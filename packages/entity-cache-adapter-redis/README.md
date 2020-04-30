@@ -1,3 +1,3 @@
-# @expo/entity-database-adapter-knex
+# @expo/entity-cache-adapter-redis
 
-[http://knexjs.org/](Knex) database adapter for @expo/entity. Currently only tested with Postgres client.
+[https://github.com/luin/ioredis](ioredis) cache adapter for @expo/entity.
