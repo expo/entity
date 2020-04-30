@@ -1,0 +1,43 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "tsc": "lerna run tsc",
+    "clean": "lerna run clean",
+    "lint": "lerna run lint",
+    "test": "lerna run test",
+    "integration": "./resources/run-with-docker lerna run integration-no-setup",
+    "prepublish": "lerna run clean",
+    "prepare": "lerna run tsc",
+    "barrelsby": "lerna run barrelsby"
+  },
+  "devDependencies": {
+    "@expo/entity": "file:packages/entity",
+    "@expo/results": "^0.3.0",
+    "@types/invariant": "^2.2.32",
+    "@types/ioredis": "^4.14.9",
+    "@types/jest": "^25.2.1",
+    "@types/lodash": "^4.14.150",
+    "@types/node": "^13.13.4",
+    "@types/uuid": "^7.0.3",
+    "@typescript-eslint/eslint-plugin": "^2.30.0",
+    "@typescript-eslint/parser": "^2.30.0",
+    "barrelsby": "^2.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-universe": "^3.0.0",
+    "jest": "^24.9.0",
+    "lerna": "^3.20.2",
+    "pg": "^8.0.3",
+    "prettier": "^2.0.5",
+    "ts-jest": "~24.2.0",
+    "ts-mockito": "^2.5.0",
+    "typescript": "^3.8.3",
+    "uuid": "^7.0.3"
+  },
+  "dependencies": {
+    "@expo/entity": "file:packages/entity",
+    "@expo/entity-cache-adapter-redis": "file:packages/entity-cache-adapter-redis",
+    "@expo/entity-database-adapter-knex": "file:packages/entity-database-adapter-knex"
+  }
+}

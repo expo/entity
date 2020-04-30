@@ -1,0 +1,476 @@
+import {
+  mock,
+  instance,
+  when,
+  anything,
+  verify,
+  anyNumber,
+  objectContaining,
+  spy,
+  anyString,
+  resetCalls,
+} from 'ts-mockito';
+
+import EntityDatabaseAdapter from '../../EntityDatabaseAdapter';
+import IEntityMetricsAdapter, { EntityMetricsLoadType } from '../../metrics/IEntityMetricsAdapter';
+import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
+import {
+  NoCacheStubCacheAdapterProvider,
+  InMemoryFullCacheStubCacheAdapterProvider,
+} from '../../testfixtures/StubCacheAdapter';
+import StubDatabaseAdapter from '../../testfixtures/StubDatabaseAdapter';
+import StubQueryContextProvider from '../../testfixtures/StubQueryContextProvider';
+import { testEntityConfiguration, TestFields } from '../../testfixtures/TestEntity';
+import EntityDataManager from '../EntityDataManager';
+import ReadThroughEntityCache from '../ReadThroughEntityCache';
+
+const objects: TestFields[] = [
+  {
+    customIdField: '1',
+    testIndexedField: 'unique1',
+    stringField: 'hello',
+    numberField: 1,
+    dateField: new Date(),
+  },
+  {
+    customIdField: '2',
+    testIndexedField: 'unique2',
+    stringField: 'hello',
+    numberField: 1,
+    dateField: new Date(),
+  },
+  {
+    customIdField: '3',
+    testIndexedField: 'unique3',
+    stringField: 'world',
+    numberField: 1,
+    dateField: new Date(),
+  },
+];
+
+describe(EntityDataManager, () => {
+  it('loads from db with a no-cache adapter', async () => {
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+    const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+
+    const entityDatas = await entityDataManager.loadManyByFieldEqualingAsync(
+      queryContext,
+      'customIdField',
+      ['2']
+    );
+    expect(entityDatas.get('2')).toHaveLength(1);
+
+    expect(dbSpy).toHaveBeenCalled();
+    expect(cacheSpy).toHaveBeenCalled();
+    dbSpy.mockClear();
+    cacheSpy.mockClear();
+
+    const entityDatas2 = await entityDataManager.loadManyByFieldEqualingAsync(
+      queryContext,
+      'testIndexedField',
+      ['unique2', 'unique3']
+    );
+    expect(entityDatas2.get('unique2')).toHaveLength(1);
+    expect(entityDatas2.get('unique3')).toHaveLength(1);
+
+    expect(dbSpy).toHaveBeenCalled();
+    expect(cacheSpy).toHaveBeenCalled();
+    dbSpy.mockClear();
+    cacheSpy.mockClear();
+  });
+
+  it('loads from a caching adaptor', async () => {
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+    const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+
+    const entityDatas = await entityDataManager.loadManyByFieldEqualingAsync(
+      queryContext,
+      'customIdField',
+      ['1']
+    );
+    expect(entityDatas.get('1')).toHaveLength(1);
+
+    expect(dbSpy).toHaveBeenCalled();
+    expect(cacheSpy).toHaveBeenCalled();
+    dbSpy.mockClear();
+    cacheSpy.mockClear();
+
+    const entityDatas2 = await entityDataManager.loadManyByFieldEqualingAsync(
+      queryContext,
+      'testIndexedField',
+      ['unique2', 'unique3']
+    );
+    expect(entityDatas2.get('unique2')).toHaveLength(1);
+    expect(entityDatas2.get('unique3')).toHaveLength(1);
+
+    expect(dbSpy).toHaveBeenCalled();
+    expect(cacheSpy).toHaveBeenCalled();
+    dbSpy.mockClear();
+    cacheSpy.mockClear();
+  });
+
+  it('loads from a caching adapter with a cache hit', async () => {
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+    const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
+    // use second data manager to ensure that cache is hit instead of data loader
+    const entityDataManager2 = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+
+    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
+      'unique2',
+    ]);
+    await entityDataManager2.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
+      'unique2',
+    ]);
+
+    expect(dbSpy).toHaveBeenCalledTimes(1);
+    expect(cacheSpy).toHaveBeenCalledTimes(2);
+
+    dbSpy.mockReset();
+    cacheSpy.mockReset();
+  });
+
+  it('loads from data loader for same query', async () => {
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+    const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+
+    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
+      'unique2',
+    ]);
+    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
+      'unique2',
+    ]);
+
+    expect(dbSpy).toHaveBeenCalledTimes(1);
+    expect(cacheSpy).toHaveBeenCalledTimes(1);
+
+    dbSpy.mockReset();
+    cacheSpy.mockReset();
+  });
+
+  it('loads and in-memory caches (dataloader) non-unique, non-cacheable loads', async () => {
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+    const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+
+    const entityData = await entityDataManager.loadManyByFieldEqualingAsync(
+      queryContext,
+      'stringField',
+      ['hello', 'world']
+    );
+    const entityData2 = await entityDataManager.loadManyByFieldEqualingAsync(
+      queryContext,
+      'stringField',
+      ['hello', 'world']
+    );
+
+    expect(dbSpy).toHaveBeenCalledTimes(1);
+    expect(cacheSpy).toHaveBeenCalledTimes(1);
+
+    expect(entityData).toMatchObject(entityData2);
+    expect(entityData.get('hello')).toHaveLength(2);
+    expect(entityData.get('world')).toHaveLength(1);
+
+    dbSpy.mockReset();
+    cacheSpy.mockReset();
+  });
+
+  it('invalidates objects', async () => {
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+    const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
+
+    const objectInQuestion = objects[1];
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+
+    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
+      objectInQuestion['testIndexedField']!,
+    ]);
+    await entityDataManager.invalidateObjectFieldsAsync(objectInQuestion);
+    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
+      objectInQuestion['testIndexedField']!,
+    ]);
+
+    expect(dbSpy).toHaveBeenCalledTimes(2);
+    expect(cacheSpy).toHaveBeenCalledTimes(2);
+
+    dbSpy.mockReset();
+    cacheSpy.mockReset();
+  });
+
+  it('invalidates all fields for an object', async () => {
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+    const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
+
+    const objectInQuestion = objects[1];
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+
+    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
+      objectInQuestion['testIndexedField']!,
+    ]);
+    await entityDataManager.invalidateObjectFieldsAsync(objectInQuestion);
+    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', [
+      objectInQuestion['customIdField']!,
+    ]);
+
+    expect(dbSpy).toHaveBeenCalledTimes(2);
+    expect(cacheSpy).toHaveBeenCalledTimes(2);
+
+    dbSpy.mockReset();
+    cacheSpy.mockReset();
+  });
+
+  it('loads only from DB when in transaction', async () => {
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+
+    const entityDatas = await StubQueryContextProvider.runInTransactionAsync(
+      async (queryContext) => {
+        return await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', [
+          '1',
+        ]);
+      }
+    );
+
+    expect(entityDatas.get('1')).toHaveLength(1);
+
+    expect(dbSpy).toHaveBeenCalled();
+    expect(cacheSpy).not.toHaveBeenCalled();
+
+    dbSpy.mockReset();
+    cacheSpy.mockReset();
+  });
+
+  it('loads by field equality conjunction and does not cache', async () => {
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+    const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyByFieldEqualityConjunctionAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+
+    const entityDatas = await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
+      queryContext,
+      [
+        {
+          fieldName: 'stringField',
+          fieldValue: 'hello',
+        },
+        {
+          fieldName: 'numberField',
+          fieldValue: 1,
+        },
+      ],
+      {}
+    );
+
+    expect(entityDatas).toHaveLength(2);
+
+    expect(dbSpy).toHaveBeenCalled();
+    expect(cacheSpy).not.toHaveBeenCalled();
+
+    dbSpy.mockReset();
+    cacheSpy.mockReset();
+  });
+
+  it('handles DB errors as expected', async () => {
+    const databaseAdapterMock = mock(EntityDatabaseAdapter);
+    when(databaseAdapterMock.fetchManyWhereAsync(anything(), anything(), anything())).thenReject(
+      new Error('DB query failed')
+    );
+
+    const databaseAdapter: EntityDatabaseAdapter<TestFields> = instance(databaseAdapterMock);
+    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter()
+    );
+    const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
+
+    await expect(
+      entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', ['2'])
+    ).rejects.toThrow();
+  });
+
+  it('records metrics appropriately', async () => {
+    const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+    const metricsAdapter = instance(metricsAdapterMock);
+
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      metricsAdapter
+    );
+    const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
+
+    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', ['1']);
+    verify(
+      metricsAdapterMock.logDataManagerLoadEvent(
+        objectContaining({
+          type: EntityMetricsLoadType.LOAD_MANY,
+          count: 1,
+        })
+      )
+    ).once();
+
+    await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
+      queryContext,
+      [
+        {
+          fieldName: 'customIdField',
+          fieldValue: '1',
+        },
+      ],
+      {}
+    );
+    verify(
+      metricsAdapterMock.logDataManagerLoadEvent(
+        objectContaining({
+          type: EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
+          count: 1,
+        })
+      )
+    ).once();
+
+    verify(metricsAdapterMock.incrementDataManagerDataloaderLoadCount(1)).once();
+    verify(metricsAdapterMock.incrementDataManagerCacheLoadCount(1)).once();
+    verify(metricsAdapterMock.incrementDataManagerDatabaseLoadCount(1)).once();
+
+    resetCalls(metricsAdapterMock);
+
+    const databaseAdapterSpy = spy(databaseAdapter);
+    when(
+      databaseAdapterSpy.fetchManyByRawWhereClauseAsync(
+        anything(),
+        anyString(),
+        anything(),
+        anything()
+      )
+    ).thenResolve([]);
+    await entityDataManager.loadManyByRawWhereClauseAsync(queryContext, '', [], {});
+    verify(
+      metricsAdapterMock.logDataManagerLoadEvent(
+        objectContaining({
+          type: EntityMetricsLoadType.LOAD_MANY_RAW,
+          count: 0,
+        })
+      )
+    ).once();
+
+    verify(metricsAdapterMock.incrementDataManagerDataloaderLoadCount(anyNumber())).never();
+    verify(metricsAdapterMock.incrementDataManagerCacheLoadCount(anyNumber())).never();
+    verify(metricsAdapterMock.incrementDataManagerDatabaseLoadCount(anyNumber())).never();
+  });
+});

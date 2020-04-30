@@ -1,0 +1,36 @@
+{
+  "name": "@expo/entity",
+  "version": "0.3.0",
+  "description": "A privacy-first data model",
+  "files": [
+    "build",
+    "src"
+  ],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "rm -rf build coverage",
+    "lint": "eslint src --ext '.ts'",
+    "test": "jest --config ../../resources/jest.config.js --rootDir",
+    "integration": "../../resources/run-with-docker yarn integration-no-setup",
+    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir --runInBand --passWithNoTests",
+    "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --exportDefault --delete"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "keywords": [
+    "entity"
+  ],
+  "author": "Expo",
+  "license": "MIT",
+  "dependencies": {
+    "@expo/results": "^0.3.0",
+    "dataloader": "^2.0.0",
+    "es6-error": "^4.1.1",
+    "invariant": "^2.2.4",
+    "lodash": "^4.17.15",
+    "uuid": "^7.0.3"
+  }
+}

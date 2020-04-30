@@ -1,0 +1,37 @@
+{
+  "name": "@expo/entity-database-adapter-knex",
+  "version": "0.3.0",
+  "description": "Knex database adapter for @expo/entity",
+  "files": [
+    "build",
+    "src"
+  ],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "rm -rf build coverage",
+    "lint": "eslint src --ext '.ts'",
+    "test": "jest --config ../../resources/jest.config.js --rootDir --passWithNoTests",
+    "integration": "../../resources/run-with-docker yarn integration-no-setup",
+    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir --runInBand --passWithNoTests",
+    "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --exportDefault --delete"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "keywords": [
+    "entity"
+  ],
+  "author": "Expo",
+  "license": "MIT",
+  "peerDependencies": {
+    "@expo/entity": "*"
+  },
+  "dependencies": {
+    "knex": "^0.20.11"
+  },
+  "devDependencies": {
+    "@expo/entity": "*"
+  }
+}

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# shellcheck disable=SC1091
+# shellcheck source=test-env.sh
+source "$DIR/test-env.sh"
+
+compose_down() {
+  docker-compose -f "$DIR/docker-compose.yml" down -v
+}
+
+docker-compose -f "$DIR/docker-compose.yml" up -d
+
+trap compose_down EXIT SIGTERM
+
+docker-compose -f "$DIR/docker-compose.yml" logs --follow --timestamps &
+
+sleep 5
+
+$@

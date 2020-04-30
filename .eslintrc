@@ -1,0 +1,46 @@
+{
+  "root": true,
+  "extends": [
+    "universe/node",
+    "universe/shared/typescript-analysis"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.ts",
+        "*.tsx",
+        "*.d.ts"
+      ],
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
+      "rules": {
+        "@typescript-eslint/explicit-function-return-type": [
+          "warn",
+          {
+            "allowExpressions": true
+          }
+        ],
+        "@typescript-eslint/naming-convention": [
+          "warn",
+          {
+            "selector": "typeLike",
+            "format": [
+              "PascalCase"
+            ]
+          },
+          {
+            "selector": "enumMember",
+            "format": [
+              "UPPER_CASE"
+            ]
+          }
+        ],
+        "no-dupe-class-members": "off",
+        "@typescript-eslint/no-dupe-class-members": [
+          "error"
+        ]
+      }
+    }
+  ]
+}

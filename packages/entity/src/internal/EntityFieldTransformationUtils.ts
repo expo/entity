@@ -1,0 +1,170 @@
+import invariant from 'invariant';
+
+import EntityConfiguration from '../EntityConfiguration';
+
+export interface FieldTransformer<T> {
+  /**
+   * Transformation to apply when a value is read from an adapter.
+   */
+  read?: (value: any) => T | null;
+
+  /**
+   * Transformation to apply when a value is written to an adapter.
+   */
+  write?: (value: T | null) => any;
+}
+
+/**
+ * Map from concrete EntityFieldDefinition implementation class name to field transformer.
+ */
+export type FieldTransformerMap = Map<string, FieldTransformer<any>>;
+
+export const getDatabaseFieldForEntityField = <TFields>(
+  entityConfiguration: EntityConfiguration<TFields>,
+  entityField: keyof TFields
+): string => {
+  const databaseField = entityConfiguration.entityToDBFieldsKeyMapping.get(entityField);
+  invariant(databaseField, `database field mapping missing for ${entityField}`);
+  return databaseField!;
+};
+
+export const transformDatabaseObjectToFields = <TFields>(
+  entityConfiguration: EntityConfiguration<TFields>,
+  fieldTransformerMap: FieldTransformerMap,
+  databaseObject: object
+): Readonly<TFields> => {
+  const fields: TFields = {} as any;
+  for (const k in databaseObject) {
+    const val = databaseObject[k];
+    const fieldsKey = entityConfiguration.dbToEntityFieldsKeyMapping.get(k);
+    if (fieldsKey) {
+      fields[fieldsKey as string] = maybeTransformDatabaseValueToFieldValue(
+        entityConfiguration,
+        fieldTransformerMap,
+        fieldsKey,
+        val
+      );
+    }
+  }
+  return fields;
+};
+
+export const transformFieldsToDatabaseObject = <TFields>(
+  entityConfiguration: EntityConfiguration<TFields>,
+  fieldTransformerMap: FieldTransformerMap,
+  fields: Readonly<Partial<TFields>>
+): object => {
+  const databaseObject: object = {};
+  for (const k in fields) {
+    const val = fields[k];
+    const databaseKey = entityConfiguration.entityToDBFieldsKeyMapping.get(k as any);
+    invariant(databaseKey, `must be database key for field: ${k}`);
+    databaseObject[databaseKey!] = maybeTransformFieldValueToDatabaseValue(
+      entityConfiguration,
+      fieldTransformerMap,
+      k,
+      val as any
+    );
+  }
+  return databaseObject;
+};
+
+export const transformCacheObjectToFields = <TFields>(
+  entityConfiguration: EntityConfiguration<TFields>,
+  fieldTransformerMap: FieldTransformerMap,
+  cacheObject: object
+): Readonly<TFields> => {
+  const fields: TFields = {} as any;
+  for (const fieldsKey in cacheObject) {
+    const val = cacheObject[fieldsKey];
+    fields[fieldsKey as string] = maybeTransformCacheValueToFieldValue(
+      entityConfiguration,
+      fieldTransformerMap,
+      fieldsKey as any,
+      val
+    );
+  }
+  return fields;
+};
+
+export const transformFieldsToCacheObject = <TFields>(
+  entityConfiguration: EntityConfiguration<TFields>,
+  fieldTransformerMap: FieldTransformerMap,
+  fields: Readonly<Partial<TFields>>
+): object => {
+  const cacheObject: object = {};
+  for (const fieldsKey in fields) {
+    const val = fields[fieldsKey];
+    cacheObject[fieldsKey as string] = maybeTransformFieldValueToCacheValue(
+      entityConfiguration,
+      fieldTransformerMap,
+      fieldsKey,
+      val as any
+    );
+  }
+  return cacheObject;
+};
+
+const maybeTransformDatabaseValueToFieldValue = <TFields, N extends keyof TFields>(
+  entityConfiguration: EntityConfiguration<TFields>,
+  fieldTransformerMap: FieldTransformerMap,
+  fieldName: N,
+  value: any
+): TFields[N] => {
+  const fieldDefinition = entityConfiguration.schema.get(fieldName);
+  if (!fieldDefinition) {
+    return value;
+  }
+
+  const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
+  const readTransformer = transformer?.read;
+  return readTransformer ? readTransformer(value) : value;
+};
+
+const maybeTransformFieldValueToDatabaseValue = <TFields, N extends keyof TFields>(
+  entityConfiguration: EntityConfiguration<TFields>,
+  fieldTransformerMap: FieldTransformerMap,
+  fieldName: N,
+  value: TFields[N]
+): any => {
+  const fieldDefinition = entityConfiguration.schema.get(fieldName);
+  if (!fieldDefinition) {
+    return value;
+  }
+
+  const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
+  const writeTransformer = transformer?.write;
+  return writeTransformer ? writeTransformer(value) : value;
+};
+
+const maybeTransformCacheValueToFieldValue = <TFields, N extends keyof TFields>(
+  entityConfiguration: EntityConfiguration<TFields>,
+  fieldTransformerMap: FieldTransformerMap,
+  fieldName: N,
+  value: any
+): TFields[N] => {
+  const fieldDefinition = entityConfiguration.schema.get(fieldName);
+  if (!fieldDefinition) {
+    return value;
+  }
+
+  const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
+  const readTransformer = transformer?.read;
+  return readTransformer ? readTransformer(value) : value;
+};
+
+const maybeTransformFieldValueToCacheValue = <TFields, N extends keyof TFields>(
+  entityConfiguration: EntityConfiguration<TFields>,
+  fieldTransformerMap: FieldTransformerMap,
+  fieldName: N,
+  value: TFields[N]
+): any => {
+  const fieldDefinition = entityConfiguration.schema.get(fieldName);
+  if (!fieldDefinition) {
+    return value;
+  }
+
+  const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
+  const writeTransformer = transformer?.write;
+  return writeTransformer ? writeTransformer(value) : value;
+};
