@@ -1,0 +1,37 @@
+{
+  "name": "@expo/entity-example",
+  "private": true,
+  "version": "0.3.0",
+  "description": "An example integration of the @expo/entity framework",
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "rm -rf build coverage",
+    "lint": "eslint src --ext '.ts'",
+    "test": "jest --config ../../resources/jest.config.js --rootDir",
+    "integration": "../../resources/run-with-docker yarn integration-no-setup",
+    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir --runInBand --passWithNoTests",
+    "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --exportDefault --delete",
+    "start": "tsnd --transpile-only --inspect --respawn --no-notify --async-stack-traces --throw-deprecation -- src/app.ts"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "keywords": [
+    "entity"
+  ],
+  "author": "Expo",
+  "license": "MIT",
+  "dependencies": {
+    "@expo/entity": "^0.3.0",
+    "koa": "^2.11.0",
+    "koa-body": "^4.1.1",
+    "koa-router": "^8.0.8"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.11.3",
+    "@types/koa-router": "^7.4.0",
+    "@types/supertest": "^2.0.9",
+    "supertest": "^4.0.2",
+    "ts-node-dev": "^1.0.0-pre.44"
+  }
+}
