@@ -1,4 +1,4 @@
-import { Result, asyncResult, result } from '@expo/results';
+import { Result, asyncResult, result, enforceAsyncResult } from '@expo/results';
 import _ from 'lodash';
 
 import Entity, { IEntityClass } from './Entity';
@@ -74,6 +74,13 @@ export class CreateMutator<
       this.metricsAdapter,
       EntityMetricsMutationType.CREATE
     )(this.createInternalAsync());
+  }
+
+  /**
+   * Convenience method that returns the new entity or throws upon create failure.
+   */
+  async createEnforcingAsync(): Promise<TEntity> {
+    return await enforceAsyncResult(this.createAsync());
   }
 
   private async createInternalAsync(): Promise<Result<TEntity>> {
@@ -157,6 +164,19 @@ export class UpdateMutator<
   }
 
   /**
+   * Set the value for entity field using updater function.
+   * @param fieldName entity field being updated
+   * @param valueUpdaterBlock updater function from existing field value to new value
+   */
+  setFieldWithBlock<K extends keyof TFields>(
+    fieldName: K,
+    valueUpdaterBlock: (previousValue: TFields[K]) => TFields[K]
+  ): this {
+    const newValue = valueUpdaterBlock(this.fieldsForEntity[fieldName]);
+    return this.setField(fieldName, newValue);
+  }
+
+  /**
    * Commit the changes to the entity after authorizing against update privacy rules.
    * Invalidates all caches for pre-update entity and caches the updated entity if not in a
    * transactional query context.
@@ -167,6 +187,13 @@ export class UpdateMutator<
       this.metricsAdapter,
       EntityMetricsMutationType.UPDATE
     )(this.updateInternalAsync());
+  }
+
+  /**
+   * Convenience method that returns the updated entity or throws upon update failure.
+   */
+  async updateEnforcingAsync(): Promise<TEntity> {
+    return await enforceAsyncResult(this.updateAsync());
   }
 
   private async updateInternalAsync(): Promise<Result<TEntity>> {
@@ -241,6 +268,13 @@ export class DeleteMutator<
       this.metricsAdapter,
       EntityMetricsMutationType.DELETE
     )(this.deleteInternalAsync());
+  }
+
+  /**
+   * Convenience method that throws upon delete failure.
+   */
+  async deleteEnforcingAsync(): Promise<void> {
+    return await enforceAsyncResult(this.deleteAsync());
   }
 
   private async deleteInternalAsync(): Promise<Result<void>> {

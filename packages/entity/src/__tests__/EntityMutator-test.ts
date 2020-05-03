@@ -114,12 +114,11 @@ describe(EntityMutatorFactory, () => {
 
     const spiedPrivacyPolicy = spy(privacyPolicy);
 
-    const newEntity = await enforceAsyncResult(
-      entityMutatorFactory
-        .forCreate(viewerContext, queryContext)
-        .setField('stringField', 'huh')
-        .createAsync()
-    );
+    const newEntity = await entityMutatorFactory
+      .forCreate(viewerContext, queryContext)
+      .setField('stringField', 'huh')
+      .createEnforcingAsync();
+
     expect(newEntity).toBeTruthy();
 
     verify(
@@ -155,16 +154,18 @@ describe(EntityMutatorFactory, () => {
       entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
     );
 
-    const updatedEntity = await enforceAsyncResult(
-      entityMutatorFactory
-        .forUpdate(existingEntity, queryContext)
-        .setField('stringField', 'huh2')
-        .updateAsync()
-    );
+    const updatedEntity = await entityMutatorFactory
+      .forUpdate(existingEntity, queryContext)
+      .setField('stringField', 'huh2')
+      .setFieldWithBlock('numberField', (numberFieldValue) => numberFieldValue + 1)
+      .setFieldWithBlock('numberField', (numberFieldValue) => numberFieldValue + 1)
+      .setFieldWithBlock('numberField', (numberFieldValue) => numberFieldValue + 1)
+      .updateEnforcingAsync();
 
     expect(updatedEntity).toBeTruthy();
     expect(updatedEntity.getAllFields()).not.toMatchObject(existingEntity.getAllFields());
     expect(updatedEntity.getField('stringField')).toEqual('huh2');
+    expect(updatedEntity.getField('numberField')).toEqual(6);
 
     const reloadedEntity = await enforceAsyncResult(
       entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
@@ -198,9 +199,7 @@ describe(EntityMutatorFactory, () => {
     );
     expect(existingEntity).toBeTruthy();
 
-    await enforceAsyncResult(
-      entityMutatorFactory.forDelete(existingEntity, queryContext).deleteAsync()
-    );
+    await entityMutatorFactory.forDelete(existingEntity, queryContext).deleteEnforcingAsync();
 
     await expect(
       enforceAsyncResult(

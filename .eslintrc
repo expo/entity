@@ -4,6 +4,9 @@
     "universe/node",
     "universe/shared/typescript-analysis"
   ],
+  "rules": {
+    "no-restricted-imports": ["error",{ "paths": [".", ".."] }]
+  },
   "overrides": [
     {
       "files": [

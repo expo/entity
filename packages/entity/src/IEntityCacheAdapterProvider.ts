@@ -1,4 +1,5 @@
-import { EntityCacheAdapter, EntityConfiguration } from '.';
+import EntityCacheAdapter from './EntityCacheAdapter';
+import EntityConfiguration from './EntityConfiguration';
 
 /**
  * A cache adapter provider vends cache adapters for a particular cache adapter type.

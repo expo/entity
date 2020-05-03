@@ -8,7 +8,7 @@ import ViewerScopedEntityCompanionProvider from './ViewerScopedEntityCompanionPr
 /**
  * A viewer context encapsulates all information necessary to evaluate an {@link EntityPrivacyPolicy}.
  */
-export default abstract class ViewerContext {
+export default class ViewerContext {
   private readonly viewerScopedEntityCompanionProvider: ViewerScopedEntityCompanionProvider;
 
   constructor(public readonly entityCompanionProvider: EntityCompanionProvider) {
