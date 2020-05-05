@@ -179,13 +179,16 @@ export default class EntityDataManager<TFields> {
    *
    * @param objectFields object to invalidate from all applicable caches
    */
-  async invalidateObjectFieldsAsync(objectFields: Partial<TFields>): Promise<void> {
+  async invalidateObjectFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
     // TODO(wschurman): check for races with load
+    const keys = Object.keys(objectFields) as (keyof TFields)[];
     await Promise.all(
-      Object.keys(objectFields).map(async (fieldName) => {
+      keys.map(async (fieldName: keyof TFields) => {
         const value = objectFields[fieldName];
         if (value !== undefined) {
-          await this.invalidateManyByFieldEqualingAsync(fieldName as keyof TFields, [value]);
+          await this.invalidateManyByFieldEqualingAsync(fieldName, [
+            value as NonNullable<TFields[keyof TFields]>,
+          ]);
         }
       })
     );

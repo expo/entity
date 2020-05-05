@@ -15,7 +15,7 @@ import {
 } from '../internal/EntityFieldTransformationUtils';
 
 export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
-  private objects: Readonly<object>[];
+  private objects: Readonly<{ [key: string]: any }>[];
 
   constructor(
     private readonly entityConfiguration2: EntityConfiguration<T>,
@@ -47,7 +47,7 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
           return obj[tableField] === fieldValue;
         })
       );
-    }, []);
+    }, [] as { [key: string]: any });
   }
 
   private static compareByOrderBys(
@@ -55,8 +55,8 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
       columnName: string;
       order: OrderByOrdering;
     }[],
-    objectA: object,
-    objectB: object
+    objectA: { [key: string]: any },
+    objectB: { [key: string]: any }
   ): 0 | 1 | -1 {
     if (orderBys.length === 0) {
       return 0;

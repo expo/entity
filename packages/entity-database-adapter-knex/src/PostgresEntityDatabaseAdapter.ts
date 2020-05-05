@@ -20,7 +20,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
            * JSON array fields must be stringified before insertion using Knex.
            * http://knexjs.org/#Schema-json
            */
-          write: (val) => JSON.stringify(val),
+          write: (val: any[]) => JSON.stringify(val),
         },
       ],
       [
@@ -31,7 +31,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
            * For this field it is only an array some of the time.
            * http://knexjs.org/#Schema-json
            */
-          write: (val) => (Array.isArray(val) ? JSON.stringify(val) : val),
+          write: (val: any[] | any) => (Array.isArray(val) ? JSON.stringify(val) : val),
         },
       ],
     ]);
@@ -84,7 +84,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     let query = queryInterface.select().from(tableName);
 
     if (tableFieldSingleValueEqualityOperands.length > 0) {
-      const whereObject = {};
+      const whereObject: { [key: string]: any } = {};
       for (const { tableField, tableValue } of tableFieldSingleValueEqualityOperands) {
         whereObject[tableField] = tableValue;
       }

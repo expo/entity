@@ -69,7 +69,7 @@ describe(transformDatabaseObjectToFields, () => {
       [
         StringField.name,
         {
-          read: (val) => `${val}-read-transformed`,
+          read: (val: any) => `${val}-read-transformed`,
         },
       ],
     ]);
@@ -104,7 +104,7 @@ describe(transformFieldsToDatabaseObject, () => {
       [
         StringField.name,
         {
-          write: (val) => `${val}-write-transformed`,
+          write: (val: string) => `${val}-write-transformed`,
         },
       ],
     ]);
@@ -125,7 +125,7 @@ describe(transformCacheObjectToFields, () => {
       [
         StringField.name,
         {
-          read: (val) => `${val}-read-transformed-cache`,
+          read: (val: any) => `${val}-read-transformed-cache`,
         },
       ],
     ]);
@@ -148,7 +148,7 @@ describe(transformFieldsToCacheObject, () => {
       [
         StringField.name,
         {
-          write: (val) => `${val}-write-transformed-cache`,
+          write: (val: string) => `${val}-write-transformed-cache`,
         },
       ],
     ]);

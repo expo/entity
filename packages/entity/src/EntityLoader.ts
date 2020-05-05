@@ -242,7 +242,7 @@ export default class EntityLoader<
    * Invalidate all caches for an entity's fields. Exposed primarily for internal use by {@link EntityMutator}.
    * @param objectFields entity data object to be invalidated
    */
-  async invalidateFieldsAsync(objectFields: Readonly<Partial<TFields>>): Promise<void> {
+  async invalidateFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
     await this.entityDataManager.invalidateObjectFieldsAsync(objectFields);
   }
 }
