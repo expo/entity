@@ -1,10 +1,12 @@
 import { EntityCompanionProvider } from '@expo/entity';
+import { ApolloServer } from 'apollo-server-koa';
 import Koa from 'koa';
 import koaBody from 'koa-body';
 import KoaRouter from 'koa-router';
 
 import { entityCompanionMiddleware, viewerContextMiddleware } from './middleware';
 import notesRouter from './routers/notesRouter';
+import { typeDefs, resolvers } from './schema';
 import { ExampleViewerContext } from './viewerContexts';
 
 export type ExampleContext = Koa.ParameterizedContext<ExampleState>;
@@ -34,5 +36,16 @@ app.use(viewerContextMiddleware);
 const router = new KoaRouter<ExampleState>();
 router.use(notesRouter.routes());
 app.use(router.routes()).use(router.allowedMethods());
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ ctx }) => {
+    return {
+      viewerContext: ctx.state.viewerContext,
+    };
+  },
+});
+app.use(server.getMiddleware({ cors: false, disableHealthCheck: true, bodyParserConfig: false }));
 
 export default app;
