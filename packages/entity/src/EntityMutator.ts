@@ -1,4 +1,4 @@
-import { Result, asyncResult, result } from '@expo/results';
+import { Result, asyncResult, result, enforceAsyncResult } from '@expo/results';
 import _ from 'lodash';
 
 import Entity, { IEntityClass } from './Entity';
@@ -74,6 +74,13 @@ export class CreateMutator<
       this.metricsAdapter,
       EntityMetricsMutationType.CREATE
     )(this.createInternalAsync());
+  }
+
+  /**
+   * Convenience method that returns the new entity or throws upon create failure.
+   */
+  async enforceCreateAsync(): Promise<TEntity> {
+    return await enforceAsyncResult(this.createAsync());
   }
 
   private async createInternalAsync(): Promise<Result<TEntity>> {
@@ -169,6 +176,13 @@ export class UpdateMutator<
     )(this.updateInternalAsync());
   }
 
+  /**
+   * Convenience method that returns the updated entity or throws upon update failure.
+   */
+  async enforceUpdateAsync(): Promise<TEntity> {
+    return await enforceAsyncResult(this.updateAsync());
+  }
+
   private async updateInternalAsync(): Promise<Result<TEntity>> {
     const entityAboutToBeUpdated = new this.entityClass(this.viewerContext, this.fieldsForEntity);
     const authorizeUpdateResult = await asyncResult(
@@ -241,6 +255,13 @@ export class DeleteMutator<
       this.metricsAdapter,
       EntityMetricsMutationType.DELETE
     )(this.deleteInternalAsync());
+  }
+
+  /**
+   * Convenience method that throws upon delete failure.
+   */
+  async enforceDeleteAsync(): Promise<void> {
+    return await enforceAsyncResult(this.deleteAsync());
   }
 
   private async deleteInternalAsync(): Promise<Result<void>> {

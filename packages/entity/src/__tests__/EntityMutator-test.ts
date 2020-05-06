@@ -114,12 +114,11 @@ describe(EntityMutatorFactory, () => {
 
     const spiedPrivacyPolicy = spy(privacyPolicy);
 
-    const newEntity = await enforceAsyncResult(
-      entityMutatorFactory
-        .forCreate(viewerContext, queryContext)
-        .setField('stringField', 'huh')
-        .createAsync()
-    );
+    const newEntity = await entityMutatorFactory
+      .forCreate(viewerContext, queryContext)
+      .setField('stringField', 'huh')
+      .enforceCreateAsync();
+
     expect(newEntity).toBeTruthy();
 
     verify(
@@ -155,12 +154,10 @@ describe(EntityMutatorFactory, () => {
       entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
     );
 
-    const updatedEntity = await enforceAsyncResult(
-      entityMutatorFactory
-        .forUpdate(existingEntity, queryContext)
-        .setField('stringField', 'huh2')
-        .updateAsync()
-    );
+    const updatedEntity = await entityMutatorFactory
+      .forUpdate(existingEntity, queryContext)
+      .setField('stringField', 'huh2')
+      .enforceUpdateAsync();
 
     expect(updatedEntity).toBeTruthy();
     expect(updatedEntity.getAllFields()).not.toMatchObject(existingEntity.getAllFields());
@@ -198,9 +195,7 @@ describe(EntityMutatorFactory, () => {
     );
     expect(existingEntity).toBeTruthy();
 
-    await enforceAsyncResult(
-      entityMutatorFactory.forDelete(existingEntity, queryContext).deleteAsync()
-    );
+    await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
 
     await expect(
       enforceAsyncResult(

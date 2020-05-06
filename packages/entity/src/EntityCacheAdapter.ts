@@ -1,4 +1,4 @@
-import { EntityConfiguration } from '.';
+import EntityConfiguration from './EntityConfiguration';
 import { FieldTransformerMap } from './internal/EntityFieldTransformationUtils';
 import { CacheLoadResult } from './internal/ReadThroughEntityCache';
 
