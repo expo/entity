@@ -112,6 +112,34 @@ export default abstract class Entity<
       .forDelete(existingEntity, queryContext)
       .deleteAsync();
   }
+
+  /**
+   * Delete an existing entity in given query context, throwing if deletion is unsuccessful.
+   * @param existingEntity entity to delete
+   * @param queryContext query context in which to perform the delete
+   */
+  static enforceDeleteAsync<
+    TMFields,
+    TMID,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity>
+  >(
+    this: IEntityClass<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy>,
+    existingEntity: TMEntity,
+    queryContext: EntityQueryContext = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getRegularEntityQueryContext()
+  ): Promise<void> {
+    return existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getMutatorFactory()
+      .forDelete(existingEntity, queryContext)
+      .enforceDeleteAsync();
+  }
 }
 
 /**

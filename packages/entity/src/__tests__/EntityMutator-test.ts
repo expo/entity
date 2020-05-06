@@ -117,7 +117,7 @@ describe(EntityMutatorFactory, () => {
     const newEntity = await entityMutatorFactory
       .forCreate(viewerContext, queryContext)
       .setField('stringField', 'huh')
-      .createEnforcingAsync();
+      .enforceCreateAsync();
 
     expect(newEntity).toBeTruthy();
 
@@ -157,15 +157,11 @@ describe(EntityMutatorFactory, () => {
     const updatedEntity = await entityMutatorFactory
       .forUpdate(existingEntity, queryContext)
       .setField('stringField', 'huh2')
-      .setFieldWithBlock('numberField', (numberFieldValue) => numberFieldValue + 1)
-      .setFieldWithBlock('numberField', (numberFieldValue) => numberFieldValue + 1)
-      .setFieldWithBlock('numberField', (numberFieldValue) => numberFieldValue + 1)
-      .updateEnforcingAsync();
+      .enforceUpdateAsync();
 
     expect(updatedEntity).toBeTruthy();
     expect(updatedEntity.getAllFields()).not.toMatchObject(existingEntity.getAllFields());
     expect(updatedEntity.getField('stringField')).toEqual('huh2');
-    expect(updatedEntity.getField('numberField')).toEqual(6);
 
     const reloadedEntity = await enforceAsyncResult(
       entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
@@ -199,7 +195,7 @@ describe(EntityMutatorFactory, () => {
     );
     expect(existingEntity).toBeTruthy();
 
-    await entityMutatorFactory.forDelete(existingEntity, queryContext).deleteEnforcingAsync();
+    await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
 
     await expect(
       enforceAsyncResult(

@@ -79,7 +79,7 @@ export class CreateMutator<
   /**
    * Convenience method that returns the new entity or throws upon create failure.
    */
-  async createEnforcingAsync(): Promise<TEntity> {
+  async enforceCreateAsync(): Promise<TEntity> {
     return await enforceAsyncResult(this.createAsync());
   }
 
@@ -164,19 +164,6 @@ export class UpdateMutator<
   }
 
   /**
-   * Set the value for entity field using updater function.
-   * @param fieldName entity field being updated
-   * @param valueUpdaterBlock updater function from existing field value to new value
-   */
-  setFieldWithBlock<K extends keyof TFields>(
-    fieldName: K,
-    valueUpdaterBlock: (previousValue: TFields[K]) => TFields[K]
-  ): this {
-    const newValue = valueUpdaterBlock(this.fieldsForEntity[fieldName]);
-    return this.setField(fieldName, newValue);
-  }
-
-  /**
    * Commit the changes to the entity after authorizing against update privacy rules.
    * Invalidates all caches for pre-update entity and caches the updated entity if not in a
    * transactional query context.
@@ -192,7 +179,7 @@ export class UpdateMutator<
   /**
    * Convenience method that returns the updated entity or throws upon update failure.
    */
-  async updateEnforcingAsync(): Promise<TEntity> {
+  async enforceUpdateAsync(): Promise<TEntity> {
     return await enforceAsyncResult(this.updateAsync());
   }
 
@@ -273,7 +260,7 @@ export class DeleteMutator<
   /**
    * Convenience method that throws upon delete failure.
    */
-  async deleteEnforcingAsync(): Promise<void> {
+  async enforceDeleteAsync(): Promise<void> {
     return await enforceAsyncResult(this.deleteAsync());
   }
 
