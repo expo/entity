@@ -11,7 +11,7 @@ import {
 import invariant from 'invariant';
 import { v4 as uuidv4 } from 'uuid';
 
-const dbObjects: Readonly<object>[] = [];
+const dbObjects: Readonly<{ [key: string]: any }>[] = [];
 
 /**
  * In-memory database adapter for entity for the purposes of this example. Normally @expo/entity-database-adapter-knex
@@ -42,8 +42,8 @@ export default class InMemoryDatabaseAdapter<T> extends EntityDatabaseAdapter<T>
       columnName: string;
       order: OrderByOrdering;
     }[],
-    objectA: object,
-    objectB: object
+    objectA: { [key: string]: any },
+    objectB: { [key: string]: any }
   ): 0 | 1 | -1 {
     if (orderBys.length === 0) {
       return 0;

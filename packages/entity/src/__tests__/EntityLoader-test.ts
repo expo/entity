@@ -194,7 +194,7 @@ describe(EntityLoader, () => {
       privacyPolicy,
       dataManagerInstance
     );
-    await entityLoader.invalidateFieldsAsync({ customIdField: 'hello' });
+    await entityLoader.invalidateFieldsAsync({ customIdField: 'hello' } as any);
 
     verify(
       dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: 'hello' }))
@@ -216,7 +216,7 @@ describe(EntityLoader, () => {
       privacyPolicy,
       dataManagerInstance
     );
-    await entityLoader.invalidateFieldsAsync({ customIdField: 'hello' });
+    await entityLoader.invalidateFieldsAsync({ customIdField: 'hello' } as any);
     verify(
       dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: 'hello' }))
     ).once();

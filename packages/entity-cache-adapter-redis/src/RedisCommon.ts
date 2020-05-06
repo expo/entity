@@ -18,8 +18,8 @@ export const redisTransformerMap = new Map([
        *                 behavior is to convert ISO strings back into Date
        *                 objects and pass through null.
        */
-      write: (val) => val?.toISOString() ?? null,
-      read: (val) => (val ? new Date(val) : val),
+      write: (val: Date) => val?.toISOString() ?? null,
+      read: (val: any) => (val ? new Date(val) : val),
     },
   ],
 ]);

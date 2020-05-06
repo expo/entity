@@ -26,10 +26,11 @@ export default abstract class ReadonlyEntity<TFields, TID, TViewerContext extend
     private readonly viewerContext: TViewerContext,
     private readonly rawFields: Readonly<TFields>
   ) {
-    const idField = (this.constructor as any).getCompanionDefinition().entityConfiguration.idField;
+    const idField = (this.constructor as any).getCompanionDefinition().entityConfiguration
+      .idField as keyof TFields;
     const id = rawFields[idField];
     invariant(id, 'must provide ID to create an entity');
-    this.id = id;
+    this.id = id as any;
   }
 
   toString(): string {
