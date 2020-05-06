@@ -11,7 +11,7 @@
     "integration": "../../resources/run-with-docker yarn integration-no-setup",
     "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir --runInBand --passWithNoTests",
     "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --exportDefault --delete",
-    "start": "tsnd --transpile-only --inspect --respawn --no-notify --async-stack-traces --throw-deprecation -- src/app.ts"
+    "start": "tsnd --transpile-only --inspect --respawn --no-notify --async-stack-traces --throw-deprecation -- src/index.ts"
   },
   "engines": {
     "node": ">=8"
@@ -23,6 +23,8 @@
   "license": "MIT",
   "dependencies": {
     "@expo/entity": "^0.3.0",
+    "apollo-server-koa": "^2.13.0",
+    "graphql": "^15.0.0",
     "koa": "^2.11.0",
     "koa-body": "^4.1.1",
     "koa-router": "^8.0.8"
