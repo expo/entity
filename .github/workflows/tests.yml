@@ -20,3 +20,9 @@ jobs:
     # need to double "escape" arguments because of yarn and lerna run
     - run: yarn lint -- -- --max-warnings=0
     - run: yarn test -- -- --coverage
+    - uses: codecov/codecov-action@v1
+      with:
+        file: ./packages/*/coverage/clover.xml
+        flags: unittest
+        fail_ci_if_error: true
+
