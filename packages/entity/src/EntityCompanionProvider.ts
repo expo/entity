@@ -69,7 +69,13 @@ export interface EntityCompanionDefinition<
 }
 
 /**
- * Lazy entity companion factory that caches one companion for each entity type.
+ * An instance of the Entity framework.
+ *
+ * Required to create a {@link ViewerContext}, which is the application entry point
+ * into the framework.
+ *
+ * Internally, this is a lazy entity companion factory that instantiates and caches one
+ * {@link EntityCompanion} for each type of {@link Entity}.
  */
 export default class EntityCompanionProvider {
   private readonly entityCompanionMap: Map<
@@ -77,6 +83,12 @@ export default class EntityCompanionProvider {
     EntityCompanion<any, any, any, any, any>
   > = new Map();
 
+  /**
+   * Instantiate an Entity framework.
+   * @param metricsAdapter An {@link IEntityMetricsAdapter} for collecting metrics on this instance
+   * @param databaseAdapterFlavors Database adapter configurations for this instance
+   * @param cacheAdapterFlavors Cache adapter configurations for this instance
+   */
   constructor(
     private metricsAdapter: IEntityMetricsAdapter,
     private databaseAdapterFlavors: Record<

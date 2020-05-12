@@ -7,7 +7,7 @@ import ViewerScopedEntityLoaderFactory from './ViewerScopedEntityLoaderFactory';
 import ViewerScopedEntityMutatorFactory from './ViewerScopedEntityMutatorFactory';
 
 /**
- * Provides a simpler API for loading and mutating entities by injecting the viewer context
+ * Provides a simpler API for loading and mutating entities by injecting the {@link ViewerContext}
  * from the viewer-scoped entity companion provider.
  */
 export default class ViewerScopedEntityCompanion<

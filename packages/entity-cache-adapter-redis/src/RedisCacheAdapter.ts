@@ -14,11 +14,39 @@ import { redisTransformerMap } from './RedisCommon';
 const DOES_NOT_EXIST_REDIS = '';
 
 export interface RedisCacheAdapterContext {
+  /**
+   * Instance of ioredis.Redis
+   */
   redisClient: Redis;
+
+  /**
+   * Create a key string for key parts (cache key prefix, versions, entity name, etc).
+   * Most commonly a simple `parts.join(':')`. See integration test for example.
+   */
   makeKeyFn: (...parts: string[]) => string;
+
+  /**
+   * Global cache version for the entity framework. Bumping this version will
+   * invalidate the cache for all entities at once.
+   */
   cacheKeyVersion: number;
+
+  /**
+   * Prefix prepended to all entity cache keys. Useful for adding a short, human-readable
+   * distintion for entity keys, e.g. `ent-`
+   */
   cacheKeyPrefix: string;
+
+  /**
+   * TTL for caching database hits. Successive entity loads within this TTL
+   * will be read from cache (unless invalidated).
+   */
   ttlSecondsPositive: number;
+
+  /**
+   * TTL for negatively caching database misses. Successive entity loads within
+   * this TTL will be assumed not present in the database (unless invalidated).
+   */
   ttlSecondsNegative: number;
 }
 

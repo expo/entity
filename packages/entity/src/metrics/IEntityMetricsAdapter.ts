@@ -21,6 +21,10 @@ export interface EntityMetricsMutationEvent {
   duration: number;
 }
 
+/**
+ * An interface for gathering metrics about the Entity framework. Information about
+ * entity load and mutation operations is piped to an instance of this adapter.
+ */
 export default interface IEntityMetricsAdapter {
   /**
    * Called when any load occurs.

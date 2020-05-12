@@ -8,8 +8,10 @@ import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQue
 import ViewerContext from './ViewerContext';
 
 /**
- * A readonly entity exposes only the read functionality of an Entity. This is useful for
- * things like:
+ * A readonly entity exposes only the read functionality of an Entity. Used as the base
+ * type for most entity operations excluding mutations.
+ *
+ * This is also useful as a base class for Entities that should not be mutated, such as:
  * - Entities representing SQL views.
  * - Entities representing immutable tables.
  */

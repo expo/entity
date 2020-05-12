@@ -7,6 +7,9 @@ import ViewerScopedEntityCompanionProvider from './ViewerScopedEntityCompanionPr
 
 /**
  * A viewer context encapsulates all information necessary to evaluate an {@link EntityPrivacyPolicy}.
+ *
+ * In combination with an {@link EntityCompanionProvider}, a viewer context is the
+ * entry point into the Entity framework.
  */
 export default class ViewerContext {
   private readonly viewerScopedEntityCompanionProvider: ViewerScopedEntityCompanionProvider;
