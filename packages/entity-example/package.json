@@ -5,7 +5,7 @@
   "description": "An example integration of the @expo/entity framework",
   "scripts": {
     "tsc": "tsc",
-    "clean": "rm -rf build coverage",
+    "clean": "rm -rf build coverage coverage-integration",
     "lint": "eslint src --ext '.ts'",
     "test": "jest --config ../../resources/jest.config.js --rootDir",
     "integration": "../../resources/run-with-docker yarn integration-no-setup",
