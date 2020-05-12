@@ -66,7 +66,7 @@ export class CreateMutator<
 
   /**
    * Commit the new entity after authorizing against creation privacy rules. Invalidates all caches for
-   * queries that would return new entity, cache the new entity if not in a transactional query context.
+   * queries that would return new entity and caches the new entity if not in a transactional query context.
    * @returns authorized, cached, newly-created entity result, where result error can be UnauthorizedError
    */
   async createAsync(): Promise<Result<TEntity>> {

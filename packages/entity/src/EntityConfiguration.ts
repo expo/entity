@@ -2,7 +2,7 @@ import { EntityFieldDefinition } from './EntityFields';
 import { mapMap, invertMap, reduceMap } from './utils/collections/maps';
 
 /**
- * The data storage configuration for an entity. Contains information relating to IDs,
+ * The data storage configuration for a type of Entity. Contains information relating to IDs,
  * cachable fields, and field mappings.
  */
 export default class EntityConfiguration<TFields> {

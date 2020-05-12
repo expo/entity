@@ -22,8 +22,7 @@ export interface IPrivacyPolicyClass<TPrivacyPolicy> {
 }
 
 /**
- * Helper class for orchestrating setup of Entity mutators and loaders. Single instance
- * created per request per entity type.
+ * Composition root responsible for orchestrating setup of Entity mutators and loaders.
  */
 export default class EntityCompanion<
   TFields,

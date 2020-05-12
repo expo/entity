@@ -76,9 +76,9 @@ export interface TableQuerySelectionModifiers {
 
 /**
  * A database adapter is an interface by which entity objects can be
- * fetched, inserted, updated, and deleted from a database. The base class
+ * fetched, inserted, updated, and deleted from a database. This base class
  * handles all entity field transformation. Subclasses are responsible for
- * implementing database-specific logic for the type of database.
+ * implementing database-specific logic for a type of database.
  */
 export default abstract class EntityDatabaseAdapter<TFields> {
   private readonly fieldTransformerMap: FieldTransformerMap;
