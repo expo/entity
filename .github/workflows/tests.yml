@@ -27,4 +27,10 @@ jobs:
         file: ./packages/*/coverage/clover.xml
         flags: unittest
         fail_ci_if_error: true
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./packages/*/coverage-integration/clover.xml
+        flags: integration
+        fail_ci_if_error: true
 
