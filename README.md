@@ -3,6 +3,7 @@
 Entity is a privacy-aware data layer for defining, caching, and authorizing access to application data models.
 
 ![Tests](https://github.com/expo/entity/workflows/Tests/badge.svg)
+[![codecov](https://codecov.io/gh/expo/entity/branch/master/graph/badge.svg)](https://codecov.io/gh/expo/entity)
 [![npm](https://img.shields.io/npm/v/@expo/entity)](https://www.npmjs.com/package/@expo/entity)
 [![NPM](https://img.shields.io/npm/l/@expo/entity)](https://www.npmjs.com/package/@expo/entity)
 
