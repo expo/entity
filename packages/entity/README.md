@@ -1,6 +1,6 @@
-# @expo/entity
+# `@expo/entity`
 
-> Note: Documentation is a work-in-progress, but all concepts are documented in source code JSDoc.
+[Documentation](https://expo.github.io/entity/modules/_expo_entity.html)
 
 ## Core Overview
 
