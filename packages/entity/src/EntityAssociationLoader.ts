@@ -17,9 +17,9 @@ export default class EntityAssociationLoader<
   /**
    * Load an associated entity identified by a field value of this entity. In a relational database,
    * the field in this entity is a foreign key to the ID of the associated entity.
-   * @param fieldIdentifyingAssociatedEntity field of this entity containing the ID of the associated entity
-   * @param associatedEntityClass class of the associated entity
-   * @param queryContext query context in which to perform the load
+   * @param fieldIdentifyingAssociatedEntity - field of this entity containing the ID of the associated entity
+   * @param associatedEntityClass - class of the associated entity
+   * @param queryContext - query context in which to perform the load
    */
   async loadAssociatedEntityAsync<
     TAssociatedFields,
@@ -58,10 +58,10 @@ export default class EntityAssociationLoader<
   /**
    * Load an associated entity identified by a field value of this entity. In a relational database,
    * the field in this entity is a foreign key to a unique field of the associated entity.
-   * @param fieldIdentifyingAssociatedEntity field of this entity containing the value with which to look up associated entity
-   * @param associatedEntityClass class of the associated entity
-   * @param associatedEntityLookupByField field of associated entity with which to look up the associated entity
-   * @param queryContext query context in which to perform the load
+   * @param fieldIdentifyingAssociatedEntity - field of this entity containing the value with which to look up associated entity
+   * @param associatedEntityClass - class of the associated entity
+   * @param associatedEntityLookupByField - field of associated entity with which to look up the associated entity
+   * @param queryContext - query context in which to perform the load
    */
   async loadAssociatedEntityByFieldEqualingAsync<
     TAssociatedFields,
@@ -104,8 +104,8 @@ export default class EntityAssociationLoader<
   /**
    * Load an associated entity by folding a sequence of {@link EntityLoadThroughDirective}. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
-   * @param loadDirectives associated entity load directives instructing each step of the fold
-   * @param queryContext query context in which to perform the loads
+   * @param loadDirectives - associated entity load directives instructing each step of the fold
+   * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync<
     TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext>,
@@ -124,8 +124,8 @@ export default class EntityAssociationLoader<
   /**
    * Load an associated entity by folding a sequence of {@link EntityLoadThroughDirective}. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
-   * @param loadDirectives associated entity load directives instructing each step of the fold
-   * @param queryContext query context in which to perform the loads
+   * @param loadDirectives - associated entity load directives instructing each step of the fold
+   * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync<
     TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext>,
@@ -163,8 +163,8 @@ export default class EntityAssociationLoader<
   /**
    * Load an associated entity by folding a sequence of {@link EntityLoadThroughDirective}. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
-   * @param loadDirectives associated entity load directives instructing each step of the fold
-   * @param queryContext query context in which to perform the loads
+   * @param loadDirectives - associated entity load directives instructing each step of the fold
+   * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync<
     TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext>,
@@ -214,8 +214,8 @@ export default class EntityAssociationLoader<
   /**
    * Load an associated entity by folding a sequence of {@link EntityLoadThroughDirective}. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
-   * @param loadDirectives associated entity load directives instructing each step of the fold
-   * @param queryContext query context in which to perform the loads
+   * @param loadDirectives - associated entity load directives instructing each step of the fold
+   * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync(
     loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any>[],

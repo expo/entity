@@ -1,8 +1,10 @@
 name: Tests
+
 on:
   push:
     branches: [ master ]
   pull_request:
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,7 +19,6 @@ jobs:
         path: ${{ github.workspace }}/node_modules
         key: ${{ runner.OS }}-node_modules-${{ hashFiles('yarn.lock') }}
     - run: yarn --frozen-lockfile
-    # need to double "escape" arguments because of yarn and lerna run
     - run: yarn lint -- -- --max-warnings=0
     - run: yarn test -- -- --coverage
     - run: yarn integration -- -- --coverage
@@ -33,4 +34,3 @@ jobs:
         file: ./packages/*/coverage-integration/clover.xml
         flags: integration
         fail_ci_if_error: true
-

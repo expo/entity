@@ -56,9 +56,9 @@ export default class ReadThroughEntityCache<TFields> {
    *
    * If cache is not applicable for fieldName, return results from fetcher.
    *
-   * @param fieldName object field being queried
-   * @param fieldValues fieldName field values being queried
-   * @param fetcher closure used to provide underlying data source objects for fieldName and fetcherFieldValues
+   * @param fieldName - object field being queried
+   * @param fieldValues - fieldName field values being queried
+   * @param fetcher - closure used to provide underlying data source objects for fieldName and fetcherFieldValues
    * @returns map from fieldValue to objects that match the query for that fieldValue
    */
   public async readManyThroughAsync<N extends keyof TFields>(
@@ -146,8 +146,8 @@ export default class ReadThroughEntityCache<TFields> {
   /**
    * Invalidate the cache for objects cached by (fieldName, fieldValue).
    *
-   * @param fieldName object field being queried
-   * @param fieldValues fieldName field values to be invalidated
+   * @param fieldName - object field being queried
+   * @param fieldValues - fieldName field values to be invalidated
    */
   public async invalidateManyAsync<N extends keyof TFields>(
     fieldName: N,

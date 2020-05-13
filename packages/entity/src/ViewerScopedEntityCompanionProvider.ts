@@ -18,8 +18,8 @@ export default class ViewerScopedEntityCompanionProvider {
    * Vend a new viewer-scoped entity companion. If not already computed and cached, the entity
    * companion is constructed using the configuration provided by the factory.
    *
-   * @param entityClass entity class to load
-   * @param factory entity companion factory
+   * @param entityClass - entity class to load
+   * @param factory - entity companion factory
    */
   getViewerScopedCompanionForEntity<
     TFields,

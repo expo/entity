@@ -1,0 +1,27 @@
+name: docs
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: Cache Node.js modules
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/node_modules
+          key: ${{ runner.OS }}-node_modules-${{ hashFiles('yarn.lock') }}
+      - run: yarn --frozen-lockfile
+      - run: yarn typedoc
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc

@@ -28,20 +28,20 @@ export interface EntityMetricsMutationEvent {
 export default interface IEntityMetricsAdapter {
   /**
    * Called when any load occurs.
-   * @param loadEvent info about the load event
+   * @param loadEvent - info about the load event
    */
   logDataManagerLoadEvent(loadEvent: EntityMetricsLoadEvent): void;
 
   /**
    * Called when any mutation occurs.
-   * @param mutationEvent info about the mutation event
+   * @param mutationEvent - info about the mutation event
    */
   logMutatorMutationEvent(mutationEvent: EntityMetricsMutationEvent): void;
 
   /**
    * Called when a dataloader load is initiated via the standard
    * load methods (not equality conjunction or raw).
-   * @param fieldValueCount count of field values being loaded for a field
+   * @param fieldValueCount - count of field values being loaded for a field
    */
   incrementDataManagerDataloaderLoadCount(fieldValueCount: number): void;
 
@@ -49,7 +49,7 @@ export default interface IEntityMetricsAdapter {
    * Called when a cache load is initiated via the standard
    * load methods (not equality conjunction or raw). Occurs upon a dataloader
    * miss.
-   * @param fieldValueCount count of field values being loaded for a field
+   * @param fieldValueCount - count of field values being loaded for a field
    */
   incrementDataManagerCacheLoadCount(fieldValueCount: number): void;
 
@@ -57,7 +57,7 @@ export default interface IEntityMetricsAdapter {
    * Called when a database load is initiated via the standard
    * load methods (not equality conjunction or raw). Occurs upon a cache
    * miss or when fetching an uncacheable field.
-   * @param fieldValueCount count of field values being loaded for a field
+   * @param fieldValueCount - count of field values being loaded for a field
    */
   incrementDataManagerDatabaseLoadCount(fieldValueCount: number): void;
 }

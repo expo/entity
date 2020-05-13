@@ -34,3 +34,4 @@ node_modules/
 build/
 coverage/
 coverage-integration/
+doc/

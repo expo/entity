@@ -3,8 +3,8 @@ export abstract class EntityFieldDefinition {
   readonly cache: boolean;
   /**
    *
-   * @param columnName Column name in the database.
-   * @param cache Whether or not to cache loaded instances of the entity by this field. The column name is
+   * @param columnName - Column name in the database.
+   * @param cache - Whether or not to cache loaded instances of the entity by this field. The column name is
    *              used to derive a cache key for the cache entry. If true, this column must be able uniquely
    *              identify the entity.
    */

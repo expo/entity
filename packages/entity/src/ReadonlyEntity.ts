@@ -20,9 +20,10 @@ export default abstract class ReadonlyEntity<TFields, TID, TViewerContext extend
 
   /**
    * Constructs an instance of an Entity.
-   * @param viewerContext the ViewerContext reading this entity
-   * @param rawFields all underlying fields for this entity's data
-   * @hideconstructor
+   * @param viewerContext - the ViewerContext reading this entity
+   * @param rawFields - all underlying fields for this entity's data
+   *
+   * @internal
    */
   constructor(
     private readonly viewerContext: TViewerContext,
@@ -40,21 +41,21 @@ export default abstract class ReadonlyEntity<TFields, TID, TViewerContext extend
   }
 
   /**
-   * @return the ViewerContext authorized to read this entity
+   * @returns the ViewerContext authorized to read this entity
    */
   getViewerContext(): TViewerContext {
     return this.viewerContext;
   }
 
   /**
-   * @return the ID of this entity
+   * @returns the ID of this entity
    */
   getID(): TID {
     return this.id;
   }
 
   /**
-   * @return {@link EntityAssociationLoader} for this entity
+   * @returns {@link EntityAssociationLoader} for this entity
    */
   associationLoader(): EntityAssociationLoader<TFields, TID, TViewerContext, this> {
     return new EntityAssociationLoader(this);
@@ -62,15 +63,15 @@ export default abstract class ReadonlyEntity<TFields, TID, TViewerContext extend
 
   /**
    * Get a underlying field from this entity's data
-   * @param fieldName the field to get
-   * @return the value of the field or undefined if not loaded with that field
+   * @param fieldName - the field to get
+   * @returns the value of the field or undefined if not loaded with that field
    */
   getField<K extends keyof TFields>(fieldName: K): TFields[K] {
     return this.rawFields[fieldName];
   }
 
   /**
-   * @return all underlying fields from this entity's data
+   * @returns all underlying fields from this entity's data
    */
   getAllFields(): Readonly<TFields> {
     return { ...this.rawFields };
@@ -78,8 +79,8 @@ export default abstract class ReadonlyEntity<TFields, TID, TViewerContext extend
 
   /**
    * Start a transaction and execute the provided transaction-scoped closure within the transaction.
-   * @param viewerContext viewer context of calling user
-   * @param transactionScope async callback to execute within the transaction
+   * @param viewerContext - viewer context of calling user
+   * @param transactionScope - async callback to execute within the transaction
    */
   static async runInTransactionAsync<
     TResult,
@@ -102,8 +103,8 @@ export default abstract class ReadonlyEntity<TFields, TID, TViewerContext extend
 
   /**
    * Vend loader for loading an entity in a given query context.
-   * @param viewerContext viewer context of loading user
-   * @param queryContext query context in which to perform the load
+   * @param viewerContext - viewer context of loading user
+   * @param queryContext - query context in which to perform the load
    */
   static loader<
     TMFields,

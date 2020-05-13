@@ -85,9 +85,9 @@ export default class EntityCompanionProvider {
 
   /**
    * Instantiate an Entity framework.
-   * @param metricsAdapter An {@link IEntityMetricsAdapter} for collecting metrics on this instance
-   * @param databaseAdapterFlavors Database adapter configurations for this instance
-   * @param cacheAdapterFlavors Cache adapter configurations for this instance
+   * @param metricsAdapter - An {@link IEntityMetricsAdapter} for collecting metrics on this instance
+   * @param databaseAdapterFlavors - Database adapter configurations for this instance
+   * @param cacheAdapterFlavors - Cache adapter configurations for this instance
    */
   constructor(
     private metricsAdapter: IEntityMetricsAdapter,
@@ -102,8 +102,8 @@ export default class EntityCompanionProvider {
    * Get the entity companion for specified entity. If not already computed and cached, the entity
    * companion is constructed using the configuration provided by the factory.
    *
-   * @param entityClass entity class to load
-   * @param factory entity companion factory
+   * @param entityClass - entity class to load
+   * @param factory - entity companion factory
    */
   getCompanionForEntity<
     TFields,

@@ -1,0 +1,15 @@
+{
+  "inputFiles": ["./packages"],
+  "mode": "modules",
+  "out": "doc",
+  "exclude": [
+    "**/*+(index).ts",
+    "**/__tests__/**/*.ts",
+    "**/__integration-tests__/**/*.ts",
+    "**/testfixtures/**/*.ts"
+  ],
+  "lernaExclude": ["@expo/entity-example"],
+  "name": "Entity",
+  "readme": "README.md",
+  "excludeNotExported": true
+}

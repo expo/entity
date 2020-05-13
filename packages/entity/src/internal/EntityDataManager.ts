@@ -74,9 +74,9 @@ export default class EntityDataManager<TFields> {
   /**
    * Load many objects where fieldName is one of fieldValues.
    *
-   * @param queryContext query context in which to perform the load
-   * @param fieldName object field being queried
-   * @param fieldValues fieldName field values being queried
+   * @param queryContext - query context in which to perform the load
+   * @param fieldName - object field being queried
+   * @param fieldValues - fieldName field values being queried
    * @returns map from fieldValue to objects that match the query for that fieldValue
    */
   async loadManyByFieldEqualingAsync<N extends keyof TFields>(
@@ -115,9 +115,9 @@ export default class EntityDataManager<TFields> {
    * Loads many objects matching the conjunction of where clauses constructed from
    * specified field equality operands.
    *
-   * @param queryContext query context in which to perform the load
-   * @param fieldEqualityOperands list of field equality where clause operand specifications
-   * @param querySelectionModifiers limit, offset, and orderBy for the query
+   * @param queryContext - query context in which to perform the load
+   * @param fieldEqualityOperands - list of field equality where clause operand specifications
+   * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of objects matching the query
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
@@ -140,10 +140,10 @@ export default class EntityDataManager<TFields> {
   /**
    * Loads many objects matching the raw WHERE clause.
    *
-   * @param queryContext query context in which to perform the load
-   * @param rawWhereClause parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
-   * @param bindings array of positional bindings or object of named bindings
-   * @param querySelectionModifiers limit, offset, and orderBy for the query
+   * @param queryContext - query context in which to perform the load
+   * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
+   * @param bindings - array of positional bindings or object of named bindings
+   * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of objects matching the query
    */
   async loadManyByRawWhereClauseAsync(
@@ -177,7 +177,7 @@ export default class EntityDataManager<TFields> {
   /**
    * Invalidate all caches, in-memory or otherwise, for an object.
    *
-   * @param objectFields object to invalidate from all applicable caches
+   * @param objectFields - object to invalidate from all applicable caches
    */
   async invalidateObjectFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
     // TODO(wschurman): check for races with load

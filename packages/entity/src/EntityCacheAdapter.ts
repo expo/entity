@@ -18,8 +18,8 @@ export default abstract class EntityCacheAdapter<TFields> {
 
   /**
    * Load many objects from cache.
-   * @param fieldName object field being queried
-   * @param fieldValues fieldName field values being queried
+   * @param fieldName - object field being queried
+   * @param fieldValues - fieldName field values being queried
    * @returns map from all field values to a CacheLoadResult for each input value
    */
   public abstract loadManyAsync<N extends keyof TFields>(
@@ -29,8 +29,8 @@ export default abstract class EntityCacheAdapter<TFields> {
 
   /**
    * Cache many objects fetched from the DB.
-   * @param fieldName object field being queried
-   * @param objectMap map from field value to object to cache
+   * @param fieldName - object field being queried
+   * @param objectMap - map from field value to object to cache
    */
   public abstract cacheManyAsync<N extends keyof TFields>(
     fieldName: N,
@@ -39,8 +39,8 @@ export default abstract class EntityCacheAdapter<TFields> {
 
   /**
    * Negatively cache objects that could not be found in the cache or DB.
-   * @param fieldName object field being queried
-   * @param fieldValues fieldValues for objects reported as {@link CacheStatus.NEGATIVE}
+   * @param fieldName - object field being queried
+   * @param fieldValues - fieldValues for objects reported as {@link CacheStatus.NEGATIVE}
    *                    in the cache and not found in the DB.
    */
   public abstract cacheDBMissesAsync<N extends keyof TFields>(
@@ -50,8 +50,8 @@ export default abstract class EntityCacheAdapter<TFields> {
 
   /**
    * Invalidate the cache for objects cached by (fieldName, fieldValue).
-   * @param fieldName object field being queried
-   * @param fieldValues fieldName field values to be invalidated
+   * @param fieldName - object field being queried
+   * @param fieldValues - fieldName field values to be invalidated
    */
   public abstract invalidateManyAsync<N extends keyof TFields>(
     fieldName: N,

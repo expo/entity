@@ -36,18 +36,24 @@ export enum EntityAuthorizationAction {
 }
 
 /**
+ * Privacy policy for an entity.
+ *
+ * @remarks
+ *
  * A privacy policy declares lists of privacy rules for create, read, update, and delete actions
  * for an entity and provides logic for authorizing an entity against rules.
  *
  * Evaluation of a list of rules is performed according the following example. This allows constructing of
  * complex yet testable permissioning logic for an entity.
- * @example
- *   foreach rule in rules:
- *     authorized if rule allows
- *     continue to next rule if rule skips
- *     not authorized if rule denies
  *
- * @summary Privacy policy for an entity.
+ * @example
+ *
+ * ```
+ * foreach rule in rules:
+ *   authorized if rule allows
+ *   continue to next rule if rule skips
+ *   not authorized if rule denies
+ * ```
  */
 export default abstract class EntityPrivacyPolicy<
   TFields,
@@ -82,8 +88,11 @@ export default abstract class EntityPrivacyPolicy<
 
   /**
    * Get the privacy policy evaluation mode and deny handler for this policy.
-   * Defaults to normal enforcing policy. Override to enable dry run evaluation
-   * of the policy.
+   * Defaults to normal enforcing policy.
+   *
+   * @remarks
+   *
+   * Override to enable dry run evaluation of the policy.
    */
   protected getPrivacyPolicyEvaluator(
     _viewerContext: TViewerContext
@@ -95,10 +104,10 @@ export default abstract class EntityPrivacyPolicy<
 
   /**
    * Authorize an entity against creation policy.
-   * @param viewerContext viewer context of user creating the entity
-   * @param entity entity to authorize
+   * @param viewerContext - viewer context of user creating the entity
+   * @param entity - entity to authorize
    * @returns entity if authorized
-   * @throws {UnauthorizedError} when not authorized
+   * @throws {@link EntityNotAuthorizedError} when not authorized
    */
   async authorizeCreateAsync(
     viewerContext: TViewerContext,
@@ -116,10 +125,10 @@ export default abstract class EntityPrivacyPolicy<
 
   /**
    * Authorize an entity against read policy.
-   * @param viewerContext viewer context of user reading the entity
-   * @param entity entity to authorize
+   * @param viewerContext - viewer context of user reading the entity
+   * @param entity - entity to authorize
    * @returns entity if authorized
-   * @throws {UnauthorizedError} when not authorized
+   * @throws {@link EntityNotAuthorizedError} when not authorized
    */
   async authorizeReadAsync(
     viewerContext: TViewerContext,
@@ -137,10 +146,10 @@ export default abstract class EntityPrivacyPolicy<
 
   /**
    * Authorize an entity against update policy.
-   * @param viewerContext viewer context of user updating the entity
-   * @param entity entity to authorize
+   * @param viewerContext - viewer context of user updating the entity
+   * @param entity - entity to authorize
    * @returns entity if authorized
-   * @throws {UnauthorizedError} when not authorized
+   * @throws {@link EntityNotAuthorizedError} when not authorized
    */
   async authorizeUpdateAsync(
     viewerContext: TViewerContext,
@@ -158,10 +167,10 @@ export default abstract class EntityPrivacyPolicy<
 
   /**
    * Authorize an entity against deletion policy.
-   * @param viewerContext viewer context of user deleting the entity
-   * @param entity entity to authorize
+   * @param viewerContext - viewer context of user deleting the entity
+   * @param entity - entity to authorize
    * @returns entity if authorized
-   * @throws {UnauthorizedError} when not authorized
+   * @throws {@link EntityNotAuthorizedError} when not authorized
    */
   async authorizeDeleteAsync(
     viewerContext: TViewerContext,
