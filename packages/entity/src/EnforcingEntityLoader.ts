@@ -28,7 +28,7 @@ export default class EnforcingEntityLoader<
 
   /**
    * Enforcing version of entity loader method by the same name.
-   * @throws {UnauthorizedError} when viewer is not authorized to view one or more of the returned entities
+   * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view one or more of the returned entities
    */
   async loadManyByFieldEqualingManyAsync<N extends keyof TFields>(
     fieldName: N,
@@ -45,7 +45,7 @@ export default class EnforcingEntityLoader<
 
   /**
    * Enforcing version of entity loader method by the same name.
-   * @throws {UnauthorizedError} when viewer is not authorized to view one or more of the returned entities
+   * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view one or more of the returned entities
    */
   async loadManyByFieldEqualingAsync<N extends keyof TFields>(
     fieldName: N,
@@ -60,7 +60,7 @@ export default class EnforcingEntityLoader<
 
   /**
    * Enforcing version of entity loader method by the same name.
-   * @throws {UnauthorizedError} when viewer is not authorized to view the returned entity
+   * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view the returned entity
    * @throws when multiple entities are found matching the condition
    */
   async loadByFieldEqualingAsync<N extends keyof TFields>(
@@ -76,7 +76,7 @@ export default class EnforcingEntityLoader<
 
   /**
    * Enforcing version of entity loader method by the same name.
-   * @throws {UnauthorizedError} when viewer is not authorized to view the returned entity
+   * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view the returned entity
    */
   async loadByIDAsync(id: TID): Promise<TEntity> {
     const entityResult = await this.entityLoader.loadByIDAsync(id);
@@ -85,7 +85,7 @@ export default class EnforcingEntityLoader<
 
   /**
    * Enforcing version of entity loader method by the same name.
-   * @throws {UnauthorizedError} when viewer is not authorized to view one or more of the returned entities
+   * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view one or more of the returned entities
    */
   async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, TEntity>> {
     const entityResults = await this.entityLoader.loadManyByIDsAsync(ids);
@@ -94,7 +94,7 @@ export default class EnforcingEntityLoader<
 
   /**
    * Enforcing version of entity loader method by the same name.
-   * @throws {UnauthorizedError} when viewer is not authorized to view one or more of the returned entities
+   * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view one or more of the returned entities
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
@@ -109,7 +109,7 @@ export default class EnforcingEntityLoader<
 
   /**
    * Enforcing version of entity loader method by the same name.
-   * @throws {UnauthorizedError} when viewer is not authorized to view one or more of the returned entities
+   * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view one or more of the returned entities
    */
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,

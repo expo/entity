@@ -32,8 +32,8 @@ export default class EntityLoaderFactory<
 
   /**
    * Vend loader for loading an entity in a given query context.
-   * @param viewerContext viewer context of loading user
-   * @param queryContext query context in which to perform the load
+   * @param viewerContext - viewer context of loading user
+   * @param queryContext - query context in which to perform the load
    */
   forLoad(
     viewerContext: TViewerContext,

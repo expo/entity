@@ -50,8 +50,8 @@ export default class EntityLoader<
 
   /**
    * Load many entities where fieldName is one of fieldValues.
-   * @param fieldName entity field being queried
-   * @param fieldValues fieldName field values being queried
+   * @param fieldName - entity field being queried
+   * @param fieldValues - fieldName field values being queried
    * @returns map from fieldValue to entity results that match the query for that fieldValue,
    *          where result errors can be UnauthorizedError
    */
@@ -83,8 +83,8 @@ export default class EntityLoader<
 
   /**
    * Load many entities where fieldName equals fieldValue.
-   * @param fieldName entity field being queried
-   * @param fieldValue fieldName field value being queried
+   * @param fieldName - entity field being queried
+   * @param fieldValue - fieldName field value being queried
    * @returns array of entity results that match the query for fieldValue, where result error can be UnauthorizedError
    */
   async loadManyByFieldEqualingAsync<N extends keyof TFields>(
@@ -102,8 +102,8 @@ export default class EntityLoader<
 
   /**
    * Load an entity where fieldName equals fieldValue, or null if no entity exists.
-   * @param uniqueFieldName entity field being queried
-   * @param fieldValue uniqueFieldName field value being queried
+   * @param uniqueFieldName - entity field being queried
+   * @param fieldValue - uniqueFieldName field value being queried
    * @returns entity result where uniqueFieldName equals fieldValue, or null if no entity matches the condition.
    * @throws when multiple entities match the condition
    */
@@ -121,7 +121,7 @@ export default class EntityLoader<
 
   /**
    * Loads an entity by a specified ID.
-   * @param id ID of the entity
+   * @param id - ID of the entity
    * @returns entity result for matching ID, where result error can be UnauthorizedError or EntityNotFoundError.
    */
   async loadByIDAsync(id: TID): Promise<Result<TEntity>> {
@@ -137,8 +137,8 @@ export default class EntityLoader<
 
   /**
    * Loads many entities for a list of IDs.
-   * @param viewerContext viewer context of loading user
-   * @param ids IDs of the entities to load
+   * @param viewerContext - viewer context of loading user
+   * @param ids - IDs of the entities to load
    * @returns map from ID to corresponding entity result, where result error can be UnauthorizedError or EntityNotFoundError.
    */
   async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, Result<TEntity>>> {
@@ -162,11 +162,13 @@ export default class EntityLoader<
    * Entities loaded using this method are not batched or cached.
    *
    * @example
-   * fieldEqualityOperands: [{fieldName: 'hello', fieldValue: 1}, {fieldName: 'world', fieldValues: [2, 3]}]
-   * entities returned: WHERE hello = 1 AND world = ANY({2, 3})
+   * fieldEqualityOperands:
+   * `[{fieldName: 'hello', fieldValue: 1}, {fieldName: 'world', fieldValues: [2, 3]}]`
+   * Entities returned:
+   * `WHERE hello = 1 AND world = ANY({2, 3})`
    *
-   * @param fieldEqualityOperands list of field equality WHERE clause operand specifications
-   * @param querySelectionModifiers limit, offset, and orderBy for the query
+   * @param fieldEqualityOperands - list of field equality WHERE clause operand specifications
+   * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
@@ -193,22 +195,24 @@ export default class EntityLoader<
 
   /**
    * Loads many entities matching the raw WHERE clause. Corresponds to the knex `whereRaw` argument format.
+   *
+   * @remarks
    * Important notes:
    * - Fields in clause are database column names instead of transformed entity field names.
    * - Entities loaded using this method are not batched or cached.
    * - Not all database adapters implement the ability to execute this method of fetching entities.
    *
    * @example
-   * rawWhereClause: "id = ?"
-   * bindings: [1]
-   * entites returned WHERE id = 1
+   * rawWhereClause: `id = ?`
+   * bindings: `[1]`
+   * Entites returned `WHERE id = 1`
    *
-   * @see http://knexjs.org/#Builder-whereRaw
-   * @see http://knexjs.org/#Raw-Bindings
+   * {@link http://knexjs.org/#Builder-whereRaw}
+   * {@link http://knexjs.org/#Raw-Bindings}
    *
-   * @param rawWhereClause parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
-   * @param bindings array of positional bindings or object of named bindings
-   * @param querySelectionModifiers limit, offset, and orderBy for the query
+   * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
+   * @param bindings - array of positional bindings or object of named bindings
+   * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    * @throws Error when rawWhereClause or bindings are invalid
    *
@@ -240,7 +244,7 @@ export default class EntityLoader<
 
   /**
    * Invalidate all caches for an entity's fields. Exposed primarily for internal use by {@link EntityMutator}.
-   * @param objectFields entity data object to be invalidated
+   * @param objectFields - entity data object to be invalidated
    */
   async invalidateFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
     await this.entityDataManager.invalidateObjectFieldsAsync(objectFields);

@@ -97,9 +97,9 @@ export default abstract class EntityDatabaseAdapter<TFields> {
   /**
    * Fetch many objects where fieldName is one of fieldValues.
    *
-   * @param queryContext query context with which to perform the fetch
-   * @param fieldName object field being queried
-   * @param fieldValues fieldName field values being queried
+   * @param queryContext - query context with which to perform the fetch
+   * @param fieldName - object field being queried
+   * @param fieldValues - fieldName field values being queried
    * @returns map from fieldValue to objects that match the query for that fieldValue
    */
   async fetchManyWhereAsync<K extends keyof TFields>(
@@ -142,9 +142,9 @@ export default abstract class EntityDatabaseAdapter<TFields> {
    * Fetch many objects matching the conjunction of where clauses constructed from
    * specified field equality operands.
    *
-   * @param queryContext query context with which to perform the fetch
-   * @param fieldEqualityOperands list of field equality where clause operand specifications
-   * @param querySelectionModifiers limit, offset, and orderBy for the query
+   * @param queryContext - query context with which to perform the fetch
+   * @param fieldEqualityOperands - list of field equality where clause operand specifications
+   * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of objects matching the query
    */
   async fetchManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
@@ -192,10 +192,10 @@ export default abstract class EntityDatabaseAdapter<TFields> {
   /**
    * Fetch many objects matching the raw WHERE clause.
    *
-   * @param queryContext query context with which to perform the fetch
-   * @param rawWhereClause parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
-   * @param bindings array of positional bindings or object of named bindings
-   * @param querySelectionModifiers limit, offset, and orderBy for the query
+   * @param queryContext - query context with which to perform the fetch
+   * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
+   * @param bindings - array of positional bindings or object of named bindings
+   * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of objects matching the query
    */
   async fetchManyByRawWhereClauseAsync(
@@ -228,9 +228,9 @@ export default abstract class EntityDatabaseAdapter<TFields> {
   /**
    * Insert an object.
    *
-   * @param queryContext query context with which to perform the insert
-   * @param object the object to insert
-   * @return the inserted object
+   * @param queryContext - query context with which to perform the insert
+   * @param object - the object to insert
+   * @returns the inserted object
    */
   async insertAsync(
     queryContext: EntityQueryContext,
@@ -262,11 +262,11 @@ export default abstract class EntityDatabaseAdapter<TFields> {
   /**
    * Update an object.
    *
-   * @param queryContext query context with which to perform the update
-   * @param idField the field in the object that is the ID
-   * @param id the value of the ID field in the object
-   * @param object the object to update
-   * @return the updated object
+   * @param queryContext - query context with which to perform the update
+   * @param idField - the field in the object that is the ID
+   * @param id - the value of the ID field in the object
+   * @param object - the object to update
+   * @returns the updated object
    */
   async updateAsync<K extends keyof TFields>(
     queryContext: EntityQueryContext,
@@ -305,9 +305,9 @@ export default abstract class EntityDatabaseAdapter<TFields> {
   /**
    * Delete an object by ID.
    *
-   * @param queryContext query context with which to perform the deletion
-   * @param idField the field in the object that is the ID
-   * @param id the value of the ID field in the object
+   * @param queryContext - query context with which to perform the deletion
+   * @param idField - the field in the object that is the ID
+   * @param id - the value of the ID field in the object
    */
   async deleteAsync<K extends keyof TFields>(
     queryContext: EntityQueryContext,

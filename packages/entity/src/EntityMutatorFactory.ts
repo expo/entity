@@ -41,9 +41,9 @@ export default class EntityMutatorFactory<
 
   /**
    * Vend mutator for creating a new entity in given query context.
-   * @param viewerContext viewer context of creating user
-   * @param queryContext query context in which to perform the create
-   * @return mutator for creating an entity
+   * @param viewerContext - viewer context of creating user
+   * @param queryContext - query context in which to perform the create
+   * @returns mutator for creating an entity
    */
   forCreate(
     viewerContext: TViewerContext,
@@ -63,8 +63,8 @@ export default class EntityMutatorFactory<
 
   /**
    * Vend mutator for updating an existing entity in given query context.
-   * @param existingEntity entity to update
-   * @param queryContext query context in which to perform the update
+   * @param existingEntity - entity to update
+   * @param queryContext - query context in which to perform the update
    * @returns mutator for updating existingEntity
    */
   forUpdate(
@@ -86,8 +86,8 @@ export default class EntityMutatorFactory<
 
   /**
    * Delete an existing entity in given query context.
-   * @param existingEntity entity to delete
-   * @param queryContext query context in which to perform the delete
+   * @param existingEntity - entity to delete
+   * @param queryContext - query context in which to perform the delete
    */
   forDelete(
     existingEntity: TEntity,

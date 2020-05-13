@@ -4,8 +4,12 @@
     "universe/node",
     "universe/shared/typescript-analysis"
   ],
+  "plugins": [
+    "eslint-plugin-tsdoc"
+  ],
   "rules": {
-    "no-restricted-imports": ["error",{ "paths": [".", ".."] }]
+    "no-restricted-imports": ["error",{ "paths": [".", ".."] }],
+    "tsdoc/syntax": "warn"
   },
   "overrides": [
     {
