@@ -18,7 +18,9 @@ Entity is a privacy-aware data layer for defining, caching, and authorizing acce
 
 ## Getting Started
 
-The best place get started is by checking out the [example application](packages/entity-example).
+- [Example application](packages/entity-example)
+- [Documentation](https://expo.github.io/entity/)
+
 
 ## Background
 

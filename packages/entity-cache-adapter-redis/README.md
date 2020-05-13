@@ -1,6 +1,8 @@
-# @expo/entity-cache-adapter-redis
+# `@expo/entity-cache-adapter-redis`
 
-[https://github.com/luin/ioredis](ioredis) cache adapter for @expo/entity.
+[ioredis](https://github.com/luin/ioredis) cache adapter for `@expo/entity`.
+
+[Documentation](https://expo.github.io/entity/modules/_expo_entity_cache_adapter_redis.html)
 
 ## Usage
 
