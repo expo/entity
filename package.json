@@ -35,7 +35,7 @@
     "ts-mockito": "^2.5.0",
     "typedoc": "^0.17.6",
     "typedoc-plugin-lerna-packages": "^0.3.0",
-    "typescript": "^3.8.3",
+    "typescript": "^3.9.2",
     "uuid": "^7.0.3"
   },
   "dependencies": {

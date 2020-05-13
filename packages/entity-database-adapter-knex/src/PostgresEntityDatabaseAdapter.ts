@@ -49,10 +49,10 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
       .whereRaw('?? = ANY(?)', [tableField, tableValues as any[]]);
   }
 
-  private applyQueryModifiersToQuery<T extends any>(
-    query: T,
+  private applyQueryModifiersToQuery(
+    query: Knex.QueryBuilder,
     querySelectionModifiers: TableQuerySelectionModifiers
-  ): T {
+  ): Knex.QueryBuilder {
     const { orderBy, offset, limit } = querySelectionModifiers;
 
     let ret = query;
