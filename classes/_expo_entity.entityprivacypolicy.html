@@ -1,0 +1,584 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>EntityPrivacyPolicy | Entity</title>
+	<meta name="description" content="Documentation for Entity">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">Entity</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_expo_entity.html">@expo/entity</a>
+				</li>
+				<li>
+					<a href="_expo_entity.entityprivacypolicy.html">EntityPrivacyPolicy</a>
+				</li>
+			</ul>
+			<h1>Class EntityPrivacyPolicy&lt;TFields, TID, TViewerContext, TEntity&gt;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Privacy policy for an entity.</p>
+					</div>
+					<dl class="tsd-comment-tags">
+						<dt>remarks</dt>
+						<dd><p>A privacy policy declares lists of privacy rules for create, read, update, and delete actions
+							for an entity and provides logic for authorizing an entity against rules.</p>
+							<p>Evaluation of a list of rules is performed according the following example. This allows constructing of
+							complex yet testable permissioning logic for an entity.</p>
+						</dd>
+						<dt>example</dt>
+						<dd><pre><code>foreach <span class="hljs-keyword">rule</span> <span class="hljs-keyword">in</span> rules:
+  authorized if <span class="hljs-keyword">rule</span> allows
+  continue <span class="hljs-keyword">to</span> next <span class="hljs-keyword">rule</span> if <span class="hljs-keyword">rule</span> skips
+  not authorized if <span class="hljs-keyword">rule</span> denies</code></pre></dd>
+					</dl>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>TFields</h4>
+					</li>
+					<li>
+						<h4>TID</h4>
+					</li>
+					<li>
+						<h4>TViewerContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.viewercontext.html" class="tsd-signature-type">ViewerContext</a></h4>
+					</li>
+					<li>
+						<h4>TEntity<span class="tsd-signature-symbol">: </span><a href="_expo_entity.readonlyentity.html" class="tsd-signature-type">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">EntityPrivacyPolicy</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section tsd-is-private-protected">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="_expo_entity.entityprivacypolicy.html#createrules" class="tsd-kind-icon">create<wbr>Rules</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="_expo_entity.entityprivacypolicy.html#deleterules" class="tsd-kind-icon">delete<wbr>Rules</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="_expo_entity.entityprivacypolicy.html#readrules" class="tsd-kind-icon">read<wbr>Rules</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="_expo_entity.entityprivacypolicy.html#updaterules" class="tsd-kind-icon">update<wbr>Rules</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.entityprivacypolicy.html#authorizecreateasync" class="tsd-kind-icon">authorize<wbr>Create<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.entityprivacypolicy.html#authorizedeleteasync" class="tsd-kind-icon">authorize<wbr>Delete<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.entityprivacypolicy.html#authorizeforrulesetasync" class="tsd-kind-icon">authorize<wbr>For<wbr>Ruleset<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.entityprivacypolicy.html#authorizeforrulesetinnerasync" class="tsd-kind-icon">authorize<wbr>For<wbr>Ruleset<wbr>Inner<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.entityprivacypolicy.html#authorizereadasync" class="tsd-kind-icon">authorize<wbr>Read<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.entityprivacypolicy.html#authorizeupdateasync" class="tsd-kind-icon">authorize<wbr>Update<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="_expo_entity.entityprivacypolicy.html#getprivacypolicyevaluator" class="tsd-kind-icon">get<wbr>Privacy<wbr>Policy<wbr>Evaluator</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-private-protected">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+					<a name="createrules" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> create<wbr>Rules</h3>
+					<div class="tsd-signature tsd-kind-icon">create<wbr>Rules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L64">packages/entity/src/EntityPrivacyPolicy.ts:64</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+					<a name="deleterules" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> delete<wbr>Rules</h3>
+					<div class="tsd-signature tsd-kind-icon">delete<wbr>Rules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L82">packages/entity/src/EntityPrivacyPolicy.ts:82</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+					<a name="readrules" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> read<wbr>Rules</h3>
+					<div class="tsd-signature tsd-kind-icon">read<wbr>Rules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L70">packages/entity/src/EntityPrivacyPolicy.ts:70</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+					<a name="updaterules" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> update<wbr>Rules</h3>
+					<div class="tsd-signature tsd-kind-icon">update<wbr>Rules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L76">packages/entity/src/EntityPrivacyPolicy.ts:76</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="authorizecreateasync" class="tsd-anchor"></a>
+					<h3>authorize<wbr>Create<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">authorize<wbr>Create<wbr>Async<span class="tsd-signature-symbol">(</span>viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L112">packages/entity/src/EntityPrivacyPolicy.ts:112</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Authorize an entity against creation policy.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p><a href="_expo_entity.entitynotauthorizederror.html">EntityNotAuthorizedError</a> when not authorized</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>viewerContext: <span class="tsd-signature-type">TViewerContext</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>viewer context of user creating the entity</p>
+									</div>
+								</li>
+								<li>
+									<h5>queryContext: <a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a></h5>
+								</li>
+								<li>
+									<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>entity to authorize</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>entity if authorized</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="authorizedeleteasync" class="tsd-anchor"></a>
+					<h3>authorize<wbr>Delete<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">authorize<wbr>Delete<wbr>Async<span class="tsd-signature-symbol">(</span>viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L175">packages/entity/src/EntityPrivacyPolicy.ts:175</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Authorize an entity against deletion policy.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p><a href="_expo_entity.entitynotauthorizederror.html">EntityNotAuthorizedError</a> when not authorized</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>viewerContext: <span class="tsd-signature-type">TViewerContext</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>viewer context of user deleting the entity</p>
+									</div>
+								</li>
+								<li>
+									<h5>queryContext: <a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a></h5>
+								</li>
+								<li>
+									<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>entity to authorize</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>entity if authorized</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="authorizeforrulesetasync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> authorize<wbr>For<wbr>Ruleset<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">authorize<wbr>For<wbr>Ruleset<wbr>Async<span class="tsd-signature-symbol">(</span>ruleset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, action<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entityauthorizationaction.html" class="tsd-signature-type">EntityAuthorizationAction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L189">packages/entity/src/EntityPrivacyPolicy.ts:189</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ruleset: <span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>viewerContext: <span class="tsd-signature-type">TViewerContext</span></h5>
+								</li>
+								<li>
+									<h5>queryContext: <a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a></h5>
+								</li>
+								<li>
+									<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
+								</li>
+								<li>
+									<h5>action: <a href="../enums/_expo_entity.entityauthorizationaction.html" class="tsd-signature-type">EntityAuthorizationAction</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="authorizeforrulesetinnerasync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> authorize<wbr>For<wbr>Ruleset<wbr>Inner<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">authorize<wbr>For<wbr>Ruleset<wbr>Inner<wbr>Async<span class="tsd-signature-symbol">(</span>ruleset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, action<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entityauthorizationaction.html" class="tsd-signature-type">EntityAuthorizationAction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L241">packages/entity/src/EntityPrivacyPolicy.ts:241</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ruleset: <span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>viewerContext: <span class="tsd-signature-type">TViewerContext</span></h5>
+								</li>
+								<li>
+									<h5>queryContext: <a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a></h5>
+								</li>
+								<li>
+									<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
+								</li>
+								<li>
+									<h5>action: <a href="../enums/_expo_entity.entityauthorizationaction.html" class="tsd-signature-type">EntityAuthorizationAction</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="authorizereadasync" class="tsd-anchor"></a>
+					<h3>authorize<wbr>Read<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">authorize<wbr>Read<wbr>Async<span class="tsd-signature-symbol">(</span>viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L133">packages/entity/src/EntityPrivacyPolicy.ts:133</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Authorize an entity against read policy.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p><a href="_expo_entity.entitynotauthorizederror.html">EntityNotAuthorizedError</a> when not authorized</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>viewerContext: <span class="tsd-signature-type">TViewerContext</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>viewer context of user reading the entity</p>
+									</div>
+								</li>
+								<li>
+									<h5>queryContext: <a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a></h5>
+								</li>
+								<li>
+									<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>entity to authorize</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>entity if authorized</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="authorizeupdateasync" class="tsd-anchor"></a>
+					<h3>authorize<wbr>Update<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">authorize<wbr>Update<wbr>Async<span class="tsd-signature-symbol">(</span>viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L154">packages/entity/src/EntityPrivacyPolicy.ts:154</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Authorize an entity against update policy.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p><a href="_expo_entity.entitynotauthorizederror.html">EntityNotAuthorizedError</a> when not authorized</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>viewerContext: <span class="tsd-signature-type">TViewerContext</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>viewer context of user updating the entity</p>
+									</div>
+								</li>
+								<li>
+									<h5>queryContext: <a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a></h5>
+								</li>
+								<li>
+									<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>entity to authorize</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>entity if authorized</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+					<a name="getprivacypolicyevaluator" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> get<wbr>Privacy<wbr>Policy<wbr>Evaluator</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Privacy<wbr>Policy<wbr>Evaluator<span class="tsd-signature-symbol">(</span>_viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#entityprivacypolicyevaluator" class="tsd-signature-type">EntityPrivacyPolicyEvaluator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L97">packages/entity/src/EntityPrivacyPolicy.ts:97</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the privacy policy evaluation mode and deny handler for this policy.
+									Defaults to normal enforcing policy.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>remarks</dt>
+									<dd><p>Override to enable dry run evaluation of the policy.</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>_viewerContext: <span class="tsd-signature-type">TViewerContext</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_expo_entity.html#entityprivacypolicyevaluator" class="tsd-signature-type">EntityPrivacyPolicyEvaluator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/_expo_entity.html">@expo/entity</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_expo_entity_cache_adapter_redis.html">@expo/entity-<wbr>cache-<wbr>adapter-<wbr>redis</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_expo_entity_database_adapter_knex.html">@expo/entity-<wbr>database-<wbr>adapter-<wbr>knex</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.entityprivacypolicy.html" class="tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+								<a href="_expo_entity.entityprivacypolicy.html#createrules" class="tsd-kind-icon">create<wbr>Rules</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+								<a href="_expo_entity.entityprivacypolicy.html#deleterules" class="tsd-kind-icon">delete<wbr>Rules</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+								<a href="_expo_entity.entityprivacypolicy.html#readrules" class="tsd-kind-icon">read<wbr>Rules</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+								<a href="_expo_entity.entityprivacypolicy.html#updaterules" class="tsd-kind-icon">update<wbr>Rules</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_expo_entity.entityprivacypolicy.html#authorizecreateasync" class="tsd-kind-icon">authorize<wbr>Create<wbr>Async</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_expo_entity.entityprivacypolicy.html#authorizedeleteasync" class="tsd-kind-icon">authorize<wbr>Delete<wbr>Async</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_expo_entity.entityprivacypolicy.html#authorizeforrulesetasync" class="tsd-kind-icon">authorize<wbr>For<wbr>Ruleset<wbr>Async</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_expo_entity.entityprivacypolicy.html#authorizeforrulesetinnerasync" class="tsd-kind-icon">authorize<wbr>For<wbr>Ruleset<wbr>Inner<wbr>Async</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_expo_entity.entityprivacypolicy.html#authorizereadasync" class="tsd-kind-icon">authorize<wbr>Read<wbr>Async</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_expo_entity.entityprivacypolicy.html#authorizeupdateasync" class="tsd-kind-icon">authorize<wbr>Update<wbr>Async</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+								<a href="_expo_entity.entityprivacypolicy.html#getprivacypolicyevaluator" class="tsd-kind-icon">get<wbr>Privacy<wbr>Policy<wbr>Evaluator</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

@@ -1,0 +1,1662 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@expo/entity | Entity</title>
+	<meta name="description" content="Documentation for Entity">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">Entity</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="_expo_entity.html">@expo/entity</a>
+				</li>
+			</ul>
+			<h1>Module @expo/entity</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<a href="#expoentity" id="expoentity" style="color: inherit; text-decoration: none;">
+						<h1>@expo/entity</h1>
+					</a>
+					<blockquote>
+						<p>Note: Documentation is a work-in-progress, but all concepts are documented in source code JSDoc.</p>
+					</blockquote>
+					<a href="#core-overview" id="core-overview" style="color: inherit; text-decoration: none;">
+						<h2>Core Overview</h2>
+					</a>
+					<p>A instance of an entity represents a single &quot;row&quot; (object) of persisted data in a database that a viewer, represented by a ViewerContext, has permission to read.</p>
+					<p>Authorization of create, read, update, and delete operations for an entity are declaratively defined using an EntityPrivacyPolicy.</p>
+					<p>Entites are loaded through an EntityLoader, which is responsible for orchestrating fetching, caching, and authorization of entity loads.</p>
+					<p>Entities are mutated and deleted through an EntityMutator, which is responsible for orchestrating database writes, cache invalidation, and authorization of entity mutations.</p>
+				</div>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Enumerations</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/_expo_entity.cacheadapterflavor.html" class="tsd-kind-icon">Cache<wbr>Adapter<wbr>Flavor</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/_expo_entity.cachestatus.html" class="tsd-kind-icon">Cache<wbr>Status</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/_expo_entity.databaseadapterflavor.html" class="tsd-kind-icon">Database<wbr>Adapter<wbr>Flavor</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/_expo_entity.entityauthorizationaction.html" class="tsd-kind-icon">Entity<wbr>Authorization<wbr>Action</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/_expo_entity.entitymetricsloadtype.html" class="tsd-kind-icon">Entity<wbr>Metrics<wbr>Load<wbr>Type</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/_expo_entity.entitymetricsmutationtype.html" class="tsd-kind-icon">Entity<wbr>Metrics<wbr>Mutation<wbr>Type</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/_expo_entity.entityprivacypolicyevaluationmode.html" class="tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy<wbr>Evaluation<wbr>Mode</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/_expo_entity.orderbyordering.html" class="tsd-kind-icon">Order<wbr>ByOrdering</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/_expo_entity.ruleevaluationresult.html" class="tsd-kind-icon">Rule<wbr>Evaluation<wbr>Result</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Classes</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.alwaysallowprivacypolicyrule.html" class="tsd-kind-icon">Always<wbr>Allow<wbr>Privacy<wbr>Policy<wbr>Rule</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.alwaysdenyprivacypolicyrule.html" class="tsd-kind-icon">Always<wbr>Deny<wbr>Privacy<wbr>Policy<wbr>Rule</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.alwaysskipprivacypolicyrule.html" class="tsd-kind-icon">Always<wbr>Skip<wbr>Privacy<wbr>Policy<wbr>Rule</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.booleanfield.html" class="tsd-kind-icon">Boolean<wbr>Field</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.createmutator.html" class="tsd-kind-icon">Create<wbr>Mutator</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.datefield.html" class="tsd-kind-icon">Date<wbr>Field</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.deletemutator.html" class="tsd-kind-icon">Delete<wbr>Mutator</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.enforcingentityloader.html" class="tsd-kind-icon">Enforcing<wbr>Entity<wbr>Loader</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entity.html" class="tsd-kind-icon">Entity</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entityassociationloader.html" class="tsd-kind-icon">Entity<wbr>Association<wbr>Loader</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitycacheadapter.html" class="tsd-kind-icon">Entity<wbr>Cache<wbr>Adapter</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitycompanion.html" class="tsd-kind-icon">Entity<wbr>Companion</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.entitycompanionprovider.html" class="tsd-kind-icon">Entity<wbr>Companion<wbr>Provider</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-kind-icon">Entity<wbr>Configuration</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitydatamanager.html" class="tsd-kind-icon">Entity<wbr>Data<wbr>Manager</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitydatabaseadapter.html" class="tsd-kind-icon">Entity<wbr>Database<wbr>Adapter</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.entityerror.html" class="tsd-kind-icon">Entity<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.entityfielddefinition.html" class="tsd-kind-icon">Entity<wbr>Field<wbr>Definition</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entityloader.html" class="tsd-kind-icon">Entity<wbr>Loader</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entityloaderfactory.html" class="tsd-kind-icon">Entity<wbr>Loader<wbr>Factory</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitymutatorfactory.html" class="tsd-kind-icon">Entity<wbr>Mutator<wbr>Factory</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.entitynontransactionalquerycontext.html" class="tsd-kind-icon">Entity<wbr>Non<wbr>Transactional<wbr>Query<wbr>Context</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitynotauthorizederror.html" class="tsd-kind-icon">Entity<wbr>Not<wbr>Authorized<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitynotfounderror.html" class="tsd-kind-icon">Entity<wbr>Not<wbr>Found<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entityprivacypolicy.html" class="tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.entityquerycontext.html" class="tsd-kind-icon">Entity<wbr>Query<wbr>Context</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.entitytransactionalquerycontext.html" class="tsd-kind-icon">Entity<wbr>Transactional<wbr>Query<wbr>Context</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.enumfield.html" class="tsd-kind-icon">Enum<wbr>Field</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.jsonarrayfield.html" class="tsd-kind-icon">JSONArray<wbr>Field</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.jsonobjectfield.html" class="tsd-kind-icon">JSONObject<wbr>Field</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.maybejsonarrayfield.html" class="tsd-kind-icon">MaybeJSONArray<wbr>Field</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.noopentitymetricsadapter.html" class="tsd-kind-icon">No<wbr>OpEntity<wbr>Metrics<wbr>Adapter</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.numberfield.html" class="tsd-kind-icon">Number<wbr>Field</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.privacypolicyrule.html" class="tsd-kind-icon">Privacy<wbr>Policy<wbr>Rule</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.readthroughentitycache.html" class="tsd-kind-icon">Read<wbr>Through<wbr>Entity<wbr>Cache</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.readonlyentity.html" class="tsd-kind-icon">Readonly<wbr>Entity</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.stringarrayfield.html" class="tsd-kind-icon">String<wbr>Array<wbr>Field</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.stringfield.html" class="tsd-kind-icon">String<wbr>Field</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.uuidfield.html" class="tsd-kind-icon">UUIDField</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.updatemutator.html" class="tsd-kind-icon">Update<wbr>Mutator</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.viewercontext.html" class="tsd-kind-icon">Viewer<wbr>Context</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.viewerscopedentitycompanion.html" class="tsd-kind-icon">Viewer<wbr>Scoped<wbr>Entity<wbr>Companion</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.viewerscopedentitycompanionprovider.html" class="tsd-kind-icon">Viewer<wbr>Scoped<wbr>Entity<wbr>Companion<wbr>Provider</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.viewerscopedentityloaderfactory.html" class="tsd-kind-icon">Viewer<wbr>Scoped<wbr>Entity<wbr>Loader<wbr>Factory</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.viewerscopedentitymutatorfactory.html" class="tsd-kind-icon">Viewer<wbr>Scoped<wbr>Entity<wbr>Mutator<wbr>Factory</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.cacheadapterflavordefinition.html" class="tsd-kind-icon">Cache<wbr>Adapter<wbr>Flavor<wbr>Definition</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.case.html" class="tsd-kind-icon">Case</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.databaseadapterflavordefinition.html" class="tsd-kind-icon">Database<wbr>Adapter<wbr>Flavor<wbr>Definition</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.entitycompaniondefinition.html" class="tsd-kind-icon">Entity<wbr>Companion<wbr>Definition</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.entityloadthroughdirective.html" class="tsd-kind-icon">Entity<wbr>Load<wbr>Through<wbr>Directive</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.entitymetricsloadevent.html" class="tsd-kind-icon">Entity<wbr>Metrics<wbr>Load<wbr>Event</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.entitymetricsmutationevent.html" class="tsd-kind-icon">Entity<wbr>Metrics<wbr>Mutation<wbr>Event</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.fieldtransformer.html" class="tsd-kind-icon">Field<wbr>Transformer</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.idatabaseadapterclass.html" class="tsd-kind-icon">IDatabase<wbr>Adapter<wbr>Class</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.ientitycacheadapterprovider.html" class="tsd-kind-icon">IEntity<wbr>Cache<wbr>Adapter<wbr>Provider</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.ientityclass.html" class="tsd-kind-icon">IEntity<wbr>Class</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-kind-icon">IEntity<wbr>Metrics<wbr>Adapter</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.ientityquerycontextprovider.html" class="tsd-kind-icon">IEntity<wbr>Query<wbr>Context<wbr>Provider</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.iprivacypolicyclass.html" class="tsd-kind-icon">IPrivacy<wbr>Policy<wbr>Class</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.queryselectionmodifiers.html" class="tsd-kind-icon">Query<wbr>Selection<wbr>Modifiers</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.tablefieldmultivalueequalitycondition.html" class="tsd-kind-icon">Table<wbr>Field<wbr>Multi<wbr>Value<wbr>Equality<wbr>Condition</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.tablefieldsinglevalueequalitycondition.html" class="tsd-kind-icon">Table<wbr>Field<wbr>Single<wbr>Value<wbr>Equality<wbr>Condition</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.tablequeryselectionmodifiers.html" class="tsd-kind-icon">Table<wbr>Query<wbr>Selection<wbr>Modifiers</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_expo_entity.html#cacheloadresult" class="tsd-kind-icon">Cache<wbr>Load<wbr>Result</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#entityprivacypolicyevaluator" class="tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy<wbr>Evaluator</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#fieldequalitycondition" class="tsd-kind-icon">Field<wbr>Equality<wbr>Condition</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_expo_entity.html#fieldtransformermap" class="tsd-kind-icon">Field<wbr>Transformer<wbr>Map</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#computeifabsent" class="tsd-kind-icon">compute<wbr>IfAbsent</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#describeprivacypolicyrule" class="tsd-kind-icon">describe<wbr>Privacy<wbr>Policy<wbr>Rule</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#describeprivacypolicyrulewithasynctestcase" class="tsd-kind-icon">describe<wbr>Privacy<wbr>Policy<wbr>Rule<wbr>With<wbr>Async<wbr>Test<wbr>Case</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#enforceresultsasync" class="tsd-kind-icon">enforce<wbr>Results<wbr>Async</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#failedresults" class="tsd-kind-icon">failed<wbr>Results</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#failedresultsfiltermap" class="tsd-kind-icon">failed<wbr>Results<wbr>Filter<wbr>Map</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#filtermap" class="tsd-kind-icon">filter<wbr>Map</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#getdatabasefieldforentityfield" class="tsd-kind-icon">get<wbr>Database<wbr>Field<wbr>For<wbr>Entity<wbr>Field</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#invertmap" class="tsd-kind-icon">invert<wbr>Map</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#iserror" class="tsd-kind-icon">is<wbr>Error</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#mapmap" class="tsd-kind-icon">map<wbr>Map</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#mapmapasync" class="tsd-kind-icon">map<wbr>Map<wbr>Async</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#partitionerrors" class="tsd-kind-icon">partition<wbr>Errors</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#reducemap" class="tsd-kind-icon">reduce<wbr>Map</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#reducemapasync" class="tsd-kind-icon">reduce<wbr>Map<wbr>Async</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#successfulresults" class="tsd-kind-icon">successful<wbr>Results</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#successfulresultsfiltermap" class="tsd-kind-icon">successful<wbr>Results<wbr>Filter<wbr>Map</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_expo_entity.html#timeandlogloadeventasync" class="tsd-kind-icon">time<wbr>And<wbr>Log<wbr>Load<wbr>Event<wbr>Async</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_expo_entity.html#timeandlogloadmapeventasync" class="tsd-kind-icon">time<wbr>And<wbr>Log<wbr>Load<wbr>Map<wbr>Event<wbr>Async</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_expo_entity.html#timeandlogmutationeventasync" class="tsd-kind-icon">time<wbr>And<wbr>Log<wbr>Mutation<wbr>Event<wbr>Async</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#transformcacheobjecttofields" class="tsd-kind-icon">transform<wbr>Cache<wbr>Object<wbr>ToFields</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#transformdatabaseobjecttofields" class="tsd-kind-icon">transform<wbr>Database<wbr>Object<wbr>ToFields</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#transformfieldstocacheobject" class="tsd-kind-icon">transform<wbr>Fields<wbr>ToCache<wbr>Object</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#transformfieldstodatabaseobject" class="tsd-kind-icon">transform<wbr>Fields<wbr>ToDatabase<wbr>Object</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#ziptomap" class="tsd-kind-icon">zip<wbr>ToMap</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="cacheloadresult" class="tsd-anchor"></a>
+					<h3>Cache<wbr>Load<wbr>Result</h3>
+					<div class="tsd-signature tsd-kind-icon">Cache<wbr>Load<wbr>Result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>status<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.cachestatus.html#hit" class="tsd-signature-type">HIT</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>status<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.cachestatus.html#miss" class="tsd-signature-type">MISS</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>status<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.cachestatus.html#negative" class="tsd-signature-type">NEGATIVE</a><span class="tsd-signature-symbol"> }</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/internal/ReadThroughEntityCache.ts#L18">packages/entity/src/internal/ReadThroughEntityCache.ts:18</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="entityprivacypolicyevaluator" class="tsd-anchor"></a>
+					<h3>Entity<wbr>Privacy<wbr>Policy<wbr>Evaluator</h3>
+					<div class="tsd-signature tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy<wbr>Evaluator&lt;TFields, TID, TViewerContext, TEntity&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>mode<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entityprivacypolicyevaluationmode.html#enforce" class="tsd-signature-type">ENFORCE</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>denyHandler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entitynotauthorizederror.html" class="tsd-signature-type">EntityNotAuthorizedError</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>mode<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entityprivacypolicyevaluationmode.html#dry_run" class="tsd-signature-type">DRY_RUN</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>denyHandler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entitynotauthorizederror.html" class="tsd-signature-type">EntityNotAuthorizedError</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>mode<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entityprivacypolicyevaluationmode.html#enforce_and_log" class="tsd-signature-type">ENFORCE_AND_LOG</a><span class="tsd-signature-symbol"> }</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityPrivacyPolicy.ts#L13">packages/entity/src/EntityPrivacyPolicy.ts:13</a></li>
+						</ul>
+					</aside>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>TFields</h4>
+						</li>
+						<li>
+							<h4>TID</h4>
+						</li>
+						<li>
+							<h4>TViewerContext<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.viewercontext.html" class="tsd-signature-type">ViewerContext</a></h4>
+						</li>
+						<li>
+							<h4>TEntity<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.readonlyentity.html" class="tsd-signature-type">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="fieldequalitycondition" class="tsd-anchor"></a>
+					<h3>Field<wbr>Equality<wbr>Condition</h3>
+					<div class="tsd-signature tsd-kind-icon">Field<wbr>Equality<wbr>Condition&lt;TFields, N&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SingleValueFieldEqualityCondition</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">N</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiValueFieldEqualityCondition</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">N</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/EntityDatabaseAdapter.ts#L20">packages/entity/src/EntityDatabaseAdapter.ts:20</a></li>
+						</ul>
+					</aside>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>TFields</h4>
+						</li>
+						<li>
+							<h4>N<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TFields</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="fieldtransformermap" class="tsd-anchor"></a>
+					<h3>Field<wbr>Transformer<wbr>Map</h3>
+					<div class="tsd-signature tsd-kind-icon">Field<wbr>Transformer<wbr>Map<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/_expo_entity.fieldtransformer.html" class="tsd-signature-type">FieldTransformer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L20">packages/entity/src/internal/EntityFieldTransformationUtils.ts:20</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Map from concrete EntityFieldDefinition implementation class name to field transformer.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="computeifabsent" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> compute<wbr>IfAbsent</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">compute<wbr>IfAbsent&lt;K, V&gt;<span class="tsd-signature-symbol">(</span>map<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span>, mappingFunction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/utils/collections/maps.ts#L3">packages/entity/src/utils/collections/maps.ts:3</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>K</h4>
+								</li>
+								<li>
+									<h4>V</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>map: <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>key: <span class="tsd-signature-type">K</span></h5>
+								</li>
+								<li>
+									<h5>mappingFunction: <span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">V</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>key: <span class="tsd-signature-type">K</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">V</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">V</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="describeprivacypolicyrule" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> describe<wbr>Privacy<wbr>Policy<wbr>Rule</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">describe<wbr>Privacy<wbr>Policy<wbr>Rule&lt;TFields, TID, TViewerContext, TEntity&gt;<span class="tsd-signature-symbol">(</span>privacyPolicyRule<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span>, __namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>allowCases<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>denyCases<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>skipCases<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/rules/PrivacyPolicyRuleTestUtils.ts#L83">packages/entity/src/rules/PrivacyPolicyRuleTestUtils.ts:83</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>For test simple privacy rules that don&#39;t have complex async preconditions.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TFields</h4>
+								</li>
+								<li>
+									<h4>TID</h4>
+								</li>
+								<li>
+									<h4>TViewerContext<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.viewercontext.html" class="tsd-signature-type">ViewerContext</a></h4>
+								</li>
+								<li>
+									<h4>TEntity<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.readonlyentity.html" class="tsd-signature-type">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">&gt;</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>privacyPolicyRule: <a href="../classes/_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>allowCases<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>denyCases<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>skipCases<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>allow<wbr>Cases<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>deny<wbr>Cases<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>skip<wbr>Cases<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="describeprivacypolicyrulewithasynctestcase" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> describe<wbr>Privacy<wbr>Policy<wbr>Rule<wbr>With<wbr>Async<wbr>Test<wbr>Case</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">describe<wbr>Privacy<wbr>Policy<wbr>Rule<wbr>With<wbr>Async<wbr>Test<wbr>Case&lt;TFields, TID, TViewerContext, TEntity&gt;<span class="tsd-signature-symbol">(</span>privacyPolicyRule<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span>, __namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>allowCases<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>denyCases<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>skipCases<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/rules/PrivacyPolicyRuleTestUtils.ts#L27">packages/entity/src/rules/PrivacyPolicyRuleTestUtils.ts:27</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Useful for defining test cases that have async preconditions.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TFields</h4>
+								</li>
+								<li>
+									<h4>TID</h4>
+								</li>
+								<li>
+									<h4>TViewerContext<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.viewercontext.html" class="tsd-signature-type">ViewerContext</a></h4>
+								</li>
+								<li>
+									<h4>TEntity<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.readonlyentity.html" class="tsd-signature-type">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">&gt;</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>privacyPolicyRule: <a href="../classes/_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>allowCases<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>denyCases<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>skipCases<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>allow<wbr>Cases<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>deny<wbr>Cases<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>skip<wbr>Cases<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_expo_entity.case.html" class="tsd-signature-type">Case</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="enforceresultsasync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> enforce<wbr>Results<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">enforce<wbr>Results<wbr>Async&lt;T&gt;<span class="tsd-signature-symbol">(</span>resultsPromise<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/entityUtils.ts#L3">packages/entity/src/entityUtils.ts:3</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>resultsPromise: <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="failedresults" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> failed<wbr>Results</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">failed<wbr>Results&lt;T&gt;<span class="tsd-signature-symbol">(</span>results<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Failure</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/entityUtils.ts#L20">packages/entity/src/entityUtils.ts:20</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>results: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Failure</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="failedresultsfiltermap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> failed<wbr>Results<wbr>Filter<wbr>Map</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">failed<wbr>Results<wbr>Filter<wbr>Map&lt;K, T&gt;<span class="tsd-signature-symbol">(</span>results<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Failure</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/entityUtils.ts#L42">packages/entity/src/entityUtils.ts:42</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>K</h4>
+								</li>
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>results: <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Failure</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="filtermap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> filter<wbr>Map</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">filter<wbr>Map&lt;K, V&gt;<span class="tsd-signature-symbol">(</span>map<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span>, predicate<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/utils/collections/maps.ts#L88">packages/entity/src/utils/collections/maps.ts:88</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>K</h4>
+								</li>
+								<li>
+									<h4>V</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>map: <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>predicate: <span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>value: <span class="tsd-signature-type">V</span></h5>
+														</li>
+														<li>
+															<h5>key: <span class="tsd-signature-type">K</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="getdatabasefieldforentityfield" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> get<wbr>Database<wbr>Field<wbr>For<wbr>Entity<wbr>Field</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Database<wbr>Field<wbr>For<wbr>Entity<wbr>Field&lt;TFields&gt;<span class="tsd-signature-symbol">(</span>entityConfiguration<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-signature-type">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, entityField<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L22">packages/entity/src/internal/EntityFieldTransformationUtils.ts:22</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TFields</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>entityConfiguration: <a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-signature-type">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>entityField: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TFields</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="invertmap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> invert<wbr>Map</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">invert<wbr>Map&lt;K, V&gt;<span class="tsd-signature-symbol">(</span>map<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/utils/collections/maps.ts#L56">packages/entity/src/utils/collections/maps.ts:56</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>K</h4>
+								</li>
+								<li>
+									<h4>V</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>map: <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="iserror" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> is<wbr>Error</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Error&lt;T&gt;<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">value</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">Error</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/entityUtils.ts#L69">packages/entity/src/entityUtils.ts:69</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">value</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">Error</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="mapmap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> map<wbr>Map</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">map<wbr>Map&lt;K, V, M&gt;<span class="tsd-signature-symbol">(</span>map<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span>, mapper<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/utils/collections/maps.ts#L17">packages/entity/src/utils/collections/maps.ts:17</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>K</h4>
+								</li>
+								<li>
+									<h4>V</h4>
+								</li>
+								<li>
+									<h4>M</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>map: <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>mapper: <span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">M</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">M</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>value: <span class="tsd-signature-type">V</span></h5>
+														</li>
+														<li>
+															<h5>key: <span class="tsd-signature-type">K</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">M</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="mapmapasync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> map<wbr>Map<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">map<wbr>Map<wbr>Async&lt;K, V, M&gt;<span class="tsd-signature-symbol">(</span>map<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span>, mapper<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/utils/collections/maps.ts#L28">packages/entity/src/utils/collections/maps.ts:28</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>K</h4>
+								</li>
+								<li>
+									<h4>V</h4>
+								</li>
+								<li>
+									<h4>M</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>map: <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>mapper: <span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">&gt;</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>value: <span class="tsd-signature-type">V</span></h5>
+														</li>
+														<li>
+															<h5>key: <span class="tsd-signature-type">K</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="partitionerrors" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> partition<wbr>Errors</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">partition<wbr>Errors&lt;T&gt;<span class="tsd-signature-symbol">(</span>valuesOrErrors<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/entityUtils.ts#L54">packages/entity/src/entityUtils.ts:54</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>valuesOrErrors: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="reducemap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> reduce<wbr>Map</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">reduce<wbr>Map&lt;K, V, A&gt;<span class="tsd-signature-symbol">(</span>map<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span>, reducer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>accumulator<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">A</span>, initialValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/utils/collections/maps.ts#L64">packages/entity/src/utils/collections/maps.ts:64</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>K</h4>
+								</li>
+								<li>
+									<h4>V</h4>
+								</li>
+								<li>
+									<h4>A</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>map: <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>reducer: <span class="tsd-signature-symbol">(</span>accumulator<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">A</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>accumulator<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>accumulator: <span class="tsd-signature-type">A</span></h5>
+														</li>
+														<li>
+															<h5>value: <span class="tsd-signature-type">V</span></h5>
+														</li>
+														<li>
+															<h5>key: <span class="tsd-signature-type">K</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">A</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>initialValue: <span class="tsd-signature-type">A</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">A</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="reducemapasync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> reduce<wbr>Map<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">reduce<wbr>Map<wbr>Async&lt;K, V, A&gt;<span class="tsd-signature-symbol">(</span>map<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span>, reducer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>accumulator<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span>, initialValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/utils/collections/maps.ts#L76">packages/entity/src/utils/collections/maps.ts:76</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>K</h4>
+								</li>
+								<li>
+									<h4>V</h4>
+								</li>
+								<li>
+									<h4>A</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>map: <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>reducer: <span class="tsd-signature-symbol">(</span>accumulator<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>accumulator<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>accumulator: <span class="tsd-signature-type">A</span></h5>
+														</li>
+														<li>
+															<h5>value: <span class="tsd-signature-type">V</span></h5>
+														</li>
+														<li>
+															<h5>key: <span class="tsd-signature-type">K</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>initialValue: <span class="tsd-signature-type">A</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="successfulresults" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> successful<wbr>Results</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">successful<wbr>Results&lt;T&gt;<span class="tsd-signature-symbol">(</span>results<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Success</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/entityUtils.ts#L10">packages/entity/src/entityUtils.ts:10</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>results: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Success</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="successfulresultsfiltermap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> successful<wbr>Results<wbr>Filter<wbr>Map</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">successful<wbr>Results<wbr>Filter<wbr>Map&lt;K, T&gt;<span class="tsd-signature-symbol">(</span>results<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Success</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/entityUtils.ts#L30">packages/entity/src/entityUtils.ts:30</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>K</h4>
+								</li>
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>results: <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Success</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="timeandlogloadeventasync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> time<wbr>And<wbr>Log<wbr>Load<wbr>Event<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">time<wbr>And<wbr>Log<wbr>Load<wbr>Event<wbr>Async<span class="tsd-signature-symbol">(</span>metricsAdapter<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-signature-type">IEntityMetricsAdapter</a>, loadType<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entitymetricsloadtype.html" class="tsd-signature-type">EntityMetricsLoadType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/metrics/EntityMetricsUtils.ts#L7">packages/entity/src/metrics/EntityMetricsUtils.ts:7</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>metricsAdapter: <a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-signature-type">IEntityMetricsAdapter</a></h5>
+								</li>
+								<li>
+									<h5>loadType: <a href="../enums/_expo_entity.entitymetricsloadtype.html" class="tsd-signature-type">EntityMetricsLoadType</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="timeandlogloadmapeventasync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> time<wbr>And<wbr>Log<wbr>Load<wbr>Map<wbr>Event<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">time<wbr>And<wbr>Log<wbr>Load<wbr>Map<wbr>Event<wbr>Async<span class="tsd-signature-symbol">(</span>metricsAdapter<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-signature-type">IEntityMetricsAdapter</a>, loadType<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entitymetricsloadtype.html" class="tsd-signature-type">EntityMetricsLoadType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/metrics/EntityMetricsUtils.ts#L24">packages/entity/src/metrics/EntityMetricsUtils.ts:24</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>metricsAdapter: <a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-signature-type">IEntityMetricsAdapter</a></h5>
+								</li>
+								<li>
+									<h5>loadType: <a href="../enums/_expo_entity.entitymetricsloadtype.html" class="tsd-signature-type">EntityMetricsLoadType</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="timeandlogmutationeventasync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> time<wbr>And<wbr>Log<wbr>Mutation<wbr>Event<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">time<wbr>And<wbr>Log<wbr>Mutation<wbr>Event<wbr>Async<span class="tsd-signature-symbol">(</span>metricsAdapter<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-signature-type">IEntityMetricsAdapter</a>, mutationType<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entitymetricsmutationtype.html" class="tsd-signature-type">EntityMetricsMutationType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/metrics/EntityMetricsUtils.ts#L45">packages/entity/src/metrics/EntityMetricsUtils.ts:45</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>metricsAdapter: <a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-signature-type">IEntityMetricsAdapter</a></h5>
+								</li>
+								<li>
+									<h5>mutationType: <a href="../enums/_expo_entity.entitymetricsmutationtype.html" class="tsd-signature-type">EntityMetricsMutationType</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="transformcacheobjecttofields" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> transform<wbr>Cache<wbr>Object<wbr>ToFields</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">transform<wbr>Cache<wbr>Object<wbr>ToFields&lt;TFields&gt;<span class="tsd-signature-symbol">(</span>entityConfiguration<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-signature-type">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, fieldTransformerMap<span class="tsd-signature-symbol">: </span><a href="_expo_entity.html#fieldtransformermap" class="tsd-signature-type">FieldTransformerMap</a>, cacheObject<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L72">packages/entity/src/internal/EntityFieldTransformationUtils.ts:72</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TFields</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>entityConfiguration: <a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-signature-type">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>fieldTransformerMap: <a href="_expo_entity.html#fieldtransformermap" class="tsd-signature-type">FieldTransformerMap</a></h5>
+								</li>
+								<li>
+									<h5>cacheObject: <span class="tsd-signature-symbol">{}</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-index-signature">
+											<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="transformdatabaseobjecttofields" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> transform<wbr>Database<wbr>Object<wbr>ToFields</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">transform<wbr>Database<wbr>Object<wbr>ToFields&lt;TFields&gt;<span class="tsd-signature-symbol">(</span>entityConfiguration<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-signature-type">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, fieldTransformerMap<span class="tsd-signature-symbol">: </span><a href="_expo_entity.html#fieldtransformermap" class="tsd-signature-type">FieldTransformerMap</a>, databaseObject<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L31">packages/entity/src/internal/EntityFieldTransformationUtils.ts:31</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TFields</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>entityConfiguration: <a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-signature-type">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>fieldTransformerMap: <a href="_expo_entity.html#fieldtransformermap" class="tsd-signature-type">FieldTransformerMap</a></h5>
+								</li>
+								<li>
+									<h5>databaseObject: <span class="tsd-signature-symbol">{}</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-index-signature">
+											<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="transformfieldstocacheobject" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> transform<wbr>Fields<wbr>ToCache<wbr>Object</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">transform<wbr>Fields<wbr>ToCache<wbr>Object&lt;TFields&gt;<span class="tsd-signature-symbol">(</span>entityConfiguration<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-signature-type">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, fieldTransformerMap<span class="tsd-signature-symbol">: </span><a href="_expo_entity.html#fieldtransformermap" class="tsd-signature-type">FieldTransformerMap</a>, fields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L90">packages/entity/src/internal/EntityFieldTransformationUtils.ts:90</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TFields</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>entityConfiguration: <a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-signature-type">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>fieldTransformerMap: <a href="_expo_entity.html#fieldtransformermap" class="tsd-signature-type">FieldTransformerMap</a></h5>
+								</li>
+								<li>
+									<h5>fields: <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="transformfieldstodatabaseobject" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> transform<wbr>Fields<wbr>ToDatabase<wbr>Object</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">transform<wbr>Fields<wbr>ToDatabase<wbr>Object&lt;TFields&gt;<span class="tsd-signature-symbol">(</span>entityConfiguration<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-signature-type">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, fieldTransformerMap<span class="tsd-signature-symbol">: </span><a href="_expo_entity.html#fieldtransformermap" class="tsd-signature-type">FieldTransformerMap</a>, fields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L52">packages/entity/src/internal/EntityFieldTransformationUtils.ts:52</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TFields</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>entityConfiguration: <a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-signature-type">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>fieldTransformerMap: <a href="_expo_entity.html#fieldtransformermap" class="tsd-signature-type">FieldTransformerMap</a></h5>
+								</li>
+								<li>
+									<h5>fields: <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="ziptomap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> zip<wbr>ToMap</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">zip<wbr>ToMap&lt;K, V&gt;<span class="tsd-signature-symbol">(</span>keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">[]</span>, values<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9b16ad7/packages/entity/src/utils/collections/maps.ts#L43">packages/entity/src/utils/collections/maps.ts:43</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>K</h4>
+								</li>
+								<li>
+									<h4>V</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>keys: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>values: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="_expo_entity.html">@expo/entity</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_expo_entity_cache_adapter_redis.html">@expo/entity-<wbr>cache-<wbr>adapter-<wbr>redis</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_expo_entity_database_adapter_knex.html">@expo/entity-<wbr>database-<wbr>adapter-<wbr>knex</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/_expo_entity.cacheadapterflavor.html" class="tsd-kind-icon">Cache<wbr>Adapter<wbr>Flavor</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/_expo_entity.cachestatus.html" class="tsd-kind-icon">Cache<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/_expo_entity.databaseadapterflavor.html" class="tsd-kind-icon">Database<wbr>Adapter<wbr>Flavor</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/_expo_entity.entityauthorizationaction.html" class="tsd-kind-icon">Entity<wbr>Authorization<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/_expo_entity.entitymetricsloadtype.html" class="tsd-kind-icon">Entity<wbr>Metrics<wbr>Load<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/_expo_entity.entitymetricsmutationtype.html" class="tsd-kind-icon">Entity<wbr>Metrics<wbr>Mutation<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/_expo_entity.entityprivacypolicyevaluationmode.html" class="tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy<wbr>Evaluation<wbr>Mode</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/_expo_entity.orderbyordering.html" class="tsd-kind-icon">Order<wbr>ByOrdering</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/_expo_entity.ruleevaluationresult.html" class="tsd-kind-icon">Rule<wbr>Evaluation<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.alwaysallowprivacypolicyrule.html" class="tsd-kind-icon">Always<wbr>Allow<wbr>Privacy<wbr>Policy<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.alwaysdenyprivacypolicyrule.html" class="tsd-kind-icon">Always<wbr>Deny<wbr>Privacy<wbr>Policy<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.alwaysskipprivacypolicyrule.html" class="tsd-kind-icon">Always<wbr>Skip<wbr>Privacy<wbr>Policy<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.booleanfield.html" class="tsd-kind-icon">Boolean<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.createmutator.html" class="tsd-kind-icon">Create<wbr>Mutator</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.datefield.html" class="tsd-kind-icon">Date<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.deletemutator.html" class="tsd-kind-icon">Delete<wbr>Mutator</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.enforcingentityloader.html" class="tsd-kind-icon">Enforcing<wbr>Entity<wbr>Loader</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entity.html" class="tsd-kind-icon">Entity</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entityassociationloader.html" class="tsd-kind-icon">Entity<wbr>Association<wbr>Loader</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entitycacheadapter.html" class="tsd-kind-icon">Entity<wbr>Cache<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entitycompanion.html" class="tsd-kind-icon">Entity<wbr>Companion</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.entitycompanionprovider.html" class="tsd-kind-icon">Entity<wbr>Companion<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entityconfiguration.html" class="tsd-kind-icon">Entity<wbr>Configuration</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entitydatamanager.html" class="tsd-kind-icon">Entity<wbr>Data<wbr>Manager</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entitydatabaseadapter.html" class="tsd-kind-icon">Entity<wbr>Database<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.entityerror.html" class="tsd-kind-icon">Entity<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.entityfielddefinition.html" class="tsd-kind-icon">Entity<wbr>Field<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entityloader.html" class="tsd-kind-icon">Entity<wbr>Loader</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entityloaderfactory.html" class="tsd-kind-icon">Entity<wbr>Loader<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entitymutatorfactory.html" class="tsd-kind-icon">Entity<wbr>Mutator<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.entitynontransactionalquerycontext.html" class="tsd-kind-icon">Entity<wbr>Non<wbr>Transactional<wbr>Query<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entitynotauthorizederror.html" class="tsd-kind-icon">Entity<wbr>Not<wbr>Authorized<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entitynotfounderror.html" class="tsd-kind-icon">Entity<wbr>Not<wbr>Found<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entityprivacypolicy.html" class="tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.entityquerycontext.html" class="tsd-kind-icon">Entity<wbr>Query<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.entitytransactionalquerycontext.html" class="tsd-kind-icon">Entity<wbr>Transactional<wbr>Query<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.enumfield.html" class="tsd-kind-icon">Enum<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.jsonarrayfield.html" class="tsd-kind-icon">JSONArray<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.jsonobjectfield.html" class="tsd-kind-icon">JSONObject<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.maybejsonarrayfield.html" class="tsd-kind-icon">MaybeJSONArray<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.noopentitymetricsadapter.html" class="tsd-kind-icon">No<wbr>OpEntity<wbr>Metrics<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.numberfield.html" class="tsd-kind-icon">Number<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.privacypolicyrule.html" class="tsd-kind-icon">Privacy<wbr>Policy<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.readthroughentitycache.html" class="tsd-kind-icon">Read<wbr>Through<wbr>Entity<wbr>Cache</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.readonlyentity.html" class="tsd-kind-icon">Readonly<wbr>Entity</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.stringarrayfield.html" class="tsd-kind-icon">String<wbr>Array<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.stringfield.html" class="tsd-kind-icon">String<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.uuidfield.html" class="tsd-kind-icon">UUIDField</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.updatemutator.html" class="tsd-kind-icon">Update<wbr>Mutator</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.viewercontext.html" class="tsd-kind-icon">Viewer<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.viewerscopedentitycompanion.html" class="tsd-kind-icon">Viewer<wbr>Scoped<wbr>Entity<wbr>Companion</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.viewerscopedentitycompanionprovider.html" class="tsd-kind-icon">Viewer<wbr>Scoped<wbr>Entity<wbr>Companion<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.viewerscopedentityloaderfactory.html" class="tsd-kind-icon">Viewer<wbr>Scoped<wbr>Entity<wbr>Loader<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.viewerscopedentitymutatorfactory.html" class="tsd-kind-icon">Viewer<wbr>Scoped<wbr>Entity<wbr>Mutator<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_expo_entity.cacheadapterflavordefinition.html" class="tsd-kind-icon">Cache<wbr>Adapter<wbr>Flavor<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/_expo_entity.case.html" class="tsd-kind-icon">Case</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/_expo_entity.databaseadapterflavordefinition.html" class="tsd-kind-icon">Database<wbr>Adapter<wbr>Flavor<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/_expo_entity.entitycompaniondefinition.html" class="tsd-kind-icon">Entity<wbr>Companion<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/_expo_entity.entityloadthroughdirective.html" class="tsd-kind-icon">Entity<wbr>Load<wbr>Through<wbr>Directive</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_expo_entity.entitymetricsloadevent.html" class="tsd-kind-icon">Entity<wbr>Metrics<wbr>Load<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_expo_entity.entitymetricsmutationevent.html" class="tsd-kind-icon">Entity<wbr>Metrics<wbr>Mutation<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/_expo_entity.fieldtransformer.html" class="tsd-kind-icon">Field<wbr>Transformer</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/_expo_entity.idatabaseadapterclass.html" class="tsd-kind-icon">IDatabase<wbr>Adapter<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_expo_entity.ientitycacheadapterprovider.html" class="tsd-kind-icon">IEntity<wbr>Cache<wbr>Adapter<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/_expo_entity.ientityclass.html" class="tsd-kind-icon">IEntity<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-kind-icon">IEntity<wbr>Metrics<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_expo_entity.ientityquerycontextprovider.html" class="tsd-kind-icon">IEntity<wbr>Query<wbr>Context<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/_expo_entity.iprivacypolicyclass.html" class="tsd-kind-icon">IPrivacy<wbr>Policy<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/_expo_entity.queryselectionmodifiers.html" class="tsd-kind-icon">Query<wbr>Selection<wbr>Modifiers</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_expo_entity.tablefieldmultivalueequalitycondition.html" class="tsd-kind-icon">Table<wbr>Field<wbr>Multi<wbr>Value<wbr>Equality<wbr>Condition</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_expo_entity.tablefieldsinglevalueequalitycondition.html" class="tsd-kind-icon">Table<wbr>Field<wbr>Single<wbr>Value<wbr>Equality<wbr>Condition</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_expo_entity.tablequeryselectionmodifiers.html" class="tsd-kind-icon">Table<wbr>Query<wbr>Selection<wbr>Modifiers</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_expo_entity.html#cacheloadresult" class="tsd-kind-icon">Cache<wbr>Load<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#entityprivacypolicyevaluator" class="tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy<wbr>Evaluator</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#fieldequalitycondition" class="tsd-kind-icon">Field<wbr>Equality<wbr>Condition</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_expo_entity.html#fieldtransformermap" class="tsd-kind-icon">Field<wbr>Transformer<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#computeifabsent" class="tsd-kind-icon">compute<wbr>IfAbsent</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#describeprivacypolicyrule" class="tsd-kind-icon">describe<wbr>Privacy<wbr>Policy<wbr>Rule</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#describeprivacypolicyrulewithasynctestcase" class="tsd-kind-icon">describe<wbr>Privacy<wbr>Policy<wbr>Rule<wbr>With<wbr>Async<wbr>Test<wbr>Case</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#enforceresultsasync" class="tsd-kind-icon">enforce<wbr>Results<wbr>Async</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#failedresults" class="tsd-kind-icon">failed<wbr>Results</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#failedresultsfiltermap" class="tsd-kind-icon">failed<wbr>Results<wbr>Filter<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#filtermap" class="tsd-kind-icon">filter<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#getdatabasefieldforentityfield" class="tsd-kind-icon">get<wbr>Database<wbr>Field<wbr>For<wbr>Entity<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#invertmap" class="tsd-kind-icon">invert<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#iserror" class="tsd-kind-icon">is<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#mapmap" class="tsd-kind-icon">map<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#mapmapasync" class="tsd-kind-icon">map<wbr>Map<wbr>Async</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#partitionerrors" class="tsd-kind-icon">partition<wbr>Errors</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#reducemap" class="tsd-kind-icon">reduce<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#reducemapasync" class="tsd-kind-icon">reduce<wbr>Map<wbr>Async</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#successfulresults" class="tsd-kind-icon">successful<wbr>Results</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#successfulresultsfiltermap" class="tsd-kind-icon">successful<wbr>Results<wbr>Filter<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_expo_entity.html#timeandlogloadeventasync" class="tsd-kind-icon">time<wbr>And<wbr>Log<wbr>Load<wbr>Event<wbr>Async</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_expo_entity.html#timeandlogloadmapeventasync" class="tsd-kind-icon">time<wbr>And<wbr>Log<wbr>Load<wbr>Map<wbr>Event<wbr>Async</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_expo_entity.html#timeandlogmutationeventasync" class="tsd-kind-icon">time<wbr>And<wbr>Log<wbr>Mutation<wbr>Event<wbr>Async</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#transformcacheobjecttofields" class="tsd-kind-icon">transform<wbr>Cache<wbr>Object<wbr>ToFields</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#transformdatabaseobjecttofields" class="tsd-kind-icon">transform<wbr>Database<wbr>Object<wbr>ToFields</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#transformfieldstocacheobject" class="tsd-kind-icon">transform<wbr>Fields<wbr>ToCache<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#transformfieldstodatabaseobject" class="tsd-kind-icon">transform<wbr>Fields<wbr>ToDatabase<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.html#ziptomap" class="tsd-kind-icon">zip<wbr>ToMap</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
