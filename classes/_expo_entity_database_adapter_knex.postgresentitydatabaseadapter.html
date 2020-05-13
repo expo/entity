@@ -101,7 +101,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private"><a href="_expo_entity_database_adapter_knex.postgresentitydatabaseadapter.html#applyquerymodifierstoquery" class="tsd-kind-icon">apply<wbr>Query<wbr>Modifiers<wbr>ToQuery</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_expo_entity_database_adapter_knex.postgresentitydatabaseadapter.html#applyquerymodifierstoquery" class="tsd-kind-icon">apply<wbr>Query<wbr>Modifiers<wbr>ToQuery</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited"><a href="_expo_entity_database_adapter_knex.postgresentitydatabaseadapter.html#deleteasync" class="tsd-kind-icon">delete<wbr>Async</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="_expo_entity_database_adapter_knex.postgresentitydatabaseadapter.html#deleteinternalasync" class="tsd-kind-icon">delete<wbr>Internal<wbr>Async</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited"><a href="_expo_entity_database_adapter_knex.postgresentitydatabaseadapter.html#fetchmanybyfieldequalityconjunctionasync" class="tsd-kind-icon">fetch<wbr>Many<wbr>ByField<wbr>Equality<wbr>Conjunction<wbr>Async</a></li>
@@ -149,35 +149,29 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="applyquerymodifierstoquery" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> apply<wbr>Query<wbr>Modifiers<wbr>ToQuery</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">apply<wbr>Query<wbr>Modifiers<wbr>ToQuery&lt;T&gt;<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, querySelectionModifiers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TableQuerySelectionModifiers</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">apply<wbr>Query<wbr>Modifiers<wbr>ToQuery<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">QueryBuilder</span>, querySelectionModifiers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TableQuerySelectionModifiers</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">QueryBuilder</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/38cf679/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L52">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9129d74/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L52">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:52</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-type-parameters-title">Type parameters</h4>
-							<ul class="tsd-type-parameters">
-								<li>
-									<h4>T<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h4>
-								</li>
-							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>query: <span class="tsd-signature-type">T</span></h5>
+									<h5>query: <span class="tsd-signature-type">QueryBuilder</span></h5>
 								</li>
 								<li>
 									<h5>querySelectionModifiers: <span class="tsd-signature-type">TableQuerySelectionModifiers</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">QueryBuilder</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -242,7 +236,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.deleteInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/38cf679/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L141">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:141</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9129d74/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L141">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:141</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -327,7 +321,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.fetchManyByFieldEqualityConjunctionInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/38cf679/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L77">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:77</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9129d74/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L77">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:77</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -414,7 +408,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.fetchManyByRawWhereClauseInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/38cf679/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L104">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9129d74/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L104">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:104</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -498,7 +492,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.fetchManyWhereInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/38cf679/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L40">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9129d74/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L40">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:40</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -531,7 +525,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.getFieldTransformerMap</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/38cf679/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L14">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9129d74/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L14">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:14</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../modules/_expo_entity.html#fieldtransformermap" class="tsd-signature-type">FieldTransformerMap</a></h4>
@@ -588,7 +582,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.insertInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/38cf679/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L119">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:119</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9129d74/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L119">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:119</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -675,7 +669,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.updateInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/38cf679/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L127">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:127</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/9129d74/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L127">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:127</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -729,7 +723,7 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
 								<a href="_expo_entity_database_adapter_knex.postgresentitydatabaseadapter.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_expo_entity_database_adapter_knex.postgresentitydatabaseadapter.html#applyquerymodifierstoquery" class="tsd-kind-icon">apply<wbr>Query<wbr>Modifiers<wbr>ToQuery</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited">
@@ -811,6 +805,9 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
 			</ul>
 		</div>
 	</div>
