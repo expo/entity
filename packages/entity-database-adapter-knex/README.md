@@ -1,6 +1,8 @@
-# @expo/entity-database-adapter-knex
+# `@expo/entity-database-adapter-knex`
 
-[http://knexjs.org/](Knex) database adapter for @expo/entity. Currently only used with Postgres client.
+[Knex](http://knexjs.org/) database adapter for `@expo/entity`. Currently only used with Postgres client.
+
+[Documentation](https://expo.github.io/entity/modules/_expo_entity_database_adapter_knex.html)
 
 ## Usage
 
