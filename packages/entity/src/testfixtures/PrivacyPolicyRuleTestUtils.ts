@@ -1,7 +1,7 @@
 import { EntityQueryContext } from '../EntityQueryContext';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
-import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
+import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
 
 export interface Case<
   TFields,

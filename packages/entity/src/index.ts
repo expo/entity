@@ -46,7 +46,7 @@ export { default as AlwaysDenyPrivacyPolicyRule } from './rules/AlwaysDenyPrivac
 export { default as AlwaysSkipPrivacyPolicyRule } from './rules/AlwaysSkipPrivacyPolicyRule';
 export { default as PrivacyPolicyRule } from './rules/PrivacyPolicyRule';
 export * from './rules/PrivacyPolicyRule';
-export * from './rules/PrivacyPolicyRuleTestUtils';
+export * from './testfixtures/PrivacyPolicyRuleTestUtils';
 export { default as SimpleTestEntity } from './testfixtures/SimpleTestEntity';
 export * from './testfixtures/StubCacheAdapter';
 export { default as StubDatabaseAdapter } from './testfixtures/StubDatabaseAdapter';

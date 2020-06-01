@@ -3,6 +3,9 @@ import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
 import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
 
+/**
+ * A no-op policy rule that always skips.
+ */
 export default class AlwaysSkipPrivacyPolicyRule<
   TFields,
   TID,
