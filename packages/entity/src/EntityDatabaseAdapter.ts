@@ -246,6 +246,17 @@ export default abstract class EntityDatabaseAdapter<TFields> {
       this.entityConfiguration.tableName,
       dbObject
     );
+
+    if (results.length > 1) {
+      throw new Error(
+        `Excessive results from database adapter insert: ${this.entityConfiguration.tableName}`
+      );
+    } else if (results.length === 0) {
+      throw new Error(
+        `Empty results from database adapter insert: ${this.entityConfiguration.tableName}`
+      );
+    }
+
     return transformDatabaseObjectToFields(
       this.entityConfiguration,
       this.fieldTransformerMap,
@@ -287,6 +298,17 @@ export default abstract class EntityDatabaseAdapter<TFields> {
       id,
       dbObject
     );
+
+    if (results.length > 1) {
+      throw new Error(
+        `Excessive results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`
+      );
+    } else if (results.length === 0) {
+      throw new Error(
+        `Empty results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`
+      );
+    }
+
     return transformDatabaseObjectToFields(
       this.entityConfiguration,
       this.fieldTransformerMap,
@@ -315,12 +337,22 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     id: any
   ): Promise<void> {
     const idColumn = getDatabaseFieldForEntityField(this.entityConfiguration, idField);
-    await this.deleteInternalAsync(
+    const numDeleted = await this.deleteInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       idColumn,
       id
     );
+
+    if (numDeleted > 1) {
+      throw new Error(
+        `Excessive deletions from database adapter delete: ${this.entityConfiguration.tableName}(id = ${id})`
+      );
+    } else if (numDeleted === 0) {
+      throw new Error(
+        `No deletions from database adapter delete: ${this.entityConfiguration.tableName}(id = ${id})`
+      );
+    }
   }
 
   protected abstract deleteInternalAsync(
@@ -328,7 +360,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     tableName: string,
     tableIdField: string,
     id: any
-  ): Promise<void>;
+  ): Promise<number>;
 
   private convertToTableQueryModifiers(
     querySelectionModifiers: QuerySelectionModifiers<TFields>

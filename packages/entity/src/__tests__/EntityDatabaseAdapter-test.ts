@@ -14,6 +14,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
   private updateResults: object[];
   private fetchEqualityConditionResults: object[];
   private fetchRawWhereResults: object[];
+  private deleteCount: number;
 
   constructor({
     fetchResults = [],
@@ -21,12 +22,14 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     updateResults = [],
     fetchEqualityConditionResults = [],
     fetchRawWhereResults = [],
+    deleteCount = 0,
   }: {
     fetchResults?: object[];
     insertResults?: object[];
     updateResults?: object[];
     fetchEqualityConditionResults?: object[];
     fetchRawWhereResults?: object[];
+    deleteCount?: number;
   }) {
     super(testEntityConfiguration);
     this.fetchResults = fetchResults;
@@ -34,6 +37,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     this.updateResults = updateResults;
     this.fetchEqualityConditionResults = fetchEqualityConditionResults;
     this.fetchRawWhereResults = fetchRawWhereResults;
+    this.deleteCount = deleteCount;
   }
 
   protected getFieldTransformerMap(): FieldTransformerMap {
@@ -90,7 +94,9 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     _tableName: string,
     _tableIdField: string,
     _id: any
-  ): Promise<void> {}
+  ): Promise<number> {
+    return this.deleteCount;
+  }
 }
 
 describe(EntityDatabaseAdapter, () => {
@@ -155,6 +161,24 @@ describe(EntityDatabaseAdapter, () => {
       const result = await adapter.insertAsync(queryContext, {} as any);
       expect(result).toEqual({ stringField: 'hello' });
     });
+
+    it('throws when insert result count zero', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({ insertResults: [] });
+      await expect(adapter.insertAsync(queryContext, {} as any)).rejects.toThrowError(
+        'Empty results from database adapter insert'
+      );
+    });
+
+    it('throws when insert result count greater than 1', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({
+        insertResults: [{ string_field: 'hello' }, { string_field: 'hello2' }],
+      });
+      await expect(adapter.insertAsync(queryContext, {} as any)).rejects.toThrowError(
+        'Excessive results from database adapter insert'
+      );
+    });
   });
 
   describe('updateAsync', () => {
@@ -163,6 +187,42 @@ describe(EntityDatabaseAdapter, () => {
       const adapter = new TestEntityDatabaseAdapter({ updateResults: [{ string_field: 'hello' }] });
       const result = await adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any);
       expect(result).toEqual({ stringField: 'hello' });
+    });
+
+    it('throws when update result count zero', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({ updateResults: [] });
+      await expect(
+        adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any)
+      ).rejects.toThrowError('Empty results from database adapter update');
+    });
+
+    it('throws when update result count greater than 1', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({
+        updateResults: [{ string_field: 'hello' }, { string_field: 'hello2' }],
+      });
+      await expect(
+        adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any)
+      ).rejects.toThrowError('Excessive results from database adapter update');
+    });
+  });
+
+  describe('deleteAsync', () => {
+    it('throws when update result count zero', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({ deleteCount: 0 });
+      await expect(adapter.deleteAsync(queryContext, 'customIdField', 'wat')).rejects.toThrowError(
+        'No deletions from database adapter delet'
+      );
+    });
+
+    it('throws when update result count greater than 1', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({ deleteCount: 2 });
+      await expect(adapter.deleteAsync(queryContext, 'customIdField', 'wat')).rejects.toThrowError(
+        'Excessive deletions from database adapter delet'
+      );
     });
   });
 });

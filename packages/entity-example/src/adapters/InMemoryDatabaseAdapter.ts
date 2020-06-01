@@ -160,11 +160,12 @@ export default class InMemoryDatabaseAdapter<T> extends EntityDatabaseAdapter<T>
     _tableName: string,
     tableIdField: string,
     id: any
-  ): Promise<void> {
+  ): Promise<number> {
     const objectIndex = dbObjects.findIndex((obj) => {
       return obj[tableIdField] === id;
     });
     invariant(objectIndex >= 0, 'should exist');
     dbObjects.splice(objectIndex, 1);
+    return 1;
   }
 }
