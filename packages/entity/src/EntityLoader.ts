@@ -136,6 +136,15 @@ export default class EntityLoader<
   }
 
   /**
+   * Load an entity by a specified ID, or return null if non-existent.
+   * @param id - ID of the entity
+   * @returns entity result for matching ID, or null if no entity exists for ID.
+   */
+  async loadByIDNullableAsync(id: TID): Promise<Result<TEntity> | null> {
+    return await this.loadByFieldEqualingAsync(this.entityConfiguration.idField, id as any);
+  }
+
+  /**
    * Loads many entities for a list of IDs.
    * @param viewerContext - viewer context of loading user
    * @param ids - IDs of the entities to load

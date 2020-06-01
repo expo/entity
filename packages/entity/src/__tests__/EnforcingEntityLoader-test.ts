@@ -149,6 +149,41 @@ describe(EnforcingEntityLoader, () => {
     });
   });
 
+  describe('loadByIDNullableAsync', () => {
+    it('throws when result is unsuccessful', async () => {
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const rejection = new Error();
+      when(entityLoaderMock.loadByIDNullableAsync(anything())).thenResolve(result(rejection));
+      const entityLoader = instance(entityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
+      await expect(enforcingEntityLoader.loadByIDNullableAsync(anything())).rejects.toThrow(
+        rejection
+      );
+    });
+
+    it('returns value when result is successful', async () => {
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const resolved = {};
+      when(entityLoaderMock.loadByIDNullableAsync(anything())).thenResolve(result(resolved));
+      const entityLoader = instance(entityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
+      await expect(enforcingEntityLoader.loadByIDNullableAsync(anything())).resolves.toEqual(
+        resolved
+      );
+    });
+
+    it('returns null when non-existent object', async () => {
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const resolved = null;
+      when(entityLoaderMock.loadByIDNullableAsync(anything())).thenResolve(result(resolved));
+      const entityLoader = instance(entityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
+      await expect(enforcingEntityLoader.loadByIDNullableAsync(anything())).resolves.toEqual(
+        resolved
+      );
+    });
+  });
+
   describe('loadManyByIDsAsync', () => {
     it('throws when result is unsuccessful', async () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
@@ -241,5 +276,20 @@ describe(EnforcingEntityLoader, () => {
         enforcingEntityLoader.loadManyByRawWhereClauseAsync(anything(), anything(), anything())
       ).resolves.toEqual([resolved]);
     });
+  });
+
+  it('has the same method names as EntityLoader', () => {
+    const enforcingLoaderProperties = Object.getOwnPropertyNames(EnforcingEntityLoader.prototype);
+    const loaderProperties = Object.getOwnPropertyNames(EntityLoader.prototype);
+
+    // ensure known differences still exist for sanity check
+    const knownLoaderOnlyDifferences = ['enforcing', 'invalidateFieldsAsync'];
+    expect(loaderProperties).toEqual(expect.arrayContaining(knownLoaderOnlyDifferences));
+
+    const loaderPropertiesWithoutKnownDifferences = loaderProperties.filter(
+      (p) => !knownLoaderOnlyDifferences.includes(p)
+    );
+
+    expect(enforcingLoaderProperties).toEqual(loaderPropertiesWithoutKnownDifferences);
   });
 });
