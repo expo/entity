@@ -67,6 +67,28 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A single unit of which declarative privacy policies are composed, allowing for simple
+						expression and testing of authorization logic.</p>
+					</div>
+					<dl class="tsd-comment-tags">
+						<dt>remarks</dt>
+						<dd><p>Each rule is responsible for returning a ruling of ALLOW, DENY, or SKIP for a condition
+								that it is checking for. While rules can return any of these, it is most common for
+								rules to return ALLOW or SKIP, explicitly authorizing or deferring authorization to the next
+							rule in the privacy policy. If all rules in the policy SKIP, the policy is denied.</p>
+							<p>Returning DENY from a rule is useful in a few notable cases:</p>
+							<ul>
+								<li>Preventing a CRUD action on an entity (<a href="_expo_entity.alwaysdenyprivacypolicyrule.html">AlwaysDenyPrivacyPolicyRule</a>)</li>
+								<li>Blocking. For example, a user blocks another user from seeing their posts, and the rule
+								would be named something like <code>DenyIfViewerHasBeenBlockedPrivacyPolicyRule</code>.</li>
+							</ul>
+						</dd>
+					</dl>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-type-parameters">
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
@@ -128,7 +150,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/c756803/packages/entity/src/rules/PrivacyPolicyRule.ts#L17">packages/entity/src/rules/PrivacyPolicyRule.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3bacecb/packages/entity/src/rules/PrivacyPolicyRule.ts#L44">packages/entity/src/rules/PrivacyPolicyRule.ts:44</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
