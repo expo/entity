@@ -3,6 +3,9 @@ import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
 import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
 
+/**
+ * Privacy policy rule that always denies.
+ */
 export default class AlwaysDenyPrivacyPolicyRule<
   TFields,
   TID,

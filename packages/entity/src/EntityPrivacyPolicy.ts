@@ -40,7 +40,7 @@ export enum EntityAuthorizationAction {
  *
  * @remarks
  *
- * A privacy policy declares lists of privacy rules for create, read, update, and delete actions
+ * A privacy policy declares lists of {@link PrivacyPolicyRule} for create, read, update, and delete actions
  * for an entity and provides logic for authorizing an entity against rules.
  *
  * Evaluation of a list of rules is performed according the following example. This allows constructing of
@@ -105,6 +105,7 @@ export default abstract class EntityPrivacyPolicy<
   /**
    * Authorize an entity against creation policy.
    * @param viewerContext - viewer context of user creating the entity
+   * @param queryContext - query context in which to perform the create authorization
    * @param entity - entity to authorize
    * @returns entity if authorized
    * @throws {@link EntityNotAuthorizedError} when not authorized
@@ -126,6 +127,7 @@ export default abstract class EntityPrivacyPolicy<
   /**
    * Authorize an entity against read policy.
    * @param viewerContext - viewer context of user reading the entity
+   * @param queryContext - query context in which to perform the read authorization
    * @param entity - entity to authorize
    * @returns entity if authorized
    * @throws {@link EntityNotAuthorizedError} when not authorized
@@ -147,6 +149,7 @@ export default abstract class EntityPrivacyPolicy<
   /**
    * Authorize an entity against update policy.
    * @param viewerContext - viewer context of user updating the entity
+   * @param queryContext - query context in which to perform the update authorization
    * @param entity - entity to authorize
    * @returns entity if authorized
    * @throws {@link EntityNotAuthorizedError} when not authorized
@@ -168,6 +171,7 @@ export default abstract class EntityPrivacyPolicy<
   /**
    * Authorize an entity against deletion policy.
    * @param viewerContext - viewer context of user deleting the entity
+   * @param queryContext - query context in which to perform the delete authorization
    * @param entity - entity to authorize
    * @returns entity if authorized
    * @throws {@link EntityNotAuthorizedError} when not authorized
