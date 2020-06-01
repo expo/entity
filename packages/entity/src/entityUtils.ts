@@ -1,5 +1,9 @@
 import { Result, Success, Failure } from '@expo/results';
 
+/**
+ * Enforce an array of results resolved from supplied promise.
+ * @param resultsPromise - promise returning an array of results to enforce
+ */
 export const enforceResultsAsync = async <T>(
   resultsPromise: Promise<readonly Result<T>[]>
 ): Promise<readonly T[]> => {
@@ -7,6 +11,10 @@ export const enforceResultsAsync = async <T>(
   return results.map((result) => result.enforceValue());
 };
 
+/**
+ * Filter out unsuccessful results.
+ * @param results - array of results to filter
+ */
 export const successfulResults = <T>(results: readonly Result<T>[]): readonly Success<T>[] => {
   const ret: Success<T>[] = [];
   for (const result of results) {
@@ -17,6 +25,10 @@ export const successfulResults = <T>(results: readonly Result<T>[]): readonly Su
   return ret;
 };
 
+/**
+ * Filter out successful results.
+ * @param results - array of results to filter
+ */
 export const failedResults = <T>(results: readonly Result<T>[]): readonly Failure<T>[] => {
   const ret: Failure<T>[] = [];
   for (const result of results) {
@@ -27,6 +39,10 @@ export const failedResults = <T>(results: readonly Result<T>[]): readonly Failur
   return ret;
 };
 
+/**
+ * Filter out failed results from a map with result values.
+ * @param results - map of results to filter.
+ */
 export const successfulResultsFilterMap = <K, T>(
   results: ReadonlyMap<K, Result<T>>
 ): ReadonlyMap<K, Success<T>> => {
@@ -39,6 +55,10 @@ export const successfulResultsFilterMap = <K, T>(
   return ret;
 };
 
+/**
+ * Filter out successful results from a map with result values.
+ * @param results - map of results to filter.
+ */
 export const failedResultsFilterMap = <K, T>(
   results: ReadonlyMap<K, Result<T>>
 ): ReadonlyMap<K, Failure<T>> => {
@@ -51,11 +71,15 @@ export const failedResultsFilterMap = <K, T>(
   return ret;
 };
 
-export const partitionErrors = <T>(valuesOrErrors: (T | Error)[]): [T[], Error[]] => {
+/**
+ * Partition array of values and errors into an array of values and an array of errors.
+ * @param valuesAndErrors - array of values and errors
+ */
+export const partitionErrors = <T>(valuesAndErrors: (T | Error)[]): [T[], Error[]] => {
   const values: T[] = [];
   const errors: Error[] = [];
 
-  for (const valueOrError of valuesOrErrors) {
+  for (const valueOrError of valuesAndErrors) {
     if (isError(valueOrError)) {
       errors.push(valueOrError);
     } else {
@@ -66,6 +90,6 @@ export const partitionErrors = <T>(valuesOrErrors: (T | Error)[]): [T[], Error[]
   return [values, errors];
 };
 
-export const isError = <T>(value: T | Error): value is Error => {
+const isError = <T>(value: T | Error): value is Error => {
   return value instanceof Error;
 };
