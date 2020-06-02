@@ -6,7 +6,7 @@ import { EntityQueryContext } from '../EntityQueryContext';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
 import SimpleTestEntity from '../testfixtures/SimpleTestEntity';
-import { createUnitTestEntityCompanionProvider } from '../testfixtures/createUnitTestEntityCompanionProvider';
+import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 describe(ReadonlyEntity, () => {
   describe('getID', () => {
