@@ -157,7 +157,7 @@ export default abstract class Entity<
    * @param existingEntity - entity loaded by viewer
    * @param queryContext - query context in which to perform the check
    */
-  static async canViewerUpdate<
+  static async canViewerUpdateAsync<
     TMFields,
     TMID,
     TMViewerContext extends ViewerContext,
@@ -192,7 +192,7 @@ export default abstract class Entity<
    * @param existingEntity - entity loaded by viewer
    * @param queryContext - query context in which to perform the check
    */
-  static async canViewerDelete<
+  static async canViewerDeleteAsync<
     TMFields,
     TMID,
     TMViewerContext extends ViewerContext,
