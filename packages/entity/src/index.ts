@@ -47,14 +47,8 @@ export { default as AlwaysSkipPrivacyPolicyRule } from './rules/AlwaysSkipPrivac
 export { default as PrivacyPolicyRule } from './rules/PrivacyPolicyRule';
 export * from './rules/PrivacyPolicyRule';
 export * from './testfixtures/PrivacyPolicyRuleTestUtils';
-export { default as SimpleTestEntity } from './testfixtures/SimpleTestEntity';
 export * from './testfixtures/StubCacheAdapter';
 export { default as StubDatabaseAdapter } from './testfixtures/StubDatabaseAdapter';
 export { default as StubQueryContextProvider } from './testfixtures/StubQueryContextProvider';
-export { default as TestEntity } from './testfixtures/TestEntity';
-export * from './testfixtures/TestEntity';
-export { default as TestEntity2 } from './testfixtures/TestEntity2';
-export * from './testfixtures/TestEntity2';
-export { default as TestViewerContext } from './testfixtures/TestViewerContext';
 export * from './testfixtures/createUnitTestEntityCompanionProvider';
 export * from './utils/collections/maps';

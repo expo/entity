@@ -78,6 +78,27 @@ export default abstract class ReadonlyEntity<TFields, TID, TViewerContext extend
   }
 
   /**
+   * Get the regular (non-transactional) query context for this entity.
+   * @param viewerContext - viewer context of calling user
+   */
+  static getRegularEntityQueryContext<
+    TMFields,
+    TMID,
+    TMViewerContext extends ViewerContext,
+    TMViewerContext2 extends TMViewerContext,
+    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity>
+  >(
+    this: IEntityClass<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy>,
+    viewerContext: TMViewerContext2
+  ): EntityQueryContext {
+    return viewerContext
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getRegularEntityQueryContext();
+  }
+
+  /**
    * Start a transaction and execute the provided transaction-scoped closure within the transaction.
    * @param viewerContext - viewer context of calling user
    * @param transactionScope - async callback to execute within the transaction

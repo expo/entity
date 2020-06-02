@@ -1,4 +1,4 @@
-import { Result } from '@expo/results';
+import { Result, asyncResult } from '@expo/results';
 
 import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import { CreateMutator, UpdateMutator } from './EntityMutator';
@@ -139,6 +139,83 @@ export default abstract class Entity<
       .getMutatorFactory()
       .forDelete(existingEntity, queryContext)
       .enforceDeleteAsync();
+  }
+
+  /**
+   * Check whether an entity loaded by a viewer can be updated by that same viewer.
+   *
+   * @remarks
+   *
+   * This may be useful in situations relying upon the thrown privacy policy thrown authorization error
+   * is insufficient for the task at hand. When dealing with purely a sequence of mutations it is easy
+   * to roll back all mutations given a single authorization error by wrapping them in a single transaction.
+   * When certain portions of a mutation cannot be rolled back transactionally (third pary calls,
+   * legacy code, etc), using this method can help decide whether the sequence of mutations will fail before
+   * attempting them. Note that if any privacy policy rules use a piece of data being updated in the mutations
+   * the result of this method and the update mutation itself may differ.
+   *
+   * @param existingEntity - entity loaded by viewer
+   * @param queryContext - query context in which to perform the check
+   */
+  static async canViewerUpdate<
+    TMFields,
+    TMID,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity>
+  >(
+    this: IEntityClass<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy>,
+    existingEntity: TMEntity,
+    queryContext: EntityQueryContext = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getRegularEntityQueryContext()
+  ): Promise<boolean> {
+    const privacyPolicy = new (this.getCompanionDefinition().privacyPolicyClass)();
+    const evaluationResult = await asyncResult(
+      privacyPolicy.authorizeUpdateAsync(
+        existingEntity.getViewerContext(),
+        queryContext,
+        existingEntity
+      )
+    );
+    return evaluationResult.ok;
+  }
+
+  /**
+   * Check whether an entity loaded by a viewer can be deleted by that same viewer.
+   *
+   * @remarks
+   * See remarks for canViewerUpdate.
+   *
+   * @param existingEntity - entity loaded by viewer
+   * @param queryContext - query context in which to perform the check
+   */
+  static async canViewerDelete<
+    TMFields,
+    TMID,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity>
+  >(
+    this: IEntityClass<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy>,
+    existingEntity: TMEntity,
+    queryContext: EntityQueryContext = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getRegularEntityQueryContext()
+  ): Promise<boolean> {
+    const privacyPolicy = new (this.getCompanionDefinition().privacyPolicyClass)();
+    const evaluationResult = await asyncResult(
+      privacyPolicy.authorizeDeleteAsync(
+        existingEntity.getViewerContext(),
+        queryContext,
+        existingEntity
+      )
+    );
+    return evaluationResult.ok;
   }
 }
 
