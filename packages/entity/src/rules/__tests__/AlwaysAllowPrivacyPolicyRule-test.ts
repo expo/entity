@@ -2,7 +2,7 @@ import { mock, instance, anything } from 'ts-mockito';
 
 import { EntityQueryContext } from '../../EntityQueryContext';
 import ViewerContext from '../../ViewerContext';
-import { describePrivacyPolicyRule } from '../../testfixtures/PrivacyPolicyRuleTestUtils';
+import { describePrivacyPolicyRule } from '../../utils/testing/PrivacyPolicyRuleTestUtils';
 import AlwaysAllowPrivacyPolicyRule from '../AlwaysAllowPrivacyPolicyRule';
 
 describePrivacyPolicyRule(new AlwaysAllowPrivacyPolicyRule(), {

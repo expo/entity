@@ -1,10 +1,10 @@
 import invariant from 'invariant';
 
-import EntityCacheAdapter from '../EntityCacheAdapter';
-import EntityConfiguration from '../EntityConfiguration';
-import IEntityCacheAdapterProvider from '../IEntityCacheAdapterProvider';
-import { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils';
-import { CacheStatus, CacheLoadResult } from '../internal/ReadThroughEntityCache';
+import EntityCacheAdapter from '../../EntityCacheAdapter';
+import EntityConfiguration from '../../EntityConfiguration';
+import IEntityCacheAdapterProvider from '../../IEntityCacheAdapterProvider';
+import { FieldTransformerMap } from '../../internal/EntityFieldTransformationUtils';
+import { CacheStatus, CacheLoadResult } from '../../internal/ReadThroughEntityCache';
 
 export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
   getCacheAdapter<TFields>(

@@ -25,14 +25,14 @@ import SimpleTestEntity, {
   SimpleTestEntityPrivacyPolicy,
   SimpleTestFields,
 } from '../testfixtures/SimpleTestEntity';
-import { NoCacheStubCacheAdapterProvider } from '../testfixtures/StubCacheAdapter';
-import StubDatabaseAdapter from '../testfixtures/StubDatabaseAdapter';
-import StubQueryContextProvider from '../testfixtures/StubQueryContextProvider';
 import TestEntity, {
   TestFields,
   TestEntityPrivacyPolicy,
   testEntityConfiguration,
 } from '../testfixtures/TestEntity';
+import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapter';
+import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
+import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider';
 
 const createEntityMutatorFactory = (
   existingObjects: TestFields[]

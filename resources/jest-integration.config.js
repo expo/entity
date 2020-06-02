@@ -1,6 +1,6 @@
 module.exports = {
   preset: 'ts-jest',
   testMatch: ['**/__integration-tests__/**/*-test.ts'],
-  coverageReporters: ['clover'],
+  coveragePathIgnorePatterns: ['testfixtures'],
   coverageDirectory: 'coverage-integration',
 };

@@ -2,8 +2,8 @@ import {
   EntityNonTransactionalQueryContext,
   EntityQueryContext,
   EntityTransactionalQueryContext,
-} from '../EntityQueryContext';
-import IEntityQueryContextProvider from '../IEntityQueryContextProvider';
+} from '../../EntityQueryContext';
+import IEntityQueryContextProvider from '../../IEntityQueryContextProvider';
 
 class StubQueryContextProvider implements IEntityQueryContextProvider {
   getRegularEntityQueryContext(): EntityQueryContext {

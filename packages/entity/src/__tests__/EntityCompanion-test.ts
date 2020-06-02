@@ -5,12 +5,12 @@ import EntityLoaderFactory from '../EntityLoaderFactory';
 import EntityMutatorFactory from '../EntityMutatorFactory';
 import IEntityQueryContextProvider from '../IEntityQueryContextProvider';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
-import { NoCacheStubCacheAdapterProvider } from '../testfixtures/StubCacheAdapter';
-import StubDatabaseAdapter from '../testfixtures/StubDatabaseAdapter';
 import TestEntity, {
   TestEntityPrivacyPolicy,
   testEntityConfiguration,
 } from '../testfixtures/TestEntity';
+import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapter';
+import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
 
 describe(EntityCompanion, () => {
   it('correctly instantiates mutator and loader factories', () => {

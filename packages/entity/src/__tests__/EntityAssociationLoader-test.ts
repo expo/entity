@@ -4,7 +4,7 @@ import EntityAssociationLoader from '../EntityAssociationLoader';
 import TestEntity from '../testfixtures/TestEntity';
 import TestEntity2 from '../testfixtures/TestEntity2';
 import TestViewerContext from '../testfixtures/TestViewerContext';
-import { createUnitTestEntityCompanionProvider } from '../testfixtures/createUnitTestEntityCompanionProvider';
+import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 describe(EntityAssociationLoader, () => {
   describe('loadAssociatedEntityAsync', () => {

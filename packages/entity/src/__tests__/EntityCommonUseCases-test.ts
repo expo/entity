@@ -16,7 +16,7 @@ import { enforceResultsAsync } from '../entityUtils';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
 import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
-import { createUnitTestEntityCompanionProvider } from '../testfixtures/createUnitTestEntityCompanionProvider';
+import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 class TestUserViewerContext extends ViewerContext {
   constructor(entityCompanionProvider: EntityCompanionProvider, private readonly userID: string) {

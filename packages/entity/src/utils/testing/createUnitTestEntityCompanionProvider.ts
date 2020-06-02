@@ -1,9 +1,9 @@
 import EntityCompanionProvider, {
   DatabaseAdapterFlavor,
   CacheAdapterFlavor,
-} from '../EntityCompanionProvider';
-import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
-import NoOpEntityMetricsAdapter from '../metrics/NoOpEntityMetricsAdapter';
+} from '../../EntityCompanionProvider';
+import IEntityMetricsAdapter from '../../metrics/IEntityMetricsAdapter';
+import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
 import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter';
 import StubDatabaseAdapter from './StubDatabaseAdapter';
 import StubQueryContextProvider from './StubQueryContextProvider';
