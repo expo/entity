@@ -35,7 +35,7 @@ describe(Entity, () => {
     });
   });
 
-  describe('canViewerUpdate', () => {
+  describe('canViewerUpdateAsync', () => {
     it('appropriately executes update privacy policy', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
@@ -43,7 +43,7 @@ describe(Entity, () => {
         id: 'what',
       };
       const testEntity = new SimpleTestDenyDeleteEntity(viewerContext, data);
-      const canViewerUpdate = await SimpleTestDenyDeleteEntity.canViewerUpdate(testEntity);
+      const canViewerUpdate = await SimpleTestDenyDeleteEntity.canViewerUpdateAsync(testEntity);
       expect(canViewerUpdate).toBe(true);
     });
 
@@ -54,12 +54,12 @@ describe(Entity, () => {
         id: 'what',
       };
       const testEntity = new SimpleTestDenyUpdateEntity(viewerContext, data);
-      const canViewerUpdate = await SimpleTestDenyUpdateEntity.canViewerUpdate(testEntity);
+      const canViewerUpdate = await SimpleTestDenyUpdateEntity.canViewerUpdateAsync(testEntity);
       expect(canViewerUpdate).toBe(false);
     });
   });
 
-  describe('canViewerDelete', () => {
+  describe('canViewerDeleteAsync', () => {
     it('appropriately executes update privacy policy', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
@@ -67,7 +67,7 @@ describe(Entity, () => {
         id: 'what',
       };
       const testEntity = new SimpleTestDenyUpdateEntity(viewerContext, data);
-      const canViewerDelete = await SimpleTestDenyUpdateEntity.canViewerDelete(testEntity);
+      const canViewerDelete = await SimpleTestDenyUpdateEntity.canViewerDeleteAsync(testEntity);
       expect(canViewerDelete).toBe(true);
     });
 
@@ -78,7 +78,7 @@ describe(Entity, () => {
         id: 'what',
       };
       const testEntity = new SimpleTestDenyDeleteEntity(viewerContext, data);
-      const canViewerDelete = await SimpleTestDenyDeleteEntity.canViewerDelete(testEntity);
+      const canViewerDelete = await SimpleTestDenyDeleteEntity.canViewerDeleteAsync(testEntity);
       expect(canViewerDelete).toBe(false);
     });
   });
