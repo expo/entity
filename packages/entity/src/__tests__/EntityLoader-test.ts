@@ -76,6 +76,9 @@ describe(EntityLoader, () => {
     await expect(entityLoader.loadByFieldEqualingAsync('stringField', 'huh')).rejects.toThrowError(
       'loadByFieldEqualing: Multiple entities of type TestEntity found for stringField=huh'
     );
+
+    await expect(entityLoader.loadByIDNullableAsync('fake')).resolves.toBeNull();
+    await expect(entityLoader.loadByIDNullableAsync('hello')).resolves.not.toBeNull();
   });
 
   it('loads entities with loadManyByFieldEqualityConjunction', async () => {
