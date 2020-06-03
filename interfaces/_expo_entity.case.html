@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>DatabaseAdapterFlavor | Entity</title>
+	<title>Case | Entity</title>
 	<meta name="description" content="Documentation for Entity">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,54 +57,87 @@
 					<a href="../modules/_expo_entity.html">@expo/entity</a>
 				</li>
 				<li>
-					<a href="_expo_entity.databaseadapterflavor.html">DatabaseAdapterFlavor</a>
+					<a href="_expo_entity.case.html">Case</a>
 				</li>
 			</ul>
-			<h1>Enumeration DatabaseAdapterFlavor</h1>
+			<h1>Interface Case&lt;TFields, TID, TViewerContext, TEntity&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Backing database and transaction type for an entity. The definitions and implementations
-						are provided by injection in the root EntityCompanionProvider to allow for mocking and sharing.</p>
-					</div>
-					<p>Note: this enum will likely be modified soon to be more flexible.</p>
-				</div>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>TFields</h4>
+					</li>
+					<li>
+						<h4>TID</h4>
+					</li>
+					<li>
+						<h4>TViewerContext<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.viewercontext.html" class="tsd-signature-type">ViewerContext</a></h4>
+					</li>
+					<li>
+						<h4>TEntity<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.readonlyentity.html" class="tsd-signature-type">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">Case</span>
+					</li>
+				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Enumeration members</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_expo_entity.databaseadapterflavor.html#postgres" class="tsd-kind-icon">POSTGRES</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.case.html#entity" class="tsd-kind-icon">entity</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.case.html#querycontext" class="tsd-kind-icon">query<wbr>Context</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.case.html#viewercontext" class="tsd-kind-icon">viewer<wbr>Context</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Enumeration members</h2>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="postgres" class="tsd-anchor"></a>
-					<h3>POSTGRES</h3>
-					<div class="tsd-signature tsd-kind-icon">POSTGRES<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;postgres&quot;</span></div>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="entity" class="tsd-anchor"></a>
+					<h3>entity</h3>
+					<div class="tsd-signature tsd-kind-icon">entity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TEntity</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/aefec72/packages/entity/src/EntityCompanionProvider.ts#L22">packages/entity/src/EntityCompanionProvider.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/aefec72/packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts#L14">packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts:14</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Knex postgres adapter, using postgres table and postgres transactions.</p>
-						</div>
-					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="querycontext" class="tsd-anchor"></a>
+					<h3>query<wbr>Context</h3>
+					<div class="tsd-signature tsd-kind-icon">query<wbr>Context<span class="tsd-signature-symbol">:</span> <a href="../classes/_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/aefec72/packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts#L13">packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts:13</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="viewercontext" class="tsd-anchor"></a>
+					<h3>viewer<wbr>Context</h3>
+					<div class="tsd-signature tsd-kind-icon">viewer<wbr>Context<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TViewerContext</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/aefec72/packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts#L12">packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts:12</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -129,11 +162,17 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-enum tsd-parent-kind-module">
-						<a href="_expo_entity.databaseadapterflavor.html" class="tsd-kind-icon">Database<wbr>Adapter<wbr>Flavor</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_expo_entity.case.html" class="tsd-kind-icon">Case</a>
 						<ul>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_expo_entity.databaseadapterflavor.html#postgres" class="tsd-kind-icon">POSTGRES</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_expo_entity.case.html#entity" class="tsd-kind-icon">entity</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_expo_entity.case.html#querycontext" class="tsd-kind-icon">query<wbr>Context</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_expo_entity.case.html#viewercontext" class="tsd-kind-icon">viewer<wbr>Context</a>
 							</li>
 						</ul>
 					</li>
@@ -158,6 +197,7 @@
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
