@@ -8,14 +8,14 @@ import { enforceResultsAsync } from '../entityUtils';
 import EntityDataManager from '../internal/EntityDataManager';
 import ReadThroughEntityCache from '../internal/ReadThroughEntityCache';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
-import { NoCacheStubCacheAdapterProvider } from '../testfixtures/StubCacheAdapter';
-import StubDatabaseAdapter from '../testfixtures/StubDatabaseAdapter';
-import StubQueryContextProvider from '../testfixtures/StubQueryContextProvider';
 import TestEntity, {
   TestFields,
   TestEntityPrivacyPolicy,
   testEntityConfiguration,
 } from '../testfixtures/TestEntity';
+import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapter';
+import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
+import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider';
 
 describe(EntityLoader, () => {
   it('loads entities', async () => {

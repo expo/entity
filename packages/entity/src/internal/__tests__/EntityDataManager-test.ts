@@ -14,13 +14,13 @@ import {
 import EntityDatabaseAdapter from '../../EntityDatabaseAdapter';
 import IEntityMetricsAdapter, { EntityMetricsLoadType } from '../../metrics/IEntityMetricsAdapter';
 import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
+import { testEntityConfiguration, TestFields } from '../../testfixtures/TestEntity';
 import {
   NoCacheStubCacheAdapterProvider,
   InMemoryFullCacheStubCacheAdapterProvider,
-} from '../../testfixtures/StubCacheAdapter';
-import StubDatabaseAdapter from '../../testfixtures/StubDatabaseAdapter';
-import StubQueryContextProvider from '../../testfixtures/StubQueryContextProvider';
-import { testEntityConfiguration, TestFields } from '../../testfixtures/TestEntity';
+} from '../../utils/testing/StubCacheAdapter';
+import StubDatabaseAdapter from '../../utils/testing/StubDatabaseAdapter';
+import StubQueryContextProvider from '../../utils/testing/StubQueryContextProvider';
 import EntityDataManager from '../EntityDataManager';
 import ReadThroughEntityCache from '../ReadThroughEntityCache';
 

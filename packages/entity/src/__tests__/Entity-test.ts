@@ -12,7 +12,7 @@ import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
 import SimpleTestEntity from '../testfixtures/SimpleTestEntity';
-import { createUnitTestEntityCompanionProvider } from '../testfixtures/createUnitTestEntityCompanionProvider';
+import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 describe(Entity, () => {
   describe('creator', () => {

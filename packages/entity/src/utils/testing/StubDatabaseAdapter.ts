@@ -1,18 +1,18 @@
 import invariant from 'invariant';
 import { v4 as uuidv4 } from 'uuid';
 
-import EntityConfiguration from '../EntityConfiguration';
+import EntityConfiguration from '../../EntityConfiguration';
 import EntityDatabaseAdapter, {
   TableFieldSingleValueEqualityCondition,
   TableFieldMultiValueEqualityCondition,
   TableQuerySelectionModifiers,
   OrderByOrdering,
-} from '../EntityDatabaseAdapter';
+} from '../../EntityDatabaseAdapter';
 import {
   getDatabaseFieldForEntityField,
   FieldTransformerMap,
   transformFieldsToDatabaseObject,
-} from '../internal/EntityFieldTransformationUtils';
+} from '../../internal/EntityFieldTransformationUtils';
 
 export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
   private objects: Readonly<{ [key: string]: any }>[];
@@ -172,11 +172,12 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
     _tableName: string,
     tableIdField: string,
     id: any
-  ): Promise<void> {
+  ): Promise<number> {
     const objectIndex = this.objects.findIndex((obj) => {
       return obj[tableIdField] === id;
     });
     invariant(objectIndex >= 0, 'should exist');
     this.objects.splice(objectIndex, 1);
+    return 1;
   }
 }

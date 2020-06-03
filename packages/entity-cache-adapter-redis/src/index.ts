@@ -6,6 +6,3 @@ export { default as RedisCacheAdapter } from './RedisCacheAdapter';
 export * from './RedisCacheAdapter';
 export { default as RedisCacheAdapterProvider } from './RedisCacheAdapterProvider';
 export * from './RedisCommon';
-export { default as RedisTestEntity } from './testfixtures/RedisTestEntity';
-export * from './testfixtures/RedisTestEntity';
-export * from './testfixtures/createRedisIntegrationTestEntityCompanionProvider';

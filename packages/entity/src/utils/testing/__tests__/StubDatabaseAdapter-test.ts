@@ -1,9 +1,9 @@
 import { instance, mock } from 'ts-mockito';
 
-import { OrderByOrdering } from '../../EntityDatabaseAdapter';
-import { EntityNonTransactionalQueryContext } from '../../EntityQueryContext';
-import StubDatabaseAdapter from '../../testfixtures/StubDatabaseAdapter';
-import { TestFields, testEntityConfiguration } from '../../testfixtures/TestEntity';
+import { OrderByOrdering } from '../../../EntityDatabaseAdapter';
+import { EntityNonTransactionalQueryContext } from '../../../EntityQueryContext';
+import { TestFields, testEntityConfiguration } from '../../../testfixtures/TestEntity';
+import StubDatabaseAdapter from '../StubDatabaseAdapter';
 
 describe(StubDatabaseAdapter, () => {
   describe('fetchManyWhereAsync', () => {

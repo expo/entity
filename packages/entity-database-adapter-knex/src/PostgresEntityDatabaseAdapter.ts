@@ -143,7 +143,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     tableName: string,
     tableIdField: string,
     id: any
-  ): Promise<void> {
-    await queryInterface.into(tableName).where(tableIdField, id).del();
+  ): Promise<number> {
+    return await queryInterface.into(tableName).where(tableIdField, id).del();
   }
 }

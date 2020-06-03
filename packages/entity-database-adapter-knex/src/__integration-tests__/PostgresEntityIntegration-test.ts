@@ -10,8 +10,6 @@ import Knex from 'knex';
 import PostgresTestEntity from '../testfixtures/PostgresTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
 
-class TestViewerContext extends ViewerContext {}
-
 describe('postgres entity integration', () => {
   let knexInstance: Knex;
 
@@ -38,9 +36,7 @@ describe('postgres entity integration', () => {
   });
 
   it('supports parallel partial updates', async () => {
-    const vc = new TestViewerContext(
-      createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-    );
+    const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     const entity = await enforceAsyncResult(
       PostgresTestEntity.creator(vc).setField('name', 'hello').createAsync()
     );
@@ -61,17 +57,13 @@ describe('postgres entity integration', () => {
 
   describe('empty creates and updates', () => {
     it('allows empty create', async () => {
-      const vc = new TestViewerContext(
-        createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-      );
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       const entity = await enforceAsyncResult(PostgresTestEntity.creator(vc).createAsync());
       expect(entity.getID()).toBeTruthy();
     });
 
     it('throws knex error upon empty update', async () => {
-      const vc = new TestViewerContext(
-        createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-      );
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       const entity = await enforceAsyncResult(
         PostgresTestEntity.creator(vc).setField('name', 'hello').createAsync()
       );
@@ -79,7 +71,7 @@ describe('postgres entity integration', () => {
     });
 
     it('throws error upon empty update for stub database adapter to match behavior', async () => {
-      const vc = new TestViewerContext(createUnitTestEntityCompanionProvider());
+      const vc = new ViewerContext(createUnitTestEntityCompanionProvider());
       const entity = await enforceAsyncResult(
         PostgresTestEntity.creator(vc).setField('name', 'hello').createAsync()
       );
@@ -88,9 +80,7 @@ describe('postgres entity integration', () => {
   });
 
   it('supports transactions', async () => {
-    const vc1 = new TestViewerContext(
-      createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-    );
+    const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
     // put one in the DB
     const firstEntity = await enforceAsyncResult(
@@ -120,9 +110,7 @@ describe('postgres entity integration', () => {
 
   describe('JSON fields', () => {
     it('supports both types of array fields', async () => {
-      const vc1 = new TestViewerContext(
-        createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-      );
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       const entity = await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
@@ -136,9 +124,7 @@ describe('postgres entity integration', () => {
     });
 
     it('supports object field', async () => {
-      const vc1 = new TestViewerContext(
-        createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-      );
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       const entity = await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
@@ -150,9 +136,7 @@ describe('postgres entity integration', () => {
     });
 
     it('supports MaybeJSONArray field', async () => {
-      const vc1 = new TestViewerContext(
-        createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-      );
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       const entity1 = await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
@@ -172,9 +156,7 @@ describe('postgres entity integration', () => {
 
   describe('conjunction field equality loading', () => {
     it('supports single fieldValue and multiple fieldValues', async () => {
-      const vc1 = new TestViewerContext(
-        createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-      );
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
@@ -224,9 +206,7 @@ describe('postgres entity integration', () => {
     });
 
     it('supports query modifiers', async () => {
-      const vc1 = new TestViewerContext(
-        createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-      );
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       await enforceAsyncResult(PostgresTestEntity.creator(vc1).setField('name', 'a').createAsync());
 
@@ -253,9 +233,7 @@ describe('postgres entity integration', () => {
 
   describe('raw where clause loading', () => {
     it('loads by raw where clause', async () => {
-      const vc1 = new TestViewerContext(
-        createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-      );
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
           .setField('name', 'hello')
@@ -272,9 +250,7 @@ describe('postgres entity integration', () => {
     });
 
     it('throws with invalid where clause', async () => {
-      const vc1 = new TestViewerContext(
-        createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-      );
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
           .setField('name', 'hello')
@@ -291,9 +267,7 @@ describe('postgres entity integration', () => {
     });
 
     it('supports query modifiers', async () => {
-      const vc1 = new TestViewerContext(
-        createKnexIntegrationTestEntityCompanionProvider(knexInstance)
-      );
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
