@@ -50,9 +50,10 @@ export enum EntityAuthorizationAction {
  *
  * ```
  * foreach rule in rules:
- *   authorized if rule allows
+ *   return authorized if rule allows
+ *   return not authorized if rule denies
  *   continue to next rule if rule skips
- *   not authorized if rule denies
+ * return not authorized if all rules skip
  * ```
  */
 export default abstract class EntityPrivacyPolicy<
