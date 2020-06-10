@@ -8,6 +8,7 @@ import EntityDatabaseAdapter, {
   TableQuerySelectionModifiers,
   OrderByOrdering,
 } from '../../EntityDatabaseAdapter';
+import { StringField, NumberField } from '../../EntityFields';
 import {
   getDatabaseFieldForEntityField,
   FieldTransformerMap,
@@ -127,6 +128,20 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
     throw new Error('Raw WHERE clauses not supported for StubDatabaseAdapter');
   }
 
+  private generateRandomID(): any {
+    const idSchemaField = this.entityConfiguration2.schema.get(this.entityConfiguration2.idField);
+    invariant(idSchemaField, `No schema field found for ${this.entityConfiguration2.idField}`);
+    if (idSchemaField instanceof StringField) {
+      return uuidv4();
+    } else if (idSchemaField instanceof NumberField) {
+      return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+    } else {
+      throw new Error(
+        `Unsupported ID type for StubDatabaseAdapter: ${idSchemaField.constructor.name}`
+      );
+    }
+  }
+
   protected async insertInternalAsync(
     _queryInterface: any,
     _tableName: string,
@@ -137,7 +152,7 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
       this.entityConfiguration2.idField
     );
     const objectToInsert = {
-      [idField]: uuidv4(),
+      [idField]: this.generateRandomID(),
       ...object,
     };
     this.objects.push(objectToInsert);
