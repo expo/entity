@@ -11,7 +11,7 @@ import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type NumberKeyFields = {
-  id: string;
+  id: number;
 };
 
 export const numberKeyEntityConfiguration = new EntityConfiguration<NumberKeyFields>({
@@ -26,28 +26,28 @@ export const numberKeyEntityConfiguration = new EntityConfiguration<NumberKeyFie
 
 export class NumberKeyPrivacyPolicy extends EntityPrivacyPolicy<
   NumberKeyFields,
-  string,
+  number,
   ViewerContext,
   NumberKeyEntity
 > {
   protected readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, string, ViewerContext, NumberKeyEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
   ];
   protected readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, string, ViewerContext, NumberKeyEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
   ];
   protected readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, string, ViewerContext, NumberKeyEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
   ];
   protected readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, string, ViewerContext, NumberKeyEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
   ];
 }
 
-export default class NumberKeyEntity extends Entity<NumberKeyFields, string, ViewerContext> {
+export default class NumberKeyEntity extends Entity<NumberKeyFields, number, ViewerContext> {
   static getCompanionDefinition(): EntityCompanionDefinition<
     NumberKeyFields,
-    string,
+    number,
     ViewerContext,
     NumberKeyEntity,
     NumberKeyPrivacyPolicy
