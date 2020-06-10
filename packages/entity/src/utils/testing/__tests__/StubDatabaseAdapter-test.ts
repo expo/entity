@@ -2,7 +2,19 @@ import { instance, mock } from 'ts-mockito';
 
 import { OrderByOrdering } from '../../../EntityDatabaseAdapter';
 import { EntityNonTransactionalQueryContext } from '../../../EntityQueryContext';
+import {
+  DateIDTestFields,
+  dateIDTestEntityConfiguration,
+} from '../../../testfixtures/DateIDTestEntity';
+import {
+  SimpleTestFields,
+  simpleTestEntityConfiguration,
+} from '../../../testfixtures/SimpleTestEntity';
 import { TestFields, testEntityConfiguration } from '../../../testfixtures/TestEntity';
+import {
+  NumberKeyFields,
+  numberKeyEntityConfiguration,
+} from '../../../testfixtures/TestEntityNumberKey';
 import StubDatabaseAdapter from '../StubDatabaseAdapter';
 
 describe(StubDatabaseAdapter, () => {
@@ -205,5 +217,25 @@ describe(StubDatabaseAdapter, () => {
 
       expect(databaseAdapter.getAllObjectsForTest()).toHaveLength(0);
     });
+  });
+
+  it('supports string and number IDs', async () => {
+    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const databaseAdapter1 = new StubDatabaseAdapter<SimpleTestFields>(
+      simpleTestEntityConfiguration
+    );
+    const insertedObject1 = await databaseAdapter1.insertAsync(queryContext, {});
+    expect(typeof insertedObject1.id).toBe('string');
+
+    const databaseAdapter2 = new StubDatabaseAdapter<NumberKeyFields>(numberKeyEntityConfiguration);
+    const insertedObject2 = await databaseAdapter2.insertAsync(queryContext, {});
+    expect(typeof insertedObject2.id).toBe('number');
+
+    const databaseAdapter3 = new StubDatabaseAdapter<DateIDTestFields>(
+      dateIDTestEntityConfiguration
+    );
+    await expect(databaseAdapter3.insertAsync(queryContext, {})).rejects.toThrowError(
+      'Unsupported ID type for StubDatabaseAdapter: DateField'
+    );
   });
 });
