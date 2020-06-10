@@ -80,10 +80,11 @@
 							complex yet testable permissioning logic for an entity.</p>
 						</dd>
 						<dt>example</dt>
-						<dd><pre><code>foreach <span class="hljs-keyword">rule</span> <span class="hljs-keyword">in</span> rules:
-  authorized if <span class="hljs-keyword">rule</span> allows
-  continue <span class="hljs-keyword">to</span> next <span class="hljs-keyword">rule</span> if <span class="hljs-keyword">rule</span> skips
-  not authorized if <span class="hljs-keyword">rule</span> denies</code></pre></dd>
+						<dd><pre><code>foreach rule <span class="hljs-keyword">in</span> rules:
+  <span class="hljs-keyword">return</span> authorized <span class="hljs-keyword">if</span> rule allows
+  <span class="hljs-keyword">return</span> not authorized <span class="hljs-keyword">if</span> rule denies
+  <span class="hljs-keyword">continue</span> to next rule <span class="hljs-keyword">if</span> rule skips
+<span class="hljs-keyword">return</span> not authorized <span class="hljs-keyword">if</span> all rules skip</code></pre></dd>
 					</dl>
 				</div>
 			</section>
@@ -148,7 +149,7 @@
 					<div class="tsd-signature tsd-kind-icon">create<wbr>Rules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L64">packages/entity/src/EntityPrivacyPolicy.ts:64</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L65">packages/entity/src/EntityPrivacyPolicy.ts:65</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -158,7 +159,7 @@
 					<div class="tsd-signature tsd-kind-icon">delete<wbr>Rules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L82">packages/entity/src/EntityPrivacyPolicy.ts:82</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L83">packages/entity/src/EntityPrivacyPolicy.ts:83</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -168,7 +169,7 @@
 					<div class="tsd-signature tsd-kind-icon">read<wbr>Rules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L70">packages/entity/src/EntityPrivacyPolicy.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L71">packages/entity/src/EntityPrivacyPolicy.ts:71</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -178,7 +179,7 @@
 					<div class="tsd-signature tsd-kind-icon">update<wbr>Rules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="_expo_entity.privacypolicyrule.html" class="tsd-signature-type">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L76">packages/entity/src/EntityPrivacyPolicy.ts:76</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L77">packages/entity/src/EntityPrivacyPolicy.ts:77</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -195,7 +196,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L113">packages/entity/src/EntityPrivacyPolicy.ts:113</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L114">packages/entity/src/EntityPrivacyPolicy.ts:114</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -244,7 +245,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L179">packages/entity/src/EntityPrivacyPolicy.ts:179</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L180">packages/entity/src/EntityPrivacyPolicy.ts:180</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -293,7 +294,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L193">packages/entity/src/EntityPrivacyPolicy.ts:193</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L194">packages/entity/src/EntityPrivacyPolicy.ts:194</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -328,7 +329,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L245">packages/entity/src/EntityPrivacyPolicy.ts:245</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L246">packages/entity/src/EntityPrivacyPolicy.ts:246</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -363,7 +364,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L135">packages/entity/src/EntityPrivacyPolicy.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L136">packages/entity/src/EntityPrivacyPolicy.ts:136</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -412,7 +413,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L157">packages/entity/src/EntityPrivacyPolicy.ts:157</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L158">packages/entity/src/EntityPrivacyPolicy.ts:158</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -461,7 +462,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d25c1e1/packages/entity/src/EntityPrivacyPolicy.ts#L97">packages/entity/src/EntityPrivacyPolicy.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/0445d3e/packages/entity/src/EntityPrivacyPolicy.ts#L98">packages/entity/src/EntityPrivacyPolicy.ts:98</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
