@@ -10,14 +10,14 @@ import TestEntity, {
   testEntityConfiguration,
 } from '../testfixtures/TestEntity';
 import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapter';
-import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
+import StubDatabaseAdapterProvider from '../utils/testing/StubDatabaseAdapterProvider';
 
 describe(EntityCompanion, () => {
   it('correctly instantiates mutator and loader factories', () => {
     const companion = new EntityCompanion(
       TestEntity,
       testEntityConfiguration,
-      StubDatabaseAdapter,
+      new StubDatabaseAdapterProvider(),
       new NoCacheStubCacheAdapterProvider(),
       TestEntityPrivacyPolicy,
       instance(mock<IEntityQueryContextProvider>()),

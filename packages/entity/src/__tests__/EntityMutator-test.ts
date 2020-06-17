@@ -57,7 +57,10 @@ const createEntityMutatorFactory = (
   const privacyPolicy = new TestEntityPrivacyPolicy();
   const databaseAdapter = new StubDatabaseAdapter<TestFields>(
     testEntityConfiguration,
-    existingObjects
+    StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      new Map([[testEntityConfiguration.tableName, existingObjects]])
+    )
   );
   const metricsAdapter = new NoOpEntityMetricsAdapter();
   const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();

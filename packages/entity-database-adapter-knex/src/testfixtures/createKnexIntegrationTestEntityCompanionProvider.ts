@@ -8,7 +8,7 @@ import {
 } from '@expo/entity';
 import Knex from 'knex';
 
-import PostgresEntityDatabaseAdapter from '../PostgresEntityDatabaseAdapter';
+import PostgresEntityDatabaseAdapterProvider from '../PostgresEntityDatabaseAdapterProvider';
 import PostgresEntityQueryContextProvider from '../PostgresEntityQueryContextProvider';
 
 export const createKnexIntegrationTestEntityCompanionProvider = (
@@ -19,7 +19,7 @@ export const createKnexIntegrationTestEntityCompanionProvider = (
     metricsAdapter,
     {
       [DatabaseAdapterFlavor.POSTGRES]: {
-        adapter: PostgresEntityDatabaseAdapter,
+        adapterProvider: new PostgresEntityDatabaseAdapterProvider(),
         queryContextProvider: new PostgresEntityQueryContextProvider(knex),
       },
     },

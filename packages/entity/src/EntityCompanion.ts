@@ -6,16 +6,13 @@ import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityMutatorFactory from './EntityMutatorFactory';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import IEntityCacheAdapterProvider from './IEntityCacheAdapterProvider';
+import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
 import IEntityQueryContextProvider from './IEntityQueryContextProvider';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import EntityDataManager from './internal/EntityDataManager';
 import ReadThroughEntityCache from './internal/ReadThroughEntityCache';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
-
-export interface IDatabaseAdapterClass<TFields> {
-  new (entityConfiguration: EntityConfiguration<TFields>): EntityDatabaseAdapter<TFields>;
-}
 
 export interface IPrivacyPolicyClass<TPrivacyPolicy> {
   new (): TPrivacyPolicy;
@@ -53,14 +50,14 @@ export default class EntityCompanion<
   constructor(
     entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>,
     entityConfiguration: EntityConfiguration<TFields>,
-    DatabaseAdapterClass: IDatabaseAdapterClass<TFields>,
+    databaseAdapterProvider: IEntityDatabaseAdapterProvider,
     cacheAdapterProvider: IEntityCacheAdapterProvider,
     PrivacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>,
     private readonly queryContextProvider: IEntityQueryContextProvider,
 
     metricsAdapter: IEntityMetricsAdapter
   ) {
-    this.databaseAdapter = new DatabaseAdapterClass(entityConfiguration);
+    this.databaseAdapter = databaseAdapterProvider.getDatabaseAdapter(entityConfiguration);
     this.cacheAdapter = cacheAdapterProvider.getCacheAdapter(entityConfiguration);
     const dataManager = new EntityDataManager(
       this.databaseAdapter,
