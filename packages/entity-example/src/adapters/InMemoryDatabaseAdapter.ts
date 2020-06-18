@@ -7,17 +7,26 @@ import {
   TableQuerySelectionModifiers,
   getDatabaseFieldForEntityField,
   EntityConfiguration,
+  IEntityDatabaseAdapterProvider,
 } from '@expo/entity';
 import invariant from 'invariant';
 import { v4 as uuidv4 } from 'uuid';
 
 const dbObjects: Readonly<{ [key: string]: any }>[] = [];
 
+export class InMemoryDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
+  getDatabaseAdapter<TFields>(
+    entityConfiguration: EntityConfiguration<TFields>
+  ): EntityDatabaseAdapter<TFields> {
+    return new InMemoryDatabaseAdapter(entityConfiguration);
+  }
+}
+
 /**
  * In-memory database adapter for entity for the purposes of this example. Normally `@expo/entity-database-adapter-knex`
  * or another production adapter would be used. Very similar to StubDatabaseAdapter but shared in a way more akin to a normal database.
  */
-export default class InMemoryDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
+class InMemoryDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
   protected getFieldTransformerMap(): FieldTransformerMap {
     return new Map();
   }

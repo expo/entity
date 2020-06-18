@@ -4,8 +4,8 @@ import {
   EntityCompanionProvider,
   CacheAdapterFlavor,
   DatabaseAdapterFlavor,
-  StubDatabaseAdapter,
   StubQueryContextProvider,
+  StubDatabaseAdapterProvider,
 } from '@expo/entity';
 
 import { RedisCacheAdapterContext } from '../RedisCacheAdapter';
@@ -19,7 +19,7 @@ export const createRedisIntegrationTestEntityCompanionProvider = (
     metricsAdapter,
     {
       [DatabaseAdapterFlavor.POSTGRES]: {
-        adapter: StubDatabaseAdapter,
+        adapterProvider: new StubDatabaseAdapterProvider(),
         queryContextProvider: StubQueryContextProvider,
       },
     },

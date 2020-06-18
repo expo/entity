@@ -14,22 +14,29 @@ import {
   FieldTransformerMap,
   transformFieldsToDatabaseObject,
 } from '../../internal/EntityFieldTransformationUtils';
+import { computeIfAbsent, mapMap } from '../collections/maps';
 
 export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
-  private objects: Readonly<{ [key: string]: any }>[];
-
   constructor(
     private readonly entityConfiguration2: EntityConfiguration<T>,
-    prepopulatedObjects: Readonly<T>[] = []
+    private readonly dataStore: Map<string, Readonly<{ [key: string]: any }>[]>
   ) {
     super(entityConfiguration2);
-    this.objects = prepopulatedObjects.map((o) =>
-      transformFieldsToDatabaseObject(entityConfiguration2, this.getFieldTransformerMap(), o)
+  }
+
+  public static convertFieldObjectsToDataStore<T>(
+    entityConfiguration: EntityConfiguration<T>,
+    dataStore: Map<string, Readonly<T>[]>
+  ): Map<string, Readonly<{ [key: string]: any }>[]> {
+    return mapMap(dataStore, (objectsForTable) =>
+      objectsForTable.map((objectForTable) =>
+        transformFieldsToDatabaseObject(entityConfiguration, new Map(), objectForTable)
+      )
     );
   }
 
-  public getAllObjectsForTest(): Readonly<object>[] {
-    return this.objects;
+  public getObjectCollectionForTable(tableName: string): { [key: string]: any }[] {
+    return computeIfAbsent(this.dataStore, tableName, () => []);
   }
 
   protected getFieldTransformerMap(): FieldTransformerMap {
@@ -38,13 +45,14 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
 
   protected async fetchManyWhereInternalAsync(
     _queryInterface: any,
-    _tableName: string,
+    tableName: string,
     tableField: string,
     tableValues: readonly any[]
   ): Promise<object[]> {
+    const objectCollection = this.getObjectCollectionForTable(tableName);
     return tableValues.reduce((acc, fieldValue) => {
       return acc.concat(
-        this.objects.filter((obj) => {
+        objectCollection.filter((obj) => {
           return obj[tableField] === fieldValue;
         })
       );
@@ -84,12 +92,12 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
 
   protected async fetchManyByFieldEqualityConjunctionInternalAsync(
     _queryInterface: any,
-    _tableName: string,
+    tableName: string,
     tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
     tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
     querySelectionModifiers: TableQuerySelectionModifiers
   ): Promise<object[]> {
-    let filteredObjects = this.objects;
+    let filteredObjects = this.getObjectCollectionForTable(tableName);
     for (const { tableField, tableValue } of tableFieldSingleValueEqualityOperands) {
       filteredObjects = filteredObjects.filter((obj) => obj[tableField] === tableValue);
     }
@@ -144,9 +152,11 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
 
   protected async insertInternalAsync(
     _queryInterface: any,
-    _tableName: string,
+    tableName: string,
     object: object
   ): Promise<object[]> {
+    const objectCollection = this.getObjectCollectionForTable(tableName);
+
     const idField = getDatabaseFieldForEntityField(
       this.entityConfiguration2,
       this.entityConfiguration2.idField
@@ -155,13 +165,13 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
       [idField]: this.generateRandomID(),
       ...object,
     };
-    this.objects.push(objectToInsert);
+    objectCollection.push(objectToInsert);
     return [objectToInsert];
   }
 
   protected async updateInternalAsync(
     _queryInterface: any,
-    _tableName: string,
+    tableName: string,
     tableIdField: string,
     id: any,
     object: object
@@ -171,28 +181,32 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
       throw new Error(`Empty update (${tableIdField} = ${id})`);
     }
 
-    const objectIndex = this.objects.findIndex((obj) => {
+    const objectCollection = this.getObjectCollectionForTable(tableName);
+
+    const objectIndex = objectCollection.findIndex((obj) => {
       return obj[tableIdField] === id;
     });
     invariant(objectIndex >= 0, 'should exist');
-    this.objects[objectIndex] = {
-      ...this.objects[objectIndex],
+    objectCollection[objectIndex] = {
+      ...objectCollection[objectIndex],
       ...object,
     };
-    return [this.objects[objectIndex]];
+    return [objectCollection[objectIndex]];
   }
 
   protected async deleteInternalAsync(
     _queryInterface: any,
-    _tableName: string,
+    tableName: string,
     tableIdField: string,
     id: any
   ): Promise<number> {
-    const objectIndex = this.objects.findIndex((obj) => {
+    const objectCollection = this.getObjectCollectionForTable(tableName);
+
+    const objectIndex = objectCollection.findIndex((obj) => {
       return obj[tableIdField] === id;
     });
     invariant(objectIndex >= 0, 'should exist');
-    this.objects.splice(objectIndex, 1);
+    objectCollection.splice(objectIndex, 1);
     return 1;
   }
 }

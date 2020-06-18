@@ -5,7 +5,7 @@ import EntityCompanionProvider, {
 import IEntityMetricsAdapter from '../../metrics/IEntityMetricsAdapter';
 import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
 import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter';
-import StubDatabaseAdapter from './StubDatabaseAdapter';
+import StubDatabaseAdapterProvider from './StubDatabaseAdapterProvider';
 import StubQueryContextProvider from './StubQueryContextProvider';
 
 /**
@@ -19,7 +19,7 @@ export const createUnitTestEntityCompanionProvider = (
     metricsAdapter,
     {
       [DatabaseAdapterFlavor.POSTGRES]: {
-        adapter: StubDatabaseAdapter,
+        adapterProvider: new StubDatabaseAdapterProvider(),
         queryContextProvider: StubQueryContextProvider,
       },
     },

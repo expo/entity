@@ -23,22 +23,33 @@ describe(EntityLoader, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = instance(mock(EntityNonTransactionalQueryContext));
 
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, [
-      {
-        customIdField: 'hello',
-        testIndexedField: 'h1',
-        numberField: 5,
-        stringField: 'huh',
-        dateField: dateToInsert,
-      },
-      {
-        customIdField: 'world',
-        testIndexedField: 'h2',
-        numberField: 3,
-        stringField: 'huh',
-        dateField: dateToInsert,
-      },
-    ]);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      testEntityConfiguration,
+      StubDatabaseAdapter.convertFieldObjectsToDataStore(
+        testEntityConfiguration,
+        new Map([
+          [
+            testEntityConfiguration.tableName,
+            [
+              {
+                customIdField: 'hello',
+                testIndexedField: 'h1',
+                numberField: 5,
+                stringField: 'huh',
+                dateField: dateToInsert,
+              },
+              {
+                customIdField: 'world',
+                testIndexedField: 'h2',
+                numberField: 3,
+                stringField: 'huh',
+                dateField: dateToInsert,
+              },
+            ],
+          ],
+        ])
+      )
+    );
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
@@ -87,29 +98,40 @@ describe(EntityLoader, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = instance(mock(EntityNonTransactionalQueryContext));
 
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, [
-      {
-        customIdField: 'hello',
-        stringField: 'huh',
-        numberField: 4,
-        testIndexedField: '4',
-        dateField: new Date(),
-      },
-      {
-        customIdField: 'world',
-        stringField: 'huh',
-        numberField: 4,
-        testIndexedField: '5',
-        dateField: new Date(),
-      },
-      {
-        customIdField: 'blah',
-        stringField: 'huh2',
-        numberField: 4,
-        testIndexedField: '6',
-        dateField: new Date(),
-      },
-    ]);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      testEntityConfiguration,
+      StubDatabaseAdapter.convertFieldObjectsToDataStore(
+        testEntityConfiguration,
+        new Map([
+          [
+            testEntityConfiguration.tableName,
+            [
+              {
+                customIdField: 'hello',
+                stringField: 'huh',
+                numberField: 4,
+                testIndexedField: '4',
+                dateField: new Date(),
+              },
+              {
+                customIdField: 'world',
+                stringField: 'huh',
+                numberField: 4,
+                testIndexedField: '5',
+                dateField: new Date(),
+              },
+              {
+                customIdField: 'blah',
+                stringField: 'huh2',
+                numberField: 4,
+                testIndexedField: '6',
+                dateField: new Date(),
+              },
+            ],
+          ],
+        ])
+      )
+    );
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -152,15 +174,26 @@ describe(EntityLoader, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = instance(mock(EntityNonTransactionalQueryContext));
 
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, [
-      {
-        customIdField: 'hello',
-        stringField: 'huh',
-        testIndexedField: '1',
-        numberField: 3,
-        dateField: new Date(),
-      },
-    ]);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      testEntityConfiguration,
+      StubDatabaseAdapter.convertFieldObjectsToDataStore(
+        testEntityConfiguration,
+        new Map([
+          [
+            testEntityConfiguration.tableName,
+            [
+              {
+                customIdField: 'hello',
+                stringField: 'huh',
+                testIndexedField: '1',
+                numberField: 3,
+                dateField: new Date(),
+              },
+            ],
+          ],
+        ])
+      )
+    );
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);

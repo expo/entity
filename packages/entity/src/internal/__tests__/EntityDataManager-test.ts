@@ -24,33 +24,44 @@ import StubQueryContextProvider from '../../utils/testing/StubQueryContextProvid
 import EntityDataManager from '../EntityDataManager';
 import ReadThroughEntityCache from '../ReadThroughEntityCache';
 
-const objects: TestFields[] = [
-  {
-    customIdField: '1',
-    testIndexedField: 'unique1',
-    stringField: 'hello',
-    numberField: 1,
-    dateField: new Date(),
-  },
-  {
-    customIdField: '2',
-    testIndexedField: 'unique2',
-    stringField: 'hello',
-    numberField: 1,
-    dateField: new Date(),
-  },
-  {
-    customIdField: '3',
-    testIndexedField: 'unique3',
-    stringField: 'world',
-    numberField: 1,
-    dateField: new Date(),
-  },
-];
+const getObjects = (): Map<string, TestFields[]> =>
+  new Map([
+    [
+      testEntityConfiguration.tableName,
+      [
+        {
+          customIdField: '1',
+          testIndexedField: 'unique1',
+          stringField: 'hello',
+          numberField: 1,
+          dateField: new Date(),
+        },
+        {
+          customIdField: '2',
+          testIndexedField: 'unique2',
+          stringField: 'hello',
+          numberField: 1,
+          dateField: new Date(),
+        },
+        {
+          customIdField: '3',
+          testIndexedField: 'unique3',
+          stringField: 'world',
+          numberField: 1,
+          dateField: new Date(),
+        },
+      ],
+    ],
+  ]);
 
 describe(EntityDataManager, () => {
   it('loads from db with a no-cache adapter', async () => {
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -92,7 +103,12 @@ describe(EntityDataManager, () => {
   });
 
   it('loads from a caching adaptor', async () => {
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -134,7 +150,12 @@ describe(EntityDataManager, () => {
   });
 
   it('loads from a caching adapter with a cache hit', async () => {
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -171,7 +192,12 @@ describe(EntityDataManager, () => {
   });
 
   it('loads from data loader for same query', async () => {
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -201,7 +227,12 @@ describe(EntityDataManager, () => {
   });
 
   it('loads and in-memory caches (dataloader) non-unique, non-cacheable loads', async () => {
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -239,7 +270,12 @@ describe(EntityDataManager, () => {
   });
 
   it('invalidates objects', async () => {
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -251,7 +287,7 @@ describe(EntityDataManager, () => {
     );
     const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
 
-    const objectInQuestion = objects[1];
+    const objectInQuestion = objects.get(testEntityConfiguration.tableName)![1];
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
@@ -272,7 +308,12 @@ describe(EntityDataManager, () => {
   });
 
   it('invalidates all fields for an object', async () => {
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -284,7 +325,7 @@ describe(EntityDataManager, () => {
     );
     const queryContext = StubQueryContextProvider.getRegularEntityQueryContext();
 
-    const objectInQuestion = objects[1];
+    const objectInQuestion = objects.get(testEntityConfiguration.tableName)![1];
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
@@ -305,7 +346,12 @@ describe(EntityDataManager, () => {
   });
 
   it('loads only from DB when in transaction', async () => {
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -337,7 +383,12 @@ describe(EntityDataManager, () => {
   });
 
   it('loads by field equality conjunction and does not cache', async () => {
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -403,7 +454,12 @@ describe(EntityDataManager, () => {
     const metricsAdapterMock = mock<IEntityMetricsAdapter>();
     const metricsAdapter = instance(metricsAdapterMock);
 
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, objects);
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);

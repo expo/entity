@@ -7,7 +7,7 @@ import {
   DatabaseAdapterFlavor,
 } from '@expo/entity';
 
-import InMemoryDatabaseAdapter from './adapters/InMemoryDatabaseAdapter';
+import { InMemoryDatabaseAdapterProvider } from './adapters/InMemoryDatabaseAdapter';
 import InMemoryQueryContextProvider from './adapters/InMemoryQueryContextProvider';
 
 /**
@@ -25,7 +25,7 @@ export const createEntityCompanionProvider = (
       // An in-memory DB is used for demonstration purposes, but generally this would be
       // instantiated with PostgresEntityDatabaseAdapter and PostgresEntityQueryContextProvider
       [DatabaseAdapterFlavor.POSTGRES]: {
-        adapter: InMemoryDatabaseAdapter,
+        adapterProvider: new InMemoryDatabaseAdapterProvider(),
         queryContextProvider: new InMemoryQueryContextProvider(),
       },
     },

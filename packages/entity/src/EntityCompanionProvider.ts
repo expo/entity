@@ -1,8 +1,9 @@
 import { IEntityClass } from './Entity';
-import EntityCompanion, { IDatabaseAdapterClass, IPrivacyPolicyClass } from './EntityCompanion';
+import EntityCompanion, { IPrivacyPolicyClass } from './EntityCompanion';
 import EntityConfiguration from './EntityConfiguration';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import IEntityCacheAdapterProvider from './IEntityCacheAdapterProvider';
+import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
 import IEntityQueryContextProvider from './IEntityQueryContextProvider';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -37,8 +38,8 @@ export enum CacheAdapterFlavor {
  * will use the specified adapter for database accesses and the specified query context provider
  * for providing query contexts.
  */
-export interface DatabaseAdapterFlavorDefinition<TFields> {
-  adapter: IDatabaseAdapterClass<TFields>;
+export interface DatabaseAdapterFlavorDefinition {
+  adapterProvider: IEntityDatabaseAdapterProvider;
   queryContextProvider: IEntityQueryContextProvider;
 }
 
@@ -91,10 +92,7 @@ export default class EntityCompanionProvider {
    */
   constructor(
     private metricsAdapter: IEntityMetricsAdapter,
-    private databaseAdapterFlavors: Record<
-      DatabaseAdapterFlavor,
-      DatabaseAdapterFlavorDefinition<any>
-    >,
+    private databaseAdapterFlavors: Record<DatabaseAdapterFlavor, DatabaseAdapterFlavorDefinition>,
     private cacheAdapterFlavors: Record<CacheAdapterFlavor, CacheAdapterFlavorDefinition>
   ) {}
 
@@ -131,7 +129,7 @@ export default class EntityCompanionProvider {
       return new EntityCompanion(
         entityCompanionDefinition.entityClass,
         entityCompanionDefinition.entityConfiguration,
-        entityDatabaseAdapterFlavor.adapter,
+        entityDatabaseAdapterFlavor.adapterProvider,
         entityCacheAdapterFlavor.cacheAdapterProvider,
         entityCompanionDefinition.privacyPolicyClass,
         entityDatabaseAdapterFlavor.queryContextProvider,

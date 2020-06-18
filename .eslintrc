@@ -8,7 +8,7 @@
     "eslint-plugin-tsdoc"
   ],
   "rules": {
-    "no-restricted-imports": ["error",{ "paths": [".", ".."] }],
+    "no-restricted-imports": ["error",{ "paths": [".", "..", "../.."] }],
     "tsdoc/syntax": "warn"
   },
   "overrides": [
