@@ -38,7 +38,7 @@ export const transformDatabaseObjectToFields = <TFields>(
     const val = databaseObject[k];
     const fieldsKey = entityConfiguration.dbToEntityFieldsKeyMapping.get(k);
     if (fieldsKey) {
-      fields[fieldsKey] = maybeTransformDatabaseValueToFieldValue(
+      fields[fieldsKey] = transformDatabaseValueToFieldValue(
         entityConfiguration,
         fieldTransformerMap,
         fieldsKey,
@@ -105,7 +105,7 @@ export const transformFieldsToCacheObject = <TFields>(
   return cacheObject;
 };
 
-const maybeTransformDatabaseValueToFieldValue = <TFields, N extends keyof TFields>(
+const transformDatabaseValueToFieldValue = <TFields, N extends keyof TFields>(
   entityConfiguration: EntityConfiguration<TFields>,
   fieldTransformerMap: FieldTransformerMap,
   fieldName: N,
@@ -167,4 +167,18 @@ const maybeTransformFieldValueToCacheValue = <TFields, N extends keyof TFields>(
   const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
   const writeTransformer = transformer?.write;
   return writeTransformer ? writeTransformer(value) : value;
+};
+
+export const validateFieldsForRead = <TFields>(
+  entityConfiguration: EntityConfiguration<TFields>,
+  fields: Readonly<TFields>
+): boolean => {
+  return Object.entries(fields).every(([fieldName, fieldValue]) => {
+    const fieldDefinition = entityConfiguration.schema.get(fieldName as any);
+    if (!fieldDefinition) {
+      return true;
+    }
+    const readValidator = fieldDefinition.validator.read;
+    return readValidator ? readValidator(fieldValue) : true;
+  });
 };

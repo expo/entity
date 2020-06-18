@@ -14,7 +14,7 @@ export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvi
   }
 }
 
-class NoCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+export class NoCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
   public getFieldTransformerMap(): FieldTransformerMap {
     return new Map();
   }
@@ -48,15 +48,22 @@ class NoCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
 }
 
 export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
+  cache: Map<string, Readonly<object>> = new Map();
+
   getCacheAdapter<TFields>(
     entityConfiguration: EntityConfiguration<TFields>
   ): EntityCacheAdapter<TFields> {
-    return new InMemoryFullCacheStubCacheAdapter(entityConfiguration);
+    return new InMemoryFullCacheStubCacheAdapter(entityConfiguration, this.cache);
   }
 }
 
-class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
-  cache: Map<string, Readonly<object>> = new Map();
+export class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+  constructor(
+    entityConfiguration: EntityConfiguration<TFields>,
+    readonly cache: Map<string, Readonly<object>>
+  ) {
+    super(entityConfiguration);
+  }
 
   public getFieldTransformerMap(): FieldTransformerMap {
     return new Map();
@@ -102,7 +109,7 @@ class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFie
 
   public async invalidateManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly TFields[N][]
+    fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<void> {
     fieldValues.forEach((fieldValue) => {
       const cacheKey = this.createCacheKey(fieldName, fieldValue);
@@ -110,7 +117,10 @@ class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFie
     });
   }
 
-  private createCacheKey<N extends keyof TFields>(fieldName: N, fieldValue: TFields[N]): string {
-    return `${fieldName}:::${fieldValue}`;
+  private createCacheKey<N extends keyof TFields>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>
+  ): string {
+    return this.getCacheKeyParts(fieldName, fieldValue).join(':');
   }
 }

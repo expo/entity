@@ -5,6 +5,7 @@ import {
   transformDatabaseObjectToFields,
   transformFieldsToDatabaseObject,
   FieldTransformerMap,
+  validateFieldsForRead,
 } from './internal/EntityFieldTransformationUtils';
 
 interface SingleValueFieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> {
@@ -114,9 +115,11 @@ export default abstract class EntityDatabaseAdapter<TFields> {
       fieldColumn,
       fieldValues
     );
-    const objects = results.map((result) =>
-      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result)
-    );
+    const objects = results
+      .map((result) =>
+        transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result)
+      )
+      .filter((result) => validateFieldsForRead(this.entityConfiguration, result));
 
     const objectMap = new Map();
     for (const fieldValue of fieldValues) {
@@ -176,9 +179,11 @@ export default abstract class EntityDatabaseAdapter<TFields> {
       this.convertToTableQueryModifiers(querySelectionModifiers)
     );
 
-    return results.map((result) =>
-      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result)
-    );
+    return results
+      .map((result) =>
+        transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result)
+      )
+      .filter((result) => validateFieldsForRead(this.entityConfiguration, result));
   }
 
   protected abstract fetchManyByFieldEqualityConjunctionInternalAsync(
@@ -212,9 +217,11 @@ export default abstract class EntityDatabaseAdapter<TFields> {
       this.convertToTableQueryModifiers(querySelectionModifiers)
     );
 
-    return results.map((result) =>
-      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result)
-    );
+    return results
+      .map((result) =>
+        transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result)
+      )
+      .filter((result) => validateFieldsForRead(this.entityConfiguration, result));
   }
 
   protected abstract fetchManyByRawWhereClauseInternalAsync(

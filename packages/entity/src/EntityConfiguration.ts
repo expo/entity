@@ -10,8 +10,9 @@ export default class EntityConfiguration<TFields> {
   readonly tableName: string;
   readonly cacheableKeys: ReadonlySet<keyof TFields>;
   readonly cacheKeyVersion: number;
+  readonly cacheName: string;
 
-  readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition>;
+  readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>;
   readonly entityToDBFieldsKeyMapping: ReadonlyMap<keyof TFields, string>;
   readonly dbToEntityFieldsKeyMapping: ReadonlyMap<string, keyof TFields>;
 
@@ -20,15 +21,18 @@ export default class EntityConfiguration<TFields> {
     tableName,
     schema,
     cacheKeyVersion = 0,
+    cacheName = tableName,
   }: {
     idField: keyof TFields;
     tableName: string;
-    schema: Record<keyof TFields, EntityFieldDefinition>;
+    schema: Record<keyof TFields, EntityFieldDefinition<any>>;
     cacheKeyVersion?: number;
+    cacheName?: string;
   }) {
     this.idField = idField;
     this.tableName = tableName;
     this.cacheKeyVersion = cacheKeyVersion;
+    this.cacheName = cacheName;
 
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups
@@ -43,7 +47,7 @@ export default class EntityConfiguration<TFields> {
   }
 
   private static computeCacheableKeys<TFields>(
-    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition>
+    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>
   ): ReadonlySet<keyof TFields> {
     return reduceMap(
       schema,
@@ -58,7 +62,7 @@ export default class EntityConfiguration<TFields> {
   }
 
   private static computeEntityToDBFieldsKeyMapping<TFields>(
-    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition>
+    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>
   ): ReadonlyMap<keyof TFields, string> {
     return mapMap(schema, (v) => v.columnName);
   }

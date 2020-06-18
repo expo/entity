@@ -66,4 +66,34 @@ describe(EntityConfiguration, () => {
       expect(entityConfiguration.cacheKeyVersion).toEqual(100);
     });
   });
+
+  describe('cacheName', () => {
+    it('defaults to tableName', () => {
+      const entityConfiguration = new EntityConfiguration<Blah2T>({
+        idField: 'id',
+        tableName: 'blah',
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+          }),
+        },
+      });
+      expect(entityConfiguration.cacheName).toEqual('blah');
+    });
+
+    it('sets to custom version', () => {
+      const entityConfiguration = new EntityConfiguration<Blah2T>({
+        idField: 'id',
+        tableName: 'blah',
+        cacheName: 'hello',
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+          }),
+        },
+        cacheKeyVersion: 100,
+      });
+      expect(entityConfiguration.cacheName).toEqual('hello');
+    });
+  });
 });

@@ -7,7 +7,7 @@ import { CacheLoadResult } from './internal/ReadThroughEntityCache';
  * cached, fetched from cache, and removed from cache (invalidated).
  */
 export default abstract class EntityCacheAdapter<TFields> {
-  constructor(protected readonly entityConfiguration: EntityConfiguration<TFields>) {}
+  constructor(private readonly entityConfiguration: EntityConfiguration<TFields>) {}
 
   /**
    * Transformer definitions for field types. Used to modify values as they are read from or written to
@@ -15,6 +15,18 @@ export default abstract class EntityCacheAdapter<TFields> {
    * If a field type is not present in the map, then fields of that type will not be transformed.
    */
   public abstract getFieldTransformerMap(): FieldTransformerMap;
+
+  protected getCacheKeyParts<N extends keyof TFields>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>
+  ): string[] {
+    return [
+      this.entityConfiguration.cacheName,
+      `v${this.entityConfiguration.cacheKeyVersion}`,
+      fieldName as string,
+      String(fieldValue),
+    ];
+  }
 
   /**
    * Load many objects from cache.

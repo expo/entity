@@ -6,6 +6,7 @@ import {
   transformFieldsToDatabaseObject,
   transformCacheObjectToFields,
   transformFieldsToCacheObject,
+  validateFieldsForRead,
 } from '../EntityFieldTransformationUtils';
 
 type BlahT = {
@@ -14,6 +15,7 @@ type BlahT = {
   uniqueButNotCacheable: string;
   transformRead: string;
   transformWrite: string;
+  validateRead: string;
 };
 
 const blahEntityConfiguration = new EntityConfiguration<BlahT>({
@@ -35,6 +37,12 @@ const blahEntityConfiguration = new EntityConfiguration<BlahT>({
     }),
     transformWrite: new StringField({
       columnName: 'transform_write',
+    }),
+    validateRead: new StringField({
+      columnName: 'validate_read',
+      validator: {
+        read: (value) => value !== 'wat',
+      },
     }),
   },
 });
@@ -162,5 +170,31 @@ describe(transformFieldsToCacheObject, () => {
       id: 'hello',
       transformWrite: 'wat-write-transformed-cache',
     });
+  });
+});
+
+describe(validateFieldsForRead, () => {
+  it('validates read if validator is supplied', () => {
+    expect(
+      validateFieldsForRead(blahEntityConfiguration, {
+        id: 'wat',
+        validateRead: 'wat',
+        cacheable: '',
+        uniqueButNotCacheable: '',
+        transformRead: '',
+        transformWrite: '',
+      })
+    ).toBe(false);
+
+    expect(
+      validateFieldsForRead(blahEntityConfiguration, {
+        id: 'wat',
+        validateRead: 'who',
+        cacheable: '',
+        uniqueButNotCacheable: '',
+        transformRead: '',
+        transformWrite: '',
+      })
+    ).toBe(true);
   });
 });

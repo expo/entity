@@ -156,10 +156,7 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
   ): string {
     return this.context.makeKeyFn(
       this.context.cacheKeyPrefix,
-      this.entityConfiguration.tableName,
-      `v${this.entityConfiguration.cacheKeyVersion}`,
-      fieldName as string,
-      String(fieldValue)
+      ...this.getCacheKeyParts(fieldName, fieldValue)
     );
   }
 }

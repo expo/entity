@@ -1,9 +1,11 @@
 import { instance, mock } from 'ts-mockito';
 
+import EntityConfiguration from '../EntityConfiguration';
 import EntityDatabaseAdapter, {
   TableFieldSingleValueEqualityCondition,
   TableFieldMultiValueEqualityCondition,
 } from '../EntityDatabaseAdapter';
+import { UUIDField, StringField, NumberField, DateField } from '../EntityFields';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils';
 import { TestFields, testEntityConfiguration } from '../testfixtures/TestEntity';
@@ -16,22 +18,25 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
   private fetchRawWhereResults: object[];
   private deleteCount: number;
 
-  constructor({
-    fetchResults = [],
-    insertResults = [],
-    updateResults = [],
-    fetchEqualityConditionResults = [],
-    fetchRawWhereResults = [],
-    deleteCount = 0,
-  }: {
-    fetchResults?: object[];
-    insertResults?: object[];
-    updateResults?: object[];
-    fetchEqualityConditionResults?: object[];
-    fetchRawWhereResults?: object[];
-    deleteCount?: number;
-  }) {
-    super(testEntityConfiguration);
+  constructor(
+    {
+      fetchResults = [],
+      insertResults = [],
+      updateResults = [],
+      fetchEqualityConditionResults = [],
+      fetchRawWhereResults = [],
+      deleteCount = 0,
+    }: {
+      fetchResults?: object[];
+      insertResults?: object[];
+      updateResults?: object[];
+      fetchEqualityConditionResults?: object[];
+      fetchRawWhereResults?: object[];
+      deleteCount?: number;
+    },
+    entityConfiguration?: EntityConfiguration<TestFields>
+  ) {
+    super(entityConfiguration ?? testEntityConfiguration);
     this.fetchResults = fetchResults;
     this.insertResults = insertResults;
     this.updateResults = updateResults;
@@ -108,6 +113,42 @@ describe(EntityDatabaseAdapter, () => {
       expect(result.get('hello')).toEqual([{ stringField: 'hello' }]);
     });
 
+    it('filters invalid objects', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const entityConfiguration = new EntityConfiguration<TestFields>({
+        idField: 'customIdField',
+        tableName: 'test_entity_should_not_write_to_db',
+        schema: {
+          customIdField: new UUIDField({
+            columnName: 'custom_id',
+          }),
+          testIndexedField: new StringField({
+            columnName: 'test_index',
+            cache: true,
+          }),
+          stringField: new StringField({
+            columnName: 'string_field',
+            validator: {
+              read: (value) => value !== 'hello',
+            },
+          }),
+          numberField: new NumberField({
+            columnName: 'number_field',
+          }),
+          dateField: new DateField({
+            columnName: 'date_field',
+          }),
+        },
+      });
+
+      const adapter = new TestEntityDatabaseAdapter(
+        { fetchResults: [{ string_field: 'hello' }] },
+        entityConfiguration
+      );
+      const result = await adapter.fetchManyWhereAsync(queryContext, 'stringField', ['hello']);
+      expect(result.get('hello')).toHaveLength(0);
+    });
+
     it('returns objects keyed by queried values', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({
@@ -141,6 +182,42 @@ describe(EntityDatabaseAdapter, () => {
       const results = await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {});
       expect(results).toEqual([{ stringField: 'hello' }]);
     });
+
+    it('filters invalid objects', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const entityConfiguration = new EntityConfiguration<TestFields>({
+        idField: 'customIdField',
+        tableName: 'test_entity_should_not_write_to_db',
+        schema: {
+          customIdField: new UUIDField({
+            columnName: 'custom_id',
+          }),
+          testIndexedField: new StringField({
+            columnName: 'test_index',
+            cache: true,
+          }),
+          stringField: new StringField({
+            columnName: 'string_field',
+            validator: {
+              read: (value) => value !== 'hello',
+            },
+          }),
+          numberField: new NumberField({
+            columnName: 'number_field',
+          }),
+          dateField: new DateField({
+            columnName: 'date_field',
+          }),
+        },
+      });
+
+      const adapter = new TestEntityDatabaseAdapter(
+        { fetchEqualityConditionResults: [{ string_field: 'hello' }] },
+        entityConfiguration
+      );
+      const results = await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {});
+      expect(results).toEqual([]);
+    });
   });
 
   describe('fetchManyWithRawWhereClause', () => {
@@ -151,6 +228,42 @@ describe(EntityDatabaseAdapter, () => {
       });
       const results = await adapter.fetchManyByRawWhereClauseAsync(queryContext, 'hello', [], {});
       expect(results).toEqual([{ stringField: 'hello' }]);
+    });
+
+    it('filters invalid objects', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const entityConfiguration = new EntityConfiguration<TestFields>({
+        idField: 'customIdField',
+        tableName: 'test_entity_should_not_write_to_db',
+        schema: {
+          customIdField: new UUIDField({
+            columnName: 'custom_id',
+          }),
+          testIndexedField: new StringField({
+            columnName: 'test_index',
+            cache: true,
+          }),
+          stringField: new StringField({
+            columnName: 'string_field',
+            validator: {
+              read: (value) => value !== 'hello',
+            },
+          }),
+          numberField: new NumberField({
+            columnName: 'number_field',
+          }),
+          dateField: new DateField({
+            columnName: 'date_field',
+          }),
+        },
+      });
+
+      const adapter = new TestEntityDatabaseAdapter(
+        { fetchRawWhereResults: [{ string_field: 'hello' }] },
+        entityConfiguration
+      );
+      const results = await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {});
+      expect(results).toEqual([]);
     });
   });
 
