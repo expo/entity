@@ -25,8 +25,15 @@ export default class EntityCompanion<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
   // defined as properties so that they can be accessed from tests
   private readonly databaseAdapter: EntityDatabaseAdapter<TFields>;
@@ -37,18 +44,27 @@ export default class EntityCompanion<
     TID,
     TViewerContext,
     TEntity,
-    TPrivacyPolicy
+    TPrivacyPolicy,
+    TSelectedFields
   >;
   private readonly entityMutatorFactory: EntityMutatorFactory<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TPrivacyPolicy
+    TPrivacyPolicy,
+    TSelectedFields
   >;
 
   constructor(
-    entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>,
+    entityClass: IEntityClass<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
     entityConfiguration: EntityConfiguration<TFields>,
     databaseAdapterProvider: IEntityDatabaseAdapterProvider,
     cacheAdapterProvider: IEntityCacheAdapterProvider,
@@ -82,11 +98,25 @@ export default class EntityCompanion<
     );
   }
 
-  getLoaderFactory(): EntityLoaderFactory<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  getLoaderFactory(): EntityLoaderFactory<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
     return this.entityLoaderFactory;
   }
 
-  getMutatorFactory(): EntityMutatorFactory<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  getMutatorFactory(): EntityMutatorFactory<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
     return this.entityMutatorFactory;
   }
 

@@ -59,10 +59,17 @@ export interface EntityCompanionDefinition<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
-  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>;
+  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>;
   entityConfiguration: EntityConfiguration<TFields>;
   databaseAdaptorFlavor: DatabaseAdapterFlavor;
   cacheAdaptorFlavor: CacheAdapterFlavor;
@@ -81,7 +88,7 @@ export interface EntityCompanionDefinition<
 export default class EntityCompanionProvider {
   private readonly entityCompanionMap: Map<
     string,
-    EntityCompanion<any, any, any, any, any>
+    EntityCompanion<any, any, any, any, any, any>
   > = new Map();
 
   /**
@@ -107,18 +114,33 @@ export default class EntityCompanionProvider {
     TFields,
     TID,
     TViewerContext extends ViewerContext,
-    TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>,
-    TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+    TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+    TPrivacyPolicy extends EntityPrivacyPolicy<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+    TSelectedFields extends keyof TFields = keyof TFields
   >(
-    entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>,
+    entityClass: IEntityClass<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
     entityCompanionDefinition: EntityCompanionDefinition<
       TFields,
       TID,
       TViewerContext,
       TEntity,
-      TPrivacyPolicy
+      TPrivacyPolicy,
+      TSelectedFields
     >
-  ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return computeIfAbsent(this.entityCompanionMap, entityClass.name, () => {
       const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[
         entityCompanionDefinition.databaseAdaptorFlavor

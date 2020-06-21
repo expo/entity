@@ -10,7 +10,8 @@ export default class EntityAssociationLoader<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
   constructor(private readonly entity: TEntity) {}
 
@@ -24,21 +25,29 @@ export default class EntityAssociationLoader<
   async loadAssociatedEntityAsync<
     TAssociatedFields,
     TAssociatedID,
-    TAssociatedEntity extends ReadonlyEntity<TAssociatedFields, TAssociatedID, TViewerContext>,
+    TAssociatedEntity extends ReadonlyEntity<
+      TAssociatedFields,
+      TAssociatedID,
+      TViewerContext,
+      TAssociatedSelectedFields
+    >,
     TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
-      TAssociatedEntity
-    >
+      TAssociatedEntity,
+      TAssociatedSelectedFields
+    >,
+    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
   >(
-    fieldIdentifyingAssociatedEntity: keyof TFields,
+    fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
       TAssociatedEntity,
-      TAssociatedPrivacyPolicy
+      TAssociatedPrivacyPolicy,
+      TAssociatedSelectedFields
     >,
     queryContext: EntityQueryContext = this.entity
       .getViewerContext()
@@ -66,21 +75,29 @@ export default class EntityAssociationLoader<
   async loadAssociatedEntityByFieldEqualingAsync<
     TAssociatedFields,
     TAssociatedID,
-    TAssociatedEntity extends ReadonlyEntity<TAssociatedFields, TAssociatedID, TViewerContext>,
+    TAssociatedEntity extends ReadonlyEntity<
+      TAssociatedFields,
+      TAssociatedID,
+      TViewerContext,
+      TAssociatedSelectedFields
+    >,
     TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
-      TAssociatedEntity
-    >
+      TAssociatedEntity,
+      TAssociatedSelectedFields
+    >,
+    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
   >(
-    fieldIdentifyingAssociatedEntity: keyof TFields,
+    fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
       TAssociatedEntity,
-      TAssociatedPrivacyPolicy
+      TAssociatedPrivacyPolicy,
+      TAssociatedSelectedFields
     >,
     associatedEntityLookupByField: keyof TAssociatedFields,
     queryContext: EntityQueryContext = this.entity
@@ -108,15 +125,36 @@ export default class EntityAssociationLoader<
    * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync<
-    TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext>,
-    TPrivacyPolicyRoot extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntityRoot>,
+    TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+    TPrivacyPolicyRoot extends EntityPrivacyPolicy<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntityRoot,
+      TSelectedFields
+    >,
     TFields2,
     TID2,
-    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext>,
-    TPrivacyPolicy2 extends EntityPrivacyPolicy<TFields2, TID2, TViewerContext, TEntity2>
+    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
+    TPrivacyPolicy2 extends EntityPrivacyPolicy<
+      TFields2,
+      TID2,
+      TViewerContext,
+      TEntity2,
+      TSelectedFields2
+    >,
+    TSelectedFields2 extends keyof TFields2 = keyof TFields2
   >(
     loadDirectives: [
-      EntityLoadThroughDirective<TViewerContext, TFields, TFields2, TID2, TEntity2, TPrivacyPolicy2>
+      EntityLoadThroughDirective<
+        TViewerContext,
+        TFields,
+        TFields2,
+        TID2,
+        TEntity2,
+        TPrivacyPolicy2,
+        TSelectedFields2
+      >
     ],
     queryContext?: EntityQueryContext
   ): Promise<Result<TEntity2> | null>;
@@ -128,16 +166,36 @@ export default class EntityAssociationLoader<
    * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync<
-    TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext>,
-    TPrivacyPolicyRoot extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntityRoot>,
+    TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+    TPrivacyPolicyRoot extends EntityPrivacyPolicy<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntityRoot,
+      TSelectedFields
+    >,
     TFields2,
     TID2,
-    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext>,
-    TPrivacyPolicy2 extends EntityPrivacyPolicy<TFields2, TID2, TViewerContext, TEntity2>,
+    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
+    TPrivacyPolicy2 extends EntityPrivacyPolicy<
+      TFields2,
+      TID2,
+      TViewerContext,
+      TEntity2,
+      TSelectedFields2
+    >,
     TFields3,
     TID3,
-    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext>,
-    TPrivacyPolicy3 extends EntityPrivacyPolicy<TFields3, TID3, TViewerContext, TEntity3>
+    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TSelectedFields3>,
+    TPrivacyPolicy3 extends EntityPrivacyPolicy<
+      TFields3,
+      TID3,
+      TViewerContext,
+      TEntity3,
+      TSelectedFields3
+    >,
+    TSelectedFields2 extends keyof TFields2 = keyof TFields2,
+    TSelectedFields3 extends keyof TFields3 = keyof TFields3
   >(
     loadDirectives: [
       EntityLoadThroughDirective<
@@ -146,7 +204,8 @@ export default class EntityAssociationLoader<
         TFields2,
         TID2,
         TEntity2,
-        TPrivacyPolicy2
+        TPrivacyPolicy2,
+        TSelectedFields2
       >,
       EntityLoadThroughDirective<
         TViewerContext,
@@ -154,7 +213,8 @@ export default class EntityAssociationLoader<
         TFields3,
         TID3,
         TEntity3,
-        TPrivacyPolicy3
+        TPrivacyPolicy3,
+        TSelectedFields3
       >
     ],
     queryContext?: EntityQueryContext
@@ -167,20 +227,47 @@ export default class EntityAssociationLoader<
    * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync<
-    TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext>,
-    TPrivacyPolicyRoot extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntityRoot>,
+    TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+    TPrivacyPolicyRoot extends EntityPrivacyPolicy<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntityRoot,
+      TSelectedFields
+    >,
     TFields2,
     TID2,
-    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext>,
-    TPrivacyPolicy2 extends EntityPrivacyPolicy<TFields2, TID2, TViewerContext, TEntity2>,
+    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
+    TPrivacyPolicy2 extends EntityPrivacyPolicy<
+      TFields2,
+      TID2,
+      TViewerContext,
+      TEntity2,
+      TSelectedFields2
+    >,
     TFields3,
     TID3,
-    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext>,
-    TPrivacyPolicy3 extends EntityPrivacyPolicy<TFields3, TID3, TViewerContext, TEntity3>,
+    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TSelectedFields3>,
+    TPrivacyPolicy3 extends EntityPrivacyPolicy<
+      TFields3,
+      TID3,
+      TViewerContext,
+      TEntity3,
+      TSelectedFields3
+    >,
     TFields4,
     TID4,
-    TEntity4 extends ReadonlyEntity<TFields4, TID4, TViewerContext>,
-    TPrivacyPolicy4 extends EntityPrivacyPolicy<TFields4, TID4, TViewerContext, TEntity4>
+    TEntity4 extends ReadonlyEntity<TFields4, TID4, TViewerContext, TSelectedFields4>,
+    TPrivacyPolicy4 extends EntityPrivacyPolicy<
+      TFields4,
+      TID4,
+      TViewerContext,
+      TEntity4,
+      TSelectedFields4
+    >,
+    TSelectedFields2 extends keyof TFields2 = keyof TFields2,
+    TSelectedFields3 extends keyof TFields3 = keyof TFields3,
+    TSelectedFields4 extends keyof TFields4 = keyof TFields4
   >(
     loadDirective: [
       EntityLoadThroughDirective<
@@ -189,7 +276,8 @@ export default class EntityAssociationLoader<
         TFields2,
         TID2,
         TEntity2,
-        TPrivacyPolicy2
+        TPrivacyPolicy2,
+        TSelectedFields2
       >,
       EntityLoadThroughDirective<
         TViewerContext,
@@ -197,7 +285,8 @@ export default class EntityAssociationLoader<
         TFields3,
         TID3,
         TEntity3,
-        TPrivacyPolicy3
+        TPrivacyPolicy3,
+        TSelectedFields3
       >,
       EntityLoadThroughDirective<
         TViewerContext,
@@ -205,7 +294,8 @@ export default class EntityAssociationLoader<
         TFields4,
         TID4,
         TEntity4,
-        TPrivacyPolicy4
+        TPrivacyPolicy4,
+        TSelectedFields4
       >
     ],
     queryContext?: EntityQueryContext
@@ -218,22 +308,22 @@ export default class EntityAssociationLoader<
    * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync(
-    loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any>[],
+    loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any>[],
     queryContext?: EntityQueryContext
-  ): Promise<Result<ReadonlyEntity<any, any, any>> | null>;
+  ): Promise<Result<ReadonlyEntity<any, any, any, any>> | null>;
 
   async loadAssociatedEntityThroughAsync(
-    loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any>[],
+    loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any>[],
     queryContext?: EntityQueryContext
-  ): Promise<Result<ReadonlyEntity<any, any, any>> | null> {
-    let currentEntity: ReadonlyEntity<any, any, any> = this.entity;
+  ): Promise<Result<ReadonlyEntity<any, any, any, any>> | null> {
+    let currentEntity: ReadonlyEntity<any, any, any, any> = this.entity;
     for (const loadDirective of loadDirectives) {
       const {
         associatedEntityClass,
         fieldIdentifyingAssociatedEntity,
         associatedEntityLookupByField,
       } = loadDirective;
-      let associatedEntityResult: Result<ReadonlyEntity<any, any, any>> | null;
+      let associatedEntityResult: Result<ReadonlyEntity<any, any, any, any>> | null;
       if (associatedEntityLookupByField) {
         associatedEntityResult = await currentEntity
           .associationLoader()
@@ -274,13 +364,20 @@ export interface EntityLoadThroughDirective<
   TFields,
   TAssociatedFields,
   TAssociatedID,
-  TAssociatedEntity extends ReadonlyEntity<TAssociatedFields, TAssociatedID, TViewerContext>,
+  TAssociatedEntity extends ReadonlyEntity<
+    TAssociatedFields,
+    TAssociatedID,
+    TViewerContext,
+    TAssociatedSelectedFields
+  >,
   TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
     TAssociatedFields,
     TAssociatedID,
     TViewerContext,
-    TAssociatedEntity
-  >
+    TAssociatedEntity,
+    TAssociatedSelectedFields
+  >,
+  TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
 > {
   /**
    * Class of entity to load at this step.
@@ -290,7 +387,8 @@ export interface EntityLoadThroughDirective<
     TAssociatedID,
     TViewerContext,
     TAssociatedEntity,
-    TAssociatedPrivacyPolicy
+    TAssociatedPrivacyPolicy,
+    TAssociatedSelectedFields
   >;
 
   /**

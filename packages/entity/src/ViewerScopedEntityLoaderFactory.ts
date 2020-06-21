@@ -12,8 +12,15 @@ export default class ViewerScopedEntityLoaderFactory<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
   constructor(
     private readonly entityLoaderFactory: EntityLoaderFactory<
@@ -21,14 +28,15 @@ export default class ViewerScopedEntityLoaderFactory<
       TID,
       TViewerContext,
       TEntity,
-      TPrivacyPolicy
+      TPrivacyPolicy,
+      TSelectedFields
     >,
     private readonly viewerContext: TViewerContext
   ) {}
 
   forLoad(
     queryContext: EntityQueryContext
-  ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
   }
 }
