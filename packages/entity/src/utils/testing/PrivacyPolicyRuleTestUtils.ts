@@ -7,7 +7,8 @@ export interface Case<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
   viewerContext: TViewerContext;
   queryContext: EntityQueryContext;
@@ -18,8 +19,9 @@ type CaseMap<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>
-> = Map<string, () => Promise<Case<TFields, TID, TViewerContext, TEntity>>>;
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields = keyof TFields
+> = Map<string, () => Promise<Case<TFields, TID, TViewerContext, TEntity, TSelectedFields>>>;
 
 /**
  * Useful for defining test cases that have async preconditions.
@@ -28,17 +30,18 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields = keyof TFields
 >(
-  privacyPolicyRule: PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity>,
+  privacyPolicyRule: PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
   {
     allowCases = new Map(),
     skipCases = new Map(),
     denyCases = new Map(),
   }: {
-    allowCases?: CaseMap<TFields, TID, TViewerContext, TEntity>;
-    skipCases?: CaseMap<TFields, TID, TViewerContext, TEntity>;
-    denyCases?: CaseMap<TFields, TID, TViewerContext, TEntity>;
+    allowCases?: CaseMap<TFields, TID, TViewerContext, TEntity, TSelectedFields>;
+    skipCases?: CaseMap<TFields, TID, TViewerContext, TEntity, TSelectedFields>;
+    denyCases?: CaseMap<TFields, TID, TViewerContext, TEntity, TSelectedFields>;
   }
 ): void => {
   describe(privacyPolicyRule.constructor.name, () => {
@@ -84,26 +87,27 @@ export const describePrivacyPolicyRule = <
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields = keyof TFields
 >(
-  privacyPolicyRule: PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity>,
+  privacyPolicyRule: PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
   {
     allowCases = [],
     skipCases = [],
     denyCases = [],
   }: {
-    allowCases?: Case<TFields, TID, TViewerContext, TEntity>[];
-    skipCases?: Case<TFields, TID, TViewerContext, TEntity>[];
-    denyCases?: Case<TFields, TID, TViewerContext, TEntity>[];
+    allowCases?: Case<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
+    skipCases?: Case<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
+    denyCases?: Case<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
   }
 ): void => {
   const makeCasesMap = (
-    cases: Case<TFields, TID, TViewerContext, TEntity>[]
-  ): CaseMap<TFields, TID, TViewerContext, TEntity> =>
+    cases: Case<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
+  ): CaseMap<TFields, TID, TViewerContext, TEntity, TSelectedFields> =>
     cases.reduce(
       (
-        acc: CaseMap<TFields, TID, TViewerContext, TEntity>,
-        testCase: Case<TFields, TID, TViewerContext, TEntity>,
+        acc: CaseMap<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
+        testCase: Case<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
         index
       ) => {
         acc.set(`case ${index}`, async () => testCase);

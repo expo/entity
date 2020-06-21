@@ -28,8 +28,9 @@ import ViewerContext from './ViewerContext';
 export default abstract class Entity<
   TFields,
   TID,
-  TViewerContext extends ViewerContext
-> extends ReadonlyEntity<TFields, TID, TViewerContext> {
+  TViewerContext extends ViewerContext,
+  TSelectedFields extends keyof TFields = keyof TFields
+> extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields> {
   /**
    * Vend mutator for creating a new entity in given query context.
    * @param viewerContext - viewer context of creating user
@@ -41,16 +42,30 @@ export default abstract class Entity<
     TMID,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity>
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields
   >(
-    this: IEntityClass<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy>,
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
     viewerContext: TMViewerContext2,
     queryContext: EntityQueryContext = viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getRegularEntityQueryContext()
-  ): CreateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy> {
+  ): CreateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
@@ -67,17 +82,31 @@ export default abstract class Entity<
     TMFields,
     TMID,
     TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity>
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields
   >(
-    this: IEntityClass<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy>,
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
     existingEntity: TMEntity,
     queryContext: EntityQueryContext = existingEntity
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getRegularEntityQueryContext()
-  ): UpdateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy> {
+  ): UpdateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return existingEntity
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
@@ -94,10 +123,24 @@ export default abstract class Entity<
     TMFields,
     TMID,
     TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity>
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields
   >(
-    this: IEntityClass<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy>,
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
     existingEntity: TMEntity,
     queryContext: EntityQueryContext = existingEntity
       .getViewerContext()
@@ -122,10 +165,24 @@ export default abstract class Entity<
     TMFields,
     TMID,
     TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity>
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields
   >(
-    this: IEntityClass<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy>,
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
     existingEntity: TMEntity,
     queryContext: EntityQueryContext = existingEntity
       .getViewerContext()
@@ -161,10 +218,24 @@ export default abstract class Entity<
     TMFields,
     TMID,
     TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity>
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields
   >(
-    this: IEntityClass<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy>,
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
     existingEntity: TMEntity,
     queryContext: EntityQueryContext = existingEntity
       .getViewerContext()
@@ -196,10 +267,24 @@ export default abstract class Entity<
     TMFields,
     TMID,
     TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity>
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields
   >(
-    this: IEntityClass<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy>,
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
     existingEntity: TMEntity,
     queryContext: EntityQueryContext = existingEntity
       .getViewerContext()
@@ -226,8 +311,15 @@ export interface IEntityClass<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
   new (viewerContext: TViewerContext, obj: Readonly<TFields>): TEntity;
   getCompanionDefinition(): EntityCompanionDefinition<
@@ -235,6 +327,7 @@ export interface IEntityClass<
     TID,
     TViewerContext,
     TEntity,
-    TPrivacyPolicy
+    TPrivacyPolicy,
+    TSelectedFields
   >;
 }

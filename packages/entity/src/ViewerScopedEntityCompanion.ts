@@ -14,8 +14,15 @@ export default class ViewerScopedEntityCompanion<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
   constructor(
     private readonly entityCompanion: EntityCompanion<
@@ -23,7 +30,8 @@ export default class ViewerScopedEntityCompanion<
       TID,
       TViewerContext,
       TEntity,
-      TPrivacyPolicy
+      TPrivacyPolicy,
+      TSelectedFields
     >,
     private readonly viewerContext: TViewerContext
   ) {}
@@ -36,7 +44,8 @@ export default class ViewerScopedEntityCompanion<
     TID,
     TViewerContext,
     TEntity,
-    TPrivacyPolicy
+    TPrivacyPolicy,
+    TSelectedFields
   > {
     return new ViewerScopedEntityLoaderFactory(
       this.entityCompanion.getLoaderFactory(),
@@ -52,7 +61,8 @@ export default class ViewerScopedEntityCompanion<
     TID,
     TViewerContext,
     TEntity,
-    TPrivacyPolicy
+    TPrivacyPolicy,
+    TSelectedFields
   > {
     return new ViewerScopedEntityMutatorFactory(
       this.entityCompanion.getMutatorFactory(),

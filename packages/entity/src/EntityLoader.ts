@@ -21,8 +21,15 @@ export default class EntityLoader<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
   constructor(
     private readonly viewerContext: TViewerContext,
@@ -33,7 +40,8 @@ export default class EntityLoader<
       TID,
       TViewerContext,
       TEntity,
-      TPrivacyPolicy
+      TPrivacyPolicy,
+      TSelectedFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
     private readonly entityDataManager: EntityDataManager<TFields>
@@ -44,7 +52,14 @@ export default class EntityLoader<
    * guaranteed to be the values of successful results (or null for some loader methods),
    * and will throw otherwise.
    */
-  enforcing(): EnforcingEntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  enforcing(): EnforcingEntityLoader<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
     return new EnforcingEntityLoader(this);
   }
 
