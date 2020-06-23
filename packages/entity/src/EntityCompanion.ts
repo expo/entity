@@ -70,7 +70,6 @@ export default class EntityCompanion<
     cacheAdapterProvider: IEntityCacheAdapterProvider,
     PrivacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>,
     private readonly queryContextProvider: IEntityQueryContextProvider,
-
     metricsAdapter: IEntityMetricsAdapter
   ) {
     this.databaseAdapter = databaseAdapterProvider.getDatabaseAdapter(entityConfiguration);

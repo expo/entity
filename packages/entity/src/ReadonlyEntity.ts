@@ -1,4 +1,5 @@
 import invariant from 'invariant';
+import { pick } from 'lodash';
 
 import { IEntityClass } from './Entity';
 import EntityAssociationLoader from './EntityAssociationLoader';
@@ -22,6 +23,7 @@ export default abstract class ReadonlyEntity<
   TSelectedFields extends keyof TFields = keyof TFields
 > {
   private readonly id: TID;
+  private readonly rawFields: Readonly<Pick<TFields, TSelectedFields>>;
 
   /**
    * Constructs an instance of an Entity.
@@ -32,13 +34,17 @@ export default abstract class ReadonlyEntity<
    */
   constructor(
     private readonly viewerContext: TViewerContext,
-    private readonly rawFields: Readonly<TFields>
+    private readonly databaseFields: Readonly<TFields>
   ) {
     const idField = (this.constructor as any).getCompanionDefinition().entityConfiguration
       .idField as keyof Pick<TFields, TSelectedFields>;
-    const id = rawFields[idField];
+    const id = databaseFields[idField];
     invariant(id, 'must provide ID to create an entity');
     this.id = id as any;
+
+    const entitySelectedFields = (this.constructor as any).getCompanionDefinition()
+      .entitySelectedFields as (keyof TFields)[];
+    this.rawFields = pick(databaseFields, entitySelectedFields);
   }
 
   toString(): string {
@@ -91,10 +97,10 @@ export default abstract class ReadonlyEntity<
   }
 
   /**
-   * @returns all underlying databasefields from this entity's data
+   * @returns all underlying fields from this entity's database data
    */
   getAllDatabaseFields(): Readonly<TFields> {
-    return { ...this.rawFields };
+    return { ...this.databaseFields };
   }
 
   /**

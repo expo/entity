@@ -13,6 +13,7 @@ describe(NoteEntity, () => {
       .setField('body', 'image')
       .setField('title', 'page')
       .createAsync();
+    console.log(createdEntityResult);
     expect(createdEntityResult.ok).toBe(true);
 
     const createdEntityResultImpersonate = await NoteEntity.creator(viewerContext)

@@ -115,18 +115,20 @@ class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFie
   }
 }
 
-const oneTestEntityCompanion = {
+const oneTestEntityCompanion = new EntityCompanionDefinition({
   entityClass: OneTestEntity,
   entityConfiguration: testEntityConfiguration,
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: TestEntityPrivacyPolicy,
-};
+  entitySelectedFields: ['id', 'entity_type'],
+});
 
-const twoTestEntityCompanion = {
+const twoTestEntityCompanion = new EntityCompanionDefinition({
   entityClass: TwoTestEntity,
   entityConfiguration: testEntityConfiguration,
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: TestEntityPrivacyPolicy,
-};
+  entitySelectedFields: ['id', 'other_field', 'entity_type'],
+});

@@ -56,10 +56,10 @@ export default class NumberKeyEntity extends Entity<NumberKeyFields, number, Vie
   }
 }
 
-export const numberKeyEntityCompanion = {
+export const numberKeyEntityCompanion = new EntityCompanionDefinition({
   entityClass: NumberKeyEntity,
   entityConfiguration: numberKeyEntityConfiguration,
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: NumberKeyPrivacyPolicy,
-};
+});
