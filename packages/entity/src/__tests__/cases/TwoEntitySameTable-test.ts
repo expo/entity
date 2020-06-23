@@ -35,50 +35,6 @@ describe('Two entities backed by the same table', () => {
       OneTestEntity.loader(viewerContext).enforcing().loadByIDAsync(two.getID())
     ).rejects.toThrowError('OneTestEntity must be instantiated with one data');
   });
-
-  test('not cached if error is thrown during instantiation', async () => {
-    const companionProvider = createUnitTestEntityCompanionProvider();
-    const viewerContext = new ViewerContext(companionProvider);
-
-    const one = await OneTestEntity.creator(viewerContext)
-      .setField('id', 'one')
-      .setField('entity_type', EntityType.ONE)
-      .enforceCreateAsync();
-
-    const two = await TwoTestEntity.creator(viewerContext)
-      .setField('id', 'two')
-      .setField('entity_type', EntityType.TWO)
-      .setField('other_field', 'blah')
-      .enforceCreateAsync();
-
-    try {
-      await OneTestEntity.loader(viewerContext).enforcing().loadByIDAsync(two.getID());
-    } catch (e) {}
-
-    const twoLoaded = await TwoTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(two.getID());
-    expect(twoLoaded.getAllFields()).toEqual(two.getAllFields());
-
-    try {
-      await TwoTestEntity.loader(viewerContext).enforcing().loadByIDAsync(one.getID());
-    } catch (e) {}
-
-    const oneLoaded = await OneTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(one.getID());
-    expect(oneLoaded.getAllFields()).toEqual(one.getAllFields());
-
-    // const companion = companionProvider.getCompanionForEntity(
-    //   TwoTestEntity,
-    //   twoTestEntityCompanion
-    // );
-    //   TwoTestFields
-    // >;
-
-    // // check that only two objects were cached (invalid loads were not cached)
-    // expect(cacheAdapter.cache.size).toEqual(2);
-  });
 });
 
 enum EntityType {
