@@ -61,21 +61,21 @@ class NoOpTest2PrivacyPolicy extends EntityPrivacyPolicy<
   Blah2Entity
 > {}
 
-const blah1CompanionDefinition = {
+const blah1CompanionDefinition = new EntityCompanionDefinition({
   entityClass: Blah1Entity,
   entityConfiguration: blahConfiguration,
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: NoOpTest1PrivacyPolicy,
-};
+});
 
-const blah2CompanionDefinition = {
+const blah2CompanionDefinition = new EntityCompanionDefinition({
   entityClass: Blah2Entity,
   entityConfiguration: blahConfiguration,
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: NoOpTest2PrivacyPolicy,
-};
+});
 
 describe(EntityCompanionProvider, () => {
   it('returns different instances for different entity types', () => {

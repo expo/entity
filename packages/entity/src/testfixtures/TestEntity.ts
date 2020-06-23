@@ -103,10 +103,10 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
   }
 }
 
-export const testEntityCompanion = {
+export const testEntityCompanion = new EntityCompanionDefinition({
   entityClass: TestEntity,
   entityConfiguration: testEntityConfiguration,
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: TestEntityPrivacyPolicy,
-};
+});

@@ -87,10 +87,10 @@ export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEnt
   },
 });
 
-const redisTestEntityCompanionDefinition = {
+const redisTestEntityCompanionDefinition = new EntityCompanionDefinition({
   entityClass: RedisTestEntity,
   entityConfiguration: redisTestEntityConfiguration,
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: RedisTestEntityPrivacyPolicy,
-};
+});

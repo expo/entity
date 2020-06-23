@@ -55,7 +55,7 @@ export interface CacheAdapterFlavorDefinition {
  * Definition for constructing a companion for an entity. Defines the core set of objects
  * used to power the entity framework for a particular type of entity.
  */
-export interface EntityCompanionDefinition<
+export class EntityCompanionDefinition<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
@@ -69,11 +69,49 @@ export interface EntityCompanionDefinition<
   >,
   TSelectedFields extends keyof TFields = keyof TFields
 > {
-  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>;
-  entityConfiguration: EntityConfiguration<TFields>;
-  databaseAdaptorFlavor: DatabaseAdapterFlavor;
-  cacheAdaptorFlavor: CacheAdapterFlavor;
-  privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+  readonly entityClass: IEntityClass<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >;
+  readonly entityConfiguration: EntityConfiguration<TFields>;
+  readonly databaseAdaptorFlavor: DatabaseAdapterFlavor;
+  readonly cacheAdaptorFlavor: CacheAdapterFlavor;
+  readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+  readonly entitySelectedFields: TSelectedFields[];
+
+  constructor({
+    entityClass,
+    entityConfiguration,
+    databaseAdaptorFlavor,
+    cacheAdaptorFlavor,
+    privacyPolicyClass,
+    entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as TSelectedFields[],
+  }: {
+    entityClass: IEntityClass<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >;
+    entityConfiguration: EntityConfiguration<TFields>;
+    databaseAdaptorFlavor: DatabaseAdapterFlavor;
+    cacheAdaptorFlavor: CacheAdapterFlavor;
+    privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+    entitySelectedFields?: TSelectedFields[];
+  }) {
+    this.entityClass = entityClass;
+    this.entityConfiguration = entityConfiguration;
+    this.databaseAdaptorFlavor = databaseAdaptorFlavor;
+    this.cacheAdaptorFlavor = cacheAdaptorFlavor;
+    this.privacyPolicyClass = privacyPolicyClass;
+    this.entitySelectedFields = entitySelectedFields;
+  }
 }
 
 /**

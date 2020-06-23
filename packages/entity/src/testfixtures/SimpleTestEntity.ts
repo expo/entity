@@ -89,10 +89,10 @@ export default class SimpleTestEntity extends Entity<
   }
 }
 
-export const testEntityCompanion = {
+export const testEntityCompanion = new EntityCompanionDefinition({
   entityClass: SimpleTestEntity,
   entityConfiguration: simpleTestEntityConfiguration,
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: SimpleTestEntityPrivacyPolicy,
-};
+});

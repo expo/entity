@@ -38,7 +38,7 @@ export default class NoteEntity extends Entity<NoteFields, string, ExampleViewer
  * of entity. In some languages, this would be representable as "abstract" static members
  * of the class itself, but TypeScript disallows static generic and abstract methods.
  */
-export const noteEntityCompanion = {
+export const noteEntityCompanion = new EntityCompanionDefinition({
   entityClass: NoteEntity,
   entityConfiguration: new EntityConfiguration<NoteFields>({
     idField: 'id',
@@ -61,4 +61,4 @@ export const noteEntityCompanion = {
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: NotePrivacyPolicy,
-};
+});

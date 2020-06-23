@@ -224,7 +224,7 @@ class EmptyPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext,
   protected readonly deleteRules = [];
 }
 
-const blahEntityCompanionDefinition = {
+const blahEntityCompanionDefinition = new EntityCompanionDefinition({
   entityClass: BlahEntity,
   entityConfiguration: new EntityConfiguration<BlahFields>({
     idField: 'id',
@@ -238,7 +238,7 @@ const blahEntityCompanionDefinition = {
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: AlwaysDenyPolicy,
-};
+});
 
 describe(EntityPrivacyPolicy, () => {
   it('throws EntityNotAuthorizedError when deny', async () => {

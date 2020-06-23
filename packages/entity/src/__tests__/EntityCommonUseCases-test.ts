@@ -86,7 +86,7 @@ class BlahEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
-const blahCompanion = {
+const blahCompanion = new EntityCompanionDefinition({
   entityClass: BlahEntity,
   entityConfiguration: new EntityConfiguration<BlahFields>({
     idField: 'id',
@@ -104,7 +104,7 @@ const blahCompanion = {
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: BlahEntityPrivacyPolicy,
-};
+});
 
 it('runs through a common workflow', async () => {
   // will be one entity companion provider for each request, so

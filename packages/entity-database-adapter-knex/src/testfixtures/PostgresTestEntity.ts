@@ -152,10 +152,10 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<PostgresT
   },
 });
 
-const postgresTestEntityCompanionDefinition = {
+const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({
   entityClass: PostgresTestEntity,
   entityConfiguration: postgresTestEntityConfiguration,
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: PostgresTestEntityPrivacyPolicy,
-};
+});

@@ -106,10 +106,10 @@ export const invalidTestEntityConfiguration = new EntityConfiguration<InvalidTes
   },
 });
 
-const invalidTestEntityCompanionDefinition = {
+const invalidTestEntityCompanionDefinition = new EntityCompanionDefinition({
   entityClass: InvalidTestEntity,
   entityConfiguration: invalidTestEntityConfiguration,
   databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
   cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: InvalidTestEntityPrivacyPolicy,
-};
+});
