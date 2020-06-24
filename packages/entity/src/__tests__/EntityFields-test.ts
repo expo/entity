@@ -1,6 +1,6 @@
 import { EntityFieldDefinition } from '../EntityFields';
 
-class TestFieldDefinition extends EntityFieldDefinition {}
+class TestFieldDefinition extends EntityFieldDefinition<any> {}
 
 describe(EntityFieldDefinition, () => {
   it('returns correct column name and defaults cache to false', () => {
@@ -11,5 +11,22 @@ describe(EntityFieldDefinition, () => {
     const fieldDefinition2 = new TestFieldDefinition({ columnName: 'wat', cache: true });
     expect(fieldDefinition2.columnName).toEqual('wat');
     expect(fieldDefinition2.cache).toEqual(true);
+  });
+
+  it('defaults validator to no-op', () => {
+    const fieldDefinition = new TestFieldDefinition({ columnName: 'wat', cache: true });
+    expect(fieldDefinition.validator).toEqual({});
+
+    const fn = async (): Promise<void> => {
+      throw new Error();
+    };
+    const fieldDefinition2 = new TestFieldDefinition({
+      columnName: 'wat',
+      cache: true,
+      validator: {
+        write: fn,
+      },
+    });
+    expect(fieldDefinition2.validator.write).toEqual(fn);
   });
 });

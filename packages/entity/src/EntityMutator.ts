@@ -1,4 +1,5 @@
 import { Result, asyncResult, result, enforceAsyncResult } from '@expo/results';
+import invariant from 'invariant';
 import _ from 'lodash';
 
 import Entity, { IEntityClass } from './Entity';
@@ -40,6 +41,25 @@ abstract class BaseMutator<
     protected readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
     protected readonly metricsAdapter: IEntityMetricsAdapter
   ) {}
+
+  protected async validateFields(fields: Partial<TFields>): Promise<Result<Partial<TFields>>> {
+    const validatorResults = await asyncResult(
+      Promise.all(
+        Object.entries(fields).map(async ([fieldName, fieldValue]) => {
+          const fieldDefinition = this.entityConfiguration.schema.get(fieldName as keyof TFields);
+          invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
+          const writeValidator = fieldDefinition.validator.write;
+          if (writeValidator) {
+            await writeValidator(fieldValue);
+          }
+        })
+      )
+    );
+    if (!validatorResults.ok) {
+      return result(validatorResults.reason);
+    }
+    return result(fields);
+  }
 }
 
 /**
@@ -84,9 +104,14 @@ export class CreateMutator<
   }
 
   private async createInternalAsync(): Promise<Result<TEntity>> {
+    const validatedFieldsResult = await this.validateFields(this.fieldsForEntity);
+    if (!validatedFieldsResult.ok) {
+      return result(validatedFieldsResult.reason);
+    }
+
     const temporaryEntityForPrivacyCheck = new this.entityClass(this.viewerContext, ({
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
-      ...this.fieldsForEntity,
+      ...validatedFieldsResult.value,
     } as unknown) as TFields);
 
     const authorizeCreateResult = await asyncResult(
@@ -102,7 +127,7 @@ export class CreateMutator<
 
     const insertResult = await this.databaseAdapter.insertAsync(
       this.queryContext,
-      this.fieldsForEntity
+      validatedFieldsResult.value
     );
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, this.queryContext);
@@ -184,6 +209,11 @@ export class UpdateMutator<
   }
 
   private async updateInternalAsync(): Promise<Result<TEntity>> {
+    const validatedUpdatedFieldsResult = await this.validateFields(this.updatedFields);
+    if (!validatedUpdatedFieldsResult.ok) {
+      return result(validatedUpdatedFieldsResult.reason);
+    }
+
     const entityAboutToBeUpdated = new this.entityClass(this.viewerContext, this.fieldsForEntity);
     const authorizeUpdateResult = await asyncResult(
       this.privacyPolicy.authorizeUpdateAsync(
@@ -200,7 +230,7 @@ export class UpdateMutator<
       this.queryContext,
       this.entityConfiguration.idField,
       entityAboutToBeUpdated.getID(),
-      this.updatedFields
+      validatedUpdatedFieldsResult.value
     );
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, this.queryContext);

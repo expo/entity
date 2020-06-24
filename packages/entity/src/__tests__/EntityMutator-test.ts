@@ -30,6 +30,11 @@ import TestEntity, {
   TestEntityPrivacyPolicy,
   testEntityConfiguration,
 } from '../testfixtures/TestEntity';
+import ValidationTestEntity, {
+  ValidationTestEntityPrivacyPolicy,
+  ValidationTestFields,
+  validationTestEntityConfiguration,
+} from '../testfixtures/ValidationTestEntity';
 import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapter';
 import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
 import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider';
@@ -95,7 +100,7 @@ const createEntityMutatorFactory = (
 };
 
 describe(EntityMutatorFactory, () => {
-  it('creates entities and checks privacy', async () => {
+  it('creates entities checks privacy', async () => {
     const viewerContext = mock<ViewerContext>();
     const queryContext = mock<EntityQueryContext>();
     const { privacyPolicy, entityMutatorFactory } = createEntityMutatorFactory([
@@ -244,6 +249,73 @@ describe(EntityMutatorFactory, () => {
         .loadManyByFieldEqualingAsync('stringField', 'huh')
     );
     expect(entities2).toHaveLength(2);
+  });
+
+  it('returns error when field not valid', async () => {
+    const viewerContext = mock<ViewerContext>();
+    const queryContext = mock<EntityQueryContext>();
+
+    const privacyPolicy = new ValidationTestEntityPrivacyPolicy();
+    const databaseAdapter = new StubDatabaseAdapter<ValidationTestFields>(
+      validationTestEntityConfiguration,
+      StubDatabaseAdapter.convertFieldObjectsToDataStore(
+        validationTestEntityConfiguration,
+        new Map([[validationTestEntityConfiguration.tableName, []]])
+      )
+    );
+    const metricsAdapter = new NoOpEntityMetricsAdapter();
+    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(validationTestEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache<ValidationTestFields>(
+      validationTestEntityConfiguration,
+      cacheAdapter
+    );
+    const dataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      metricsAdapter
+    );
+    const entityLoaderFactory = new EntityLoaderFactory(
+      validationTestEntityConfiguration,
+      ValidationTestEntity,
+      privacyPolicy,
+      dataManager
+    );
+    const entityMutatorFactory = new EntityMutatorFactory(
+      validationTestEntityConfiguration,
+      ValidationTestEntity,
+      privacyPolicy,
+      entityLoaderFactory,
+      databaseAdapter,
+      metricsAdapter
+    );
+
+    const entityCreateInvalidResult = await entityMutatorFactory
+      .forCreate(viewerContext, queryContext)
+      .setField('numberOtherThanTen', 10)
+      .createAsync();
+    expect(entityCreateInvalidResult.ok).toBe(false);
+    expect(entityCreateInvalidResult.reason?.message).toEqual('should not be ten');
+
+    const entityCreateValidResult = await entityMutatorFactory
+      .forCreate(viewerContext, queryContext)
+      .setField('numberOtherThanTen', 11)
+      .createAsync();
+    expect(entityCreateValidResult.ok).toBe(true);
+
+    const entityUpdateInvalidResult = await entityMutatorFactory
+      .forUpdate(entityCreateValidResult.enforceValue(), queryContext)
+      .setField('numberOtherThanTen', 10)
+      .updateAsync();
+    expect(entityUpdateInvalidResult.ok).toBe(false);
+    expect(entityUpdateInvalidResult.reason?.message).toEqual('should not be ten');
+
+    const entityUpdateValidResult = await entityMutatorFactory
+      .forUpdate(entityCreateValidResult.enforceValue(), queryContext)
+      .setField('numberOtherThanTen', 12)
+      .updateAsync();
+    expect(entityUpdateValidResult.ok).toBe(true);
   });
 
   it('returns error result when not authorized to create', async () => {
