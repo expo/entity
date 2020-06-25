@@ -24,6 +24,8 @@ export const simpleTestEntityConfiguration = new EntityConfiguration<SimpleTestF
       columnName: 'custom_id',
     }),
   },
+  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
 });
 
 export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
@@ -92,7 +94,5 @@ export default class SimpleTestEntity extends Entity<
 export const testEntityCompanion = new EntityCompanionDefinition({
   entityClass: SimpleTestEntity,
   entityConfiguration: simpleTestEntityConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: SimpleTestEntityPrivacyPolicy,
 });

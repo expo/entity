@@ -104,12 +104,12 @@ export const invalidTestEntityConfiguration = new EntityConfiguration<InvalidTes
       columnName: 'name',
     }),
   },
+  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
 });
 
 const invalidTestEntityCompanionDefinition = new EntityCompanionDefinition({
   entityClass: InvalidTestEntity,
   entityConfiguration: invalidTestEntityConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: InvalidTestEntityPrivacyPolicy,
 });

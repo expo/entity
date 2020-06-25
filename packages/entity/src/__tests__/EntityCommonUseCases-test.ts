@@ -100,9 +100,9 @@ const blahCompanion = new EntityCompanionDefinition({
         columnName: 'owner_id',
       }),
     },
+    databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
+    cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   }),
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: BlahEntityPrivacyPolicy,
 });
 

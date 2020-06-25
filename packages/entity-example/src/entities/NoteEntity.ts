@@ -57,8 +57,8 @@ export const noteEntityCompanion = new EntityCompanionDefinition({
         columnName: 'body',
       }),
     },
+    databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
+    cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   }),
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: NotePrivacyPolicy,
 });

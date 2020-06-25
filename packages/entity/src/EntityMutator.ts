@@ -2,7 +2,6 @@ import { Result, asyncResult, result, enforceAsyncResult } from '@expo/results';
 import _ from 'lodash';
 
 import Entity, { IEntityClass } from './Entity';
-import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
@@ -28,7 +27,7 @@ abstract class BaseMutator<
   constructor(
     protected readonly viewerContext: TViewerContext,
     protected readonly queryContext: EntityQueryContext,
-    protected readonly entityConfiguration: EntityConfiguration<TFields>,
+    protected readonly idField: keyof TFields,
     protected readonly entityClass: IEntityClass<
       TFields,
       TID,
@@ -101,7 +100,7 @@ export class CreateMutator<
 
   private async createInternalAsync(): Promise<Result<TEntity>> {
     const temporaryEntityForPrivacyCheck = new this.entityClass(this.viewerContext, ({
-      [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
+      [this.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
       ...this.fieldsForEntity,
     } as unknown) as TFields);
 
@@ -153,7 +152,7 @@ export class UpdateMutator<
   constructor(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    entityConfiguration: EntityConfiguration<TFields>,
+    idField: keyof TFields,
     entityClass: IEntityClass<
       TFields,
       TID,
@@ -178,7 +177,7 @@ export class UpdateMutator<
     super(
       viewerContext,
       queryContext,
-      entityConfiguration,
+      idField,
       entityClass,
       privacyPolicy,
       entityLoaderFactory,
@@ -235,7 +234,7 @@ export class UpdateMutator<
 
     const updateResult = await this.databaseAdapter.updateAsync(
       this.queryContext,
-      this.entityConfiguration.idField,
+      this.idField,
       entityAboutToBeUpdated.getID(),
       this.updatedFields
     );
@@ -270,7 +269,7 @@ export class DeleteMutator<
   constructor(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    entityConfiguration: EntityConfiguration<TFields>,
+    idField: keyof TFields,
     entityClass: IEntityClass<
       TFields,
       TID,
@@ -295,7 +294,7 @@ export class DeleteMutator<
     super(
       viewerContext,
       queryContext,
-      entityConfiguration,
+      idField,
       entityClass,
       privacyPolicy,
       entityLoaderFactory,
@@ -332,7 +331,7 @@ export class DeleteMutator<
 
     const id = this.entity.getID();
 
-    await this.databaseAdapter.deleteAsync(this.queryContext, this.entityConfiguration.idField, id);
+    await this.databaseAdapter.deleteAsync(this.queryContext, this.idField, id);
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, this.queryContext);
     await entityLoader.invalidateFieldsAsync(this.entity.getAllDatabaseFields());

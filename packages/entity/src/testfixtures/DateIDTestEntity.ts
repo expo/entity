@@ -22,6 +22,8 @@ export const dateIDTestEntityConfiguration = new EntityConfiguration<DateIDTestF
       columnName: 'custom_id',
     }),
   },
+  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
 });
 
 export class DateIDTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
@@ -59,7 +61,5 @@ export default class DateIDTestEntity extends Entity<DateIDTestFields, Date, Vie
 export const dateIDTestEntityCompanion = new EntityCompanionDefinition({
   entityClass: DateIDTestEntity,
   entityConfiguration: dateIDTestEntityConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: DateIDTestEntityPrivacyPolicy,
 });

@@ -22,6 +22,8 @@ export const numberKeyEntityConfiguration = new EntityConfiguration<NumberKeyFie
       columnName: 'custom_id',
     }),
   },
+  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
 });
 
 export class NumberKeyPrivacyPolicy extends EntityPrivacyPolicy<
@@ -59,7 +61,5 @@ export default class NumberKeyEntity extends Entity<NumberKeyFields, number, Vie
 export const numberKeyEntityCompanion = new EntityCompanionDefinition({
   entityClass: NumberKeyEntity,
   entityConfiguration: numberKeyEntityConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: NumberKeyPrivacyPolicy,
 });

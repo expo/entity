@@ -66,6 +66,8 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
       columnName: 'entity_type',
     }),
   },
+  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
 });
 
 class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {
@@ -118,8 +120,6 @@ class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFie
 const oneTestEntityCompanion = new EntityCompanionDefinition({
   entityClass: OneTestEntity,
   entityConfiguration: testEntityConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: TestEntityPrivacyPolicy,
   entitySelectedFields: ['id', 'entity_type'],
 });
@@ -127,8 +127,6 @@ const oneTestEntityCompanion = new EntityCompanionDefinition({
 const twoTestEntityCompanion = new EntityCompanionDefinition({
   entityClass: TwoTestEntity,
   entityConfiguration: testEntityConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: TestEntityPrivacyPolicy,
   entitySelectedFields: ['id', 'other_field', 'entity_type'],
 });

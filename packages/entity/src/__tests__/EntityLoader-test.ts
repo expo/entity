@@ -63,7 +63,7 @@ describe(EntityLoader, () => {
     const entityLoader = new EntityLoader(
       viewerContext,
       queryContext,
-      testEntityConfiguration,
+      testEntityConfiguration.idField,
       TestEntity,
       privacyPolicy,
       dataManager
@@ -144,7 +144,7 @@ describe(EntityLoader, () => {
     const entityLoader = new EntityLoader(
       viewerContext,
       queryContext,
-      testEntityConfiguration,
+      testEntityConfiguration.idField,
       TestEntity,
       privacyPolicy,
       dataManager
@@ -206,7 +206,7 @@ describe(EntityLoader, () => {
     const entityLoader = new EntityLoader(
       viewerContext,
       queryContext,
-      testEntityConfiguration,
+      testEntityConfiguration.idField,
       TestEntity,
       privacyPolicy,
       dataManager
@@ -225,7 +225,7 @@ describe(EntityLoader, () => {
     const entityLoader = new EntityLoader(
       viewerContext,
       queryContext,
-      testEntityConfiguration,
+      testEntityConfiguration.idField,
       TestEntity,
       privacyPolicy,
       dataManagerInstance
@@ -247,7 +247,7 @@ describe(EntityLoader, () => {
     const entityLoader = new EntityLoader(
       viewerContext,
       queryContext,
-      testEntityConfiguration,
+      testEntityConfiguration.idField,
       TestEntity,
       privacyPolicy,
       dataManagerInstance
@@ -280,7 +280,7 @@ describe(EntityLoader, () => {
     const entityLoader = new EntityLoader(
       viewerContext,
       queryContext,
-      testEntityConfiguration,
+      testEntityConfiguration.idField,
       TestEntity,
       privacyPolicy,
       dataManagerInstance
@@ -309,7 +309,7 @@ describe(EntityLoader, () => {
     const entityLoader = new EntityLoader(
       viewerContext,
       queryContext,
-      testEntityConfiguration,
+      testEntityConfiguration.idField,
       TestEntity,
       privacyPolicy,
       dataManagerInstance
