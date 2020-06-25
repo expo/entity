@@ -3,7 +3,6 @@ import invariant from 'invariant';
 
 import EnforcingEntityLoader from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
-import EntityConfiguration from './EntityConfiguration';
 import { FieldEqualityCondition, QuerySelectionModifiers } from './EntityDatabaseAdapter';
 import { EntityNotFoundError } from './EntityErrors';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
@@ -34,7 +33,7 @@ export default class EntityLoader<
   constructor(
     private readonly viewerContext: TViewerContext,
     private readonly queryContext: EntityQueryContext,
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly idField: keyof TFields,
     private readonly entityClass: IEntityClass<
       TFields,
       TID,
@@ -44,7 +43,7 @@ export default class EntityLoader<
       TSelectedFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
-    private readonly entityDataManager: EntityDataManager<TFields>
+    private readonly dataManager: EntityDataManager<TFields>
   ) {}
 
   /**
@@ -74,7 +73,7 @@ export default class EntityLoader<
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
-    const fieldValuesToObjects = await this.entityDataManager.loadManyByFieldEqualingAsync(
+    const fieldValuesToObjects = await this.dataManager.loadManyByFieldEqualingAsync(
       this.queryContext,
       fieldName,
       fieldValues
@@ -143,9 +142,7 @@ export default class EntityLoader<
     const entityResults = await this.loadManyByIDsAsync([id]);
     const entityResult = entityResults.get(id);
     if (entityResult === undefined) {
-      return result(
-        new EntityNotFoundError(this.entityClass, this.entityConfiguration.idField, id as any)
-      );
+      return result(new EntityNotFoundError(this.entityClass, this.idField, id as any));
     }
     return entityResult;
   }
@@ -156,7 +153,7 @@ export default class EntityLoader<
    * @returns entity result for matching ID, or null if no entity exists for ID.
    */
   async loadByIDNullableAsync(id: TID): Promise<Result<TEntity> | null> {
-    return await this.loadByFieldEqualingAsync(this.entityConfiguration.idField, id as any);
+    return await this.loadByFieldEqualingAsync(this.idField, id as any);
   }
 
   /**
@@ -167,16 +164,13 @@ export default class EntityLoader<
    */
   async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, Result<TEntity>>> {
     const entityResults = ((await this.loadManyByFieldEqualingManyAsync(
-      this.entityConfiguration.idField,
+      this.idField,
       ids as any
     )) as any) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
     return mapMap(entityResults, (entityResultsForId, id) => {
       const entityResult = entityResultsForId[0];
       return (
-        entityResult ??
-        result(
-          new EntityNotFoundError(this.entityClass, this.entityConfiguration.idField, id as any)
-        )
+        entityResult ?? result(new EntityNotFoundError(this.entityClass, this.idField, id as any))
       );
     });
   }
@@ -199,7 +193,7 @@ export default class EntityLoader<
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly Result<TEntity>[]> {
-    const fieldValuesArray = await this.entityDataManager.loadManyByFieldEqualityConjunctionAsync(
+    const fieldValuesArray = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
       this.queryContext,
       fieldEqualityOperands,
       querySelectionModifiers
@@ -247,7 +241,7 @@ export default class EntityLoader<
     bindings: any[] | object,
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly Result<TEntity>[]> {
-    const fieldValuesArray = await this.entityDataManager.loadManyByRawWhereClauseAsync(
+    const fieldValuesArray = await this.dataManager.loadManyByRawWhereClauseAsync(
       this.queryContext,
       rawWhereClause,
       bindings,
@@ -271,6 +265,6 @@ export default class EntityLoader<
    * @param objectFields - entity data object to be invalidated
    */
   async invalidateFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
-    await this.entityDataManager.invalidateObjectFieldsAsync(objectFields);
+    await this.dataManager.invalidateObjectFieldsAsync(objectFields);
   }
 }

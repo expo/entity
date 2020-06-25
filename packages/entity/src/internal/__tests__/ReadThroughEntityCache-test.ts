@@ -1,6 +1,7 @@
 import { verify, deepEqual, mock, instance, when, anything } from 'ts-mockito';
 
 import EntityCacheAdapter from '../../EntityCacheAdapter';
+import { DatabaseAdapterFlavor, CacheAdapterFlavor } from '../../EntityCompanionProvider';
 import EntityConfiguration from '../../EntityConfiguration';
 import { UUIDField } from '../../EntityFields';
 import ReadThroughEntityCache, { CacheStatus } from '../ReadThroughEntityCache';
@@ -16,6 +17,8 @@ const makeEntityConfiguration = (cacheIdField: boolean): EntityConfiguration<Bla
     schema: {
       id: new UUIDField({ columnName: 'id', cache: cacheIdField }),
     },
+    databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
+    cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   });
 
 const createIdFetcher = (ids: string[]) => async <N extends keyof BlahFields>(

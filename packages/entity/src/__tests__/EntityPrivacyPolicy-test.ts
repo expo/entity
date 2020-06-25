@@ -234,9 +234,9 @@ const blahEntityCompanionDefinition = new EntityCompanionDefinition({
         columnName: 'id',
       }),
     },
+    databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
+    cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   }),
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: AlwaysDenyPolicy,
 });
 

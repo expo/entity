@@ -7,6 +7,7 @@ import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
 import IEntityQueryContextProvider from './IEntityQueryContextProvider';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
+import EntityTableDataCoordinator from './internal/EntityTableDataCoordinator';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 import { computeIfAbsent } from './utils/collections/maps';
 
@@ -78,16 +79,12 @@ export class EntityCompanionDefinition<
     TSelectedFields
   >;
   readonly entityConfiguration: EntityConfiguration<TFields>;
-  readonly databaseAdaptorFlavor: DatabaseAdapterFlavor;
-  readonly cacheAdaptorFlavor: CacheAdapterFlavor;
   readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
   readonly entitySelectedFields: TSelectedFields[];
 
   constructor({
     entityClass,
     entityConfiguration,
-    databaseAdaptorFlavor,
-    cacheAdaptorFlavor,
     privacyPolicyClass,
     entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as TSelectedFields[],
   }: {
@@ -100,15 +97,11 @@ export class EntityCompanionDefinition<
       TSelectedFields
     >;
     entityConfiguration: EntityConfiguration<TFields>;
-    databaseAdaptorFlavor: DatabaseAdapterFlavor;
-    cacheAdaptorFlavor: CacheAdapterFlavor;
     privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
     entitySelectedFields?: TSelectedFields[];
   }) {
     this.entityClass = entityClass;
     this.entityConfiguration = entityConfiguration;
-    this.databaseAdaptorFlavor = databaseAdaptorFlavor;
-    this.cacheAdaptorFlavor = cacheAdaptorFlavor;
     this.privacyPolicyClass = privacyPolicyClass;
     this.entitySelectedFields = entitySelectedFields;
   }
@@ -124,9 +117,13 @@ export class EntityCompanionDefinition<
  * {@link EntityCompanion} for each type of {@link Entity}.
  */
 export default class EntityCompanionProvider {
-  private readonly entityCompanionMap: Map<
+  private readonly companionMap: Map<
     string,
     EntityCompanion<any, any, any, any, any, any>
+  > = new Map();
+  private readonly tableDataCoordinatorMap: Map<
+    string,
+    EntityTableDataCoordinator<any>
   > = new Map();
 
   /**
@@ -179,19 +176,33 @@ export default class EntityCompanionProvider {
       TSelectedFields
     >
   ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return computeIfAbsent(this.entityCompanionMap, entityClass.name, () => {
-      const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[
-        entityCompanionDefinition.databaseAdaptorFlavor
-      ];
-      const entityCacheAdapterFlavor = this.cacheAdapterFlavors[
-        entityCompanionDefinition.cacheAdaptorFlavor
-      ];
+    const tableDataCoordinator = this.getTableDataCoordinatorForEntity(
+      entityCompanionDefinition.entityConfiguration
+    );
+    return computeIfAbsent(this.companionMap, entityClass.name, () => {
       return new EntityCompanion(
         entityCompanionDefinition.entityClass,
-        entityCompanionDefinition.entityConfiguration,
+        tableDataCoordinator,
+        entityCompanionDefinition.privacyPolicyClass,
+        this.metricsAdapter
+      );
+    });
+  }
+
+  private getTableDataCoordinatorForEntity<TFields>(
+    entityConfiguration: EntityConfiguration<TFields>
+  ): EntityTableDataCoordinator<TFields> {
+    return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration.tableName, () => {
+      const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[
+        entityConfiguration.databaseAdaptorFlavor
+      ];
+      const entityCacheAdapterFlavor = this.cacheAdapterFlavors[
+        entityConfiguration.cacheAdaptorFlavor
+      ];
+      return new EntityTableDataCoordinator(
+        entityConfiguration,
         entityDatabaseAdapterFlavor.adapterProvider,
         entityCacheAdapterFlavor.cacheAdapterProvider,
-        entityCompanionDefinition.privacyPolicyClass,
         entityDatabaseAdapterFlavor.queryContextProvider,
         this.metricsAdapter
       );

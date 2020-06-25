@@ -44,7 +44,7 @@ describe(RedisCacheAdapter, () => {
     const cacheAdapter = vc1.entityCompanionProvider.getCompanionForEntity(
       RedisTestEntity,
       RedisTestEntity.getCompanionDefinition()
-    )['cacheAdapter'];
+    )['tableDataCoordinator']['cacheAdapter'];
     const cacheKeyMaker = cacheAdapter['makeCacheKey'].bind(cacheAdapter);
 
     // creating an entity should put it in cache (loader loads it after creation)

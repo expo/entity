@@ -1,5 +1,4 @@
 import Entity, { IEntityClass } from './Entity';
-import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import { CreateMutator, UpdateMutator, DeleteMutator } from './EntityMutator';
@@ -26,7 +25,7 @@ export default class EntityMutatorFactory<
   TSelectedFields extends keyof TFields = keyof TFields
 > {
   constructor(
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly idField: keyof TFields,
     private readonly entityClass: IEntityClass<
       TFields,
       TID,
@@ -61,7 +60,7 @@ export default class EntityMutatorFactory<
     return new CreateMutator(
       viewerContext,
       queryContext,
-      this.entityConfiguration,
+      this.idField,
       this.entityClass,
       this.privacyPolicy,
       this.entityLoaderFactory,
@@ -83,7 +82,7 @@ export default class EntityMutatorFactory<
     return new UpdateMutator(
       existingEntity.getViewerContext(),
       queryContext,
-      this.entityConfiguration,
+      this.idField,
       this.entityClass,
       this.privacyPolicy,
       this.entityLoaderFactory,
@@ -105,7 +104,7 @@ export default class EntityMutatorFactory<
     return new DeleteMutator(
       existingEntity.getViewerContext(),
       queryContext,
-      this.entityConfiguration,
+      this.idField,
       this.entityClass,
       this.privacyPolicy,
       this.entityLoaderFactory,

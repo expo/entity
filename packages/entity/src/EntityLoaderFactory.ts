@@ -1,5 +1,4 @@
 import { IEntityClass } from './Entity';
-import EntityConfiguration from './EntityConfiguration';
 import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
@@ -25,7 +24,7 @@ export default class EntityLoaderFactory<
   TSelectedFields extends keyof TFields = keyof TFields
 > {
   constructor(
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly idField: keyof TFields,
     private readonly entityClass: IEntityClass<
       TFields,
       TID,
@@ -50,7 +49,7 @@ export default class EntityLoaderFactory<
     return new EntityLoader(
       viewerContext,
       queryContext,
-      this.entityConfiguration,
+      this.idField,
       this.entityClass,
       this.privacyPolicyClass,
       this.dataManager
