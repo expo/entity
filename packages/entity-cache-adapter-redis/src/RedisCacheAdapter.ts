@@ -50,9 +50,11 @@ export interface RedisCacheAdapterContext {
   ttlSecondsNegative: number;
 }
 
-export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+export default class RedisCacheAdapter<TDatabaseFields> extends EntityCacheAdapter<
+  TDatabaseFields
+> {
   constructor(
-    entityConfiguration: EntityConfiguration<TFields>,
+    entityConfiguration: EntityConfiguration<TDatabaseFields>,
     private readonly context: RedisCacheAdapterContext
   ) {
     super(entityConfiguration);
@@ -62,10 +64,10 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     return redisTransformerMap;
   }
 
-  public async loadManyAsync<N extends keyof TFields>(
+  public async loadManyAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult>> {
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
+  ): Promise<ReadonlyMap<NonNullable<TDatabaseFields[N]>, CacheLoadResult>> {
     if (fieldValues.length === 0) {
       return new Map();
     }
@@ -73,7 +75,7 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     const redisKeys = fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue));
     const redisResults = await this.context.redisClient.mget(...redisKeys);
 
-    const results = new Map<NonNullable<TFields[N]>, CacheLoadResult>();
+    const results = new Map<NonNullable<TDatabaseFields[N]>, CacheLoadResult>();
     for (let i = 0; i < fieldValues.length; i++) {
       const fieldValue = fieldValues[i];
       const redisResult = redisResults[i];
@@ -96,9 +98,9 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     return results;
   }
 
-  public async cacheManyAsync<N extends keyof TFields>(
+  public async cacheManyAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, object>
+    objectMap: ReadonlyMap<NonNullable<TDatabaseFields[N]>, object>
   ): Promise<void> {
     if (objectMap.size === 0) {
       return;
@@ -117,9 +119,9 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     await redisTransaction.exec();
   }
 
-  public async cacheDBMissesAsync<N extends keyof TFields>(
+  public async cacheDBMissesAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
   ): Promise<void> {
     if (fieldValues.length === 0) {
       return;
@@ -138,9 +140,9 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     await redisTransaction.exec();
   }
 
-  public async invalidateManyAsync<N extends keyof TFields>(
+  public async invalidateManyAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
   ): Promise<void> {
     if (fieldValues.length === 0) {
       return;
@@ -150,9 +152,9 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     await this.context.redisClient.del(...redisKeys);
   }
 
-  private makeCacheKey<N extends keyof TFields>(
+  private makeCacheKey<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TDatabaseFields[N]>
   ): string {
     return this.context.makeKeyFn(
       this.context.cacheKeyPrefix,

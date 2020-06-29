@@ -11,16 +11,16 @@ export class EntityNotFoundError<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >,
-  N extends keyof TFields,
-  TSelectedFields extends keyof TFields = keyof TFields
+  N extends keyof TDatabaseFields,
+  TDatabaseFields extends TFields = TFields
 > extends EntityError {
   constructor(
     entityClass: IEntityClass<
@@ -29,10 +29,10 @@ export class EntityNotFoundError<
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >,
     fieldName: N,
-    fieldValue: TFields[N]
+    fieldValue: TDatabaseFields[N]
   ) {
     super(`Entity not found: ${entityClass.name} (${fieldName} = ${fieldValue})`);
   }
@@ -42,8 +42,8 @@ export class EntityNotAuthorizedError<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
+  TDatabaseFields extends TFields = TFields
 > extends EntityError {
   public readonly entityClassName: string;
 

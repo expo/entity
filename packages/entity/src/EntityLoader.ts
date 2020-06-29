@@ -20,30 +20,30 @@ export default class EntityLoader<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TDatabaseFields extends TFields = TFields
 > {
   constructor(
     private readonly viewerContext: TViewerContext,
     private readonly queryContext: EntityQueryContext,
-    private readonly idField: keyof TFields,
+    private readonly idField: keyof TDatabaseFields,
     private readonly entityClass: IEntityClass<
       TFields,
       TID,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
-    private readonly dataManager: EntityDataManager<TFields>
+    private readonly dataManager: EntityDataManager<TDatabaseFields>
   ) {}
 
   /**
@@ -57,7 +57,7 @@ export default class EntityLoader<
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
-    TSelectedFields
+    TDatabaseFields
   > {
     return new EnforcingEntityLoader(this);
   }
@@ -264,7 +264,7 @@ export default class EntityLoader<
    * Invalidate all caches for an entity's fields. Exposed primarily for internal use by {@link EntityMutator}.
    * @param objectFields - entity data object to be invalidated
    */
-  async invalidateFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
+  async invalidateFieldsAsync(objectFields: Readonly<TDatabaseFields>): Promise<void> {
     await this.dataManager.invalidateObjectFieldsAsync(objectFields);
   }
 }

@@ -25,15 +25,15 @@ export default class ViewerScopedEntityCompanionProvider {
     TFields,
     TID,
     TViewerContext extends ViewerContext,
-    TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+    TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
     TPrivacyPolicy extends EntityPrivacyPolicy<
       TFields,
       TID,
       TViewerContext,
       TEntity,
-      TSelectedFields
+      TDatabaseFields
     >,
-    TSelectedFields extends keyof TFields = keyof TFields
+    TDatabaseFields extends TFields = TFields
   >(
     entityClass: IEntityClass<
       TFields,
@@ -41,7 +41,7 @@ export default class ViewerScopedEntityCompanionProvider {
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >,
     entityCompanionDefinition: EntityCompanionDefinition<
       TFields,
@@ -49,7 +49,7 @@ export default class ViewerScopedEntityCompanionProvider {
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >
   ): ViewerScopedEntityCompanion<
     TFields,
@@ -57,7 +57,7 @@ export default class ViewerScopedEntityCompanionProvider {
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
-    TSelectedFields
+    TDatabaseFields
   > {
     return new ViewerScopedEntityCompanion(
       this.entityCompanionProvider.getCompanionForEntity(entityClass, entityCompanionDefinition),

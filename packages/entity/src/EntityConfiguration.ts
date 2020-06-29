@@ -6,15 +6,15 @@ import { mapMap, invertMap, reduceMap } from './utils/collections/maps';
  * The data storage configuration for a type of Entity. Contains information relating to IDs,
  * cachable fields, field mappings, and types of cache and database adapter.
  */
-export default class EntityConfiguration<TFields> {
-  readonly idField: keyof TFields;
+export default class EntityConfiguration<TDatabaseFields> {
+  readonly idField: keyof TDatabaseFields;
   readonly tableName: string;
-  readonly cacheableKeys: ReadonlySet<keyof TFields>;
+  readonly cacheableKeys: ReadonlySet<keyof TDatabaseFields>;
   readonly cacheKeyVersion: number;
 
-  readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition>;
-  readonly entityToDBFieldsKeyMapping: ReadonlyMap<keyof TFields, string>;
-  readonly dbToEntityFieldsKeyMapping: ReadonlyMap<string, keyof TFields>;
+  readonly schema: ReadonlyMap<keyof TDatabaseFields, EntityFieldDefinition>;
+  readonly entityToDBFieldsKeyMapping: ReadonlyMap<keyof TDatabaseFields, string>;
+  readonly dbToEntityFieldsKeyMapping: ReadonlyMap<string, keyof TDatabaseFields>;
 
   readonly databaseAdapterFlavor: DatabaseAdapterFlavor;
   readonly cacheAdapterFlavor: CacheAdapterFlavor;
@@ -27,9 +27,9 @@ export default class EntityConfiguration<TFields> {
     databaseAdapterFlavor,
     cacheAdapterFlavor,
   }: {
-    idField: keyof TFields;
+    idField: keyof TDatabaseFields;
     tableName: string;
-    schema: Record<keyof TFields, EntityFieldDefinition>;
+    schema: Record<keyof TDatabaseFields, EntityFieldDefinition>;
     cacheKeyVersion?: number;
     databaseAdapterFlavor: DatabaseAdapterFlavor;
     cacheAdapterFlavor: CacheAdapterFlavor;

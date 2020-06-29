@@ -5,9 +5,9 @@ import RedisCacheAdapter, { RedisCacheAdapterContext } from './RedisCacheAdapter
 export default class RedisCacheAdapterProvider implements IEntityCacheAdapterProvider {
   constructor(private readonly context: RedisCacheAdapterContext) {}
 
-  getCacheAdapter<TFields>(
-    entityConfiguration: EntityConfiguration<TFields>
-  ): EntityCacheAdapter<TFields> {
+  getCacheAdapter<TDatabaseFields>(
+    entityConfiguration: EntityConfiguration<TDatabaseFields>
+  ): EntityCacheAdapter<TDatabaseFields> {
     return new RedisCacheAdapter(entityConfiguration, this.context);
   }
 }

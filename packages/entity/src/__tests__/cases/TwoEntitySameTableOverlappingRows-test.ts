@@ -88,16 +88,16 @@ describe('Two entities backed by the same table', () => {
   });
 });
 
-interface TestFields {
+interface TestDatabaseFields {
   id: string;
   other_field: string;
   fake_field: string;
 }
 
-type OneTestFields = 'id' | 'fake_field';
-type TwoTestFields = 'id' | 'other_field' | 'fake_field';
+type OneTestFields = Pick<TestDatabaseFields, 'id' | 'fake_field'>;
+type TwoTestFields = Pick<TestDatabaseFields, 'id' | 'other_field' | 'fake_field'>;
 
-const testEntityConfiguration = new EntityConfiguration<TestFields>({
+const testEntityConfiguration = new EntityConfiguration<TestDatabaseFields>({
   idField: 'id',
   tableName: 'entities',
   schema: {
@@ -125,27 +125,27 @@ class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerCon
   protected readonly deleteRules = [new AlwaysAllowPrivacyPolicyRule()];
 }
 
-class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFields> {
+class OneTestEntity extends Entity<OneTestFields, string, ViewerContext, TestDatabaseFields> {
   static getCompanionDefinition(): EntityCompanionDefinition<
-    TestFields,
+    OneTestFields,
     string,
     ViewerContext,
     OneTestEntity,
     TestEntityPrivacyPolicy,
-    OneTestFields
+    TestDatabaseFields
   > {
     return oneTestEntityCompanion;
   }
 }
 
-class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFields> {
+class TwoTestEntity extends Entity<TwoTestFields, string, ViewerContext, TestDatabaseFields> {
   static getCompanionDefinition(): EntityCompanionDefinition<
-    TestFields,
+    TwoTestFields,
     string,
     ViewerContext,
     TwoTestEntity,
     TestEntityPrivacyPolicy,
-    TwoTestFields
+    TestDatabaseFields
   > {
     return twoTestEntityCompanion;
   }
@@ -155,12 +155,10 @@ const oneTestEntityCompanion = new EntityCompanionDefinition({
   entityClass: OneTestEntity,
   entityConfiguration: testEntityConfiguration,
   privacyPolicyClass: TestEntityPrivacyPolicy,
-  entitySelectedFields: ['id', 'fake_field'],
 });
 
 const twoTestEntityCompanion = new EntityCompanionDefinition({
   entityClass: TwoTestEntity,
   entityConfiguration: testEntityConfiguration,
   privacyPolicyClass: TestEntityPrivacyPolicy,
-  entitySelectedFields: ['id', 'other_field', 'fake_field'],
 });

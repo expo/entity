@@ -60,15 +60,15 @@ export class EntityCompanionDefinition<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TDatabaseFields extends TFields = TFields
 > {
   readonly entityClass: IEntityClass<
     TFields,
@@ -76,17 +76,17 @@ export class EntityCompanionDefinition<
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
-    TSelectedFields
+    TDatabaseFields
   >;
-  readonly entityConfiguration: EntityConfiguration<TFields>;
+  readonly entityConfiguration: EntityConfiguration<TDatabaseFields>;
   readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
-  readonly entitySelectedFields: TSelectedFields[];
+  readonly entitySelectedFields: (keyof TFields)[];
 
   constructor({
     entityClass,
     entityConfiguration,
     privacyPolicyClass,
-    entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as TSelectedFields[],
+    entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as (keyof TFields)[],
   }: {
     entityClass: IEntityClass<
       TFields,
@@ -94,11 +94,11 @@ export class EntityCompanionDefinition<
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >;
-    entityConfiguration: EntityConfiguration<TFields>;
+    entityConfiguration: EntityConfiguration<TDatabaseFields>;
     privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
-    entitySelectedFields?: TSelectedFields[];
+    entitySelectedFields?: (keyof TFields)[];
   }) {
     this.entityClass = entityClass;
     this.entityConfiguration = entityConfiguration;
@@ -149,15 +149,15 @@ export default class EntityCompanionProvider {
     TFields,
     TID,
     TViewerContext extends ViewerContext,
-    TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+    TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
     TPrivacyPolicy extends EntityPrivacyPolicy<
       TFields,
       TID,
       TViewerContext,
       TEntity,
-      TSelectedFields
+      TDatabaseFields
     >,
-    TSelectedFields extends keyof TFields = keyof TFields
+    TDatabaseFields extends TFields = TFields
   >(
     entityClass: IEntityClass<
       TFields,
@@ -165,7 +165,7 @@ export default class EntityCompanionProvider {
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >,
     entityCompanionDefinition: EntityCompanionDefinition<
       TFields,
@@ -173,9 +173,9 @@ export default class EntityCompanionProvider {
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >
-  ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TDatabaseFields> {
     const tableDataCoordinator = this.getTableDataCoordinatorForEntity(
       entityCompanionDefinition.entityConfiguration
     );
@@ -189,9 +189,9 @@ export default class EntityCompanionProvider {
     });
   }
 
-  private getTableDataCoordinatorForEntity<TFields>(
-    entityConfiguration: EntityConfiguration<TFields>
-  ): EntityTableDataCoordinator<TFields> {
+  private getTableDataCoordinatorForEntity<TDatabaseFields>(
+    entityConfiguration: EntityConfiguration<TDatabaseFields>
+  ): EntityTableDataCoordinator<TDatabaseFields> {
     return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration.tableName, () => {
       const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[
         entityConfiguration.databaseAdapterFlavor

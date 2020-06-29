@@ -19,15 +19,15 @@ export default class EntityCompanion<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TDatabaseFields extends TFields = TFields
 > {
   private readonly entityLoaderFactory: EntityLoaderFactory<
     TFields,
@@ -35,7 +35,7 @@ export default class EntityCompanion<
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
-    TSelectedFields
+    TDatabaseFields
   >;
   private readonly entityMutatorFactory: EntityMutatorFactory<
     TFields,
@@ -43,7 +43,7 @@ export default class EntityCompanion<
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
-    TSelectedFields
+    TDatabaseFields
   >;
 
   constructor(
@@ -53,9 +53,9 @@ export default class EntityCompanion<
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >,
-    private readonly tableDataCoordinator: EntityTableDataCoordinator<TFields>,
+    private readonly tableDataCoordinator: EntityTableDataCoordinator<TDatabaseFields>,
     PrivacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>,
     metricsAdapter: IEntityMetricsAdapter
   ) {
@@ -82,7 +82,7 @@ export default class EntityCompanion<
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
-    TSelectedFields
+    TDatabaseFields
   > {
     return this.entityLoaderFactory;
   }
@@ -93,7 +93,7 @@ export default class EntityCompanion<
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
-    TSelectedFields
+    TDatabaseFields
   > {
     return this.entityMutatorFactory;
   }

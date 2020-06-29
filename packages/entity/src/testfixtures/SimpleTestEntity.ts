@@ -14,8 +14,6 @@ export type SimpleTestFields = {
   id: string;
 };
 
-export type SimpleTestFieldSelection = keyof SimpleTestFields;
-
 export const simpleTestEntityConfiguration = new EntityConfiguration<SimpleTestFields>({
   idField: 'id',
   tableName: 'simple_test_entity_should_not_write_to_db',
@@ -32,60 +30,29 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   SimpleTestFields,
   string,
   ViewerContext,
-  SimpleTestEntity,
-  SimpleTestFieldSelection
+  SimpleTestEntity
 > {
   protected readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<
-      SimpleTestFields,
-      string,
-      ViewerContext,
-      SimpleTestEntity,
-      SimpleTestFieldSelection
-    >(),
+    new AlwaysAllowPrivacyPolicyRule<SimpleTestFields, string, ViewerContext, SimpleTestEntity>(),
   ];
   protected readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<
-      SimpleTestFields,
-      string,
-      ViewerContext,
-      SimpleTestEntity,
-      SimpleTestFieldSelection
-    >(),
+    new AlwaysAllowPrivacyPolicyRule<SimpleTestFields, string, ViewerContext, SimpleTestEntity>(),
   ];
   protected readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<
-      SimpleTestFields,
-      string,
-      ViewerContext,
-      SimpleTestEntity,
-      SimpleTestFieldSelection
-    >(),
+    new AlwaysAllowPrivacyPolicyRule<SimpleTestFields, string, ViewerContext, SimpleTestEntity>(),
   ];
   protected readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<
-      SimpleTestFields,
-      string,
-      ViewerContext,
-      SimpleTestEntity,
-      SimpleTestFieldSelection
-    >(),
+    new AlwaysAllowPrivacyPolicyRule<SimpleTestFields, string, ViewerContext, SimpleTestEntity>(),
   ];
 }
 
-export default class SimpleTestEntity extends Entity<
-  SimpleTestFields,
-  string,
-  ViewerContext,
-  SimpleTestFieldSelection
-> {
+export default class SimpleTestEntity extends Entity<SimpleTestFields, string, ViewerContext> {
   static getCompanionDefinition(): EntityCompanionDefinition<
     SimpleTestFields,
     string,
     ViewerContext,
     SimpleTestEntity,
-    SimpleTestEntityPrivacyPolicy,
-    SimpleTestFieldSelection
+    SimpleTestEntityPrivacyPolicy
   > {
     return testEntityCompanion;
   }

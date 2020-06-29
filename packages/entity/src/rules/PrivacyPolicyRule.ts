@@ -39,8 +39,8 @@ export default abstract class PrivacyPolicyRule<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
+  TDatabaseFields extends TFields = TFields
 > {
   abstract async evaluateAsync(
     viewerContext: TViewerContext,

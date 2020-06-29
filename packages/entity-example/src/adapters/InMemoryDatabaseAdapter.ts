@@ -15,9 +15,9 @@ import { v4 as uuidv4 } from 'uuid';
 const dbObjects: Readonly<{ [key: string]: any }>[] = [];
 
 export class InMemoryDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
-  getDatabaseAdapter<TFields>(
-    entityConfiguration: EntityConfiguration<TFields>
-  ): EntityDatabaseAdapter<TFields> {
+  getDatabaseAdapter<TDatabaseFields>(
+    entityConfiguration: EntityConfiguration<TDatabaseFields>
+  ): EntityDatabaseAdapter<TDatabaseFields> {
     return new InMemoryDatabaseAdapter(entityConfiguration);
   }
 }

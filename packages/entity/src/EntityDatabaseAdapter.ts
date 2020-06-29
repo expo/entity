@@ -80,10 +80,10 @@ export interface TableQuerySelectionModifiers {
  * handles all entity field transformation. Subclasses are responsible for
  * implementing database-specific logic for a type of database.
  */
-export default abstract class EntityDatabaseAdapter<TFields> {
+export default abstract class EntityDatabaseAdapter<TDatabaseFields> {
   private readonly fieldTransformerMap: FieldTransformerMap;
 
-  constructor(private readonly entityConfiguration: EntityConfiguration<TFields>) {
+  constructor(private readonly entityConfiguration: EntityConfiguration<TDatabaseFields>) {
     this.fieldTransformerMap = this.getFieldTransformerMap();
   }
 
@@ -102,11 +102,11 @@ export default abstract class EntityDatabaseAdapter<TFields> {
    * @param fieldValues - fieldName field values being queried
    * @returns map from fieldValue to objects that match the query for that fieldValue
    */
-  async fetchManyWhereAsync<K extends keyof TFields>(
+  async fetchManyWhereAsync<K extends keyof TDatabaseFields>(
     queryContext: EntityQueryContext,
     field: K,
-    fieldValues: readonly NonNullable<TFields[K]>[]
-  ): Promise<ReadonlyMap<NonNullable<TFields[K]>, readonly Readonly<TFields>[]>> {
+    fieldValues: readonly NonNullable<TDatabaseFields[K]>[]
+  ): Promise<ReadonlyMap<NonNullable<TDatabaseFields[K]>, readonly Readonly<TDatabaseFields>[]>> {
     const fieldColumn = getDatabaseFieldForEntityField(this.entityConfiguration, field);
     const results = await this.fetchManyWhereInternalAsync(
       queryContext.getQueryInterface(),
@@ -147,11 +147,11 @@ export default abstract class EntityDatabaseAdapter<TFields> {
    * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of objects matching the query
    */
-  async fetchManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
+  async fetchManyByFieldEqualityConjunctionAsync<N extends keyof TDatabaseFields>(
     queryContext: EntityQueryContext,
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
-  ): Promise<readonly Readonly<TFields>[]> {
+    fieldEqualityOperands: FieldEqualityCondition<TDatabaseFields, N>[],
+    querySelectionModifiers: QuerySelectionModifiers<TDatabaseFields>
+  ): Promise<readonly Readonly<TDatabaseFields>[]> {
     const tableFieldSingleValueOperands: TableFieldSingleValueEqualityCondition[] = [];
     const tableFieldMultipleValueOperands: TableFieldMultiValueEqualityCondition[] = [];
     for (const operand of fieldEqualityOperands) {
@@ -202,8 +202,8 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
-  ): Promise<readonly Readonly<TFields>[]> {
+    querySelectionModifiers: QuerySelectionModifiers<TDatabaseFields>
+  ): Promise<readonly Readonly<TDatabaseFields>[]> {
     const results = await this.fetchManyByRawWhereClauseInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
@@ -234,8 +234,8 @@ export default abstract class EntityDatabaseAdapter<TFields> {
    */
   async insertAsync(
     queryContext: EntityQueryContext,
-    object: Readonly<Partial<TFields>>
-  ): Promise<Readonly<TFields>> {
+    object: Readonly<Partial<TDatabaseFields>>
+  ): Promise<Readonly<TDatabaseFields>> {
     const dbObject = transformFieldsToDatabaseObject(
       this.entityConfiguration,
       this.fieldTransformerMap,
@@ -279,12 +279,12 @@ export default abstract class EntityDatabaseAdapter<TFields> {
    * @param object - the object to update
    * @returns the updated object
    */
-  async updateAsync<K extends keyof TFields>(
+  async updateAsync<K extends keyof TDatabaseFields>(
     queryContext: EntityQueryContext,
     idField: K,
     id: any,
-    object: Readonly<Partial<TFields>>
-  ): Promise<Readonly<TFields>> {
+    object: Readonly<Partial<TDatabaseFields>>
+  ): Promise<Readonly<TDatabaseFields>> {
     const idColumn = getDatabaseFieldForEntityField(this.entityConfiguration, idField);
     const dbObject = transformFieldsToDatabaseObject(
       this.entityConfiguration,
@@ -331,7 +331,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
    * @param idField - the field in the object that is the ID
    * @param id - the value of the ID field in the object
    */
-  async deleteAsync<K extends keyof TFields>(
+  async deleteAsync<K extends keyof TDatabaseFields>(
     queryContext: EntityQueryContext,
     idField: K,
     id: any
@@ -363,7 +363,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
   ): Promise<number>;
 
   private convertToTableQueryModifiers(
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
+    querySelectionModifiers: QuerySelectionModifiers<TDatabaseFields>
   ): TableQuerySelectionModifiers {
     const orderBy = querySelectionModifiers.orderBy;
     return {

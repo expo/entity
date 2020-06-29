@@ -9,7 +9,7 @@ export default interface IEntityDatabaseAdapterProvider {
   /**
    * Vend a database adapter.
    */
-  getDatabaseAdapter<TFields>(
-    entityConfiguration: EntityConfiguration<TFields>
-  ): EntityDatabaseAdapter<TFields>;
+  getDatabaseAdapter<TDatabaseFields>(
+    entityConfiguration: EntityConfiguration<TDatabaseFields>
+  ): EntityDatabaseAdapter<TDatabaseFields>;
 }

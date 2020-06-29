@@ -6,8 +6,8 @@ import { CacheLoadResult } from './internal/ReadThroughEntityCache';
  * A cache adapter is an interface by which objects can be
  * cached, fetched from cache, and removed from cache (invalidated).
  */
-export default abstract class EntityCacheAdapter<TFields> {
-  constructor(protected readonly entityConfiguration: EntityConfiguration<TFields>) {}
+export default abstract class EntityCacheAdapter<TDatabaseFields> {
+  constructor(protected readonly entityConfiguration: EntityConfiguration<TDatabaseFields>) {}
 
   /**
    * Transformer definitions for field types. Used to modify values as they are read from or written to
@@ -22,19 +22,19 @@ export default abstract class EntityCacheAdapter<TFields> {
    * @param fieldValues - fieldName field values being queried
    * @returns map from all field values to a CacheLoadResult for each input value
    */
-  public abstract loadManyAsync<N extends keyof TFields>(
+  public abstract loadManyAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult>>;
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
+  ): Promise<ReadonlyMap<NonNullable<TDatabaseFields[N]>, CacheLoadResult>>;
 
   /**
    * Cache many objects fetched from the DB.
    * @param fieldName - object field being queried
    * @param objectMap - map from field value to object to cache
    */
-  public abstract cacheManyAsync<N extends keyof TFields>(
+  public abstract cacheManyAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, object>
+    objectMap: ReadonlyMap<NonNullable<TDatabaseFields[N]>, object>
   ): Promise<void>;
 
   /**
@@ -43,9 +43,9 @@ export default abstract class EntityCacheAdapter<TFields> {
    * @param fieldValues - fieldValues for objects reported as {@link CacheStatus.NEGATIVE}
    *                    in the cache and not found in the DB.
    */
-  public abstract cacheDBMissesAsync<N extends keyof TFields>(
+  public abstract cacheDBMissesAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
   ): Promise<void>;
 
   /**
@@ -53,8 +53,8 @@ export default abstract class EntityCacheAdapter<TFields> {
    * @param fieldName - object field being queried
    * @param fieldValues - fieldName field values to be invalidated
    */
-  public abstract invalidateManyAsync<N extends keyof TFields>(
+  public abstract invalidateManyAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
   ): Promise<void>;
 }

@@ -29,15 +29,15 @@ export default class ViewerContext {
     TMFields,
     TMID,
     TMViewerContext extends ViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMDatabaseFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
       TMID,
       TMViewerContext,
       TMEntity,
-      TMSelectedFields
+      TMDatabaseFields
     >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
+    TMDatabaseFields extends TMFields = TMFields
   >(
     entityClass: IEntityClass<
       TMFields,
@@ -45,7 +45,7 @@ export default class ViewerContext {
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
-      TMSelectedFields
+      TMDatabaseFields
     >
   ): ViewerScopedEntityCompanion<
     TMFields,
@@ -53,7 +53,7 @@ export default class ViewerContext {
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,
-    TMSelectedFields
+    TMDatabaseFields
   > {
     return this.viewerScopedEntityCompanionProvider.getViewerScopedCompanionForEntity(
       entityClass,

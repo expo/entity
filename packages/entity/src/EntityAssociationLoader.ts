@@ -10,8 +10,8 @@ export default class EntityAssociationLoader<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
+  TDatabaseFields extends TFields = TFields
 > {
   constructor(private readonly entity: TEntity) {}
 
@@ -29,25 +29,25 @@ export default class EntityAssociationLoader<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
-      TAssociatedSelectedFields
+      TAssociatedDatabaseFields
     >,
     TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
       TAssociatedEntity,
-      TAssociatedSelectedFields
+      TAssociatedDatabaseFields
     >,
-    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
+    TAssociatedDatabaseFields extends TAssociatedFields = TAssociatedFields
   >(
-    fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
+    fieldIdentifyingAssociatedEntity: keyof TFields,
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
       TAssociatedEntity,
       TAssociatedPrivacyPolicy,
-      TAssociatedSelectedFields
+      TAssociatedDatabaseFields
     >,
     queryContext: EntityQueryContext = this.entity
       .getViewerContext()
@@ -125,25 +125,25 @@ export default class EntityAssociationLoader<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
-      TAssociatedSelectedFields
+      TAssociatedDatabaseFields
     >,
     TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
       TAssociatedEntity,
-      TAssociatedSelectedFields
+      TAssociatedDatabaseFields
     >,
-    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
+    TAssociatedDatabaseFields extends TAssociatedFields = TAssociatedFields
   >(
-    fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
+    fieldIdentifyingAssociatedEntity: keyof TFields,
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
       TAssociatedEntity,
       TAssociatedPrivacyPolicy,
-      TAssociatedSelectedFields
+      TAssociatedDatabaseFields
     >,
     associatedEntityLookupByField: keyof TAssociatedFields,
     queryContext: EntityQueryContext = this.entity
@@ -183,7 +183,7 @@ export default class EntityAssociationLoader<
       TAssociatedEntity
     >
   >(
-    fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
+    fieldIdentifyingAssociatedEntity: keyof TFields,
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
       TAssociatedID,
@@ -219,15 +219,15 @@ export default class EntityAssociationLoader<
   async loadAssociatedEntityThroughAsync<
     TFields2,
     TID2,
-    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
+    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TDatabaseFields2>,
     TPrivacyPolicy2 extends EntityPrivacyPolicy<
       TFields2,
       TID2,
       TViewerContext,
       TEntity2,
-      TSelectedFields2
+      TDatabaseFields2
     >,
-    TSelectedFields2 extends keyof TFields2 = keyof TFields2
+    TDatabaseFields2 extends TFields2 = TFields2
   >(
     loadDirectives: [
       EntityLoadThroughDirective<
@@ -237,8 +237,7 @@ export default class EntityAssociationLoader<
         TID2,
         TEntity2,
         TPrivacyPolicy2,
-        TSelectedFields,
-        TSelectedFields2
+        TDatabaseFields2
       >
     ],
     queryContext?: EntityQueryContext
@@ -253,26 +252,26 @@ export default class EntityAssociationLoader<
   async loadAssociatedEntityThroughAsync<
     TFields2,
     TID2,
-    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
+    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TDatabaseFields2>,
     TPrivacyPolicy2 extends EntityPrivacyPolicy<
       TFields2,
       TID2,
       TViewerContext,
       TEntity2,
-      TSelectedFields2
+      TDatabaseFields2
     >,
     TFields3,
     TID3,
-    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TSelectedFields3>,
+    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TDatabaseFields3>,
     TPrivacyPolicy3 extends EntityPrivacyPolicy<
       TFields3,
       TID3,
       TViewerContext,
       TEntity3,
-      TSelectedFields3
+      TDatabaseFields3
     >,
-    TSelectedFields2 extends keyof TFields2 = keyof TFields2,
-    TSelectedFields3 extends keyof TFields3 = keyof TFields3
+    TDatabaseFields2 extends TFields2 = TFields2,
+    TDatabaseFields3 extends TFields3 = TFields3
   >(
     loadDirectives: [
       EntityLoadThroughDirective<
@@ -282,8 +281,7 @@ export default class EntityAssociationLoader<
         TID2,
         TEntity2,
         TPrivacyPolicy2,
-        TSelectedFields,
-        TSelectedFields2
+        TDatabaseFields2
       >,
       EntityLoadThroughDirective<
         TViewerContext,
@@ -292,8 +290,7 @@ export default class EntityAssociationLoader<
         TID3,
         TEntity3,
         TPrivacyPolicy3,
-        TSelectedFields2,
-        TSelectedFields3
+        TDatabaseFields3
       >
     ],
     queryContext?: EntityQueryContext
@@ -308,37 +305,37 @@ export default class EntityAssociationLoader<
   async loadAssociatedEntityThroughAsync<
     TFields2,
     TID2,
-    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
+    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TDatabaseFields2>,
     TPrivacyPolicy2 extends EntityPrivacyPolicy<
       TFields2,
       TID2,
       TViewerContext,
       TEntity2,
-      TSelectedFields2
+      TDatabaseFields2
     >,
     TFields3,
     TID3,
-    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TSelectedFields3>,
+    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TDatabaseFields3>,
     TPrivacyPolicy3 extends EntityPrivacyPolicy<
       TFields3,
       TID3,
       TViewerContext,
       TEntity3,
-      TSelectedFields3
+      TDatabaseFields3
     >,
     TFields4,
     TID4,
-    TEntity4 extends ReadonlyEntity<TFields4, TID4, TViewerContext, TSelectedFields4>,
+    TEntity4 extends ReadonlyEntity<TFields4, TID4, TViewerContext, TDatabaseFields4>,
     TPrivacyPolicy4 extends EntityPrivacyPolicy<
       TFields4,
       TID4,
       TViewerContext,
       TEntity4,
-      TSelectedFields4
+      TDatabaseFields4
     >,
-    TSelectedFields2 extends keyof TFields2 = keyof TFields2,
-    TSelectedFields3 extends keyof TFields3 = keyof TFields3,
-    TSelectedFields4 extends keyof TFields4 = keyof TFields4
+    TDatabaseFields2 extends TFields2 = TFields2,
+    TDatabaseFields3 extends TFields3 = TFields3,
+    TDatabaseFields4 extends TFields4 = TFields4
   >(
     loadDirective: [
       EntityLoadThroughDirective<
@@ -348,8 +345,7 @@ export default class EntityAssociationLoader<
         TID2,
         TEntity2,
         TPrivacyPolicy2,
-        TSelectedFields,
-        TSelectedFields2
+        TDatabaseFields2
       >,
       EntityLoadThroughDirective<
         TViewerContext,
@@ -358,8 +354,7 @@ export default class EntityAssociationLoader<
         TID3,
         TEntity3,
         TPrivacyPolicy3,
-        TSelectedFields2,
-        TSelectedFields3
+        TDatabaseFields3
       >,
       EntityLoadThroughDirective<
         TViewerContext,
@@ -368,8 +363,7 @@ export default class EntityAssociationLoader<
         TID4,
         TEntity4,
         TPrivacyPolicy4,
-        TSelectedFields3,
-        TSelectedFields4
+        TDatabaseFields4
       >
     ],
     queryContext?: EntityQueryContext
@@ -442,17 +436,16 @@ export interface EntityLoadThroughDirective<
     TAssociatedFields,
     TAssociatedID,
     TViewerContext,
-    TAssociatedSelectedFields
+    TAssociatedDatabaseFields
   >,
   TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
     TAssociatedFields,
     TAssociatedID,
     TViewerContext,
     TAssociatedEntity,
-    TAssociatedSelectedFields
+    TAssociatedDatabaseFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields,
-  TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
+  TAssociatedDatabaseFields extends TAssociatedFields = TAssociatedFields
 > {
   /**
    * Class of entity to load at this step.
@@ -463,13 +456,13 @@ export interface EntityLoadThroughDirective<
     TViewerContext,
     TAssociatedEntity,
     TAssociatedPrivacyPolicy,
-    TAssociatedSelectedFields
+    TAssociatedDatabaseFields
   >;
 
   /**
    * Field of the current entity with which to load an instance of associatedEntityClass.
    */
-  fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>;
+  fieldIdentifyingAssociatedEntity: keyof TFields;
 
   /**
    * Field by which to load the instance of associatedEntityClass. If not provided, the

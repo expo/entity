@@ -10,7 +10,9 @@ import {
 } from '@expo/entity';
 import Knex from 'knex';
 
-export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDatabaseAdapter<TFields> {
+export default class PostgresEntityDatabaseAdapter<TDatabaseFields> extends EntityDatabaseAdapter<
+  TDatabaseFields
+> {
   protected getFieldTransformerMap(): FieldTransformerMap {
     return new Map<string, FieldTransformer<any>>([
       [

@@ -42,16 +42,16 @@ enum EntityType {
   TWO,
 }
 
-interface TestFields {
+interface TestDatabaseFields {
   id: string;
   other_field: string;
   entity_type: EntityType;
 }
 
-type OneTestFields = 'id' | 'entity_type';
-type TwoTestFields = 'id' | 'other_field' | 'entity_type';
+type OneTestFields = Pick<TestDatabaseFields, 'id' | 'entity_type'>;
+type TwoTestFields = Pick<TestDatabaseFields, 'id' | 'other_field' | 'entity_type'>;
 
-const testEntityConfiguration = new EntityConfiguration<TestFields>({
+const testEntityConfiguration = new EntityConfiguration<TestDatabaseFields>({
   idField: 'id',
   tableName: 'entities',
   schema: {
@@ -77,8 +77,8 @@ class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerCon
   protected readonly deleteRules = [new AlwaysAllowPrivacyPolicyRule()];
 }
 
-class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFields> {
-  constructor(viewerContext: ViewerContext, rawFields: Readonly<TestFields>) {
+class OneTestEntity extends Entity<OneTestFields, string, ViewerContext, TestDatabaseFields> {
+  constructor(viewerContext: ViewerContext, rawFields: Readonly<TestDatabaseFields>) {
     if (rawFields.entity_type !== EntityType.ONE) {
       throw new Error('OneTestEntity must be instantiated with one data');
     }
@@ -86,19 +86,19 @@ class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFie
   }
 
   static getCompanionDefinition(): EntityCompanionDefinition<
-    TestFields,
+    OneTestFields,
     string,
     ViewerContext,
     OneTestEntity,
     TestEntityPrivacyPolicy,
-    OneTestFields
+    TestDatabaseFields
   > {
     return oneTestEntityCompanion;
   }
 }
 
-class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFields> {
-  constructor(viewerContext: ViewerContext, rawFields: Readonly<TestFields>) {
+class TwoTestEntity extends Entity<TwoTestFields, string, ViewerContext, TestDatabaseFields> {
+  constructor(viewerContext: ViewerContext, rawFields: Readonly<TestDatabaseFields>) {
     if (rawFields.entity_type !== EntityType.TWO) {
       throw new Error('TwoTestEntity must be instantiated with two data');
     }
@@ -106,12 +106,12 @@ class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFie
   }
 
   static getCompanionDefinition(): EntityCompanionDefinition<
-    TestFields,
+    TwoTestFields,
     string,
     ViewerContext,
     TwoTestEntity,
     TestEntityPrivacyPolicy,
-    TwoTestFields
+    TestDatabaseFields
   > {
     return twoTestEntityCompanion;
   }

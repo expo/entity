@@ -13,28 +13,28 @@ export default class EntityLoaderFactory<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TDatabaseFields extends TFields = TFields
 > {
   constructor(
-    private readonly idField: keyof TFields,
+    private readonly idField: keyof TDatabaseFields,
     private readonly entityClass: IEntityClass<
       TFields,
       TID,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >,
     private readonly privacyPolicyClass: TPrivacyPolicy,
-    private readonly dataManager: EntityDataManager<TFields>
+    private readonly dataManager: EntityDataManager<TDatabaseFields>
   ) {}
 
   /**
@@ -45,7 +45,7 @@ export default class EntityLoaderFactory<
   forLoad(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext
-  ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TDatabaseFields> {
     return new EntityLoader(
       viewerContext,
       queryContext,

@@ -7,23 +7,23 @@ import { FieldTransformerMap } from '../../internal/EntityFieldTransformationUti
 import { CacheStatus, CacheLoadResult } from '../../internal/ReadThroughEntityCache';
 
 export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
-  getCacheAdapter<TFields>(
-    entityConfiguration: EntityConfiguration<TFields>
-  ): EntityCacheAdapter<TFields> {
+  getCacheAdapter<TDatabaseFields>(
+    entityConfiguration: EntityConfiguration<TDatabaseFields>
+  ): EntityCacheAdapter<TDatabaseFields> {
     return new NoCacheStubCacheAdapter(entityConfiguration);
   }
 }
 
-export class NoCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+export class NoCacheStubCacheAdapter<TDatabaseFields> extends EntityCacheAdapter<TDatabaseFields> {
   public getFieldTransformerMap(): FieldTransformerMap {
     return new Map();
   }
 
-  public async loadManyAsync<N extends keyof TFields>(
+  public async loadManyAsync<N extends keyof TDatabaseFields>(
     _fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult>> {
-    return fieldValues.reduce((acc: Map<NonNullable<TFields[N]>, CacheLoadResult>, v) => {
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
+  ): Promise<ReadonlyMap<NonNullable<TDatabaseFields[N]>, CacheLoadResult>> {
+    return fieldValues.reduce((acc: Map<NonNullable<TDatabaseFields[N]>, CacheLoadResult>, v) => {
       acc.set(v, {
         status: CacheStatus.MISS,
       });
@@ -31,35 +31,37 @@ export class NoCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields
     }, new Map());
   }
 
-  public async cacheManyAsync<N extends keyof TFields>(
+  public async cacheManyAsync<N extends keyof TDatabaseFields>(
     _fieldName: N,
-    _objectMap: ReadonlyMap<NonNullable<TFields[N]>, object>
+    _objectMap: ReadonlyMap<NonNullable<TDatabaseFields[N]>, object>
   ): Promise<void> {}
 
-  public async cacheDBMissesAsync<N extends keyof TFields>(
+  public async cacheDBMissesAsync<N extends keyof TDatabaseFields>(
     _fieldName: N,
-    _fieldValues: readonly NonNullable<TFields[N]>[]
+    _fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
   ): Promise<void> {}
 
-  async invalidateManyAsync<N extends keyof TFields>(
+  async invalidateManyAsync<N extends keyof TDatabaseFields>(
     _fieldName: N,
-    _fieldValues: readonly TFields[N][]
+    _fieldValues: readonly TDatabaseFields[N][]
   ): Promise<void> {}
 }
 
 export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
   cache: Map<string, Readonly<object>> = new Map();
 
-  getCacheAdapter<TFields>(
-    entityConfiguration: EntityConfiguration<TFields>
-  ): EntityCacheAdapter<TFields> {
+  getCacheAdapter<TDatabaseFields>(
+    entityConfiguration: EntityConfiguration<TDatabaseFields>
+  ): EntityCacheAdapter<TDatabaseFields> {
     return new InMemoryFullCacheStubCacheAdapter(entityConfiguration, this.cache);
   }
 }
 
-class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+class InMemoryFullCacheStubCacheAdapter<TDatabaseFields> extends EntityCacheAdapter<
+  TDatabaseFields
+> {
   constructor(
-    entityConfiguration: EntityConfiguration<TFields>,
+    entityConfiguration: EntityConfiguration<TDatabaseFields>,
     readonly cache: Map<string, Readonly<object>>
   ) {
     super(entityConfiguration);
@@ -69,11 +71,11 @@ class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFie
     return new Map();
   }
 
-  public async loadManyAsync<N extends keyof TFields>(
+  public async loadManyAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult>> {
-    const results = new Map<NonNullable<TFields[N]>, CacheLoadResult>();
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
+  ): Promise<ReadonlyMap<NonNullable<TDatabaseFields[N]>, CacheLoadResult>> {
+    const results = new Map<NonNullable<TDatabaseFields[N]>, CacheLoadResult>();
     fieldValues.forEach((fieldValue) => {
       const cacheKey = this.createCacheKey(fieldName, fieldValue);
       if (!this.cache.has(cacheKey)) {
@@ -92,9 +94,9 @@ class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFie
     return results;
   }
 
-  public async cacheManyAsync<N extends keyof TFields>(
+  public async cacheManyAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, object>
+    objectMap: ReadonlyMap<NonNullable<TDatabaseFields[N]>, object>
   ): Promise<void> {
     objectMap.forEach((obj, fieldValue) => {
       const cacheKey = this.createCacheKey(fieldName, fieldValue);
@@ -102,14 +104,14 @@ class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFie
     });
   }
 
-  public async cacheDBMissesAsync<N extends keyof TFields>(
+  public async cacheDBMissesAsync<N extends keyof TDatabaseFields>(
     _fieldName: N,
-    _fieldValues: readonly NonNullable<TFields[N]>[]
+    _fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
   ): Promise<void> {}
 
-  public async invalidateManyAsync<N extends keyof TFields>(
+  public async invalidateManyAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
   ): Promise<void> {
     fieldValues.forEach((fieldValue) => {
       const cacheKey = this.createCacheKey(fieldName, fieldValue);
@@ -117,7 +119,10 @@ class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFie
     });
   }
 
-  private createCacheKey<N extends keyof TFields>(fieldName: N, fieldValue: TFields[N]): string {
+  private createCacheKey<N extends keyof TDatabaseFields>(
+    fieldName: N,
+    fieldValue: TDatabaseFields[N]
+  ): string {
     return `${fieldName}:::${fieldValue}`;
   }
 }

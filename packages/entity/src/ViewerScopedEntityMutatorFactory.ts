@@ -12,15 +12,15 @@ export default class ViewerScopedEntityMutatorFactory<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TDatabaseFields extends TFields = TFields
 > {
   constructor(
     private readonly entityMutatorFactory: EntityMutatorFactory<
@@ -29,28 +29,28 @@ export default class ViewerScopedEntityMutatorFactory<
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >,
     private readonly viewerContext: TViewerContext
   ) {}
 
   forCreate(
     queryContext: EntityQueryContext
-  ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TDatabaseFields> {
     return this.entityMutatorFactory.forCreate(this.viewerContext, queryContext);
   }
 
   forUpdate(
     existingEntity: TEntity,
     queryContext: EntityQueryContext
-  ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TDatabaseFields> {
     return this.entityMutatorFactory.forUpdate(existingEntity, queryContext);
   }
 
   forDelete(
     existingEntity: TEntity,
     queryContext: EntityQueryContext
-  ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TDatabaseFields> {
     return this.entityMutatorFactory.forDelete(existingEntity, queryContext);
   }
 }

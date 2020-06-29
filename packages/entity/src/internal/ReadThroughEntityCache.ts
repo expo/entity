@@ -31,17 +31,17 @@ export type CacheLoadResult =
  * A read through entity cache is responsible for coordinating a {@link EntityDatabaseAdapter} and
  * {@link EntityCacheAdapter} within the {@link EntityDataManager}.
  */
-export default class ReadThroughEntityCache<TFields> {
+export default class ReadThroughEntityCache<TDatabaseFields> {
   private readonly fieldTransformerMap: FieldTransformerMap;
 
   constructor(
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
-    private readonly entityCacheAdapter: EntityCacheAdapter<TFields>
+    private readonly entityConfiguration: EntityConfiguration<TDatabaseFields>,
+    private readonly entityCacheAdapter: EntityCacheAdapter<TDatabaseFields>
   ) {
     this.fieldTransformerMap = entityCacheAdapter.getFieldTransformerMap();
   }
 
-  private isFieldCacheable<N extends keyof TFields>(fieldName: N): boolean {
+  private isFieldCacheable<N extends keyof TDatabaseFields>(fieldName: N): boolean {
     return this.entityConfiguration.cacheableKeys.has(fieldName);
   }
 
@@ -61,13 +61,13 @@ export default class ReadThroughEntityCache<TFields> {
    * @param fetcher - closure used to provide underlying data source objects for fieldName and fetcherFieldValues
    * @returns map from fieldValue to objects that match the query for that fieldValue
    */
-  public async readManyThroughAsync<N extends keyof TFields>(
+  public async readManyThroughAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[],
     fetcher: (
-      fetcherFieldValues: readonly NonNullable<TFields[N]>[]
-    ) => Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>>
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
+      fetcherFieldValues: readonly NonNullable<TDatabaseFields[N]>[]
+    ) => Promise<ReadonlyMap<NonNullable<TDatabaseFields[N]>, readonly Readonly<TDatabaseFields>[]>>
+  ): Promise<ReadonlyMap<NonNullable<TDatabaseFields[N]>, readonly Readonly<TDatabaseFields>[]>> {
     // return normal fetch when cache by fieldName not supported
     if (!this.isFieldCacheable(fieldName)) {
       return await fetcher(fieldValues);
@@ -88,7 +88,10 @@ export default class ReadThroughEntityCache<TFields> {
     );
 
     // put transformed cache hits in result map
-    const results: Map<NonNullable<TFields[N]>, readonly Readonly<TFields>[]> = new Map();
+    const results: Map<
+      NonNullable<TDatabaseFields[N]>,
+      readonly Readonly<TDatabaseFields>[]
+    > = new Map();
     cacheLoadResults.forEach((cacheLoadResult, fieldValue) => {
       if (cacheLoadResult.status === CacheStatus.HIT) {
         results.set(fieldValue, [
@@ -110,7 +113,7 @@ export default class ReadThroughEntityCache<TFields> {
         return !objectsFromFulfillerForFv || objectsFromFulfillerForFv.length === 0;
       });
 
-      const objectsToCache: Map<NonNullable<TFields[N]>, object> = new Map();
+      const objectsToCache: Map<NonNullable<TDatabaseFields[N]>, object> = new Map();
       for (const [fieldValue, objects] of dbFetchResults.entries()) {
         if (objects.length > 1) {
           // multiple objects received for what was supposed to be a unique query, don't add to return map nor cache
@@ -150,9 +153,9 @@ export default class ReadThroughEntityCache<TFields> {
    * @param fieldName - object field being queried
    * @param fieldValues - fieldName field values to be invalidated
    */
-  public async invalidateManyAsync<N extends keyof TFields>(
+  public async invalidateManyAsync<N extends keyof TDatabaseFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
   ): Promise<void> {
     // no-op when cache by fieldName not supported
     if (!this.isFieldCacheable(fieldName)) {

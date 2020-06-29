@@ -14,8 +14,8 @@ export type EntityPrivacyPolicyEvaluator<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
+  TDatabaseFields extends TFields = TFields
 > =
   | {
       mode: EntityPrivacyPolicyEvaluationMode.ENFORCE;
@@ -23,13 +23,13 @@ export type EntityPrivacyPolicyEvaluator<
   | {
       mode: EntityPrivacyPolicyEvaluationMode.DRY_RUN;
       denyHandler: (
-        error: EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+        error: EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TDatabaseFields>
       ) => void;
     }
   | {
       mode: EntityPrivacyPolicyEvaluationMode.ENFORCE_AND_LOG;
       denyHandler: (
-        error: EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+        error: EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TDatabaseFields>
       ) => void;
     };
 
@@ -65,36 +65,36 @@ export default abstract class EntityPrivacyPolicy<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TDatabaseFields>,
+  TDatabaseFields extends TFields = TFields
 > {
   protected readonly createRules: readonly PrivacyPolicyRule<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >[] = [];
   protected readonly readRules: readonly PrivacyPolicyRule<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >[] = [];
   protected readonly updateRules: readonly PrivacyPolicyRule<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >[] = [];
   protected readonly deleteRules: readonly PrivacyPolicyRule<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >[] = [];
 
   /**
@@ -107,7 +107,7 @@ export default abstract class EntityPrivacyPolicy<
    */
   protected getPrivacyPolicyEvaluator(
     _viewerContext: TViewerContext
-  ): EntityPrivacyPolicyEvaluator<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+  ): EntityPrivacyPolicyEvaluator<TFields, TID, TViewerContext, TEntity, TDatabaseFields> {
     return {
       mode: EntityPrivacyPolicyEvaluationMode.ENFORCE,
     };
@@ -202,7 +202,7 @@ export default abstract class EntityPrivacyPolicy<
   }
 
   private async authorizeForRulesetAsync(
-    ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
+    ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TDatabaseFields>[],
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     entity: TEntity,
@@ -254,7 +254,7 @@ export default abstract class EntityPrivacyPolicy<
   }
 
   private async authorizeForRulesetInnerAsync(
-    ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
+    ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TDatabaseFields>[],
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     entity: TEntity,

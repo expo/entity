@@ -20,10 +20,10 @@ export default abstract class ReadonlyEntity<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TDatabaseFields extends TFields = TFields
 > {
   private readonly id: TID;
-  private readonly rawFields: Readonly<Pick<TFields, TSelectedFields>>;
+  private readonly rawFields: Readonly<TFields>;
 
   /**
    * Constructs an instance of an Entity.
@@ -34,10 +34,10 @@ export default abstract class ReadonlyEntity<
    */
   constructor(
     private readonly viewerContext: TViewerContext,
-    private readonly databaseFields: Readonly<TFields>
+    private readonly databaseFields: Readonly<TDatabaseFields>
   ) {
     const idField = (this.constructor as any).getCompanionDefinition().entityConfiguration
-      .idField as keyof Pick<TFields, TSelectedFields>;
+      .idField as keyof TFields;
     const id = databaseFields[idField];
     invariant(id, 'must provide ID to create an entity');
     this.id = id as any;
@@ -73,7 +73,7 @@ export default abstract class ReadonlyEntity<
     TID,
     TViewerContext,
     this,
-    TSelectedFields
+    TDatabaseFields
   > {
     return new EntityAssociationLoader(this);
   }
@@ -83,23 +83,21 @@ export default abstract class ReadonlyEntity<
    * @param fieldName - the field to get
    * @returns the value of the field or undefined if not loaded with that field
    */
-  getField<K extends keyof Pick<TFields, TSelectedFields>>(
-    fieldName: K
-  ): Pick<TFields, TSelectedFields>[K] {
+  getField<K extends keyof TFields>(fieldName: K): TFields[K] {
     return this.rawFields[fieldName];
   }
 
   /**
    * @returns all underlying fields from this entity's data
    */
-  getAllFields(): Readonly<Pick<TFields, TSelectedFields>> {
+  getAllFields(): Readonly<TFields> {
     return { ...this.rawFields };
   }
 
   /**
    * @returns all underlying fields from this entity's database data
    */
-  getAllDatabaseFields(): Readonly<TFields> {
+  getAllDatabaseFields(): Readonly<TDatabaseFields> {
     return { ...this.databaseFields };
   }
 
@@ -112,15 +110,15 @@ export default abstract class ReadonlyEntity<
     TMID,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMDatabaseFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
       TMID,
       TMViewerContext,
       TMEntity,
-      TMSelectedFields
+      TMDatabaseFields
     >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
+    TMDatabaseFields extends TMFields = TMFields
   >(
     this: IEntityClass<
       TMFields,
@@ -128,7 +126,7 @@ export default abstract class ReadonlyEntity<
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
-      TMSelectedFields
+      TMDatabaseFields
     >,
     viewerContext: TMViewerContext2
   ): EntityQueryContext {
@@ -149,15 +147,15 @@ export default abstract class ReadonlyEntity<
     TMID,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMDatabaseFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
       TMID,
       TMViewerContext,
       TMEntity,
-      TMSelectedFields
+      TMDatabaseFields
     >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
+    TMDatabaseFields extends TMFields = TMFields
   >(
     this: IEntityClass<
       TMFields,
@@ -165,7 +163,7 @@ export default abstract class ReadonlyEntity<
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
-      TMSelectedFields
+      TMDatabaseFields
     >,
     viewerContext: TMViewerContext2,
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<TResult>
@@ -186,15 +184,15 @@ export default abstract class ReadonlyEntity<
     TMID,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMDatabaseFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
       TMID,
       TMViewerContext,
       TMEntity,
-      TMSelectedFields
+      TMDatabaseFields
     >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
+    TMDatabaseFields extends TMFields = TMFields
   >(
     this: IEntityClass<
       TMFields,
@@ -202,14 +200,14 @@ export default abstract class ReadonlyEntity<
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
-      TMSelectedFields
+      TMDatabaseFields
     >,
     viewerContext: TMViewerContext2,
     queryContext: EntityQueryContext = viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getRegularEntityQueryContext()
-  ): EntityLoader<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
+  ): EntityLoader<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMDatabaseFields> {
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getLoaderFactory()

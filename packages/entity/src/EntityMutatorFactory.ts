@@ -14,25 +14,25 @@ export default class EntityMutatorFactory<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TID, TViewerContext, TDatabaseFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TSelectedFields
+    TDatabaseFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TDatabaseFields extends TFields = TFields
 > {
   constructor(
-    private readonly idField: keyof TFields,
+    private readonly idField: keyof TDatabaseFields,
     private readonly entityClass: IEntityClass<
       TFields,
       TID,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
     private readonly entityLoaderFactory: EntityLoaderFactory<
@@ -41,9 +41,9 @@ export default class EntityMutatorFactory<
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
-      TSelectedFields
+      TDatabaseFields
     >,
-    private readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
+    private readonly databaseAdapter: EntityDatabaseAdapter<TDatabaseFields>,
     private readonly metricsAdapter: IEntityMetricsAdapter
   ) {}
 
@@ -56,7 +56,7 @@ export default class EntityMutatorFactory<
   forCreate(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext
-  ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TDatabaseFields> {
     return new CreateMutator(
       viewerContext,
       queryContext,
@@ -78,7 +78,7 @@ export default class EntityMutatorFactory<
   forUpdate(
     existingEntity: TEntity,
     queryContext: EntityQueryContext
-  ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TDatabaseFields> {
     return new UpdateMutator(
       existingEntity.getViewerContext(),
       queryContext,
@@ -100,7 +100,7 @@ export default class EntityMutatorFactory<
   forDelete(
     existingEntity: TEntity,
     queryContext: EntityQueryContext
-  ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TDatabaseFields> {
     return new DeleteMutator(
       existingEntity.getViewerContext(),
       queryContext,
