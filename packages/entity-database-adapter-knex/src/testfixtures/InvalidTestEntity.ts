@@ -104,8 +104,8 @@ export const invalidTestEntityConfiguration = new EntityConfiguration<InvalidTes
       columnName: 'name',
     }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 const invalidTestEntityCompanionDefinition = new EntityCompanionDefinition({

@@ -41,8 +41,8 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields>({
       columnName: 'date_field',
     }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<

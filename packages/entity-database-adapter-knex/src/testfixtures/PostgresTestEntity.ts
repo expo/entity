@@ -150,8 +150,8 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<PostgresT
       columnName: 'maybe_json_array_field',
     }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({

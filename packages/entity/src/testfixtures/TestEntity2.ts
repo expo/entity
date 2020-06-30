@@ -26,8 +26,8 @@ export const testEntity2Configuration = new EntityConfiguration<Test2Fields>({
       columnName: 'foreign_key',
     }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 export class TestEntity2PrivacyPolicy extends EntityPrivacyPolicy<

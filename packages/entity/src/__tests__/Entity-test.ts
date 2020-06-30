@@ -96,8 +96,8 @@ const testEntityConfiguration = new EntityConfiguration<TestEntityFields>({
       columnName: 'custom_id',
     }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<

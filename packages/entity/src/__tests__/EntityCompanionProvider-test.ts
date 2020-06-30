@@ -22,8 +22,8 @@ const blahConfiguration = new EntityConfiguration<BlahFields>({
       columnName: 'hello',
     }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 class Blah1Entity extends Entity<BlahFields, string, ViewerContext> {

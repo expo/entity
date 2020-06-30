@@ -20,8 +20,8 @@ const entityConfiguration = new EntityConfiguration<BlahFields>({
   schema: {
     id: new UUIDField({ columnName: 'id', cache: true }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 describe(RedisCacheAdapter, () => {

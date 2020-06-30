@@ -9,7 +9,8 @@
   ],
   "rules": {
     "no-restricted-imports": ["error",{ "paths": [".", "..", "../.."] }],
-    "tsdoc/syntax": "warn"
+    "tsdoc/syntax": "warn",
+    "no-console": "warn"
   },
   "overrides": [
     {

@@ -16,29 +16,29 @@ export default class EntityConfiguration<TFields> {
   readonly entityToDBFieldsKeyMapping: ReadonlyMap<keyof TFields, string>;
   readonly dbToEntityFieldsKeyMapping: ReadonlyMap<string, keyof TFields>;
 
-  readonly databaseAdaptorFlavor: DatabaseAdapterFlavor;
-  readonly cacheAdaptorFlavor: CacheAdapterFlavor;
+  readonly databaseAdapterFlavor: DatabaseAdapterFlavor;
+  readonly cacheAdapterFlavor: CacheAdapterFlavor;
 
   constructor({
     idField,
     tableName,
     schema,
     cacheKeyVersion = 0,
-    databaseAdaptorFlavor,
-    cacheAdaptorFlavor,
+    databaseAdapterFlavor,
+    cacheAdapterFlavor,
   }: {
     idField: keyof TFields;
     tableName: string;
     schema: Record<keyof TFields, EntityFieldDefinition>;
     cacheKeyVersion?: number;
-    databaseAdaptorFlavor: DatabaseAdapterFlavor;
-    cacheAdaptorFlavor: CacheAdapterFlavor;
+    databaseAdapterFlavor: DatabaseAdapterFlavor;
+    cacheAdapterFlavor: CacheAdapterFlavor;
   }) {
     this.idField = idField;
     this.tableName = tableName;
     this.cacheKeyVersion = cacheKeyVersion;
-    this.databaseAdaptorFlavor = databaseAdaptorFlavor;
-    this.cacheAdaptorFlavor = cacheAdaptorFlavor;
+    this.databaseAdapterFlavor = databaseAdapterFlavor;
+    this.cacheAdapterFlavor = cacheAdapterFlavor;
 
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups
