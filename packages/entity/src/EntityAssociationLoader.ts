@@ -170,16 +170,16 @@ export default class EntityAssociationLoader<
     >,
     TFields3,
     TID3,
-    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TSelectedFields3>,
+    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TSelectedFields3blah>,
     TPrivacyPolicy3 extends EntityPrivacyPolicy<
       TFields3,
       TID3,
       TViewerContext,
       TEntity3,
-      TSelectedFields3
+      TSelectedFields3blah
     >,
     TSelectedFields2 extends keyof TFields2 = keyof TFields2,
-    TSelectedFields3 extends keyof TFields3 = keyof TFields3
+    TSelectedFields3blah extends keyof TFields3 = keyof TFields3
   >(
     loadDirectives: [
       EntityLoadThroughDirective<
@@ -198,7 +198,7 @@ export default class EntityAssociationLoader<
         TID3,
         TEntity3,
         TPrivacyPolicy3,
-        TSelectedFields3
+        TSelectedFields3blah
       >
     ],
     queryContext?: EntityQueryContext
