@@ -56,6 +56,52 @@ export default class EntityAssociationLoader<
   }
 
   /**
+   * Load many entities associated with this entity, often referred to as entites belonging
+   * to this entity. In a relational database, the field in the foreign entity is a
+   * foreign key to the ID of this entity. Also commonly referred to as a has many relationship,
+   * where this entity has many associated entities.
+   * @param associatedEntityClass - class of the associated entities
+   * @param associatedEntityFieldContainingThisID - field of associated entity which contains the ID of this entity
+   * @param queryContext - query context in which to perform the load
+   */
+  async loadManyAssociatedEntitiesAsync<
+    TAssociatedFields,
+    TAssociatedID,
+    TAssociatedEntity extends ReadonlyEntity<TAssociatedFields, TAssociatedID, TViewerContext>,
+    TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
+      TAssociatedFields,
+      TAssociatedID,
+      TViewerContext,
+      TAssociatedEntity
+    >
+  >(
+    associatedEntityClass: IEntityClass<
+      TAssociatedFields,
+      TAssociatedID,
+      TViewerContext,
+      TAssociatedEntity,
+      TAssociatedPrivacyPolicy
+    >,
+    associatedEntityFieldContainingThisID: keyof TAssociatedFields,
+    queryContext: EntityQueryContext = this.entity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(associatedEntityClass)
+      .getQueryContextProvider()
+      .getRegularEntityQueryContext()
+  ): Promise<readonly Result<TAssociatedEntity>[]> {
+    const thisID = this.entity.getID();
+    const loader = this.entity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(associatedEntityClass)
+      .getLoaderFactory()
+      .forLoad(queryContext);
+    return await loader.loadManyByFieldEqualingAsync(
+      associatedEntityFieldContainingThisID,
+      thisID as any
+    );
+  }
+
+  /**
    * Load an associated entity identified by a field value of this entity. In a relational database,
    * the field in this entity is a foreign key to a unique field of the associated entity.
    * @param fieldIdentifyingAssociatedEntity - field of this entity containing the value with which to look up associated entity
@@ -96,6 +142,52 @@ export default class EntityAssociationLoader<
       .getLoaderFactory()
       .forLoad(queryContext);
     return await loader.loadByFieldEqualingAsync(
+      associatedEntityLookupByField,
+      associatedFieldValue as any
+    );
+  }
+
+  /**
+   * Load many associated entities identified by a field value of this entity. In a relational database,
+   * the field in this entity refers to a field of the associated entity.
+   * @param fieldIdentifyingAssociatedEntity - field of this entity containing the value with which to look up associated entities
+   * @param associatedEntityClass - class of the associated entities
+   * @param associatedEntityLookupByField - field of associated entities with which to look up the associated entities
+   * @param queryContext - query context in which to perform the load
+   */
+  async loadManyAssociatedEntitiesByFieldEqualingAsync<
+    TAssociatedFields,
+    TAssociatedID,
+    TAssociatedEntity extends ReadonlyEntity<TAssociatedFields, TAssociatedID, TViewerContext>,
+    TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
+      TAssociatedFields,
+      TAssociatedID,
+      TViewerContext,
+      TAssociatedEntity
+    >
+  >(
+    fieldIdentifyingAssociatedEntity: keyof TFields,
+    associatedEntityClass: IEntityClass<
+      TAssociatedFields,
+      TAssociatedID,
+      TViewerContext,
+      TAssociatedEntity,
+      TAssociatedPrivacyPolicy
+    >,
+    associatedEntityLookupByField: keyof TAssociatedFields,
+    queryContext: EntityQueryContext = this.entity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(associatedEntityClass)
+      .getQueryContextProvider()
+      .getRegularEntityQueryContext()
+  ): Promise<readonly Result<TAssociatedEntity>[]> {
+    const associatedFieldValue = this.entity.getField(fieldIdentifyingAssociatedEntity);
+    const loader = this.entity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(associatedEntityClass)
+      .getLoaderFactory()
+      .forLoad(queryContext);
+    return await loader.loadManyByFieldEqualingAsync(
       associatedEntityLookupByField,
       associatedFieldValue as any
     );

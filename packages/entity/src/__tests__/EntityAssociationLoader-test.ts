@@ -1,6 +1,7 @@
 import { enforceAsyncResult } from '@expo/results';
 
 import EntityAssociationLoader from '../EntityAssociationLoader';
+import { enforceResultsAsync } from '../entityUtils';
 import TestEntity from '../testfixtures/TestEntity';
 import TestEntity2 from '../testfixtures/TestEntity2';
 import TestViewerContext from '../testfixtures/TestViewerContext';
@@ -26,8 +27,28 @@ describe(EntityAssociationLoader, () => {
     });
   });
 
-  describe('loadRelatedEntityByFieldEqualingAsync', () => {
-    it('loads associated entities by field equaling', async () => {
+  describe('loadManyAssociatedEntitiesAsync', () => {
+    it('loads many associated entities referencing this entity', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new TestViewerContext(companionProvider);
+      const testEntity = await enforceAsyncResult(TestEntity.creator(viewerContext).createAsync());
+      const testOtherEntity1 = await enforceAsyncResult(
+        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync()
+      );
+      const testOtherEntity2 = await enforceAsyncResult(
+        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync()
+      );
+      const loaded = await enforceResultsAsync(
+        testEntity.associationLoader().loadManyAssociatedEntitiesAsync(TestEntity, 'stringField')
+      );
+      expect(loaded).toHaveLength(2);
+      expect(loaded.find((e) => e.getID() === testOtherEntity1.getID())).not.toBeUndefined();
+      expect(loaded.find((e) => e.getID() === testOtherEntity2.getID())).not.toBeUndefined();
+    });
+  });
+
+  describe('loadAssociatedEntityByFieldEqualingAsync', () => {
+    it('loads associated entity by field equaling', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
       const testOtherEntity = await enforceAsyncResult(
@@ -54,6 +75,32 @@ describe(EntityAssociationLoader, () => {
         .associationLoader()
         .loadAssociatedEntityByFieldEqualingAsync('stringField', TestEntity, 'customIdField');
       expect(loadedOtherResult).toBeNull();
+    });
+  });
+
+  describe('loadManyAssociatedEntitiesByFieldEqualingAsync', () => {
+    it('loads many associated entities by field equaling', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new TestViewerContext(companionProvider);
+      const testEntity = await enforceAsyncResult(TestEntity.creator(viewerContext).createAsync());
+      const testOtherEntity1 = await enforceAsyncResult(
+        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync()
+      );
+      const testOtherEntity2 = await enforceAsyncResult(
+        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync()
+      );
+      const loaded = await enforceResultsAsync(
+        testEntity
+          .associationLoader()
+          .loadManyAssociatedEntitiesByFieldEqualingAsync(
+            'customIdField',
+            TestEntity,
+            'stringField'
+          )
+      );
+      expect(loaded).toHaveLength(2);
+      expect(loaded.find((e) => e.getID() === testOtherEntity1.getID())).not.toBeUndefined();
+      expect(loaded.find((e) => e.getID() === testOtherEntity2.getID())).not.toBeUndefined();
     });
   });
 
