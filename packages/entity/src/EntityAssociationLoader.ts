@@ -125,14 +125,6 @@ export default class EntityAssociationLoader<
    * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync<
-    TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-    TPrivacyPolicyRoot extends EntityPrivacyPolicy<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntityRoot,
-      TSelectedFields
-    >,
     TFields2,
     TID2,
     TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
@@ -166,14 +158,6 @@ export default class EntityAssociationLoader<
    * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync<
-    TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-    TPrivacyPolicyRoot extends EntityPrivacyPolicy<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntityRoot,
-      TSelectedFields
-    >,
     TFields2,
     TID2,
     TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
@@ -227,14 +211,6 @@ export default class EntityAssociationLoader<
    * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync<
-    TEntityRoot extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-    TPrivacyPolicyRoot extends EntityPrivacyPolicy<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntityRoot,
-      TSelectedFields
-    >,
     TFields2,
     TID2,
     TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
