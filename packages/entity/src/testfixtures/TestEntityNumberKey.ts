@@ -22,8 +22,8 @@ export const numberKeyEntityConfiguration = new EntityConfiguration<NumberKeyFie
       columnName: 'custom_id',
     }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 export class NumberKeyPrivacyPolicy extends EntityPrivacyPolicy<

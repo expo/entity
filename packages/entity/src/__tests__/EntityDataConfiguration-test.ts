@@ -28,15 +28,15 @@ describe(EntityConfiguration, () => {
         columnName: 'unique_but_not_cacheable',
       }),
     },
-    databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-    cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
   });
 
   it('returns correct fields', () => {
     expect(blahEntityConfiguration.idField).toEqual('id');
     expect(blahEntityConfiguration.tableName).toEqual('blah_table');
-    expect(blahEntityConfiguration.databaseAdaptorFlavor).toEqual(DatabaseAdapterFlavor.POSTGRES);
-    expect(blahEntityConfiguration.cacheAdaptorFlavor).toEqual(CacheAdapterFlavor.REDIS);
+    expect(blahEntityConfiguration.databaseAdapterFlavor).toEqual(DatabaseAdapterFlavor.POSTGRES);
+    expect(blahEntityConfiguration.cacheAdapterFlavor).toEqual(CacheAdapterFlavor.REDIS);
   });
 
   it('filters cacheable fields', () => {
@@ -53,8 +53,8 @@ describe(EntityConfiguration, () => {
             columnName: 'id',
           }),
         },
-        databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-        cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+        databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+        cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
       });
       expect(entityConfiguration.cacheKeyVersion).toEqual(0);
     });
@@ -68,8 +68,8 @@ describe(EntityConfiguration, () => {
             columnName: 'id',
           }),
         },
-        databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-        cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+        databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+        cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
         cacheKeyVersion: 100,
       });
       expect(entityConfiguration.cacheKeyVersion).toEqual(100);

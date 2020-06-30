@@ -85,8 +85,8 @@ export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEnt
       columnName: 'date_field',
     }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 const redisTestEntityCompanionDefinition = new EntityCompanionDefinition({

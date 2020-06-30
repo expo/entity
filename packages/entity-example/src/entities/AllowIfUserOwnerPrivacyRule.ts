@@ -35,7 +35,6 @@ export default class AllowIfUserOwnerPrivacyRule<
     _queryContext: EntityQueryContext,
     entity: TEntity
   ): Promise<RuleEvaluationResult> {
-    console.log(entity.getField(this.entityOwnerField), entity.getAllFields());
     if (viewerContext.isUserViewerContext()) {
       if (String(entity.getField(this.entityOwnerField)) === viewerContext.userID) {
         return RuleEvaluationResult.ALLOW;

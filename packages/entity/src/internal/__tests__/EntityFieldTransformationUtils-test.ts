@@ -38,8 +38,8 @@ const blahEntityConfiguration = new EntityConfiguration<BlahT>({
       columnName: 'transform_write',
     }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 describe(getDatabaseFieldForEntityField, () => {

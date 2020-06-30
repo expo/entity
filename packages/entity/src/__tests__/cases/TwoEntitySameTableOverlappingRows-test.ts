@@ -16,14 +16,14 @@ describe('Two entities backed by the same table', () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
 
-    const entity = await OneTestEntity.creator(viewerContext)
+    const entity1 = await OneTestEntity.creator(viewerContext)
       .setField('fake_field', 'hello')
       .enforceCreateAsync();
-    expect(entity).toBeInstanceOf(OneTestEntity);
+    expect(entity1).toBeInstanceOf(OneTestEntity);
 
     const entity2 = await TwoTestEntity.loader(viewerContext)
       .enforcing()
-      .loadByIDAsync(entity.getID());
+      .loadByIDAsync(entity1.getID());
     expect(entity2).toBeInstanceOf(TwoTestEntity);
 
     const updated2 = await TwoTestEntity.updater(entity2)
@@ -38,7 +38,7 @@ describe('Two entities backed by the same table', () => {
 
     const loaded1 = await OneTestEntity.loader(viewerContext)
       .enforcing()
-      .loadByIDAsync(entity.getID());
+      .loadByIDAsync(entity1.getID());
     expect(loaded1.getAllFields()).toMatchObject({
       id: updated2.getID(),
       fake_field: 'world',
@@ -114,8 +114,8 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
       cache: true,
     }),
   },
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {

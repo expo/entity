@@ -194,10 +194,10 @@ export default class EntityCompanionProvider {
   ): EntityTableDataCoordinator<TFields> {
     return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration.tableName, () => {
       const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[
-        entityConfiguration.databaseAdaptorFlavor
+        entityConfiguration.databaseAdapterFlavor
       ];
       const entityCacheAdapterFlavor = this.cacheAdapterFlavors[
-        entityConfiguration.cacheAdaptorFlavor
+        entityConfiguration.cacheAdapterFlavor
       ];
       return new EntityTableDataCoordinator(
         entityConfiguration,
