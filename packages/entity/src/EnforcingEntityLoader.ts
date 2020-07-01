@@ -21,7 +21,7 @@ export default class EnforcingEntityLoader<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 > {
   constructor(
     private readonly entityLoader: EntityLoader<

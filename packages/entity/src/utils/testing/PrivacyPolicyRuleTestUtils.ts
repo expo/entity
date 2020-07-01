@@ -8,7 +8,7 @@ export interface Case<
   TID,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 > {
   viewerContext: TViewerContext;
   queryContext: EntityQueryContext;
@@ -20,7 +20,7 @@ type CaseMap<
   TID,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 > = Map<string, () => Promise<Case<TFields, TID, TViewerContext, TEntity, TSelectedFields>>>;
 
 /**
@@ -31,7 +31,7 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
   TID,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 >(
   privacyPolicyRule: PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
   {
@@ -88,7 +88,7 @@ export const describePrivacyPolicyRule = <
   TID,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 >(
   privacyPolicyRule: PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
   {

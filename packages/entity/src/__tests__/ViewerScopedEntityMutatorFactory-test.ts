@@ -20,7 +20,8 @@ describe(ViewerScopedEntityMutatorFactory, () => {
       string,
       ViewerContext,
       TestEntity,
-      TestEntityPrivacyPolicy
+      TestEntityPrivacyPolicy,
+      keyof TestFields
     >(baseMutatorFactoryInstance, viewerContext);
 
     viewerScopedEntityLoader.forCreate(queryContext);

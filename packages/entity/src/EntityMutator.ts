@@ -22,7 +22,7 @@ abstract class BaseMutator<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 > {
   constructor(
     protected readonly viewerContext: TViewerContext,
@@ -65,7 +65,7 @@ export class CreateMutator<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 > extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
   private readonly fieldsForEntity: Partial<TFields> = {};
 
@@ -143,7 +143,7 @@ export class UpdateMutator<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 > extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
   private readonly originalFieldsForEntity: Readonly<TFields>;
   private readonly fieldsForEntity: TFields;
@@ -264,7 +264,7 @@ export class DeleteMutator<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 > extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
   constructor(
     viewerContext: TViewerContext,

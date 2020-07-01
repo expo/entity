@@ -27,7 +27,7 @@ export default class EntityCompanion<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 > {
   private readonly entityLoaderFactory: EntityLoaderFactory<
     TFields,

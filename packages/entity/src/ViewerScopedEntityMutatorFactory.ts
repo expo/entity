@@ -20,7 +20,7 @@ export default class ViewerScopedEntityMutatorFactory<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 > {
   constructor(
     private readonly entityMutatorFactory: EntityMutatorFactory<
