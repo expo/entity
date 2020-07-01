@@ -60,7 +60,7 @@
 					<a href="_expo_entity.ientityclass.html">IEntityClass</a>
 				</li>
 			</ul>
-			<h1>Interface IEntityClass&lt;TFields, TID, TViewerContext, TEntity, TPrivacyPolicy&gt;</h1>
+			<h1>Interface IEntityClass&lt;TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -87,10 +87,13 @@
 						<h4>TViewerContext<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.viewercontext.html" class="tsd-signature-type">ViewerContext</a></h4>
 					</li>
 					<li>
-						<h4>TEntity<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.readonlyentity.html" class="tsd-signature-type">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4>TEntity<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.readonlyentity.html" class="tsd-signature-type">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 					<li>
-						<h4>TPrivacyPolicy<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entityprivacypolicy.html" class="tsd-signature-type">EntityPrivacyPolicy</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4>TPrivacyPolicy<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entityprivacypolicy.html" class="tsd-signature-type">EntityPrivacyPolicy</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+					<li>
+						<h4>TSelectedFields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TFields</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -133,7 +136,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/ccbdbc4/packages/entity/src/Entity.ts#L231">packages/entity/src/Entity.ts:231</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/4e40b2e/packages/entity/src/Entity.ts#L323">packages/entity/src/Entity.ts:323</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -156,16 +159,16 @@
 					<a name="getcompaniondefinition" class="tsd-anchor"></a>
 					<h3>get<wbr>Companion<wbr>Definition</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Companion<wbr>Definition<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.entitycompaniondefinition.html" class="tsd-signature-type">EntityCompanionDefinition</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Companion<wbr>Definition<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entitycompaniondefinition.html" class="tsd-signature-type">EntityCompanionDefinition</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/ccbdbc4/packages/entity/src/Entity.ts#L233">packages/entity/src/Entity.ts:233</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/4e40b2e/packages/entity/src/Entity.ts#L325">packages/entity/src/Entity.ts:325</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_expo_entity.entitycompaniondefinition.html" class="tsd-signature-type">EntityCompanionDefinition</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/_expo_entity.entitycompaniondefinition.html" class="tsd-signature-type">EntityCompanionDefinition</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
