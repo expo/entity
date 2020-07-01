@@ -74,7 +74,7 @@ export class CreateMutator<
    * @param fieldName - entity field being updated
    * @param value - value for entity field
    */
-  setField<K extends keyof TFields>(fieldName: K, value: TFields[K]): this {
+  setField<K extends keyof TFields>(fieldName: K, value: TDatabaseFields[K]): this {
     this.fieldsForEntity[fieldName] = value;
     return this;
   }

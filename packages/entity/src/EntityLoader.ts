@@ -71,7 +71,7 @@ export default class EntityLoader<
    */
   async loadManyByFieldEqualingManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
     const fieldValuesToObjects = await this.dataManager.loadManyByFieldEqualingAsync(
       this.queryContext,
@@ -103,7 +103,7 @@ export default class EntityLoader<
    */
   async loadManyByFieldEqualingAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TDatabaseFields[N]>
   ): Promise<readonly Result<TEntity>[]> {
     const entityResults = await this.loadManyByFieldEqualingManyAsync(fieldName, [fieldValue]);
     const entityResultsForFieldValue = entityResults.get(fieldValue);
@@ -123,7 +123,7 @@ export default class EntityLoader<
    */
   async loadByFieldEqualingAsync<N extends keyof TFields>(
     uniqueFieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TDatabaseFields[N]>
   ): Promise<Result<TEntity> | null> {
     const entityResults = await this.loadManyByFieldEqualingAsync(uniqueFieldName, fieldValue);
     invariant(
@@ -153,7 +153,7 @@ export default class EntityLoader<
    * @returns entity result for matching ID, or null if no entity exists for ID.
    */
   async loadByIDNullableAsync(id: TID): Promise<Result<TEntity> | null> {
-    return await this.loadByFieldEqualingAsync(this.idField, id as any);
+    return await this.loadByFieldEqualingAsync(this.idField as keyof TFields, id as any);
   }
 
   /**
@@ -164,7 +164,7 @@ export default class EntityLoader<
    */
   async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, Result<TEntity>>> {
     const entityResults = ((await this.loadManyByFieldEqualingManyAsync(
-      this.idField,
+      this.idField as keyof TFields,
       ids as any
     )) as any) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
     return mapMap(entityResults, (entityResultsForId, id) => {
@@ -190,7 +190,7 @@ export default class EntityLoader<
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
+    fieldEqualityOperands: FieldEqualityCondition<TDatabaseFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly Result<TEntity>[]> {
     const fieldValuesArray = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(

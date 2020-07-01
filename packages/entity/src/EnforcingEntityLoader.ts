@@ -40,7 +40,7 @@ export default class EnforcingEntityLoader<
    */
   async loadManyByFieldEqualingManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TDatabaseFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly TEntity[]>> {
     const fieldValuesToResults = await this.entityLoader.loadManyByFieldEqualingManyAsync(
       fieldName,
@@ -57,7 +57,7 @@ export default class EnforcingEntityLoader<
    */
   async loadManyByFieldEqualingAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TDatabaseFields[N]>
   ): Promise<readonly TEntity[]> {
     const entityResults = await this.entityLoader.loadManyByFieldEqualingAsync(
       fieldName,
@@ -73,7 +73,7 @@ export default class EnforcingEntityLoader<
    */
   async loadByFieldEqualingAsync<N extends keyof TFields>(
     uniqueFieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TDatabaseFields[N]>
   ): Promise<TEntity | null> {
     const entityResult = await this.entityLoader.loadByFieldEqualingAsync(
       uniqueFieldName,
@@ -115,7 +115,7 @@ export default class EnforcingEntityLoader<
    * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view one or more of the returned entities
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
+    fieldEqualityOperands: FieldEqualityCondition<TDatabaseFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly TEntity[]> {
     const entityResults = await this.entityLoader.loadManyByFieldEqualityConjunctionAsync(
