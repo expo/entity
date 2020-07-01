@@ -22,6 +22,8 @@ const blahConfiguration = new EntityConfiguration<BlahFields>({
       columnName: 'hello',
     }),
   },
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 class Blah1Entity extends Entity<BlahFields, string, ViewerContext> {
@@ -61,24 +63,20 @@ class NoOpTest2PrivacyPolicy extends EntityPrivacyPolicy<
   Blah2Entity
 > {}
 
-const blah1CompanionDefinition = {
+const blah1CompanionDefinition = new EntityCompanionDefinition({
   entityClass: Blah1Entity,
   entityConfiguration: blahConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: NoOpTest1PrivacyPolicy,
-};
+});
 
-const blah2CompanionDefinition = {
+const blah2CompanionDefinition = new EntityCompanionDefinition({
   entityClass: Blah2Entity,
   entityConfiguration: blahConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: NoOpTest2PrivacyPolicy,
-};
+});
 
 describe(EntityCompanionProvider, () => {
-  it('returns different instances for different entity types', () => {
+  it('returns different instances for different entity types, but share table data coordinators', () => {
     const entityCompanionProvider = createUnitTestEntityCompanionProvider();
     const companion1 = entityCompanionProvider.getCompanionForEntity(
       Blah1Entity,
@@ -91,5 +89,6 @@ describe(EntityCompanionProvider, () => {
     );
 
     expect(companion1).not.toEqual(companion2);
+    expect(companion1['tableDataCoordinator']).toEqual(companion2['tableDataCoordinator']);
   });
 });

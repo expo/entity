@@ -96,6 +96,8 @@ const testEntityConfiguration = new EntityConfiguration<TestEntityFields>({
       columnName: 'custom_id',
     }),
   },
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
@@ -134,13 +136,11 @@ class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, string, Viewer
   }
 }
 
-const simpleTestDenyUpdateEntityCompanion = {
+const simpleTestDenyUpdateEntityCompanion = new EntityCompanionDefinition({
   entityClass: SimpleTestDenyUpdateEntity,
   entityConfiguration: testEntityConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: SimpleTestDenyUpdateEntityPrivacyPolicy,
-};
+});
 
 class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, string, ViewerContext> {
   static getCompanionDefinition(): EntityCompanionDefinition<
@@ -154,10 +154,8 @@ class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, string, Viewer
   }
 }
 
-const simpleTestDenyDeleteEntityCompanion = {
+const simpleTestDenyDeleteEntityCompanion = new EntityCompanionDefinition({
   entityClass: SimpleTestDenyDeleteEntity,
   entityConfiguration: testEntityConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: SimpleTestDenyDeleteEntityPrivacyPolicy,
-};
+});

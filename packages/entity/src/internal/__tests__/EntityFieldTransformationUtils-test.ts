@@ -1,3 +1,4 @@
+import { DatabaseAdapterFlavor, CacheAdapterFlavor } from '../../EntityCompanionProvider';
 import EntityConfiguration from '../../EntityConfiguration';
 import { UUIDField, StringField } from '../../EntityFields';
 import {
@@ -37,6 +38,8 @@ const blahEntityConfiguration = new EntityConfiguration<BlahT>({
       columnName: 'transform_write',
     }),
   },
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 describe(getDatabaseFieldForEntityField, () => {

@@ -2,7 +2,6 @@ import { Result, asyncResult, result, enforceAsyncResult } from '@expo/results';
 import _ from 'lodash';
 
 import Entity, { IEntityClass } from './Entity';
-import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
@@ -15,19 +14,27 @@ abstract class BaseMutator<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
   constructor(
     protected readonly viewerContext: TViewerContext,
     protected readonly queryContext: EntityQueryContext,
-    protected readonly entityConfiguration: EntityConfiguration<TFields>,
+    protected readonly idField: keyof TFields,
     protected readonly entityClass: IEntityClass<
       TFields,
       TID,
       TViewerContext,
       TEntity,
-      TPrivacyPolicy
+      TPrivacyPolicy,
+      TSelectedFields
     >,
     protected readonly privacyPolicy: TPrivacyPolicy,
     protected readonly entityLoaderFactory: EntityLoaderFactory<
@@ -35,7 +42,8 @@ abstract class BaseMutator<
       TID,
       TViewerContext,
       TEntity,
-      TPrivacyPolicy
+      TPrivacyPolicy,
+      TSelectedFields
     >,
     protected readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
     protected readonly metricsAdapter: IEntityMetricsAdapter
@@ -49,9 +57,16 @@ export class CreateMutator<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
-> extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
+> extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
   private readonly fieldsForEntity: Partial<TFields> = {};
 
   /**
@@ -85,7 +100,7 @@ export class CreateMutator<
 
   private async createInternalAsync(): Promise<Result<TEntity>> {
     const temporaryEntityForPrivacyCheck = new this.entityClass(this.viewerContext, ({
-      [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
+      [this.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
       ...this.fieldsForEntity,
     } as unknown) as TFields);
 
@@ -120,9 +135,16 @@ export class UpdateMutator<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
-> extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
+> extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
   private readonly originalFieldsForEntity: Readonly<TFields>;
   private readonly fieldsForEntity: TFields;
   private readonly updatedFields: Partial<TFields> = {};
@@ -130,10 +152,24 @@ export class UpdateMutator<
   constructor(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    entityConfiguration: EntityConfiguration<TFields>,
-    entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>,
+    idField: keyof TFields,
+    entityClass: IEntityClass<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
     privacyPolicy: TPrivacyPolicy,
-    entityLoaderFactory: EntityLoaderFactory<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>,
+    entityLoaderFactory: EntityLoaderFactory<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
     databaseAdapter: EntityDatabaseAdapter<TFields>,
     metricsAdapter: IEntityMetricsAdapter,
     fieldsForEntity: Readonly<TFields>
@@ -141,7 +177,7 @@ export class UpdateMutator<
     super(
       viewerContext,
       queryContext,
-      entityConfiguration,
+      idField,
       entityClass,
       privacyPolicy,
       entityLoaderFactory,
@@ -198,7 +234,7 @@ export class UpdateMutator<
 
     const updateResult = await this.databaseAdapter.updateAsync(
       this.queryContext,
-      this.entityConfiguration.idField,
+      this.idField,
       entityAboutToBeUpdated.getID(),
       this.updatedFields
     );
@@ -220,16 +256,37 @@ export class DeleteMutator<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
-> extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
+> extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
   constructor(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    entityConfiguration: EntityConfiguration<TFields>,
-    entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>,
+    idField: keyof TFields,
+    entityClass: IEntityClass<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
     privacyPolicy: TPrivacyPolicy,
-    entityLoaderFactory: EntityLoaderFactory<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>,
+    entityLoaderFactory: EntityLoaderFactory<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
     databaseAdapter: EntityDatabaseAdapter<TFields>,
     metricsAdapter: IEntityMetricsAdapter,
     private readonly entity: TEntity
@@ -237,7 +294,7 @@ export class DeleteMutator<
     super(
       viewerContext,
       queryContext,
-      entityConfiguration,
+      idField,
       entityClass,
       privacyPolicy,
       entityLoaderFactory,
@@ -274,10 +331,10 @@ export class DeleteMutator<
 
     const id = this.entity.getID();
 
-    await this.databaseAdapter.deleteAsync(this.queryContext, this.entityConfiguration.idField, id);
+    await this.databaseAdapter.deleteAsync(this.queryContext, this.idField, id);
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, this.queryContext);
-    await entityLoader.invalidateFieldsAsync(this.entity.getAllFields());
+    await entityLoader.invalidateFieldsAsync(this.entity.getAllDatabaseFields());
 
     return result();
   }

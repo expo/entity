@@ -115,6 +115,7 @@ export default class ReadThroughEntityCache<TFields> {
         if (objects.length > 1) {
           // multiple objects received for what was supposed to be a unique query, don't add to return map nor cache
           // TODO(wschurman): emit or throw here since console may not be available
+          // eslint-disable-next-line no-console
           console.warn(
             `unique key ${fieldName} in ${this.entityConfiguration.tableName} returned multiple rows for ${fieldValue}`
           );

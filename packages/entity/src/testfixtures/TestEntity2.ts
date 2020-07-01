@@ -26,6 +26,8 @@ export const testEntity2Configuration = new EntityConfiguration<Test2Fields>({
       columnName: 'foreign_key',
     }),
   },
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 export class TestEntity2PrivacyPolicy extends EntityPrivacyPolicy<
@@ -60,10 +62,8 @@ export default class TestEntity2 extends Entity<Test2Fields, string, ViewerConte
   }
 }
 
-export const testEntity2Companion = {
+export const testEntity2Companion = new EntityCompanionDefinition({
   entityClass: TestEntity2,
   entityConfiguration: testEntity2Configuration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: TestEntity2PrivacyPolicy,
-};
+});

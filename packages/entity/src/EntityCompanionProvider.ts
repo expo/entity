@@ -7,6 +7,7 @@ import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
 import IEntityQueryContextProvider from './IEntityQueryContextProvider';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
+import EntityTableDataCoordinator from './internal/EntityTableDataCoordinator';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 import { computeIfAbsent } from './utils/collections/maps';
 
@@ -55,18 +56,55 @@ export interface CacheAdapterFlavorDefinition {
  * Definition for constructing a companion for an entity. Defines the core set of objects
  * used to power the entity framework for a particular type of entity.
  */
-export interface EntityCompanionDefinition<
+export class EntityCompanionDefinition<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
-  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>;
-  entityConfiguration: EntityConfiguration<TFields>;
-  databaseAdaptorFlavor: DatabaseAdapterFlavor;
-  cacheAdaptorFlavor: CacheAdapterFlavor;
-  privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+  readonly entityClass: IEntityClass<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >;
+  readonly entityConfiguration: EntityConfiguration<TFields>;
+  readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+  readonly entitySelectedFields: TSelectedFields[];
+
+  constructor({
+    entityClass,
+    entityConfiguration,
+    privacyPolicyClass,
+    entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as TSelectedFields[],
+  }: {
+    entityClass: IEntityClass<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >;
+    entityConfiguration: EntityConfiguration<TFields>;
+    privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+    entitySelectedFields?: TSelectedFields[];
+  }) {
+    this.entityClass = entityClass;
+    this.entityConfiguration = entityConfiguration;
+    this.privacyPolicyClass = privacyPolicyClass;
+    this.entitySelectedFields = entitySelectedFields;
+  }
 }
 
 /**
@@ -79,9 +117,13 @@ export interface EntityCompanionDefinition<
  * {@link EntityCompanion} for each type of {@link Entity}.
  */
 export default class EntityCompanionProvider {
-  private readonly entityCompanionMap: Map<
+  private readonly companionMap: Map<
     string,
-    EntityCompanion<any, any, any, any, any>
+    EntityCompanion<any, any, any, any, any, any>
+  > = new Map();
+  private readonly tableDataCoordinatorMap: Map<
+    string,
+    EntityTableDataCoordinator<any>
   > = new Map();
 
   /**
@@ -107,31 +149,60 @@ export default class EntityCompanionProvider {
     TFields,
     TID,
     TViewerContext extends ViewerContext,
-    TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>,
-    TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+    TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+    TPrivacyPolicy extends EntityPrivacyPolicy<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+    TSelectedFields extends keyof TFields = keyof TFields
   >(
-    entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>,
+    entityClass: IEntityClass<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
     entityCompanionDefinition: EntityCompanionDefinition<
       TFields,
       TID,
       TViewerContext,
       TEntity,
-      TPrivacyPolicy
+      TPrivacyPolicy,
+      TSelectedFields
     >
-  ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
-    return computeIfAbsent(this.entityCompanionMap, entityClass.name, () => {
-      const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[
-        entityCompanionDefinition.databaseAdaptorFlavor
-      ];
-      const entityCacheAdapterFlavor = this.cacheAdapterFlavors[
-        entityCompanionDefinition.cacheAdaptorFlavor
-      ];
+  ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+    const tableDataCoordinator = this.getTableDataCoordinatorForEntity(
+      entityCompanionDefinition.entityConfiguration
+    );
+    return computeIfAbsent(this.companionMap, entityClass.name, () => {
       return new EntityCompanion(
         entityCompanionDefinition.entityClass,
-        entityCompanionDefinition.entityConfiguration,
+        tableDataCoordinator,
+        entityCompanionDefinition.privacyPolicyClass,
+        this.metricsAdapter
+      );
+    });
+  }
+
+  private getTableDataCoordinatorForEntity<TFields>(
+    entityConfiguration: EntityConfiguration<TFields>
+  ): EntityTableDataCoordinator<TFields> {
+    return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration.tableName, () => {
+      const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[
+        entityConfiguration.databaseAdapterFlavor
+      ];
+      const entityCacheAdapterFlavor = this.cacheAdapterFlavors[
+        entityConfiguration.cacheAdapterFlavor
+      ];
+      return new EntityTableDataCoordinator(
+        entityConfiguration,
         entityDatabaseAdapterFlavor.adapterProvider,
         entityCacheAdapterFlavor.cacheAdapterProvider,
-        entityCompanionDefinition.privacyPolicyClass,
         entityDatabaseAdapterFlavor.queryContextProvider,
         this.metricsAdapter
       );

@@ -14,6 +14,8 @@ export type SimpleTestFields = {
   id: string;
 };
 
+export type SimpleTestFieldSelection = keyof SimpleTestFields;
+
 export const simpleTestEntityConfiguration = new EntityConfiguration<SimpleTestFields>({
   idField: 'id',
   tableName: 'simple_test_entity_should_not_write_to_db',
@@ -22,44 +24,75 @@ export const simpleTestEntityConfiguration = new EntityConfiguration<SimpleTestF
       columnName: 'custom_id',
     }),
   },
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   SimpleTestFields,
   string,
   ViewerContext,
-  SimpleTestEntity
+  SimpleTestEntity,
+  SimpleTestFieldSelection
 > {
   protected readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<SimpleTestFields, string, ViewerContext, SimpleTestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<
+      SimpleTestFields,
+      string,
+      ViewerContext,
+      SimpleTestEntity,
+      SimpleTestFieldSelection
+    >(),
   ];
   protected readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<SimpleTestFields, string, ViewerContext, SimpleTestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<
+      SimpleTestFields,
+      string,
+      ViewerContext,
+      SimpleTestEntity,
+      SimpleTestFieldSelection
+    >(),
   ];
   protected readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<SimpleTestFields, string, ViewerContext, SimpleTestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<
+      SimpleTestFields,
+      string,
+      ViewerContext,
+      SimpleTestEntity,
+      SimpleTestFieldSelection
+    >(),
   ];
   protected readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<SimpleTestFields, string, ViewerContext, SimpleTestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<
+      SimpleTestFields,
+      string,
+      ViewerContext,
+      SimpleTestEntity,
+      SimpleTestFieldSelection
+    >(),
   ];
 }
 
-export default class SimpleTestEntity extends Entity<SimpleTestFields, string, ViewerContext> {
+export default class SimpleTestEntity extends Entity<
+  SimpleTestFields,
+  string,
+  ViewerContext,
+  SimpleTestFieldSelection
+> {
   static getCompanionDefinition(): EntityCompanionDefinition<
     SimpleTestFields,
     string,
     ViewerContext,
     SimpleTestEntity,
-    SimpleTestEntityPrivacyPolicy
+    SimpleTestEntityPrivacyPolicy,
+    SimpleTestFieldSelection
   > {
     return testEntityCompanion;
   }
 }
 
-export const testEntityCompanion = {
+export const testEntityCompanion = new EntityCompanionDefinition({
   entityClass: SimpleTestEntity,
   entityConfiguration: simpleTestEntityConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: SimpleTestEntityPrivacyPolicy,
-};
+});

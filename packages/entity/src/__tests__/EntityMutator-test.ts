@@ -73,13 +73,13 @@ const createEntityMutatorFactory = (
     metricsAdapter
   );
   const entityLoaderFactory = new EntityLoaderFactory(
-    testEntityConfiguration,
+    testEntityConfiguration.idField,
     TestEntity,
     privacyPolicy,
     dataManager
   );
   const entityMutatorFactory = new EntityMutatorFactory(
-    testEntityConfiguration,
+    testEntityConfiguration.idField,
     TestEntity,
     privacyPolicy,
     entityLoaderFactory,
@@ -289,7 +289,7 @@ describe(EntityMutatorFactory, () => {
     ).thenReject(rejectionError);
 
     const entityMutatorFactory = new EntityMutatorFactory(
-      simpleTestEntityConfiguration,
+      simpleTestEntityConfiguration.idField,
       SimpleTestEntity,
       instance(privacyPolicyMock),
       entityLoaderFactory,
@@ -352,7 +352,7 @@ describe(EntityMutatorFactory, () => {
     );
 
     const entityMutatorFactory = new EntityMutatorFactory(
-      simpleTestEntityConfiguration,
+      simpleTestEntityConfiguration.idField,
       SimpleTestEntity,
       privacyPolicy,
       entityLoaderFactory,

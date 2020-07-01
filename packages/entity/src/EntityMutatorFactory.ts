@@ -1,5 +1,4 @@
 import Entity, { IEntityClass } from './Entity';
-import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import { CreateMutator, UpdateMutator, DeleteMutator } from './EntityMutator';
@@ -15,17 +14,25 @@ export default class EntityMutatorFactory<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
   constructor(
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly idField: keyof TFields,
     private readonly entityClass: IEntityClass<
       TFields,
       TID,
       TViewerContext,
       TEntity,
-      TPrivacyPolicy
+      TPrivacyPolicy,
+      TSelectedFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
     private readonly entityLoaderFactory: EntityLoaderFactory<
@@ -33,7 +40,8 @@ export default class EntityMutatorFactory<
       TID,
       TViewerContext,
       TEntity,
-      TPrivacyPolicy
+      TPrivacyPolicy,
+      TSelectedFields
     >,
     private readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
     private readonly metricsAdapter: IEntityMetricsAdapter
@@ -48,11 +56,11 @@ export default class EntityMutatorFactory<
   forCreate(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext
-  ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new CreateMutator(
       viewerContext,
       queryContext,
-      this.entityConfiguration,
+      this.idField,
       this.entityClass,
       this.privacyPolicy,
       this.entityLoaderFactory,
@@ -70,17 +78,17 @@ export default class EntityMutatorFactory<
   forUpdate(
     existingEntity: TEntity,
     queryContext: EntityQueryContext
-  ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new UpdateMutator(
       existingEntity.getViewerContext(),
       queryContext,
-      this.entityConfiguration,
+      this.idField,
       this.entityClass,
       this.privacyPolicy,
       this.entityLoaderFactory,
       this.databaseAdapter,
       this.metricsAdapter,
-      existingEntity.getAllFields()
+      existingEntity.getAllDatabaseFields()
     );
   }
 
@@ -92,11 +100,11 @@ export default class EntityMutatorFactory<
   forDelete(
     existingEntity: TEntity,
     queryContext: EntityQueryContext
-  ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new DeleteMutator(
       existingEntity.getViewerContext(),
       queryContext,
-      this.entityConfiguration,
+      this.idField,
       this.entityClass,
       this.privacyPolicy,
       this.entityLoaderFactory,

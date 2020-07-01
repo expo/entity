@@ -1,17 +1,11 @@
 import { IEntityClass } from './Entity';
-import EntityCacheAdapter from './EntityCacheAdapter';
-import EntityConfiguration from './EntityConfiguration';
-import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityMutatorFactory from './EntityMutatorFactory';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import IEntityCacheAdapterProvider from './IEntityCacheAdapterProvider';
-import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
 import IEntityQueryContextProvider from './IEntityQueryContextProvider';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
-import EntityDataManager from './internal/EntityDataManager';
-import ReadThroughEntityCache from './internal/ReadThroughEntityCache';
+import EntityTableDataCoordinator from './internal/EntityTableDataCoordinator';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 
 export interface IPrivacyPolicyClass<TPrivacyPolicy> {
@@ -25,72 +19,89 @@ export default class EntityCompanion<
   TFields,
   TID,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity>
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
-  // defined as properties so that they can be accessed from tests
-  private readonly databaseAdapter: EntityDatabaseAdapter<TFields>;
-  private readonly cacheAdapter: EntityCacheAdapter<TFields>;
-
   private readonly entityLoaderFactory: EntityLoaderFactory<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TPrivacyPolicy
+    TPrivacyPolicy,
+    TSelectedFields
   >;
   private readonly entityMutatorFactory: EntityMutatorFactory<
     TFields,
     TID,
     TViewerContext,
     TEntity,
-    TPrivacyPolicy
+    TPrivacyPolicy,
+    TSelectedFields
   >;
 
   constructor(
-    entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy>,
-    entityConfiguration: EntityConfiguration<TFields>,
-    databaseAdapterProvider: IEntityDatabaseAdapterProvider,
-    cacheAdapterProvider: IEntityCacheAdapterProvider,
+    entityClass: IEntityClass<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    private readonly tableDataCoordinator: EntityTableDataCoordinator<TFields>,
     PrivacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>,
-    private readonly queryContextProvider: IEntityQueryContextProvider,
-
     metricsAdapter: IEntityMetricsAdapter
   ) {
-    this.databaseAdapter = databaseAdapterProvider.getDatabaseAdapter(entityConfiguration);
-    this.cacheAdapter = cacheAdapterProvider.getCacheAdapter(entityConfiguration);
-    const dataManager = new EntityDataManager(
-      this.databaseAdapter,
-      new ReadThroughEntityCache(entityConfiguration, this.cacheAdapter),
-      queryContextProvider,
-      metricsAdapter
-    );
     const privacyPolicy = new PrivacyPolicyClass();
     this.entityLoaderFactory = new EntityLoaderFactory(
-      entityConfiguration,
+      tableDataCoordinator.entityConfiguration.idField,
       entityClass,
       privacyPolicy,
-      dataManager
+      tableDataCoordinator.dataManager
     );
     this.entityMutatorFactory = new EntityMutatorFactory(
-      entityConfiguration,
+      tableDataCoordinator.entityConfiguration.idField,
       entityClass,
       privacyPolicy,
       this.entityLoaderFactory,
-      this.databaseAdapter,
+      tableDataCoordinator.databaseAdapter,
       metricsAdapter
     );
   }
 
-  getLoaderFactory(): EntityLoaderFactory<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  getLoaderFactory(): EntityLoaderFactory<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
     return this.entityLoaderFactory;
   }
 
-  getMutatorFactory(): EntityMutatorFactory<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy> {
+  getMutatorFactory(): EntityMutatorFactory<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
     return this.entityMutatorFactory;
   }
 
+  /**
+   * Get the query context provider for this entity.
+   */
   getQueryContextProvider(): IEntityQueryContextProvider {
-    return this.queryContextProvider;
+    return this.tableDataCoordinator.getQueryContextProvider();
   }
 }

@@ -41,6 +41,8 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields>({
       columnName: 'date_field',
     }),
   },
+  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
 });
 
 export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
@@ -103,10 +105,8 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
   }
 }
 
-export const testEntityCompanion = {
+export const testEntityCompanion = new EntityCompanionDefinition({
   entityClass: TestEntity,
   entityConfiguration: testEntityConfiguration,
-  databaseAdaptorFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdaptorFlavor: CacheAdapterFlavor.REDIS,
   privacyPolicyClass: TestEntityPrivacyPolicy,
-};
+});
