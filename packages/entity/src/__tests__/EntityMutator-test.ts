@@ -43,7 +43,8 @@ const createEntityMutatorFactory = (
     string,
     ViewerContext,
     TestEntity,
-    TestEntityPrivacyPolicy
+    TestEntityPrivacyPolicy,
+    keyof TestFields
   >;
   entityMutatorFactory: EntityMutatorFactory<
     TestFields,
@@ -259,7 +260,8 @@ describe(EntityMutatorFactory, () => {
           string,
           ViewerContext,
           SimpleTestEntity,
-          SimpleTestEntityPrivacyPolicy
+          SimpleTestEntityPrivacyPolicy,
+          keyof SimpleTestFields
         >
       >(EntityLoaderFactory)
     );
@@ -336,7 +338,8 @@ describe(EntityMutatorFactory, () => {
           string,
           ViewerContext,
           SimpleTestEntity,
-          SimpleTestEntityPrivacyPolicy
+          SimpleTestEntityPrivacyPolicy,
+          keyof SimpleTestFields
         >
       >(EntityLoaderFactory)
     );

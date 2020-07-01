@@ -157,7 +157,7 @@ export default class EntityCompanionProvider {
       TEntity,
       TSelectedFields
     >,
-    TSelectedFields extends keyof TFields = keyof TFields
+    TSelectedFields extends keyof TFields
   >(
     entityClass: IEntityClass<
       TFields,

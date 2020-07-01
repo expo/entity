@@ -37,7 +37,7 @@ export default class ViewerContext {
       TMEntity,
       TMSelectedFields
     >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
+    TMSelectedFields extends keyof TMFields
   >(
     entityClass: IEntityClass<
       TMFields,

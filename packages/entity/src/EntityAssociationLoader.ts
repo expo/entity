@@ -11,7 +11,7 @@ export default class EntityAssociationLoader<
   TID,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields
 > {
   constructor(private readonly entity: TEntity) {}
 
@@ -76,20 +76,28 @@ export default class EntityAssociationLoader<
   async loadManyAssociatedEntitiesAsync<
     TAssociatedFields,
     TAssociatedID,
-    TAssociatedEntity extends ReadonlyEntity<TAssociatedFields, TAssociatedID, TViewerContext>,
+    TAssociatedEntity extends ReadonlyEntity<
+      TAssociatedFields,
+      TAssociatedID,
+      TViewerContext,
+      TAssociatedSelectedFields
+    >,
     TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
-      TAssociatedEntity
-    >
+      TAssociatedEntity,
+      TAssociatedSelectedFields
+    >,
+    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
   >(
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
       TAssociatedEntity,
-      TAssociatedPrivacyPolicy
+      TAssociatedPrivacyPolicy,
+      TAssociatedSelectedFields
     >,
     associatedEntityFieldContainingThisID: keyof TAssociatedFields,
     queryContext: EntityQueryContext = this.entity
@@ -175,13 +183,20 @@ export default class EntityAssociationLoader<
   async loadManyAssociatedEntitiesByFieldEqualingAsync<
     TAssociatedFields,
     TAssociatedID,
-    TAssociatedEntity extends ReadonlyEntity<TAssociatedFields, TAssociatedID, TViewerContext>,
+    TAssociatedEntity extends ReadonlyEntity<
+      TAssociatedFields,
+      TAssociatedID,
+      TViewerContext,
+      TAssociatedSelectedFields
+    >,
     TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
       TAssociatedFields,
       TAssociatedID,
       TViewerContext,
-      TAssociatedEntity
-    >
+      TAssociatedEntity,
+      TAssociatedSelectedFields
+    >,
+    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
   >(
     fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
     associatedEntityClass: IEntityClass<
@@ -189,7 +204,8 @@ export default class EntityAssociationLoader<
       TAssociatedID,
       TViewerContext,
       TAssociatedEntity,
-      TAssociatedPrivacyPolicy
+      TAssociatedPrivacyPolicy,
+      TAssociatedSelectedFields
     >,
     associatedEntityLookupByField: keyof TAssociatedFields,
     queryContext: EntityQueryContext = this.entity
@@ -382,12 +398,12 @@ export default class EntityAssociationLoader<
    * @param queryContext - query context in which to perform the loads
    */
   async loadAssociatedEntityThroughAsync(
-    loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any>[],
+    loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any, any>[],
     queryContext?: EntityQueryContext
   ): Promise<Result<ReadonlyEntity<any, any, any, any>> | null>;
 
   async loadAssociatedEntityThroughAsync(
-    loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any>[],
+    loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any, any>[],
     queryContext?: EntityQueryContext
   ): Promise<Result<ReadonlyEntity<any, any, any, any>> | null> {
     let currentEntity: ReadonlyEntity<any, any, any, any> = this.entity;

@@ -11,7 +11,14 @@ describe(ViewerScopedEntityCompanion, () => {
   it('returns viewer scoped loader and mutator factory', () => {
     const vc = instance(mock(ViewerContext));
     const entityCompanion = mock<
-      EntityCompanion<TestFields, string, ViewerContext, TestEntity, TestEntityPrivacyPolicy>
+      EntityCompanion<
+        TestFields,
+        string,
+        ViewerContext,
+        TestEntity,
+        TestEntityPrivacyPolicy,
+        keyof TestFields
+      >
     >();
     const viewerScopedEntityCompanion = new ViewerScopedEntityCompanion(entityCompanion, vc);
     expect(viewerScopedEntityCompanion.getLoaderFactory()).toBeInstanceOf(

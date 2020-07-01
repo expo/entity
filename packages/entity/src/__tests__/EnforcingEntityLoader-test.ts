@@ -7,7 +7,7 @@ import EntityLoader from '../EntityLoader';
 describe(EnforcingEntityLoader, () => {
   describe('loadManyByFieldEqualingManyAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(entityLoaderMock.loadManyByFieldEqualingManyAsync(anything(), anything())).thenResolve(
         new Map(
@@ -24,7 +24,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(entityLoaderMock.loadManyByFieldEqualingManyAsync(anything(), anything())).thenResolve(
         new Map(
@@ -49,7 +49,7 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadManyByFieldEqualingAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(entityLoaderMock.loadManyByFieldEqualingAsync(anything(), anything())).thenResolve([
         result(rejection),
@@ -62,7 +62,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(entityLoaderMock.loadManyByFieldEqualingAsync(anything(), anything())).thenResolve([
         result(resolved),
@@ -77,7 +77,7 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadByFieldEqualingAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(entityLoaderMock.loadByFieldEqualingAsync(anything(), anything())).thenResolve(
         result(rejection)
@@ -90,7 +90,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(entityLoaderMock.loadByFieldEqualingAsync(anything(), anything())).thenResolve(
         result(resolved)
@@ -103,7 +103,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns null when result is successful and no entity is found', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = null;
       when(entityLoaderMock.loadByFieldEqualingAsync(anything(), anything())).thenResolve(
         result(resolved)
@@ -116,7 +116,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('throws when multiple matching entities are found', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const multipleEntitiesError = new Error();
       when(entityLoaderMock.loadByFieldEqualingAsync(anything(), anything())).thenReject(
         multipleEntitiesError
@@ -131,7 +131,7 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadByIDAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(entityLoaderMock.loadByIDAsync(anything())).thenResolve(result(rejection));
       const entityLoader = instance(entityLoaderMock);
@@ -140,7 +140,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(entityLoaderMock.loadByIDAsync(anything())).thenResolve(result(resolved));
       const entityLoader = instance(entityLoaderMock);
@@ -151,7 +151,7 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadByIDNullableAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(entityLoaderMock.loadByIDNullableAsync(anything())).thenResolve(result(rejection));
       const entityLoader = instance(entityLoaderMock);
@@ -162,7 +162,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(entityLoaderMock.loadByIDNullableAsync(anything())).thenResolve(result(resolved));
       const entityLoader = instance(entityLoaderMock);
@@ -173,7 +173,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns null when non-existent object', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = null;
       when(entityLoaderMock.loadByIDNullableAsync(anything())).thenResolve(result(resolved));
       const entityLoader = instance(entityLoaderMock);
@@ -186,7 +186,7 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadManyByIDsAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(entityLoaderMock.loadManyByIDsAsync(anything())).thenResolve(
         new Map(
@@ -201,7 +201,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(entityLoaderMock.loadManyByIDsAsync(anything())).thenResolve(
         new Map(
@@ -224,7 +224,7 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadManyByFieldEqualityConjunction', () => {
     it('throws when result is unsuccessful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(
         entityLoaderMock.loadManyByFieldEqualityConjunctionAsync(anything(), anything())
@@ -237,7 +237,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(
         entityLoaderMock.loadManyByFieldEqualityConjunctionAsync(anything(), anything())
@@ -252,7 +252,7 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadManyByRawWhereClause', () => {
     it('throws when result is unsuccessful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(
         entityLoaderMock.loadManyByRawWhereClauseAsync(anything(), anything(), anything())
@@ -265,7 +265,7 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any>>(EntityLoader);
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(
         entityLoaderMock.loadManyByRawWhereClauseAsync(anything(), anything(), anything())
