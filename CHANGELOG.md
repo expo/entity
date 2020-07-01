@@ -18,12 +18,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * support entity fields subset of db fields ([#49](https://github.com/expo/entity/issues/49)) ([4e40b2e](https://github.com/expo/entity/commit/4e40b2e521407e521d236978ec3b3b56db3990be))
 
 
+# 0.4.0 (2020-06-03)
 
-
-
-# Changelog
-
-## v0.4.0 (2020-06-03)
 
 * All Packages
   * Documentation Improvements
@@ -39,7 +35,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * `@expo/entity-example`
   * Initial Version
 
-## v0.3.0 (2020-04-28)
+# 0.3.0 (2020-04-28)
 
 * `@expo/entity`
   * Initial Version
