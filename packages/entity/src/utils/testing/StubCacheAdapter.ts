@@ -118,6 +118,11 @@ class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFie
   }
 
   private createCacheKey<N extends keyof TFields>(fieldName: N, fieldValue: TFields[N]): string {
-    return `${fieldName}:::${fieldValue}`;
+    return [
+      this.entityConfiguration.tableName,
+      `v${this.entityConfiguration.cacheKeyVersion}`,
+      fieldName as string,
+      String(fieldValue),
+    ].join(':');
   }
 }
