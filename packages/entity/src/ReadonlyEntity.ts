@@ -3,6 +3,7 @@ import { pick } from 'lodash';
 
 import { IEntityClass } from './Entity';
 import EntityAssociationLoader from './EntityAssociationLoader';
+import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
@@ -36,14 +37,24 @@ export default abstract class ReadonlyEntity<
     private readonly viewerContext: TViewerContext,
     private readonly databaseFields: Readonly<TFields>
   ) {
-    const idField = (this.constructor as any).getCompanionDefinition().entityConfiguration
-      .idField as keyof Pick<TFields, TSelectedFields>;
+    const companionDefinition = (this
+      .constructor as any).getCompanionDefinition() as EntityCompanionDefinition<
+      TFields,
+      TID,
+      TViewerContext,
+      this,
+      EntityPrivacyPolicy<TFields, TID, TViewerContext, this, TSelectedFields>,
+      TSelectedFields
+    >;
+    const idField = companionDefinition.entityConfiguration.idField as keyof Pick<
+      TFields,
+      TSelectedFields
+    >;
     const id = databaseFields[idField];
     invariant(id, 'must provide ID to create an entity');
     this.id = id as any;
 
-    const entitySelectedFields = (this.constructor as any).getCompanionDefinition()
-      .entitySelectedFields as (keyof TFields)[];
+    const entitySelectedFields = companionDefinition.entitySelectedFields as (keyof TFields)[];
     this.rawFields = pick(databaseFields, entitySelectedFields);
   }
 

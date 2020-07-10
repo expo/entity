@@ -80,7 +80,7 @@ const createEntityMutatorFactory = (
     dataManager
   );
   const entityMutatorFactory = new EntityMutatorFactory(
-    testEntityConfiguration.idField,
+    testEntityConfiguration,
     TestEntity,
     privacyPolicy,
     entityLoaderFactory,
@@ -291,7 +291,7 @@ describe(EntityMutatorFactory, () => {
     ).thenReject(rejectionError);
 
     const entityMutatorFactory = new EntityMutatorFactory(
-      simpleTestEntityConfiguration.idField,
+      simpleTestEntityConfiguration,
       SimpleTestEntity,
       instance(privacyPolicyMock),
       entityLoaderFactory,
@@ -355,7 +355,7 @@ describe(EntityMutatorFactory, () => {
     );
 
     const entityMutatorFactory = new EntityMutatorFactory(
-      simpleTestEntityConfiguration.idField,
+      simpleTestEntityConfiguration,
       SimpleTestEntity,
       privacyPolicy,
       entityLoaderFactory,

@@ -67,7 +67,7 @@ export default class EntityCompanion<
       tableDataCoordinator.dataManager
     );
     this.entityMutatorFactory = new EntityMutatorFactory(
-      tableDataCoordinator.entityConfiguration.idField,
+      tableDataCoordinator.entityConfiguration,
       entityClass,
       privacyPolicy,
       this.entityLoaderFactory,
