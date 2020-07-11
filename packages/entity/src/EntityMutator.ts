@@ -74,7 +74,7 @@ export class CreateMutator<
    * @param fieldName - entity field being updated
    * @param value - value for entity field
    */
-  setField<K extends keyof TFields>(fieldName: K, value: TFields[K]): this {
+  setField<K extends keyof Pick<TFields, TSelectedFields>>(fieldName: K, value: TFields[K]): this {
     this.fieldsForEntity[fieldName] = value;
     return this;
   }
@@ -193,7 +193,7 @@ export class UpdateMutator<
    * @param fieldName - entity field being updated
    * @param value - value for entity field
    */
-  setField<K extends keyof TFields>(fieldName: K, value: TFields[K]): this {
+  setField<K extends keyof Pick<TFields, TSelectedFields>>(fieldName: K, value: TFields[K]): this {
     this.fieldsForEntity[fieldName] = value;
     this.updatedFields[fieldName] = value;
     return this;
