@@ -57,7 +57,7 @@ class ChildEntity extends Entity<ChildFields, string, ViewerContext> {
 const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
   idField: 'id',
   tableName: 'parents',
-  inboundEdgeEntities: [ChildEntity],
+  inboundEdges: [ChildEntity],
   schema: {
     id: new UUIDField({
       columnName: 'id',
