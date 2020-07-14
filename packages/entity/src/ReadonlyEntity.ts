@@ -6,7 +6,7 @@ import EntityAssociationLoader from './EntityAssociationLoader';
 import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
+import { EntityQueryContext } from './EntityQueryContext';
 import ViewerContext from './ViewerContext';
 
 /**
@@ -118,7 +118,7 @@ export default abstract class ReadonlyEntity<
    * Get the regular (non-transactional) query context for this entity.
    * @param viewerContext - viewer context of calling user
    */
-  static getRegularEntityQueryContext<
+  static getQueryContext<
     TMFields,
     TMID,
     TMViewerContext extends ViewerContext,
@@ -146,7 +146,7 @@ export default abstract class ReadonlyEntity<
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext();
+      .getQueryContext();
   }
 
   /**
@@ -179,12 +179,13 @@ export default abstract class ReadonlyEntity<
       TMSelectedFields
     >,
     viewerContext: TMViewerContext2,
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<TResult>
+    transactionScope: (queryContext: EntityQueryContext) => Promise<TResult>
   ): Promise<TResult> {
     return await viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .runInTransactionAsync(transactionScope);
+      .getQueryContext()
+      .runInTransactionIfNotInTransactionAsync(transactionScope);
   }
 
   /**
@@ -219,7 +220,7 @@ export default abstract class ReadonlyEntity<
     queryContext: EntityQueryContext = viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): EntityLoader<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)

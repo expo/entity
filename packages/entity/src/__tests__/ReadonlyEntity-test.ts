@@ -74,7 +74,7 @@ describe(ReadonlyEntity, () => {
     it('creates a new regular query context', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      const queryContext = SimpleTestEntity.getRegularEntityQueryContext(viewerContext);
+      const queryContext = SimpleTestEntity.getQueryContext(viewerContext);
       expect(queryContext).toBeInstanceOf(EntityQueryContext);
       expect(queryContext.isInTransaction()).toBe(false);
     });

@@ -48,9 +48,12 @@ describe(RedisCacheAdapter, () => {
     const cacheKeyMaker = cacheAdapter['makeCacheKey'].bind(cacheAdapter);
 
     // creating an entity should put it in cache (loader loads it after creation)
-    const entity1 = await enforceAsyncResult(
-      RedisTestEntity.creator(vc1).setField('name', 'blah').createAsync()
-    );
+    const entity1Created = await RedisTestEntity.creator(vc1)
+      .setField('name', 'blah')
+      .enforceCreateAsync();
+    const entity1 = await RedisTestEntity.loader(vc1)
+      .enforcing()
+      .loadByIDAsync(entity1Created.getID());
 
     const cachedJSON = await redisCacheAdapterContext.redisClient.get(
       cacheKeyMaker('id', entity1.getID())

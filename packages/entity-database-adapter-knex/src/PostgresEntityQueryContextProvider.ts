@@ -11,8 +11,8 @@ import Knex from 'knex';
 export default class PostgresEntityQueryContextProvider implements IEntityQueryContextProvider {
   constructor(private readonly knexInstance: Knex) {}
 
-  getRegularEntityQueryContext(): EntityNonTransactionalQueryContext {
-    return new EntityNonTransactionalQueryContext(this.knexInstance);
+  getQueryContext(): EntityNonTransactionalQueryContext {
+    return new EntityNonTransactionalQueryContext(this.knexInstance, this);
   }
 
   async runInTransactionAsync<T>(

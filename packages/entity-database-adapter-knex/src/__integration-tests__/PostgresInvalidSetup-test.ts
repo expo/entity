@@ -43,9 +43,6 @@ describe('postgres entity integration', () => {
       await expect(InvalidTestEntity.deleteAsync(entity1)).rejects.toThrowError(
         'Excessive deletions from database adapter delete'
       );
-      await expect(InvalidTestEntity.deleteAsync(entity1)).rejects.toThrowError(
-        'No deletions from database adapter delete'
-      );
     });
 
     it('throws after update of multiple rows', async () => {

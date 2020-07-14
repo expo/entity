@@ -53,7 +53,7 @@ export default class EntityAssociationLoader<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): Promise<Result<TAssociatedEntity>> {
     const associatedEntityID = this.entity.getField(fieldIdentifyingAssociatedEntity);
     const loader = this.entity
@@ -104,7 +104,7 @@ export default class EntityAssociationLoader<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): Promise<readonly Result<TAssociatedEntity>[]> {
     const thisID = this.entity.getID();
     const loader = this.entity
@@ -158,7 +158,7 @@ export default class EntityAssociationLoader<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): Promise<Result<TAssociatedEntity> | null> {
     const associatedFieldValue = this.entity.getField(fieldIdentifyingAssociatedEntity);
     const loader = this.entity
@@ -212,7 +212,7 @@ export default class EntityAssociationLoader<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): Promise<readonly Result<TAssociatedEntity>[]> {
     const associatedFieldValue = this.entity.getField(fieldIdentifyingAssociatedEntity);
     const loader = this.entity

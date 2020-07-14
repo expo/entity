@@ -64,7 +64,7 @@ export default abstract class Entity<
     queryContext: EntityQueryContext = viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): CreateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
@@ -105,7 +105,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): UpdateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return existingEntity
       .getViewerContext()
@@ -146,7 +146,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): Promise<Result<void>> {
     return existingEntity
       .getViewerContext()
@@ -188,7 +188,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): Promise<void> {
     return existingEntity
       .getViewerContext()
@@ -241,7 +241,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): Promise<boolean> {
     const privacyPolicy = new (this.getCompanionDefinition().privacyPolicyClass)();
     const evaluationResult = await asyncResult(
@@ -290,7 +290,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): Promise<boolean> {
     const privacyPolicy = new (this.getCompanionDefinition().privacyPolicyClass)();
     const evaluationResult = await asyncResult(

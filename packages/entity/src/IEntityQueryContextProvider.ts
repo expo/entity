@@ -1,6 +1,6 @@
 import {
-  EntityNonTransactionalQueryContext,
   EntityTransactionalQueryContext,
+  EntityNonTransactionalQueryContext,
 } from './EntityQueryContext';
 
 /**
@@ -8,9 +8,9 @@ import {
  */
 export default interface IEntityQueryContextProvider {
   /**
-   * Vend a regular (non-transactional) entity query context.
+   * Vend an entity query context.
    */
-  getRegularEntityQueryContext(): EntityNonTransactionalQueryContext;
+  getQueryContext(): EntityNonTransactionalQueryContext;
 
   /**
    * Start a transaction and execute the provided transaction-scoped closure within the transaction.

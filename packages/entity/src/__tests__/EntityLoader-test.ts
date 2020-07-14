@@ -2,7 +2,6 @@ import { enforceAsyncResult } from '@expo/results';
 import { mock, instance, verify, spy, deepEqual, anyOfClass, anything, when } from 'ts-mockito';
 
 import EntityLoader from '../EntityLoader';
-import { EntityNonTransactionalQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import EntityDataManager from '../internal/EntityDataManager';
@@ -21,7 +20,7 @@ describe(EntityLoader, () => {
   it('loads entities', async () => {
     const dateToInsert = new Date();
     const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const queryContext = StubQueryContextProvider.getQueryContext();
 
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(
       testEntityConfiguration,
@@ -96,7 +95,7 @@ describe(EntityLoader, () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
     const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const queryContext = StubQueryContextProvider.getQueryContext();
 
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(
       testEntityConfiguration,
@@ -172,7 +171,7 @@ describe(EntityLoader, () => {
     const spiedPrivacyPolicy = spy(privacyPolicy);
 
     const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const queryContext = StubQueryContextProvider.getQueryContext();
 
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(
       testEntityConfiguration,
@@ -217,7 +216,7 @@ describe(EntityLoader, () => {
 
   it('invalidates upon invalidate one', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
     const dataManagerMock = mock(EntityDataManager);
     const dataManagerInstance = instance(dataManagerMock);
@@ -239,7 +238,7 @@ describe(EntityLoader, () => {
 
   it('invalidates upon invalidate by field', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
     const dataManagerMock = mock(EntityDataManager);
     const dataManagerInstance = instance(dataManagerMock);
@@ -260,7 +259,7 @@ describe(EntityLoader, () => {
 
   it('returns error result when not allowed', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicyMock = mock(TestEntityPrivacyPolicy);
     const dataManagerMock = mock(EntityDataManager);
 
@@ -294,7 +293,7 @@ describe(EntityLoader, () => {
 
   it('throws upon database adapter error', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
     const dataManagerMock = mock(EntityDataManager);
 

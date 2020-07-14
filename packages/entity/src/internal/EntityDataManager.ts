@@ -63,7 +63,7 @@ export default class EntityDataManager<TFields> {
       async (fetcherValues) => {
         this.metricsAdapter.incrementDataManagerDatabaseLoadCount(fieldValues.length);
         return await this.databaseAdapter.fetchManyWhereAsync(
-          this.queryContextProvider.getRegularEntityQueryContext(),
+          this.queryContextProvider.getQueryContext(),
           fieldName,
           fetcherValues
         );

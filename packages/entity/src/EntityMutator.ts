@@ -92,7 +92,7 @@ export class CreateMutator<
     return await timeAndLogMutationEventAsync(
       this.metricsAdapter,
       EntityMetricsMutationType.CREATE
-    )(this.createInternalAsync());
+    )(this.createInTransactionAsync());
   }
 
   /**
@@ -102,7 +102,13 @@ export class CreateMutator<
     return await enforceAsyncResult(this.createAsync());
   }
 
-  private async createInternalAsync(): Promise<Result<TEntity>> {
+  private async createInTransactionAsync(): Promise<Result<TEntity>> {
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.createInternalAsync(innerQueryContext)
+    );
+  }
+
+  private async createInternalAsync(queryContext: EntityQueryContext): Promise<Result<TEntity>> {
     const temporaryEntityForPrivacyCheck = new this.entityClass(this.viewerContext, ({
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
       ...this.fieldsForEntity,
@@ -111,7 +117,7 @@ export class CreateMutator<
     const authorizeCreateResult = await asyncResult(
       this.privacyPolicy.authorizeCreateAsync(
         this.viewerContext,
-        this.queryContext,
+        queryContext,
         temporaryEntityForPrivacyCheck
       )
     );
@@ -119,12 +125,9 @@ export class CreateMutator<
       return authorizeCreateResult;
     }
 
-    const insertResult = await this.databaseAdapter.insertAsync(
-      this.queryContext,
-      this.fieldsForEntity
-    );
+    const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, this.queryContext);
+    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
     await entityLoader.invalidateFieldsAsync(insertResult);
 
     const unauthorizedEntityAfterInsert = new this.entityClass(this.viewerContext, insertResult);
@@ -213,7 +216,7 @@ export class UpdateMutator<
     return await timeAndLogMutationEventAsync(
       this.metricsAdapter,
       EntityMetricsMutationType.UPDATE
-    )(this.updateInternalAsync());
+    )(this.updateInTransactionAsync());
   }
 
   /**
@@ -223,12 +226,18 @@ export class UpdateMutator<
     return await enforceAsyncResult(this.updateAsync());
   }
 
-  private async updateInternalAsync(): Promise<Result<TEntity>> {
+  private async updateInTransactionAsync(): Promise<Result<TEntity>> {
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.updateInternalAsync(innerQueryContext)
+    );
+  }
+
+  private async updateInternalAsync(queryContext: EntityQueryContext): Promise<Result<TEntity>> {
     const entityAboutToBeUpdated = new this.entityClass(this.viewerContext, this.fieldsForEntity);
     const authorizeUpdateResult = await asyncResult(
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
-        this.queryContext,
+        queryContext,
         entityAboutToBeUpdated
       )
     );
@@ -237,13 +246,13 @@ export class UpdateMutator<
     }
 
     const updateResult = await this.databaseAdapter.updateAsync(
-      this.queryContext,
+      queryContext,
       this.entityConfiguration.idField,
       entityAboutToBeUpdated.getID(),
       this.updatedFields
     );
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, this.queryContext);
+    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
 
     await entityLoader.invalidateFieldsAsync(this.originalFieldsForEntity);
     await entityLoader.invalidateFieldsAsync(this.fieldsForEntity);
@@ -315,7 +324,7 @@ export class DeleteMutator<
     return await timeAndLogMutationEventAsync(
       this.metricsAdapter,
       EntityMetricsMutationType.DELETE
-    )(this.deleteInternalAsync());
+    )(this.deleteInTransactionAsync());
   }
 
   /**
@@ -325,9 +334,15 @@ export class DeleteMutator<
     return await enforceAsyncResult(this.deleteAsync());
   }
 
-  private async deleteInternalAsync(): Promise<Result<void>> {
+  private async deleteInTransactionAsync(): Promise<Result<void>> {
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.deleteInternalAsync(innerQueryContext)
+    );
+  }
+
+  private async deleteInternalAsync(queryContext: EntityQueryContext): Promise<Result<void>> {
     const authorizeDeleteResult = await asyncResult(
-      this.privacyPolicy.authorizeDeleteAsync(this.viewerContext, this.queryContext, this.entity)
+      this.privacyPolicy.authorizeDeleteAsync(this.viewerContext, queryContext, this.entity)
     );
     if (!authorizeDeleteResult.ok) {
       return authorizeDeleteResult;
@@ -335,20 +350,20 @@ export class DeleteMutator<
 
     const id = this.entity.getID();
 
-    await this.processEntityDeletionForInboundEdgesAsync(this.entity);
+    await this.processEntityDeletionForInboundEdgesAsync(this.entity, queryContext);
 
-    await this.databaseAdapter.deleteAsync(this.queryContext, this.entityConfiguration.idField, id);
+    await this.databaseAdapter.deleteAsync(queryContext, this.entityConfiguration.idField, id);
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, this.queryContext);
+    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
     await entityLoader.invalidateFieldsAsync(this.entity.getAllDatabaseFields());
 
     return result();
   }
 
   /**
-   * Finds all entities referencing specified entity and either deletes, nullifies, or
-   * invalidates the cache depending on the {@link OnDeleteBehavior} of the field referencing
-   * the specified entity.
+   * Finds all entities referencing the specified entity and either deletes them, nullifies
+   * their references to the specified entity, or invalidates the cache depending on the
+   * {@link OnDeleteBehavior} of the field referencing the specified entity.
    *
    * @remarks
    * This works by doing reverse fan-out queries:
@@ -359,7 +374,10 @@ export class DeleteMutator<
    *
    * @param entity - entity to find all references to
    */
-  private async processEntityDeletionForInboundEdgesAsync(entity: TEntity): Promise<void> {
+  private async processEntityDeletionForInboundEdgesAsync(
+    entity: TEntity,
+    queryContext: EntityQueryContext
+  ): Promise<void> {
     const inboundEdges = this.entityConfiguration.inboundEdges;
     await Promise.all(
       inboundEdges.map(async (entityClass) => {
@@ -389,7 +407,7 @@ export class DeleteMutator<
 
             if (associatedEntityLookupByField) {
               inboundReferenceEntities = await loaderFactory
-                .forLoad(this.queryContext)
+                .forLoad(queryContext)
                 .enforcing()
                 .loadManyByFieldEqualingAsync(
                   fieldName,
@@ -397,7 +415,7 @@ export class DeleteMutator<
                 );
             } else {
               inboundReferenceEntities = await loaderFactory
-                .forLoad(this.queryContext)
+                .forLoad(queryContext)
                 .enforcing()
                 .loadManyByFieldEqualingAsync(fieldName, entity.getID());
             }
@@ -408,7 +426,7 @@ export class DeleteMutator<
                 await Promise.all(
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     loaderFactory
-                      .forLoad(this.queryContext)
+                      .forLoad(queryContext)
                       .invalidateFieldsAsync(inboundReferenceEntity.getAllDatabaseFields())
                   )
                 );
@@ -418,7 +436,7 @@ export class DeleteMutator<
                 await Promise.all(
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     mutatorFactory
-                      .forUpdate(inboundReferenceEntity, this.queryContext)
+                      .forUpdate(inboundReferenceEntity, queryContext)
                       .setField(fieldName, null)
                       .enforceUpdateAsync()
                   )
@@ -429,7 +447,7 @@ export class DeleteMutator<
                 await Promise.all(
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     mutatorFactory
-                      .forDelete(inboundReferenceEntity, this.queryContext)
+                      .forDelete(inboundReferenceEntity, queryContext)
                       .enforceDeleteAsync()
                   )
                 );

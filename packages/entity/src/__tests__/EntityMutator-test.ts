@@ -13,7 +13,7 @@ import {
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
 import EntityLoaderFactory from '../EntityLoaderFactory';
 import EntityMutatorFactory from '../EntityMutatorFactory';
-import { EntityQueryContext, EntityNonTransactionalQueryContext } from '../EntityQueryContext';
+import { EntityTransactionalQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import EntityDataManager from '../internal/EntityDataManager';
@@ -98,7 +98,7 @@ const createEntityMutatorFactory = (
 describe(EntityMutatorFactory, () => {
   it('creates entities and checks privacy', async () => {
     const viewerContext = mock<ViewerContext>();
-    const queryContext = mock<EntityQueryContext>();
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const { privacyPolicy, entityMutatorFactory } = createEntityMutatorFactory([
       {
         customIdField: 'hello',
@@ -126,13 +126,17 @@ describe(EntityMutatorFactory, () => {
     expect(newEntity).toBeTruthy();
 
     verify(
-      spiedPrivacyPolicy.authorizeCreateAsync(viewerContext, queryContext, anyOfClass(TestEntity))
+      spiedPrivacyPolicy.authorizeCreateAsync(
+        viewerContext,
+        anyOfClass(EntityTransactionalQueryContext),
+        anyOfClass(TestEntity)
+      )
     ).once();
   });
 
   it('updates entities and checks privacy', async () => {
     const viewerContext = mock<ViewerContext>();
-    const queryContext = mock<EntityQueryContext>();
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const { privacyPolicy, entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory(
       [
         {
@@ -173,13 +177,17 @@ describe(EntityMutatorFactory, () => {
     expect(reloadedEntity.getAllFields()).toMatchObject(updatedEntity.getAllFields());
 
     verify(
-      spiedPrivacyPolicy.authorizeUpdateAsync(viewerContext, queryContext, anyOfClass(TestEntity))
+      spiedPrivacyPolicy.authorizeUpdateAsync(
+        viewerContext,
+        anyOfClass(EntityTransactionalQueryContext),
+        anyOfClass(TestEntity)
+      )
     ).once();
   });
 
   it('deletes entities and checks privacy', async () => {
     const viewerContext = mock<ViewerContext>();
-    const queryContext = mock<EntityQueryContext>();
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const { privacyPolicy, entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory(
       [
         {
@@ -208,13 +216,17 @@ describe(EntityMutatorFactory, () => {
     ).rejects.toBeInstanceOf(Error);
 
     verify(
-      spiedPrivacyPolicy.authorizeDeleteAsync(viewerContext, queryContext, anyOfClass(TestEntity))
+      spiedPrivacyPolicy.authorizeDeleteAsync(
+        viewerContext,
+        anyOfClass(EntityTransactionalQueryContext),
+        anyOfClass(TestEntity)
+      )
     ).once();
   });
 
   it('invalidates cache for fields upon create', async () => {
     const viewerContext = mock<ViewerContext>();
-    const queryContext = mock<EntityQueryContext>();
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const { entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory([
       {
         customIdField: 'world',
@@ -249,7 +261,7 @@ describe(EntityMutatorFactory, () => {
 
   it('returns error result when not authorized to create', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicyMock = mock(SimpleTestEntityPrivacyPolicy);
     const databaseAdapter = instance(mock(EntityDatabaseAdapter));
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
@@ -271,21 +283,21 @@ describe(EntityMutatorFactory, () => {
     when(
       privacyPolicyMock.authorizeCreateAsync(
         viewerContext,
-        queryContext,
+        anyOfClass(EntityTransactionalQueryContext),
         anyOfClass(SimpleTestEntity)
       )
     ).thenReject(rejectionError);
     when(
       privacyPolicyMock.authorizeUpdateAsync(
         viewerContext,
-        queryContext,
+        anyOfClass(EntityTransactionalQueryContext),
         anyOfClass(SimpleTestEntity)
       )
     ).thenReject(rejectionError);
     when(
       privacyPolicyMock.authorizeDeleteAsync(
         viewerContext,
-        queryContext,
+        anyOfClass(EntityTransactionalQueryContext),
         anyOfClass(SimpleTestEntity)
       )
     ).thenReject(rejectionError);
@@ -327,7 +339,7 @@ describe(EntityMutatorFactory, () => {
 
   it('throws error when db adapter throws', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(SimpleTestEntityPrivacyPolicy));
     const databaseAdapterMock = mock(EntityDatabaseAdapter);
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
@@ -346,13 +358,24 @@ describe(EntityMutatorFactory, () => {
 
     const rejectionError = new Error();
 
-    when(databaseAdapterMock.insertAsync(queryContext, anything())).thenReject(rejectionError);
     when(
-      databaseAdapterMock.updateAsync(queryContext, anything(), anything(), anything())
+      databaseAdapterMock.insertAsync(anyOfClass(EntityTransactionalQueryContext), anything())
     ).thenReject(rejectionError);
-    when(databaseAdapterMock.deleteAsync(queryContext, anything(), anything())).thenReject(
-      rejectionError
-    );
+    when(
+      databaseAdapterMock.updateAsync(
+        anyOfClass(EntityTransactionalQueryContext),
+        anything(),
+        anything(),
+        anything()
+      )
+    ).thenReject(rejectionError);
+    when(
+      databaseAdapterMock.deleteAsync(
+        anyOfClass(EntityTransactionalQueryContext),
+        anything(),
+        anything()
+      )
+    ).thenReject(rejectionError);
 
     const entityMutatorFactory = new EntityMutatorFactory(
       simpleTestEntityConfiguration,
@@ -380,7 +403,7 @@ describe(EntityMutatorFactory, () => {
 
   it('records metrics appropriately', async () => {
     const viewerContext = mock<ViewerContext>();
-    const queryContext = mock<EntityQueryContext>();
+    const queryContext = StubQueryContextProvider.getQueryContext();
     const { entityMutatorFactory, metricsAdapter } = createEntityMutatorFactory([]);
     const spiedMetricsAdapter = spy(metricsAdapter);
 
