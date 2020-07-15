@@ -8,6 +8,7 @@ import { enforceAsyncResult } from '@expo/results';
 import Knex from 'knex';
 
 import PostgresTestEntity from '../testfixtures/PostgresTestEntity';
+import PostgresTriggerTestEntity from '../testfixtures/PostgresTriggerTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
 
 describe('postgres entity integration', () => {
@@ -323,6 +324,166 @@ describe('postgres entity integration', () => {
 
       expect(resultsMultipleOrderBy).toHaveLength(3);
       expect(resultsMultipleOrderBy.map((e) => e.getField('name'))).toEqual(['c', 'b', 'a']);
+    });
+  });
+
+  describe('trigger transaction behavior', () => {
+    describe('create', () => {
+      it('rolls back transaction when trigger throws except afterCommit', async () => {
+        const vc1 = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance)
+        );
+
+        await expect(
+          PostgresTriggerTestEntity.creator(vc1)
+            .setField('name', 'beforeCreate')
+            .enforceCreateAsync()
+        ).rejects.toThrowError('name cannot have value beforeCreate');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'beforeCreate')
+        ).resolves.toBeNull();
+
+        await expect(
+          PostgresTriggerTestEntity.creator(vc1)
+            .setField('name', 'afterCreate')
+            .enforceCreateAsync()
+        ).rejects.toThrowError('name cannot have value afterCreate');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'afterCreate')
+        ).resolves.toBeNull();
+
+        await expect(
+          PostgresTriggerTestEntity.creator(vc1).setField('name', 'beforeAll').enforceCreateAsync()
+        ).rejects.toThrowError('name cannot have value beforeAll');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'beforeAll')
+        ).resolves.toBeNull();
+
+        await expect(
+          PostgresTriggerTestEntity.creator(vc1).setField('name', 'afterAll').enforceCreateAsync()
+        ).rejects.toThrowError('name cannot have value afterAll');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'afterAll')
+        ).resolves.toBeNull();
+
+        await expect(
+          PostgresTriggerTestEntity.creator(vc1)
+            .setField('name', 'afterCommit')
+            .enforceCreateAsync()
+        ).rejects.toThrowError('name cannot have value afterCommit');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'afterCommit')
+        ).resolves.not.toBeNull();
+      });
+    });
+
+    describe('update', () => {
+      it('rolls back transaction when trigger throws except afterCommit', async () => {
+        const vc1 = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance)
+        );
+
+        const entity = await PostgresTriggerTestEntity.creator(vc1)
+          .setField('name', 'blah')
+          .enforceCreateAsync();
+
+        await expect(
+          PostgresTriggerTestEntity.updater(entity)
+            .setField('name', 'beforeUpdate')
+            .enforceUpdateAsync()
+        ).rejects.toThrowError('name cannot have value beforeUpdate');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'beforeUpdate')
+        ).resolves.toBeNull();
+
+        await expect(
+          PostgresTriggerTestEntity.updater(entity)
+            .setField('name', 'afterUpdate')
+            .enforceUpdateAsync()
+        ).rejects.toThrowError('name cannot have value afterUpdate');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'afterUpdate')
+        ).resolves.toBeNull();
+
+        await expect(
+          PostgresTriggerTestEntity.updater(entity)
+            .setField('name', 'beforeAll')
+            .enforceUpdateAsync()
+        ).rejects.toThrowError('name cannot have value beforeAll');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'beforeAll')
+        ).resolves.toBeNull();
+
+        await expect(
+          PostgresTriggerTestEntity.updater(entity)
+            .setField('name', 'afterAll')
+            .enforceUpdateAsync()
+        ).rejects.toThrowError('name cannot have value afterAll');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'afterAll')
+        ).resolves.toBeNull();
+
+        await expect(
+          PostgresTriggerTestEntity.updater(entity)
+            .setField('name', 'afterCommit')
+            .enforceUpdateAsync()
+        ).rejects.toThrowError('name cannot have value afterCommit');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'afterCommit')
+        ).resolves.not.toBeNull();
+      });
+    });
+
+    describe('delete', () => {
+      it('rolls back transaction when trigger throws except afterCommit', async () => {
+        const vc1 = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance)
+        );
+
+        const entityBeforeDelete = await PostgresTriggerTestEntity.creator(vc1)
+          .setField('name', 'beforeDelete')
+          .enforceCreateAsync();
+        await expect(
+          PostgresTriggerTestEntity.enforceDeleteAsync(entityBeforeDelete)
+        ).rejects.toThrowError('name cannot have value beforeDelete');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'beforeDelete')
+        ).resolves.not.toBeNull();
+
+        const entityAfterDelete = await PostgresTriggerTestEntity.creator(vc1)
+          .setField('name', 'afterDelete')
+          .enforceCreateAsync();
+        await expect(
+          PostgresTriggerTestEntity.enforceDeleteAsync(entityAfterDelete)
+        ).rejects.toThrowError('name cannot have value afterDelete');
+        await expect(
+          PostgresTriggerTestEntity.loader(vc1)
+            .enforcing()
+            .loadByFieldEqualingAsync('name', 'afterDelete')
+        ).resolves.not.toBeNull();
+      });
     });
   });
 });

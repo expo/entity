@@ -1,6 +1,7 @@
 import { IEntityClass } from './Entity';
 import EntityCompanion, { IPrivacyPolicyClass } from './EntityCompanion';
 import EntityConfiguration from './EntityConfiguration';
+import { EntityMutationTriggerConfiguration } from './EntityMutationTrigger';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import IEntityCacheAdapterProvider from './IEntityCacheAdapterProvider';
 import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
@@ -80,12 +81,20 @@ export class EntityCompanionDefinition<
   >;
   readonly entityConfiguration: EntityConfiguration<TFields>;
   readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+  readonly mutationTriggers: EntityMutationTriggerConfiguration<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >;
   readonly entitySelectedFields: TSelectedFields[];
 
   constructor({
     entityClass,
     entityConfiguration,
     privacyPolicyClass,
+    mutationTriggers = {},
     entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as TSelectedFields[],
   }: {
     entityClass: IEntityClass<
@@ -98,11 +107,19 @@ export class EntityCompanionDefinition<
     >;
     entityConfiguration: EntityConfiguration<TFields>;
     privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+    mutationTriggers?: EntityMutationTriggerConfiguration<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >;
     entitySelectedFields?: TSelectedFields[];
   }) {
     this.entityClass = entityClass;
     this.entityConfiguration = entityConfiguration;
     this.privacyPolicyClass = privacyPolicyClass;
+    this.mutationTriggers = mutationTriggers;
     this.entitySelectedFields = entitySelectedFields;
   }
 }
@@ -184,6 +201,7 @@ export default class EntityCompanionProvider {
         entityCompanionDefinition.entityClass,
         tableDataCoordinator,
         entityCompanionDefinition.privacyPolicyClass,
+        entityCompanionDefinition.mutationTriggers,
         this.metricsAdapter
       );
     });
