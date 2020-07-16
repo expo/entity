@@ -2,6 +2,7 @@ import { Result, asyncResult, result, enforceAsyncResult } from '@expo/results';
 import _ from 'lodash';
 
 import Entity, { IEntityClass } from './Entity';
+import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import { EntityEdgeDeletionBehavior } from './EntityFields';
@@ -350,7 +351,7 @@ export class DeleteMutator<
 
     const id = this.entity.getID();
 
-    await this.processEntityDeletionForInboundEdgesAsync(this.entity, queryContext);
+    await DeleteMutator.processEntityDeletionForInboundEdgesAsync(this.entity, queryContext);
 
     await this.databaseAdapter.deleteAsync(queryContext, this.entityConfiguration.idField, id);
 
@@ -374,11 +375,23 @@ export class DeleteMutator<
    *
    * @param entity - entity to find all references to
    */
-  private async processEntityDeletionForInboundEdgesAsync(
-    entity: TEntity,
-    queryContext: EntityQueryContext
-  ): Promise<void> {
-    const inboundEdges = this.entityConfiguration.inboundEdges;
+  private static async processEntityDeletionForInboundEdgesAsync<
+    TMFields,
+    TMID,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMSelectedFields extends keyof TMFields
+  >(entity: TMEntity, queryContext: EntityQueryContext): Promise<void> {
+    const companionDefinition = (entity.constructor as any).getCompanionDefinition() as EntityCompanionDefinition<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity, TMSelectedFields>,
+      TMSelectedFields
+    >;
+    const entityConfiguration = companionDefinition.entityConfiguration;
+    const inboundEdges = entityConfiguration.inboundEdges;
     await Promise.all(
       inboundEdges.map(async (entityClass) => {
         return await mapMapAsync(
@@ -391,17 +404,19 @@ export class DeleteMutator<
 
             const associatedConfiguration = association.associatedEntityClass.getCompanionDefinition()
               .entityConfiguration;
-            if (associatedConfiguration !== this.entityConfiguration) {
+            if (associatedConfiguration !== entityConfiguration) {
               return;
             }
 
             const associatedEntityLookupByField = association.associatedEntityLookupByField;
             let inboundReferenceEntities: readonly ReadonlyEntity<any, any, any, any>[];
 
-            const loaderFactory = this.viewerContext
+            const loaderFactory = entity
+              .getViewerContext()
               .getViewerScopedEntityCompanionForClass(entityClass)
               .getLoaderFactory();
-            const mutatorFactory = this.viewerContext
+            const mutatorFactory = entity
+              .getViewerContext()
               .getViewerScopedEntityCompanionForClass(entityClass)
               .getMutatorFactory();
 
@@ -422,7 +437,15 @@ export class DeleteMutator<
 
             switch (association.edgeDeletionBehavior) {
               case undefined:
-              case EntityEdgeDeletionBehavior.INVALIDATE_CACHE: {
+              case EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE: {
+                await Promise.all(
+                  inboundReferenceEntities.map((inboundReferenceEntity) =>
+                    this.processEntityDeletionForInboundEdgesAsync(
+                      inboundReferenceEntity,
+                      queryContext
+                    )
+                  )
+                );
                 await Promise.all(
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     loaderFactory

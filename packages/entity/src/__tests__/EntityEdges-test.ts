@@ -22,6 +22,11 @@ interface ChildFields {
   parent_id: string;
 }
 
+interface GrandChildFields {
+  id: string;
+  parent_id: string;
+}
+
 class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   any,
   string,
@@ -35,79 +40,132 @@ class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected readonly deleteRules = [new AlwaysAllowPrivacyPolicyRule()];
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
+  class ParentEntity extends Entity<ParentFields, string, TestViewerContext> {
+    static getCompanionDefinition(): EntityCompanionDefinition<
+      ParentFields,
+      string,
+      TestViewerContext,
+      ParentEntity,
+      TestEntityPrivacyPolicy
+    > {
+      return parentEntityCompanion;
+    }
+  }
+
+  class ChildEntity extends Entity<ChildFields, string, TestViewerContext> {
+    static getCompanionDefinition(): EntityCompanionDefinition<
+      ChildFields,
+      string,
+      TestViewerContext,
+      ChildEntity,
+      TestEntityPrivacyPolicy
+    > {
+      return childEntityCompanion;
+    }
+  }
+
+  class GrandChildEntity extends Entity<GrandChildFields, string, TestViewerContext> {
+    static getCompanionDefinition(): EntityCompanionDefinition<
+      GrandChildFields,
+      string,
+      TestViewerContext,
+      GrandChildEntity,
+      TestEntityPrivacyPolicy
+    > {
+      return grandChildEntityCompanion;
+    }
+  }
+
+  const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
+    idField: 'id',
+    tableName: 'parents',
+    inboundEdges: [ChildEntity],
+    schema: {
+      id: new UUIDField({
+        columnName: 'id',
+        cache: true,
+      }),
+    },
+    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  });
+
+  const childEntityConfiguration = new EntityConfiguration<ChildFields>({
+    idField: 'id',
+    tableName: 'children',
+    inboundEdges: [GrandChildEntity],
+    schema: {
+      id: new UUIDField({
+        columnName: 'id',
+        cache: true,
+      }),
+      parent_id: new UUIDField({
+        columnName: 'parent_id',
+        cache: true,
+        association: {
+          associatedEntityClass: ParentEntity,
+          edgeDeletionBehavior,
+        },
+      }),
+    },
+    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  });
+
+  const grandChildEntityConfiguration = new EntityConfiguration<GrandChildFields>({
+    idField: 'id',
+    tableName: 'grandchildren',
+    schema: {
+      id: new UUIDField({
+        columnName: 'id',
+        cache: true,
+      }),
+      parent_id: new UUIDField({
+        columnName: 'parent_id',
+        cache: true,
+        association: {
+          associatedEntityClass: ChildEntity,
+          edgeDeletionBehavior,
+        },
+      }),
+    },
+    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
+    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  });
+
+  const parentEntityCompanion = new EntityCompanionDefinition({
+    entityClass: ParentEntity,
+    entityConfiguration: parentEntityConfiguration,
+    privacyPolicyClass: TestEntityPrivacyPolicy,
+  });
+
+  const childEntityCompanion = new EntityCompanionDefinition({
+    entityClass: ChildEntity,
+    entityConfiguration: childEntityConfiguration,
+    privacyPolicyClass: TestEntityPrivacyPolicy,
+  });
+
+  const grandChildEntityCompanion = new EntityCompanionDefinition({
+    entityClass: GrandChildEntity,
+    entityConfiguration: grandChildEntityConfiguration,
+    privacyPolicyClass: TestEntityPrivacyPolicy,
+  });
+
+  return {
+    ParentEntity,
+    ChildEntity,
+    GrandChildEntity,
+  };
+};
+
 describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
-  describe('OnDeleteBehavior.DELETE', () => {
-    class ParentEntity extends Entity<ParentFields, string, TestViewerContext> {
-      static getCompanionDefinition(): EntityCompanionDefinition<
-        ParentFields,
-        string,
-        TestViewerContext,
-        ParentEntity,
-        TestEntityPrivacyPolicy
-      > {
-        return parentEntityCompanion;
-      }
-    }
-
-    class ChildEntity extends Entity<ChildFields, string, TestViewerContext> {
-      static getCompanionDefinition(): EntityCompanionDefinition<
-        ChildFields,
-        string,
-        TestViewerContext,
-        ChildEntity,
-        TestEntityPrivacyPolicy
-      > {
-        return childEntityCompanion;
-      }
-    }
-
-    const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
-      idField: 'id',
-      tableName: 'parents',
-      inboundEdges: [ChildEntity],
-      schema: {
-        id: new UUIDField({
-          columnName: 'id',
-          cache: true,
-        }),
-      },
-      databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-      cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
-    });
-
-    const childEntityConfiguration = new EntityConfiguration<ChildFields>({
-      idField: 'id',
-      tableName: 'children',
-      schema: {
-        id: new UUIDField({
-          columnName: 'id',
-          cache: true,
-        }),
-        parent_id: new UUIDField({
-          columnName: 'parent_id',
-          association: {
-            associatedEntityClass: ParentEntity,
-            edgeDeletionBehavior: EntityEdgeDeletionBehavior.CASCADE_DELETE,
-          },
-        }),
-      },
-      databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-      cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
-    });
-
-    const parentEntityCompanion = new EntityCompanionDefinition({
-      entityClass: ParentEntity,
-      entityConfiguration: parentEntityConfiguration,
-      privacyPolicyClass: TestEntityPrivacyPolicy,
-    });
-
-    const childEntityCompanion = new EntityCompanionDefinition({
-      entityClass: ChildEntity,
-      entityConfiguration: childEntityConfiguration,
-      privacyPolicyClass: TestEntityPrivacyPolicy,
-    });
-
+  describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
     it('deletes', async () => {
+      const { ParentEntity, ChildEntity, GrandChildEntity } = makeEntityClasses(
+        EntityEdgeDeletionBehavior.CASCADE_DELETE
+      );
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
@@ -115,12 +173,18 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const child = await ChildEntity.creator(viewerContext)
         .setField('parent_id', parent.getID())
         .enforceCreateAsync();
+      const grandchild = await GrandChildEntity.creator(viewerContext)
+        .setField('parent_id', child.getID())
+        .enforceCreateAsync();
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
       ).resolves.not.toBeNull();
       await expect(
         ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+      ).resolves.not.toBeNull();
+      await expect(
+        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
       ).resolves.not.toBeNull();
 
       await ParentEntity.enforceDeleteAsync(parent);
@@ -131,81 +195,18 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       await expect(
         ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
       ).resolves.toBeNull();
+      await expect(
+        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
+      ).resolves.toBeNull();
     });
   });
 
-  describe('OnDeleteBehavior.SET_NULL', () => {
-    class ParentEntity extends Entity<ParentFields, string, TestViewerContext> {
-      static getCompanionDefinition(): EntityCompanionDefinition<
-        ParentFields,
-        string,
-        TestViewerContext,
-        ParentEntity,
-        TestEntityPrivacyPolicy
-      > {
-        return parentEntityCompanion;
-      }
-    }
-
-    class ChildEntity extends Entity<ChildFields, string, TestViewerContext> {
-      static getCompanionDefinition(): EntityCompanionDefinition<
-        ChildFields,
-        string,
-        TestViewerContext,
-        ChildEntity,
-        TestEntityPrivacyPolicy
-      > {
-        return childEntityCompanion;
-      }
-    }
-
-    const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
-      idField: 'id',
-      tableName: 'parents',
-      inboundEdges: [ChildEntity],
-      schema: {
-        id: new UUIDField({
-          columnName: 'id',
-          cache: true,
-        }),
-      },
-      databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-      cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
-    });
-
-    const childEntityConfiguration = new EntityConfiguration<ChildFields>({
-      idField: 'id',
-      tableName: 'children',
-      schema: {
-        id: new UUIDField({
-          columnName: 'id',
-          cache: true,
-        }),
-        parent_id: new UUIDField({
-          columnName: 'parent_id',
-          association: {
-            associatedEntityClass: ParentEntity,
-            edgeDeletionBehavior: EntityEdgeDeletionBehavior.SET_NULL,
-          },
-        }),
-      },
-      databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-      cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
-    });
-
-    const parentEntityCompanion = new EntityCompanionDefinition({
-      entityClass: ParentEntity,
-      entityConfiguration: parentEntityConfiguration,
-      privacyPolicyClass: TestEntityPrivacyPolicy,
-    });
-
-    const childEntityCompanion = new EntityCompanionDefinition({
-      entityClass: ChildEntity,
-      entityConfiguration: childEntityConfiguration,
-      privacyPolicyClass: TestEntityPrivacyPolicy,
-    });
-
+  describe('EntityEdgeDeletionBehavior.SET_NULL', () => {
     it('sets null', async () => {
+      const { ParentEntity, ChildEntity, GrandChildEntity } = makeEntityClasses(
+        EntityEdgeDeletionBehavior.SET_NULL
+      );
+
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
@@ -213,12 +214,18 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const child = await ChildEntity.creator(viewerContext)
         .setField('parent_id', parent.getID())
         .enforceCreateAsync();
+      const grandchild = await GrandChildEntity.creator(viewerContext)
+        .setField('parent_id', child.getID())
+        .enforceCreateAsync();
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
       ).resolves.not.toBeNull();
       await expect(
         ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+      ).resolves.not.toBeNull();
+      await expect(
+        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
       ).resolves.not.toBeNull();
 
       await ParentEntity.enforceDeleteAsync(parent);
@@ -231,88 +238,29 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         .enforcing()
         .loadByIDAsync(child.getID());
       expect(loadedChild.getField('parent_id')).toBeNull();
+
+      const loadedGrandchild = await GrandChildEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDAsync(grandchild.getID());
+      expect(loadedGrandchild.getField('parent_id')).toEqual(loadedChild.getID());
     });
   });
 
-  describe('OnDeleteBehavior.INVALIDATE_CACHE', () => {
-    class ParentEntity extends Entity<ParentFields, string, TestViewerContext> {
-      static getCompanionDefinition(): EntityCompanionDefinition<
-        ParentFields,
-        string,
-        TestViewerContext,
-        ParentEntity,
-        TestEntityPrivacyPolicy
-      > {
-        return parentEntityCompanion;
-      }
-    }
-
-    class ChildEntity extends Entity<ChildFields, string, TestViewerContext> {
-      static getCompanionDefinition(): EntityCompanionDefinition<
-        ChildFields,
-        string,
-        TestViewerContext,
-        ChildEntity,
-        TestEntityPrivacyPolicy
-      > {
-        return childEntityCompanion;
-      }
-    }
-
-    const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
-      idField: 'id',
-      tableName: 'parents',
-      inboundEdges: [ChildEntity],
-      schema: {
-        id: new UUIDField({
-          columnName: 'id',
-          cache: true,
-        }),
-      },
-      databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-      cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
-    });
-
-    const childEntityConfiguration = new EntityConfiguration<ChildFields>({
-      idField: 'id',
-      tableName: 'children',
-      schema: {
-        id: new UUIDField({
-          columnName: 'id',
-          cache: true,
-        }),
-        parent_id: new UUIDField({
-          columnName: 'parent_id',
-          cache: true,
-          association: {
-            associatedEntityClass: ParentEntity,
-            edgeDeletionBehavior: EntityEdgeDeletionBehavior.INVALIDATE_CACHE,
-          },
-        }),
-      },
-      databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-      cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
-    });
-
-    const parentEntityCompanion = new EntityCompanionDefinition({
-      entityClass: ParentEntity,
-      entityConfiguration: parentEntityConfiguration,
-      privacyPolicyClass: TestEntityPrivacyPolicy,
-    });
-
-    const childEntityCompanion = new EntityCompanionDefinition({
-      entityClass: ChildEntity,
-      entityConfiguration: childEntityConfiguration,
-      privacyPolicyClass: TestEntityPrivacyPolicy,
-    });
-
+  describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     it('invalidates the cache', async () => {
+      const { ParentEntity, ChildEntity, GrandChildEntity } = makeEntityClasses(
+        EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE
+      );
+
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
       const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
       const child = await ChildEntity.creator(viewerContext)
         .setField('parent_id', parent.getID())
+        .enforceCreateAsync();
+      const grandchild = await GrandChildEntity.creator(viewerContext)
+        .setField('parent_id', child.getID())
         .enforceCreateAsync();
 
       await expect(
@@ -323,24 +271,48 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
           .enforcing()
           .loadByFieldEqualingAsync('parent_id', parent.getID())
       ).resolves.not.toBeNull();
+      await expect(
+        GrandChildEntity.loader(viewerContext)
+          .enforcing()
+          .loadByFieldEqualingAsync('parent_id', child.getID())
+      ).resolves.not.toBeNull();
 
-      const cacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(ChildEntity)[
+      const childCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(ChildEntity)[
         'entityCompanion'
       ]['tableDataCoordinator']['cacheAdapter'] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
-      const cachedBefore = await cacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
-      expect(cachedBefore.get(parent.getID())?.status).toEqual(CacheStatus.HIT);
+      const childCachedBefore = await childCacheAdapter.loadManyAsync('parent_id', [
+        parent.getID(),
+      ]);
+      expect(childCachedBefore.get(parent.getID())?.status).toEqual(CacheStatus.HIT);
+
+      const grandChildCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(
+        GrandChildEntity
+      )['entityCompanion']['tableDataCoordinator'][
+        'cacheAdapter'
+      ] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
+      const grandChildCachedBefore = await grandChildCacheAdapter.loadManyAsync('parent_id', [
+        child.getID(),
+      ]);
+      expect(grandChildCachedBefore.get(child.getID())?.status).toEqual(CacheStatus.HIT);
 
       await ParentEntity.enforceDeleteAsync(parent);
 
-      const cachedAfter = await cacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
-      expect(cachedAfter.get(parent.getID())?.status).toEqual(CacheStatus.MISS);
+      const childCachedAfter = await childCacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
+      expect(childCachedAfter.get(parent.getID())?.status).toEqual(CacheStatus.MISS);
+
+      const grandChildCachedAfter = await grandChildCacheAdapter.loadManyAsync('parent_id', [
+        child.getID(),
+      ]);
+      expect(grandChildCachedAfter.get(child.getID())?.status).toEqual(CacheStatus.MISS);
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
       ).resolves.toBeNull();
-
       await expect(
         ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+      ).resolves.not.toBeNull();
+      await expect(
+        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
       ).resolves.not.toBeNull();
     });
   });

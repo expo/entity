@@ -10,7 +10,7 @@ export enum EntityEdgeDeletionBehavior {
    * keys and cascading deletes or set nulls and the entity framework just needs to
    * be kept consistent with the state of the database.
    */
-  INVALIDATE_CACHE,
+  CASCADE_DELETE_INVALIDATE_CACHE,
 
   /**
    * Delete all entities that reference the entity being deleted through this field. This is very similar
