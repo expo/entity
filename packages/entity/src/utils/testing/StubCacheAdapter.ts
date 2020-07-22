@@ -57,7 +57,7 @@ export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAd
   }
 }
 
-class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+export class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
   constructor(
     entityConfiguration: EntityConfiguration<TFields>,
     readonly cache: Map<string, Readonly<object>>

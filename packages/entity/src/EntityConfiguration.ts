@@ -1,3 +1,4 @@
+import { IEntityClass } from './Entity';
 import { DatabaseAdapterFlavor, CacheAdapterFlavor } from './EntityCompanionProvider';
 import { EntityFieldDefinition } from './EntityFields';
 import { mapMap, invertMap, reduceMap } from './utils/collections/maps';
@@ -12,6 +13,7 @@ export default class EntityConfiguration<TFields> {
   readonly cacheableKeys: ReadonlySet<keyof TFields>;
   readonly cacheKeyVersion: number;
 
+  readonly inboundEdges: IEntityClass<any, any, any, any, any, any>[];
   readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition>;
   readonly entityToDBFieldsKeyMapping: ReadonlyMap<keyof TFields, string>;
   readonly dbToEntityFieldsKeyMapping: ReadonlyMap<string, keyof TFields>;
@@ -23,6 +25,7 @@ export default class EntityConfiguration<TFields> {
     idField,
     tableName,
     schema,
+    inboundEdges = [],
     cacheKeyVersion = 0,
     databaseAdapterFlavor,
     cacheAdapterFlavor,
@@ -30,6 +33,7 @@ export default class EntityConfiguration<TFields> {
     idField: keyof TFields;
     tableName: string;
     schema: Record<keyof TFields, EntityFieldDefinition>;
+    inboundEdges?: IEntityClass<any, any, any, any, any, any>[];
     cacheKeyVersion?: number;
     databaseAdapterFlavor: DatabaseAdapterFlavor;
     cacheAdapterFlavor: CacheAdapterFlavor;
@@ -39,6 +43,8 @@ export default class EntityConfiguration<TFields> {
     this.cacheKeyVersion = cacheKeyVersion;
     this.databaseAdapterFlavor = databaseAdapterFlavor;
     this.cacheAdapterFlavor = cacheAdapterFlavor;
+
+    this.inboundEdges = inboundEdges;
 
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups

@@ -4,7 +4,7 @@ import {
   EntityCompanionProvider,
   CacheAdapterFlavor,
   DatabaseAdapterFlavor,
-  NoCacheStubCacheAdapterProvider,
+  InMemoryFullCacheStubCacheAdapterProvider,
 } from '@expo/entity';
 import Knex from 'knex';
 
@@ -25,7 +25,7 @@ export const createKnexIntegrationTestEntityCompanionProvider = (
     },
     {
       [CacheAdapterFlavor.REDIS]: {
-        cacheAdapterProvider: new NoCacheStubCacheAdapterProvider(),
+        cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
       },
     }
   );

@@ -3,9 +3,10 @@ import { pick } from 'lodash';
 
 import { IEntityClass } from './Entity';
 import EntityAssociationLoader from './EntityAssociationLoader';
+import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
+import { EntityQueryContext } from './EntityQueryContext';
 import ViewerContext from './ViewerContext';
 
 /**
@@ -36,19 +37,33 @@ export default abstract class ReadonlyEntity<
     private readonly viewerContext: TViewerContext,
     private readonly databaseFields: Readonly<TFields>
   ) {
-    const idField = (this.constructor as any).getCompanionDefinition().entityConfiguration
-      .idField as keyof Pick<TFields, TSelectedFields>;
+    const companionDefinition = (this
+      .constructor as any).getCompanionDefinition() as EntityCompanionDefinition<
+      TFields,
+      TID,
+      TViewerContext,
+      this,
+      EntityPrivacyPolicy<TFields, TID, TViewerContext, this, TSelectedFields>,
+      TSelectedFields
+    >;
+    const idField = companionDefinition.entityConfiguration.idField as keyof Pick<
+      TFields,
+      TSelectedFields
+    >;
     const id = databaseFields[idField];
     invariant(id, 'must provide ID to create an entity');
     this.id = id as any;
 
-    const entitySelectedFields = (this.constructor as any).getCompanionDefinition()
-      .entitySelectedFields as (keyof TFields)[];
+    const entitySelectedFields = companionDefinition.entitySelectedFields as (keyof TFields)[];
     this.rawFields = pick(databaseFields, entitySelectedFields);
   }
 
   toString(): string {
     return `${this.constructor.name}[${this.getID()}]`;
+  }
+
+  getUniqueIdentifier(): string {
+    return this.toString();
   }
 
   /**
@@ -107,7 +122,7 @@ export default abstract class ReadonlyEntity<
    * Get the regular (non-transactional) query context for this entity.
    * @param viewerContext - viewer context of calling user
    */
-  static getRegularEntityQueryContext<
+  static getQueryContext<
     TMFields,
     TMID,
     TMViewerContext extends ViewerContext,
@@ -135,7 +150,7 @@ export default abstract class ReadonlyEntity<
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext();
+      .getQueryContext();
   }
 
   /**
@@ -168,12 +183,13 @@ export default abstract class ReadonlyEntity<
       TMSelectedFields
     >,
     viewerContext: TMViewerContext2,
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<TResult>
+    transactionScope: (queryContext: EntityQueryContext) => Promise<TResult>
   ): Promise<TResult> {
     return await viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .runInTransactionAsync(transactionScope);
+      .getQueryContext()
+      .runInTransactionIfNotInTransactionAsync(transactionScope);
   }
 
   /**
@@ -208,7 +224,7 @@ export default abstract class ReadonlyEntity<
     queryContext: EntityQueryContext = viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getRegularEntityQueryContext()
+      .getQueryContext()
   ): EntityLoader<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)

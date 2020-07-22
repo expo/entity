@@ -1,7 +1,7 @@
 import { instance, mock } from 'ts-mockito';
 
 import { OrderByOrdering } from '../../../EntityDatabaseAdapter';
-import { EntityNonTransactionalQueryContext } from '../../../EntityQueryContext';
+import { EntityQueryContext } from '../../../EntityQueryContext';
 import {
   DateIDTestFields,
   dateIDTestEntityConfiguration,
@@ -20,7 +20,7 @@ import StubDatabaseAdapter from '../StubDatabaseAdapter';
 describe(StubDatabaseAdapter, () => {
   describe('fetchManyWhereAsync', () => {
     it('fetches many where', async () => {
-      const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+      const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
@@ -58,7 +58,7 @@ describe(StubDatabaseAdapter, () => {
 
   describe('fetchManyByFieldEqualityConjunctionAsync', () => {
     it('supports conjuntions and query modifiers', async () => {
-      const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+      const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
@@ -123,7 +123,7 @@ describe(StubDatabaseAdapter, () => {
     });
 
     it('supports multiple order bys', async () => {
-      const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+      const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
@@ -188,7 +188,7 @@ describe(StubDatabaseAdapter, () => {
 
   describe('fetchManyByRawWhereClauseAsync', () => {
     it('throws because it is unsupported', async () => {
-      const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+      const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
         new Map()
@@ -201,7 +201,7 @@ describe(StubDatabaseAdapter, () => {
 
   describe('insertAsync', () => {
     it('inserts a record', async () => {
-      const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+      const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
         new Map()
@@ -221,7 +221,7 @@ describe(StubDatabaseAdapter, () => {
 
   describe('updateAsync', () => {
     it('updates a record', async () => {
-      const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+      const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
@@ -254,7 +254,7 @@ describe(StubDatabaseAdapter, () => {
 
   describe('deleteAsync', () => {
     it('deletes an object', async () => {
-      const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+      const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
@@ -285,7 +285,7 @@ describe(StubDatabaseAdapter, () => {
   });
 
   it('supports string and number IDs', async () => {
-    const queryContext = instance(mock(EntityNonTransactionalQueryContext));
+    const queryContext = instance(mock(EntityQueryContext));
     const databaseAdapter1 = new StubDatabaseAdapter<SimpleTestFields>(
       simpleTestEntityConfiguration,
       new Map()

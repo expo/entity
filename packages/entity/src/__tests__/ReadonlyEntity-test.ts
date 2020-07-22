@@ -6,6 +6,7 @@ import { EntityQueryContext } from '../EntityQueryContext';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
 import SimpleTestEntity from '../testfixtures/SimpleTestEntity';
+import TestEntity from '../testfixtures/TestEntity';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 describe(ReadonlyEntity, () => {
@@ -28,6 +29,42 @@ describe(ReadonlyEntity, () => {
       };
       const testEntity = new SimpleTestEntity(viewerContext, data);
       expect(testEntity.toString()).toEqual('SimpleTestEntity[what]');
+    });
+  });
+
+  describe('getUniqueIdentifier', () => {
+    it('returns a different value for two different entities of the same type', () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const testEntity = new SimpleTestEntity(viewerContext, {
+        id: '1',
+      });
+      const testEntity2 = new SimpleTestEntity(viewerContext, {
+        id: '2',
+      });
+      expect(testEntity.getUniqueIdentifier()).not.toEqual(testEntity2.getUniqueIdentifier());
+    });
+
+    it('returns the same value even if different viewer context', () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const viewerContext2 = instance(mock(ViewerContext));
+      const data = { id: '1' };
+      const testEntity = new SimpleTestEntity(viewerContext, data);
+      const testEntity2 = new SimpleTestEntity(viewerContext2, data);
+      expect(testEntity.getUniqueIdentifier()).toEqual(testEntity2.getUniqueIdentifier());
+    });
+
+    it('returns a different value for different entities even if same ID', () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const data = { id: '1' };
+      const testEntity = new SimpleTestEntity(viewerContext, data);
+      const testEntity2 = new TestEntity(viewerContext, {
+        customIdField: '1',
+        testIndexedField: '2',
+        stringField: '3',
+        numberField: 4,
+        dateField: new Date(),
+      });
+      expect(testEntity.getUniqueIdentifier()).not.toEqual(testEntity2.getUniqueIdentifier());
     });
   });
 
@@ -74,7 +111,7 @@ describe(ReadonlyEntity, () => {
     it('creates a new regular query context', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      const queryContext = SimpleTestEntity.getRegularEntityQueryContext(viewerContext);
+      const queryContext = SimpleTestEntity.getQueryContext(viewerContext);
       expect(queryContext).toBeInstanceOf(EntityQueryContext);
       expect(queryContext.isInTransaction()).toBe(false);
     });

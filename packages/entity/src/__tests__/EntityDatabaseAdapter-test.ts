@@ -209,14 +209,6 @@ describe(EntityDatabaseAdapter, () => {
   });
 
   describe('deleteAsync', () => {
-    it('throws when update result count zero', async () => {
-      const queryContext = instance(mock(EntityQueryContext));
-      const adapter = new TestEntityDatabaseAdapter({ deleteCount: 0 });
-      await expect(adapter.deleteAsync(queryContext, 'customIdField', 'wat')).rejects.toThrowError(
-        'No deletions from database adapter delet'
-      );
-    });
-
     it('throws when update result count greater than 1', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({ deleteCount: 2 });

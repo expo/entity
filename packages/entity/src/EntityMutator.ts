@@ -2,13 +2,18 @@ import { Result, asyncResult, result, enforceAsyncResult } from '@expo/results';
 import _ from 'lodash';
 
 import Entity, { IEntityClass } from './Entity';
+import { EntityCompanionDefinition } from './EntityCompanionProvider';
+import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
+import { EntityEdgeDeletionBehavior } from './EntityFields';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
+import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
 import IEntityMetricsAdapter, { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter';
+import { mapMapAsync } from './utils/collections/maps';
 
 abstract class BaseMutator<
   TFields,
@@ -27,7 +32,7 @@ abstract class BaseMutator<
   constructor(
     protected readonly viewerContext: TViewerContext,
     protected readonly queryContext: EntityQueryContext,
-    protected readonly idField: keyof TFields,
+    protected readonly entityConfiguration: EntityConfiguration<TFields>,
     protected readonly entityClass: IEntityClass<
       TFields,
       TID,
@@ -88,7 +93,7 @@ export class CreateMutator<
     return await timeAndLogMutationEventAsync(
       this.metricsAdapter,
       EntityMetricsMutationType.CREATE
-    )(this.createInternalAsync());
+    )(this.createInTransactionAsync());
   }
 
   /**
@@ -98,16 +103,22 @@ export class CreateMutator<
     return await enforceAsyncResult(this.createAsync());
   }
 
-  private async createInternalAsync(): Promise<Result<TEntity>> {
+  private async createInTransactionAsync(): Promise<Result<TEntity>> {
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.createInternalAsync(innerQueryContext)
+    );
+  }
+
+  private async createInternalAsync(queryContext: EntityQueryContext): Promise<Result<TEntity>> {
     const temporaryEntityForPrivacyCheck = new this.entityClass(this.viewerContext, ({
-      [this.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
+      [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
       ...this.fieldsForEntity,
     } as unknown) as TFields);
 
     const authorizeCreateResult = await asyncResult(
       this.privacyPolicy.authorizeCreateAsync(
         this.viewerContext,
-        this.queryContext,
+        queryContext,
         temporaryEntityForPrivacyCheck
       )
     );
@@ -115,12 +126,9 @@ export class CreateMutator<
       return authorizeCreateResult;
     }
 
-    const insertResult = await this.databaseAdapter.insertAsync(
-      this.queryContext,
-      this.fieldsForEntity
-    );
+    const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, this.queryContext);
+    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
     await entityLoader.invalidateFieldsAsync(insertResult);
 
     const unauthorizedEntityAfterInsert = new this.entityClass(this.viewerContext, insertResult);
@@ -152,7 +160,7 @@ export class UpdateMutator<
   constructor(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    idField: keyof TFields,
+    entityConfiguration: EntityConfiguration<TFields>,
     entityClass: IEntityClass<
       TFields,
       TID,
@@ -177,7 +185,7 @@ export class UpdateMutator<
     super(
       viewerContext,
       queryContext,
-      idField,
+      entityConfiguration,
       entityClass,
       privacyPolicy,
       entityLoaderFactory,
@@ -209,7 +217,7 @@ export class UpdateMutator<
     return await timeAndLogMutationEventAsync(
       this.metricsAdapter,
       EntityMetricsMutationType.UPDATE
-    )(this.updateInternalAsync());
+    )(this.updateInTransactionAsync());
   }
 
   /**
@@ -219,12 +227,18 @@ export class UpdateMutator<
     return await enforceAsyncResult(this.updateAsync());
   }
 
-  private async updateInternalAsync(): Promise<Result<TEntity>> {
+  private async updateInTransactionAsync(): Promise<Result<TEntity>> {
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.updateInternalAsync(innerQueryContext)
+    );
+  }
+
+  private async updateInternalAsync(queryContext: EntityQueryContext): Promise<Result<TEntity>> {
     const entityAboutToBeUpdated = new this.entityClass(this.viewerContext, this.fieldsForEntity);
     const authorizeUpdateResult = await asyncResult(
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
-        this.queryContext,
+        queryContext,
         entityAboutToBeUpdated
       )
     );
@@ -233,13 +247,13 @@ export class UpdateMutator<
     }
 
     const updateResult = await this.databaseAdapter.updateAsync(
-      this.queryContext,
-      this.idField,
+      queryContext,
+      this.entityConfiguration.idField,
       entityAboutToBeUpdated.getID(),
       this.updatedFields
     );
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, this.queryContext);
+    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
 
     await entityLoader.invalidateFieldsAsync(this.originalFieldsForEntity);
     await entityLoader.invalidateFieldsAsync(this.fieldsForEntity);
@@ -269,7 +283,7 @@ export class DeleteMutator<
   constructor(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    idField: keyof TFields,
+    entityConfiguration: EntityConfiguration<TFields>,
     entityClass: IEntityClass<
       TFields,
       TID,
@@ -294,7 +308,7 @@ export class DeleteMutator<
     super(
       viewerContext,
       queryContext,
-      idField,
+      entityConfiguration,
       entityClass,
       privacyPolicy,
       entityLoaderFactory,
@@ -311,7 +325,7 @@ export class DeleteMutator<
     return await timeAndLogMutationEventAsync(
       this.metricsAdapter,
       EntityMetricsMutationType.DELETE
-    )(this.deleteInternalAsync());
+    )(this.deleteInTransactionAsync());
   }
 
   /**
@@ -321,21 +335,170 @@ export class DeleteMutator<
     return await enforceAsyncResult(this.deleteAsync());
   }
 
-  private async deleteInternalAsync(): Promise<Result<void>> {
+  private async deleteInTransactionAsync(): Promise<Result<void>> {
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.deleteInternalAsync(innerQueryContext)
+    );
+  }
+
+  private async deleteInternalAsync(
+    queryContext: EntityQueryContext,
+    processedEntityIdentifiersFromTransitiveDeletions: Set<string> = new Set()
+  ): Promise<Result<void>> {
     const authorizeDeleteResult = await asyncResult(
-      this.privacyPolicy.authorizeDeleteAsync(this.viewerContext, this.queryContext, this.entity)
+      this.privacyPolicy.authorizeDeleteAsync(this.viewerContext, queryContext, this.entity)
     );
     if (!authorizeDeleteResult.ok) {
       return authorizeDeleteResult;
     }
 
-    const id = this.entity.getID();
+    await DeleteMutator.processEntityDeletionForInboundEdgesAsync(
+      this.entity,
+      queryContext,
+      processedEntityIdentifiersFromTransitiveDeletions
+    );
 
-    await this.databaseAdapter.deleteAsync(this.queryContext, this.idField, id);
+    await this.databaseAdapter.deleteAsync(
+      queryContext,
+      this.entityConfiguration.idField,
+      this.entity.getID()
+    );
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, this.queryContext);
+    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
     await entityLoader.invalidateFieldsAsync(this.entity.getAllDatabaseFields());
 
     return result();
+  }
+
+  /**
+   * Finds all entities referencing the specified entity and either deletes them, nullifies
+   * their references to the specified entity, or invalidates the cache depending on the
+   * {@link OnDeleteBehavior} of the field referencing the specified entity.
+   *
+   * @remarks
+   * This works by doing reverse fan-out queries:
+   * 1. Load all entity configurations of entity types that reference this type of entity
+   * 2. For each entity configuration, find all fields that contain edges to this type of entity
+   * 3. For each edge field, load all entities with an edge from target entity to this entity via that field
+   * 4. Perform desired OnDeleteBehavior for entities
+   *
+   * @param entity - entity to find all references to
+   */
+  private static async processEntityDeletionForInboundEdgesAsync<
+    TMFields,
+    TMID,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMSelectedFields extends keyof TMFields
+  >(
+    entity: TMEntity,
+    queryContext: EntityQueryContext,
+    processedEntityIdentifiers: Set<string>
+  ): Promise<void> {
+    // prevent infinite reference cycles by keeping track of entities already processed
+    if (processedEntityIdentifiers.has(entity.getUniqueIdentifier())) {
+      return;
+    }
+    processedEntityIdentifiers.add(entity.getUniqueIdentifier());
+
+    const companionDefinition = (entity.constructor as any).getCompanionDefinition() as EntityCompanionDefinition<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity, TMSelectedFields>,
+      TMSelectedFields
+    >;
+    const entityConfiguration = companionDefinition.entityConfiguration;
+    const inboundEdges = entityConfiguration.inboundEdges;
+    await Promise.all(
+      inboundEdges.map(async (entityClass) => {
+        return await mapMapAsync(
+          entityClass.getCompanionDefinition().entityConfiguration.schema,
+          async (fieldDefinition, fieldName) => {
+            const association = fieldDefinition.association;
+            if (!association) {
+              return;
+            }
+
+            const associatedConfiguration = association.associatedEntityClass.getCompanionDefinition()
+              .entityConfiguration;
+            if (associatedConfiguration !== entityConfiguration) {
+              return;
+            }
+
+            const associatedEntityLookupByField = association.associatedEntityLookupByField;
+
+            const loaderFactory = entity
+              .getViewerContext()
+              .getViewerScopedEntityCompanionForClass(entityClass)
+              .getLoaderFactory();
+            const mutatorFactory = entity
+              .getViewerContext()
+              .getViewerScopedEntityCompanionForClass(entityClass)
+              .getMutatorFactory();
+
+            let inboundReferenceEntities: readonly ReadonlyEntity<any, any, any, any>[];
+            if (associatedEntityLookupByField) {
+              inboundReferenceEntities = await loaderFactory
+                .forLoad(queryContext)
+                .enforcing()
+                .loadManyByFieldEqualingAsync(
+                  fieldName,
+                  entity.getField(associatedEntityLookupByField as any)
+                );
+            } else {
+              inboundReferenceEntities = await loaderFactory
+                .forLoad(queryContext)
+                .enforcing()
+                .loadManyByFieldEqualingAsync(fieldName, entity.getID());
+            }
+
+            switch (association.edgeDeletionBehavior) {
+              case undefined:
+              case EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE: {
+                await Promise.all(
+                  inboundReferenceEntities.map((inboundReferenceEntity) =>
+                    this.processEntityDeletionForInboundEdgesAsync(
+                      inboundReferenceEntity,
+                      queryContext,
+                      processedEntityIdentifiers
+                    )
+                  )
+                );
+                await Promise.all(
+                  inboundReferenceEntities.map((inboundReferenceEntity) =>
+                    loaderFactory
+                      .forLoad(queryContext)
+                      .invalidateFieldsAsync(inboundReferenceEntity.getAllDatabaseFields())
+                  )
+                );
+                break;
+              }
+              case EntityEdgeDeletionBehavior.SET_NULL: {
+                await Promise.all(
+                  inboundReferenceEntities.map((inboundReferenceEntity) =>
+                    mutatorFactory
+                      .forUpdate(inboundReferenceEntity, queryContext)
+                      .setField(fieldName, null)
+                      .enforceUpdateAsync()
+                  )
+                );
+                break;
+              }
+              case EntityEdgeDeletionBehavior.CASCADE_DELETE: {
+                await Promise.all(
+                  inboundReferenceEntities.map((inboundReferenceEntity) =>
+                    mutatorFactory
+                      .forDelete(inboundReferenceEntity, queryContext)
+                      .deleteInternalAsync(queryContext, processedEntityIdentifiers)
+                  )
+                );
+              }
+            }
+          }
+        );
+      })
+    );
   }
 }

@@ -205,7 +205,9 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
     const objectIndex = objectCollection.findIndex((obj) => {
       return obj[tableIdField] === id;
     });
-    invariant(objectIndex >= 0, 'should exist');
+    if (objectIndex < 0) {
+      return 0;
+    }
     objectCollection.splice(objectIndex, 1);
     return 1;
   }

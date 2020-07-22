@@ -1,3 +1,5 @@
+import IEntityQueryContextProvider from './IEntityQueryContextProvider';
+
 /**
  * Entity framework representation of transactional and non-transactional database
  * query execution units.
@@ -13,16 +15,43 @@ export abstract class EntityQueryContext {
   getQueryInterface(): any {
     return this.queryInterface;
   }
+
+  abstract async runInTransactionIfNotInTransactionAsync<T>(
+    transactionScope: (queryContext: EntityQueryContext) => Promise<T>
+  ): Promise<T>;
+}
+
+export class EntityNonTransactionalQueryContext extends EntityQueryContext {
+  constructor(
+    queryInterface: any,
+    private readonly entityQueryContextProvider: IEntityQueryContextProvider
+  ) {
+    super(queryInterface);
+  }
+
+  isInTransaction(): boolean {
+    return false;
+  }
+
+  async runInTransactionIfNotInTransactionAsync<T>(
+    transactionScope: (queryContext: EntityQueryContext) => Promise<T>
+  ): Promise<T> {
+    if (this.isInTransaction()) {
+      return await transactionScope(this);
+    } else {
+      return await this.entityQueryContextProvider.runInTransactionAsync(transactionScope);
+    }
+  }
 }
 
 export class EntityTransactionalQueryContext extends EntityQueryContext {
   isInTransaction(): boolean {
     return true;
   }
-}
 
-export class EntityNonTransactionalQueryContext extends EntityQueryContext {
-  isInTransaction(): boolean {
-    return false;
+  async runInTransactionIfNotInTransactionAsync<T>(
+    transactionScope: (queryContext: EntityQueryContext) => Promise<T>
+  ): Promise<T> {
+    return await transactionScope(this);
   }
 }
