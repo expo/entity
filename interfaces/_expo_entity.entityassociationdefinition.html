@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>EntityLoadThroughDirective | Entity</title>
+	<title>EntityAssociationDefinition | Entity</title>
 	<meta name="description" content="Documentation for Entity">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,31 +57,21 @@
 					<a href="../modules/_expo_entity.html">@expo/entity</a>
 				</li>
 				<li>
-					<a href="_expo_entity.entityloadthroughdirective.html">EntityLoadThroughDirective</a>
+					<a href="_expo_entity.entityassociationdefinition.html">EntityAssociationDefinition</a>
 				</li>
 			</ul>
-			<h1>Interface EntityLoadThroughDirective&lt;TViewerContext, TFields, TAssociatedFields, TAssociatedID, TAssociatedEntity, TAssociatedPrivacyPolicy, TSelectedFields, TAssociatedSelectedFields&gt;</h1>
+			<h1>Interface EntityAssociationDefinition&lt;TViewerContext, TAssociatedFields, TAssociatedID, TAssociatedEntity, TAssociatedPrivacyPolicy, TAssociatedSelectedFields&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Instruction for each step of a load-associated-through method.</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-type-parameters">
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
 						<h4>TViewerContext<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.viewercontext.html" class="tsd-signature-type">ViewerContext</a></h4>
-					</li>
-					<li>
-						<h4>TFields</h4>
 					</li>
 					<li>
 						<h4>TAssociatedFields</h4>
@@ -96,9 +86,6 @@
 						<h4>TAssociatedPrivacyPolicy<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entityprivacypolicy.html" class="tsd-signature-type">EntityPrivacyPolicy</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 					<li>
-						<h4>TSelectedFields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TFields</span></h4>
-					</li>
-					<li>
 						<h4>TAssociatedSelectedFields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TAssociatedFields</span></h4>
 					</li>
 				</ul>
@@ -107,7 +94,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">EntityLoadThroughDirective</span>
+						<span class="target">EntityAssociationDefinition</span>
 					</li>
 				</ul>
 			</section>
@@ -118,9 +105,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.entityloadthroughdirective.html#associatedentityclass" class="tsd-kind-icon">associated<wbr>Entity<wbr>Class</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.entityloadthroughdirective.html#associatedentitylookupbyfield" class="tsd-kind-icon">associated<wbr>Entity<wbr>Lookup<wbr>ByField</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.entityloadthroughdirective.html#fieldidentifyingassociatedentity" class="tsd-kind-icon">field<wbr>Identifying<wbr>Associated<wbr>Entity</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.entityassociationdefinition.html#associatedentityclass" class="tsd-kind-icon">associated<wbr>Entity<wbr>Class</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.entityassociationdefinition.html#associatedentitylookupbyfield" class="tsd-kind-icon">associated<wbr>Entity<wbr>Lookup<wbr>ByField</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.entityassociationdefinition.html#edgedeletionbehavior" class="tsd-kind-icon">edge<wbr>Deletion<wbr>Behavior</a></li>
 							</ul>
 						</section>
 					</div>
@@ -134,12 +121,12 @@
 					<div class="tsd-signature tsd-kind-icon">associated<wbr>Entity<wbr>Class<span class="tsd-signature-symbol">:</span> <a href="_expo_entity.ientityclass.html" class="tsd-signature-type">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/1224de7/packages/entity/src/EntityAssociationLoader.ts#L476">packages/entity/src/EntityAssociationLoader.ts:476</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/1224de7/packages/entity/src/EntityFields.ts#L53">packages/entity/src/EntityFields.ts:53</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Class of entity to load at this step.</p>
+							<p>Class of entity on the other end of this edge.</p>
 						</div>
 					</div>
 				</section>
@@ -149,7 +136,7 @@
 					<div class="tsd-signature tsd-kind-icon">associated<wbr>Entity<wbr>Lookup<wbr>ByField<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TAssociatedFields</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/1224de7/packages/entity/src/EntityAssociationLoader.ts#L494">packages/entity/src/EntityAssociationLoader.ts:494</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/1224de7/packages/entity/src/EntityFields.ts#L66">packages/entity/src/EntityFields.ts:66</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -160,18 +147,33 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="fieldidentifyingassociatedentity" class="tsd-anchor"></a>
-					<h3>field<wbr>Identifying<wbr>Associated<wbr>Entity</h3>
-					<div class="tsd-signature tsd-kind-icon">field<wbr>Identifying<wbr>Associated<wbr>Entity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<a name="edgedeletionbehavior" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> edge<wbr>Deletion<wbr>Behavior</h3>
+					<div class="tsd-signature tsd-kind-icon">edge<wbr>Deletion<wbr>Behavior<span class="tsd-signature-symbol">:</span> <a href="../enums/_expo_entity.entityedgedeletionbehavior.html" class="tsd-signature-type">EntityEdgeDeletionBehavior</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/1224de7/packages/entity/src/EntityAssociationLoader.ts#L488">packages/entity/src/EntityAssociationLoader.ts:488</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/1224de7/packages/entity/src/EntityFields.ts#L83">packages/entity/src/EntityFields.ts:83</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Field of the current entity with which to load an instance of associatedEntityClass.</p>
+							<p>What action to perform on the current entity when the entity on the referencing end of
+							this edge is deleted.</p>
 						</div>
+						<dl class="tsd-comment-tags">
+							<dt>remarks</dt>
+							<dd><p>The entity framework doesn&#39;t prescribe a one-size-fits-all solution for referential
+									integrity; instead it exposes mechanisms that supports both database foreign key constraints
+									and implicit entity-specified foreign keys. Choosing which approach to use often depends on
+								application requirements, and sometimes even a mix-and-match is the right choice.</p>
+								<ul>
+									<li>If referential integrity is critical to your application, database foreign key constraints
+									combined with {@link EntityEdgeDeletionBehavior.CASACDE_DELETE_INVALIDATE_CACHE} are recommended.</li>
+									<li>If the database being used doesn&#39;t support foreign keys, then using the entity framework for referential
+									integrity is recommended.</li>
+								</ul>
+							</dd>
+						</dl>
 					</div>
 				</section>
 			</section>
@@ -198,16 +200,16 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
-						<a href="_expo_entity.entityloadthroughdirective.html" class="tsd-kind-icon">Entity<wbr>Load<wbr>Through<wbr>Directive</a>
+						<a href="_expo_entity.entityassociationdefinition.html" class="tsd-kind-icon">Entity<wbr>Association<wbr>Definition</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_expo_entity.entityloadthroughdirective.html#associatedentityclass" class="tsd-kind-icon">associated<wbr>Entity<wbr>Class</a>
+								<a href="_expo_entity.entityassociationdefinition.html#associatedentityclass" class="tsd-kind-icon">associated<wbr>Entity<wbr>Class</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_expo_entity.entityloadthroughdirective.html#associatedentitylookupbyfield" class="tsd-kind-icon">associated<wbr>Entity<wbr>Lookup<wbr>ByField</a>
+								<a href="_expo_entity.entityassociationdefinition.html#associatedentitylookupbyfield" class="tsd-kind-icon">associated<wbr>Entity<wbr>Lookup<wbr>ByField</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_expo_entity.entityloadthroughdirective.html#fieldidentifyingassociatedentity" class="tsd-kind-icon">field<wbr>Identifying<wbr>Associated<wbr>Entity</a>
+								<a href="_expo_entity.entityassociationdefinition.html#edgedeletionbehavior" class="tsd-kind-icon">edge<wbr>Deletion<wbr>Behavior</a>
 							</li>
 						</ul>
 					</li>

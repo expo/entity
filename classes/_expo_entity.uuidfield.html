@@ -93,6 +93,7 @@
 						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_expo_entity.uuidfield.html#association" class="tsd-kind-icon">association</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_expo_entity.uuidfield.html#cache" class="tsd-kind-icon">cache</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_expo_entity.uuidfield.html#columnname" class="tsd-kind-icon">column<wbr>Name</a></li>
 							</ul>
@@ -106,14 +107,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">new UUIDField<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>cache<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>columnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.uuidfield.html" class="tsd-signature-type">UUIDField</a></li>
+						<li class="tsd-signature tsd-kind-icon">new UUIDField<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>association<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_expo_entity.entityassociationdefinition.html" class="tsd-signature-type">EntityAssociationDefinition</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>cache<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>columnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.uuidfield.html" class="tsd-signature-type">UUIDField</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_expo_entity.entityfielddefinition.html">EntityFieldDefinition</a>.<a href="_expo_entity.entityfielddefinition.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/7a77afc/packages/entity/src/EntityFields.ts#L3">packages/entity/src/EntityFields.ts:3</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/1224de7/packages/entity/src/EntityFields.ts#L89">packages/entity/src/EntityFields.ts:89</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -121,8 +122,11 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>cache<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>columnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h5>
+									<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>association<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_expo_entity.entityassociationdefinition.html" class="tsd-signature-type">EntityAssociationDefinition</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>cache<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>columnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h5>
 									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>association<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_expo_entity.entityassociationdefinition.html" class="tsd-signature-type">EntityAssociationDefinition</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+										</li>
 										<li class="tsd-parameter">
 											<h5>cache<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
 											<div class="tsd-comment tsd-typography">
@@ -148,13 +152,24 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="association" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> association</h3>
+					<div class="tsd-signature tsd-kind-icon">association<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_expo_entity.entityassociationdefinition.html" class="tsd-signature-type">EntityAssociationDefinition</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_expo_entity.entityfielddefinition.html">EntityFieldDefinition</a>.<a href="_expo_entity.entityfielddefinition.html#association">association</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/1224de7/packages/entity/src/EntityFields.ts#L89">packages/entity/src/EntityFields.ts:89</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="cache" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> cache</h3>
 					<div class="tsd-signature tsd-kind-icon">cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_expo_entity.entityfielddefinition.html">EntityFieldDefinition</a>.<a href="_expo_entity.entityfielddefinition.html#cache">cache</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/7a77afc/packages/entity/src/EntityFields.ts#L3">packages/entity/src/EntityFields.ts:3</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/1224de7/packages/entity/src/EntityFields.ts#L88">packages/entity/src/EntityFields.ts:88</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,7 +180,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_expo_entity.entityfielddefinition.html">EntityFieldDefinition</a>.<a href="_expo_entity.entityfielddefinition.html#columnname">columnName</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/7a77afc/packages/entity/src/EntityFields.ts#L2">packages/entity/src/EntityFields.ts:2</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/1224de7/packages/entity/src/EntityFields.ts#L87">packages/entity/src/EntityFields.ts:87</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -197,6 +212,9 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
 								<a href="_expo_entity.uuidfield.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_expo_entity.uuidfield.html#association" class="tsd-kind-icon">association</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="_expo_entity.uuidfield.html#cache" class="tsd-kind-icon">cache</a>
