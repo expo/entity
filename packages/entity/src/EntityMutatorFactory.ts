@@ -2,6 +2,7 @@ import Entity, { IEntityClass } from './Entity';
 import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import EntityLoaderFactory from './EntityLoaderFactory';
+import { EntityMutationTriggerConfiguration } from './EntityMutationTrigger';
 import { CreateMutator, UpdateMutator, DeleteMutator } from './EntityMutator';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
@@ -36,6 +37,13 @@ export default class EntityMutatorFactory<
       TSelectedFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
+    private readonly mutationTriggers: EntityMutationTriggerConfiguration<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     private readonly entityLoaderFactory: EntityLoaderFactory<
       TFields,
       TID,
@@ -64,6 +72,7 @@ export default class EntityMutatorFactory<
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicy,
+      this.mutationTriggers,
       this.entityLoaderFactory,
       this.databaseAdapter,
       this.metricsAdapter
@@ -86,6 +95,7 @@ export default class EntityMutatorFactory<
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicy,
+      this.mutationTriggers,
       this.entityLoaderFactory,
       this.databaseAdapter,
       this.metricsAdapter,
@@ -108,6 +118,7 @@ export default class EntityMutatorFactory<
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicy,
+      this.mutationTriggers,
       this.entityLoaderFactory,
       this.databaseAdapter,
       this.metricsAdapter,

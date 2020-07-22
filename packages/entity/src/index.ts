@@ -16,6 +16,7 @@ export * from './EntityFields';
 export { default as EntityLoader } from './EntityLoader';
 export { default as EntityLoaderFactory } from './EntityLoaderFactory';
 export * from './EntityMutator';
+export * from './EntityMutationTrigger';
 export { default as EntityMutatorFactory } from './EntityMutatorFactory';
 export { default as EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 export * from './EntityPrivacyPolicy';

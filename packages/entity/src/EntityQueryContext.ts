@@ -17,7 +17,7 @@ export abstract class EntityQueryContext {
   }
 
   abstract async runInTransactionIfNotInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityQueryContext) => Promise<T>
+    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
   ): Promise<T>;
 }
 

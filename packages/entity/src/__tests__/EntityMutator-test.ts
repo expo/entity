@@ -12,8 +12,16 @@ import {
 
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
 import EntityLoaderFactory from '../EntityLoaderFactory';
+import {
+  EntityMutationTriggerConfiguration,
+  EntityMutationTrigger,
+} from '../EntityMutationTrigger';
 import EntityMutatorFactory from '../EntityMutatorFactory';
-import { EntityTransactionalQueryContext } from '../EntityQueryContext';
+import {
+  EntityTransactionalQueryContext,
+  EntityQueryContext,
+  EntityNonTransactionalQueryContext,
+} from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import EntityDataManager from '../internal/EntityDataManager';
@@ -33,6 +41,121 @@ import TestEntity, {
 import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapter';
 import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
 import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider';
+
+class TestMutationTrigger extends EntityMutationTrigger<
+  TestFields,
+  string,
+  ViewerContext,
+  TestEntity,
+  keyof TestFields
+> {
+  async executeAsync(
+    _viewerContext: ViewerContext,
+    _queryContext: EntityQueryContext,
+    _entity: TestEntity
+  ): Promise<void> {}
+}
+
+const setUpMutationTriggerSpies = (
+  mutationTriggers: EntityMutationTriggerConfiguration<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  >
+): EntityMutationTriggerConfiguration<
+  TestFields,
+  string,
+  ViewerContext,
+  TestEntity,
+  keyof TestFields
+> => {
+  return {
+    beforeCreate: [spy(mutationTriggers.beforeCreate![0])],
+    afterCreate: [spy(mutationTriggers.afterCreate![0])],
+    beforeUpdate: [spy(mutationTriggers.beforeUpdate![0])],
+    afterUpdate: [spy(mutationTriggers.afterUpdate![0])],
+    beforeDelete: [spy(mutationTriggers.beforeDelete![0])],
+    afterDelete: [spy(mutationTriggers.afterDelete![0])],
+    beforeAll: [spy(mutationTriggers.beforeAll![0])],
+    afterAll: [spy(mutationTriggers.afterAll![0])],
+    afterCommit: [spy(mutationTriggers.afterCommit![0])],
+  };
+};
+
+const verifyTriggerCounts = (
+  viewerContext: ViewerContext,
+  mutationTriggerSpies: EntityMutationTriggerConfiguration<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  >,
+  executed: Record<
+    keyof Pick<
+      EntityMutationTriggerConfiguration<
+        TestFields,
+        string,
+        ViewerContext,
+        TestEntity,
+        keyof TestFields
+      >,
+      | 'beforeCreate'
+      | 'afterCreate'
+      | 'beforeUpdate'
+      | 'afterUpdate'
+      | 'beforeDelete'
+      | 'afterDelete'
+    >,
+    boolean
+  >
+): void => {
+  Object.keys(executed).forEach((s) => {
+    if ((executed as any)[s]) {
+      verify(
+        (mutationTriggerSpies as any)[s]![0].executeAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          anyOfClass(TestEntity)
+        )
+      ).once();
+    } else {
+      verify(
+        (mutationTriggerSpies as any)[s]![0].executeAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          anyOfClass(TestEntity)
+        )
+      ).never();
+    }
+  });
+
+  verify(
+    mutationTriggerSpies.beforeAll![0].executeAsync(
+      viewerContext,
+      anyOfClass(EntityTransactionalQueryContext),
+      anyOfClass(TestEntity)
+    )
+  ).once();
+
+  verify(
+    mutationTriggerSpies.afterAll![0].executeAsync(
+      viewerContext,
+      anyOfClass(EntityTransactionalQueryContext),
+      anyOfClass(TestEntity)
+    )
+  ).once();
+
+  verify(
+    mutationTriggerSpies.afterCommit![0].executeAsync(
+      viewerContext,
+      anyOfClass(EntityNonTransactionalQueryContext),
+      anyOfClass(TestEntity)
+    )
+  ).once();
+};
 
 const createEntityMutatorFactory = (
   existingObjects: TestFields[]
@@ -54,7 +177,31 @@ const createEntityMutatorFactory = (
     TestEntityPrivacyPolicy
   >;
   metricsAdapter: IEntityMetricsAdapter;
+  mutationTriggers: EntityMutationTriggerConfiguration<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  >;
 } => {
+  const mutationTriggers: EntityMutationTriggerConfiguration<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  > = {
+    beforeCreate: [new TestMutationTrigger()],
+    afterCreate: [new TestMutationTrigger()],
+    beforeUpdate: [new TestMutationTrigger()],
+    afterUpdate: [new TestMutationTrigger()],
+    beforeDelete: [new TestMutationTrigger()],
+    afterDelete: [new TestMutationTrigger()],
+    beforeAll: [new TestMutationTrigger()],
+    afterAll: [new TestMutationTrigger()],
+    afterCommit: [new TestMutationTrigger()],
+  };
   const privacyPolicy = new TestEntityPrivacyPolicy();
   const databaseAdapter = new StubDatabaseAdapter<TestFields>(
     testEntityConfiguration,
@@ -83,6 +230,7 @@ const createEntityMutatorFactory = (
     testEntityConfiguration,
     TestEntity,
     privacyPolicy,
+    mutationTriggers,
     entityLoaderFactory,
     databaseAdapter,
     metricsAdapter
@@ -92,53 +240,117 @@ const createEntityMutatorFactory = (
     entityLoaderFactory,
     entityMutatorFactory,
     metricsAdapter,
+    mutationTriggers,
   };
 };
 
 describe(EntityMutatorFactory, () => {
-  it('creates entities and checks privacy', async () => {
-    const viewerContext = mock<ViewerContext>();
-    const queryContext = StubQueryContextProvider.getQueryContext();
-    const { privacyPolicy, entityMutatorFactory } = createEntityMutatorFactory([
-      {
-        customIdField: 'hello',
-        stringField: 'huh',
-        testIndexedField: '4',
-        numberField: 1,
-        dateField: new Date(),
-      },
-      {
-        customIdField: 'world',
-        stringField: 'huh',
-        testIndexedField: '5',
-        numberField: 1,
-        dateField: new Date(),
-      },
-    ]);
+  describe('forCreate', () => {
+    it('creates entities', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const { entityMutatorFactory } = createEntityMutatorFactory([
+        {
+          customIdField: 'hello',
+          stringField: 'huh',
+          testIndexedField: '4',
+          numberField: 1,
+          dateField: new Date(),
+        },
+        {
+          customIdField: 'world',
+          stringField: 'huh',
+          testIndexedField: '5',
+          numberField: 1,
+          dateField: new Date(),
+        },
+      ]);
+      const newEntity = await entityMutatorFactory
+        .forCreate(viewerContext, queryContext)
+        .setField('stringField', 'huh')
+        .enforceCreateAsync();
+      expect(newEntity).toBeTruthy();
+    });
 
-    const spiedPrivacyPolicy = spy(privacyPolicy);
+    it('checks privacy', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const { privacyPolicy, entityMutatorFactory } = createEntityMutatorFactory([
+        {
+          customIdField: 'hello',
+          stringField: 'huh',
+          testIndexedField: '4',
+          numberField: 1,
+          dateField: new Date(),
+        },
+        {
+          customIdField: 'world',
+          stringField: 'huh',
+          testIndexedField: '5',
+          numberField: 1,
+          dateField: new Date(),
+        },
+      ]);
 
-    const newEntity = await entityMutatorFactory
-      .forCreate(viewerContext, queryContext)
-      .setField('stringField', 'huh')
-      .enforceCreateAsync();
+      const spiedPrivacyPolicy = spy(privacyPolicy);
 
-    expect(newEntity).toBeTruthy();
+      await entityMutatorFactory
+        .forCreate(viewerContext, queryContext)
+        .setField('stringField', 'huh')
+        .enforceCreateAsync();
 
-    verify(
-      spiedPrivacyPolicy.authorizeCreateAsync(
-        viewerContext,
-        anyOfClass(EntityTransactionalQueryContext),
-        anyOfClass(TestEntity)
-      )
-    ).once();
+      verify(
+        spiedPrivacyPolicy.authorizeCreateAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          anyOfClass(TestEntity)
+        )
+      ).once();
+    });
+
+    it('executes triggers', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const { mutationTriggers, entityMutatorFactory } = createEntityMutatorFactory([
+        {
+          customIdField: 'hello',
+          stringField: 'huh',
+          testIndexedField: '4',
+          numberField: 1,
+          dateField: new Date(),
+        },
+        {
+          customIdField: 'world',
+          stringField: 'huh',
+          testIndexedField: '5',
+          numberField: 1,
+          dateField: new Date(),
+        },
+      ]);
+
+      const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
+
+      await entityMutatorFactory
+        .forCreate(viewerContext, queryContext)
+        .setField('stringField', 'huh')
+        .enforceCreateAsync();
+
+      verifyTriggerCounts(viewerContext, triggerSpies, {
+        beforeCreate: true,
+        afterCreate: true,
+        beforeUpdate: false,
+        afterUpdate: false,
+        beforeDelete: false,
+        afterDelete: false,
+      });
+    });
   });
 
-  it('updates entities and checks privacy', async () => {
-    const viewerContext = mock<ViewerContext>();
-    const queryContext = StubQueryContextProvider.getQueryContext();
-    const { privacyPolicy, entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory(
-      [
+  describe('forUpdate', () => {
+    it('updates entities', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const { entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory([
         {
           customIdField: 'hello',
           stringField: 'huh',
@@ -153,43 +365,122 @@ describe(EntityMutatorFactory, () => {
           numberField: 3,
           dateField: new Date(),
         },
-      ]
-    );
+      ]);
 
-    const spiedPrivacyPolicy = spy(privacyPolicy);
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+      );
 
-    const existingEntity = await enforceAsyncResult(
-      entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
-    );
+      const updatedEntity = await entityMutatorFactory
+        .forUpdate(existingEntity, queryContext)
+        .setField('stringField', 'huh2')
+        .enforceUpdateAsync();
 
-    const updatedEntity = await entityMutatorFactory
-      .forUpdate(existingEntity, queryContext)
-      .setField('stringField', 'huh2')
-      .enforceUpdateAsync();
+      expect(updatedEntity).toBeTruthy();
+      expect(updatedEntity.getAllFields()).not.toMatchObject(existingEntity.getAllFields());
+      expect(updatedEntity.getField('stringField')).toEqual('huh2');
 
-    expect(updatedEntity).toBeTruthy();
-    expect(updatedEntity.getAllFields()).not.toMatchObject(existingEntity.getAllFields());
-    expect(updatedEntity.getField('stringField')).toEqual('huh2');
+      const reloadedEntity = await enforceAsyncResult(
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+      );
+      expect(reloadedEntity.getAllFields()).toMatchObject(updatedEntity.getAllFields());
+    });
 
-    const reloadedEntity = await enforceAsyncResult(
-      entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
-    );
-    expect(reloadedEntity.getAllFields()).toMatchObject(updatedEntity.getAllFields());
+    it('checks privacy', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const {
+        privacyPolicy,
+        entityMutatorFactory,
+        entityLoaderFactory,
+      } = createEntityMutatorFactory([
+        {
+          customIdField: 'hello',
+          stringField: 'huh',
+          testIndexedField: '3',
+          numberField: 3,
+          dateField: new Date(),
+        },
+        {
+          customIdField: 'world',
+          stringField: 'huh',
+          testIndexedField: '4',
+          numberField: 3,
+          dateField: new Date(),
+        },
+      ]);
 
-    verify(
-      spiedPrivacyPolicy.authorizeUpdateAsync(
-        viewerContext,
-        anyOfClass(EntityTransactionalQueryContext),
-        anyOfClass(TestEntity)
-      )
-    ).once();
+      const spiedPrivacyPolicy = spy(privacyPolicy);
+
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+      );
+
+      await entityMutatorFactory
+        .forUpdate(existingEntity, queryContext)
+        .setField('stringField', 'huh2')
+        .enforceUpdateAsync();
+
+      verify(
+        spiedPrivacyPolicy.authorizeUpdateAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          anyOfClass(TestEntity)
+        )
+      ).once();
+    });
+
+    it('executes triggers', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const {
+        mutationTriggers,
+        entityMutatorFactory,
+        entityLoaderFactory,
+      } = createEntityMutatorFactory([
+        {
+          customIdField: 'hello',
+          stringField: 'huh',
+          testIndexedField: '3',
+          numberField: 3,
+          dateField: new Date(),
+        },
+        {
+          customIdField: 'world',
+          stringField: 'huh',
+          testIndexedField: '4',
+          numberField: 3,
+          dateField: new Date(),
+        },
+      ]);
+
+      const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
+
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+      );
+
+      await entityMutatorFactory
+        .forUpdate(existingEntity, queryContext)
+        .setField('stringField', 'huh2')
+        .enforceUpdateAsync();
+
+      verifyTriggerCounts(viewerContext, triggerSpies, {
+        beforeCreate: false,
+        afterCreate: false,
+        beforeUpdate: true,
+        afterUpdate: true,
+        beforeDelete: false,
+        afterDelete: false,
+      });
+    });
   });
 
-  it('deletes entities and checks privacy', async () => {
-    const viewerContext = mock<ViewerContext>();
-    const queryContext = StubQueryContextProvider.getQueryContext();
-    const { privacyPolicy, entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory(
-      [
+  describe('forDelete', () => {
+    it('deletes entities', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const { entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory([
         {
           customIdField: 'world',
           stringField: 'huh',
@@ -197,31 +488,90 @@ describe(EntityMutatorFactory, () => {
           numberField: 3,
           dateField: new Date(),
         },
-      ]
-    );
+      ]);
 
-    const spiedPrivacyPolicy = spy(privacyPolicy);
-
-    const existingEntity = await enforceAsyncResult(
-      entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
-    );
-    expect(existingEntity).toBeTruthy();
-
-    await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
-
-    await expect(
-      enforceAsyncResult(
+      const existingEntity = await enforceAsyncResult(
         entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
-      )
-    ).rejects.toBeInstanceOf(Error);
+      );
+      expect(existingEntity).toBeTruthy();
 
-    verify(
-      spiedPrivacyPolicy.authorizeDeleteAsync(
-        viewerContext,
-        anyOfClass(EntityTransactionalQueryContext),
-        anyOfClass(TestEntity)
-      )
-    ).once();
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+
+      await expect(
+        enforceAsyncResult(
+          entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+        )
+      ).rejects.toBeInstanceOf(Error);
+    });
+
+    it('checks privacy', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const {
+        privacyPolicy,
+        entityMutatorFactory,
+        entityLoaderFactory,
+      } = createEntityMutatorFactory([
+        {
+          customIdField: 'world',
+          stringField: 'huh',
+          testIndexedField: '3',
+          numberField: 3,
+          dateField: new Date(),
+        },
+      ]);
+
+      const spiedPrivacyPolicy = spy(privacyPolicy);
+
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+      );
+
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+
+      verify(
+        spiedPrivacyPolicy.authorizeDeleteAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          anyOfClass(TestEntity)
+        )
+      ).once();
+    });
+
+    it('executes triggers', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const {
+        mutationTriggers,
+        entityMutatorFactory,
+        entityLoaderFactory,
+      } = createEntityMutatorFactory([
+        {
+          customIdField: 'world',
+          stringField: 'huh',
+          testIndexedField: '3',
+          numberField: 3,
+          dateField: new Date(),
+        },
+      ]);
+
+      const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
+
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+      );
+
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+
+      verifyTriggerCounts(viewerContext, triggerSpies, {
+        beforeCreate: false,
+        afterCreate: false,
+        beforeUpdate: false,
+        afterUpdate: false,
+        beforeDelete: true,
+        afterDelete: true,
+      });
+    });
   });
 
   it('invalidates cache for fields upon create', async () => {
@@ -306,6 +656,7 @@ describe(EntityMutatorFactory, () => {
       simpleTestEntityConfiguration,
       SimpleTestEntity,
       instance(privacyPolicyMock),
+      {},
       entityLoaderFactory,
       databaseAdapter,
       metricsAdapter
@@ -381,6 +732,7 @@ describe(EntityMutatorFactory, () => {
       simpleTestEntityConfiguration,
       SimpleTestEntity,
       privacyPolicy,
+      {},
       entityLoaderFactory,
       instance(databaseAdapterMock),
       metricsAdapter
