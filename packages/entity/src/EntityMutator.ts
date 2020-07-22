@@ -1,5 +1,4 @@
 import { Result, asyncResult, result, enforceAsyncResult } from '@expo/results';
-import _ from 'lodash';
 
 import Entity, { IEntityClass } from './Entity';
 import { EntityCompanionDefinition } from './EntityCompanionProvider';
@@ -192,8 +191,8 @@ export class UpdateMutator<
       databaseAdapter,
       metricsAdapter
     );
-    this.originalFieldsForEntity = _.cloneDeep(fieldsForEntity);
-    this.fieldsForEntity = _.cloneDeep(fieldsForEntity);
+    this.originalFieldsForEntity = { ...fieldsForEntity };
+    this.fieldsForEntity = { ...fieldsForEntity };
   }
 
   /**

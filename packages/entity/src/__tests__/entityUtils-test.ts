@@ -6,6 +6,7 @@ import {
   failedResults,
   successfulResultsFilterMap,
   failedResultsFilterMap,
+  pick,
 } from '../entityUtils';
 
 describe(enforceResultsAsync, () => {
@@ -42,39 +43,57 @@ describe(failedResults, () => {
 });
 
 describe(successfulResultsFilterMap, () => {
-  const result1 = result(1);
-  const result2 = result(new Error('hello'));
-  const result3 = result(1);
-  const allResults = new Map(
-    Object.entries({
-      a: result1,
-      b: result2,
-      c: result3,
-    })
-  );
+  it('filters out failed results', () => {
+    const result1 = result(1);
+    const result2 = result(new Error('hello'));
+    const result3 = result(1);
+    const allResults = new Map(
+      Object.entries({
+        a: result1,
+        b: result2,
+        c: result3,
+      })
+    );
 
-  const resultingMap = successfulResultsFilterMap(allResults);
+    const resultingMap = successfulResultsFilterMap(allResults);
 
-  expect(resultingMap.get('a')).toEqual(result1);
-  expect(resultingMap.get('b')).toBeUndefined();
-  expect(resultingMap.get('c')).toEqual(result3);
+    expect(resultingMap.get('a')).toEqual(result1);
+    expect(resultingMap.get('b')).toBeUndefined();
+    expect(resultingMap.get('c')).toEqual(result3);
+  });
 });
 
 describe(failedResultsFilterMap, () => {
-  const result1 = result(1);
-  const result2 = result(new Error('hello'));
-  const result3 = result(1);
-  const allResults = new Map(
-    Object.entries({
-      a: result1,
-      b: result2,
-      c: result3,
-    })
-  );
+  it('filters out successful results', () => {
+    const result1 = result(1);
+    const result2 = result(new Error('hello'));
+    const result3 = result(1);
+    const allResults = new Map(
+      Object.entries({
+        a: result1,
+        b: result2,
+        c: result3,
+      })
+    );
 
-  const resultingMap = failedResultsFilterMap(allResults);
+    const resultingMap = failedResultsFilterMap(allResults);
 
-  expect(resultingMap.get('a')).toBeUndefined();
-  expect(resultingMap.get('b')).toEqual(result2);
-  expect(resultingMap.get('c')).toBeUndefined();
+    expect(resultingMap.get('a')).toBeUndefined();
+    expect(resultingMap.get('b')).toEqual(result2);
+    expect(resultingMap.get('c')).toBeUndefined();
+  });
+});
+
+describe(pick, () => {
+  it('picks specified keys', () => {
+    const object = {
+      a: 1,
+      b: 2,
+      c: 3,
+    };
+    expect(pick(object, ['a', 'b'])).toEqual({
+      a: 1,
+      b: 2,
+    });
+  });
 });

@@ -1,5 +1,4 @@
 import invariant from 'invariant';
-import { pick } from 'lodash';
 
 import { IEntityClass } from './Entity';
 import EntityAssociationLoader from './EntityAssociationLoader';
@@ -8,6 +7,7 @@ import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ViewerContext from './ViewerContext';
+import { pick } from './entityUtils';
 
 /**
  * A readonly entity exposes only the read functionality of an Entity. Used as the base

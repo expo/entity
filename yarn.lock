@@ -311,23 +311,22 @@
     which "^1.3.1"
 
 "@expo/entity-cache-adapter-redis@file:packages/entity-cache-adapter-redis":
-  version "0.4.0"
+  version "0.5.2"
   dependencies:
     ioredis "^4.16.1"
 
 "@expo/entity-database-adapter-knex@file:packages/entity-database-adapter-knex":
-  version "0.4.0"
+  version "0.5.2"
   dependencies:
     knex "^0.20.11"
 
 "@expo/entity@file:packages/entity":
-  version "0.4.0"
+  version "0.5.2"
   dependencies:
     "@expo/results" "^0.3.0"
     dataloader "^2.0.0"
     es6-error "^4.1.1"
     invariant "^2.2.4"
-    lodash "^4.17.15"
     uuid "^7.0.3"
 
 "@expo/results@^0.3.0":
@@ -1612,11 +1611,6 @@
   integrity sha512-RfG2EuSc+nv/E+xbDSLW8KCoeri/3AkqwVPuENfF/DctllRoXhooboO//Sw7yFtkLvj7nG7O1H3JcZmoTQz8nQ==
   dependencies:
     "@types/koa" "*"
-
-"@types/lodash@^4.14.150":
-  version "4.14.150"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.150.tgz#649fe44684c3f1fcb6164d943c5a61977e8cf0bd"
-  integrity sha512-kMNLM5JBcasgYscD9x/Gvr6lTAv2NVgsKtet/hm93qMyf/D1pt+7jeEZklKJKxMVmXjxbRVQQGfqDSfipYCO6w==
 
 "@types/long@^4.0.0":
   version "4.0.1"
