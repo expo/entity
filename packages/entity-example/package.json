@@ -14,7 +14,7 @@
     "start": "tsnd --transpile-only --inspect --respawn --no-notify --async-stack-traces --throw-deprecation -- src/index.ts"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=12"
   },
   "keywords": [
     "entity"
