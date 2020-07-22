@@ -343,7 +343,7 @@ export class DeleteMutator<
 
   private async deleteInternalAsync(
     queryContext: EntityQueryContext,
-    processedEntitiesFromTransitiveDeletions: ReadonlyEntity<any, any, any, any>[] = []
+    processedEntityIdentifiersFromTransitiveDeletions: Set<string> = new Set()
   ): Promise<Result<void>> {
     const authorizeDeleteResult = await asyncResult(
       this.privacyPolicy.authorizeDeleteAsync(this.viewerContext, queryContext, this.entity)
@@ -355,7 +355,7 @@ export class DeleteMutator<
     await DeleteMutator.processEntityDeletionForInboundEdgesAsync(
       this.entity,
       queryContext,
-      processedEntitiesFromTransitiveDeletions
+      processedEntityIdentifiersFromTransitiveDeletions
     );
 
     await this.databaseAdapter.deleteAsync(
@@ -393,13 +393,13 @@ export class DeleteMutator<
   >(
     entity: TMEntity,
     queryContext: EntityQueryContext,
-    processedEntities: ReadonlyEntity<any, any, any, any>[]
+    processedEntityIdentifiers: Set<string>
   ): Promise<void> {
     // prevent infinite reference cycles by keeping track of entities already processed
-    if (processedEntities.find((processedEntity) => processedEntity.equals(entity))) {
+    if (processedEntityIdentifiers.has(entity.getUniqueIdentifier())) {
       return;
     }
-    processedEntities.push(entity);
+    processedEntityIdentifiers.add(entity.getUniqueIdentifier());
 
     const companionDefinition = (entity.constructor as any).getCompanionDefinition() as EntityCompanionDefinition<
       TMFields,
@@ -462,7 +462,7 @@ export class DeleteMutator<
                     this.processEntityDeletionForInboundEdgesAsync(
                       inboundReferenceEntity,
                       queryContext,
-                      processedEntities
+                      processedEntityIdentifiers
                     )
                   )
                 );
@@ -491,7 +491,7 @@ export class DeleteMutator<
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     mutatorFactory
                       .forDelete(inboundReferenceEntity, queryContext)
-                      .deleteInternalAsync(queryContext, processedEntities)
+                      .deleteInternalAsync(queryContext, processedEntityIdentifiers)
                   )
                 );
               }

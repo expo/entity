@@ -62,8 +62,8 @@ export default abstract class ReadonlyEntity<
     return `${this.constructor.name}[${this.getID()}]`;
   }
 
-  equals(otherEntity: this): boolean {
-    return this.toString() === otherEntity.toString();
+  getUniqueIdentifier(): string {
+    return this.toString();
   }
 
   /**
