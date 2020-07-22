@@ -341,7 +341,10 @@ export class DeleteMutator<
     );
   }
 
-  private async deleteInternalAsync(queryContext: EntityQueryContext): Promise<Result<void>> {
+  private async deleteInternalAsync(
+    queryContext: EntityQueryContext,
+    processedEntitiesFromTransitiveDeletions: ReadonlyEntity<any, any, any, any>[] = []
+  ): Promise<Result<void>> {
     const authorizeDeleteResult = await asyncResult(
       this.privacyPolicy.authorizeDeleteAsync(this.viewerContext, queryContext, this.entity)
     );
@@ -349,11 +352,17 @@ export class DeleteMutator<
       return authorizeDeleteResult;
     }
 
-    const id = this.entity.getID();
+    await DeleteMutator.processEntityDeletionForInboundEdgesAsync(
+      this.entity,
+      queryContext,
+      processedEntitiesFromTransitiveDeletions
+    );
 
-    await DeleteMutator.processEntityDeletionForInboundEdgesAsync(this.entity, queryContext);
-
-    await this.databaseAdapter.deleteAsync(queryContext, this.entityConfiguration.idField, id);
+    await this.databaseAdapter.deleteAsync(
+      queryContext,
+      this.entityConfiguration.idField,
+      this.entity.getID()
+    );
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
     await entityLoader.invalidateFieldsAsync(this.entity.getAllDatabaseFields());
@@ -381,7 +390,17 @@ export class DeleteMutator<
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
     TMSelectedFields extends keyof TMFields
-  >(entity: TMEntity, queryContext: EntityQueryContext): Promise<void> {
+  >(
+    entity: TMEntity,
+    queryContext: EntityQueryContext,
+    processedEntities: ReadonlyEntity<any, any, any, any>[]
+  ): Promise<void> {
+    // prevent infinite reference cycles by keeping track of entities already processed
+    if (processedEntities.find((processedEntity) => processedEntity.equals(entity))) {
+      return;
+    }
+    processedEntities.push(entity);
+
     const companionDefinition = (entity.constructor as any).getCompanionDefinition() as EntityCompanionDefinition<
       TMFields,
       TMID,
@@ -409,7 +428,6 @@ export class DeleteMutator<
             }
 
             const associatedEntityLookupByField = association.associatedEntityLookupByField;
-            let inboundReferenceEntities: readonly ReadonlyEntity<any, any, any, any>[];
 
             const loaderFactory = entity
               .getViewerContext()
@@ -420,6 +438,7 @@ export class DeleteMutator<
               .getViewerScopedEntityCompanionForClass(entityClass)
               .getMutatorFactory();
 
+            let inboundReferenceEntities: readonly ReadonlyEntity<any, any, any, any>[];
             if (associatedEntityLookupByField) {
               inboundReferenceEntities = await loaderFactory
                 .forLoad(queryContext)
@@ -442,7 +461,8 @@ export class DeleteMutator<
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     this.processEntityDeletionForInboundEdgesAsync(
                       inboundReferenceEntity,
-                      queryContext
+                      queryContext,
+                      processedEntities
                     )
                   )
                 );
@@ -471,7 +491,7 @@ export class DeleteMutator<
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     mutatorFactory
                       .forDelete(inboundReferenceEntity, queryContext)
-                      .enforceDeleteAsync()
+                      .deleteInternalAsync(queryContext, processedEntities)
                   )
                 );
               }

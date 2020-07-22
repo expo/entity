@@ -348,10 +348,6 @@ export default abstract class EntityDatabaseAdapter<TFields> {
       throw new Error(
         `Excessive deletions from database adapter delete: ${this.entityConfiguration.tableName}(id = ${id})`
       );
-    } else if (numDeleted === 0) {
-      throw new Error(
-        `No deletions from database adapter delete: ${this.entityConfiguration.tableName}(id = ${id})`
-      );
     }
   }
 
