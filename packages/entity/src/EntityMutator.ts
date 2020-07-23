@@ -6,7 +6,7 @@ import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import { EntityEdgeDeletionBehavior } from './EntityFields';
 import EntityLoaderFactory from './EntityLoaderFactory';
-import { EntityMutationTriggerConfiguration, EntityMutationTrigger } from './EntityMutationTrigger';
+import { EntityMutationTrigger, EntityMutationTriggerConfiguration } from './EntityMutationTrigger';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
@@ -42,6 +42,13 @@ abstract class BaseMutator<
       TSelectedFields
     >,
     protected readonly privacyPolicy: TPrivacyPolicy,
+    protected readonly mutationValidators: EntityMutationTrigger<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >[],
     protected readonly mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
       TID,
@@ -159,6 +166,11 @@ export class CreateMutator<
     }
 
     await this.executeTriggers(
+      this.mutationValidators,
+      queryContext,
+      temporaryEntityForPrivacyCheck
+    );
+    await this.executeTriggers(
       this.mutationTriggers.beforeAll,
       queryContext,
       temporaryEntityForPrivacyCheck
@@ -220,6 +232,13 @@ export class UpdateMutator<
       TSelectedFields
     >,
     privacyPolicy: TPrivacyPolicy,
+    mutationValidators: EntityMutationTrigger<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >[],
     mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
       TID,
@@ -245,6 +264,7 @@ export class UpdateMutator<
       entityConfiguration,
       entityClass,
       privacyPolicy,
+      mutationValidators,
       mutationTriggers,
       entityLoaderFactory,
       databaseAdapter,
@@ -314,6 +334,7 @@ export class UpdateMutator<
       return authorizeUpdateResult;
     }
 
+    await this.executeTriggers(this.mutationValidators, queryContext, entityAboutToBeUpdated);
     await this.executeTriggers(
       this.mutationTriggers.beforeAll,
       queryContext,
@@ -379,6 +400,13 @@ export class DeleteMutator<
       TSelectedFields
     >,
     privacyPolicy: TPrivacyPolicy,
+    mutationValidators: EntityMutationTrigger<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >[],
     mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
       TID,
@@ -404,6 +432,7 @@ export class DeleteMutator<
       entityConfiguration,
       entityClass,
       privacyPolicy,
+      mutationValidators,
       mutationTriggers,
       entityLoaderFactory,
       databaseAdapter,

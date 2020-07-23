@@ -19,6 +19,7 @@ describe(EntityCompanion, () => {
       TestEntity,
       instance(tableDataCoordinatorMock),
       TestEntityPrivacyPolicy,
+      [],
       {},
       instance(mock<IEntityMetricsAdapter>())
     );

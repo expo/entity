@@ -9,6 +9,7 @@ import Knex from 'knex';
 
 import PostgresTestEntity from '../testfixtures/PostgresTestEntity';
 import PostgresTriggerTestEntity from '../testfixtures/PostgresTriggerTestEntity';
+import PostgresValidatorTestEntity from '../testfixtures/PostgresValidatorTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
 
 describe('postgres entity integration', () => {
@@ -483,6 +484,65 @@ describe('postgres entity integration', () => {
             .enforcing()
             .loadByFieldEqualingAsync('name', 'afterDelete')
         ).resolves.not.toBeNull();
+      });
+    });
+    describe('validation transaction behavior', () => {
+      describe('create', () => {
+        it('rolls back transaction when trigger throws ', async () => {
+          const vc1 = new ViewerContext(
+            createKnexIntegrationTestEntityCompanionProvider(knexInstance)
+          );
+
+          await expect(
+            PostgresValidatorTestEntity.creator(vc1)
+              .setField('name', 'beforeCreateAndBeforeUpdate')
+              .enforceCreateAsync()
+          ).rejects.toThrowError('name cannot have value beforeCreateAndBeforeUpdate');
+          await expect(
+            PostgresValidatorTestEntity.loader(vc1)
+              .enforcing()
+              .loadByFieldEqualingAsync('name', 'beforeCreateAndBeforeUpdate')
+          ).resolves.toBeNull();
+        });
+      });
+      describe('update', () => {
+        it('rolls back transaction when trigger throws ', async () => {
+          const vc1 = new ViewerContext(
+            createKnexIntegrationTestEntityCompanionProvider(knexInstance)
+          );
+
+          const entity = await PostgresValidatorTestEntity.creator(vc1)
+            .setField('name', 'blah')
+            .enforceCreateAsync();
+
+          await expect(
+            PostgresValidatorTestEntity.updater(entity)
+              .setField('name', 'beforeCreateAndBeforeUpdate')
+              .enforceUpdateAsync()
+          ).rejects.toThrowError('name cannot have value beforeCreateAndBeforeUpdate');
+          await expect(
+            PostgresValidatorTestEntity.loader(vc1)
+              .enforcing()
+              .loadByFieldEqualingAsync('name', 'beforeCreateAndBeforeUpdate')
+          ).resolves.toBeNull();
+        });
+      });
+      describe('delete', () => {
+        it('validation should not run on a delete mutation', async () => {
+          const vc1 = new ViewerContext(
+            createKnexIntegrationTestEntityCompanionProvider(knexInstance)
+          );
+
+          const entityToDelete = await PostgresValidatorTestEntity.creator(vc1)
+            .setField('name', 'shouldBeDeleted')
+            .enforceCreateAsync();
+          await PostgresValidatorTestEntity.enforceDeleteAsync(entityToDelete);
+          await expect(
+            PostgresValidatorTestEntity.loader(vc1)
+              .enforcing()
+              .loadByFieldEqualingAsync('name', 'shouldBeDeleted')
+          ).resolves.toBeNull();
+        });
       });
     });
   });

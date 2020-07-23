@@ -56,6 +56,40 @@ class TestMutationTrigger extends EntityMutationTrigger<
   ): Promise<void> {}
 }
 
+const setUpMutationValidatorSpies = (
+  mutationValidators: EntityMutationTrigger<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  >[]
+): EntityMutationTrigger<TestFields, string, ViewerContext, TestEntity, keyof TestFields>[] => {
+  return mutationValidators.map((validator) => spy(validator));
+};
+
+const verifyValidatorCounts = (
+  viewerContext: ViewerContext,
+  mutationValidatorSpies: EntityMutationTrigger<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  >[],
+  expectedCalls: number
+): void => {
+  for (const validator of mutationValidatorSpies) {
+    verify(
+      validator.executeAsync(
+        viewerContext,
+        anyOfClass(EntityTransactionalQueryContext),
+        anyOfClass(TestEntity)
+      )
+    ).times(expectedCalls);
+  }
+};
+
 const setUpMutationTriggerSpies = (
   mutationTriggers: EntityMutationTriggerConfiguration<
     TestFields,
@@ -177,6 +211,13 @@ const createEntityMutatorFactory = (
     TestEntityPrivacyPolicy
   >;
   metricsAdapter: IEntityMetricsAdapter;
+  mutationValidators: EntityMutationTrigger<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  >[];
   mutationTriggers: EntityMutationTriggerConfiguration<
     TestFields,
     string,
@@ -185,6 +226,13 @@ const createEntityMutatorFactory = (
     keyof TestFields
   >;
 } => {
+  const mutationValidators: EntityMutationTrigger<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  >[] = [new TestMutationTrigger()];
   const mutationTriggers: EntityMutationTriggerConfiguration<
     TestFields,
     string,
@@ -230,6 +278,7 @@ const createEntityMutatorFactory = (
     testEntityConfiguration,
     TestEntity,
     privacyPolicy,
+    mutationValidators,
     mutationTriggers,
     entityLoaderFactory,
     databaseAdapter,
@@ -240,6 +289,7 @@ const createEntityMutatorFactory = (
     entityLoaderFactory,
     entityMutatorFactory,
     metricsAdapter,
+    mutationValidators,
     mutationTriggers,
   };
 };
@@ -343,6 +393,36 @@ describe(EntityMutatorFactory, () => {
         beforeDelete: false,
         afterDelete: false,
       });
+    });
+
+    it('executes validators', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const { mutationValidators, entityMutatorFactory } = createEntityMutatorFactory([
+        {
+          customIdField: 'hello',
+          stringField: 'huh',
+          testIndexedField: '4',
+          numberField: 1,
+          dateField: new Date(),
+        },
+        {
+          customIdField: 'world',
+          stringField: 'huh',
+          testIndexedField: '5',
+          numberField: 1,
+          dateField: new Date(),
+        },
+      ]);
+
+      const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
+
+      await entityMutatorFactory
+        .forCreate(viewerContext, queryContext)
+        .setField('stringField', 'huh')
+        .enforceCreateAsync();
+
+      verifyValidatorCounts(viewerContext, validatorSpies, 1);
     });
   });
 
@@ -474,6 +554,44 @@ describe(EntityMutatorFactory, () => {
         afterDelete: false,
       });
     });
+    it('executes validators', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const {
+        mutationValidators,
+        entityMutatorFactory,
+        entityLoaderFactory,
+      } = createEntityMutatorFactory([
+        {
+          customIdField: 'hello',
+          stringField: 'huh',
+          testIndexedField: '3',
+          numberField: 3,
+          dateField: new Date(),
+        },
+        {
+          customIdField: 'world',
+          stringField: 'huh',
+          testIndexedField: '4',
+          numberField: 3,
+          dateField: new Date(),
+        },
+      ]);
+
+      const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
+
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+      );
+
+      await entityMutatorFactory
+        .forUpdate(existingEntity, queryContext)
+        .setField('stringField', 'huh2')
+        .enforceUpdateAsync();
+
+      verifyValidatorCounts(viewerContext, validatorSpies, 1);
+    });
   });
 
   describe('forDelete', () => {
@@ -572,6 +690,34 @@ describe(EntityMutatorFactory, () => {
         afterDelete: true,
       });
     });
+
+    it('does not execute validators', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const queryContext = StubQueryContextProvider.getQueryContext();
+      const {
+        mutationValidators,
+        entityMutatorFactory,
+        entityLoaderFactory,
+      } = createEntityMutatorFactory([
+        {
+          customIdField: 'world',
+          stringField: 'huh',
+          testIndexedField: '3',
+          numberField: 3,
+          dateField: new Date(),
+        },
+      ]);
+
+      const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
+
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+      );
+
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+
+      verifyValidatorCounts(viewerContext, validatorSpies, 0);
+    });
   });
 
   it('invalidates cache for fields upon create', async () => {
@@ -656,6 +802,7 @@ describe(EntityMutatorFactory, () => {
       simpleTestEntityConfiguration,
       SimpleTestEntity,
       instance(privacyPolicyMock),
+      [],
       {},
       entityLoaderFactory,
       databaseAdapter,
@@ -732,6 +879,7 @@ describe(EntityMutatorFactory, () => {
       simpleTestEntityConfiguration,
       SimpleTestEntity,
       privacyPolicy,
+      [],
       {},
       entityLoaderFactory,
       instance(databaseAdapterMock),
