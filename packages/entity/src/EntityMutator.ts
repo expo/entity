@@ -429,9 +429,17 @@ export class DeleteMutator<
     return await enforceAsyncResult(this.deleteAsync());
   }
 
-  private async deleteInTransactionAsync(): Promise<Result<void>> {
+  private async deleteInTransactionAsync(
+    processedEntityIdentifiersFromTransitiveDeletions: Set<string> = new Set(),
+    skipDatabaseDeletion: boolean = false
+  ): Promise<Result<void>> {
     const internalResult = await this.queryContext.runInTransactionIfNotInTransactionAsync(
-      (innerQueryContext) => this.deleteInternalAsync(innerQueryContext)
+      (innerQueryContext) =>
+        this.deleteInternalAsync(
+          innerQueryContext,
+          processedEntityIdentifiersFromTransitiveDeletions,
+          skipDatabaseDeletion
+        )
     );
     if (internalResult.ok) {
       await this.executeTriggers(
@@ -445,7 +453,8 @@ export class DeleteMutator<
 
   private async deleteInternalAsync(
     queryContext: EntityTransactionalQueryContext,
-    processedEntityIdentifiersFromTransitiveDeletions: Set<string> = new Set()
+    processedEntityIdentifiersFromTransitiveDeletions: Set<string>,
+    skipDatabaseDeletion: boolean
   ): Promise<Result<TEntity>> {
     const authorizeDeleteResult = await asyncResult(
       this.privacyPolicy.authorizeDeleteAsync(this.viewerContext, queryContext, this.entity)
@@ -463,11 +472,13 @@ export class DeleteMutator<
     await this.executeTriggers(this.mutationTriggers.beforeAll, queryContext, this.entity);
     await this.executeTriggers(this.mutationTriggers.beforeDelete, queryContext, this.entity);
 
-    await this.databaseAdapter.deleteAsync(
-      queryContext,
-      this.entityConfiguration.idField,
-      this.entity.getID()
-    );
+    if (!skipDatabaseDeletion) {
+      await this.databaseAdapter.deleteAsync(
+        queryContext,
+        this.entityConfiguration.idField,
+        this.entity.getID()
+      );
+    }
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
     await entityLoader.invalidateFieldsAsync(this.entity.getAllDatabaseFields());
@@ -567,18 +578,12 @@ export class DeleteMutator<
               case EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE: {
                 await Promise.all(
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
-                    this.processEntityDeletionForInboundEdgesAsync(
-                      inboundReferenceEntity,
-                      queryContext,
-                      processedEntityIdentifiers
-                    )
-                  )
-                );
-                await Promise.all(
-                  inboundReferenceEntities.map((inboundReferenceEntity) =>
-                    loaderFactory
-                      .forLoad(queryContext)
-                      .invalidateFieldsAsync(inboundReferenceEntity.getAllDatabaseFields())
+                    mutatorFactory
+                      .forDelete(inboundReferenceEntity, queryContext)
+                      .deleteInTransactionAsync(
+                        processedEntityIdentifiers,
+                        /* skipDatabaseDeletion */ true // deletion is handled by DB
+                      )
                   )
                 );
                 break;
@@ -599,7 +604,10 @@ export class DeleteMutator<
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     mutatorFactory
                       .forDelete(inboundReferenceEntity, queryContext)
-                      .deleteInternalAsync(queryContext, processedEntityIdentifiers)
+                      .deleteInTransactionAsync(
+                        processedEntityIdentifiers,
+                        /* skipDatabaseDeletion */ false
+                      )
                   )
                 );
               }
