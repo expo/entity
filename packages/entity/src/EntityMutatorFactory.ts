@@ -2,7 +2,7 @@ import Entity, { IEntityClass } from './Entity';
 import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import EntityLoaderFactory from './EntityLoaderFactory';
-import { EntityMutationTriggerConfiguration } from './EntityMutationTrigger';
+import { EntityMutationTriggerConfiguration, EntityMutationTrigger } from './EntityMutationTrigger';
 import { CreateMutator, UpdateMutator, DeleteMutator } from './EntityMutator';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
@@ -37,13 +37,13 @@ export default class EntityMutatorFactory<
       TSelectedFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
-    private readonly mutationValidators: EntityMutationTriggerConfiguration<
+    private readonly mutationValidators: EntityMutationTrigger<
       TFields,
       TID,
       TViewerContext,
       TEntity,
       TSelectedFields
-    >,
+    >[],
     private readonly mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
       TID,

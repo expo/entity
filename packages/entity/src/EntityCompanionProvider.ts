@@ -1,10 +1,7 @@
 import { IEntityClass } from './Entity';
 import EntityCompanion, { IPrivacyPolicyClass } from './EntityCompanion';
 import EntityConfiguration from './EntityConfiguration';
-import {
-  EntityMutationTriggerConfiguration,
-  EntityMutationValidatorConfiguration,
-} from './EntityMutationTrigger';
+import { EntityMutationTriggerConfiguration, EntityMutationTrigger } from './EntityMutationTrigger';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import IEntityCacheAdapterProvider from './IEntityCacheAdapterProvider';
 import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
@@ -84,13 +81,13 @@ export class EntityCompanionDefinition<
   >;
   readonly entityConfiguration: EntityConfiguration<TFields>;
   readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
-  readonly mutationValidators: EntityMutationValidatorConfiguration<
+  readonly mutationValidators: EntityMutationTrigger<
     TFields,
     TID,
     TViewerContext,
     TEntity,
     TSelectedFields
-  >;
+  >[];
   readonly mutationTriggers: EntityMutationTriggerConfiguration<
     TFields,
     TID,
@@ -104,7 +101,7 @@ export class EntityCompanionDefinition<
     entityClass,
     entityConfiguration,
     privacyPolicyClass,
-    mutationValidators = {},
+    mutationValidators = [],
     mutationTriggers = {},
     entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as TSelectedFields[],
   }: {
@@ -118,13 +115,13 @@ export class EntityCompanionDefinition<
     >;
     entityConfiguration: EntityConfiguration<TFields>;
     privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
-    mutationValidators?: EntityMutationValidatorConfiguration<
+    mutationValidators?: EntityMutationTrigger<
       TFields,
       TID,
       TViewerContext,
       TEntity,
       TSelectedFields
-    >;
+    >[];
     mutationTriggers?: EntityMutationTriggerConfiguration<
       TFields,
       TID,

@@ -2,19 +2,6 @@ import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 
-export interface EntityMutationValidatorConfiguration<
-  TFields,
-  TID,
-  TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
-> {
-  beforeCreate?: EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
-  beforeUpdate?: EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
-  beforeDelete?: EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
-  beforeAll?: EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
-}
-
 /**
  * Interface to define trigger behavior for entities.
  */
