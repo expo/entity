@@ -12,10 +12,10 @@ import {
 
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
 import EntityLoaderFactory from '../EntityLoaderFactory';
-import {
-  EntityMutationTriggerConfiguration,
+import EntityMutationTriggerConfiguration, {
   EntityMutationTrigger,
-} from '../EntityMutationTrigger';
+} from '../EntityMutationTriggerConfiguration';
+import EntityMutationValidator from '../EntityMutationValidator';
 import EntityMutatorFactory from '../EntityMutatorFactory';
 import {
   EntityTransactionalQueryContext,
@@ -57,20 +57,20 @@ class TestMutationTrigger extends EntityMutationTrigger<
 }
 
 const setUpMutationValidatorSpies = (
-  mutationValidators: EntityMutationTrigger<
+  mutationValidators: EntityMutationValidator<
     TestFields,
     string,
     ViewerContext,
     TestEntity,
     keyof TestFields
   >[]
-): EntityMutationTrigger<TestFields, string, ViewerContext, TestEntity, keyof TestFields>[] => {
+): EntityMutationValidator<TestFields, string, ViewerContext, TestEntity, keyof TestFields>[] => {
   return mutationValidators.map((validator) => spy(validator));
 };
 
 const verifyValidatorCounts = (
   viewerContext: ViewerContext,
-  mutationValidatorSpies: EntityMutationTrigger<
+  mutationValidatorSpies: EntityMutationValidator<
     TestFields,
     string,
     ViewerContext,
@@ -211,7 +211,7 @@ const createEntityMutatorFactory = (
     TestEntityPrivacyPolicy
   >;
   metricsAdapter: IEntityMetricsAdapter;
-  mutationValidators: EntityMutationTrigger<
+  mutationValidators: EntityMutationValidator<
     TestFields,
     string,
     ViewerContext,
@@ -226,7 +226,7 @@ const createEntityMutatorFactory = (
     keyof TestFields
   >;
 } => {
-  const mutationValidators: EntityMutationTrigger<
+  const mutationValidators: EntityMutationValidator<
     TestFields,
     string,
     ViewerContext,

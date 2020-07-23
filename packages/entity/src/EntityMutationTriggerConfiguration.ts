@@ -5,7 +5,7 @@ import ViewerContext from './ViewerContext';
 /**
  * Interface to define trigger behavior for entities.
  */
-export interface EntityMutationTriggerConfiguration<
+export default interface EntityMutationTriggerConfiguration<
   TFields,
   TID,
   TViewerContext extends ViewerContext,

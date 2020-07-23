@@ -9,7 +9,7 @@ import {
   CacheAdapterFlavor,
   EntityCompanionDefinition,
   Entity,
-  EntityMutationTrigger,
+  EntityMutationExecutable,
   EntityQueryContext,
 } from '@expo/entity';
 import Knex from 'knex';
@@ -97,7 +97,7 @@ class PostgresValidatorTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
-class ThrowConditionallyTrigger extends EntityMutationTrigger<
+class ThrowConditionallyTrigger extends EntityMutationExecutable<
   PostgresValidatorTestEntityFields,
   string,
   ViewerContext,
