@@ -37,6 +37,13 @@ export default class EntityMutatorFactory<
       TSelectedFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
+    private readonly mutationValidators: EntityMutationTriggerConfiguration<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     private readonly mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
       TID,
@@ -72,6 +79,7 @@ export default class EntityMutatorFactory<
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicy,
+      this.mutationValidators,
       this.mutationTriggers,
       this.entityLoaderFactory,
       this.databaseAdapter,
@@ -95,6 +103,7 @@ export default class EntityMutatorFactory<
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicy,
+      this.mutationValidators,
       this.mutationTriggers,
       this.entityLoaderFactory,
       this.databaseAdapter,
@@ -118,6 +127,7 @@ export default class EntityMutatorFactory<
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicy,
+      this.mutationValidators,
       this.mutationTriggers,
       this.entityLoaderFactory,
       this.databaseAdapter,

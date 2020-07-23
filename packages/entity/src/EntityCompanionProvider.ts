@@ -1,7 +1,10 @@
 import { IEntityClass } from './Entity';
 import EntityCompanion, { IPrivacyPolicyClass } from './EntityCompanion';
 import EntityConfiguration from './EntityConfiguration';
-import { EntityMutationTriggerConfiguration } from './EntityMutationTrigger';
+import {
+  EntityMutationTriggerConfiguration,
+  EntityMutationValidatorConfiguration,
+} from './EntityMutationTrigger';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import IEntityCacheAdapterProvider from './IEntityCacheAdapterProvider';
 import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
@@ -81,6 +84,13 @@ export class EntityCompanionDefinition<
   >;
   readonly entityConfiguration: EntityConfiguration<TFields>;
   readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+  readonly mutationValidators: EntityMutationValidatorConfiguration<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >;
   readonly mutationTriggers: EntityMutationTriggerConfiguration<
     TFields,
     TID,
@@ -94,6 +104,7 @@ export class EntityCompanionDefinition<
     entityClass,
     entityConfiguration,
     privacyPolicyClass,
+    mutationValidators = {},
     mutationTriggers = {},
     entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as TSelectedFields[],
   }: {
@@ -107,6 +118,13 @@ export class EntityCompanionDefinition<
     >;
     entityConfiguration: EntityConfiguration<TFields>;
     privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+    mutationValidators?: EntityMutationValidatorConfiguration<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >;
     mutationTriggers?: EntityMutationTriggerConfiguration<
       TFields,
       TID,
@@ -119,6 +137,7 @@ export class EntityCompanionDefinition<
     this.entityClass = entityClass;
     this.entityConfiguration = entityConfiguration;
     this.privacyPolicyClass = privacyPolicyClass;
+    this.mutationValidators = mutationValidators;
     this.mutationTriggers = mutationTriggers;
     this.entitySelectedFields = entitySelectedFields;
   }
@@ -201,6 +220,7 @@ export default class EntityCompanionProvider {
         entityCompanionDefinition.entityClass,
         tableDataCoordinator,
         entityCompanionDefinition.privacyPolicyClass,
+        entityCompanionDefinition.mutationValidators,
         entityCompanionDefinition.mutationTriggers,
         this.metricsAdapter
       );

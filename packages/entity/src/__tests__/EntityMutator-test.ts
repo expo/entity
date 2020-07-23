@@ -185,6 +185,18 @@ const createEntityMutatorFactory = (
     keyof TestFields
   >;
 } => {
+  const mutatationValidators: EntityMutationTriggerConfiguration<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  > = {
+    beforeCreate: [new TestMutationTrigger()],
+    beforeUpdate: [new TestMutationTrigger()],
+    beforeDelete: [new TestMutationTrigger()],
+    beforeAll: [new TestMutationTrigger()],
+  };
   const mutationTriggers: EntityMutationTriggerConfiguration<
     TestFields,
     string,
@@ -230,6 +242,7 @@ const createEntityMutatorFactory = (
     testEntityConfiguration,
     TestEntity,
     privacyPolicy,
+    mutatationValidators,
     mutationTriggers,
     entityLoaderFactory,
     databaseAdapter,
@@ -657,6 +670,7 @@ describe(EntityMutatorFactory, () => {
       SimpleTestEntity,
       instance(privacyPolicyMock),
       {},
+      {},
       entityLoaderFactory,
       databaseAdapter,
       metricsAdapter
@@ -732,6 +746,7 @@ describe(EntityMutatorFactory, () => {
       simpleTestEntityConfiguration,
       SimpleTestEntity,
       privacyPolicy,
+      {},
       {},
       entityLoaderFactory,
       instance(databaseAdapterMock),

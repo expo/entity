@@ -20,6 +20,7 @@ describe(EntityCompanion, () => {
       instance(tableDataCoordinatorMock),
       TestEntityPrivacyPolicy,
       {},
+      {},
       instance(mock<IEntityMetricsAdapter>())
     );
     expect(companion.getLoaderFactory()).toBeInstanceOf(EntityLoaderFactory);
