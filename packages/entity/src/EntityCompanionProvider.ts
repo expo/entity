@@ -1,8 +1,8 @@
 import { IEntityClass } from './Entity';
 import EntityCompanion, { IPrivacyPolicyClass } from './EntityCompanion';
 import EntityConfiguration from './EntityConfiguration';
-import EntityMutationExecutable from './EntityMutationExecutable';
 import EntityMutationTriggerConfiguration from './EntityMutationTriggerConfiguration';
+import EntityMutationValidator from './EntityMutationValidator';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import IEntityCacheAdapterProvider from './IEntityCacheAdapterProvider';
 import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
@@ -82,7 +82,7 @@ export class EntityCompanionDefinition<
   >;
   readonly entityConfiguration: EntityConfiguration<TFields>;
   readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
-  readonly mutationValidators: EntityMutationExecutable<
+  readonly mutationValidators: EntityMutationValidator<
     TFields,
     TID,
     TViewerContext,
@@ -116,7 +116,7 @@ export class EntityCompanionDefinition<
     >;
     entityConfiguration: EntityConfiguration<TFields>;
     privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
-    mutationValidators?: EntityMutationExecutable<
+    mutationValidators?: EntityMutationValidator<
       TFields,
       TID,
       TViewerContext,

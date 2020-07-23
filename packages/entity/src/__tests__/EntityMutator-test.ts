@@ -12,8 +12,10 @@ import {
 
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
 import EntityLoaderFactory from '../EntityLoaderFactory';
-import EntityMutationExecutable from '../EntityMutationExecutable';
-import EntityMutationTriggerConfiguration from '../EntityMutationTriggerConfiguration';
+import EntityMutationTriggerConfiguration, {
+  EntityMutationTrigger,
+} from '../EntityMutationTriggerConfiguration';
+import EntityMutationValidator from '../EntityMutationValidator';
 import EntityMutatorFactory from '../EntityMutatorFactory';
 import {
   EntityTransactionalQueryContext,
@@ -40,7 +42,7 @@ import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapt
 import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
 import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider';
 
-class TestMutationTrigger extends EntityMutationExecutable<
+class TestMutationTrigger extends EntityMutationTrigger<
   TestFields,
   string,
   ViewerContext,
@@ -55,20 +57,20 @@ class TestMutationTrigger extends EntityMutationExecutable<
 }
 
 const setUpMutationValidatorSpies = (
-  mutationValidators: EntityMutationExecutable<
+  mutationValidators: EntityMutationValidator<
     TestFields,
     string,
     ViewerContext,
     TestEntity,
     keyof TestFields
   >[]
-): EntityMutationExecutable<TestFields, string, ViewerContext, TestEntity, keyof TestFields>[] => {
+): EntityMutationValidator<TestFields, string, ViewerContext, TestEntity, keyof TestFields>[] => {
   return mutationValidators.map((validator) => spy(validator));
 };
 
 const verifyValidatorCounts = (
   viewerContext: ViewerContext,
-  mutationValidatorSpies: EntityMutationExecutable<
+  mutationValidatorSpies: EntityMutationValidator<
     TestFields,
     string,
     ViewerContext,
@@ -209,7 +211,7 @@ const createEntityMutatorFactory = (
     TestEntityPrivacyPolicy
   >;
   metricsAdapter: IEntityMetricsAdapter;
-  mutationValidators: EntityMutationExecutable<
+  mutationValidators: EntityMutationValidator<
     TestFields,
     string,
     ViewerContext,
@@ -224,7 +226,7 @@ const createEntityMutatorFactory = (
     keyof TestFields
   >;
 } => {
-  const mutationValidators: EntityMutationExecutable<
+  const mutationValidators: EntityMutationValidator<
     TestFields,
     string,
     ViewerContext,
