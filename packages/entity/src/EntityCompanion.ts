@@ -1,6 +1,7 @@
 import { IEntityClass } from './Entity';
 import EntityLoaderFactory from './EntityLoaderFactory';
-import { EntityMutationTriggerConfiguration, EntityMutationTrigger } from './EntityMutationTrigger';
+import EntityMutationExecutable from './EntityMutationExecutable';
+import EntityMutationTriggerConfiguration from './EntityMutationTriggerConfiguration';
 import EntityMutatorFactory from './EntityMutatorFactory';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import IEntityQueryContextProvider from './IEntityQueryContextProvider';
@@ -58,7 +59,7 @@ export default class EntityCompanion<
     >,
     private readonly tableDataCoordinator: EntityTableDataCoordinator<TFields>,
     PrivacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>,
-    mutationValidators: EntityMutationTrigger<
+    mutationValidators: EntityMutationExecutable<
       TFields,
       TID,
       TViewerContext,

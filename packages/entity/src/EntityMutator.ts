@@ -6,7 +6,8 @@ import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import { EntityEdgeDeletionBehavior } from './EntityFields';
 import EntityLoaderFactory from './EntityLoaderFactory';
-import { EntityMutationTrigger, EntityMutationTriggerConfiguration } from './EntityMutationTrigger';
+import EntityMutationExecutable from './EntityMutationExecutable';
+import EntityMutationTriggerConfiguration from './EntityMutationTriggerConfiguration';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
@@ -42,7 +43,7 @@ abstract class BaseMutator<
       TSelectedFields
     >,
     protected readonly privacyPolicy: TPrivacyPolicy,
-    protected readonly mutationValidators: EntityMutationTrigger<
+    protected readonly mutationValidators: EntityMutationExecutable<
       TFields,
       TID,
       TViewerContext,
@@ -68,18 +69,20 @@ abstract class BaseMutator<
     protected readonly metricsAdapter: IEntityMetricsAdapter
   ) {}
 
-  protected async executeTriggers(
-    triggers:
-      | EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
+  protected async executeMutationExecutablesAsync(
+    executables:
+      | EntityMutationExecutable<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
       | undefined,
     queryContext: EntityQueryContext,
     entity: TEntity
   ): Promise<void> {
-    if (!triggers) {
+    if (!executables) {
       return;
     }
     await Promise.all(
-      triggers.map((trigger) => trigger.executeAsync(this.viewerContext, queryContext, entity))
+      executables.map((executable) =>
+        executable.executeAsync(this.viewerContext, queryContext, entity)
+      )
     );
   }
 }
@@ -137,7 +140,7 @@ export class CreateMutator<
       (innerQueryContext) => this.createInternalAsync(innerQueryContext)
     );
     if (internalResult.ok) {
-      await this.executeTriggers(
+      await this.executeMutationExecutablesAsync(
         this.mutationTriggers.afterCommit,
         this.queryContext,
         internalResult.value
@@ -165,17 +168,17 @@ export class CreateMutator<
       return authorizeCreateResult;
     }
 
-    await this.executeTriggers(
+    await this.executeMutationExecutablesAsync(
       this.mutationValidators,
       queryContext,
       temporaryEntityForPrivacyCheck
     );
-    await this.executeTriggers(
+    await this.executeMutationExecutablesAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
       temporaryEntityForPrivacyCheck
     );
-    await this.executeTriggers(
+    await this.executeMutationExecutablesAsync(
       this.mutationTriggers.beforeCreate,
       queryContext,
       temporaryEntityForPrivacyCheck
@@ -191,8 +194,16 @@ export class CreateMutator<
       .enforcing()
       .loadByIDAsync(unauthorizedEntityAfterInsert.getID());
 
-    await this.executeTriggers(this.mutationTriggers.afterCreate, queryContext, newEntity);
-    await this.executeTriggers(this.mutationTriggers.afterAll, queryContext, newEntity);
+    await this.executeMutationExecutablesAsync(
+      this.mutationTriggers.afterCreate,
+      queryContext,
+      newEntity
+    );
+    await this.executeMutationExecutablesAsync(
+      this.mutationTriggers.afterAll,
+      queryContext,
+      newEntity
+    );
 
     return result(newEntity);
   }
@@ -232,7 +243,7 @@ export class UpdateMutator<
       TSelectedFields
     >,
     privacyPolicy: TPrivacyPolicy,
-    mutationValidators: EntityMutationTrigger<
+    mutationValidators: EntityMutationExecutable<
       TFields,
       TID,
       TViewerContext,
@@ -310,7 +321,7 @@ export class UpdateMutator<
       (innerQueryContext) => this.updateInternalAsync(innerQueryContext)
     );
     if (internalResult.ok) {
-      await this.executeTriggers(
+      await this.executeMutationExecutablesAsync(
         this.mutationTriggers.afterCommit,
         this.queryContext,
         internalResult.value
@@ -334,13 +345,17 @@ export class UpdateMutator<
       return authorizeUpdateResult;
     }
 
-    await this.executeTriggers(this.mutationValidators, queryContext, entityAboutToBeUpdated);
-    await this.executeTriggers(
+    await this.executeMutationExecutablesAsync(
+      this.mutationValidators,
+      queryContext,
+      entityAboutToBeUpdated
+    );
+    await this.executeMutationExecutablesAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
       entityAboutToBeUpdated
     );
-    await this.executeTriggers(
+    await this.executeMutationExecutablesAsync(
       this.mutationTriggers.beforeUpdate,
       queryContext,
       entityAboutToBeUpdated
@@ -363,8 +378,16 @@ export class UpdateMutator<
       .enforcing()
       .loadByIDAsync(unauthorizedEntityAfterUpdate.getID());
 
-    await this.executeTriggers(this.mutationTriggers.afterUpdate, queryContext, updatedEntity);
-    await this.executeTriggers(this.mutationTriggers.afterAll, queryContext, updatedEntity);
+    await this.executeMutationExecutablesAsync(
+      this.mutationTriggers.afterUpdate,
+      queryContext,
+      updatedEntity
+    );
+    await this.executeMutationExecutablesAsync(
+      this.mutationTriggers.afterAll,
+      queryContext,
+      updatedEntity
+    );
 
     return result(updatedEntity);
   }
@@ -400,7 +423,7 @@ export class DeleteMutator<
       TSelectedFields
     >,
     privacyPolicy: TPrivacyPolicy,
-    mutationValidators: EntityMutationTrigger<
+    mutationValidators: EntityMutationExecutable<
       TFields,
       TID,
       TViewerContext,
@@ -471,7 +494,7 @@ export class DeleteMutator<
         )
     );
     if (internalResult.ok) {
-      await this.executeTriggers(
+      await this.executeMutationExecutablesAsync(
         this.mutationTriggers.afterCommit,
         this.queryContext,
         internalResult.value
@@ -498,8 +521,16 @@ export class DeleteMutator<
       processedEntityIdentifiersFromTransitiveDeletions
     );
 
-    await this.executeTriggers(this.mutationTriggers.beforeAll, queryContext, this.entity);
-    await this.executeTriggers(this.mutationTriggers.beforeDelete, queryContext, this.entity);
+    await this.executeMutationExecutablesAsync(
+      this.mutationTriggers.beforeAll,
+      queryContext,
+      this.entity
+    );
+    await this.executeMutationExecutablesAsync(
+      this.mutationTriggers.beforeDelete,
+      queryContext,
+      this.entity
+    );
 
     if (!skipDatabaseDeletion) {
       await this.databaseAdapter.deleteAsync(
@@ -512,8 +543,16 @@ export class DeleteMutator<
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
     await entityLoader.invalidateFieldsAsync(this.entity.getAllDatabaseFields());
 
-    await this.executeTriggers(this.mutationTriggers.afterDelete, queryContext, this.entity);
-    await this.executeTriggers(this.mutationTriggers.afterAll, queryContext, this.entity);
+    await this.executeMutationExecutablesAsync(
+      this.mutationTriggers.afterDelete,
+      queryContext,
+      this.entity
+    );
+    await this.executeMutationExecutablesAsync(
+      this.mutationTriggers.afterAll,
+      queryContext,
+      this.entity
+    );
 
     return result(this.entity);
   }
