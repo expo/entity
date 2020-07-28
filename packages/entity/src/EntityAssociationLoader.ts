@@ -99,7 +99,7 @@ export default class EntityAssociationLoader<
       TAssociatedPrivacyPolicy,
       TAssociatedSelectedFields
     >,
-    associatedEntityFieldContainingThisID: keyof TAssociatedFields,
+    associatedEntityFieldContainingThisID: keyof Pick<TAssociatedFields, TAssociatedSelectedFields>,
     queryContext: EntityQueryContext = this.entity
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
@@ -153,7 +153,7 @@ export default class EntityAssociationLoader<
       TAssociatedPrivacyPolicy,
       TAssociatedSelectedFields
     >,
-    associatedEntityLookupByField: keyof TAssociatedFields,
+    associatedEntityLookupByField: keyof Pick<TAssociatedFields, TAssociatedSelectedFields>,
     queryContext: EntityQueryContext = this.entity
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
@@ -207,7 +207,7 @@ export default class EntityAssociationLoader<
       TAssociatedPrivacyPolicy,
       TAssociatedSelectedFields
     >,
-    associatedEntityLookupByField: keyof TAssociatedFields,
+    associatedEntityLookupByField: keyof Pick<TAssociatedFields, TAssociatedSelectedFields>,
     queryContext: EntityQueryContext = this.entity
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
@@ -491,5 +491,5 @@ export interface EntityLoadThroughDirective<
    * Field by which to load the instance of associatedEntityClass. If not provided, the
    * associatedEntityClass instance is fetched by its ID.
    */
-  associatedEntityLookupByField?: keyof TAssociatedFields;
+  associatedEntityLookupByField?: keyof Pick<TAssociatedFields, TAssociatedSelectedFields>;
 }

@@ -33,7 +33,7 @@ export default class EntityLoader<
   constructor(
     private readonly viewerContext: TViewerContext,
     private readonly queryContext: EntityQueryContext,
-    private readonly idField: keyof TFields,
+    private readonly idField: keyof Pick<TFields, TSelectedFields>,
     private readonly entityClass: IEntityClass<
       TFields,
       TID,
@@ -69,7 +69,7 @@ export default class EntityLoader<
    * @returns map from fieldValue to entity results that match the query for that fieldValue,
    *          where result errors can be UnauthorizedError
    */
-  async loadManyByFieldEqualingManyAsync<N extends keyof TFields>(
+  async loadManyByFieldEqualingManyAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
@@ -101,7 +101,7 @@ export default class EntityLoader<
    * @param fieldValue - fieldName field value being queried
    * @returns array of entity results that match the query for fieldValue, where result error can be UnauthorizedError
    */
-  async loadManyByFieldEqualingAsync<N extends keyof TFields>(
+  async loadManyByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValue: NonNullable<TFields[N]>
   ): Promise<readonly Result<TEntity>[]> {
@@ -121,7 +121,7 @@ export default class EntityLoader<
    * @returns entity result where uniqueFieldName equals fieldValue, or null if no entity matches the condition.
    * @throws when multiple entities match the condition
    */
-  async loadByFieldEqualingAsync<N extends keyof TFields>(
+  async loadByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     uniqueFieldName: N,
     fieldValue: NonNullable<TFields[N]>
   ): Promise<Result<TEntity> | null> {
@@ -189,7 +189,7 @@ export default class EntityLoader<
    * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    */
-  async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
+  async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly Result<TEntity>[]> {

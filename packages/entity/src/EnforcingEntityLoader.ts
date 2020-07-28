@@ -38,7 +38,7 @@ export default class EnforcingEntityLoader<
    * Enforcing version of entity loader method by the same name.
    * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view one or more of the returned entities
    */
-  async loadManyByFieldEqualingManyAsync<N extends keyof TFields>(
+  async loadManyByFieldEqualingManyAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly TEntity[]>> {
@@ -55,7 +55,7 @@ export default class EnforcingEntityLoader<
    * Enforcing version of entity loader method by the same name.
    * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view one or more of the returned entities
    */
-  async loadManyByFieldEqualingAsync<N extends keyof TFields>(
+  async loadManyByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValue: NonNullable<TFields[N]>
   ): Promise<readonly TEntity[]> {
@@ -71,7 +71,7 @@ export default class EnforcingEntityLoader<
    * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view the returned entity
    * @throws when multiple entities are found matching the condition
    */
-  async loadByFieldEqualingAsync<N extends keyof TFields>(
+  async loadByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     uniqueFieldName: N,
     fieldValue: NonNullable<TFields[N]>
   ): Promise<TEntity | null> {
@@ -114,7 +114,7 @@ export default class EnforcingEntityLoader<
    * Enforcing version of entity loader method by the same name.
    * @throws {@link EntityNotAuthorizedError} when viewer is not authorized to view one or more of the returned entities
    */
-  async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
+  async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly TEntity[]> {
