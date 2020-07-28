@@ -76,8 +76,15 @@ export default class EntityCompanion<
     metricsAdapter: IEntityMetricsAdapter
   ) {
     const privacyPolicy = new PrivacyPolicyClass();
-    this.entityLoaderFactory = new EntityLoaderFactory(
-      tableDataCoordinator.entityConfiguration.idField,
+    this.entityLoaderFactory = new EntityLoaderFactory<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >(
+      tableDataCoordinator.entityConfiguration.idField as keyof Pick<TFields, TSelectedFields>,
       entityClass,
       privacyPolicy,
       tableDataCoordinator.dataManager
