@@ -8,6 +8,7 @@ import EntityConfiguration from '../../EntityConfiguration';
 import { UUIDField, EnumField, StringField } from '../../EntityFields';
 import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
 import ViewerContext from '../../ViewerContext';
+import { successfulResults, failedResults } from '../../entityUtils';
 import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
 import { createUnitTestEntityCompanionProvider } from '../../utils/testing/createUnitTestEntityCompanionProvider';
 
@@ -18,11 +19,13 @@ describe('Two entities backed by the same table', () => {
 
     const one = await OneTestEntity.creator(viewerContext)
       .setField('entity_type', EntityType.ONE)
+      .setField('common_other_field', 'wat')
       .enforceCreateAsync();
 
     const two = await TwoTestEntity.creator(viewerContext)
       .setField('entity_type', EntityType.TWO)
       .setField('other_field', 'blah')
+      .setField('common_other_field', 'wat')
       .enforceCreateAsync();
 
     expect(one).toBeInstanceOf(OneTestEntity);
@@ -31,9 +34,25 @@ describe('Two entities backed by the same table', () => {
     await expect(
       TwoTestEntity.loader(viewerContext).enforcing().loadByIDAsync(one.getID())
     ).rejects.toThrowError('TwoTestEntity must be instantiated with two data');
+
     await expect(
       OneTestEntity.loader(viewerContext).enforcing().loadByIDAsync(two.getID())
     ).rejects.toThrowError('OneTestEntity must be instantiated with one data');
+
+    const manyResults = await OneTestEntity.loader(viewerContext).loadManyByFieldEqualingAsync(
+      'common_other_field',
+      'wat'
+    );
+    const successfulManyResults = successfulResults(manyResults);
+    const failedManyResults = failedResults(manyResults);
+
+    expect(successfulManyResults).toHaveLength(1);
+    expect(failedManyResults).toHaveLength(1);
+
+    expect(successfulManyResults[0].enforceValue().getID()).toEqual(one.getID());
+    expect(failedManyResults[0].enforceError().message).toEqual(
+      'OneTestEntity must be instantiated with one data'
+    );
   });
 });
 
@@ -45,11 +64,12 @@ enum EntityType {
 interface TestFields {
   id: string;
   other_field: string;
+  common_other_field: string;
   entity_type: EntityType;
 }
 
-type OneTestFields = 'id' | 'entity_type';
-type TwoTestFields = 'id' | 'other_field' | 'entity_type';
+type OneTestFields = 'id' | 'entity_type' | 'common_other_field';
+type TwoTestFields = 'id' | 'other_field' | 'entity_type' | 'common_other_field';
 
 const testEntityConfiguration = new EntityConfiguration<TestFields>({
   idField: 'id',
@@ -61,6 +81,9 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
     }),
     other_field: new StringField({
       columnName: 'other_field',
+    }),
+    common_other_field: new StringField({
+      columnName: 'common_other_field',
     }),
     entity_type: new EnumField({
       columnName: 'entity_type',
@@ -121,12 +144,12 @@ const oneTestEntityCompanion = new EntityCompanionDefinition({
   entityClass: OneTestEntity,
   entityConfiguration: testEntityConfiguration,
   privacyPolicyClass: TestEntityPrivacyPolicy,
-  entitySelectedFields: ['id', 'entity_type'],
+  entitySelectedFields: ['id', 'entity_type', 'common_other_field'],
 });
 
 const twoTestEntityCompanion = new EntityCompanionDefinition({
   entityClass: TwoTestEntity,
   entityConfiguration: testEntityConfiguration,
   privacyPolicyClass: TestEntityPrivacyPolicy,
-  entitySelectedFields: ['id', 'other_field', 'entity_type'],
+  entitySelectedFields: ['id', 'other_field', 'common_other_field', 'entity_type'],
 });

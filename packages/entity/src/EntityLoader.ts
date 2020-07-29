@@ -73,26 +73,34 @@ export default class EntityLoader<
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
-    const fieldValuesToObjects = await this.dataManager.loadManyByFieldEqualingAsync(
+    const fieldValuesToFieldObjects = await this.dataManager.loadManyByFieldEqualingAsync(
       this.queryContext,
       fieldName,
       fieldValues
     );
-    const fieldValuesToUncheckedEntities = mapMap(fieldValuesToObjects, (v) => {
-      return v.map((obj) => {
-        return new this.entityClass(this.viewerContext, obj);
-      });
-    });
+    const fieldValuesToUncheckedEntityResults = mapMap(fieldValuesToFieldObjects, (fieldObjects) =>
+      this.tryConstructEntities(fieldObjects)
+    );
 
-    return await mapMapAsync(fieldValuesToUncheckedEntities, async (v) => {
-      return await Promise.all(
-        v.map((entity) =>
-          asyncResult(
-            this.privacyPolicy.authorizeReadAsync(this.viewerContext, this.queryContext, entity)
-          )
-        )
-      );
-    });
+    return await mapMapAsync(
+      fieldValuesToUncheckedEntityResults,
+      async (uncheckedEntityResults) => {
+        return await Promise.all(
+          uncheckedEntityResults.map(async (uncheckedEntityResult) => {
+            if (!uncheckedEntityResult.ok) {
+              return uncheckedEntityResult;
+            }
+            return await asyncResult(
+              this.privacyPolicy.authorizeReadAsync(
+                this.viewerContext,
+                this.queryContext,
+                uncheckedEntityResult.value
+              )
+            );
+          })
+        );
+      }
+    );
   }
 
   /**
@@ -193,21 +201,25 @@ export default class EntityLoader<
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly Result<TEntity>[]> {
-    const fieldValuesArray = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
+    const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
       this.queryContext,
       fieldEqualityOperands,
       querySelectionModifiers
     );
-    const uncheckedEntities = fieldValuesArray.map((obj) => {
-      return new this.entityClass(this.viewerContext, obj);
-    });
-
+    const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
     return await Promise.all(
-      uncheckedEntities.map(async (entity) =>
-        asyncResult(
-          this.privacyPolicy.authorizeReadAsync(this.viewerContext, this.queryContext, entity)
-        )
-      )
+      uncheckedEntityResults.map(async (uncheckedEntityResult) => {
+        if (!uncheckedEntityResult.ok) {
+          return uncheckedEntityResult;
+        }
+        return await asyncResult(
+          this.privacyPolicy.authorizeReadAsync(
+            this.viewerContext,
+            this.queryContext,
+            uncheckedEntityResult.value
+          )
+        );
+      })
     );
   }
 
@@ -241,22 +253,26 @@ export default class EntityLoader<
     bindings: any[] | object,
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly Result<TEntity>[]> {
-    const fieldValuesArray = await this.dataManager.loadManyByRawWhereClauseAsync(
+    const fieldObjects = await this.dataManager.loadManyByRawWhereClauseAsync(
       this.queryContext,
       rawWhereClause,
       bindings,
       querySelectionModifiers
     );
-    const uncheckedEntities = fieldValuesArray.map((obj) => {
-      return new this.entityClass(this.viewerContext, obj);
-    });
-
+    const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
     return await Promise.all(
-      uncheckedEntities.map(async (entity) =>
-        asyncResult(
-          this.privacyPolicy.authorizeReadAsync(this.viewerContext, this.queryContext, entity)
-        )
-      )
+      uncheckedEntityResults.map(async (uncheckedEntityResult) => {
+        if (!uncheckedEntityResult.ok) {
+          return uncheckedEntityResult;
+        }
+        return await asyncResult(
+          this.privacyPolicy.authorizeReadAsync(
+            this.viewerContext,
+            this.queryContext,
+            uncheckedEntityResult.value
+          )
+        );
+      })
     );
   }
 
@@ -266,5 +282,20 @@ export default class EntityLoader<
    */
   async invalidateFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
     await this.dataManager.invalidateObjectFieldsAsync(objectFields);
+  }
+
+  /**
+   * Wrap entity construction in try/catch and return Results. Used to prevent constructor errors
+   * thrown for one entity instantiation from interfering with other entity instantiatons of the same query.
+   * @param fieldsObject - array of entity data objects to construct entities
+   */
+  private tryConstructEntities(fieldsObjects: readonly TFields[]): readonly Result<TEntity>[] {
+    return fieldsObjects.map((fieldsObject) => {
+      try {
+        return result(new this.entityClass(this.viewerContext, fieldsObject));
+      } catch (e) {
+        return result(e);
+      }
+    });
   }
 }
