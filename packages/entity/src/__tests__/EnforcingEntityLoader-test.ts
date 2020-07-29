@@ -283,7 +283,11 @@ describe(EnforcingEntityLoader, () => {
     const loaderProperties = Object.getOwnPropertyNames(EntityLoader.prototype);
 
     // ensure known differences still exist for sanity check
-    const knownLoaderOnlyDifferences = ['enforcing', 'invalidateFieldsAsync'];
+    const knownLoaderOnlyDifferences = [
+      'enforcing',
+      'invalidateFieldsAsync',
+      'tryConstructEntities',
+    ];
     expect(loaderProperties).toEqual(expect.arrayContaining(knownLoaderOnlyDifferences));
 
     const loaderPropertiesWithoutKnownDifferences = loaderProperties.filter(
