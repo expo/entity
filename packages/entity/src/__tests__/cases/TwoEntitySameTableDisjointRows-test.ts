@@ -53,6 +53,23 @@ describe('Two entities backed by the same table', () => {
     expect(failedManyResults[0].enforceError().message).toEqual(
       'OneTestEntity must be instantiated with one data'
     );
+
+    const fieldEqualityConjunctionResults = await OneTestEntity.loader(
+      viewerContext
+    ).loadManyByFieldEqualityConjunctionAsync([
+      {
+        fieldName: 'common_other_field',
+        fieldValue: 'wat',
+      },
+    ]);
+    const successfulfieldEqualityConjunctionResultsResults = successfulResults(
+      fieldEqualityConjunctionResults
+    );
+    const failedfieldEqualityConjunctionResultsResults = failedResults(
+      fieldEqualityConjunctionResults
+    );
+    expect(successfulfieldEqualityConjunctionResultsResults).toHaveLength(1);
+    expect(failedfieldEqualityConjunctionResultsResults).toHaveLength(1);
   });
 });
 
