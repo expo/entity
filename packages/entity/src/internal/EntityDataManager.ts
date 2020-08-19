@@ -5,7 +5,7 @@ import EntityDatabaseAdapter, {
   QuerySelectionModifiers,
 } from '../EntityDatabaseAdapter';
 import { EntityQueryContext } from '../EntityQueryContext';
-import IEntityQueryContextProvider from '../IEntityQueryContextProvider';
+import EntityQueryContextProvider from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
 import {
   timeAndLogLoadEventAsync,
@@ -30,7 +30,7 @@ export default class EntityDataManager<TFields> {
   constructor(
     private readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
     private readonly entityCache: ReadThroughEntityCache<TFields>,
-    private readonly queryContextProvider: IEntityQueryContextProvider,
+    private readonly queryContextProvider: EntityQueryContextProvider,
     private readonly metricsAdapter: IEntityMetricsAdapter
   ) {}
 

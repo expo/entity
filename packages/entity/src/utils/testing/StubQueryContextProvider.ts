@@ -1,18 +1,14 @@
-import {
-  EntityNonTransactionalQueryContext,
-  EntityTransactionalQueryContext,
-} from '../../EntityQueryContext';
-import IEntityQueryContextProvider from '../../IEntityQueryContextProvider';
+import EntityQueryContextProvider from '../../EntityQueryContextProvider';
 
-class StubQueryContextProvider implements IEntityQueryContextProvider {
-  getQueryContext(): EntityNonTransactionalQueryContext {
-    return new EntityNonTransactionalQueryContext({}, this);
+class StubQueryContextProvider extends EntityQueryContextProvider {
+  protected getQueryInterface(): any {
+    return {};
   }
 
-  async runInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
-  ): Promise<T> {
-    return await transactionScope(new EntityTransactionalQueryContext({}));
+  protected createTransactionRunner<T>(): (
+    transactionScope: (queryInterface: any) => Promise<T>
+  ) => Promise<T> {
+    return (transactionScope) => Promise.resolve(transactionScope({}));
   }
 }
 

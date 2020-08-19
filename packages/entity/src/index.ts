@@ -25,7 +25,7 @@ export * from './EntityPrivacyPolicy';
 export * from './EntityQueryContext';
 export { default as IEntityCacheAdapterProvider } from './IEntityCacheAdapterProvider';
 export { default as IEntityDatabaseAdapterProvider } from './IEntityDatabaseAdapterProvider';
-export { default as IEntityQueryContextProvider } from './IEntityQueryContextProvider';
+export { default as EntityQueryContextProvider } from './EntityQueryContextProvider';
 export { default as ReadonlyEntity } from './ReadonlyEntity';
 export { default as ViewerContext } from './ViewerContext';
 export { default as ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';

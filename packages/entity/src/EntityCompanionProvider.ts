@@ -4,9 +4,9 @@ import EntityConfiguration from './EntityConfiguration';
 import EntityMutationTriggerConfiguration from './EntityMutationTriggerConfiguration';
 import EntityMutationValidator from './EntityMutationValidator';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import EntityQueryContextProvider from './EntityQueryContextProvider';
 import IEntityCacheAdapterProvider from './IEntityCacheAdapterProvider';
 import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
-import IEntityQueryContextProvider from './IEntityQueryContextProvider';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import EntityTableDataCoordinator from './internal/EntityTableDataCoordinator';
@@ -43,7 +43,7 @@ export enum CacheAdapterFlavor {
  */
 export interface DatabaseAdapterFlavorDefinition {
   adapterProvider: IEntityDatabaseAdapterProvider;
-  queryContextProvider: IEntityQueryContextProvider;
+  queryContextProvider: EntityQueryContextProvider;
 }
 
 /**
