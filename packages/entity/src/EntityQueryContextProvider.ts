@@ -15,12 +15,12 @@ export default abstract class EntityQueryContextProvider {
   }
 
   /**
-   * Get the query interface for constructing a query context;
+   * Get the query interface for constructing a query context.
    */
   protected abstract getQueryInterface(): any;
 
   /**
-   * Vend a transactional entity query context.
+   * Vend a transaction runner for use in {@link runInTransactionAsync}.
    */
   protected abstract createTransactionRunner<T>(): (
     transactionScope: (queryInterface: any) => Promise<T>
