@@ -130,7 +130,7 @@ describe('Entity cache inconsistency', () => {
 
   afterAll(async () => {
     await dropPostgresTable(knexInstance);
-    knexInstance.destroy();
+    await knexInstance.destroy();
     redisCacheAdapterContext.redisClient.disconnect();
   });
 
