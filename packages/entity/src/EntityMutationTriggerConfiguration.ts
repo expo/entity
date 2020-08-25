@@ -54,7 +54,13 @@ export default interface EntityMutationTriggerConfiguration<
    * after any mutation (create, update, delete). If the call to the mutation is wrapped in a transaction,
    * this too will be within the transaction.
    */
-  afterCommit?: EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
+  afterCommit?: EntityNonTransactionalMutationTrigger<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >[];
 }
 
 /**
@@ -74,4 +80,18 @@ export abstract class EntityMutationTrigger<
     queryContext: EntityQueryContext,
     entity: TEntity
   ): Promise<void>;
+}
+
+/**
+ * A non-transactional trigger is like a {@link EntityMutationTrigger} but used for afterCommit triggers
+ * since they explicitly occur outside of the transaction.
+ */
+export abstract class EntityNonTransactionalMutationTrigger<
+  TFields,
+  TID,
+  TViewerContext extends ViewerContext,
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields = keyof TFields
+> {
+  abstract async executeAsync(viewerContext: TViewerContext, entity: TEntity): Promise<void>;
 }

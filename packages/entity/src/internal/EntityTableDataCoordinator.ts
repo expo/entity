@@ -1,9 +1,9 @@
 import EntityCacheAdapter from '../EntityCacheAdapter';
 import EntityConfiguration from '../EntityConfiguration';
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
+import EntityQueryContextProvider from '../EntityQueryContextProvider';
 import IEntityCacheAdapterProvider from '../IEntityCacheAdapterProvider';
 import IEntityDatabaseAdapterProvider from '../IEntityDatabaseAdapterProvider';
-import IEntityQueryContextProvider from '../IEntityQueryContextProvider';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
 import EntityDataManager from './EntityDataManager';
 import ReadThroughEntityCache from './ReadThroughEntityCache';
@@ -22,7 +22,7 @@ export default class EntityTableDataCoordinator<TFields> {
     readonly entityConfiguration: EntityConfiguration<TFields>,
     databaseAdapterProvider: IEntityDatabaseAdapterProvider,
     cacheAdapterProvider: IEntityCacheAdapterProvider,
-    private readonly queryContextProvider: IEntityQueryContextProvider,
+    private readonly queryContextProvider: EntityQueryContextProvider,
     metricsAdapter: IEntityMetricsAdapter
   ) {
     this.databaseAdapter = databaseAdapterProvider.getDatabaseAdapter(entityConfiguration);
@@ -35,7 +35,7 @@ export default class EntityTableDataCoordinator<TFields> {
     );
   }
 
-  getQueryContextProvider(): IEntityQueryContextProvider {
+  getQueryContextProvider(): EntityQueryContextProvider {
     return this.queryContextProvider;
   }
 }

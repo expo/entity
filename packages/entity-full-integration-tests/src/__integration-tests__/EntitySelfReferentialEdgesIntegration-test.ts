@@ -10,10 +10,13 @@ import {
   UUIDField,
   EntityEdgeDeletionBehavior,
 } from '@expo/entity';
+import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
+import Redis from 'ioredis';
 import Knex from 'knex';
+import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
+import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
 
 interface CategoryFields {
   id: string;
@@ -154,6 +157,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
 };
 describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   let knexInstance: Knex;
+  let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
     knexInstance = Knex({
@@ -166,10 +170,25 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         database: process.env.PGDATABASE,
       },
     });
+    redisCacheAdapterContext = {
+      redisClient: new Redis(new URL(process.env.REDIS_URL!).toString()),
+      makeKeyFn(...parts: string[]): string {
+        const delimiter = ':';
+        const escapedParts = parts.map((part) =>
+          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
+        );
+        return escapedParts.join(delimiter);
+      },
+      cacheKeyPrefix: 'test-',
+      cacheKeyVersion: 1,
+      ttlSecondsPositive: 86400, // 1 day
+      ttlSecondsNegative: 600, // 10 minutes
+    };
   });
 
   afterAll(async () => {
     knexInstance.destroy();
+    redisCacheAdapterContext.redisClient.disconnect();
   });
 
   it.each([
@@ -183,7 +202,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
     );
 
     const viewerContext = new ViewerContext(
-      createKnexIntegrationTestEntityCompanionProvider(knexInstance)
+      createFullIntegrationTestEntityCompanionProvider(knexInstance, redisCacheAdapterContext)
     );
 
     const category1 = await CategoryEntity.creator(viewerContext).enforceCreateAsync();

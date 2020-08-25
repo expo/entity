@@ -14,14 +14,11 @@ import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
 import EntityLoaderFactory from '../EntityLoaderFactory';
 import EntityMutationTriggerConfiguration, {
   EntityMutationTrigger,
+  EntityNonTransactionalMutationTrigger,
 } from '../EntityMutationTriggerConfiguration';
 import EntityMutationValidator from '../EntityMutationValidator';
 import EntityMutatorFactory from '../EntityMutatorFactory';
-import {
-  EntityTransactionalQueryContext,
-  EntityQueryContext,
-  EntityNonTransactionalQueryContext,
-} from '../EntityQueryContext';
+import { EntityTransactionalQueryContext, EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import EntityDataManager from '../internal/EntityDataManager';
@@ -54,6 +51,16 @@ class TestMutationTrigger extends EntityMutationTrigger<
     _queryContext: EntityQueryContext,
     _entity: TestEntity
   ): Promise<void> {}
+}
+
+class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutationTrigger<
+  TestFields,
+  string,
+  ViewerContext,
+  TestEntity,
+  keyof TestFields
+> {
+  async executeAsync(_viewerContext: ViewerContext, _entity: TestEntity): Promise<void> {}
 }
 
 const setUpMutationValidatorSpies = (
@@ -183,11 +190,7 @@ const verifyTriggerCounts = (
   ).once();
 
   verify(
-    mutationTriggerSpies.afterCommit![0].executeAsync(
-      viewerContext,
-      anyOfClass(EntityNonTransactionalQueryContext),
-      anyOfClass(TestEntity)
-    )
+    mutationTriggerSpies.afterCommit![0].executeAsync(viewerContext, anyOfClass(TestEntity))
   ).once();
 };
 
@@ -248,7 +251,7 @@ const createEntityMutatorFactory = (
     afterDelete: [new TestMutationTrigger()],
     beforeAll: [new TestMutationTrigger()],
     afterAll: [new TestMutationTrigger()],
-    afterCommit: [new TestMutationTrigger()],
+    afterCommit: [new TestNonTransactionalMutationTrigger()],
   };
   const privacyPolicy = new TestEntityPrivacyPolicy();
   const databaseAdapter = new StubDatabaseAdapter<TestFields>(

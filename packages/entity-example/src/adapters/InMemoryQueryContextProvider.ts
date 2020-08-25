@@ -1,17 +1,13 @@
-import {
-  IEntityQueryContextProvider,
-  EntityNonTransactionalQueryContext,
-  EntityTransactionalQueryContext,
-} from '@expo/entity';
+import { EntityQueryContextProvider } from '@expo/entity';
 
-export default class InMemoryQueryContextProvider implements IEntityQueryContextProvider {
-  getQueryContext(): EntityNonTransactionalQueryContext {
-    return new EntityNonTransactionalQueryContext({}, this);
+export default class InMemoryQueryContextProvider extends EntityQueryContextProvider {
+  protected getQueryInterface(): any {
+    return {};
   }
 
-  async runInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
-  ): Promise<T> {
-    return await transactionScope(new EntityTransactionalQueryContext({}));
+  protected createTransactionRunner<T>(): (
+    transactionScope: (queryInterface: any) => Promise<T>
+  ) => Promise<T> {
+    return (transactionScope) => Promise.resolve(transactionScope({}));
   }
 }

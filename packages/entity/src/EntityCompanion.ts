@@ -4,7 +4,7 @@ import EntityMutationTriggerConfiguration from './EntityMutationTriggerConfigura
 import EntityMutationValidator from './EntityMutationValidator';
 import EntityMutatorFactory from './EntityMutatorFactory';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import IEntityQueryContextProvider from './IEntityQueryContextProvider';
+import EntityQueryContextProvider from './EntityQueryContextProvider';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import EntityTableDataCoordinator from './internal/EntityTableDataCoordinator';
@@ -126,7 +126,7 @@ export default class EntityCompanion<
   /**
    * Get the query context provider for this entity.
    */
-  getQueryContextProvider(): IEntityQueryContextProvider {
+  getQueryContextProvider(): EntityQueryContextProvider {
     return this.tableDataCoordinator.getQueryContextProvider();
   }
 }

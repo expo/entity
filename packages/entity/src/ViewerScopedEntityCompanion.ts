@@ -1,6 +1,6 @@
 import EntityCompanion from './EntityCompanion';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import IEntityQueryContextProvider from './IEntityQueryContextProvider';
+import EntityQueryContextProvider from './EntityQueryContextProvider';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import ViewerScopedEntityLoaderFactory from './ViewerScopedEntityLoaderFactory';
@@ -73,7 +73,7 @@ export default class ViewerScopedEntityCompanion<
   /**
    * Get the query context provider for this entity.
    */
-  getQueryContextProvider(): IEntityQueryContextProvider {
+  getQueryContextProvider(): EntityQueryContextProvider {
     return this.entityCompanion.getQueryContextProvider();
   }
 }

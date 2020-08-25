@@ -8,6 +8,7 @@ import { EntityEdgeDeletionBehavior } from './EntityFields';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityMutationTriggerConfiguration, {
   EntityMutationTrigger,
+  EntityNonTransactionalMutationTrigger,
 } from './EntityMutationTriggerConfiguration';
 import EntityMutationValidator from './EntityMutationValidator';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
@@ -88,6 +89,24 @@ abstract class BaseMutator<
       )
     );
   }
+
+  protected async executeNonTransactionalMutationTriggersOrValidatorsAsync(
+    triggers:
+      | EntityNonTransactionalMutationTrigger<
+          TFields,
+          TID,
+          TViewerContext,
+          TEntity,
+          TSelectedFields
+        >[]
+      | undefined,
+    entity: TEntity
+  ): Promise<void> {
+    if (!triggers) {
+      return;
+    }
+    await Promise.all(triggers.map((trigger) => trigger.executeAsync(this.viewerContext, entity)));
+  }
 }
 
 /**
@@ -139,17 +158,9 @@ export class CreateMutator<
   }
 
   private async createInTransactionAsync(): Promise<Result<TEntity>> {
-    const internalResult = await this.queryContext.runInTransactionIfNotInTransactionAsync(
-      (innerQueryContext) => this.createInternalAsync(innerQueryContext)
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.createInternalAsync(innerQueryContext)
     );
-    if (internalResult.ok) {
-      await this.executeMutationTriggersOrValidatorsAsync(
-        this.mutationTriggers.afterCommit,
-        this.queryContext,
-        internalResult.value
-      );
-    }
-    return internalResult;
   }
 
   private async createInternalAsync(
@@ -190,7 +201,9 @@ export class CreateMutator<
     const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
-    await entityLoader.invalidateFieldsAsync(insertResult);
+    queryContext.appendPostCommitCallback(
+      entityLoader.invalidateFieldsAsync.bind(entityLoader, insertResult)
+    );
 
     const unauthorizedEntityAfterInsert = new this.entityClass(this.viewerContext, insertResult);
     const newEntity = await entityLoader
@@ -206,6 +219,14 @@ export class CreateMutator<
       this.mutationTriggers.afterAll,
       queryContext,
       newEntity
+    );
+
+    queryContext.appendPostCommitCallback(
+      this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
+        this,
+        this.mutationTriggers.afterCommit,
+        newEntity
+      )
     );
 
     return result(newEntity);
@@ -320,17 +341,9 @@ export class UpdateMutator<
   }
 
   private async updateInTransactionAsync(): Promise<Result<TEntity>> {
-    const internalResult = await this.queryContext.runInTransactionIfNotInTransactionAsync(
-      (innerQueryContext) => this.updateInternalAsync(innerQueryContext)
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.updateInternalAsync(innerQueryContext)
     );
-    if (internalResult.ok) {
-      await this.executeMutationTriggersOrValidatorsAsync(
-        this.mutationTriggers.afterCommit,
-        this.queryContext,
-        internalResult.value
-      );
-    }
-    return internalResult;
   }
 
   private async updateInternalAsync(
@@ -373,8 +386,12 @@ export class UpdateMutator<
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
 
-    await entityLoader.invalidateFieldsAsync(this.originalFieldsForEntity);
-    await entityLoader.invalidateFieldsAsync(this.fieldsForEntity);
+    queryContext.appendPostCommitCallback(
+      entityLoader.invalidateFieldsAsync.bind(entityLoader, this.originalFieldsForEntity)
+    );
+    queryContext.appendPostCommitCallback(
+      entityLoader.invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity)
+    );
 
     const unauthorizedEntityAfterUpdate = new this.entityClass(this.viewerContext, updateResult);
     const updatedEntity = await entityLoader
@@ -390,6 +407,14 @@ export class UpdateMutator<
       this.mutationTriggers.afterAll,
       queryContext,
       updatedEntity
+    );
+
+    queryContext.appendPostCommitCallback(
+      this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
+        this,
+        this.mutationTriggers.afterCommit,
+        updatedEntity
+      )
     );
 
     return result(updatedEntity);
@@ -488,29 +513,20 @@ export class DeleteMutator<
     processedEntityIdentifiersFromTransitiveDeletions: Set<string> = new Set(),
     skipDatabaseDeletion: boolean = false
   ): Promise<Result<void>> {
-    const internalResult = await this.queryContext.runInTransactionIfNotInTransactionAsync(
-      (innerQueryContext) =>
-        this.deleteInternalAsync(
-          innerQueryContext,
-          processedEntityIdentifiersFromTransitiveDeletions,
-          skipDatabaseDeletion
-        )
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.deleteInternalAsync(
+        innerQueryContext,
+        processedEntityIdentifiersFromTransitiveDeletions,
+        skipDatabaseDeletion
+      )
     );
-    if (internalResult.ok) {
-      await this.executeMutationTriggersOrValidatorsAsync(
-        this.mutationTriggers.afterCommit,
-        this.queryContext,
-        internalResult.value
-      );
-    }
-    return internalResult.ok ? result() : result(internalResult.reason);
   }
 
   private async deleteInternalAsync(
     queryContext: EntityTransactionalQueryContext,
     processedEntityIdentifiersFromTransitiveDeletions: Set<string>,
     skipDatabaseDeletion: boolean
-  ): Promise<Result<TEntity>> {
+  ): Promise<Result<void>> {
     const authorizeDeleteResult = await asyncResult(
       this.privacyPolicy.authorizeDeleteAsync(this.viewerContext, queryContext, this.entity)
     );
@@ -544,7 +560,9 @@ export class DeleteMutator<
     }
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
-    await entityLoader.invalidateFieldsAsync(this.entity.getAllDatabaseFields());
+    queryContext.appendPostCommitCallback(
+      entityLoader.invalidateFieldsAsync.bind(entityLoader, this.entity.getAllDatabaseFields())
+    );
 
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.afterDelete,
@@ -557,7 +575,15 @@ export class DeleteMutator<
       this.entity
     );
 
-    return result(this.entity);
+    queryContext.appendPostCommitCallback(
+      this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
+        this,
+        this.mutationTriggers.afterCommit,
+        this.entity
+      )
+    );
+
+    return result();
   }
 
   /**

@@ -1,4 +1,6 @@
-import IEntityQueryContextProvider from './IEntityQueryContextProvider';
+import EntityQueryContextProvider from './EntityQueryContextProvider';
+
+export type PostCommitCallback = (...args: any) => Promise<any>;
 
 /**
  * Entity framework representation of transactional and non-transactional database
@@ -24,7 +26,7 @@ export abstract class EntityQueryContext {
 export class EntityNonTransactionalQueryContext extends EntityQueryContext {
   constructor(
     queryInterface: any,
-    private readonly entityQueryContextProvider: IEntityQueryContextProvider
+    private readonly entityQueryContextProvider: EntityQueryContextProvider
   ) {
     super(queryInterface);
   }
@@ -34,23 +36,31 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
   }
 
   async runInTransactionIfNotInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityQueryContext) => Promise<T>
+    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
   ): Promise<T> {
-    if (this.isInTransaction()) {
-      return await transactionScope(this);
-    } else {
-      return await this.entityQueryContextProvider.runInTransactionAsync(transactionScope);
-    }
+    return await this.entityQueryContextProvider.runInTransactionAsync(transactionScope);
   }
 }
 
 export class EntityTransactionalQueryContext extends EntityQueryContext {
+  private readonly postCommitCallbacks: PostCommitCallback[] = [];
+
+  public appendPostCommitCallback(callback: PostCommitCallback): void {
+    this.postCommitCallbacks.push(callback);
+  }
+
+  public async runPostCommitCallbacksAsync(): Promise<void> {
+    const callbacks = [...this.postCommitCallbacks];
+    this.postCommitCallbacks.length = 0;
+    await Promise.all(callbacks.map((callback) => callback()));
+  }
+
   isInTransaction(): boolean {
     return true;
   }
 
   async runInTransactionIfNotInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityQueryContext) => Promise<T>
+    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
   ): Promise<T> {
     return await transactionScope(this);
   }

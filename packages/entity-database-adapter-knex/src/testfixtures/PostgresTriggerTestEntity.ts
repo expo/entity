@@ -11,6 +11,7 @@ import {
   Entity,
   EntityMutationTrigger,
   EntityQueryContext,
+  EntityNonTransactionalMutationTrigger,
 } from '@expo/entity';
 import Knex from 'knex';
 
@@ -118,6 +119,26 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
   }
 }
 
+class ThrowConditionallyNonTransactionalTrigger extends EntityNonTransactionalMutationTrigger<
+  PostgresTriggerTestEntityFields,
+  string,
+  ViewerContext,
+  PostgresTriggerTestEntity
+> {
+  constructor(private fieldName: keyof PostgresTriggerTestEntityFields, private badValue: string) {
+    super();
+  }
+
+  async executeAsync(
+    _viewerContext: ViewerContext,
+    entity: PostgresTriggerTestEntity
+  ): Promise<void> {
+    if (entity.getField(this.fieldName) === this.badValue) {
+      throw new Error(`${this.fieldName} cannot have value ${this.badValue}`);
+    }
+  }
+}
+
 export const postgresTestEntityConfiguration = new EntityConfiguration<
   PostgresTriggerTestEntityFields
 >({
@@ -149,6 +170,6 @@ const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({
     afterDelete: [new ThrowConditionallyTrigger('name', 'afterDelete')],
     beforeAll: [new ThrowConditionallyTrigger('name', 'beforeAll')],
     afterAll: [new ThrowConditionallyTrigger('name', 'afterAll')],
-    afterCommit: [new ThrowConditionallyTrigger('name', 'afterCommit')],
+    afterCommit: [new ThrowConditionallyNonTransactionalTrigger('name', 'afterCommit')],
   },
 });
