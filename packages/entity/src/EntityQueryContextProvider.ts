@@ -40,7 +40,7 @@ export default abstract class EntityQueryContextProvider {
       const result = await transactionScope(queryContext);
       return [result, queryContext];
     });
-    await Promise.all(queryContext.postCommitCallbacks.map((f) => f()));
+    await queryContext.runPostCommitCallbacksAsync();
     return returnedValue;
   }
 }

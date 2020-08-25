@@ -43,10 +43,16 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
 }
 
 export class EntityTransactionalQueryContext extends EntityQueryContext {
-  public readonly postCommitCallbacks: PostCommitCallback[] = [];
+  private readonly postCommitCallbacks: PostCommitCallback[] = [];
 
   public appendPostCommitCallback(callback: PostCommitCallback): void {
     this.postCommitCallbacks.push(callback);
+  }
+
+  public async runPostCommitCallbacksAsync(): Promise<void> {
+    const callbacks = [...this.postCommitCallbacks];
+    this.postCommitCallbacks.length = 0;
+    await Promise.all(callbacks.map((callback) => callback()));
   }
 
   isInTransaction(): boolean {

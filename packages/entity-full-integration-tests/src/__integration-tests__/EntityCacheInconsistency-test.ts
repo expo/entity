@@ -141,7 +141,7 @@ describe('Entity cache inconsistency', () => {
 
     const entity1 = await TestEntity.creator(viewerContext)
       .setField('other_string', 'hello')
-      .setField('third_string', 'wat')
+      .setField('third_string', 'initial')
       .enforceCreateAsync();
 
     // put entities in cache and dataloader
@@ -150,25 +150,40 @@ describe('Entity cache inconsistency', () => {
       .enforcing()
       .loadByFieldEqualingAsync('other_string', 'hello');
 
+    let openBarrier1: () => void;
+    const barrier1 = new Promise((resolve) => {
+      openBarrier1 = resolve;
+    });
+
+    let openBarrier2: () => void;
+    const barrier2 = new Promise((resolve) => {
+      openBarrier2 = resolve;
+    });
+
     await Promise.all([
       // do a load after the transaction below updates the entity but before transaction commits to ensure
       // that the cache is cleared after the transaction commits rather than in the middle where the changes
       // may not be visible by other requests (ViewerContexts) which would cache the incorrect
       // value during the read-through cache.
       (async () => {
-        await new Promise((r) => setTimeout(r, 100));
+        await barrier1;
+
         const viewerContextInternal = new ViewerContext(
           createFullIntegrationTestEntityCompanionProvider(knexInstance, redisCacheAdapterContext)
         );
         await TestEntity.loader(viewerContextInternal).enforcing().loadByIDAsync(entity1.getID());
+
+        openBarrier2!();
       })(),
       TestEntity.runInTransactionAsync(viewerContext, async (queryContext) => {
         await TestEntity.updater(entity1, queryContext)
-          .setField('third_string', 'huh')
+          .setField('third_string', 'updated')
           .enforceUpdateAsync();
 
-        // wait for 250 ms to ensure the transaction isn't committed until after load above occurs
-        await new Promise((r) => setTimeout(r, 250));
+        openBarrier1();
+
+        // wait for to ensure the transaction isn't committed until after load above occurs
+        await barrier2;
       }),
     ]);
 
@@ -184,7 +199,7 @@ describe('Entity cache inconsistency', () => {
       .enforcing()
       .loadByFieldEqualingAsync('other_string', 'hello');
 
-    expect(loadedById.getField('third_string')).toEqual('huh');
-    expect(loadedByField!.getField('third_string')).toEqual('huh');
+    expect(loadedById.getField('third_string')).toEqual('updated');
+    expect(loadedByField!.getField('third_string')).toEqual('updated');
   });
 });
