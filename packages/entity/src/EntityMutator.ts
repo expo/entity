@@ -8,6 +8,7 @@ import { EntityEdgeDeletionBehavior } from './EntityFields';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityMutationTriggerConfiguration, {
   EntityMutationTrigger,
+  EntityNonTransactionalMutationTrigger,
 } from './EntityMutationTriggerConfiguration';
 import EntityMutationValidator from './EntityMutationValidator';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
@@ -87,6 +88,24 @@ abstract class BaseMutator<
         triggerOrValidator.executeAsync(this.viewerContext, queryContext, entity)
       )
     );
+  }
+
+  protected async executeNonTransactionalMutationTriggersOrValidatorsAsync(
+    triggers:
+      | EntityNonTransactionalMutationTrigger<
+          TFields,
+          TID,
+          TViewerContext,
+          TEntity,
+          TSelectedFields
+        >[]
+      | undefined,
+    entity: TEntity
+  ): Promise<void> {
+    if (!triggers) {
+      return;
+    }
+    await Promise.all(triggers.map((trigger) => trigger.executeAsync(this.viewerContext, entity)));
   }
 }
 
@@ -203,10 +222,9 @@ export class CreateMutator<
     );
 
     queryContext.appendPostCommitCallback(
-      this.executeMutationTriggersOrValidatorsAsync.bind(
+      this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
         this,
         this.mutationTriggers.afterCommit,
-        this.queryContext,
         newEntity
       )
     );
@@ -392,10 +410,9 @@ export class UpdateMutator<
     );
 
     queryContext.appendPostCommitCallback(
-      this.executeMutationTriggersOrValidatorsAsync.bind(
+      this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
         this,
         this.mutationTriggers.afterCommit,
-        this.queryContext,
         updatedEntity
       )
     );
@@ -559,10 +576,9 @@ export class DeleteMutator<
     );
 
     queryContext.appendPostCommitCallback(
-      this.executeMutationTriggersOrValidatorsAsync.bind(
+      this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
         this,
         this.mutationTriggers.afterCommit,
-        this.queryContext,
         this.entity
       )
     );
