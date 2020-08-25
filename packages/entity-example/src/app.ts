@@ -2,14 +2,14 @@ import { EntityCompanionProvider } from '@expo/entity';
 import { ApolloServer } from 'apollo-server-koa';
 import Koa from 'koa';
 import koaBody from 'koa-body';
-import KoaRouter from 'koa-router';
+import KoaRouter, { RouterContext } from 'koa-router';
 
 import { entityCompanionMiddleware, viewerContextMiddleware } from './middleware';
 import notesRouter from './routers/notesRouter';
 import { typeDefs, resolvers } from './schema';
 import { ExampleViewerContext } from './viewerContexts';
 
-export type ExampleContext = Koa.ParameterizedContext<ExampleState>;
+export type ExampleContext = RouterContext<ExampleState>;
 
 /**
  * Koa provides a per-request state container to place custom properties.
