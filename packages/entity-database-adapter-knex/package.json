@@ -12,9 +12,9 @@
     "tsc": "tsc",
     "clean": "rm -rf build coverage coverage-integration",
     "lint": "eslint src --ext '.ts'",
-    "test": "jest --rootDir --config ../../resources/jest.config.js --passWithNoTests",
+    "test": "jest --rootDir . --config ../../resources/jest.config.js --passWithNoTests",
     "integration": "../../resources/run-with-docker yarn integration-no-setup",
-    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir --runInBand --passWithNoTests",
+    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir . --runInBand --passWithNoTests",
     "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --exportDefault --delete"
   },
   "engines": {
@@ -29,7 +29,7 @@
     "@expo/entity": "*"
   },
   "dependencies": {
-    "knex": "^0.20.11"
+    "knex": "^0.21.5"
   },
   "devDependencies": {
     "@expo/entity": "^0.6.0"

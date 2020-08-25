@@ -34,7 +34,7 @@ describe('postgres entity integration', () => {
 
   afterAll(async () => {
     await PostgresTestEntity.dropPostgresTable(knexInstance);
-    knexInstance.destroy();
+    await knexInstance.destroy();
   });
 
   it('supports parallel partial updates', async () => {

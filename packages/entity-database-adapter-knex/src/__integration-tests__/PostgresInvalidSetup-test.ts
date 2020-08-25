@@ -27,7 +27,7 @@ describe('postgres entity integration', () => {
 
   afterAll(async () => {
     await InvalidTestEntity.dropPostgresTable(knexInstance);
-    knexInstance.destroy();
+    await knexInstance.destroy();
   });
 
   describe('invalid operation result counts', () => {

@@ -12,9 +12,9 @@
     "tsc": "tsc",
     "clean": "rm -rf build coverage coverage-integration",
     "lint": "eslint src --ext '.ts'",
-    "test": "jest --rootDir --config ../../resources/jest.config.js",
+    "test": "jest --rootDir . --config ../../resources/jest.config.js",
     "integration": "../../resources/run-with-docker yarn integration-no-setup",
-    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir --runInBand --passWithNoTests",
+    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir . --runInBand --passWithNoTests",
     "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --exportDefault --delete"
   },
   "engines": {
@@ -26,10 +26,10 @@
   "author": "Expo",
   "license": "MIT",
   "dependencies": {
-    "@expo/results": "^0.3.0",
+    "@expo/results": "^1.0.0",
     "dataloader": "^2.0.0",
     "es6-error": "^4.1.1",
     "invariant": "^2.2.4",
-    "uuid": "^7.0.3"
+    "uuid": "^8.3.0"
   }
 }

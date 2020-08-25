@@ -187,7 +187,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   });
 
   afterAll(async () => {
-    knexInstance.destroy();
+    await knexInstance.destroy();
     redisCacheAdapterContext.redisClient.disconnect();
   });
 
