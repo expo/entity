@@ -8,7 +8,7 @@
     "**/__integration-tests__/**/*.ts",
     "**/testfixtures/**/*.ts"
   ],
-  "lernaExclude": ["@expo/entity-example"],
+  "lernaExclude": ["@expo/entity-example", "@expo/entity-full-integration-tests"],
   "name": "Entity",
   "readme": "README.md",
   "excludeNotExported": true
