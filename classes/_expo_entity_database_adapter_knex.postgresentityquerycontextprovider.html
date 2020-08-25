@@ -78,14 +78,13 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">PostgresEntityQueryContextProvider</span>
+						<span class="tsd-signature-type">EntityQueryContextProvider</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">PostgresEntityQueryContextProvider</span>
+							</li>
+						</ul>
 					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implements</h3>
-				<ul class="tsd-hierarchy">
-					<li><span class="tsd-signature-type">IEntityQueryContextProvider</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -107,8 +106,10 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#getquerycontext" class="tsd-kind-icon">get<wbr>Query<wbr>Context</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#runintransactionasync" class="tsd-kind-icon">run<wbr>InTransaction<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite tsd-is-protected"><a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#createtransactionrunner" class="tsd-kind-icon">create<wbr>Transaction<wbr>Runner</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#getquerycontext" class="tsd-kind-icon">get<wbr>Query<wbr>Context</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#getqueryinterface" class="tsd-kind-icon">get<wbr>Query<wbr>Interface</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited"><a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#runintransactionasync" class="tsd-kind-icon">run<wbr>InTransaction<wbr>Async</a></li>
 							</ul>
 						</section>
 					</div>
@@ -126,7 +127,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts#L11">packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts#L7">packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts:7</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -148,43 +149,133 @@
 					<div class="tsd-signature tsd-kind-icon">knex<wbr>Instance<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Knex</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts#L12">packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts#L8">packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite tsd-is-protected">
+					<a name="createtransactionrunner" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> create<wbr>Transaction<wbr>Runner</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Transaction<wbr>Runner&lt;T&gt;<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>transactionScope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>trx<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides EntityQueryContextProvider.createTransactionRunner</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts#L16">packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts:16</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>transactionScope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>trx<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal">
+										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>transactionScope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>trx<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-parameters-title">Parameters</h4>
+											<ul class="tsd-parameters">
+												<li>
+													<h5>transactionScope: <span class="tsd-signature-symbol">(</span>trx<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+													<ul class="tsd-parameters">
+														<li class="tsd-parameter-signature">
+															<ul class="tsd-signatures tsd-kind-type-literal">
+																<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>trx<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+															</ul>
+															<ul class="tsd-descriptions">
+																<li class="tsd-description">
+																	<h4 class="tsd-parameters-title">Parameters</h4>
+																	<ul class="tsd-parameters">
+																		<li>
+																			<h5>trx: <span class="tsd-signature-type">any</span></h5>
+																		</li>
+																	</ul>
+																	<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+																</li>
+															</ul>
+														</li>
+													</ul>
+												</li>
+											</ul>
+											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="getquerycontext" class="tsd-anchor"></a>
 					<h3>get<wbr>Query<wbr>Context</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">get<wbr>Query<wbr>Context<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EntityNonTransactionalQueryContext</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html">PostgresEntityQueryContextProvider</a>.<a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#getquerycontext">getQueryContext</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts#L14">packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts:14</a></li>
+									<li>Defined in packages/entity/build/EntityQueryContextProvider.d.ts:9</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Vend a regular (non-transactional) entity query context.</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">EntityNonTransactionalQueryContext</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+					<a name="getqueryinterface" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> get<wbr>Query<wbr>Interface</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Query<wbr>Interface<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides EntityQueryContextProvider.getQueryInterface</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts#L12">packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts:12</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited">
 					<a name="runintransactionasync" class="tsd-anchor"></a>
 					<h3>run<wbr>InTransaction<wbr>Async</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">run<wbr>InTransaction<wbr>Async&lt;T&gt;<span class="tsd-signature-symbol">(</span>transactionScope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>queryContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EntityTransactionalQueryContext</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html">PostgresEntityQueryContextProvider</a>.<a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#runintransactionasync">runInTransactionAsync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts#L18">packages/entity-database-adapter-knex/src/PostgresEntityQueryContextProvider.ts:18</a></li>
+									<li>Defined in packages/entity/build/EntityQueryContextProvider.d.ts:22</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Start a transaction and execute the provided transaction-scoped closure within the transaction.</p>
+								</div>
+							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
@@ -195,6 +286,9 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>transactionScope: <span class="tsd-signature-symbol">(</span>queryContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EntityTransactionalQueryContext</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>async callback to execute within the transaction</p>
+									</div>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-signature">
 											<ul class="tsd-signatures tsd-kind-type-literal">
@@ -257,10 +351,16 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#knexinstance" class="tsd-kind-icon">knex<wbr>Instance</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite tsd-is-protected">
+								<a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#createtransactionrunner" class="tsd-kind-icon">create<wbr>Transaction<wbr>Runner</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#getquerycontext" class="tsd-kind-icon">get<wbr>Query<wbr>Context</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+								<a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#getqueryinterface" class="tsd-kind-icon">get<wbr>Query<wbr>Interface</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited">
 								<a href="_expo_entity_database_adapter_knex.postgresentityquerycontextprovider.html#runintransactionasync" class="tsd-kind-icon">run<wbr>InTransaction<wbr>Async</a>
 							</li>
 						</ul>
@@ -287,7 +387,6 @@
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
 				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
@@ -295,6 +394,12 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>

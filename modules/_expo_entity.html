@@ -125,11 +125,13 @@
 								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitymutationtrigger.html" class="tsd-kind-icon">Entity<wbr>Mutation<wbr>Trigger</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitymutationvalidator.html" class="tsd-kind-icon">Entity<wbr>Mutation<wbr>Validator</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitymutatorfactory.html" class="tsd-kind-icon">Entity<wbr>Mutator<wbr>Factory</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitynontransactionalmutationtrigger.html" class="tsd-kind-icon">Entity<wbr>Non<wbr>Transactional<wbr>Mutation<wbr>Trigger</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.entitynontransactionalquerycontext.html" class="tsd-kind-icon">Entity<wbr>Non<wbr>Transactional<wbr>Query<wbr>Context</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitynotauthorizederror.html" class="tsd-kind-icon">Entity<wbr>Not<wbr>Authorized<wbr>Error</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitynotfounderror.html" class="tsd-kind-icon">Entity<wbr>Not<wbr>Found<wbr>Error</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entityprivacypolicy.html" class="tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.entityquerycontext.html" class="tsd-kind-icon">Entity<wbr>Query<wbr>Context</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.entityquerycontextprovider.html" class="tsd-kind-icon">Entity<wbr>Query<wbr>Context<wbr>Provider</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/_expo_entity.entitytabledatacoordinator.html" class="tsd-kind-icon">Entity<wbr>Table<wbr>Data<wbr>Coordinator</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.entitytransactionalquerycontext.html" class="tsd-kind-icon">Entity<wbr>Transactional<wbr>Query<wbr>Context</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_expo_entity.enumfield.html" class="tsd-kind-icon">Enum<wbr>Field</a></li>
@@ -174,7 +176,6 @@
 								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.ientityclass.html" class="tsd-kind-icon">IEntity<wbr>Class</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.ientitydatabaseadapterprovider.html" class="tsd-kind-icon">IEntity<wbr>Database<wbr>Adapter<wbr>Provider</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-kind-icon">IEntity<wbr>Metrics<wbr>Adapter</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.ientityquerycontextprovider.html" class="tsd-kind-icon">IEntity<wbr>Query<wbr>Context<wbr>Provider</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.iprivacypolicyclass.html" class="tsd-kind-icon">IPrivacy<wbr>Policy<wbr>Class</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/_expo_entity.queryselectionmodifiers.html" class="tsd-kind-icon">Query<wbr>Selection<wbr>Modifiers</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_expo_entity.tablefieldmultivalueequalitycondition.html" class="tsd-kind-icon">Table<wbr>Field<wbr>Multi<wbr>Value<wbr>Equality<wbr>Condition</a></li>
@@ -189,6 +190,7 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#entityprivacypolicyevaluator" class="tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy<wbr>Evaluator</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="_expo_entity.html#fieldequalitycondition" class="tsd-kind-icon">Field<wbr>Equality<wbr>Condition</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_expo_entity.html#fieldtransformermap" class="tsd-kind-icon">Field<wbr>Transformer<wbr>Map</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_expo_entity.html#postcommitcallback" class="tsd-kind-icon">Post<wbr>Commit<wbr>Callback</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -233,7 +235,7 @@
 					<div class="tsd-signature tsd-kind-icon">Cache<wbr>Load<wbr>Result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>status<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.cachestatus.html#hit" class="tsd-signature-type">HIT</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>status<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.cachestatus.html#miss" class="tsd-signature-type">MISS</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>status<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.cachestatus.html#negative" class="tsd-signature-type">NEGATIVE</a><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/internal/ReadThroughEntityCache.ts#L18">packages/entity/src/internal/ReadThroughEntityCache.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/internal/ReadThroughEntityCache.ts#L18">packages/entity/src/internal/ReadThroughEntityCache.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -243,7 +245,7 @@
 					<div class="tsd-signature tsd-kind-icon">Entity<wbr>Privacy<wbr>Policy<wbr>Evaluator&lt;TFields, TID, TViewerContext, TEntity, TSelectedFields&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>mode<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entityprivacypolicyevaluationmode.html#enforce" class="tsd-signature-type">ENFORCE</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>denyHandler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entitynotauthorizederror.html" class="tsd-signature-type">EntityNotAuthorizedError</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>mode<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entityprivacypolicyevaluationmode.html#dry_run" class="tsd-signature-type">DRY_RUN</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>denyHandler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entitynotauthorizederror.html" class="tsd-signature-type">EntityNotAuthorizedError</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>mode<span class="tsd-signature-symbol">: </span><a href="../enums/_expo_entity.entityprivacypolicyevaluationmode.html#enforce_and_log" class="tsd-signature-type">ENFORCE_AND_LOG</a><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/EntityPrivacyPolicy.ts#L13">packages/entity/src/EntityPrivacyPolicy.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/EntityPrivacyPolicy.ts#L13">packages/entity/src/EntityPrivacyPolicy.ts:13</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -271,7 +273,7 @@
 					<div class="tsd-signature tsd-kind-icon">Field<wbr>Equality<wbr>Condition&lt;TFields, N&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SingleValueFieldEqualityCondition</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">N</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiValueFieldEqualityCondition</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">N</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/EntityDatabaseAdapter.ts#L20">packages/entity/src/EntityDatabaseAdapter.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/EntityDatabaseAdapter.ts#L20">packages/entity/src/EntityDatabaseAdapter.ts:20</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -290,13 +292,44 @@
 					<div class="tsd-signature tsd-kind-icon">Field<wbr>Transformer<wbr>Map<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/_expo_entity.fieldtransformer.html" class="tsd-signature-type">FieldTransformer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L20">packages/entity/src/internal/EntityFieldTransformationUtils.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L20">packages/entity/src/internal/EntityFieldTransformationUtils.ts:20</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Map from concrete EntityFieldDefinition implementation class name to field transformer.</p>
 						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="postcommitcallback" class="tsd-anchor"></a>
+					<h3>Post<wbr>Commit<wbr>Callback</h3>
+					<div class="tsd-signature tsd-kind-icon">Post<wbr>Commit<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/EntityQueryContext.ts#L3">packages/entity/src/EntityQueryContext.ts:3</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>args: <span class="tsd-signature-type">any</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
 					</div>
 				</section>
 			</section>
@@ -312,7 +345,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/collections/maps.ts#L3">packages/entity/src/utils/collections/maps.ts:3</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/collections/maps.ts#L3">packages/entity/src/utils/collections/maps.ts:3</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -368,7 +401,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/testing/createUnitTestEntityCompanionProvider.ts#L15">packages/entity/src/utils/testing/createUnitTestEntityCompanionProvider.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/testing/createUnitTestEntityCompanionProvider.ts#L15">packages/entity/src/utils/testing/createUnitTestEntityCompanionProvider.ts:15</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -397,7 +430,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts#L86">packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts:86</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts#L86">packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts:86</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -457,7 +490,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts#L29">packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts#L29">packages/entity/src/utils/testing/PrivacyPolicyRuleTestUtils.ts:29</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -517,7 +550,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/entityUtils.ts#L7">packages/entity/src/entityUtils.ts:7</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/entityUtils.ts#L7">packages/entity/src/entityUtils.ts:7</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -556,7 +589,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/entityUtils.ts#L32">packages/entity/src/entityUtils.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/entityUtils.ts#L32">packages/entity/src/entityUtils.ts:32</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -595,7 +628,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/entityUtils.ts#L62">packages/entity/src/entityUtils.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/entityUtils.ts#L62">packages/entity/src/entityUtils.ts:62</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -637,7 +670,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/collections/maps.ts#L88">packages/entity/src/utils/collections/maps.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/collections/maps.ts#L88">packages/entity/src/utils/collections/maps.ts:88</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -693,7 +726,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L22">packages/entity/src/internal/EntityFieldTransformationUtils.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L22">packages/entity/src/internal/EntityFieldTransformationUtils.ts:22</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -725,7 +758,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/collections/maps.ts#L56">packages/entity/src/utils/collections/maps.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/collections/maps.ts#L56">packages/entity/src/utils/collections/maps.ts:56</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -757,7 +790,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/collections/maps.ts#L17">packages/entity/src/utils/collections/maps.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/collections/maps.ts#L17">packages/entity/src/utils/collections/maps.ts:17</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -816,7 +849,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/collections/maps.ts#L28">packages/entity/src/utils/collections/maps.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/collections/maps.ts#L28">packages/entity/src/utils/collections/maps.ts:28</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -875,7 +908,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/entityUtils.ts#L78">packages/entity/src/entityUtils.ts:78</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/entityUtils.ts#L78">packages/entity/src/entityUtils.ts:78</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -914,7 +947,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/entityUtils.ts#L97">packages/entity/src/entityUtils.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/entityUtils.ts#L97">packages/entity/src/entityUtils.ts:97</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -949,7 +982,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/collections/maps.ts#L64">packages/entity/src/utils/collections/maps.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/collections/maps.ts#L64">packages/entity/src/utils/collections/maps.ts:64</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1014,7 +1047,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/collections/maps.ts#L76">packages/entity/src/utils/collections/maps.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/collections/maps.ts#L76">packages/entity/src/utils/collections/maps.ts:76</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1079,7 +1112,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/entityUtils.ts#L18">packages/entity/src/entityUtils.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/entityUtils.ts#L18">packages/entity/src/entityUtils.ts:18</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1118,7 +1151,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/entityUtils.ts#L46">packages/entity/src/entityUtils.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/entityUtils.ts#L46">packages/entity/src/entityUtils.ts:46</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1160,7 +1193,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/metrics/EntityMetricsUtils.ts#L7">packages/entity/src/metrics/EntityMetricsUtils.ts:7</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/metrics/EntityMetricsUtils.ts#L7">packages/entity/src/metrics/EntityMetricsUtils.ts:7</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1186,7 +1219,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/metrics/EntityMetricsUtils.ts#L24">packages/entity/src/metrics/EntityMetricsUtils.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/metrics/EntityMetricsUtils.ts#L24">packages/entity/src/metrics/EntityMetricsUtils.ts:24</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1212,7 +1245,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/metrics/EntityMetricsUtils.ts#L45">packages/entity/src/metrics/EntityMetricsUtils.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/metrics/EntityMetricsUtils.ts#L45">packages/entity/src/metrics/EntityMetricsUtils.ts:45</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1238,7 +1271,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L72">packages/entity/src/internal/EntityFieldTransformationUtils.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L72">packages/entity/src/internal/EntityFieldTransformationUtils.ts:72</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1278,7 +1311,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L31">packages/entity/src/internal/EntityFieldTransformationUtils.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L31">packages/entity/src/internal/EntityFieldTransformationUtils.ts:31</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1318,7 +1351,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L90">packages/entity/src/internal/EntityFieldTransformationUtils.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L90">packages/entity/src/internal/EntityFieldTransformationUtils.ts:90</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1353,7 +1386,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L52">packages/entity/src/internal/EntityFieldTransformationUtils.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/internal/EntityFieldTransformationUtils.ts#L52">packages/entity/src/internal/EntityFieldTransformationUtils.ts:52</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1388,7 +1421,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/62bfd6c/packages/entity/src/utils/collections/maps.ts#L43">packages/entity/src/utils/collections/maps.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/dbc3c81/packages/entity/src/utils/collections/maps.ts#L43">packages/entity/src/utils/collections/maps.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1536,6 +1569,9 @@
 					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="../classes/_expo_entity.entitymutatorfactory.html" class="tsd-kind-icon">Entity<wbr>Mutator<wbr>Factory</a>
 					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity.entitynontransactionalmutationtrigger.html" class="tsd-kind-icon">Entity<wbr>Non<wbr>Transactional<wbr>Mutation<wbr>Trigger</a>
+					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/_expo_entity.entitynontransactionalquerycontext.html" class="tsd-kind-icon">Entity<wbr>Non<wbr>Transactional<wbr>Query<wbr>Context</a>
 					</li>
@@ -1550,6 +1586,9 @@
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/_expo_entity.entityquerycontext.html" class="tsd-kind-icon">Entity<wbr>Query<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity.entityquerycontextprovider.html" class="tsd-kind-icon">Entity<wbr>Query<wbr>Context<wbr>Provider</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="../classes/_expo_entity.entitytabledatacoordinator.html" class="tsd-kind-icon">Entity<wbr>Table<wbr>Data<wbr>Coordinator</a>
@@ -1668,9 +1707,6 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-kind-icon">IEntity<wbr>Metrics<wbr>Adapter</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/_expo_entity.ientityquerycontextprovider.html" class="tsd-kind-icon">IEntity<wbr>Query<wbr>Context<wbr>Provider</a>
-					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="../interfaces/_expo_entity.iprivacypolicyclass.html" class="tsd-kind-icon">IPrivacy<wbr>Policy<wbr>Class</a>
 					</li>
@@ -1697,6 +1733,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
 						<a href="_expo_entity.html#fieldtransformermap" class="tsd-kind-icon">Field<wbr>Transformer<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_expo_entity.html#postcommitcallback" class="tsd-kind-icon">Post<wbr>Commit<wbr>Callback</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="_expo_entity.html#computeifabsent" class="tsd-kind-icon">compute<wbr>IfAbsent</a>
