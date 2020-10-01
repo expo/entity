@@ -5,7 +5,7 @@ import EntityAssociationLoader from './EntityAssociationLoader';
 import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
+import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
 import ViewerContext from './ViewerContext';
 import { pick } from './entityUtils';
 
@@ -183,7 +183,7 @@ export default abstract class ReadonlyEntity<
       TMSelectedFields
     >,
     viewerContext: TMViewerContext2,
-    transactionScope: (queryContext: EntityQueryContext) => Promise<TResult>
+    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<TResult>
   ): Promise<TResult> {
     return await viewerContext
       .getViewerScopedEntityCompanionForClass(this)
