@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/expo/entity/compare/v0.6.0...v0.7.0) (2020-10-01)
+
+
+### Bug Fixes
+
+* upgrade packages ([#78](https://github.com/expo/entity/issues/78)) ([9891e74](https://github.com/expo/entity/commit/9891e7469467a28589f529c8d87b10fc2232d3ff))
+
+
+
+
+
 # [0.6.0](https://github.com/expo/entity/compare/v0.5.2...v0.6.0) (2020-07-23)
 
 **Note:** Version bump only for package @expo/entity-cache-adapter-redis
