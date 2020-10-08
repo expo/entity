@@ -6,6 +6,7 @@ export enum EntityMetricsLoadType {
 
 export interface EntityMetricsLoadEvent {
   type: EntityMetricsLoadType;
+  entityClassName: string;
   duration: number;
   count: number;
 }
@@ -18,6 +19,7 @@ export enum EntityMetricsMutationType {
 
 export interface EntityMetricsMutationEvent {
   type: EntityMetricsMutationType;
+  entityClassName: string;
   duration: number;
 }
 

@@ -31,7 +31,8 @@ export default class EntityDataManager<TFields> {
     private readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
     private readonly entityCache: ReadThroughEntityCache<TFields>,
     private readonly queryContextProvider: EntityQueryContextProvider,
-    private readonly metricsAdapter: IEntityMetricsAdapter
+    private readonly metricsAdapter: IEntityMetricsAdapter,
+    private readonly entityClassName: string
   ) {}
 
   private getFieldDataLoaderForFieldName<N extends keyof TFields>(
@@ -86,7 +87,8 @@ export default class EntityDataManager<TFields> {
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
     return await timeAndLogLoadMapEventAsync(
       this.metricsAdapter,
-      EntityMetricsLoadType.LOAD_MANY
+      EntityMetricsLoadType.LOAD_MANY,
+      this.entityClassName
     )(this.loadManyByFieldEqualingInternalAsync(queryContext, fieldName, fieldValues));
   }
 
@@ -127,7 +129,8 @@ export default class EntityDataManager<TFields> {
   ): Promise<readonly Readonly<TFields>[]> {
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
-      EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION
+      EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
+      this.entityClassName
     )(
       this.databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
         queryContext,
@@ -154,7 +157,8 @@ export default class EntityDataManager<TFields> {
   ): Promise<readonly Readonly<TFields>[]> {
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
-      EntityMetricsLoadType.LOAD_MANY_RAW
+      EntityMetricsLoadType.LOAD_MANY_RAW,
+      this.entityClassName
     )(
       this.databaseAdapter.fetchManyByRawWhereClauseAsync(
         queryContext,

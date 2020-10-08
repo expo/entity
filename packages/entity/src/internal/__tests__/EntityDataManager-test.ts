@@ -14,7 +14,7 @@ import {
 import EntityDatabaseAdapter from '../../EntityDatabaseAdapter';
 import IEntityMetricsAdapter, { EntityMetricsLoadType } from '../../metrics/IEntityMetricsAdapter';
 import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
-import { testEntityConfiguration, TestFields } from '../../testfixtures/TestEntity';
+import TestEntity, { testEntityConfiguration, TestFields } from '../../testfixtures/TestEntity';
 import {
   NoCacheStubCacheAdapterProvider,
   InMemoryFullCacheStubCacheAdapterProvider,
@@ -69,7 +69,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -116,7 +117,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -163,7 +165,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
     // use second data manager to ensure that cache is hit instead of data loader
@@ -171,7 +174,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
@@ -205,7 +209,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -240,7 +245,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -283,7 +289,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -321,7 +328,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -359,7 +367,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
@@ -396,7 +405,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -441,7 +451,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      new NoOpEntityMetricsAdapter()
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -467,7 +478,8 @@ describe(EntityDataManager, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      metricsAdapter
+      metricsAdapter,
+      TestEntity.name
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -476,6 +488,7 @@ describe(EntityDataManager, () => {
       metricsAdapterMock.logDataManagerLoadEvent(
         objectContaining({
           type: EntityMetricsLoadType.LOAD_MANY,
+          entityClassName: TestEntity.name,
           count: 1,
         })
       )
@@ -495,6 +508,7 @@ describe(EntityDataManager, () => {
       metricsAdapterMock.logDataManagerLoadEvent(
         objectContaining({
           type: EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
+          entityClassName: TestEntity.name,
           count: 1,
         })
       )
@@ -520,6 +534,7 @@ describe(EntityDataManager, () => {
       metricsAdapterMock.logDataManagerLoadEvent(
         objectContaining({
           type: EntityMetricsLoadType.LOAD_MANY_RAW,
+          entityClassName: TestEntity.name,
           count: 0,
         })
       )

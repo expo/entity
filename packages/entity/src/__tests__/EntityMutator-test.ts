@@ -269,7 +269,8 @@ const createEntityMutatorFactory = (
     databaseAdapter,
     entityCache,
     StubQueryContextProvider,
-    metricsAdapter
+    metricsAdapter,
+    TestEntity.name
   );
   const entityLoaderFactory = new EntityLoaderFactory(
     testEntityConfiguration.idField,
@@ -930,6 +931,7 @@ describe(EntityMutatorFactory, () => {
       spiedMetricsAdapter.logMutatorMutationEvent(
         objectContaining({
           type: EntityMetricsMutationType.CREATE,
+          entityClassName: TestEntity.name,
         })
       )
     ).once();
@@ -937,6 +939,7 @@ describe(EntityMutatorFactory, () => {
       spiedMetricsAdapter.logMutatorMutationEvent(
         objectContaining({
           type: EntityMetricsMutationType.UPDATE,
+          entityClassName: TestEntity.name,
         })
       )
     ).once();
@@ -944,6 +947,7 @@ describe(EntityMutatorFactory, () => {
       spiedMetricsAdapter.logMutatorMutationEvent(
         objectContaining({
           type: EntityMetricsMutationType.DELETE,
+          entityClassName: TestEntity.name,
         })
       )
     ).once();
