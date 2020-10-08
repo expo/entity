@@ -57,7 +57,8 @@ describe(EntityLoader, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      instance(mock<IEntityMetricsAdapter>())
+      instance(mock<IEntityMetricsAdapter>()),
+      TestEntity.name
     );
     const entityLoader = new EntityLoader(
       viewerContext,
@@ -138,7 +139,8 @@ describe(EntityLoader, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      instance(mock<IEntityMetricsAdapter>())
+      instance(mock<IEntityMetricsAdapter>()),
+      TestEntity.name
     );
     const entityLoader = new EntityLoader(
       viewerContext,
@@ -200,7 +202,8 @@ describe(EntityLoader, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      instance(mock<IEntityMetricsAdapter>())
+      instance(mock<IEntityMetricsAdapter>()),
+      TestEntity.name
     );
     const entityLoader = new EntityLoader(
       viewerContext,

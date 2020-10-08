@@ -146,7 +146,8 @@ export class CreateMutator<
   async createAsync(): Promise<Result<TEntity>> {
     return await timeAndLogMutationEventAsync(
       this.metricsAdapter,
-      EntityMetricsMutationType.CREATE
+      EntityMetricsMutationType.CREATE,
+      this.entityClass.name
     )(this.createInTransactionAsync());
   }
 
@@ -329,7 +330,8 @@ export class UpdateMutator<
   async updateAsync(): Promise<Result<TEntity>> {
     return await timeAndLogMutationEventAsync(
       this.metricsAdapter,
-      EntityMetricsMutationType.UPDATE
+      EntityMetricsMutationType.UPDATE,
+      this.entityClass.name
     )(this.updateInTransactionAsync());
   }
 
@@ -498,7 +500,8 @@ export class DeleteMutator<
   async deleteAsync(): Promise<Result<void>> {
     return await timeAndLogMutationEventAsync(
       this.metricsAdapter,
-      EntityMetricsMutationType.DELETE
+      EntityMetricsMutationType.DELETE,
+      this.entityClass.name
     )(this.deleteInTransactionAsync());
   }
 

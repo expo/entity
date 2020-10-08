@@ -211,7 +211,8 @@ export default class EntityCompanionProvider {
     >
   ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     const tableDataCoordinator = this.getTableDataCoordinatorForEntity(
-      entityCompanionDefinition.entityConfiguration
+      entityCompanionDefinition.entityConfiguration,
+      entityClass.name
     );
     return computeIfAbsent(this.companionMap, entityClass.name, () => {
       return new EntityCompanion(
@@ -226,7 +227,8 @@ export default class EntityCompanionProvider {
   }
 
   private getTableDataCoordinatorForEntity<TFields>(
-    entityConfiguration: EntityConfiguration<TFields>
+    entityConfiguration: EntityConfiguration<TFields>,
+    entityClassName: string
   ): EntityTableDataCoordinator<TFields> {
     return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration.tableName, () => {
       const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[
@@ -240,7 +242,8 @@ export default class EntityCompanionProvider {
         entityDatabaseAdapterFlavor.adapterProvider,
         entityCacheAdapterFlavor.cacheAdapterProvider,
         entityDatabaseAdapterFlavor.queryContextProvider,
-        this.metricsAdapter
+        this.metricsAdapter,
+        entityClassName
       );
     });
   }

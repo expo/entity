@@ -23,7 +23,8 @@ export default class EntityTableDataCoordinator<TFields> {
     databaseAdapterProvider: IEntityDatabaseAdapterProvider,
     cacheAdapterProvider: IEntityCacheAdapterProvider,
     private readonly queryContextProvider: EntityQueryContextProvider,
-    metricsAdapter: IEntityMetricsAdapter
+    metricsAdapter: IEntityMetricsAdapter,
+    entityClassName: string
   ) {
     this.databaseAdapter = databaseAdapterProvider.getDatabaseAdapter(entityConfiguration);
     this.cacheAdapter = cacheAdapterProvider.getCacheAdapter(entityConfiguration);
@@ -31,7 +32,8 @@ export default class EntityTableDataCoordinator<TFields> {
       this.databaseAdapter,
       new ReadThroughEntityCache(entityConfiguration, this.cacheAdapter),
       queryContextProvider,
-      metricsAdapter
+      metricsAdapter,
+      entityClassName
     );
   }
 
