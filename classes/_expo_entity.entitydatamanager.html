@@ -107,6 +107,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.entitydatamanager.html#databaseadapter" class="tsd-kind-icon">database<wbr>Adapter</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.entitydatamanager.html#entitycache" class="tsd-kind-icon">entity<wbr>Cache</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.entitydatamanager.html#entityclassname" class="tsd-kind-icon">entity<wbr>Class<wbr>Name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.entitydatamanager.html#fielddataloaders" class="tsd-kind-icon">field<wbr>Data<wbr>Loaders</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.entitydatamanager.html#metricsadapter" class="tsd-kind-icon">metrics<wbr>Adapter</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.entitydatamanager.html#querycontextprovider" class="tsd-kind-icon">query<wbr>Context<wbr>Provider</a></li>
@@ -134,13 +135,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Entity<wbr>Data<wbr>Manager<span class="tsd-signature-symbol">(</span>databaseAdapter<span class="tsd-signature-symbol">: </span><a href="_expo_entity.entitydatabaseadapter.html" class="tsd-signature-type">EntityDatabaseAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, entityCache<span class="tsd-signature-symbol">: </span><a href="_expo_entity.readthroughentitycache.html" class="tsd-signature-type">ReadThroughEntityCache</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, queryContextProvider<span class="tsd-signature-symbol">: </span><a href="_expo_entity.entityquerycontextprovider.html" class="tsd-signature-type">EntityQueryContextProvider</a>, metricsAdapter<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-signature-type">IEntityMetricsAdapter</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.entitydatamanager.html" class="tsd-signature-type">EntityDataManager</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Entity<wbr>Data<wbr>Manager<span class="tsd-signature-symbol">(</span>databaseAdapter<span class="tsd-signature-symbol">: </span><a href="_expo_entity.entitydatabaseadapter.html" class="tsd-signature-type">EntityDatabaseAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, entityCache<span class="tsd-signature-symbol">: </span><a href="_expo_entity.readthroughentitycache.html" class="tsd-signature-type">ReadThroughEntityCache</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, queryContextProvider<span class="tsd-signature-symbol">: </span><a href="_expo_entity.entityquerycontextprovider.html" class="tsd-signature-type">EntityQueryContextProvider</a>, metricsAdapter<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-signature-type">IEntityMetricsAdapter</a>, entityClassName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.entitydatamanager.html" class="tsd-signature-type">EntityDataManager</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L28">packages/entity/src/internal/EntityDataManager.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L28">packages/entity/src/internal/EntityDataManager.ts:28</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -157,6 +158,9 @@
 								<li>
 									<h5>metricsAdapter: <a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-signature-type">IEntityMetricsAdapter</a></h5>
 								</li>
+								<li>
+									<h5>entityClassName: <span class="tsd-signature-type">string</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_expo_entity.entitydatamanager.html" class="tsd-signature-type">EntityDataManager</a></h4>
 						</li>
@@ -171,7 +175,7 @@
 					<div class="tsd-signature tsd-kind-icon">database<wbr>Adapter<span class="tsd-signature-symbol">:</span> <a href="_expo_entity.entitydatabaseadapter.html" class="tsd-signature-type">EntityDatabaseAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L31">packages/entity/src/internal/EntityDataManager.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L31">packages/entity/src/internal/EntityDataManager.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -181,7 +185,17 @@
 					<div class="tsd-signature tsd-kind-icon">entity<wbr>Cache<span class="tsd-signature-symbol">:</span> <a href="_expo_entity.readthroughentitycache.html" class="tsd-signature-type">ReadThroughEntityCache</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L32">packages/entity/src/internal/EntityDataManager.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L32">packages/entity/src/internal/EntityDataManager.ts:32</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="entityclassname" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> entity<wbr>Class<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">entity<wbr>Class<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L35">packages/entity/src/internal/EntityDataManager.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,7 +205,7 @@
 					<div class="tsd-signature tsd-kind-icon">field<wbr>Data<wbr>Loaders<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DataLoader</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = new Map()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L25">packages/entity/src/internal/EntityDataManager.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L25">packages/entity/src/internal/EntityDataManager.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -201,7 +215,7 @@
 					<div class="tsd-signature tsd-kind-icon">metrics<wbr>Adapter<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_expo_entity.ientitymetricsadapter.html" class="tsd-signature-type">IEntityMetricsAdapter</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L34">packages/entity/src/internal/EntityDataManager.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L34">packages/entity/src/internal/EntityDataManager.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -211,7 +225,7 @@
 					<div class="tsd-signature tsd-kind-icon">query<wbr>Context<wbr>Provider<span class="tsd-signature-symbol">:</span> <a href="_expo_entity.entityquerycontextprovider.html" class="tsd-signature-type">EntityQueryContextProvider</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L33">packages/entity/src/internal/EntityDataManager.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L33">packages/entity/src/internal/EntityDataManager.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -228,7 +242,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L37">packages/entity/src/internal/EntityDataManager.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L38">packages/entity/src/internal/EntityDataManager.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -257,7 +271,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L168">packages/entity/src/internal/EntityDataManager.ts:168</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L172">packages/entity/src/internal/EntityDataManager.ts:172</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -289,7 +303,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L182">packages/entity/src/internal/EntityDataManager.ts:182</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L186">packages/entity/src/internal/EntityDataManager.ts:186</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -320,7 +334,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L82">packages/entity/src/internal/EntityDataManager.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L83">packages/entity/src/internal/EntityDataManager.ts:83</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -370,7 +384,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L93">packages/entity/src/internal/EntityDataManager.ts:93</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L95">packages/entity/src/internal/EntityDataManager.ts:95</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -405,7 +419,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L123">packages/entity/src/internal/EntityDataManager.ts:123</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L125">packages/entity/src/internal/EntityDataManager.ts:125</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -456,7 +470,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L149">packages/entity/src/internal/EntityDataManager.ts:149</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L152">packages/entity/src/internal/EntityDataManager.ts:152</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -506,7 +520,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/d0cd8d8/packages/entity/src/internal/EntityDataManager.ts#L55">packages/entity/src/internal/EntityDataManager.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f4cdc01/packages/entity/src/internal/EntityDataManager.ts#L56">packages/entity/src/internal/EntityDataManager.ts:56</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -562,6 +576,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_expo_entity.entitydatamanager.html#entitycache" class="tsd-kind-icon">entity<wbr>Cache</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_expo_entity.entitydatamanager.html#entityclassname" class="tsd-kind-icon">entity<wbr>Class<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_expo_entity.entitydatamanager.html#fielddataloaders" class="tsd-kind-icon">field<wbr>Data<wbr>Loaders</a>
