@@ -78,6 +78,19 @@ Entity is not limited in where it can or should be used, but was designed for us
 
 Note: The entity framework instance should not be shared across multiple requests since it contains a unique memoized [Dataloader](https://github.com/graphql/dataloader#class-dataloader). A long-lived instance is prone to data synchronization issues, especially when the application is scaled horizontally and multiple shared caches would exist for the same data.
 
+## Releasing
+
+To release a new version, let's say `v1.0.0` for example:
+1. `git checkout -b v1.0.0`
+1. `yarn lerna version minor -- --no-push --conventional-commits`
+1. `git push -u origin v1.0.0`
+1. Create a PR from the `v1.0.0` branch, wait for tests, and commit the PR using GitHub interface.
+1. `git checkout master && git pull`
+1. `git tag -d v1.0.0`
+1. `git tag v1.0.0`
+1. `git push origin v1.0.0`
+1. In GitHub release interface, create a new release from the tag, copy changelog changes to release description.
+
 ## License
 
 The Entity source code is made available under the [MIT license](LICENSE).
