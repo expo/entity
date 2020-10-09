@@ -23,6 +23,11 @@ export interface EntityMetricsMutationEvent {
   duration: number;
 }
 
+export interface IncrementLoadCountEvent {
+  fieldValueCount: number;
+  entityClassName: string;
+}
+
 /**
  * An interface for gathering metrics about the Entity framework. Information about
  * entity load and mutation operations is piped to an instance of this adapter.
@@ -45,7 +50,7 @@ export default interface IEntityMetricsAdapter {
    * load methods (not equality conjunction or raw).
    * @param fieldValueCount - count of field values being loaded for a field
    */
-  incrementDataManagerDataloaderLoadCount(fieldValueCount: number): void;
+  incrementDataManagerDataloaderLoadCount(incrementLoadCountEvent: IncrementLoadCountEvent): void;
 
   /**
    * Called when a cache load is initiated via the standard
@@ -53,7 +58,7 @@ export default interface IEntityMetricsAdapter {
    * miss.
    * @param fieldValueCount - count of field values being loaded for a field
    */
-  incrementDataManagerCacheLoadCount(fieldValueCount: number): void;
+  incrementDataManagerCacheLoadCount(incrementLoadCountEvent: IncrementLoadCountEvent): void;
 
   /**
    * Called when a database load is initiated via the standard
@@ -61,5 +66,5 @@ export default interface IEntityMetricsAdapter {
    * miss or when fetching an uncacheable field.
    * @param fieldValueCount - count of field values being loaded for a field
    */
-  incrementDataManagerDatabaseLoadCount(fieldValueCount: number): void;
+  incrementDataManagerDatabaseLoadCount(incrementLoadCountEvent: IncrementLoadCountEvent): void;
 }

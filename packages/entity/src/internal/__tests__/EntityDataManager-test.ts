@@ -9,6 +9,7 @@ import {
   spy,
   anyString,
   resetCalls,
+  deepEqual,
 } from 'ts-mockito';
 
 import EntityDatabaseAdapter from '../../EntityDatabaseAdapter';
@@ -514,9 +515,30 @@ describe(EntityDataManager, () => {
       )
     ).once();
 
-    verify(metricsAdapterMock.incrementDataManagerDataloaderLoadCount(1)).once();
-    verify(metricsAdapterMock.incrementDataManagerCacheLoadCount(1)).once();
-    verify(metricsAdapterMock.incrementDataManagerDatabaseLoadCount(1)).once();
+    verify(
+      metricsAdapterMock.incrementDataManagerDataloaderLoadCount(
+        deepEqual({
+          fieldValueCount: 1,
+          entityClassName: TestEntity.name,
+        })
+      )
+    ).once();
+    verify(
+      metricsAdapterMock.incrementDataManagerCacheLoadCount(
+        deepEqual({
+          fieldValueCount: 1,
+          entityClassName: TestEntity.name,
+        })
+      )
+    ).once();
+    verify(
+      metricsAdapterMock.incrementDataManagerDatabaseLoadCount(
+        deepEqual({
+          fieldValueCount: 1,
+          entityClassName: TestEntity.name,
+        })
+      )
+    ).once();
 
     resetCalls(metricsAdapterMock);
 
