@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "A privacy-first data model",
   "files": [
     "build",
