@@ -57,12 +57,18 @@ export default class EntityDataManager<TFields> {
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
-    this.metricsAdapter.incrementDataManagerCacheLoadCount(fieldValues.length);
+    this.metricsAdapter.incrementDataManagerCacheLoadCount({
+      fieldValueCount: fieldValues.length,
+      entityClassName: this.entityClassName,
+    });
     return await this.entityCache.readManyThroughAsync(
       fieldName,
       fieldValues,
       async (fetcherValues) => {
-        this.metricsAdapter.incrementDataManagerDatabaseLoadCount(fieldValues.length);
+        this.metricsAdapter.incrementDataManagerDatabaseLoadCount({
+          fieldValueCount: fieldValues.length,
+          entityClassName: this.entityClassName,
+        });
         return await this.databaseAdapter.fetchManyWhereAsync(
           this.queryContextProvider.getQueryContext(),
           fieldName,
@@ -102,7 +108,10 @@ export default class EntityDataManager<TFields> {
       return await this.databaseAdapter.fetchManyWhereAsync(queryContext, fieldName, fieldValues);
     }
 
-    this.metricsAdapter.incrementDataManagerDataloaderLoadCount(fieldValues.length);
+    this.metricsAdapter.incrementDataManagerDataloaderLoadCount({
+      fieldValueCount: fieldValues.length,
+      entityClassName: this.entityClassName,
+    });
     const dataLoader = this.getFieldDataLoaderForFieldName(fieldName);
     const results = await dataLoader.loadMany(fieldValues);
     const [values, errors] = partitionErrors(results);
