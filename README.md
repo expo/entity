@@ -91,7 +91,7 @@ To release a new version, let's say `v1.0.0` for example:
 1. `git push origin v1.0.0`
 1. In GitHub release interface, create a new release from the tag, copy changelog changes to release description.
 1. `yarn clean && yarn tsc`
-1. In each public subpackage, run `npm publish`
+1. In each public subpackage, run `npm publish` and enter 2FA token.
 
 ## License
 
