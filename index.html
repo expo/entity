@@ -138,10 +138,10 @@ PhotoView
 				</a>
 				<p>To release a new version, let&#39;s say <code>v1.0.0</code> for example:</p>
 				<ol>
-					<li><code>git checkout -b v1.0.0</code></li>
+					<li><code>git checkout -b bump-v1.0.0</code></li>
 					<li><code>yarn lerna version minor -- --no-push --conventional-commits</code></li>
-					<li><code>git push -u origin v1.0.0</code></li>
-					<li>Create a PR from the <code>v1.0.0</code> branch, wait for tests, and commit the PR using GitHub interface.</li>
+					<li><code>git push -u origin bump-v1.0.0</code></li>
+					<li>Create a PR from the <code>bump-v1.0.0</code> branch, wait for tests, and commit the PR using GitHub interface.</li>
 					<li><code>git checkout master &amp;&amp; git pull</code></li>
 					<li><code>git tag -d v1.0.0</code></li>
 					<li><code>git tag v1.0.0</code></li>
