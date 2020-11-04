@@ -38,7 +38,7 @@ export default class ParentEntity extends Entity<ParentFields, string, ViewerCon
 const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
   idField: 'id',
   tableName: 'parents',
-  inboundEdges: [ChildEntity],
+  inboundEdges: () => [ChildEntity],
   schema: {
     id: new UUIDField({
       columnName: 'id',

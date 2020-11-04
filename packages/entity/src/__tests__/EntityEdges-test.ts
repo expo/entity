@@ -81,7 +81,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
   const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
     idField: 'id',
     tableName: 'parents',
-    inboundEdges: [ChildEntity],
+    inboundEdges: () => [ChildEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
@@ -95,7 +95,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
   const childEntityConfiguration = new EntityConfiguration<ChildFields>({
     idField: 'id',
     tableName: 'children',
-    inboundEdges: [GrandChildEntity],
+    inboundEdges: () => [GrandChildEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',

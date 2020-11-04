@@ -48,7 +48,7 @@ const makeEntityClass = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
   const categoryEntityConfiguration = new EntityConfiguration<CategoryFields>({
     idField: 'id',
     tableName: 'categories',
-    inboundEdges: [CategoryEntity],
+    inboundEdges: () => [CategoryEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
