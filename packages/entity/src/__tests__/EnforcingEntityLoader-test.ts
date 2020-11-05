@@ -286,6 +286,7 @@ describe(EnforcingEntityLoader, () => {
     const knownLoaderOnlyDifferences = [
       'enforcing',
       'invalidateFieldsAsync',
+      'invalidateEntityAsync',
       'tryConstructEntities',
     ];
     expect(loaderProperties).toEqual(expect.arrayContaining(knownLoaderOnlyDifferences));

@@ -285,9 +285,18 @@ export default class EntityLoader<
   }
 
   /**
+   * Invalidate all caches for an entity. One potential use case would be to keep the entity
+   * framework in sync with changes made to data outside of the framework.
+   * @param entity - entity to be invalidated
+   */
+  async invalidateEntityAsync(entity: TEntity): Promise<void> {
+    await this.invalidateFieldsAsync(entity.getAllDatabaseFields());
+  }
+
+  /**
    * Wrap entity construction in try/catch and return Results. Used to prevent constructor errors
    * thrown for one entity instantiation from interfering with other entity instantiatons of the same query.
-   * @param fieldsObject - array of entity data objects to construct entities
+   * @param fieldsObjects - array of entity data objects to construct entities
    */
   private tryConstructEntities(fieldsObjects: readonly TFields[]): readonly Result<TEntity>[] {
     return fieldsObjects.map((fieldsObject) => {
