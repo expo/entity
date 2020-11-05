@@ -629,7 +629,7 @@ export class DeleteMutator<
       TMSelectedFields
     >;
     const entityConfiguration = companionDefinition.entityConfiguration;
-    const inboundEdges = entityConfiguration.inboundEdges;
+    const inboundEdges = entityConfiguration.inboundEdges();
     await Promise.all(
       inboundEdges.map(async (entityClass) => {
         return await mapMapAsync(

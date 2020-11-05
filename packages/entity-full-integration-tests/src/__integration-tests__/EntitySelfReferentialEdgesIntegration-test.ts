@@ -67,7 +67,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
   const categoryEntityConfiguration = new EntityConfiguration<CategoryFields>({
     idField: 'id',
     tableName: categoriesTableName,
-    inboundEdges: [OtherEntity],
+    inboundEdges: () => [OtherEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
@@ -95,7 +95,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
   const otherEntityConfiguration = new EntityConfiguration<OtherFields>({
     idField: 'id',
     tableName: othersTableName,
-    inboundEdges: [CategoryEntity],
+    inboundEdges: () => [CategoryEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',

@@ -1,108 +1,12 @@
-import {
-  EntityPrivacyPolicy,
-  ViewerContext,
-  AlwaysAllowPrivacyPolicyRule,
-  Entity,
-  EntityCompanionDefinition,
-  EntityConfiguration,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-  UUIDField,
-  EntityEdgeDeletionBehavior,
-} from '@expo/entity';
+import { ViewerContext } from '@expo/entity';
 import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
 import Knex from 'knex';
 import { URL } from 'url';
 
 import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
-
-interface ParentFields {
-  id: string;
-}
-
-interface ChildFields {
-  id: string;
-  parent_id: string;
-}
-
-class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {
-  protected readonly readRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly createRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly updateRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly deleteRules = [new AlwaysAllowPrivacyPolicyRule()];
-}
-
-class ParentEntity extends Entity<ParentFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
-    ParentFields,
-    string,
-    ViewerContext,
-    ParentEntity,
-    TestEntityPrivacyPolicy
-  > {
-    return parentEntityCompanion;
-  }
-}
-
-class ChildEntity extends Entity<ChildFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
-    ChildFields,
-    string,
-    ViewerContext,
-    ChildEntity,
-    TestEntityPrivacyPolicy
-  > {
-    return childEntityCompanion;
-  }
-}
-
-const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
-  idField: 'id',
-  tableName: 'parents',
-  inboundEdges: [ChildEntity],
-  schema: {
-    id: new UUIDField({
-      columnName: 'id',
-      cache: true,
-    }),
-  },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
-});
-
-const childEntityConfiguration = new EntityConfiguration<ChildFields>({
-  idField: 'id',
-  tableName: 'children',
-  schema: {
-    id: new UUIDField({
-      columnName: 'id',
-      cache: true,
-    }),
-    parent_id: new UUIDField({
-      columnName: 'parent_id',
-      cache: true,
-      association: {
-        associatedEntityClass: ParentEntity,
-        edgeDeletionBehavior: EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE,
-      },
-    }),
-  },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
-});
-
-const parentEntityCompanion = new EntityCompanionDefinition({
-  entityClass: ParentEntity,
-  entityConfiguration: parentEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
-});
-
-const childEntityCompanion = new EntityCompanionDefinition({
-  entityClass: ChildEntity,
-  entityConfiguration: childEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
-});
+import ChildEntity from './entities/ChildEntity';
+import ParentEntity from './entities/ParentEntity';
 
 async function createOrTruncatePostgresTables(knex: Knex): Promise<void> {
   await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"'); // for uuid_generate_v4()

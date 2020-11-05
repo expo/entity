@@ -13,7 +13,7 @@ export default class EntityConfiguration<TFields> {
   readonly cacheableKeys: ReadonlySet<keyof TFields>;
   readonly cacheKeyVersion: number;
 
-  readonly inboundEdges: IEntityClass<any, any, any, any, any, any>[];
+  readonly inboundEdges: () => IEntityClass<any, any, any, any, any, any>[];
   readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition>;
   readonly entityToDBFieldsKeyMapping: ReadonlyMap<keyof TFields, string>;
   readonly dbToEntityFieldsKeyMapping: ReadonlyMap<string, keyof TFields>;
@@ -25,7 +25,7 @@ export default class EntityConfiguration<TFields> {
     idField,
     tableName,
     schema,
-    inboundEdges = [],
+    inboundEdges = () => [],
     cacheKeyVersion = 0,
     databaseAdapterFlavor,
     cacheAdapterFlavor,
@@ -33,7 +33,7 @@ export default class EntityConfiguration<TFields> {
     idField: keyof TFields;
     tableName: string;
     schema: Record<keyof TFields, EntityFieldDefinition>;
-    inboundEdges?: IEntityClass<any, any, any, any, any, any>[];
+    inboundEdges?: () => IEntityClass<any, any, any, any, any, any>[];
     cacheKeyVersion?: number;
     databaseAdapterFlavor: DatabaseAdapterFlavor;
     cacheAdapterFlavor: CacheAdapterFlavor;
