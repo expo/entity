@@ -260,6 +260,31 @@ describe(EntityLoader, () => {
     ).once();
   });
 
+  it('invalidates upon invalidate by entity', async () => {
+    const viewerContext = instance(mock(ViewerContext));
+    const queryContext = StubQueryContextProvider.getQueryContext();
+    const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
+    const dataManagerMock = mock(EntityDataManager);
+    const dataManagerInstance = instance(dataManagerMock);
+
+    const entityMock = mock(TestEntity);
+    when(entityMock.getAllDatabaseFields()).thenReturn({ customIdField: 'hello' } as any);
+    const entityInstance = instance(entityMock);
+
+    const entityLoader = new EntityLoader(
+      viewerContext,
+      queryContext,
+      testEntityConfiguration.idField,
+      TestEntity,
+      privacyPolicy,
+      dataManagerInstance
+    );
+    await entityLoader.invalidateEntityAsync(entityInstance);
+    verify(
+      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: 'hello' }))
+    ).once();
+  });
+
   it('returns error result when not allowed', async () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
