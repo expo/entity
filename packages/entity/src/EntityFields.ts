@@ -50,7 +50,7 @@ export interface EntityAssociationDefinition<
   /**
    * Class of entity on the other end of this edge.
    */
-  associatedEntityClass: () => IEntityClass<
+  getAssociatedEntityClass: () => IEntityClass<
     TAssociatedFields,
     TAssociatedID,
     TViewerContext,

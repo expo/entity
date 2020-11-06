@@ -48,7 +48,7 @@ const makeEntityClass = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
   const categoryEntityConfiguration = new EntityConfiguration<CategoryFields>({
     idField: 'id',
     tableName: 'categories',
-    inboundEdges: () => [CategoryEntity],
+    getInboundEdges: () => [CategoryEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
@@ -58,7 +58,7 @@ const makeEntityClass = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
         columnName: 'parent_category_id',
         cache: true,
         association: {
-          associatedEntityClass: () => CategoryEntity,
+          getAssociatedEntityClass: () => CategoryEntity,
           edgeDeletionBehavior,
         },
       }),
