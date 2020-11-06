@@ -640,8 +640,9 @@ export class DeleteMutator<
               return;
             }
 
-            const associatedConfiguration = association.associatedEntityClass.getCompanionDefinition()
-              .entityConfiguration;
+            const associatedConfiguration = association
+              .associatedEntityClass()
+              .getCompanionDefinition().entityConfiguration;
             if (associatedConfiguration !== entityConfiguration) {
               return;
             }

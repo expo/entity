@@ -77,7 +77,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
         columnName: 'parent_other_id',
         cache: true,
         association: {
-          associatedEntityClass: OtherEntity,
+          associatedEntityClass: () => OtherEntity,
           edgeDeletionBehavior,
         },
       }),
@@ -105,7 +105,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
         columnName: 'parent_category_id',
         cache: true,
         association: {
-          associatedEntityClass: CategoryEntity,
+          associatedEntityClass: () => CategoryEntity,
           edgeDeletionBehavior,
         },
       }),

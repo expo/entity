@@ -58,7 +58,7 @@ const makeEntityClass = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
         columnName: 'parent_category_id',
         cache: true,
         association: {
-          associatedEntityClass: CategoryEntity,
+          associatedEntityClass: () => CategoryEntity,
           edgeDeletionBehavior,
         },
       }),
