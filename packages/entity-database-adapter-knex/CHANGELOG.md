@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.1](https://github.com/expo/entity/compare/v0.9.0...v0.9.1) (2020-11-06)
+
+**Note:** Version bump only for package @expo/entity-database-adapter-knex
+
+
+
+
+
 # [0.9.0](https://github.com/expo/entity/compare/v0.8.1...v0.9.0) (2020-11-05)
 
 **Note:** Version bump only for package @expo/entity-database-adapter-knex
