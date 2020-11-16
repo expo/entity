@@ -570,7 +570,7 @@ describe(EntityDataManager, () => {
     verify(metricsAdapterMock.incrementDataManagerDatabaseLoadCount(anyNumber())).never();
   });
 
-  it('throws when a load by value is null or undefined', async () => {
+  it('throws when a load-by value is null or undefined', async () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
