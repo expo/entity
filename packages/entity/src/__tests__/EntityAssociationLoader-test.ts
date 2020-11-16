@@ -9,7 +9,7 @@ import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUn
 
 describe(EntityAssociationLoader, () => {
   describe('loadAssociatedEntityAsync', () => {
-    it('loads associated entities by ID', async () => {
+    it('loads associated entities by ID and correctly handles a null value', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
       const testOtherEntity = await enforceAsyncResult(
@@ -24,6 +24,11 @@ describe(EntityAssociationLoader, () => {
         testEntity.associationLoader().loadAssociatedEntityAsync('stringField', TestEntity)
       );
       expect(loadedOther.getID()).toEqual(testOtherEntity.getID());
+
+      const loadedOther2 = await enforceAsyncResult(
+        testEntity.associationLoader().loadAssociatedEntityAsync('nullableField', TestEntity)
+      );
+      expect(loadedOther2).toBeNull();
     });
   });
 
@@ -62,7 +67,7 @@ describe(EntityAssociationLoader, () => {
       const loadedOtherResult = await testEntity
         .associationLoader()
         .loadAssociatedEntityByFieldEqualingAsync('stringField', TestEntity, 'customIdField');
-      expect(loadedOtherResult?.enforceValue().getID()).toEqual(testOtherEntity.getID());
+      expect(loadedOtherResult.enforceValue()?.getID()).toEqual(testOtherEntity.getID());
     });
 
     it('returns null when loading associated entities by field equaling a non existent association', async () => {
@@ -74,7 +79,19 @@ describe(EntityAssociationLoader, () => {
       const loadedOtherResult = await testEntity
         .associationLoader()
         .loadAssociatedEntityByFieldEqualingAsync('stringField', TestEntity, 'customIdField');
-      expect(loadedOtherResult).toBeNull();
+      expect(loadedOtherResult.enforceValue()).toBeNull();
+    });
+
+    it('returns null when load-by field is null', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new TestViewerContext(companionProvider);
+      const testEntity = await enforceAsyncResult(
+        TestEntity.creator(viewerContext).setField('stringField', 'blah').createAsync()
+      );
+      const loadedOtherResult = await testEntity
+        .associationLoader()
+        .loadAssociatedEntityByFieldEqualingAsync('nullableField', TestEntity, 'customIdField');
+      expect(loadedOtherResult.enforceValue()).toBeNull();
     });
   });
 
@@ -102,6 +119,22 @@ describe(EntityAssociationLoader, () => {
       expect(loaded.find((e) => e.getID() === testOtherEntity1.getID())).not.toBeUndefined();
       expect(loaded.find((e) => e.getID() === testOtherEntity2.getID())).not.toBeUndefined();
     });
+
+    it('returns empty results when field being queried by is null', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new TestViewerContext(companionProvider);
+      const testEntity = await enforceAsyncResult(TestEntity.creator(viewerContext).createAsync());
+      const loaded = await enforceResultsAsync(
+        testEntity
+          .associationLoader()
+          .loadManyAssociatedEntitiesByFieldEqualingAsync(
+            'nullableField',
+            TestEntity,
+            'stringField'
+          )
+      );
+      expect(loaded).toHaveLength(0);
+    });
   });
 
   describe('loadAssociatedEntityThroughAsync', () => {
@@ -127,7 +160,7 @@ describe(EntityAssociationLoader, () => {
           fieldIdentifyingAssociatedEntity: 'foreignKey',
         },
       ]);
-      expect(loaded2Result?.enforceValue().getID()).toEqual(testEntity2.getID());
+      expect(loaded2Result.enforceValue()?.getID()).toEqual(testEntity2.getID());
 
       const loaded3Result = await testEntity.associationLoader().loadAssociatedEntityThroughAsync([
         {
@@ -139,7 +172,7 @@ describe(EntityAssociationLoader, () => {
           fieldIdentifyingAssociatedEntity: 'testIndexedField',
         },
       ]);
-      expect(loaded3Result?.enforceValue().getID()).toEqual(testEntity3.getID());
+      expect(loaded3Result.enforceValue()?.getID()).toEqual(testEntity3.getID());
 
       const loaded4Result = await testEntity.associationLoader().loadAssociatedEntityThroughAsync([
         {
@@ -155,7 +188,7 @@ describe(EntityAssociationLoader, () => {
           fieldIdentifyingAssociatedEntity: 'foreignKey',
         },
       ]);
-      expect(loaded4Result?.enforceValue().getID()).toEqual(testEntity4.getID());
+      expect(loaded4Result.enforceValue()?.getID()).toEqual(testEntity4.getID());
     });
 
     it('fails when chain loading associated entity fails', async () => {
@@ -193,7 +226,7 @@ describe(EntityAssociationLoader, () => {
           associatedEntityLookupByField: 'stringField',
         },
       ]);
-      expect(loaded2Result?.enforceValue().getID()).toEqual(testEntity2.getID());
+      expect(loaded2Result.enforceValue()?.getID()).toEqual(testEntity2.getID());
     });
 
     it('returns null when chain loading by field equality returns null', async () => {
@@ -211,7 +244,24 @@ describe(EntityAssociationLoader, () => {
           associatedEntityLookupByField: 'stringField',
         },
       ]);
-      expect(loaded2Result).toBeNull();
+      expect(loaded2Result.enforceValue()).toBeNull();
+    });
+
+    it('returns null when chain loading by field is null', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new TestViewerContext(companionProvider);
+
+      const testEntity = await enforceAsyncResult(
+        TestEntity.creator(viewerContext).setField('nullableField', null).createAsync()
+      );
+
+      const loadedResult = await testEntity.associationLoader().loadAssociatedEntityThroughAsync([
+        {
+          associatedEntityClass: TestEntity,
+          fieldIdentifyingAssociatedEntity: 'nullableField',
+        },
+      ]);
+      expect(loadedResult.enforceValue()).toBeNull();
     });
   });
 });

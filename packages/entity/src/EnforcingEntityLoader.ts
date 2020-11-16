@@ -79,7 +79,7 @@ export default class EnforcingEntityLoader<
       uniqueFieldName,
       fieldValue
     );
-    return entityResult ? entityResult.enforceValue() : null;
+    return entityResult.enforceValue();
   }
 
   /**
@@ -98,7 +98,7 @@ export default class EnforcingEntityLoader<
    */
   async loadByIDNullableAsync(id: TID): Promise<TEntity | null> {
     const entityResult = await this.entityLoader.loadByIDNullableAsync(id);
-    return entityResult ? entityResult.enforceValue() : null;
+    return entityResult.enforceValue();
   }
 
   /**

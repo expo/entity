@@ -103,6 +103,15 @@ export default class EntityDataManager<TFields> {
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
+    const nullOrUndefinedValueIndex = fieldValues.findIndex(
+      (value) => value === null || value === undefined
+    );
+    if (nullOrUndefinedValueIndex >= 0) {
+      throw new Error(
+        `Invalid load: ${this.entityClassName} (${fieldName} = ${fieldValues[nullOrUndefinedValueIndex]})`
+      );
+    }
+
     // don't cache when in transaction, as rollbacks complicate things significantly
     if (queryContext.isInTransaction()) {
       return await this.databaseAdapter.fetchManyWhereAsync(queryContext, fieldName, fieldValues);

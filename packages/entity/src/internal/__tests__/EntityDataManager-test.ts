@@ -36,6 +36,7 @@ const getObjects = (): Map<string, TestFields[]> =>
           stringField: 'hello',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
         {
           customIdField: '2',
@@ -43,6 +44,7 @@ const getObjects = (): Map<string, TestFields[]> =>
           stringField: 'hello',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
         {
           customIdField: '3',
@@ -50,6 +52,7 @@ const getObjects = (): Map<string, TestFields[]> =>
           stringField: 'world',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
       ],
     ],
@@ -565,5 +568,35 @@ describe(EntityDataManager, () => {
     verify(metricsAdapterMock.incrementDataManagerDataloaderLoadCount(anyNumber())).never();
     verify(metricsAdapterMock.incrementDataManagerCacheLoadCount(anyNumber())).never();
     verify(metricsAdapterMock.incrementDataManagerDatabaseLoadCount(anyNumber())).never();
+  });
+
+  it('throws when a load by value is null or undefined', async () => {
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name
+    );
+    const queryContext = StubQueryContextProvider.getQueryContext();
+
+    await expect(
+      entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'nullableField', [null as any])
+    ).rejects.toThrowError('Invalid load: TestEntity (nullableField = null)');
+
+    await expect(
+      entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'nullableField', [
+        undefined as any,
+      ])
+    ).rejects.toThrowError('Invalid load: TestEntity (nullableField = undefined)');
   });
 });

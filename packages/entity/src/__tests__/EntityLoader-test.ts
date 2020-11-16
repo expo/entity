@@ -36,6 +36,7 @@ describe(EntityLoader, () => {
                 numberField: 5,
                 stringField: 'huh',
                 dateField: dateToInsert,
+                nullableField: null,
               },
               {
                 customIdField: 'world',
@@ -43,6 +44,7 @@ describe(EntityLoader, () => {
                 numberField: 3,
                 stringField: 'huh',
                 dateField: dateToInsert,
+                nullableField: null,
               },
             ],
           ],
@@ -79,16 +81,16 @@ describe(EntityLoader, () => {
 
     const entityResultNumber3 = await entityLoader.loadByFieldEqualingAsync('numberField', 3);
     expect(entityResultNumber3).not.toBeNull();
-    expect(entityResultNumber3!.enforceValue().getID()).toEqual('world');
+    expect(entityResultNumber3.enforceValue()?.getID()).toEqual('world');
 
     const entityResultNumber4 = await entityLoader.loadByFieldEqualingAsync('numberField', 4);
-    expect(entityResultNumber4).toBeNull();
+    expect(entityResultNumber4.enforceValue()).toBeNull();
 
     await expect(entityLoader.loadByFieldEqualingAsync('stringField', 'huh')).rejects.toThrowError(
       'loadByFieldEqualing: Multiple entities of type TestEntity found for stringField=huh'
     );
 
-    await expect(entityLoader.loadByIDNullableAsync('fake')).resolves.toBeNull();
+    expect((await entityLoader.loadByIDNullableAsync('fake')).enforceValue()).toBeNull();
     await expect(entityLoader.loadByIDNullableAsync('hello')).resolves.not.toBeNull();
   });
 
@@ -112,6 +114,7 @@ describe(EntityLoader, () => {
                 numberField: 4,
                 testIndexedField: '4',
                 dateField: new Date(),
+                nullableField: null,
               },
               {
                 customIdField: 'world',
@@ -119,6 +122,7 @@ describe(EntityLoader, () => {
                 numberField: 4,
                 testIndexedField: '5',
                 dateField: new Date(),
+                nullableField: null,
               },
               {
                 customIdField: 'blah',
@@ -126,6 +130,7 @@ describe(EntityLoader, () => {
                 numberField: 4,
                 testIndexedField: '6',
                 dateField: new Date(),
+                nullableField: null,
               },
             ],
           ],
@@ -189,6 +194,7 @@ describe(EntityLoader, () => {
                 testIndexedField: '1',
                 numberField: 3,
                 dateField: new Date(),
+                nullableField: null,
               },
             ],
           ],

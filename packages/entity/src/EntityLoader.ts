@@ -132,13 +132,13 @@ export default class EntityLoader<
   async loadByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     uniqueFieldName: N,
     fieldValue: NonNullable<TFields[N]>
-  ): Promise<Result<TEntity> | null> {
+  ): Promise<Result<TEntity | null>> {
     const entityResults = await this.loadManyByFieldEqualingAsync(uniqueFieldName, fieldValue);
     invariant(
       entityResults.length <= 1,
       `loadByFieldEqualing: Multiple entities of type ${this.entityClass.name} found for ${uniqueFieldName}=${fieldValue}`
     );
-    return entityResults[0] ?? null;
+    return entityResults[0] ?? result(null);
   }
 
   /**
@@ -160,7 +160,7 @@ export default class EntityLoader<
    * @param id - ID of the entity
    * @returns entity result for matching ID, or null if no entity exists for ID.
    */
-  async loadByIDNullableAsync(id: TID): Promise<Result<TEntity> | null> {
+  async loadByIDNullableAsync(id: TID): Promise<Result<TEntity | null>> {
     return await this.loadByFieldEqualingAsync(this.idField, id as any);
   }
 
