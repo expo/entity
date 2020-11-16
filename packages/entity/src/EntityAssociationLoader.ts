@@ -60,7 +60,9 @@ export default class EntityAssociationLoader<
   > {
     const associatedEntityID = this.entity.getField(fieldIdentifyingAssociatedEntity);
     if (!associatedEntityID) {
-      return result(null) as any;
+      // @ts-expect-error typechecker is not sufficiently able to infer relationship between the
+      // type of associatedEntityID and the return type of this function
+      return result(null);
     }
 
     const loader = this.entity
@@ -68,7 +70,9 @@ export default class EntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getLoaderFactory()
       .forLoad(queryContext);
-    return (await loader.loadByIDAsync((associatedEntityID as unknown) as TAssociatedID)) as any;
+
+    // @ts-expect-error
+    return await loader.loadByIDAsync((associatedEntityID as unknown) as TAssociatedID);
   }
 
   /**
