@@ -310,6 +310,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '4',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
         {
           customIdField: 'world',
@@ -317,6 +318,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '5',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
       const newEntity = await entityMutatorFactory
@@ -336,6 +338,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '4',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
         {
           customIdField: 'world',
@@ -343,6 +346,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '5',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -372,6 +376,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '4',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
         {
           customIdField: 'world',
@@ -379,6 +384,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '5',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -409,6 +415,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '4',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
         {
           customIdField: 'world',
@@ -416,6 +423,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '5',
           numberField: 1,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -441,6 +449,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '3',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
         {
           customIdField: 'world',
@@ -448,6 +457,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '4',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -484,6 +494,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '3',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
         {
           customIdField: 'world',
@@ -491,6 +502,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '4',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -528,6 +540,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '3',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
         {
           customIdField: 'world',
@@ -535,6 +548,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '4',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -573,6 +587,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '3',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
         {
           customIdField: 'world',
@@ -580,6 +595,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '4',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -609,6 +625,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '3',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -640,6 +657,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '3',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -674,6 +692,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '3',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -709,6 +728,7 @@ describe(EntityMutatorFactory, () => {
           testIndexedField: '3',
           numberField: 3,
           dateField: new Date(),
+          nullableField: null,
         },
       ]);
 
@@ -734,6 +754,7 @@ describe(EntityMutatorFactory, () => {
         testIndexedField: '3',
         numberField: 3,
         dateField: new Date(),
+        nullableField: null,
       },
     ]);
 

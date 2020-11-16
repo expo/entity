@@ -23,6 +23,7 @@ export default class EntityAssociationLoader<
    * @param queryContext - query context in which to perform the load
    */
   async loadAssociatedEntityAsync<
+    TIdentifyingField extends keyof Pick<TFields, TSelectedFields>,
     TAssociatedFields,
     TAssociatedID,
     TAssociatedEntity extends ReadonlyEntity<
@@ -40,7 +41,7 @@ export default class EntityAssociationLoader<
     >,
     TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
   >(
-    fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
+    fieldIdentifyingAssociatedEntity: TIdentifyingField,
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
       TAssociatedID,
@@ -54,14 +55,20 @@ export default class EntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getQueryContextProvider()
       .getQueryContext()
-  ): Promise<Result<TAssociatedEntity>> {
+  ): Promise<
+    Result<null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity>
+  > {
     const associatedEntityID = this.entity.getField(fieldIdentifyingAssociatedEntity);
+    if (!associatedEntityID) {
+      return result(null) as any;
+    }
+
     const loader = this.entity
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getLoaderFactory()
       .forLoad(queryContext);
-    return await loader.loadByIDAsync((associatedEntityID as unknown) as TAssociatedID);
+    return (await loader.loadByIDAsync((associatedEntityID as unknown) as TAssociatedID)) as any;
   }
 
   /**
@@ -161,6 +168,9 @@ export default class EntityAssociationLoader<
       .getQueryContext()
   ): Promise<Result<TAssociatedEntity> | null> {
     const associatedFieldValue = this.entity.getField(fieldIdentifyingAssociatedEntity);
+    if (!associatedFieldValue) {
+      return null;
+    }
     const loader = this.entity
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
@@ -215,6 +225,10 @@ export default class EntityAssociationLoader<
       .getQueryContext()
   ): Promise<readonly Result<TAssociatedEntity>[]> {
     const associatedFieldValue = this.entity.getField(fieldIdentifyingAssociatedEntity);
+    if (!associatedFieldValue) {
+      return [];
+    }
+
     const loader = this.entity
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
@@ -424,13 +438,19 @@ export default class EntityAssociationLoader<
             queryContext
           );
       } else {
-        associatedEntityResult = await currentEntity
+        const associatedEntityResultLocal = await currentEntity
           .associationLoader()
           .loadAssociatedEntityAsync(
             fieldIdentifyingAssociatedEntity,
             associatedEntityClass,
             queryContext
           );
+
+        if (associatedEntityResultLocal.ok && associatedEntityResultLocal.value === null) {
+          associatedEntityResult = null;
+        } else {
+          associatedEntityResult = associatedEntityResultLocal;
+        }
       }
 
       if (!associatedEntityResult) {
