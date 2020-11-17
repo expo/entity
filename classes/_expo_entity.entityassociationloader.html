@@ -136,7 +136,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/b22c734/packages/entity/src/EntityAssociationLoader.ts#L15">packages/entity/src/EntityAssociationLoader.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/d960329/packages/entity/src/EntityAssociationLoader.ts#L15">packages/entity/src/EntityAssociationLoader.ts:15</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -158,7 +158,7 @@
 					<div class="tsd-signature tsd-kind-icon">entity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TEntity</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/b22c734/packages/entity/src/EntityAssociationLoader.ts#L16">packages/entity/src/EntityAssociationLoader.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/d960329/packages/entity/src/EntityAssociationLoader.ts#L16">packages/entity/src/EntityAssociationLoader.ts:16</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -169,13 +169,13 @@
 					<a name="loadassociatedentityasync" class="tsd-anchor"></a>
 					<h3>load<wbr>Associated<wbr>Entity<wbr>Async</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">load<wbr>Associated<wbr>Entity<wbr>Async&lt;TAssociatedFields, TAssociatedID, TAssociatedEntity, TAssociatedPrivacyPolicy, TAssociatedSelectedFields&gt;<span class="tsd-signature-symbol">(</span>fieldIdentifyingAssociatedEntity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span>, associatedEntityClass<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.ientityclass.html" class="tsd-signature-type">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span>, queryContext<span class="tsd-signature-symbol">?: </span><a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">load<wbr>Associated<wbr>Entity<wbr>Async&lt;TIdentifyingField, TAssociatedFields, TAssociatedID, TAssociatedEntity, TAssociatedPrivacyPolicy, TAssociatedSelectedFields&gt;<span class="tsd-signature-symbol">(</span>fieldIdentifyingAssociatedEntity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TIdentifyingField</span>, associatedEntityClass<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.ientityclass.html" class="tsd-signature-type">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span>, queryContext<span class="tsd-signature-symbol">?: </span><a href="_expo_entity.entityquerycontext.html" class="tsd-signature-type">EntityQueryContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">TIdentifyingField</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/b22c734/packages/entity/src/EntityAssociationLoader.ts#L25">packages/entity/src/EntityAssociationLoader.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/d960329/packages/entity/src/EntityAssociationLoader.ts#L25">packages/entity/src/EntityAssociationLoader.ts:25</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -186,6 +186,9 @@
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TIdentifyingField<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
+								</li>
 								<li>
 									<h4>TAssociatedFields</h4>
 								</li>
@@ -205,7 +208,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>fieldIdentifyingAssociatedEntity: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>fieldIdentifyingAssociatedEntity: <span class="tsd-signature-type">TIdentifyingField</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>field of this entity containing the ID of the associated entity</p>
 									</div>
@@ -223,7 +226,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">TIdentifyingField</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -237,7 +240,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/b22c734/packages/entity/src/EntityAssociationLoader.ts#L129">packages/entity/src/EntityAssociationLoader.ts:129</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/d960329/packages/entity/src/EntityAssociationLoader.ts#L141">packages/entity/src/EntityAssociationLoader.ts:141</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -308,7 +311,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/b22c734/packages/entity/src/EntityAssociationLoader.ts#L235">packages/entity/src/EntityAssociationLoader.ts:235</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/d960329/packages/entity/src/EntityAssociationLoader.ts#L254">packages/entity/src/EntityAssociationLoader.ts:254</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -355,7 +358,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/b22c734/packages/entity/src/EntityAssociationLoader.ts#L269">packages/entity/src/EntityAssociationLoader.ts:269</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/d960329/packages/entity/src/EntityAssociationLoader.ts#L288">packages/entity/src/EntityAssociationLoader.ts:288</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -417,7 +420,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/b22c734/packages/entity/src/EntityAssociationLoader.ts#L324">packages/entity/src/EntityAssociationLoader.ts:324</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/d960329/packages/entity/src/EntityAssociationLoader.ts#L343">packages/entity/src/EntityAssociationLoader.ts:343</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -491,7 +494,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/b22c734/packages/entity/src/EntityAssociationLoader.ts#L400">packages/entity/src/EntityAssociationLoader.ts:400</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/d960329/packages/entity/src/EntityAssociationLoader.ts#L419">packages/entity/src/EntityAssociationLoader.ts:419</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -529,7 +532,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/b22c734/packages/entity/src/EntityAssociationLoader.ts#L76">packages/entity/src/EntityAssociationLoader.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/d960329/packages/entity/src/EntityAssociationLoader.ts#L88">packages/entity/src/EntityAssociationLoader.ts:88</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -593,7 +596,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/b22c734/packages/entity/src/EntityAssociationLoader.ts#L183">packages/entity/src/EntityAssociationLoader.ts:183</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/d960329/packages/entity/src/EntityAssociationLoader.ts#L198">packages/entity/src/EntityAssociationLoader.ts:198</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
