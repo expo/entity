@@ -60,9 +60,9 @@ export default class EntityAssociationLoader<
   > {
     const associatedEntityID = this.entity.getField(fieldIdentifyingAssociatedEntity);
     if (!associatedEntityID) {
-      // @ts-expect-error typechecker is not sufficiently able to infer relationship between the
-      // type of associatedEntityID and the return type of this function
-      return result(null);
+      return result(null) as Result<
+        null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity
+      >;
     }
 
     const loader = this.entity
@@ -71,8 +71,9 @@ export default class EntityAssociationLoader<
       .getLoaderFactory()
       .forLoad(queryContext);
 
-    // @ts-expect-error
-    return await loader.loadByIDAsync((associatedEntityID as unknown) as TAssociatedID);
+    return (await loader.loadByIDAsync((associatedEntityID as unknown) as TAssociatedID)) as Result<
+      null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity
+    >;
   }
 
   /**
