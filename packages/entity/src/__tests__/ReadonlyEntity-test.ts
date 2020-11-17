@@ -63,6 +63,7 @@ describe(ReadonlyEntity, () => {
         stringField: '3',
         numberField: 4,
         dateField: new Date(),
+        nullableField: null,
       });
       expect(testEntity.getUniqueIdentifier()).not.toEqual(testEntity2.getUniqueIdentifier());
     });

@@ -18,6 +18,7 @@ export type TestFields = {
   stringField: string;
   numberField: number;
   dateField: Date;
+  nullableField: string | null;
 };
 
 export const testEntityConfiguration = new EntityConfiguration<TestFields>({
@@ -39,6 +40,9 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields>({
     }),
     dateField: new DateField({
       columnName: 'date_field',
+    }),
+    nullableField: new StringField({
+      columnName: 'nullable_field',
     }),
   },
   databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
@@ -88,6 +92,7 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
         stringField: 'hello',
         numberField: 1,
         dateField: new Date(),
+        nullableField: null,
       })
     );
   }

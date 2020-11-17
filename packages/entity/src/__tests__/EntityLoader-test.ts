@@ -36,6 +36,7 @@ describe(EntityLoader, () => {
                 numberField: 5,
                 stringField: 'huh',
                 dateField: dateToInsert,
+                nullableField: null,
               },
               {
                 customIdField: 'world',
@@ -43,6 +44,7 @@ describe(EntityLoader, () => {
                 numberField: 3,
                 stringField: 'huh',
                 dateField: dateToInsert,
+                nullableField: null,
               },
             ],
           ],
@@ -112,6 +114,7 @@ describe(EntityLoader, () => {
                 numberField: 4,
                 testIndexedField: '4',
                 dateField: new Date(),
+                nullableField: null,
               },
               {
                 customIdField: 'world',
@@ -119,6 +122,7 @@ describe(EntityLoader, () => {
                 numberField: 4,
                 testIndexedField: '5',
                 dateField: new Date(),
+                nullableField: null,
               },
               {
                 customIdField: 'blah',
@@ -126,6 +130,7 @@ describe(EntityLoader, () => {
                 numberField: 4,
                 testIndexedField: '6',
                 dateField: new Date(),
+                nullableField: null,
               },
             ],
           ],
@@ -189,6 +194,7 @@ describe(EntityLoader, () => {
                 testIndexedField: '1',
                 numberField: 3,
                 dateField: new Date(),
+                nullableField: null,
               },
             ],
           ],
