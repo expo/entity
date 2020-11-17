@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/expo/entity/compare/v0.9.1...v0.10.0) (2020-11-17)
+
+
+### Bug Fixes
+
+* fix null handling in load paths (try 2) ([#96](https://github.com/expo/entity/issues/96)) ([d960329](https://github.com/expo/entity/commit/d9603298e0cc5c3c2b0cca959876e9195555fb57))
+
+
+
+
+
 ## [0.9.1](https://github.com/expo/entity/compare/v0.9.0...v0.9.1) (2020-11-06)
 
 
