@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import EntityQueryContextProvider from './EntityQueryContextProvider';
 
 export type PostCommitCallback = (...args: any) => Promise<any>;
@@ -12,7 +14,7 @@ export type PostCommitCallback = (...args: any) => Promise<any>;
 export abstract class EntityQueryContext {
   constructor(private readonly queryInterface: any) {}
 
-  abstract isInTransaction(): boolean;
+  abstract isInTransaction(): this is EntityTransactionalQueryContext;
 
   getQueryInterface(): any {
     return this.queryInterface;
@@ -31,7 +33,7 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
     super(queryInterface);
   }
 
-  isInTransaction(): boolean {
+  isInTransaction(): this is EntityTransactionalQueryContext {
     return false;
   }
 
@@ -43,6 +45,8 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
 }
 
 export class EntityTransactionalQueryContext extends EntityQueryContext {
+  public readonly transactionID = uuidv4();
+
   private readonly postCommitCallbacks: PostCommitCallback[] = [];
 
   public appendPostCommitCallback(callback: PostCommitCallback): void {
@@ -55,7 +59,7 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
     await Promise.all(callbacks.map((callback) => callback()));
   }
 
-  isInTransaction(): boolean {
+  isInTransaction(): this is EntityTransactionalQueryContext {
     return true;
   }
 
