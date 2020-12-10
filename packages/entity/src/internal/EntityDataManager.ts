@@ -4,7 +4,7 @@ import EntityDatabaseAdapter, {
   FieldEqualityCondition,
   QuerySelectionModifiers,
 } from '../EntityDatabaseAdapter';
-import { EntityQueryContext } from '../EntityQueryContext';
+import { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
 import EntityQueryContextProvider from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
 import {
@@ -15,6 +15,13 @@ import IEntityMetricsAdapter, { EntityMetricsLoadType } from '../metrics/IEntity
 import { computeIfAbsent, zipToMap } from '../utils/collections/maps';
 import ReadThroughEntityCache from './ReadThroughEntityCache';
 
+type FieldDataLoader<TFields> = DataLoader<
+  NonNullable<TFields[keyof TFields]>,
+  readonly Readonly<TFields>[]
+>;
+
+type FieldDataLoadersMap<TFields> = Map<keyof TFields, FieldDataLoader<TFields>>;
+
 /**
  * A data manager is responsible for orchestrating multiple sources of entity
  * data including local caches, {@link EntityCacheAdapter}, and {@link EntityDatabaseAdapter}.
@@ -22,9 +29,11 @@ import ReadThroughEntityCache from './ReadThroughEntityCache';
  * It is also responsible for invalidating all sources of data when mutated using {@link EntityMutator}.
  */
 export default class EntityDataManager<TFields> {
-  private readonly fieldDataLoaders: Map<
-    keyof TFields,
-    DataLoader<NonNullable<TFields[keyof TFields]>, readonly Readonly<TFields>[]>
+  private readonly regularFieldDataLoaders: FieldDataLoadersMap<TFields> = new Map();
+
+  private readonly transactionalFieldDataLoaders: Map<
+    string,
+    FieldDataLoadersMap<TFields>
   > = new Map();
 
   constructor(
@@ -35,10 +44,10 @@ export default class EntityDataManager<TFields> {
     private readonly entityClassName: string
   ) {}
 
-  private getFieldDataLoaderForFieldName<N extends keyof TFields>(
+  private getRegularFieldDataLoderForFieldName<N extends keyof TFields>(
     fieldName: N
-  ): DataLoader<NonNullable<TFields[N]>, readonly Readonly<TFields>[]> {
-    return computeIfAbsent(this.fieldDataLoaders, fieldName, () => {
+  ): FieldDataLoader<TFields> {
+    return computeIfAbsent(this.regularFieldDataLoaders, fieldName, () => {
       return new DataLoader(
         async (
           fieldValues: readonly NonNullable<TFields[N]>[]
@@ -53,6 +62,43 @@ export default class EntityDataManager<TFields> {
     });
   }
 
+  private getTransactionalFieldDataLoaderForFieldName<N extends keyof TFields>(
+    queryContext: EntityTransactionalQueryContext,
+    fieldName: N
+  ): FieldDataLoader<TFields> {
+    const fieldDataLoaderMap = computeIfAbsent(
+      this.transactionalFieldDataLoaders,
+      queryContext.transactionID,
+      () => new Map<keyof TFields, FieldDataLoader<TFields>>()
+    );
+    return computeIfAbsent(fieldDataLoaderMap, fieldName, () => {
+      return new DataLoader(
+        async (
+          fieldValues: readonly NonNullable<TFields[N]>[]
+        ): Promise<readonly (readonly TFields[])[]> => {
+          const objectMap = await this.loadManyForTransactionalDataLoaderByFieldEqualingAsync(
+            fieldName,
+            fieldValues,
+            queryContext
+          );
+          return fieldValues.map((fv) => objectMap.get(fv) ?? []);
+        }
+      );
+    });
+  }
+
+  private async loadManyForTransactionalDataLoaderByFieldEqualingAsync<N extends keyof TFields>(
+    fieldName: N,
+    fieldValues: readonly NonNullable<TFields[N]>[],
+    queryContext: EntityTransactionalQueryContext
+  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
+    this.metricsAdapter.incrementDataManagerDatabaseLoadCount({
+      fieldValueCount: fieldValues.length,
+      entityClassName: this.entityClassName,
+    });
+    return await this.databaseAdapter.fetchManyWhereAsync(queryContext, fieldName, fieldValues);
+  }
+
   private async loadManyForDataLoaderByFieldEqualingAsync<N extends keyof TFields>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
@@ -61,10 +107,11 @@ export default class EntityDataManager<TFields> {
       fieldValueCount: fieldValues.length,
       entityClassName: this.entityClassName,
     });
+
     return await this.entityCache.readManyThroughAsync(
       fieldName,
       fieldValues,
-      async (fetcherValues) => {
+      async (fetcherValues: readonly NonNullable<TFields[N]>[]) => {
         this.metricsAdapter.incrementDataManagerDatabaseLoadCount({
           fieldValueCount: fieldValues.length,
           entityClassName: this.entityClassName,
@@ -112,16 +159,13 @@ export default class EntityDataManager<TFields> {
       );
     }
 
-    // don't cache when in transaction, as rollbacks complicate things significantly
-    if (queryContext.isInTransaction()) {
-      return await this.databaseAdapter.fetchManyWhereAsync(queryContext, fieldName, fieldValues);
-    }
-
     this.metricsAdapter.incrementDataManagerDataloaderLoadCount({
       fieldValueCount: fieldValues.length,
       entityClassName: this.entityClassName,
     });
-    const dataLoader = this.getFieldDataLoaderForFieldName(fieldName);
+    const dataLoader = queryContext.isInTransaction()
+      ? this.getTransactionalFieldDataLoaderForFieldName(queryContext, fieldName)
+      : this.getRegularFieldDataLoderForFieldName(fieldName);
     const results = await dataLoader.loadMany(fieldValues);
     const [values, errors] = partitionErrors(results);
     if (errors.length > 0) {
@@ -192,7 +236,20 @@ export default class EntityDataManager<TFields> {
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<void> {
     await this.entityCache.invalidateManyAsync(fieldName, fieldValues);
-    const dataLoader = this.getFieldDataLoaderForFieldName(fieldName);
+    const dataLoader = this.getRegularFieldDataLoderForFieldName(fieldName);
+    fieldValues.forEach((fieldValue) => dataLoader.clear(fieldValue));
+  }
+
+  private async invalidateManyByFieldEqualingTransactionalAsync<N extends keyof TFields>(
+    queryContext: EntityQueryContext,
+    fieldName: N,
+    fieldValues: readonly NonNullable<TFields[N]>[]
+  ): Promise<void> {
+    if (!queryContext.isInTransaction()) {
+      return;
+    }
+
+    const dataLoader = this.getTransactionalFieldDataLoaderForFieldName(queryContext, fieldName);
     fieldValues.forEach((fieldValue) => dataLoader.clear(fieldValue));
   }
 
@@ -209,6 +266,23 @@ export default class EntityDataManager<TFields> {
         const value = objectFields[fieldName];
         if (value !== undefined) {
           await this.invalidateManyByFieldEqualingAsync(fieldName, [
+            value as NonNullable<TFields[keyof TFields]>,
+          ]);
+        }
+      })
+    );
+  }
+
+  async invalidateObjectFieldsTransactionalAsync(
+    queryContext: EntityQueryContext,
+    objectFields: Readonly<TFields>
+  ): Promise<void> {
+    const keys = Object.keys(objectFields) as (keyof TFields)[];
+    await Promise.all(
+      keys.map(async (fieldName: keyof TFields) => {
+        const value = objectFields[fieldName];
+        if (value !== undefined) {
+          await this.invalidateManyByFieldEqualingTransactionalAsync(queryContext, fieldName, [
             value as NonNullable<TFields[keyof TFields]>,
           ]);
         }

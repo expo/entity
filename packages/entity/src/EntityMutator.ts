@@ -205,6 +205,7 @@ export class CreateMutator<
     queryContext.appendPostCommitCallback(
       entityLoader.invalidateFieldsAsync.bind(entityLoader, insertResult)
     );
+    await entityLoader.invalidateFieldsTransactionalAsync(insertResult);
 
     const unauthorizedEntityAfterInsert = new this.entityClass(this.viewerContext, insertResult);
     const newEntity = await entityLoader
@@ -395,6 +396,11 @@ export class UpdateMutator<
       entityLoader.invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity)
     );
 
+    await Promise.all([
+      entityLoader.invalidateFieldsTransactionalAsync(this.originalFieldsForEntity),
+      entityLoader.invalidateFieldsTransactionalAsync(this.fieldsForEntity),
+    ]);
+
     const unauthorizedEntityAfterUpdate = new this.entityClass(this.viewerContext, updateResult);
     const updatedEntity = await entityLoader
       .enforcing()
@@ -566,6 +572,7 @@ export class DeleteMutator<
     queryContext.appendPostCommitCallback(
       entityLoader.invalidateFieldsAsync.bind(entityLoader, this.entity.getAllDatabaseFields())
     );
+    await entityLoader.invalidateFieldsTransactionalAsync(this.entity.getAllDatabaseFields());
 
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.afterDelete,

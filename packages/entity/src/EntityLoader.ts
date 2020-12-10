@@ -284,6 +284,13 @@ export default class EntityLoader<
     await this.dataManager.invalidateObjectFieldsAsync(objectFields);
   }
 
+  async invalidateFieldsTransactionalAsync(objectFields: Readonly<TFields>): Promise<void> {
+    await this.dataManager.invalidateObjectFieldsTransactionalAsync(
+      this.queryContext,
+      objectFields
+    );
+  }
+
   /**
    * Invalidate all caches for an entity. One potential use case would be to keep the entity
    * framework in sync with changes made to data outside of the framework.
