@@ -7,7 +7,7 @@ import ViewerContext from './ViewerContext';
  */
 export default interface EntityMutationTriggerConfiguration<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
@@ -70,7 +70,7 @@ export default interface EntityMutationTriggerConfiguration<
  */
 export abstract class EntityMutationTrigger<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
@@ -88,7 +88,7 @@ export abstract class EntityMutationTrigger<
  */
 export abstract class EntityNonTransactionalMutationTrigger<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields

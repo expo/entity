@@ -5,7 +5,7 @@ import PrivacyPolicyRule, { RuleEvaluationResult } from '../../rules/PrivacyPoli
 
 export interface Case<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields
@@ -17,7 +17,7 @@ export interface Case<
 
 type CaseMap<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields
@@ -28,7 +28,7 @@ type CaseMap<
  */
 export const describePrivacyPolicyRuleWithAsyncTestCase = <
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields
@@ -85,7 +85,7 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
  */
 export const describePrivacyPolicyRule = <
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields

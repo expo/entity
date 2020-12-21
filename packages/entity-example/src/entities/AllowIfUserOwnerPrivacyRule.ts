@@ -23,8 +23,9 @@ import { ExampleViewerContext } from '../viewerContexts';
  */
 export default class AllowIfUserOwnerPrivacyRule<
   TFields,
-  TID,
-  TEntity extends ReadonlyEntity<TFields, TID, ExampleViewerContext>
+  TID extends NonNullable<TFields[TSelectedFields]>,
+  TEntity extends ReadonlyEntity<TFields, TID, ExampleViewerContext>,
+  TSelectedFields extends keyof TFields = keyof TFields
 > extends PrivacyPolicyRule<TFields, TID, ExampleViewerContext, TEntity> {
   constructor(private readonly entityOwnerField: keyof TFields) {
     super();

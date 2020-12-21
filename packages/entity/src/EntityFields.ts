@@ -31,7 +31,7 @@ export enum EntityEdgeDeletionBehavior {
 export interface EntityAssociationDefinition<
   TViewerContext extends ViewerContext,
   TAssociatedFields,
-  TAssociatedID,
+  TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
   TAssociatedEntity extends ReadonlyEntity<
     TAssociatedFields,
     TAssociatedID,

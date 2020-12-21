@@ -28,10 +28,18 @@ class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   TestEntity
 > {
-  protected readonly readRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly createRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly updateRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly deleteRules = [new AlwaysAllowPrivacyPolicyRule()];
+  protected readonly readRules = [
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+  ];
+  protected readonly createRules = [
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+  ];
+  protected readonly updateRules = [
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+  ];
+  protected readonly deleteRules = [
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+  ];
 }
 
 class TestEntity extends Entity<TestFields, string, ViewerContext> {

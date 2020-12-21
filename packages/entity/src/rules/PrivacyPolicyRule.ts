@@ -37,7 +37,7 @@ export enum RuleEvaluationResult {
  */
 export default abstract class PrivacyPolicyRule<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields

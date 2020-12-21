@@ -8,7 +8,7 @@ import ViewerContext from './ViewerContext';
 
 export default class EntityAssociationLoader<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields
@@ -25,7 +25,7 @@ export default class EntityAssociationLoader<
   async loadAssociatedEntityAsync<
     TIdentifyingField extends keyof Pick<TFields, TSelectedFields>,
     TAssociatedFields,
-    TAssociatedID,
+    TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
     TAssociatedEntity extends ReadonlyEntity<
       TAssociatedFields,
       TAssociatedID,
@@ -87,7 +87,7 @@ export default class EntityAssociationLoader<
    */
   async loadManyAssociatedEntitiesAsync<
     TAssociatedFields,
-    TAssociatedID,
+    TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
     TAssociatedEntity extends ReadonlyEntity<
       TAssociatedFields,
       TAssociatedID,
@@ -140,7 +140,7 @@ export default class EntityAssociationLoader<
    */
   async loadAssociatedEntityByFieldEqualingAsync<
     TAssociatedFields,
-    TAssociatedID,
+    TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
     TAssociatedEntity extends ReadonlyEntity<
       TAssociatedFields,
       TAssociatedID,
@@ -197,7 +197,7 @@ export default class EntityAssociationLoader<
    */
   async loadManyAssociatedEntitiesByFieldEqualingAsync<
     TAssociatedFields,
-    TAssociatedID,
+    TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
     TAssociatedEntity extends ReadonlyEntity<
       TAssociatedFields,
       TAssociatedID,
@@ -253,7 +253,7 @@ export default class EntityAssociationLoader<
    */
   async loadAssociatedEntityThroughAsync<
     TFields2,
-    TID2,
+    TID2 extends NonNullable<TFields2[TSelectedFields2]>,
     TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
     TPrivacyPolicy2 extends EntityPrivacyPolicy<
       TFields2,
@@ -287,7 +287,7 @@ export default class EntityAssociationLoader<
    */
   async loadAssociatedEntityThroughAsync<
     TFields2,
-    TID2,
+    TID2 extends NonNullable<TFields2[TSelectedFields2]>,
     TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
     TPrivacyPolicy2 extends EntityPrivacyPolicy<
       TFields2,
@@ -297,7 +297,7 @@ export default class EntityAssociationLoader<
       TSelectedFields2
     >,
     TFields3,
-    TID3,
+    TID3 extends NonNullable<TFields3[TSelectedFields3]>,
     TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TSelectedFields3>,
     TPrivacyPolicy3 extends EntityPrivacyPolicy<
       TFields3,
@@ -342,7 +342,7 @@ export default class EntityAssociationLoader<
    */
   async loadAssociatedEntityThroughAsync<
     TFields2,
-    TID2,
+    TID2 extends NonNullable<TFields2[TSelectedFields2]>,
     TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
     TPrivacyPolicy2 extends EntityPrivacyPolicy<
       TFields2,
@@ -352,7 +352,7 @@ export default class EntityAssociationLoader<
       TSelectedFields2
     >,
     TFields3,
-    TID3,
+    TID3 extends NonNullable<TFields3[TSelectedFields3]>,
     TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TSelectedFields3>,
     TPrivacyPolicy3 extends EntityPrivacyPolicy<
       TFields3,
@@ -362,7 +362,7 @@ export default class EntityAssociationLoader<
       TSelectedFields3
     >,
     TFields4,
-    TID4,
+    TID4 extends NonNullable<TFields4[TSelectedFields4]>,
     TEntity4 extends ReadonlyEntity<TFields4, TID4, TViewerContext, TSelectedFields4>,
     TPrivacyPolicy4 extends EntityPrivacyPolicy<
       TFields4,
@@ -478,7 +478,7 @@ export interface EntityLoadThroughDirective<
   TViewerContext extends ViewerContext,
   TFields,
   TAssociatedFields,
-  TAssociatedID,
+  TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
   TAssociatedEntity extends ReadonlyEntity<
     TAssociatedFields,
     TAssociatedID,

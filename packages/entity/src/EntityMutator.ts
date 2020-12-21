@@ -21,7 +21,7 @@ import { mapMapAsync } from './utils/collections/maps';
 
 abstract class BaseMutator<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
@@ -114,7 +114,7 @@ abstract class BaseMutator<
  */
 export class CreateMutator<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
@@ -239,7 +239,7 @@ export class CreateMutator<
  */
 export class UpdateMutator<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
@@ -428,7 +428,7 @@ export class UpdateMutator<
  */
 export class DeleteMutator<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
@@ -537,7 +537,7 @@ export class DeleteMutator<
       return authorizeDeleteResult;
     }
 
-    await DeleteMutator.processEntityDeletionForInboundEdgesAsync(
+    await this.processEntityDeletionForInboundEdgesAsync(
       this.entity,
       queryContext,
       processedEntityIdentifiersFromTransitiveDeletions
@@ -603,14 +603,8 @@ export class DeleteMutator<
    *
    * @param entity - entity to find all references to
    */
-  private static async processEntityDeletionForInboundEdgesAsync<
-    TMFields,
-    TMID,
-    TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
-    TMSelectedFields extends keyof TMFields
-  >(
-    entity: TMEntity,
+  private async processEntityDeletionForInboundEdgesAsync(
+    entity: TEntity,
     queryContext: EntityTransactionalQueryContext,
     processedEntityIdentifiers: Set<string>
   ): Promise<void> {
@@ -621,12 +615,12 @@ export class DeleteMutator<
     processedEntityIdentifiers.add(entity.getUniqueIdentifier());
 
     const companionDefinition = (entity.constructor as any).getCompanionDefinition() as EntityCompanionDefinition<
-      TMFields,
-      TMID,
-      TMViewerContext,
-      TMEntity,
-      EntityPrivacyPolicy<TMFields, TMID, TMViewerContext, TMEntity, TMSelectedFields>,
-      TMSelectedFields
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
     >;
     const entityConfiguration = companionDefinition.entityConfiguration;
     const inboundEdges = entityConfiguration.getInboundEdges();

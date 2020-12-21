@@ -10,7 +10,7 @@ import ViewerContext from './ViewerContext';
  */
 export default class ViewerScopedEntityLoaderFactory<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<

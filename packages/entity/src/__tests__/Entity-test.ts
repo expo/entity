@@ -106,10 +106,38 @@ class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   SimpleTestDenyUpdateEntity
 > {
-  protected readonly readRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly createRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly updateRules = [new AlwaysDenyPrivacyPolicyRule()];
-  protected readonly deleteRules = [new AlwaysAllowPrivacyPolicyRule()];
+  protected readonly readRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      TestEntityFields,
+      string,
+      ViewerContext,
+      SimpleTestDenyUpdateEntity
+    >(),
+  ];
+  protected readonly createRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      TestEntityFields,
+      string,
+      ViewerContext,
+      SimpleTestDenyUpdateEntity
+    >(),
+  ];
+  protected readonly updateRules = [
+    new AlwaysDenyPrivacyPolicyRule<
+      TestEntityFields,
+      string,
+      ViewerContext,
+      SimpleTestDenyUpdateEntity
+    >(),
+  ];
+  protected readonly deleteRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      TestEntityFields,
+      string,
+      ViewerContext,
+      SimpleTestDenyUpdateEntity
+    >(),
+  ];
 }
 
 class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
@@ -118,10 +146,38 @@ class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   SimpleTestDenyDeleteEntity
 > {
-  protected readonly readRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly createRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly updateRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly deleteRules = [new AlwaysDenyPrivacyPolicyRule()];
+  protected readonly readRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      TestEntityFields,
+      string,
+      ViewerContext,
+      SimpleTestDenyDeleteEntity
+    >(),
+  ];
+  protected readonly createRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      TestEntityFields,
+      string,
+      ViewerContext,
+      SimpleTestDenyDeleteEntity
+    >(),
+  ];
+  protected readonly updateRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      TestEntityFields,
+      string,
+      ViewerContext,
+      SimpleTestDenyDeleteEntity
+    >(),
+  ];
+  protected readonly deleteRules = [
+    new AlwaysDenyPrivacyPolicyRule<
+      TestEntityFields,
+      string,
+      ViewerContext,
+      SimpleTestDenyDeleteEntity
+    >(),
+  ];
 }
 
 class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, string, ViewerContext> {
