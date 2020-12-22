@@ -7,12 +7,12 @@ import EntityCompanionProvider, {
   EntityCompanionDefinition,
 } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
-import { EntityNotAuthorizedError } from '../EntityErrors';
 import { UUIDField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
+import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
 import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';

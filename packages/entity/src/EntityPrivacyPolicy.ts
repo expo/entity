@@ -1,7 +1,7 @@
-import { EntityNotAuthorizedError } from './EntityErrors';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
+import EntityNotAuthorizedError from './errors/EntityNotAuthorizedError';
 import PrivacyPolicyRule, { RuleEvaluationResult } from './rules/PrivacyPolicyRule';
 
 export enum EntityPrivacyPolicyEvaluationMode {

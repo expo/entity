@@ -4,11 +4,11 @@ import invariant from 'invariant';
 import EnforcingEntityLoader from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
 import { FieldEqualityCondition, QuerySelectionModifiers } from './EntityDatabaseAdapter';
-import { EntityNotFoundError } from './EntityErrors';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
+import EntityNotFoundError from './errors/EntityNotFoundError';
 import EntityDataManager from './internal/EntityDataManager';
 import { mapMap, mapMapAsync } from './utils/collections/maps';
 
