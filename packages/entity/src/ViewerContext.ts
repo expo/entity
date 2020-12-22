@@ -27,7 +27,7 @@ export default class ViewerContext {
 
   getViewerScopedEntityCompanionForClass<
     TMFields,
-    TMID,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<

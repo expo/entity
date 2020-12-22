@@ -8,7 +8,7 @@ import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
  */
 export default class AlwaysSkipPrivacyPolicyRule<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields

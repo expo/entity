@@ -27,7 +27,7 @@ import ViewerContext from './ViewerContext';
  */
 export default abstract class Entity<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TSelectedFields extends keyof TFields = keyof TFields
 > extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields> {
@@ -39,7 +39,7 @@ export default abstract class Entity<
    */
   static creator<
     TMFields,
-    TMID,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
@@ -80,7 +80,7 @@ export default abstract class Entity<
    */
   static updater<
     TMFields,
-    TMID,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
@@ -121,7 +121,7 @@ export default abstract class Entity<
    */
   static deleteAsync<
     TMFields,
-    TMID,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
@@ -163,7 +163,7 @@ export default abstract class Entity<
    */
   static enforceDeleteAsync<
     TMFields,
-    TMID,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
@@ -216,7 +216,7 @@ export default abstract class Entity<
    */
   static async canViewerUpdateAsync<
     TMFields,
-    TMID,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
@@ -265,7 +265,7 @@ export default abstract class Entity<
    */
   static async canViewerDeleteAsync<
     TMFields,
-    TMID,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
@@ -309,7 +309,7 @@ export default abstract class Entity<
  */
 export interface IEntityClass<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<

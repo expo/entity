@@ -23,7 +23,7 @@ export default class ViewerScopedEntityCompanionProvider {
    */
   getViewerScopedCompanionForEntity<
     TFields,
-    TID,
+    TID extends NonNullable<TFields[TSelectedFields]>,
     TViewerContext extends ViewerContext,
     TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
     TPrivacyPolicy extends EntityPrivacyPolicy<

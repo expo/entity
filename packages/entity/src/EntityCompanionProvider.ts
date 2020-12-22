@@ -60,7 +60,7 @@ export interface CacheAdapterFlavorDefinition {
  */
 export class EntityCompanionDefinition<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
@@ -181,7 +181,7 @@ export default class EntityCompanionProvider {
    */
   getCompanionForEntity<
     TFields,
-    TID,
+    TID extends NonNullable<TFields[TSelectedFields]>,
     TViewerContext extends ViewerContext,
     TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
     TPrivacyPolicy extends EntityPrivacyPolicy<

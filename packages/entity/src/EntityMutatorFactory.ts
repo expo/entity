@@ -15,7 +15,7 @@ import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
  */
 export default class EntityMutatorFactory<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<

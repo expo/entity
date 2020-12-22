@@ -12,7 +12,7 @@ export enum EntityPrivacyPolicyEvaluationMode {
 
 export type EntityPrivacyPolicyEvaluator<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
@@ -63,7 +63,7 @@ export enum EntityAuthorizationAction {
  */
 export default abstract class EntityPrivacyPolicy<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
@@ -265,7 +265,13 @@ export default abstract class EntityPrivacyPolicy<
       const ruleEvaluationResult = await rule.evaluateAsync(viewerContext, queryContext, entity);
       switch (ruleEvaluationResult) {
         case RuleEvaluationResult.DENY:
-          throw new EntityNotAuthorizedError(entity, viewerContext, action, i);
+          throw new EntityNotAuthorizedError<
+            TFields,
+            TID,
+            TViewerContext,
+            TEntity,
+            TSelectedFields
+          >(entity, viewerContext, action, i);
         case RuleEvaluationResult.SKIP:
           continue;
         case RuleEvaluationResult.ALLOW:
@@ -275,6 +281,11 @@ export default abstract class EntityPrivacyPolicy<
       }
     }
 
-    throw new EntityNotAuthorizedError(entity, viewerContext, action, -1);
+    throw new EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TSelectedFields>(
+      entity,
+      viewerContext,
+      action,
+      -1
+    );
   }
 }

@@ -11,7 +11,7 @@ import { mapMap } from './utils/collections/maps';
  */
 export default class EnforcingEntityLoader<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<

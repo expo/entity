@@ -19,10 +19,18 @@ interface ChildFields {
 }
 
 class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {
-  protected readonly readRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly createRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly updateRules = [new AlwaysAllowPrivacyPolicyRule()];
-  protected readonly deleteRules = [new AlwaysAllowPrivacyPolicyRule()];
+  protected readonly readRules = [
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+  ];
+  protected readonly createRules = [
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+  ];
+  protected readonly updateRules = [
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+  ];
+  protected readonly deleteRules = [
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+  ];
 }
 
 export default class ChildEntity extends Entity<ChildFields, string, ViewerContext> {

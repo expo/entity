@@ -19,7 +19,7 @@ import { pick } from './entityUtils';
  */
 export default abstract class ReadonlyEntity<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TSelectedFields extends keyof TFields = keyof TFields
 > {
@@ -124,7 +124,7 @@ export default abstract class ReadonlyEntity<
    */
   static getQueryContext<
     TMFields,
-    TMID,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
     TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
@@ -161,7 +161,7 @@ export default abstract class ReadonlyEntity<
   static async runInTransactionAsync<
     TResult,
     TMFields,
-    TMID,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
     TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
@@ -199,7 +199,7 @@ export default abstract class ReadonlyEntity<
    */
   static loader<
     TMFields,
-    TMID,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
     TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,

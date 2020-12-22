@@ -18,7 +18,7 @@ import { mapMap, mapMapAsync } from './utils/collections/maps';
  */
 export default class EntityLoader<
   TFields,
-  TID,
+  TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
@@ -150,7 +150,7 @@ export default class EntityLoader<
     const entityResults = await this.loadManyByIDsAsync([id]);
     const entityResult = entityResults.get(id);
     if (entityResult === undefined) {
-      return result(new EntityNotFoundError(this.entityClass, this.idField, id as any));
+      return result(new EntityNotFoundError(this.entityClass, this.idField, id));
     }
     return entityResult;
   }
@@ -161,7 +161,7 @@ export default class EntityLoader<
    * @returns entity result for matching ID, or null if no entity exists for ID.
    */
   async loadByIDNullableAsync(id: TID): Promise<Result<TEntity> | null> {
-    return await this.loadByFieldEqualingAsync(this.idField, id as any);
+    return await this.loadByFieldEqualingAsync(this.idField, id);
   }
 
   /**
@@ -171,15 +171,13 @@ export default class EntityLoader<
    * @returns map from ID to corresponding entity result, where result error can be UnauthorizedError or EntityNotFoundError.
    */
   async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, Result<TEntity>>> {
-    const entityResults = ((await this.loadManyByFieldEqualingManyAsync(
+    const entityResults = (await this.loadManyByFieldEqualingManyAsync(
       this.idField,
-      ids as any
-    )) as any) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
+      ids
+    )) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
     return mapMap(entityResults, (entityResultsForId, id) => {
       const entityResult = entityResultsForId[0];
-      return (
-        entityResult ?? result(new EntityNotFoundError(this.entityClass, this.idField, id as any))
-      );
+      return entityResult ?? result(new EntityNotFoundError(this.entityClass, this.idField, id));
     });
   }
 
