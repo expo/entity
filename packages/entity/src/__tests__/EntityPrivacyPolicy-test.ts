@@ -7,7 +7,6 @@ import {
   CacheAdapterFlavor,
 } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
-import { EntityNotAuthorizedError } from '../EntityErrors';
 import { UUIDField } from '../EntityFields';
 import EntityPrivacyPolicy, {
   EntityPrivacyPolicyEvaluator,
@@ -15,6 +14,7 @@ import EntityPrivacyPolicy, {
 } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
+import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
 import AlwaysSkipPrivacyPolicyRule from '../rules/AlwaysSkipPrivacyPolicyRule';
