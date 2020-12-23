@@ -9,9 +9,7 @@ export const computeIfAbsent = <K, V>(
     const value = mappingFunction(key);
     map.set(key, value);
   }
-  const value = map.get(key);
-  invariant(value !== undefined, 'should always be present');
-  return value!;
+  return map.get(key)!;
 };
 
 export const mapMap = <K, V, M>(
@@ -32,8 +30,8 @@ export const mapMapAsync = async function <K, V, M>(
   const resultingMap: Map<K, M> = new Map();
   await Promise.all(
     Array.from(map.keys()).map(async (k) => {
-      const initialValue = map.get(k) ?? invariant(false, 'cannot be undefined here');
-      const result = await mapper(initialValue!, k);
+      const initialValue = map.get(k) as V;
+      const result = await mapper(initialValue, k);
       resultingMap.set(k, result);
     })
   );
