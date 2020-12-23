@@ -41,9 +41,9 @@ function translatePostgresError(
   }
 }
 
-export default async function wrapNativePostgresCall<T>(fn: Promise<T>): Promise<T> {
+export default async function wrapNativePostgresCall<T>(fn: () => Promise<T>): Promise<T> {
   try {
-    return await fn;
+    return await fn();
   } catch (e) {
     throw wrapNativePostgresError(e);
   }

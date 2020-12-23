@@ -72,7 +72,9 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     }
 
     const redisKeys = fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue));
-    const redisResults = await wrapNativeRedisCall(this.context.redisClient.mget(...redisKeys));
+    const redisResults = await wrapNativeRedisCall(() =>
+      this.context.redisClient.mget(...redisKeys)
+    );
 
     const results = new Map<NonNullable<TFields[N]>, CacheLoadResult>();
     for (let i = 0; i < fieldValues.length; i++) {
@@ -115,7 +117,7 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
         this.context.ttlSecondsPositive
       );
     });
-    await wrapNativeRedisCall(redisTransaction.exec());
+    await wrapNativeRedisCall(() => redisTransaction.exec());
   }
 
   public async cacheDBMissesAsync<N extends keyof TFields>(
@@ -136,7 +138,7 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
         this.context.ttlSecondsNegative
       );
     });
-    await wrapNativeRedisCall(redisTransaction.exec());
+    await wrapNativeRedisCall(() => redisTransaction.exec());
   }
 
   public async invalidateManyAsync<N extends keyof TFields>(
@@ -148,7 +150,7 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     }
 
     const redisKeys = fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue));
-    await wrapNativeRedisCall(this.context.redisClient.del(...redisKeys));
+    await wrapNativeRedisCall(() => this.context.redisClient.del(...redisKeys));
   }
 
   private makeCacheKey<N extends keyof TFields>(
