@@ -8,6 +8,7 @@ import {
 import { Redis } from 'ioredis';
 
 import { redisTransformerMap } from './RedisCommon';
+import wrapNativeRedisCall from './errors/wrapNativeRedisCall';
 
 // Sentinel value we store in Redis to negatively cache a database miss.
 // The sentinel value is distinct from any (positively) cached value.
@@ -71,7 +72,9 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     }
 
     const redisKeys = fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue));
-    const redisResults = await this.context.redisClient.mget(...redisKeys);
+    const redisResults = await wrapNativeRedisCall(() =>
+      this.context.redisClient.mget(...redisKeys)
+    );
 
     const results = new Map<NonNullable<TFields[N]>, CacheLoadResult>();
     for (let i = 0; i < fieldValues.length; i++) {
@@ -114,7 +117,7 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
         this.context.ttlSecondsPositive
       );
     });
-    await redisTransaction.exec();
+    await wrapNativeRedisCall(() => redisTransaction.exec());
   }
 
   public async cacheDBMissesAsync<N extends keyof TFields>(
@@ -135,7 +138,7 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
         this.context.ttlSecondsNegative
       );
     });
-    await redisTransaction.exec();
+    await wrapNativeRedisCall(() => redisTransaction.exec());
   }
 
   public async invalidateManyAsync<N extends keyof TFields>(
@@ -147,7 +150,7 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     }
 
     const redisKeys = fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue));
-    await this.context.redisClient.del(...redisKeys);
+    await wrapNativeRedisCall(() => this.context.redisClient.del(...redisKeys));
   }
 
   private makeCacheKey<N extends keyof TFields>(
