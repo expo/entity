@@ -2,7 +2,7 @@ import { IEntityClass } from '../Entity';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
-import EntityError, { EntityErrorState } from './EntityError';
+import EntityError, { EntityErrorCode, EntityErrorState } from './EntityError';
 
 export default class EntityNotFoundError<
   TFields,
@@ -20,6 +20,7 @@ export default class EntityNotFoundError<
   TSelectedFields extends keyof TFields = keyof TFields
 > extends EntityError {
   public readonly state = EntityErrorState.PERMANENT;
+  public readonly code = EntityErrorCode.ERR_ENTITY_NOT_FOUND;
 
   constructor(
     entityClass: IEntityClass<

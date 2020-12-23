@@ -1,7 +1,7 @@
 import { EntityAuthorizationAction } from '../EntityPrivacyPolicy';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
-import EntityError, { EntityErrorState } from './EntityError';
+import EntityError, { EntityErrorCode, EntityErrorState } from './EntityError';
 
 export default class EntityNotAuthorizedError<
   TFields,
@@ -11,6 +11,7 @@ export default class EntityNotAuthorizedError<
   TSelectedFields extends keyof TFields = keyof TFields
 > extends EntityError {
   public readonly state = EntityErrorState.PERMANENT;
+  public readonly code = EntityErrorCode.ERR_ENTITY_NOT_AUTHORIZED;
 
   public readonly entityClassName: string;
 

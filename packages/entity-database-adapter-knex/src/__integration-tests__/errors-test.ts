@@ -1,15 +1,15 @@
 import { ViewerContext } from '@expo/entity';
+import {
+  EntityDatabaseAdapterCheckConstraintError,
+  EntityDatabaseAdapterExclusionConstraintError,
+  EntityDatabaseAdapterForeignKeyConstraintError,
+  EntityDatabaseAdapterNotNullConstraintError,
+  EntityDatabaseAdapterTransientError,
+  EntityDatabaseAdapterUniqueConstraintError,
+  EntityDatabaseAdapterUnknownError,
+} from '@expo/entity/build/errors/EntityDatabaseAdapterError';
 import Knex from 'knex';
 
-import {
-  EntityDatabaseAdapterForeignKeyConstraintError,
-  PostgresEntityDatabaseAdapterCheckConstraintError,
-  PostgresEntityDatabaseAdapterExclusionConstraintError,
-  PostgresEntityDatabaseAdapterNotNullConstraintError,
-  PostgresEntityDatabaseAdapterTransientError,
-  PostgresEntityDatabaseAdapterUniqueConstraintError,
-  PostgresEntityDatabaseAdapterUnknownError,
-} from '../errors/PostgresEntityDatabaseAdapterError';
 import ErrorsTestEntity from '../testfixtures/ErrorsTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
 
@@ -38,7 +38,7 @@ describe('postgres errors', () => {
     await knexInstance.destroy();
   });
 
-  it('throws PostgresEntityDatabaseAdapterTransientError on Knex timeout', async () => {
+  it('throws EntityDatabaseAdapterTransientError on Knex timeout', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await ErrorsTestEntity.creator(vc)
       .setField('id', 1)
@@ -60,19 +60,19 @@ describe('postgres errors', () => {
       createKnexIntegrationTestEntityCompanionProvider(shortTimeoutKnexInstance)
     );
     await expect(ErrorsTestEntity.loader(vc2).enforcing().loadByIDAsync(1)).rejects.toThrow(
-      PostgresEntityDatabaseAdapterTransientError
+      EntityDatabaseAdapterTransientError
     );
     await shortTimeoutKnexInstance.destroy();
   });
 
-  it('throws PostgresEntityDatabaseAdapterNotNullConstraintError when not null is violated', async () => {
+  it('throws EntityDatabaseAdapterNotNullConstraintError when not null is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
       ErrorsTestEntity.creator(vc)
         .setField('id', 1)
         .setField('fieldNonNull', null as any)
         .enforceCreateAsync()
-    ).rejects.toThrow(PostgresEntityDatabaseAdapterNotNullConstraintError);
+    ).rejects.toThrow(EntityDatabaseAdapterNotNullConstraintError);
   });
 
   it('throws EntityDatabaseAdapterForeignKeyConstraintError when foreign key is violated', async () => {
@@ -86,7 +86,7 @@ describe('postgres errors', () => {
     ).rejects.toThrow(EntityDatabaseAdapterForeignKeyConstraintError);
   });
 
-  it('throws PostgresEntityDatabaseAdapterUniqueConstraintError when primary key unique constraint is violated', async () => {
+  it('throws EntityDatabaseAdapterUniqueConstraintError when primary key unique constraint is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
     await ErrorsTestEntity.creator(vc)
@@ -99,10 +99,10 @@ describe('postgres errors', () => {
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .enforceCreateAsync()
-    ).rejects.toThrow(PostgresEntityDatabaseAdapterUniqueConstraintError);
+    ).rejects.toThrow(EntityDatabaseAdapterUniqueConstraintError);
   });
 
-  it('throws PostgresEntityDatabaseAdapterUniqueConstraintError when unique constraint is violated', async () => {
+  it('throws EntityDatabaseAdapterUniqueConstraintError when unique constraint is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await ErrorsTestEntity.creator(vc)
       .setField('id', 2)
@@ -116,10 +116,10 @@ describe('postgres errors', () => {
         .setField('fieldNonNull', 'hello')
         .setField('fieldUnique', 'hello')
         .enforceCreateAsync()
-    ).rejects.toThrow(PostgresEntityDatabaseAdapterUniqueConstraintError);
+    ).rejects.toThrow(EntityDatabaseAdapterUniqueConstraintError);
   });
 
-  it('throws PostgresEntityDatabaseAdapterCheckConstraintError when check constraint is violated', async () => {
+  it('throws EntityDatabaseAdapterCheckConstraintError when check constraint is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
       ErrorsTestEntity.creator(vc)
@@ -135,10 +135,10 @@ describe('postgres errors', () => {
         .setField('fieldNonNull', 'hello')
         .setField('checkLessThan5', 10)
         .enforceCreateAsync()
-    ).rejects.toThrow(PostgresEntityDatabaseAdapterCheckConstraintError);
+    ).rejects.toThrow(EntityDatabaseAdapterCheckConstraintError);
   });
 
-  it('throws PostgresEntityDatabaseAdapterExclusionConstraintError when exclusion constraint is violated', async () => {
+  it('throws EntityDatabaseAdapterExclusionConstraintError when exclusion constraint is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
       ErrorsTestEntity.creator(vc)
@@ -154,10 +154,10 @@ describe('postgres errors', () => {
         .setField('fieldNonNull', 'hello')
         .setField('fieldExclusion', 'what')
         .enforceCreateAsync()
-    ).rejects.toThrow(PostgresEntityDatabaseAdapterExclusionConstraintError);
+    ).rejects.toThrow(EntityDatabaseAdapterExclusionConstraintError);
   });
 
-  it('throws PostgresEntityDatabaseAdapterUnknownError otherwise', async () => {
+  it('throws EntityDatabaseAdapterUnknownError otherwise', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
       ErrorsTestEntity.creator(vc)
@@ -165,6 +165,6 @@ describe('postgres errors', () => {
         .setField('fieldNonNull', 'hello')
         .setField('nonExistentColumn', 'what')
         .enforceCreateAsync()
-    ).rejects.toThrow(PostgresEntityDatabaseAdapterUnknownError);
+    ).rejects.toThrow(EntityDatabaseAdapterUnknownError);
   });
 });
