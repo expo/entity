@@ -1,5 +1,5 @@
-import { EntityDatabaseAdapterError } from '@expo/entity';
 import {
+  EntityDatabaseAdapterError,
   EntityDatabaseAdapterCheckConstraintError,
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
@@ -7,7 +7,7 @@ import {
   EntityDatabaseAdapterTransientError,
   EntityDatabaseAdapterUniqueConstraintError,
   EntityDatabaseAdapterUnknownError,
-} from '@expo/entity/build/errors/EntityDatabaseAdapterError';
+} from '@expo/entity';
 import { KnexTimeoutError } from 'knex';
 
 function wrapNativePostgresError(
