@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/expo/entity/compare/v0.10.0...v0.11.0) (2020-12-24)
+
+
+### Bug Fixes
+
+* add type generic default in test utils ([#104](https://github.com/expo/entity/issues/104)) ([fe2917e](https://github.com/expo/entity/commit/fe2917e6b5af808f166aa354d476e168c41e6d21))
+* maps utils invariants for collections containing undefined values ([#103](https://github.com/expo/entity/issues/103)) ([29c1a43](https://github.com/expo/entity/commit/29c1a434ab6cd8d30e9f0e7c742065c8d46d8d8a))
+* remove any cast from EntityLoader ([#100](https://github.com/expo/entity/issues/100)) ([b8e07f9](https://github.com/expo/entity/commit/b8e07f9ddc4077768980c000d61f5ddcc824e2e3))
+
+
+### Features
+
+* better cache adapter error handling ([#102](https://github.com/expo/entity/issues/102)) ([15546aa](https://github.com/expo/entity/commit/15546aad97734ab9ac67f1c012485f096a0e94f1))
+* better database adapter error handling ([#101](https://github.com/expo/entity/issues/101)) ([5208aee](https://github.com/expo/entity/commit/5208aeedb0192f0460ba3d575770a04175f5c3aa))
+
+
+
+
+
 # [0.10.0](https://github.com/expo/entity/compare/v0.9.1...v0.10.0) (2020-11-17)
 
 
