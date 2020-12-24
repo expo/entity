@@ -31,7 +31,7 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields
 >(
   privacyPolicyRule: PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
   {
@@ -88,7 +88,7 @@ export const describePrivacyPolicyRule = <
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields
 >(
   privacyPolicyRule: PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
   {
