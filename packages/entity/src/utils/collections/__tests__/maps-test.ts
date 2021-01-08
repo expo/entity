@@ -117,4 +117,18 @@ describe(filterMap, () => {
     expect(filteredMap.get('a')).toBeUndefined();
     expect(filteredMap.get('b')).toBe(true);
   });
+
+  it('can use predicates', () => {
+    function truthy<TValue>(value: TValue | null | undefined): value is TValue {
+      return !!value;
+    }
+
+    const map = new Map<string, string | null>([
+      ['a', 'yes'],
+      ['b', null],
+    ]);
+
+    const filteredMap: Map<string, string> = filterMap(map, truthy);
+    expect(filteredMap.size).toBe(1);
+  });
 });
