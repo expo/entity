@@ -83,10 +83,18 @@ export const reduceMapAsync = async <K, V, A>(
   return newAccumulator;
 };
 
-export const filterMap = <K, V>(
+export function filterMap<K, V, S extends V>(
+  map: ReadonlyMap<K, V>,
+  predicate: (value: V, key: K) => value is S
+): Map<K, S>;
+export function filterMap<K, V>(
   map: ReadonlyMap<K, V>,
   predicate: (value: V, key: K) => boolean
-): Map<K, V> => {
+): Map<K, V>;
+export function filterMap<K, V>(
+  map: ReadonlyMap<K, V>,
+  predicate: (value: V, key: K) => unknown
+): Map<K, V> {
   const resultingMap = new Map();
   map.forEach((v, k) => {
     if (predicate(v, k)) {
@@ -94,4 +102,4 @@ export const filterMap = <K, V>(
     }
   });
   return resultingMap;
-};
+}
