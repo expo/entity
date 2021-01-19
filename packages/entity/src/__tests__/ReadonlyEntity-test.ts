@@ -2,7 +2,6 @@ import { instance, mock } from 'ts-mockito';
 
 import EntityAssociationLoader from '../EntityAssociationLoader';
 import EntityLoader from '../EntityLoader';
-import { EntityQueryContext } from '../EntityQueryContext';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
 import SimpleTestEntity from '../testfixtures/SimpleTestEntity';
@@ -105,30 +104,6 @@ describe(ReadonlyEntity, () => {
       };
       const testEntity = new SimpleTestEntity(viewerContext, data);
       expect(testEntity.associationLoader()).toBeInstanceOf(EntityAssociationLoader);
-    });
-  });
-
-  describe('getRegularEntityQueryContext', () => {
-    it('creates a new regular query context', () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
-      const queryContext = SimpleTestEntity.getQueryContext(viewerContext);
-      expect(queryContext).toBeInstanceOf(EntityQueryContext);
-      expect(queryContext.isInTransaction()).toBe(false);
-    });
-  });
-
-  describe('runInTransactionAsync', () => {
-    it('creates a new transactional query context', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
-      const didCreateTransaction = await SimpleTestEntity.runInTransactionAsync(
-        viewerContext,
-        async (queryContext) => {
-          return queryContext.isInTransaction();
-        }
-      );
-      expect(didCreateTransaction).toBe(true);
     });
   });
 
