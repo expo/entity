@@ -75,16 +75,16 @@
 						<h2>Usage</h2>
 					</a>
 					<p>During <code>EntityCompanionProvider</code> instantiation:</p>
-					<pre><code class="language-typescript"><span class="hljs-keyword">import</span> Knex <span class="hljs-keyword">from</span> <span class="hljs-string">'knex'</span>;
+					<pre><code class="language-typescript"><span class="hljs-keyword">import</span> Knex <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;knex&#x27;</span>;
 
 <span class="hljs-keyword">const</span> knexInstance = Knex({
-  client: <span class="hljs-string">'pg'</span>,
-  connection: {
-    user: process.env.PGUSER,
-    password: process.env.PGPASSWORD,
-    host: process.env.PGHOST,
-    port: <span class="hljs-built_in">parseInt</span>(process.env.PGPORT!, <span class="hljs-number">10</span>),
-    database: process.env.PGDATABASE,
+  <span class="hljs-attr">client</span>: <span class="hljs-string">&#x27;pg&#x27;</span>,
+  <span class="hljs-attr">connection</span>: {
+    <span class="hljs-attr">user</span>: process.env.PGUSER,
+    <span class="hljs-attr">password</span>: process.env.PGPASSWORD,
+    <span class="hljs-attr">host</span>: process.env.PGHOST,
+    <span class="hljs-attr">port</span>: <span class="hljs-built_in">parseInt</span>(process.env.PGPORT!, <span class="hljs-number">10</span>),
+    <span class="hljs-attr">database</span>: process.env.PGDATABASE,
   },
 });
 
@@ -95,9 +95,9 @@
     metricsAdapter,
     {
       <span class="hljs-comment">// add the knex database adapter flavor</span>
-      [<span class="hljs-string">'postgres'</span>]: {
-        adapter: PostgresEntityDatabaseAdapter,
-        queryContextProvider: <span class="hljs-keyword">new</span> PostgresEntityQueryContextProvider(knexInstance),
+      [<span class="hljs-string">&#x27;postgres&#x27;</span>]: {
+        <span class="hljs-attr">adapter</span>: PostgresEntityDatabaseAdapter,
+        <span class="hljs-attr">queryContextProvider</span>: <span class="hljs-keyword">new</span> PostgresEntityQueryContextProvider(knexInstance),
       },
     },
     {
@@ -140,7 +140,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/a032141/packages/entity-database-adapter-knex/src/errors/wrapNativePostgresCall.ts#L44">packages/entity-database-adapter-knex/src/errors/wrapNativePostgresCall.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/045c575/packages/entity-database-adapter-knex/src/errors/wrapNativePostgresCall.ts#L44">packages/entity-database-adapter-knex/src/errors/wrapNativePostgresCall.ts:44</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>

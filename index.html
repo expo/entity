@@ -107,10 +107,10 @@
 PhotoView
     <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">render</span><span class="hljs-params">()</span></span>:
         photo = Photo.find(params[<span class="hljs-symbol">:id</span>])
-        authorize(photo, <span class="hljs-string">'read'</span>)
+        authorize(photo, <span class="hljs-string">&#x27;read&#x27;</span>)
         render_html(photo)</code></pre><p>This works well and is flexible since it allows executing ad-hoc authorization checks. Most libraries also provide hooks into views or controllers such that these authorization checks are performed automatically. This is sufficient for many applications but still has one main drawback: it is prone to error in cases where the authorization check is forgotten or the incorrect check is performed.</p>
 				<p>The Entity framework solves this by adding an additional property to the system: all data accesses are authorized. Given an <code>object</code> and a <code>viewer</code>, the framework provides a clear and testable mechanism for expressing complex relationships between <code>object</code> and <code>viewer</code> needed to authorize access during CRUD operations, and makes it impossible to perform CRUD operations without performing the authorization checks. This combines the data load and authorization steps from above into a single step:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">class</span> PhotoPrivacyPolicy {
+				<pre><code class="language-typescript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PhotoPrivacyPolicy</span> </span>{
   <span class="hljs-keyword">const</span> readRules = [
     <span class="hljs-keyword">new</span> AllowIfOwnerRule(),
     <span class="hljs-keyword">new</span> AllowIfOrganizationPermissionRule(),
