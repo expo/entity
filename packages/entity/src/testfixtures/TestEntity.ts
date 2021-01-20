@@ -1,11 +1,7 @@
 import { result, Result } from '@expo/results';
 
 import Entity from '../Entity';
-import {
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-  EntityCompanionDefinition,
-} from '../EntityCompanionProvider';
+import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField, StringField, DateField, NumberField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
@@ -45,8 +41,8 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields>({
       columnName: 'nullable_field',
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<

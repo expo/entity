@@ -3,8 +3,6 @@ import {
   NoOpEntityMetricsAdapter,
   EntityCompanionProvider,
   InMemoryFullCacheStubCacheAdapterProvider,
-  CacheAdapterFlavor,
-  DatabaseAdapterFlavor,
 } from '@expo/entity';
 
 import { InMemoryDatabaseAdapterProvider } from './adapters/InMemoryDatabaseAdapter';
@@ -21,20 +19,26 @@ export const createEntityCompanionProvider = (
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
     metricsAdapter,
-    {
-      // An in-memory DB is used for demonstration purposes, but generally this would be
-      // instantiated with PostgresEntityDatabaseAdapter and PostgresEntityQueryContextProvider
-      [DatabaseAdapterFlavor.POSTGRES]: {
-        adapterProvider: new InMemoryDatabaseAdapterProvider(),
-        queryContextProvider: new InMemoryQueryContextProvider(),
-      },
-    },
-    {
-      // An in-memory cache is used for demonstration purposes, but generally this would be
-      // instantiated with a RedisCacheAdapterProvider
-      [CacheAdapterFlavor.REDIS]: {
-        cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
-      },
-    }
+    new Map([
+      [
+        'postgres',
+        // An in-memory DB is used for demonstration purposes, but generally this would be
+        // instantiated with PostgresEntityDatabaseAdapter and PostgresEntityQueryContextProvider
+        {
+          adapterProvider: new InMemoryDatabaseAdapterProvider(),
+          queryContextProvider: new InMemoryQueryContextProvider(),
+        },
+      ],
+    ]),
+    new Map([
+      [
+        'redis',
+        // An in-memory cache is used for demonstration purposes, but generally this would be
+        // instantiated with a RedisCacheAdapterProvider
+        {
+          cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
+        },
+      ],
+    ])
   );
 };

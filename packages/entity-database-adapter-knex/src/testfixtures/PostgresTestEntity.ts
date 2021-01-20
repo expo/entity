@@ -11,8 +11,6 @@ import {
   DateField,
   MaybeJSONArrayField,
   EntityConfiguration,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
   EntityCompanionDefinition,
   Entity,
 } from '@expo/entity';
@@ -150,8 +148,8 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<PostgresT
       columnName: 'maybe_json_array_field',
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({

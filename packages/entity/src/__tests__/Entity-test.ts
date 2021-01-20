@@ -1,9 +1,5 @@
 import Entity from '../Entity';
-import {
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-  EntityCompanionDefinition,
-} from '../EntityCompanionProvider';
+import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import { CreateMutator, UpdateMutator } from '../EntityMutator';
@@ -96,8 +92,8 @@ const testEntityConfiguration = new EntityConfiguration<TestEntityFields>({
       columnName: 'custom_id',
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<

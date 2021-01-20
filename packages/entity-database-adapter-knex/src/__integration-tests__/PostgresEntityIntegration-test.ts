@@ -3,7 +3,6 @@ import {
   createUnitTestEntityCompanionProvider,
   enforceResultsAsync,
   ViewerContext,
-  DatabaseAdapterFlavor,
 } from '@expo/entity';
 import { enforceAsyncResult } from '@expo/results';
 import Knex from 'knex';
@@ -95,17 +94,14 @@ describe('postgres entity integration', () => {
     const errorToThrow = new Error('Intentional error');
 
     await expect(
-      vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
-        DatabaseAdapterFlavor.POSTGRES,
-        async (queryContext) => {
-          // put another in the DB that will be rolled back due to error thrown
-          await enforceAsyncResult(
-            PostgresTestEntity.creator(vc1, queryContext).setField('name', 'hello').createAsync()
-          );
+      vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+        // put another in the DB that will be rolled back due to error thrown
+        await enforceAsyncResult(
+          PostgresTestEntity.creator(vc1, queryContext).setField('name', 'hello').createAsync()
+        );
 
-          throw errorToThrow;
-        }
-      )
+        throw errorToThrow;
+      })
     ).rejects.toEqual(errorToThrow);
 
     const entities = await enforceResultsAsync(

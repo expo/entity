@@ -1,11 +1,7 @@
 import { enforceAsyncResult } from '@expo/results';
 
 import Entity from '../Entity';
-import EntityCompanionProvider, {
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-  EntityCompanionDefinition,
-} from '../EntityCompanionProvider';
+import EntityCompanionProvider, { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
@@ -100,8 +96,8 @@ const blahCompanion = new EntityCompanionDefinition({
         columnName: 'owner_id',
       }),
     },
-    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+    databaseAdapterFlavor: 'postgres',
+    cacheAdapterFlavor: 'redis',
   }),
   privacyPolicyClass: BlahEntityPrivacyPolicy,
 });

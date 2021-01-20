@@ -1,3 +1,5 @@
+import invariant from 'invariant';
+
 import { IEntityClass } from './Entity';
 import EntityCompanion, { IPrivacyPolicyClass } from './EntityCompanion';
 import EntityConfiguration from './EntityConfiguration';
@@ -16,25 +18,14 @@ import { computeIfAbsent } from './utils/collections/maps';
 /**
  * Backing database and transaction type for an entity. The definitions and implementations
  * are provided by injection in the root EntityCompanionProvider to allow for mocking and sharing.
- *
- * Note: this enum will likely be modified soon to be more flexible.
  */
-export enum DatabaseAdapterFlavor {
-  /**
-   * Knex postgres adapter, using postgres table and postgres transactions.
-   */
-  POSTGRES = 'postgres',
-}
+export type DatabaseAdapterFlavor = string;
 
 /**
  * Cache system for an entity. The definitions and implementations are provided by injection
  * in the root EntityCompanionProvider to allow for mocking and sharing.
- *
- * Note: this enum will likely be modified soon to be more flexible.
  */
-export enum CacheAdapterFlavor {
-  REDIS = 'redis',
-}
+export type CacheAdapterFlavor = string;
 
 /**
  * Defines a set interfaces for a entity database adapter flavor. An entity that uses a flavor
@@ -168,8 +159,11 @@ export default class EntityCompanionProvider {
    */
   constructor(
     private metricsAdapter: IEntityMetricsAdapter,
-    private databaseAdapterFlavors: Record<DatabaseAdapterFlavor, DatabaseAdapterFlavorDefinition>,
-    private cacheAdapterFlavors: Record<CacheAdapterFlavor, CacheAdapterFlavorDefinition>
+    private databaseAdapterFlavors: ReadonlyMap<
+      DatabaseAdapterFlavor,
+      DatabaseAdapterFlavorDefinition
+    >,
+    private cacheAdapterFlavors: ReadonlyMap<CacheAdapterFlavor, CacheAdapterFlavorDefinition>
   ) {}
 
   /**
@@ -229,7 +223,12 @@ export default class EntityCompanionProvider {
   getQueryContextProviderForDatabaseAdaptorFlavor(
     databaseAdapterFlavor: DatabaseAdapterFlavor
   ): EntityQueryContextProvider {
-    const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[databaseAdapterFlavor];
+    const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors.get(databaseAdapterFlavor);
+    invariant(
+      entityDatabaseAdapterFlavor,
+      `No database adaptor configuration found for flavor: ${databaseAdapterFlavor}`
+    );
+
     return entityDatabaseAdapterFlavor.queryContextProvider;
   }
 
@@ -238,12 +237,22 @@ export default class EntityCompanionProvider {
     entityClassName: string
   ): EntityTableDataCoordinator<TFields> {
     return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration.tableName, () => {
-      const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[
+      const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors.get(
         entityConfiguration.databaseAdapterFlavor
-      ];
-      const entityCacheAdapterFlavor = this.cacheAdapterFlavors[
+      );
+      invariant(
+        entityDatabaseAdapterFlavor,
+        `No database adaptor configuration found for flavor: ${entityConfiguration.databaseAdapterFlavor}`
+      );
+
+      const entityCacheAdapterFlavor = this.cacheAdapterFlavors.get(
         entityConfiguration.cacheAdapterFlavor
-      ];
+      );
+      invariant(
+        entityCacheAdapterFlavor,
+        `No cache adaptor configuration found for flavor: ${entityConfiguration.cacheAdapterFlavor}`
+      );
+
       return new EntityTableDataCoordinator(
         entityConfiguration,
         entityDatabaseAdapterFlavor.adapterProvider,

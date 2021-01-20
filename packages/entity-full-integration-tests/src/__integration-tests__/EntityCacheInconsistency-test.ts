@@ -5,8 +5,6 @@ import {
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
   UUIDField,
 } from '@expo/entity';
 import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
@@ -70,8 +68,8 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
       columnName: 'third_string',
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 const testEntityCompanion = new EntityCompanionDefinition({
@@ -184,7 +182,7 @@ describe('Entity cache inconsistency', () => {
         openBarrier2!();
       })(),
       viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
-        DatabaseAdapterFlavor.POSTGRES,
+        'postgres',
         async (queryContext) => {
           await TestEntity.updater(entity1, queryContext)
             .setField('third_string', 'updated')

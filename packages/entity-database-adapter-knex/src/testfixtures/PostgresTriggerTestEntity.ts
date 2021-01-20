@@ -5,8 +5,6 @@ import {
   UUIDField,
   StringField,
   EntityConfiguration,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
   EntityCompanionDefinition,
   Entity,
   EntityMutationTrigger,
@@ -153,8 +151,8 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<
       columnName: 'name',
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({

@@ -1,9 +1,5 @@
 import Entity from '../../Entity';
-import {
-  EntityCompanionDefinition,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-} from '../../EntityCompanionProvider';
+import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import EntityConfiguration from '../../EntityConfiguration';
 import { UUIDField, StringField } from '../../EntityFields';
 import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
@@ -114,8 +110,8 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
       cache: true,
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {

@@ -35,7 +35,7 @@ export const createDefaultEntityCompanionProvider = (
       ...
     },
     {
-      [CacheAdapterFlavor.REDIS]: {
+      ['redis']: {
         cacheAdapterProvider: new RedisCacheAdapterProvider(redisCacheAdapterContext),
       },
     }

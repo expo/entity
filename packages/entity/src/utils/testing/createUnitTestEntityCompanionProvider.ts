@@ -1,7 +1,4 @@
-import EntityCompanionProvider, {
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-} from '../../EntityCompanionProvider';
+import EntityCompanionProvider from '../../EntityCompanionProvider';
 import IEntityMetricsAdapter from '../../metrics/IEntityMetricsAdapter';
 import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
 import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter';
@@ -17,16 +14,22 @@ export const createUnitTestEntityCompanionProvider = (
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
     metricsAdapter,
-    {
-      [DatabaseAdapterFlavor.POSTGRES]: {
-        adapterProvider: new StubDatabaseAdapterProvider(),
-        queryContextProvider: StubQueryContextProvider,
-      },
-    },
-    {
-      [CacheAdapterFlavor.REDIS]: {
-        cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
-      },
-    }
+    new Map([
+      [
+        'postgres',
+        {
+          adapterProvider: new StubDatabaseAdapterProvider(),
+          queryContextProvider: StubQueryContextProvider,
+        },
+      ],
+    ]),
+    new Map([
+      [
+        'redis',
+        {
+          cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
+        },
+      ],
+    ])
   );
 };

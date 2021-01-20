@@ -29,7 +29,7 @@ export const createDefaultEntityCompanionProvider = (
     metricsAdapter,
     {
       // add the knex database adapter flavor
-      [DatabaseAdapterFlavor.POSTGRES]: {
+      ['postgres']: {
         adapter: PostgresEntityDatabaseAdapter,
         queryContextProvider: new PostgresEntityQueryContextProvider(knexInstance),
       },

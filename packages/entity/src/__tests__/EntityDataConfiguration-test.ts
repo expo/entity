@@ -1,4 +1,3 @@
-import { DatabaseAdapterFlavor, CacheAdapterFlavor } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField, StringField } from '../EntityFields';
 
@@ -28,15 +27,15 @@ describe(EntityConfiguration, () => {
         columnName: 'unique_but_not_cacheable',
       }),
     },
-    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+    databaseAdapterFlavor: 'postgres',
+    cacheAdapterFlavor: 'redis',
   });
 
   it('returns correct fields', () => {
     expect(blahEntityConfiguration.idField).toEqual('id');
     expect(blahEntityConfiguration.tableName).toEqual('blah_table');
-    expect(blahEntityConfiguration.databaseAdapterFlavor).toEqual(DatabaseAdapterFlavor.POSTGRES);
-    expect(blahEntityConfiguration.cacheAdapterFlavor).toEqual(CacheAdapterFlavor.REDIS);
+    expect(blahEntityConfiguration.databaseAdapterFlavor).toEqual('postgres');
+    expect(blahEntityConfiguration.cacheAdapterFlavor).toEqual('redis');
   });
 
   it('filters cacheable fields', () => {
@@ -53,8 +52,8 @@ describe(EntityConfiguration, () => {
             columnName: 'id',
           }),
         },
-        databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-        cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
       });
       expect(entityConfiguration.cacheKeyVersion).toEqual(0);
     });
@@ -68,8 +67,8 @@ describe(EntityConfiguration, () => {
             columnName: 'id',
           }),
         },
-        databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-        cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
         cacheKeyVersion: 100,
       });
       expect(entityConfiguration.cacheKeyVersion).toEqual(100);

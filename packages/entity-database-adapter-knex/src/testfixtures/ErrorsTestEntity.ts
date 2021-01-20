@@ -4,8 +4,6 @@ import {
   ViewerContext,
   StringField,
   EntityConfiguration,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
   EntityCompanionDefinition,
   Entity,
   NumberField,
@@ -168,8 +166,8 @@ export const ErrorsTestEntityConfiguration = new EntityConfiguration<ErrorsTestE
       columnName: 'non_existent_column',
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 const errorsTestEntityCompanionDefinition = new EntityCompanionDefinition({
