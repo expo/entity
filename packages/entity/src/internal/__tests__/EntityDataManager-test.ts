@@ -442,12 +442,12 @@ describe(EntityDataManager, () => {
   });
 
   it('handles DB errors as expected', async () => {
-    const databaseAdapterMock = mock(EntityDatabaseAdapter);
+    const databaseAdapterMock = mock<EntityDatabaseAdapter<TestFields>>();
     when(databaseAdapterMock.fetchManyWhereAsync(anything(), anything(), anything())).thenReject(
       new Error('DB query failed')
     );
 
-    const databaseAdapter: EntityDatabaseAdapter<TestFields> = instance(databaseAdapterMock);
+    const databaseAdapter = instance(databaseAdapterMock);
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);

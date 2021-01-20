@@ -784,7 +784,7 @@ describe(EntityMutatorFactory, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicyMock = mock(SimpleTestEntityPrivacyPolicy);
-    const databaseAdapter = instance(mock(EntityDatabaseAdapter));
+    const databaseAdapter = instance(mock<EntityDatabaseAdapter<SimpleTestFields>>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const entityLoaderFactory = instance(
       mock<
@@ -864,7 +864,7 @@ describe(EntityMutatorFactory, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(SimpleTestEntityPrivacyPolicy));
-    const databaseAdapterMock = mock(EntityDatabaseAdapter);
+    const databaseAdapterMock = mock<EntityDatabaseAdapter<SimpleTestFields>>();
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const entityLoaderFactory = instance(
       mock<

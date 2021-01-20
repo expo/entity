@@ -227,7 +227,7 @@ describe(EntityLoader, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
-    const dataManagerMock = mock(EntityDataManager);
+    const dataManagerMock = mock<EntityDataManager<TestFields>>();
     const dataManagerInstance = instance(dataManagerMock);
 
     const entityLoader = new EntityLoader(
@@ -241,7 +241,7 @@ describe(EntityLoader, () => {
     await entityLoader.invalidateFieldsAsync({ customIdField: 'hello' } as any);
 
     verify(
-      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: 'hello' }))
+      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: 'hello' } as any))
     ).once();
   });
 
@@ -249,7 +249,7 @@ describe(EntityLoader, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
-    const dataManagerMock = mock(EntityDataManager);
+    const dataManagerMock = mock<EntityDataManager<TestFields>>();
     const dataManagerInstance = instance(dataManagerMock);
 
     const entityLoader = new EntityLoader(
@@ -262,7 +262,7 @@ describe(EntityLoader, () => {
     );
     await entityLoader.invalidateFieldsAsync({ customIdField: 'hello' } as any);
     verify(
-      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: 'hello' }))
+      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: 'hello' } as any))
     ).once();
   });
 
@@ -270,7 +270,7 @@ describe(EntityLoader, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
-    const dataManagerMock = mock(EntityDataManager);
+    const dataManagerMock = mock<EntityDataManager<TestFields>>();
     const dataManagerInstance = instance(dataManagerMock);
 
     const entityMock = mock(TestEntity);
@@ -287,7 +287,7 @@ describe(EntityLoader, () => {
     );
     await entityLoader.invalidateEntityAsync(entityInstance);
     verify(
-      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: 'hello' }))
+      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: 'hello' } as any))
     ).once();
   });
 
@@ -295,7 +295,7 @@ describe(EntityLoader, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicyMock = mock(TestEntityPrivacyPolicy);
-    const dataManagerMock = mock(EntityDataManager);
+    const dataManagerMock = mock<EntityDataManager<TestFields>>();
 
     when(
       dataManagerMock.loadManyByFieldEqualingAsync(anything(), anything(), anything())
@@ -329,7 +329,7 @@ describe(EntityLoader, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
-    const dataManagerMock = mock(EntityDataManager);
+    const dataManagerMock = mock<EntityDataManager<TestFields>>();
 
     const error = new Error();
 

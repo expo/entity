@@ -8,11 +8,12 @@ import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
 import TestEntity, {
   TestEntityPrivacyPolicy,
   testEntityConfiguration,
+  TestFields,
 } from '../testfixtures/TestEntity';
 
 describe(EntityCompanion, () => {
   it('correctly instantiates mutator and loader factories', () => {
-    const tableDataCoordinatorMock = mock(EntityTableDataCoordinator);
+    const tableDataCoordinatorMock = mock<EntityTableDataCoordinator<TestFields>>();
     when(tableDataCoordinatorMock.entityConfiguration).thenReturn(testEntityConfiguration);
 
     const companion = new EntityCompanion(
