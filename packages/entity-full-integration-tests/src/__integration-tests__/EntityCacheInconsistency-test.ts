@@ -183,16 +183,19 @@ describe('Entity cache inconsistency', () => {
 
         openBarrier2!();
       })(),
-      TestEntity.runInTransactionAsync(viewerContext, async (queryContext) => {
-        await TestEntity.updater(entity1, queryContext)
-          .setField('third_string', 'updated')
-          .enforceUpdateAsync();
+      viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        DatabaseAdapterFlavor.POSTGRES,
+        async (queryContext) => {
+          await TestEntity.updater(entity1, queryContext)
+            .setField('third_string', 'updated')
+            .enforceUpdateAsync();
 
-        openBarrier1();
+          openBarrier1();
 
-        // wait for to ensure the transaction isn't committed until after load above occurs
-        await barrier2;
-      }),
+          // wait for to ensure the transaction isn't committed until after load above occurs
+          await barrier2;
+        }
+      ),
     ]);
 
     // ensure cache consistency

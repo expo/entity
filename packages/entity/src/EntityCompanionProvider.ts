@@ -226,6 +226,13 @@ export default class EntityCompanionProvider {
     });
   }
 
+  getQueryContextProviderForDatabaseAdaptorFlavor(
+    databaseAdapterFlavor: DatabaseAdapterFlavor
+  ): EntityQueryContextProvider {
+    const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors[databaseAdapterFlavor];
+    return entityDatabaseAdapterFlavor.queryContextProvider;
+  }
+
   private getTableDataCoordinatorForEntity<TFields>(
     entityConfiguration: EntityConfiguration<TFields>,
     entityClassName: string

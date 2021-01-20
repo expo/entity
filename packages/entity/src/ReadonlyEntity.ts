@@ -5,7 +5,7 @@ import EntityAssociationLoader from './EntityAssociationLoader';
 import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
+import { EntityQueryContext } from './EntityQueryContext';
 import ViewerContext from './ViewerContext';
 import { pick } from './entityUtils';
 
@@ -116,80 +116,6 @@ export default abstract class ReadonlyEntity<
    */
   getAllDatabaseFields(): Readonly<TFields> {
     return { ...this.databaseFields };
-  }
-
-  /**
-   * Get the regular (non-transactional) query context for this entity.
-   * @param viewerContext - viewer context of calling user
-   */
-  static getQueryContext<
-    TMFields,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
-    TMViewerContext extends ViewerContext,
-    TMViewerContext2 extends TMViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<
-      TMFields,
-      TMID,
-      TMViewerContext,
-      TMEntity,
-      TMSelectedFields
-    >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
-  >(
-    this: IEntityClass<
-      TMFields,
-      TMID,
-      TMViewerContext,
-      TMEntity,
-      TMPrivacyPolicy,
-      TMSelectedFields
-    >,
-    viewerContext: TMViewerContext2
-  ): EntityQueryContext {
-    return viewerContext
-      .getViewerScopedEntityCompanionForClass(this)
-      .getQueryContextProvider()
-      .getQueryContext();
-  }
-
-  /**
-   * Start a transaction and execute the provided transaction-scoped closure within the transaction.
-   * @param viewerContext - viewer context of calling user
-   * @param transactionScope - async callback to execute within the transaction
-   */
-  static async runInTransactionAsync<
-    TResult,
-    TMFields,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
-    TMViewerContext extends ViewerContext,
-    TMViewerContext2 extends TMViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<
-      TMFields,
-      TMID,
-      TMViewerContext,
-      TMEntity,
-      TMSelectedFields
-    >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
-  >(
-    this: IEntityClass<
-      TMFields,
-      TMID,
-      TMViewerContext,
-      TMEntity,
-      TMPrivacyPolicy,
-      TMSelectedFields
-    >,
-    viewerContext: TMViewerContext2,
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<TResult>
-  ): Promise<TResult> {
-    return await viewerContext
-      .getViewerScopedEntityCompanionForClass(this)
-      .getQueryContextProvider()
-      .getQueryContext()
-      .runInTransactionIfNotInTransactionAsync(transactionScope);
   }
 
   /**
