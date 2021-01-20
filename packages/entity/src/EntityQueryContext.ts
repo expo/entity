@@ -18,7 +18,7 @@ export abstract class EntityQueryContext {
     return this.queryInterface;
   }
 
-  abstract async runInTransactionIfNotInTransactionAsync<T>(
+  abstract runInTransactionIfNotInTransactionAsync<T>(
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
   ): Promise<T>;
 }

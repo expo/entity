@@ -13,7 +13,7 @@ export default abstract class EntityMutationValidator<
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
 > {
-  abstract async executeAsync(
+  abstract executeAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     entity: TEntity

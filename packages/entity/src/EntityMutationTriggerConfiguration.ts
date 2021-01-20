@@ -75,7 +75,7 @@ export abstract class EntityMutationTrigger<
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
 > {
-  abstract async executeAsync(
+  abstract executeAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     entity: TEntity
@@ -93,5 +93,5 @@ export abstract class EntityNonTransactionalMutationTrigger<
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
 > {
-  abstract async executeAsync(viewerContext: TViewerContext, entity: TEntity): Promise<void>;
+  abstract executeAsync(viewerContext: TViewerContext, entity: TEntity): Promise<void>;
 }

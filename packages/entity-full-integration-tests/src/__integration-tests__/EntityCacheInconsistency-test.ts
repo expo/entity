@@ -157,12 +157,12 @@ describe('Entity cache inconsistency', () => {
       .loadByFieldEqualingAsync('other_string', 'hello');
 
     let openBarrier1: () => void;
-    const barrier1 = new Promise((resolve) => {
+    const barrier1 = new Promise<void>((resolve) => {
       openBarrier1 = resolve;
     });
 
     let openBarrier2: () => void;
-    const barrier2 = new Promise((resolve) => {
+    const barrier2 = new Promise<void>((resolve) => {
       openBarrier2 = resolve;
     });
 
