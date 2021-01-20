@@ -1,3 +1,5 @@
+import invariant from 'invariant';
+
 import { IEntityClass } from './Entity';
 import EntityCompanion, { IPrivacyPolicyClass } from './EntityCompanion';
 import EntityConfiguration from './EntityConfiguration';
@@ -222,11 +224,10 @@ export default class EntityCompanionProvider {
     databaseAdapterFlavor: DatabaseAdapterFlavor
   ): EntityQueryContextProvider {
     const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors.get(databaseAdapterFlavor);
-    if (!entityDatabaseAdapterFlavor) {
-      throw new Error(
-        `No database adaptor configuration found for flavor: ${databaseAdapterFlavor}`
-      );
-    }
+    invariant(
+      entityDatabaseAdapterFlavor,
+      `No database adaptor configuration found for flavor: ${databaseAdapterFlavor}`
+    );
 
     return entityDatabaseAdapterFlavor.queryContextProvider;
   }
@@ -239,20 +240,18 @@ export default class EntityCompanionProvider {
       const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors.get(
         entityConfiguration.databaseAdapterFlavor
       );
-      if (!entityDatabaseAdapterFlavor) {
-        throw new Error(
-          `No database adaptor configuration found for flavor: ${entityConfiguration.databaseAdapterFlavor}`
-        );
-      }
+      invariant(
+        entityDatabaseAdapterFlavor,
+        `No database adaptor configuration found for flavor: ${entityConfiguration.databaseAdapterFlavor}`
+      );
 
       const entityCacheAdapterFlavor = this.cacheAdapterFlavors.get(
         entityConfiguration.cacheAdapterFlavor
       );
-      if (!entityCacheAdapterFlavor) {
-        throw new Error(
-          `No cache adaptor configuration found for flavor: ${entityConfiguration.cacheAdapterFlavor}`
-        );
-      }
+      invariant(
+        entityCacheAdapterFlavor,
+        `No cache adaptor configuration found for flavor: ${entityConfiguration.cacheAdapterFlavor}`
+      );
 
       return new EntityTableDataCoordinator(
         entityConfiguration,
