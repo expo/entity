@@ -6,8 +6,6 @@ import {
   DateField,
   StringField,
   EntityConfiguration,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
   EntityCompanionDefinition,
   Entity,
 } from '@expo/entity';
@@ -85,8 +83,8 @@ export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEnt
       columnName: 'date_field',
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 const redisTestEntityCompanionDefinition = new EntityCompanionDefinition({

@@ -2,8 +2,6 @@ import {
   NoOpEntityMetricsAdapter,
   IEntityMetricsAdapter,
   EntityCompanionProvider,
-  CacheAdapterFlavor,
-  DatabaseAdapterFlavor,
   InMemoryFullCacheStubCacheAdapterProvider,
 } from '@expo/entity';
 import Knex from 'knex';
@@ -17,16 +15,22 @@ export const createKnexIntegrationTestEntityCompanionProvider = (
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
     metricsAdapter,
-    {
-      [DatabaseAdapterFlavor.POSTGRES]: {
-        adapterProvider: new PostgresEntityDatabaseAdapterProvider(),
-        queryContextProvider: new PostgresEntityQueryContextProvider(knex),
-      },
-    },
-    {
-      [CacheAdapterFlavor.REDIS]: {
-        cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
-      },
-    }
+    new Map([
+      [
+        'postgres',
+        {
+          adapterProvider: new PostgresEntityDatabaseAdapterProvider(),
+          queryContextProvider: new PostgresEntityQueryContextProvider(knex),
+        },
+      ],
+    ]),
+    new Map([
+      [
+        'redis',
+        {
+          cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
+        },
+      ],
+    ])
   );
 };

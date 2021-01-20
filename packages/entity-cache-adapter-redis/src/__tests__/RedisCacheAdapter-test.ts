@@ -1,10 +1,4 @@
-import {
-  CacheStatus,
-  UUIDField,
-  EntityConfiguration,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-} from '@expo/entity';
+import { CacheStatus, UUIDField, EntityConfiguration } from '@expo/entity';
 import { Redis, Pipeline } from 'ioredis';
 import { mock, when, instance, anything, verify } from 'ts-mockito';
 
@@ -20,8 +14,8 @@ const entityConfiguration = new EntityConfiguration<BlahFields>({
   schema: {
     id: new UUIDField({ columnName: 'id', cache: true }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 describe(RedisCacheAdapter, () => {

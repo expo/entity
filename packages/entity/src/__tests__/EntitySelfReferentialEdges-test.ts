@@ -1,9 +1,5 @@
 import Entity from '../Entity';
-import {
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-  EntityCompanionDefinition,
-} from '../EntityCompanionProvider';
+import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField, EntityEdgeDeletionBehavior } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
@@ -71,8 +67,8 @@ const makeEntityClass = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
         },
       }),
     },
-    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+    databaseAdapterFlavor: 'postgres',
+    cacheAdapterFlavor: 'redis',
   });
 
   const categoryEntityCompanion = new EntityCompanionDefinition({

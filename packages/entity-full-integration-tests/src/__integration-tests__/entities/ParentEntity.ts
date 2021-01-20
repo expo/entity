@@ -1,7 +1,5 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
-  CacheAdapterFlavor,
-  DatabaseAdapterFlavor,
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
@@ -53,8 +51,8 @@ const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
       cache: true,
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 const parentEntityCompanion = new EntityCompanionDefinition({

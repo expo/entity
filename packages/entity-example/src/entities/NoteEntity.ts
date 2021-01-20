@@ -3,8 +3,6 @@ import {
   EntityCompanionDefinition,
   EntityConfiguration,
   UUIDField,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
   StringField,
 } from '@expo/entity';
 
@@ -57,8 +55,8 @@ export const noteEntityCompanion = new EntityCompanionDefinition({
         columnName: 'body',
       }),
     },
-    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+    databaseAdapterFlavor: 'postgres',
+    cacheAdapterFlavor: 'redis',
   }),
   privacyPolicyClass: NotePrivacyPolicy,
 });

@@ -1,11 +1,7 @@
 import { mock, instance, spy, verify, anyOfClass } from 'ts-mockito';
 
 import Entity from '../Entity';
-import {
-  EntityCompanionDefinition,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-} from '../EntityCompanionProvider';
+import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import EntityPrivacyPolicy, {
@@ -234,8 +230,8 @@ const blahEntityCompanionDefinition = new EntityCompanionDefinition({
         columnName: 'id',
       }),
     },
-    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+    databaseAdapterFlavor: 'postgres',
+    cacheAdapterFlavor: 'redis',
   }),
   privacyPolicyClass: AlwaysDenyPolicy,
 });

@@ -1,9 +1,5 @@
 import Entity from '../Entity';
-import EntityCompanionProvider, {
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-  EntityCompanionDefinition,
-} from '../EntityCompanionProvider';
+import EntityCompanionProvider, { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { StringField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
@@ -22,8 +18,8 @@ const blahConfiguration = new EntityConfiguration<BlahFields>({
       columnName: 'hello',
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 class Blah1Entity extends Entity<BlahFields, string, ViewerContext> {

@@ -1,9 +1,5 @@
 import Entity from '../Entity';
-import {
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
-  EntityCompanionDefinition,
-} from '../EntityCompanionProvider';
+import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { NumberField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
@@ -22,8 +18,8 @@ export const numberKeyEntityConfiguration = new EntityConfiguration<NumberKeyFie
       columnName: 'custom_id',
     }),
   },
-  databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-  cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
 });
 
 export class NumberKeyPrivacyPolicy extends EntityPrivacyPolicy<

@@ -2,8 +2,6 @@ import {
   NoOpEntityMetricsAdapter,
   IEntityMetricsAdapter,
   EntityCompanionProvider,
-  CacheAdapterFlavor,
-  DatabaseAdapterFlavor,
   StubQueryContextProvider,
   StubDatabaseAdapterProvider,
 } from '@expo/entity';
@@ -17,16 +15,22 @@ export const createRedisIntegrationTestEntityCompanionProvider = (
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
     metricsAdapter,
-    {
-      [DatabaseAdapterFlavor.POSTGRES]: {
-        adapterProvider: new StubDatabaseAdapterProvider(),
-        queryContextProvider: StubQueryContextProvider,
-      },
-    },
-    {
-      [CacheAdapterFlavor.REDIS]: {
-        cacheAdapterProvider: new RedisCacheAdapterProvider(redisCacheAdapterContext),
-      },
-    }
+    new Map([
+      [
+        'postgres',
+        {
+          adapterProvider: new StubDatabaseAdapterProvider(),
+          queryContextProvider: StubQueryContextProvider,
+        },
+      ],
+    ]),
+    new Map([
+      [
+        'redis',
+        {
+          cacheAdapterProvider: new RedisCacheAdapterProvider(redisCacheAdapterContext),
+        },
+      ],
+    ])
   );
 };

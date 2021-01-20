@@ -5,8 +5,6 @@ import {
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
-  DatabaseAdapterFlavor,
-  CacheAdapterFlavor,
   UUIDField,
   EntityEdgeDeletionBehavior,
 } from '@expo/entity';
@@ -90,8 +88,8 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
         },
       }),
     },
-    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+    databaseAdapterFlavor: 'postgres',
+    cacheAdapterFlavor: 'redis',
   });
 
   const categoryEntityCompanion = new EntityCompanionDefinition({
@@ -118,8 +116,8 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
         },
       }),
     },
-    databaseAdapterFlavor: DatabaseAdapterFlavor.POSTGRES,
-    cacheAdapterFlavor: CacheAdapterFlavor.REDIS,
+    databaseAdapterFlavor: 'postgres',
+    cacheAdapterFlavor: 'redis',
   });
 
   const otherEntityCompanion = new EntityCompanionDefinition({

@@ -1,4 +1,3 @@
-import { DatabaseAdapterFlavor } from '../EntityCompanionProvider';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
@@ -8,9 +7,7 @@ describe(ViewerContext, () => {
     it('creates a new regular query context', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      const queryContext = viewerContext.getQueryContextForDatabaseAdaptorFlavor(
-        DatabaseAdapterFlavor.POSTGRES
-      );
+      const queryContext = viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres');
       expect(queryContext).toBeInstanceOf(EntityQueryContext);
       expect(queryContext.isInTransaction()).toBe(false);
     });
@@ -21,7 +18,7 @@ describe(ViewerContext, () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
       const didCreateTransaction = await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
-        DatabaseAdapterFlavor.POSTGRES,
+        'postgres',
         async (queryContext) => {
           return queryContext.isInTransaction();
         }
