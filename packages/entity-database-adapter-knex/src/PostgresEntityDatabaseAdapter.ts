@@ -97,7 +97,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
 
     if (tableFieldMultiValueEqualityOperands.length > 0) {
       for (const { tableField, tableValues } of tableFieldMultiValueEqualityOperands) {
-        query = query.whereRaw('?? = ANY(?)', [tableField, tableValues]);
+        query = query.whereRaw('?? = ANY(?)', [tableField, [...tableValues]]);
       }
     }
 

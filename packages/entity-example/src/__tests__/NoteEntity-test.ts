@@ -1,4 +1,5 @@
 import { createUnitTestEntityCompanionProvider } from '@expo/entity';
+import { v4 as uuidv4 } from 'uuid';
 
 import NoteEntity from '../entities/NoteEntity';
 import { UserViewerContext } from '../viewerContexts';
@@ -6,17 +7,18 @@ import { UserViewerContext } from '../viewerContexts';
 describe(NoteEntity, () => {
   test('demonstrate usage of business logic test utilities', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
-    const viewerContext = new UserViewerContext(companionProvider, '4');
+    const userId = uuidv4();
+    const viewerContext = new UserViewerContext(companionProvider, userId);
 
     const createdEntityResult = await NoteEntity.creator(viewerContext)
-      .setField('userID', '4')
+      .setField('userID', userId)
       .setField('body', 'image')
       .setField('title', 'page')
       .createAsync();
     expect(createdEntityResult.ok).toBe(true);
 
     const createdEntityResultImpersonate = await NoteEntity.creator(viewerContext)
-      .setField('userID', '5')
+      .setField('userID', uuidv4()) // a different user
       .setField('body', 'image')
       .setField('title', 'page')
       .createAsync();
