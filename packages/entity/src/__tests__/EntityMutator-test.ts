@@ -780,6 +780,44 @@ describe(EntityMutatorFactory, () => {
     expect(entities2).toHaveLength(2);
   });
 
+  it('returns error when field not valid', async () => {
+    const viewerContext = mock<ViewerContext>();
+    const queryContext = StubQueryContextProvider.getQueryContext();
+    const { entityMutatorFactory } = createEntityMutatorFactory([
+      {
+        customIdField: 'world',
+        stringField: 'huh',
+        testIndexedField: '3',
+        numberField: 3,
+        dateField: new Date(),
+        nullableField: null,
+      },
+    ]);
+
+    const entityCreateInvalidResult = await entityMutatorFactory
+      .forCreate(viewerContext, queryContext)
+      .setField('stringField', 10 as any)
+      .createAsync();
+    expect(entityCreateInvalidResult.ok).toBe(false);
+    expect(entityCreateInvalidResult.reason?.message).toEqual(
+      'Entity field not valid: TestEntity (stringField = 10)'
+    );
+
+    const createdEntity = await entityMutatorFactory
+      .forCreate(viewerContext, queryContext)
+      .setField('stringField', 'hello')
+      .enforceCreateAsync();
+
+    const entityUpdateInvalidResult = await entityMutatorFactory
+      .forUpdate(createdEntity, queryContext)
+      .setField('stringField', 10 as any)
+      .updateAsync();
+    expect(entityUpdateInvalidResult.ok).toBe(false);
+    expect(entityUpdateInvalidResult.reason?.message).toEqual(
+      'Entity field not valid: TestEntity (stringField = 10)'
+    );
+  });
+
   it('returns error result when not authorized to create', async () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
