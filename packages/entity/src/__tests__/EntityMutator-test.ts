@@ -9,6 +9,7 @@ import {
   anything,
   objectContaining,
 } from 'ts-mockito';
+import { v4 as uuidv4 } from 'uuid';
 
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
 import EntityLoaderFactory from '../EntityLoaderFactory';
@@ -273,7 +274,7 @@ const createEntityMutatorFactory = (
     TestEntity.name
   );
   const entityLoaderFactory = new EntityLoaderFactory(
-    testEntityConfiguration.idField,
+    testEntityConfiguration,
     TestEntity,
     privacyPolicy,
     dataManager
@@ -303,9 +304,12 @@ describe(EntityMutatorFactory, () => {
     it('creates entities', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
       const { entityMutatorFactory } = createEntityMutatorFactory([
         {
-          customIdField: 'hello',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '4',
           numberField: 1,
@@ -313,7 +317,7 @@ describe(EntityMutatorFactory, () => {
           nullableField: null,
         },
         {
-          customIdField: 'world',
+          customIdField: id2,
           stringField: 'huh',
           testIndexedField: '5',
           numberField: 1,
@@ -331,9 +335,12 @@ describe(EntityMutatorFactory, () => {
     it('checks privacy', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
       const { privacyPolicy, entityMutatorFactory } = createEntityMutatorFactory([
         {
-          customIdField: 'hello',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '4',
           numberField: 1,
@@ -341,7 +348,7 @@ describe(EntityMutatorFactory, () => {
           nullableField: null,
         },
         {
-          customIdField: 'world',
+          customIdField: id2,
           stringField: 'huh',
           testIndexedField: '5',
           numberField: 1,
@@ -369,9 +376,12 @@ describe(EntityMutatorFactory, () => {
     it('executes triggers', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
       const { mutationTriggers, entityMutatorFactory } = createEntityMutatorFactory([
         {
-          customIdField: 'hello',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '4',
           numberField: 1,
@@ -379,7 +389,7 @@ describe(EntityMutatorFactory, () => {
           nullableField: null,
         },
         {
-          customIdField: 'world',
+          customIdField: id2,
           stringField: 'huh',
           testIndexedField: '5',
           numberField: 1,
@@ -408,9 +418,12 @@ describe(EntityMutatorFactory, () => {
     it('executes validators', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
       const { mutationValidators, entityMutatorFactory } = createEntityMutatorFactory([
         {
-          customIdField: 'hello',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '4',
           numberField: 1,
@@ -418,7 +431,7 @@ describe(EntityMutatorFactory, () => {
           nullableField: null,
         },
         {
-          customIdField: 'world',
+          customIdField: id2,
           stringField: 'huh',
           testIndexedField: '5',
           numberField: 1,
@@ -442,9 +455,12 @@ describe(EntityMutatorFactory, () => {
     it('updates entities', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
       const { entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory([
         {
-          customIdField: 'hello',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '3',
           numberField: 3,
@@ -452,7 +468,7 @@ describe(EntityMutatorFactory, () => {
           nullableField: null,
         },
         {
-          customIdField: 'world',
+          customIdField: id2,
           stringField: 'huh',
           testIndexedField: '4',
           numberField: 3,
@@ -462,7 +478,7 @@ describe(EntityMutatorFactory, () => {
       ]);
 
       const existingEntity = await enforceAsyncResult(
-        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync(id2)
       );
 
       const updatedEntity = await entityMutatorFactory
@@ -475,7 +491,7 @@ describe(EntityMutatorFactory, () => {
       expect(updatedEntity.getField('stringField')).toEqual('huh2');
 
       const reloadedEntity = await enforceAsyncResult(
-        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync(id2)
       );
       expect(reloadedEntity.getAllFields()).toMatchObject(updatedEntity.getAllFields());
     });
@@ -483,13 +499,16 @@ describe(EntityMutatorFactory, () => {
     it('checks privacy', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
       const {
         privacyPolicy,
         entityMutatorFactory,
         entityLoaderFactory,
       } = createEntityMutatorFactory([
         {
-          customIdField: 'hello',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '3',
           numberField: 3,
@@ -497,7 +516,7 @@ describe(EntityMutatorFactory, () => {
           nullableField: null,
         },
         {
-          customIdField: 'world',
+          customIdField: id2,
           stringField: 'huh',
           testIndexedField: '4',
           numberField: 3,
@@ -509,7 +528,7 @@ describe(EntityMutatorFactory, () => {
       const spiedPrivacyPolicy = spy(privacyPolicy);
 
       const existingEntity = await enforceAsyncResult(
-        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync(id2)
       );
 
       await entityMutatorFactory
@@ -529,13 +548,16 @@ describe(EntityMutatorFactory, () => {
     it('executes triggers', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
       const {
         mutationTriggers,
         entityMutatorFactory,
         entityLoaderFactory,
       } = createEntityMutatorFactory([
         {
-          customIdField: 'hello',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '3',
           numberField: 3,
@@ -543,7 +565,7 @@ describe(EntityMutatorFactory, () => {
           nullableField: null,
         },
         {
-          customIdField: 'world',
+          customIdField: id2,
           stringField: 'huh',
           testIndexedField: '4',
           numberField: 3,
@@ -555,7 +577,7 @@ describe(EntityMutatorFactory, () => {
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
 
       const existingEntity = await enforceAsyncResult(
-        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync(id2)
       );
 
       await entityMutatorFactory
@@ -576,13 +598,15 @@ describe(EntityMutatorFactory, () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
 
+      const id1 = uuidv4();
+      const id2 = uuidv4();
       const {
         mutationValidators,
         entityMutatorFactory,
         entityLoaderFactory,
       } = createEntityMutatorFactory([
         {
-          customIdField: 'hello',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '3',
           numberField: 3,
@@ -590,7 +614,7 @@ describe(EntityMutatorFactory, () => {
           nullableField: null,
         },
         {
-          customIdField: 'world',
+          customIdField: id2,
           stringField: 'huh',
           testIndexedField: '4',
           numberField: 3,
@@ -602,7 +626,7 @@ describe(EntityMutatorFactory, () => {
       const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
 
       const existingEntity = await enforceAsyncResult(
-        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync(id2)
       );
 
       await entityMutatorFactory
@@ -618,9 +642,11 @@ describe(EntityMutatorFactory, () => {
     it('deletes entities', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
       const { entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory([
         {
-          customIdField: 'world',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '3',
           numberField: 3,
@@ -630,7 +656,7 @@ describe(EntityMutatorFactory, () => {
       ]);
 
       const existingEntity = await enforceAsyncResult(
-        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync(id1)
       );
       expect(existingEntity).toBeTruthy();
 
@@ -638,7 +664,7 @@ describe(EntityMutatorFactory, () => {
 
       await expect(
         enforceAsyncResult(
-          entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+          entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync(id1)
         )
       ).rejects.toBeInstanceOf(Error);
     });
@@ -646,13 +672,15 @@ describe(EntityMutatorFactory, () => {
     it('checks privacy', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
       const {
         privacyPolicy,
         entityMutatorFactory,
         entityLoaderFactory,
       } = createEntityMutatorFactory([
         {
-          customIdField: 'world',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '3',
           numberField: 3,
@@ -664,7 +692,7 @@ describe(EntityMutatorFactory, () => {
       const spiedPrivacyPolicy = spy(privacyPolicy);
 
       const existingEntity = await enforceAsyncResult(
-        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync(id1)
       );
 
       await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
@@ -681,13 +709,15 @@ describe(EntityMutatorFactory, () => {
     it('executes triggers', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
       const {
         mutationTriggers,
         entityMutatorFactory,
         entityLoaderFactory,
       } = createEntityMutatorFactory([
         {
-          customIdField: 'world',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '3',
           numberField: 3,
@@ -699,7 +729,7 @@ describe(EntityMutatorFactory, () => {
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
 
       const existingEntity = await enforceAsyncResult(
-        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync(id1)
       );
 
       await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
@@ -717,13 +747,15 @@ describe(EntityMutatorFactory, () => {
     it('does not execute validators', async () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
       const {
         mutationValidators,
         entityMutatorFactory,
         entityLoaderFactory,
       } = createEntityMutatorFactory([
         {
-          customIdField: 'world',
+          customIdField: id1,
           stringField: 'huh',
           testIndexedField: '3',
           numberField: 3,
@@ -735,7 +767,7 @@ describe(EntityMutatorFactory, () => {
       const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
 
       const existingEntity = await enforceAsyncResult(
-        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync('world')
+        entityLoaderFactory.forLoad(viewerContext, queryContext).loadByIDAsync(id1)
       );
 
       await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
@@ -747,9 +779,11 @@ describe(EntityMutatorFactory, () => {
   it('invalidates cache for fields upon create', async () => {
     const viewerContext = mock<ViewerContext>();
     const queryContext = StubQueryContextProvider.getQueryContext();
+
+    const id1 = uuidv4();
     const { entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory([
       {
-        customIdField: 'world',
+        customIdField: id1,
         stringField: 'huh',
         testIndexedField: '3',
         numberField: 3,
@@ -783,9 +817,10 @@ describe(EntityMutatorFactory, () => {
   it('returns error when field not valid', async () => {
     const viewerContext = mock<ViewerContext>();
     const queryContext = StubQueryContextProvider.getQueryContext();
+    const id1 = uuidv4();
     const { entityMutatorFactory } = createEntityMutatorFactory([
       {
-        customIdField: 'world',
+        customIdField: id1,
         stringField: 'huh',
         testIndexedField: '3',
         numberField: 3,
@@ -879,8 +914,9 @@ describe(EntityMutatorFactory, () => {
     expect(entityCreateResult.reason).toEqual(rejectionError);
     expect(entityCreateResult.value).toBe(undefined);
 
+    const id1 = uuidv4();
     const fakeEntity = new SimpleTestEntity(viewerContext, {
-      id: 'hello',
+      id: id1,
     });
 
     const entityUpdateResult = await entityMutatorFactory
@@ -949,8 +985,9 @@ describe(EntityMutatorFactory, () => {
       metricsAdapter
     );
 
+    const id1 = uuidv4();
     const fakeEntity = new SimpleTestEntity(viewerContext, {
-      id: 'hello',
+      id: id1,
     });
 
     await expect(

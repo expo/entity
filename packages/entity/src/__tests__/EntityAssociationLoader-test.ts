@@ -75,7 +75,7 @@ describe(EntityAssociationLoader, () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
       const testEntity = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).setField('stringField', 'blah').createAsync()
+        TestEntity.creator(viewerContext).setField('stringField', uuidv4()).createAsync()
       );
       const loadedOtherResult = await testEntity
         .associationLoader()

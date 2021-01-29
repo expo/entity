@@ -9,19 +9,22 @@ import {
 
 interface SingleValueFieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> {
   fieldName: N;
-  fieldValue: TFields[N];
+  fieldValue: NonNullable<TFields[N]>;
 }
 
 interface MultiValueFieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> {
   fieldName: N;
-  fieldValues: TFields[N][];
+  fieldValues: readonly NonNullable<TFields[N]>[];
 }
 
 export type FieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> =
   | SingleValueFieldEqualityCondition<TFields, N>
   | MultiValueFieldEqualityCondition<TFields, N>;
 
-function isSingleValueFieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields>(
+export function isSingleValueFieldEqualityCondition<
+  TFields,
+  N extends keyof TFields = keyof TFields
+>(
   condition: FieldEqualityCondition<TFields, N>
 ): condition is SingleValueFieldEqualityCondition<TFields, N> {
   return (condition as SingleValueFieldEqualityCondition<TFields, N>).fieldValue !== undefined;
@@ -34,7 +37,7 @@ export interface TableFieldSingleValueEqualityCondition {
 
 export interface TableFieldMultiValueEqualityCondition {
   tableField: string;
-  tableValues: any[];
+  tableValues: readonly any[];
 }
 
 export enum OrderByOrdering {
