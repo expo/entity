@@ -74,17 +74,16 @@ abstract class BaseMutator<
     protected readonly metricsAdapter: IEntityMetricsAdapter
   ) {}
 
-  protected validateFields(fields: Partial<TFields>): Result<void> {
+  protected validateFields(fields: Partial<TFields>): void {
     for (const fieldName in fields) {
       const fieldValue = fields[fieldName];
       const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
       invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
       const isInputValid = fieldDefinition.validateInputValueIfNotNull(fieldValue);
       if (!isInputValid) {
-        return result(new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue));
+        throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
       }
     }
-    return result();
   }
 
   protected async executeMutationTriggersOrValidatorsAsync(
@@ -182,10 +181,7 @@ export class CreateMutator<
   private async createInternalAsync(
     queryContext: EntityTransactionalQueryContext
   ): Promise<Result<TEntity>> {
-    const validResult = this.validateFields(this.fieldsForEntity);
-    if (!validResult.ok) {
-      return result(validResult.reason);
-    }
+    this.validateFields(this.fieldsForEntity);
 
     const temporaryEntityForPrivacyCheck = new this.entityClass(this.viewerContext, ({
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
@@ -371,10 +367,7 @@ export class UpdateMutator<
   private async updateInternalAsync(
     queryContext: EntityTransactionalQueryContext
   ): Promise<Result<TEntity>> {
-    const validResult = this.validateFields(this.updatedFields);
-    if (!validResult.ok) {
-      return result(validResult.reason);
-    }
+    this.validateFields(this.updatedFields);
 
     const entityAboutToBeUpdated = new this.entityClass(this.viewerContext, this.fieldsForEntity);
     const authorizeUpdateResult = await asyncResult(

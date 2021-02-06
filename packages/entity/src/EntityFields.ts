@@ -111,7 +111,7 @@ export abstract class EntityFieldDefinition<T> {
   }
 
   /**
-   * Validates input value for a field of this type. This is used for things like:
+   * Validates input value for a field of this type. Null is considered valid. This is used for things like:
    * - EntityLoader.loadByFieldValue - to ensure the value being loaded by is a valid value
    * - EntityMutator.setField - to ensure the value being set is a valid value
    */
@@ -157,7 +157,7 @@ export class StringArrayField extends EntityFieldDefinition<string[]> {
 }
 export class JSONObjectField extends EntityFieldDefinition<object> {
   protected validateInputValue(value: object): boolean {
-    return typeof value === 'object';
+    return typeof value === 'object' && !Array.isArray(value);
   }
 }
 export class EnumField extends EntityFieldDefinition<string | number> {

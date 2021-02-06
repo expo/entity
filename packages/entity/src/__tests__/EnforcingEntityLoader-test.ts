@@ -288,7 +288,7 @@ describe(EnforcingEntityLoader, () => {
       'invalidateFieldsAsync',
       'invalidateEntityAsync',
       'tryConstructEntities',
-      'partitionFieldValues',
+      'validateFieldValues',
     ];
     expect(loaderProperties).toEqual(expect.arrayContaining(knownLoaderOnlyDifferences));
 

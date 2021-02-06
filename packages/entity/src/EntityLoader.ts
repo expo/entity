@@ -79,24 +79,15 @@ export default class EntityLoader<
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
-    const { invalidFieldValues, validFieldValues } = this.partitionFieldValues(
-      fieldName,
-      fieldValues
-    );
+    this.validateFieldValues(fieldName, fieldValues);
 
     const fieldValuesToFieldObjects = await this.dataManager.loadManyByFieldEqualingAsync(
       this.queryContext,
       fieldName,
-      validFieldValues
+      fieldValues
     );
     const fieldValuesToUncheckedEntityResults = mapMap(fieldValuesToFieldObjects, (fieldObjects) =>
       this.tryConstructEntities(fieldObjects)
-    );
-
-    invalidFieldValues.forEach((invalidFieldValue) =>
-      fieldValuesToUncheckedEntityResults.set(invalidFieldValue, [
-        result(new EntityInvalidFieldValueError(this.entityClass, fieldName, invalidFieldValue)),
-      ])
     );
 
     return await mapMapAsync(
@@ -224,29 +215,11 @@ export default class EntityLoader<
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly Result<TEntity>[]> {
-    const invalidFieldValueErrors: Result<TEntity>[] = [];
     for (const fieldEqualityOperand of fieldEqualityOperands) {
       const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
         ? [fieldEqualityOperand.fieldValue]
         : fieldEqualityOperand.fieldValues;
-      const { invalidFieldValues } = this.partitionFieldValues(
-        fieldEqualityOperand.fieldName,
-        fieldValues
-      );
-      invalidFieldValues.forEach((invalidFieldValue) =>
-        invalidFieldValueErrors.push(
-          result(
-            new EntityInvalidFieldValueError(
-              this.entityClass,
-              fieldEqualityOperand.fieldName,
-              invalidFieldValue
-            )
-          )
-        )
-      );
-    }
-    if (invalidFieldValueErrors.length > 0) {
-      return invalidFieldValueErrors;
+      this.validateFieldValues(fieldEqualityOperand.fieldName, fieldValues);
     }
 
     const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
@@ -356,31 +329,17 @@ export default class EntityLoader<
     });
   }
 
-  private partitionFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
+  private validateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
-  ): {
-    validFieldValues: readonly NonNullable<TFields[N]>[];
-    invalidFieldValues: readonly NonNullable<TFields[N]>[];
-  } {
+  ): void {
     const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
     invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
-
-    const validFieldValues: NonNullable<TFields[N]>[] = [];
-    const invalidFieldValues: NonNullable<TFields[N]>[] = [];
-
     for (const fieldValue of fieldValues) {
       const isInputValid = fieldDefinition.validateInputValueIfNotNull(fieldValue);
-      if (isInputValid) {
-        validFieldValues.push(fieldValue);
-      } else {
-        invalidFieldValues.push(fieldValue);
+      if (!isInputValid) {
+        throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
       }
     }
-
-    return {
-      validFieldValues,
-      invalidFieldValues,
-    };
   }
 }
