@@ -1,5 +1,6 @@
 import http from 'http';
 import request from 'supertest';
+import { v4 as uuidv4 } from 'uuid';
 
 import app from '../app';
 
@@ -7,14 +8,15 @@ describe('graphql', () => {
   it('allows CRUD of user notes', async () => {
     const server = request(http.createServer(app.callback()));
 
-    const responseEmpty = await server.post('/graphql').set('totally-secure-user-id', '4').send({
+    const userId = uuidv4();
+    const responseEmpty = await server.post('/graphql').set('totally-secure-user-id', userId).send({
       query: `query { me { notes { id } } }`,
     });
     expect(responseEmpty.body.data.me.notes).toEqual([]);
 
     const createResponse1 = await server
       .post('/graphql')
-      .set('totally-secure-user-id', '4')
+      .set('totally-secure-user-id', userId)
       .send({
         query: `mutation($note: NoteInput!) { addNote(note: $note) { id, title, body } }`,
         variables: {
@@ -31,7 +33,7 @@ describe('graphql', () => {
 
     const createResponse2 = await server
       .post('/graphql')
-      .set('totally-secure-user-id', '4')
+      .set('totally-secure-user-id', userId)
       .send({
         query: `mutation($note: NoteInput!) { addNote(note: $note) { id, title, body } }`,
         variables: {
@@ -42,14 +44,17 @@ describe('graphql', () => {
         },
       });
 
-    const responseLength2 = await server.post('/graphql').set('totally-secure-user-id', '4').send({
-      query: `query { me { notes { id } } }`,
-    });
+    const responseLength2 = await server
+      .post('/graphql')
+      .set('totally-secure-user-id', userId)
+      .send({
+        query: `query { me { notes { id } } }`,
+      });
     expect(responseLength2.body.data.me.notes).toHaveLength(2);
 
     const responseGetSingle = await server
       .post('/graphql')
-      .set('totally-secure-user-id', '4')
+      .set('totally-secure-user-id', userId)
       .send({
         query: `query($id: ID!) { noteByID(id: $id) { id, title, body } }`,
         variables: {
@@ -64,7 +69,7 @@ describe('graphql', () => {
 
     const responseUpdateSingle = await server
       .post('/graphql')
-      .set('totally-secure-user-id', '4')
+      .set('totally-secure-user-id', userId)
       .send({
         query: `mutation($id: ID!, $note: NoteInput!) { updateNote(id: $id, note: $note) { id, title, body } }`,
         variables: {
@@ -84,7 +89,7 @@ describe('graphql', () => {
 
     const responseDeleteSingle = await server
       .post('/graphql')
-      .set('totally-secure-user-id', '4')
+      .set('totally-secure-user-id', userId)
       .send({
         query: `mutation($id: ID!) { deleteNote(id: $id) { id, title, body } }`,
         variables: {
@@ -102,9 +107,12 @@ describe('graphql', () => {
       body: 'boarding',
     });
 
-    const responseLength1 = await server.post('/graphql').set('totally-secure-user-id', '4').send({
-      query: `query { me { notes { id } } }`,
-    });
+    const responseLength1 = await server
+      .post('/graphql')
+      .set('totally-secure-user-id', userId)
+      .send({
+        query: `query { me { notes { id } } }`,
+      });
     expect(responseLength1.body.data.me.notes).toHaveLength(1);
   });
 
@@ -127,9 +135,11 @@ describe('graphql', () => {
   it('disallows cross-user note impersonation', async () => {
     const server = request(http.createServer(app.callback()));
 
+    const userId = uuidv4();
+    const userId2 = uuidv4();
     const createResponse1 = await server
       .post('/graphql')
-      .set('totally-secure-user-id', '4')
+      .set('totally-secure-user-id', userId)
       .send({
         query: `mutation($note: NoteInput!) { addNote(note: $note) { id, title, body } }`,
         variables: {
@@ -143,7 +153,7 @@ describe('graphql', () => {
     // notes are public
     const responseGetSingle = await server
       .post('/graphql')
-      .set('totally-secure-user-id', '5')
+      .set('totally-secure-user-id', userId2)
       .send({
         query: `query($id: ID!) { noteByID(id: $id) { id, title, body } }`,
         variables: {
@@ -159,7 +169,7 @@ describe('graphql', () => {
     // but can only be updated by the owner
     const responseUpdateSingle = await server
       .post('/graphql')
-      .set('totally-secure-user-id', '5')
+      .set('totally-secure-user-id', userId2)
       .send({
         query: `mutation($id: ID!, $note: NoteInput!) { updateNote(id: $id, note: $note) { id, title, body } }`,
         variables: {

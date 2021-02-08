@@ -3,11 +3,17 @@ import invariant from 'invariant';
 
 import EnforcingEntityLoader from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
-import { FieldEqualityCondition, QuerySelectionModifiers } from './EntityDatabaseAdapter';
+import EntityConfiguration from './EntityConfiguration';
+import {
+  FieldEqualityCondition,
+  QuerySelectionModifiers,
+  isSingleValueFieldEqualityCondition,
+} from './EntityDatabaseAdapter';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
+import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import EntityDataManager from './internal/EntityDataManager';
 import { mapMap, mapMapAsync } from './utils/collections/maps';
@@ -33,7 +39,7 @@ export default class EntityLoader<
   constructor(
     private readonly viewerContext: TViewerContext,
     private readonly queryContext: EntityQueryContext,
-    private readonly idField: keyof Pick<TFields, TSelectedFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields>,
     private readonly entityClass: IEntityClass<
       TFields,
       TID,
@@ -73,6 +79,8 @@ export default class EntityLoader<
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
+    this.validateFieldValues(fieldName, fieldValues);
+
     const fieldValuesToFieldObjects = await this.dataManager.loadManyByFieldEqualingAsync(
       this.queryContext,
       fieldName,
@@ -150,7 +158,9 @@ export default class EntityLoader<
     const entityResults = await this.loadManyByIDsAsync([id]);
     const entityResult = entityResults.get(id);
     if (entityResult === undefined) {
-      return result(new EntityNotFoundError(this.entityClass, this.idField, id));
+      return result(
+        new EntityNotFoundError(this.entityClass, this.entityConfiguration.idField, id)
+      );
     }
     return entityResult;
   }
@@ -161,7 +171,10 @@ export default class EntityLoader<
    * @returns entity result for matching ID, or null if no entity exists for ID.
    */
   async loadByIDNullableAsync(id: TID): Promise<Result<TEntity> | null> {
-    return await this.loadByFieldEqualingAsync(this.idField, id);
+    return await this.loadByFieldEqualingAsync(
+      this.entityConfiguration.idField as TSelectedFields,
+      id
+    );
   }
 
   /**
@@ -172,12 +185,15 @@ export default class EntityLoader<
    */
   async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, Result<TEntity>>> {
     const entityResults = (await this.loadManyByFieldEqualingManyAsync(
-      this.idField,
+      this.entityConfiguration.idField as TSelectedFields,
       ids
     )) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
     return mapMap(entityResults, (entityResultsForId, id) => {
       const entityResult = entityResultsForId[0];
-      return entityResult ?? result(new EntityNotFoundError(this.entityClass, this.idField, id));
+      return (
+        entityResult ??
+        result(new EntityNotFoundError(this.entityClass, this.entityConfiguration.idField, id))
+      );
     });
   }
 
@@ -199,6 +215,13 @@ export default class EntityLoader<
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly Result<TEntity>[]> {
+    for (const fieldEqualityOperand of fieldEqualityOperands) {
+      const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
+        ? [fieldEqualityOperand.fieldValue]
+        : fieldEqualityOperand.fieldValues;
+      this.validateFieldValues(fieldEqualityOperand.fieldName, fieldValues);
+    }
+
     const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
       this.queryContext,
       fieldEqualityOperands,
@@ -304,5 +327,19 @@ export default class EntityLoader<
         return result(e);
       }
     });
+  }
+
+  private validateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValues: readonly NonNullable<TFields[N]>[]
+  ): void {
+    const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
+    invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
+    for (const fieldValue of fieldValues) {
+      const isInputValid = fieldDefinition.validateInputValueIfNotNull(fieldValue);
+      if (!isInputValid) {
+        throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
+      }
+    }
   }
 }

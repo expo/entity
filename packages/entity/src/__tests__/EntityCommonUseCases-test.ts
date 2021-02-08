@@ -1,4 +1,5 @@
 import { enforceAsyncResult } from '@expo/results';
+import { v4 as uuidv4 } from 'uuid';
 
 import Entity from '../Entity';
 import EntityCompanionProvider, { EntityCompanionDefinition } from '../EntityCompanionProvider';
@@ -106,8 +107,8 @@ it('runs through a common workflow', async () => {
   // will be one entity companion provider for each request, so
   // share amongst all VCs created in that request
   const entityCompanionProvider = createUnitTestEntityCompanionProvider();
-  const vc1 = new TestUserViewerContext(entityCompanionProvider, '1');
-  const vc2 = new TestUserViewerContext(entityCompanionProvider, '2');
+  const vc1 = new TestUserViewerContext(entityCompanionProvider, uuidv4());
+  const vc2 = new TestUserViewerContext(entityCompanionProvider, uuidv4());
 
   const blahOwner1 = await enforceAsyncResult(
     BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()!).createAsync()

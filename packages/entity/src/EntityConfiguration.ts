@@ -14,7 +14,7 @@ export default class EntityConfiguration<TFields> {
   readonly cacheKeyVersion: number;
 
   readonly getInboundEdges: () => IEntityClass<any, any, any, any, any, any>[];
-  readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition>;
+  readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>;
   readonly entityToDBFieldsKeyMapping: ReadonlyMap<keyof TFields, string>;
   readonly dbToEntityFieldsKeyMapping: ReadonlyMap<string, keyof TFields>;
 
@@ -32,7 +32,7 @@ export default class EntityConfiguration<TFields> {
   }: {
     idField: keyof TFields;
     tableName: string;
-    schema: Record<keyof TFields, EntityFieldDefinition>;
+    schema: Record<keyof TFields, EntityFieldDefinition<any>>;
     getInboundEdges?: () => IEntityClass<any, any, any, any, any, any>[];
     cacheKeyVersion?: number;
     databaseAdapterFlavor: DatabaseAdapterFlavor;
@@ -59,7 +59,7 @@ export default class EntityConfiguration<TFields> {
   }
 
   private static computeCacheableKeys<TFields>(
-    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition>
+    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>
   ): ReadonlySet<keyof TFields> {
     return reduceMap(
       schema,
@@ -74,7 +74,7 @@ export default class EntityConfiguration<TFields> {
   }
 
   private static computeEntityToDBFieldsKeyMapping<TFields>(
-    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition>
+    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>
   ): ReadonlyMap<keyof TFields, string> {
     return mapMap(schema, (v) => v.columnName);
   }

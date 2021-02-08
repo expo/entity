@@ -6,6 +6,7 @@ import {
   EntityCompanionDefinition,
   EntityConfiguration,
   UUIDField,
+  StringField,
 } from '@expo/entity';
 import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
@@ -60,11 +61,11 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
       columnName: 'id',
       cache: true,
     }),
-    other_string: new UUIDField({
+    other_string: new StringField({
       columnName: 'other_string',
       cache: true,
     }),
-    third_string: new UUIDField({
+    third_string: new StringField({
       columnName: 'third_string',
     }),
   },

@@ -1,3 +1,5 @@
+import { validate as validateUUID } from 'uuid';
+
 import { IEntityClass } from './Entity';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import ReadonlyEntity from './ReadonlyEntity';
@@ -83,7 +85,7 @@ export interface EntityAssociationDefinition<
   edgeDeletionBehavior?: EntityEdgeDeletionBehavior;
 }
 
-export abstract class EntityFieldDefinition {
+export abstract class EntityFieldDefinition<T> {
   readonly columnName: string;
   readonly cache: boolean;
   readonly association?: EntityAssociationDefinition<any, any, any, any, any, any>;
@@ -107,15 +109,69 @@ export abstract class EntityFieldDefinition {
     this.cache = cache;
     this.association = association;
   }
+
+  /**
+   * Validates input value for a field of this type. Null is considered valid. This is used for things like:
+   * - EntityLoader.loadByFieldValue - to ensure the value being loaded by is a valid value
+   * - EntityMutator.setField - to ensure the value being set is a valid value
+   */
+  public validateInputValueIfNotNull(value: T | null): boolean {
+    if (value === null) {
+      return true;
+    }
+
+    return this.validateInputValue(value);
+  }
+  protected abstract validateInputValue(value: T): boolean;
 }
 
-export class StringField extends EntityFieldDefinition {}
-export class UUIDField extends StringField {}
-export class DateField extends EntityFieldDefinition {}
-export class BooleanField extends EntityFieldDefinition {}
-export class NumberField extends EntityFieldDefinition {}
-export class StringArrayField extends EntityFieldDefinition {}
-export class JSONObjectField extends EntityFieldDefinition {}
-export class EnumField extends EntityFieldDefinition {}
-export class JSONArrayField extends EntityFieldDefinition {}
-export class MaybeJSONArrayField extends EntityFieldDefinition {}
+export class StringField extends EntityFieldDefinition<string> {
+  protected validateInputValue(value: string): boolean {
+    return typeof value === 'string';
+  }
+}
+export class UUIDField extends StringField {
+  protected validateInputValue(value: string): boolean {
+    return validateUUID(value);
+  }
+}
+export class DateField extends EntityFieldDefinition<Date> {
+  protected validateInputValue(value: Date): boolean {
+    return value instanceof Date;
+  }
+}
+export class BooleanField extends EntityFieldDefinition<boolean> {
+  protected validateInputValue(value: boolean): boolean {
+    return typeof value === 'boolean';
+  }
+}
+export class NumberField extends EntityFieldDefinition<number> {
+  protected validateInputValue(value: number): boolean {
+    return typeof value === 'number';
+  }
+}
+export class StringArrayField extends EntityFieldDefinition<string[]> {
+  protected validateInputValue(value: string[]): boolean {
+    return Array.isArray(value) && value.every((subValue) => typeof subValue === 'string');
+  }
+}
+export class JSONObjectField extends EntityFieldDefinition<object> {
+  protected validateInputValue(value: object): boolean {
+    return typeof value === 'object' && !Array.isArray(value);
+  }
+}
+export class EnumField extends EntityFieldDefinition<string | number> {
+  protected validateInputValue(value: string | number): boolean {
+    return typeof value === 'number' || typeof value === 'string';
+  }
+}
+export class JSONArrayField extends EntityFieldDefinition<any[]> {
+  protected validateInputValue(value: any[]): boolean {
+    return Array.isArray(value);
+  }
+}
+export class MaybeJSONArrayField extends EntityFieldDefinition<any | any[]> {
+  protected validateInputValue(_value: any): boolean {
+    return true;
+  }
+}

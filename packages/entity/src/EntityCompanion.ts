@@ -84,7 +84,7 @@ export default class EntityCompanion<
       TPrivacyPolicy,
       TSelectedFields
     >(
-      tableDataCoordinator.entityConfiguration.idField as keyof Pick<TFields, TSelectedFields>,
+      tableDataCoordinator.entityConfiguration,
       entityClass,
       privacyPolicy,
       tableDataCoordinator.dataManager
