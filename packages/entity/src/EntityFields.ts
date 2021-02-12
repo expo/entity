@@ -111,67 +111,67 @@ export abstract class EntityFieldDefinition<T> {
   }
 
   /**
-   * Validates input value for a field of this type. Null is considered valid. This is used for things like:
+   * Validates input value for a field of this type. Null and undefined are considered valid by default. This is used for things like:
    * - EntityLoader.loadByFieldValue - to ensure the value being loaded by is a valid value
    * - EntityMutator.setField - to ensure the value being set is a valid value
    */
-  public validateInputValueIfNotNull(value: T | null): boolean {
-    if (value === null) {
+  public validateInputValue(value: T | null | undefined): boolean {
+    if (value === null || value === undefined) {
       return true;
     }
 
-    return this.validateInputValue(value);
+    return this.validateInputValueInternal(value);
   }
-  protected abstract validateInputValue(value: T): boolean;
+  protected abstract validateInputValueInternal(value: T): boolean;
 }
 
 export class StringField extends EntityFieldDefinition<string> {
-  protected validateInputValue(value: string): boolean {
+  protected validateInputValueInternal(value: string): boolean {
     return typeof value === 'string';
   }
 }
 export class UUIDField extends StringField {
-  protected validateInputValue(value: string): boolean {
+  protected validateInputValueInternal(value: string): boolean {
     return validateUUID(value);
   }
 }
 export class DateField extends EntityFieldDefinition<Date> {
-  protected validateInputValue(value: Date): boolean {
+  protected validateInputValueInternal(value: Date): boolean {
     return value instanceof Date;
   }
 }
 export class BooleanField extends EntityFieldDefinition<boolean> {
-  protected validateInputValue(value: boolean): boolean {
+  protected validateInputValueInternal(value: boolean): boolean {
     return typeof value === 'boolean';
   }
 }
 export class NumberField extends EntityFieldDefinition<number> {
-  protected validateInputValue(value: number): boolean {
+  protected validateInputValueInternal(value: number): boolean {
     return typeof value === 'number';
   }
 }
 export class StringArrayField extends EntityFieldDefinition<string[]> {
-  protected validateInputValue(value: string[]): boolean {
+  protected validateInputValueInternal(value: string[]): boolean {
     return Array.isArray(value) && value.every((subValue) => typeof subValue === 'string');
   }
 }
 export class JSONObjectField extends EntityFieldDefinition<object> {
-  protected validateInputValue(value: object): boolean {
+  protected validateInputValueInternal(value: object): boolean {
     return typeof value === 'object' && !Array.isArray(value);
   }
 }
 export class EnumField extends EntityFieldDefinition<string | number> {
-  protected validateInputValue(value: string | number): boolean {
+  protected validateInputValueInternal(value: string | number): boolean {
     return typeof value === 'number' || typeof value === 'string';
   }
 }
 export class JSONArrayField extends EntityFieldDefinition<any[]> {
-  protected validateInputValue(value: any[]): boolean {
+  protected validateInputValueInternal(value: any[]): boolean {
     return Array.isArray(value);
   }
 }
 export class MaybeJSONArrayField extends EntityFieldDefinition<any | any[]> {
-  protected validateInputValue(_value: any): boolean {
+  protected validateInputValueInternal(_value: any): boolean {
     return true;
   }
 }
