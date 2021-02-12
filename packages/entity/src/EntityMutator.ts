@@ -79,7 +79,7 @@ abstract class BaseMutator<
       const fieldValue = fields[fieldName];
       const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
       invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
-      const isInputValid = fieldDefinition.validateInputValueIfNotNull(fieldValue);
+      const isInputValid = fieldDefinition.validateInputValue(fieldValue);
       if (!isInputValid) {
         throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
       }

@@ -15,7 +15,7 @@ import {
 } from '../EntityFields';
 
 class TestFieldDefinition extends EntityFieldDefinition<string> {
-  protected validateInputValue(value: string): boolean {
+  protected validateInputValueInternal(value: string): boolean {
     return value === 'helloworld';
   }
 }
@@ -33,17 +33,22 @@ describe(EntityFieldDefinition, () => {
 
   test('validator returns true when value is null', () => {
     const fieldDefinition = new TestFieldDefinition({ columnName: 'wat', cache: true });
-    expect(fieldDefinition.validateInputValueIfNotNull(null)).toBe(true);
+    expect(fieldDefinition.validateInputValue(null)).toBe(true);
+  });
+
+  test('validator returns true when value is undefined', () => {
+    const fieldDefinition = new TestFieldDefinition({ columnName: 'wat', cache: true });
+    expect(fieldDefinition.validateInputValue(undefined)).toBe(true);
   });
 
   test('validator returns false when value is invalid', () => {
     const fieldDefinition = new TestFieldDefinition({ columnName: 'wat', cache: true });
-    expect(fieldDefinition.validateInputValueIfNotNull('nothelloworld')).toBe(false);
+    expect(fieldDefinition.validateInputValue('nothelloworld')).toBe(false);
   });
 
   test('validator returns true when value is valid', () => {
     const fieldDefinition = new TestFieldDefinition({ columnName: 'wat', cache: true });
-    expect(fieldDefinition.validateInputValueIfNotNull('helloworld')).toBe(true);
+    expect(fieldDefinition.validateInputValue('helloworld')).toBe(true);
   });
 });
 
@@ -55,13 +60,13 @@ const describeFieldTestCase = <T>(
   describe(fieldDefinition.constructor.name, () => {
     if (validValues.length > 0) {
       test.each(validValues)(`${fieldDefinition.constructor.name}.valid %p`, (value) => {
-        expect(fieldDefinition.validateInputValueIfNotNull(value)).toBe(true);
+        expect(fieldDefinition.validateInputValue(value)).toBe(true);
       });
     }
 
     if (invalidValues.length > 0) {
       test.each(invalidValues)(`${fieldDefinition.constructor.name}.invalid %p`, (value) => {
-        expect(fieldDefinition.validateInputValueIfNotNull(value)).toBe(false);
+        expect(fieldDefinition.validateInputValue(value)).toBe(false);
       });
     }
   });

@@ -336,7 +336,7 @@ export default class EntityLoader<
     const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
     invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
     for (const fieldValue of fieldValues) {
-      const isInputValid = fieldDefinition.validateInputValueIfNotNull(fieldValue);
+      const isInputValid = fieldDefinition.validateInputValue(fieldValue);
       if (!isInputValid) {
         throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
       }
