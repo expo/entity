@@ -7,6 +7,7 @@
 	<meta name="description" content="Documentation for Entity">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -51,7 +52,7 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="../globals.html">Globals</a>
+					<a href="../modules.html">Entity</a>
 				</li>
 				<li>
 					<a href="../modules/_expo_entity.html">@expo/entity</a>
@@ -71,7 +72,7 @@
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>TViewerContext<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.viewercontext.html" class="tsd-signature-type">ViewerContext</a></h4>
+						<h4>TViewerContext<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.viewercontext.html" class="tsd-signature-type" data-tsd-kind="Class">ViewerContext</a></h4>
 					</li>
 					<li>
 						<h4>TAssociatedFields</h4>
@@ -80,13 +81,13 @@
 						<h4>TAssociatedID<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 					<li>
-						<h4>TAssociatedEntity<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.readonlyentity.html" class="tsd-signature-type">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4>TAssociatedEntity<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.readonlyentity.html" class="tsd-signature-type" data-tsd-kind="Class">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 					<li>
-						<h4>TAssociatedPrivacyPolicy<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entityprivacypolicy.html" class="tsd-signature-type">EntityPrivacyPolicy</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4>TAssociatedPrivacyPolicy<span class="tsd-signature-symbol">: </span><a href="../classes/_expo_entity.entityprivacypolicy.html" class="tsd-signature-type" data-tsd-kind="Class">EntityPrivacyPolicy</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 					<li>
-						<h4>TAssociatedSelectedFields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TAssociatedFields</span></h4>
+						<h4>TAssociatedSelectedFields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TAssociatedFields</span> = <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TAssociatedFields</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -118,10 +119,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="associatedentitylookupbyfield" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> associated<wbr>Entity<wbr>Lookup<wbr>ByField</h3>
-					<div class="tsd-signature tsd-kind-icon">associated<wbr>Entity<wbr>Lookup<wbr>ByField<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TAssociatedFields</span></div>
+					<div class="tsd-signature tsd-kind-icon">associated<wbr>Entity<wbr>Lookup<wbr>ByField<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">TAssociatedFields</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/2052838/packages/entity/src/EntityFields.ts#L68">packages/entity/src/EntityFields.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/3ce961d/packages/entity/src/EntityFields.ts#L68">packages/entity/src/EntityFields.ts:68</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -134,10 +135,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="edgedeletionbehavior" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> edge<wbr>Deletion<wbr>Behavior</h3>
-					<div class="tsd-signature tsd-kind-icon">edge<wbr>Deletion<wbr>Behavior<span class="tsd-signature-symbol">:</span> <a href="../enums/_expo_entity.entityedgedeletionbehavior.html" class="tsd-signature-type">EntityEdgeDeletionBehavior</a></div>
+					<div class="tsd-signature tsd-kind-icon">edge<wbr>Deletion<wbr>Behavior<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../enums/_expo_entity.entityedgedeletionbehavior.html#cascade_delete_invalidate_cache" class="tsd-signature-type" data-tsd-kind="Enumeration member">CASCADE_DELETE_INVALIDATE_CACHE</a><span class="tsd-signature-symbol"> | </span><a href="../enums/_expo_entity.entityedgedeletionbehavior.html#cascade_delete" class="tsd-signature-type" data-tsd-kind="Enumeration member">CASCADE_DELETE</a><span class="tsd-signature-symbol"> | </span><a href="../enums/_expo_entity.entityedgedeletionbehavior.html#set_null" class="tsd-signature-type" data-tsd-kind="Enumeration member">SET_NULL</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/2052838/packages/entity/src/EntityFields.ts#L85">packages/entity/src/EntityFields.ts:85</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/3ce961d/packages/entity/src/EntityFields.ts#L85">packages/entity/src/EntityFields.ts:85</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -164,10 +165,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="getassociatedentityclass" class="tsd-anchor"></a>
 					<h3>get<wbr>Associated<wbr>Entity<wbr>Class</h3>
-					<div class="tsd-signature tsd-kind-icon">get<wbr>Associated<wbr>Entity<wbr>Class<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="_expo_entity.ientityclass.html" class="tsd-signature-type">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">get<wbr>Associated<wbr>Entity<wbr>Class<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="_expo_entity.ientityclass.html" class="tsd-signature-type" data-tsd-kind="Interface">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/2052838/packages/entity/src/EntityFields.ts#L55">packages/entity/src/EntityFields.ts:55</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/3ce961d/packages/entity/src/EntityFields.ts#L55">packages/entity/src/EntityFields.ts:55</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -179,12 +180,12 @@
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
-								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.ientityclass.html" class="tsd-signature-type">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-interface">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.ientityclass.html" class="tsd-signature-type" data-tsd-kind="Interface">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
-										<h4 class="tsd-returns-title">Returns <a href="_expo_entity.ientityclass.html" class="tsd-signature-type">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
+										<h4 class="tsd-returns-title">Returns <a href="_expo_entity.ientityclass.html" class="tsd-signature-type" data-tsd-kind="Interface">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAssociatedFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TAssociatedSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
 									</li>
 								</ul>
 							</li>
@@ -196,8 +197,8 @@
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="../globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="../modules.html">Modules</a>
 					</li>
 					<li class="current tsd-kind-module">
 						<a href="../modules/_expo_entity.html">@expo/entity</a>

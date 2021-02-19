@@ -7,6 +7,7 @@
 	<meta name="description" content="Documentation for Entity">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -49,11 +50,6 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
 			<h1>Entity</h1>
 		</div>
 	</div>
@@ -95,33 +91,36 @@
 				<p>One could imagine a simple application with users and their photos. The authorization logic is simple: when the user loads their photos, only query photos <code>WHERE user_id = user.id</code>. A more complex authorization system is most likely overkill at this point.</p>
 				<p>Now, lets add teams to our simple application, where users on the same team can see each others&#39; photos. The authorization logic becomes more complex: <code>WHERE user_id = user.id OR user_id IN (list of users for all organizations that user belongs to)</code>. While still maintainable, one can see that as requirements are added, this logic becomes increasingly difficult to express in just the query or simple checks in code.</p>
 				<p>A common next step is to add an authorization system on top of the data loading layer. <a href="https://github.com/varvet/pundit">Pundit</a>, <a href="https://github.com/dfunckt/django-rules">Django Rules</a>, and <a href="https://laravel.com/docs/authorization">Laravel Policies</a> are examples of excellent libraries that provide a method to authorize a piece of loaded data in the following manner:</p>
-				<pre><code>PhotoModel
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">authorize_read</span><span class="hljs-params">()</span></span>:
-        <span class="hljs-keyword">if</span> rules.is_photo_owner(user, photo)
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
-        <span class="hljs-keyword">if</span> rules.has_organization_permission(user, photo)
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">authorize_create</span><span class="hljs-params">()</span></span>:
-        ...
+				<pre><code><span style="color: #001080">PhotoModel</span>
+<span style="color: #000000">    </span><span style="color: #001080">def</span><span style="color: #000000"> </span><span style="color: #795E26">authorize_read</span><span style="color: #000000">():</span>
+<span style="color: #000000">        </span><span style="color: #AF00DB">if</span><span style="color: #000000"> </span><span style="color: #001080">rules</span><span style="color: #000000">.</span><span style="color: #795E26">is_photo_owner</span><span style="color: #000000">(</span><span style="color: #001080">user</span><span style="color: #000000">, </span><span style="color: #001080">photo</span><span style="color: #000000">)</span>
+<span style="color: #000000">            </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span>
+<span style="color: #000000">        </span><span style="color: #AF00DB">if</span><span style="color: #000000"> </span><span style="color: #001080">rules</span><span style="color: #000000">.</span><span style="color: #795E26">has_organization_permission</span><span style="color: #000000">(</span><span style="color: #001080">user</span><span style="color: #000000">, </span><span style="color: #001080">photo</span><span style="color: #000000">)</span>
+<span style="color: #000000">            </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span>
+<span style="color: #000000">    </span><span style="color: #001080">def</span><span style="color: #000000"> </span><span style="color: #795E26">authorize_create</span><span style="color: #000000">():</span>
+<span style="color: #000000">        ...</span>
 
-PhotoView
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">render</span><span class="hljs-params">()</span></span>:
-        photo = Photo.find(params[<span class="hljs-symbol">:id</span>])
-        authorize(photo, <span class="hljs-string">&#x27;read&#x27;</span>)
-        render_html(photo)</code></pre><p>This works well and is flexible since it allows executing ad-hoc authorization checks. Most libraries also provide hooks into views or controllers such that these authorization checks are performed automatically. This is sufficient for many applications but still has one main drawback: it is prone to error in cases where the authorization check is forgotten or the incorrect check is performed.</p>
+<span style="color: #001080">PhotoView</span>
+<span style="color: #000000">    </span><span style="color: #001080">def</span><span style="color: #000000"> </span><span style="color: #795E26">render</span><span style="color: #000000">():</span>
+<span style="color: #000000">        </span><span style="color: #001080">photo</span><span style="color: #000000"> = </span><span style="color: #001080">Photo</span><span style="color: #000000">.</span><span style="color: #795E26">find</span><span style="color: #000000">(</span><span style="color: #001080">params</span><span style="color: #000000">[:</span><span style="color: #001080">id</span><span style="color: #000000">])</span>
+<span style="color: #000000">        </span><span style="color: #795E26">authorize</span><span style="color: #000000">(</span><span style="color: #001080">photo</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;read&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">        </span><span style="color: #795E26">render_html</span><span style="color: #000000">(</span><span style="color: #001080">photo</span><span style="color: #000000">)</span>
+</code></pre>
+				<p>This works well and is flexible since it allows executing ad-hoc authorization checks. Most libraries also provide hooks into views or controllers such that these authorization checks are performed automatically. This is sufficient for many applications but still has one main drawback: it is prone to error in cases where the authorization check is forgotten or the incorrect check is performed.</p>
 				<p>The Entity framework solves this by adding an additional property to the system: all data accesses are authorized. Given an <code>object</code> and a <code>viewer</code>, the framework provides a clear and testable mechanism for expressing complex relationships between <code>object</code> and <code>viewer</code> needed to authorize access during CRUD operations, and makes it impossible to perform CRUD operations without performing the authorization checks. This combines the data load and authorization steps from above into a single step:</p>
-				<pre><code class="language-typescript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PhotoPrivacyPolicy</span> </span>{
-  <span class="hljs-keyword">const</span> readRules = [
-    <span class="hljs-keyword">new</span> AllowIfOwnerRule(),
-    <span class="hljs-keyword">new</span> AllowIfOrganizationPermissionRule(),
-  ];
-}
+				<pre><code class="language-typescript"><span style="color: #0000FF">class</span><span style="color: #000000"> </span><span style="color: #267F99">PhotoPrivacyPolicy</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #001080">const</span><span style="color: #000000"> </span><span style="color: #001080">readRules</span><span style="color: #000000"> = [</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">AllowIfOwnerRule</span><span style="color: #000000">(),</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">AllowIfOrganizationPermissionRule</span><span style="color: #000000">(),</span>
+<span style="color: #000000">  ];</span>
+<span style="color: #000000">}</span>
 
-<span class="hljs-comment">// in the view, for example</span>
-<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">get_photo_page</span>(<span class="hljs-params">viewer: ViewerContext</span>): <span class="hljs-title">string</span> </span>{
-  <span class="hljs-keyword">const</span> photo = <span class="hljs-keyword">await</span> PhotoEntity.loader(viewer).loadById(id);
-  <span class="hljs-keyword">return</span> render_html(photo);
-}</code></pre>
+<span style="color: #008000">// in the view, for example</span>
+<span style="color: #0000FF">async</span><span style="color: #000000"> </span><span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">get_photo_page</span><span style="color: #000000">(</span><span style="color: #001080">viewer</span><span style="color: #000000">: </span><span style="color: #267F99">ViewerContext</span><span style="color: #000000">): </span><span style="color: #267F99">string</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">photo</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">PhotoEntity</span><span style="color: #000000">.</span><span style="color: #795E26">loader</span><span style="color: #000000">(</span><span style="color: #001080">viewer</span><span style="color: #000000">).</span><span style="color: #795E26">loadById</span><span style="color: #000000">(</span><span style="color: #001080">id</span><span style="color: #000000">);</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #795E26">render_html</span><span style="color: #000000">(</span><span style="color: #001080">photo</span><span style="color: #000000">);</span>
+<span style="color: #000000">}</span>
+</code></pre>
 				<a href="#use-case" id="use-case" style="color: inherit; text-decoration: none;">
 					<h2>Use Case</h2>
 				</a>
@@ -159,8 +158,8 @@ PhotoView
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="modules.html">Modules</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_expo_entity.html">@expo/entity</a>
