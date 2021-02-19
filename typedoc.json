@@ -1,15 +1,11 @@
 {
-  "inputFiles": ["./packages"],
-  "mode": "modules",
+  "entryPoints": ["./packages/entity/src/index.ts", "./packages/entity-database-adapter-knex/src/index.ts", "./packages/entity-cache-adapter-redis/src/index.ts"],
   "out": "doc",
   "exclude": [
-    "**/*+(index).ts",
     "**/__tests__/**/*.ts",
     "**/__integration-tests__/**/*.ts",
     "**/testfixtures/**/*.ts"
   ],
-  "lernaExclude": ["@expo/entity-example", "@expo/entity-full-integration-tests"],
   "name": "Entity",
-  "readme": "README.md",
-  "excludeNotExported": true
+  "readme": "README.md"
 }
