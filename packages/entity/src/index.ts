@@ -1,3 +1,9 @@
+/* eslint-disable tsdoc/syntax */
+/**
+ * @packageDocumentation
+ * @module @expo/entity
+ */
+
 export { default as EnforcingEntityLoader } from './EnforcingEntityLoader';
 export { default as Entity } from './Entity';
 export * from './Entity';
