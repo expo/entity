@@ -8,6 +8,7 @@ import {
   when,
   anything,
   objectContaining,
+  deepEqual,
 } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -18,6 +19,7 @@ import EntityMutationTriggerConfiguration, {
   EntityNonTransactionalMutationTrigger,
 } from '../EntityMutationTriggerConfiguration';
 import EntityMutationValidator from '../EntityMutationValidator';
+import { EntityMutationInfo, EntityMutationType } from '../EntityMutator';
 import EntityMutatorFactory from '../EntityMutatorFactory';
 import { EntityTransactionalQueryContext, EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
@@ -50,7 +52,14 @@ class TestMutationTrigger extends EntityMutationTrigger<
   async executeAsync(
     _viewerContext: ViewerContext,
     _queryContext: EntityQueryContext,
-    _entity: TestEntity
+    _entity: TestEntity,
+    _mutationInfo: EntityMutationInfo<
+      TestFields,
+      string,
+      ViewerContext,
+      TestEntity,
+      keyof TestFields
+    >
   ): Promise<void> {}
 }
 
@@ -85,14 +94,16 @@ const verifyValidatorCounts = (
     TestEntity,
     keyof TestFields
   >[],
-  expectedCalls: number
+  expectedCalls: number,
+  mutationInfo: EntityMutationInfo<TestFields, string, ViewerContext, TestEntity, keyof TestFields>
 ): void => {
   for (const validator of mutationValidatorSpies) {
     verify(
       validator.executeAsync(
         viewerContext,
         anyOfClass(EntityTransactionalQueryContext),
-        anyOfClass(TestEntity)
+        anyOfClass(TestEntity),
+        deepEqual(mutationInfo)
       )
     ).times(expectedCalls);
   }
@@ -152,7 +163,8 @@ const verifyTriggerCounts = (
       | 'afterDelete'
     >,
     boolean
-  >
+  >,
+  mutationInfo: EntityMutationInfo<TestFields, string, ViewerContext, TestEntity, keyof TestFields>
 ): void => {
   Object.keys(executed).forEach((s) => {
     if ((executed as any)[s]) {
@@ -160,7 +172,8 @@ const verifyTriggerCounts = (
         (mutationTriggerSpies as any)[s]![0].executeAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
-          anyOfClass(TestEntity)
+          anyOfClass(TestEntity),
+          deepEqual(mutationInfo)
         )
       ).once();
     } else {
@@ -168,7 +181,8 @@ const verifyTriggerCounts = (
         (mutationTriggerSpies as any)[s]![0].executeAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
-          anyOfClass(TestEntity)
+          anyOfClass(TestEntity),
+          deepEqual(mutationInfo)
         )
       ).never();
     }
@@ -178,7 +192,8 @@ const verifyTriggerCounts = (
     mutationTriggerSpies.beforeAll![0].executeAsync(
       viewerContext,
       anyOfClass(EntityTransactionalQueryContext),
-      anyOfClass(TestEntity)
+      anyOfClass(TestEntity),
+      deepEqual(mutationInfo)
     )
   ).once();
 
@@ -186,12 +201,17 @@ const verifyTriggerCounts = (
     mutationTriggerSpies.afterAll![0].executeAsync(
       viewerContext,
       anyOfClass(EntityTransactionalQueryContext),
-      anyOfClass(TestEntity)
+      anyOfClass(TestEntity),
+      deepEqual(mutationInfo)
     )
   ).once();
 
   verify(
-    mutationTriggerSpies.afterCommit![0].executeAsync(viewerContext, anyOfClass(TestEntity))
+    mutationTriggerSpies.afterCommit![0].executeAsync(
+      viewerContext,
+      anyOfClass(TestEntity),
+      deepEqual(mutationInfo)
+    )
   ).once();
 };
 
@@ -405,14 +425,19 @@ describe(EntityMutatorFactory, () => {
         .setField('stringField', 'huh')
         .enforceCreateAsync();
 
-      verifyTriggerCounts(viewerContext, triggerSpies, {
-        beforeCreate: true,
-        afterCreate: true,
-        beforeUpdate: false,
-        afterUpdate: false,
-        beforeDelete: false,
-        afterDelete: false,
-      });
+      verifyTriggerCounts(
+        viewerContext,
+        triggerSpies,
+        {
+          beforeCreate: true,
+          afterCreate: true,
+          beforeUpdate: false,
+          afterUpdate: false,
+          beforeDelete: false,
+          afterDelete: false,
+        },
+        { type: EntityMutationType.CREATE }
+      );
     });
 
     it('executes validators', async () => {
@@ -447,7 +472,7 @@ describe(EntityMutatorFactory, () => {
         .setField('stringField', 'huh')
         .enforceCreateAsync();
 
-      verifyValidatorCounts(viewerContext, validatorSpies, 1);
+      verifyValidatorCounts(viewerContext, validatorSpies, 1, { type: EntityMutationType.CREATE });
     });
   });
 
@@ -585,14 +610,19 @@ describe(EntityMutatorFactory, () => {
         .setField('stringField', 'huh2')
         .enforceUpdateAsync();
 
-      verifyTriggerCounts(viewerContext, triggerSpies, {
-        beforeCreate: false,
-        afterCreate: false,
-        beforeUpdate: true,
-        afterUpdate: true,
-        beforeDelete: false,
-        afterDelete: false,
-      });
+      verifyTriggerCounts(
+        viewerContext,
+        triggerSpies,
+        {
+          beforeCreate: false,
+          afterCreate: false,
+          beforeUpdate: true,
+          afterUpdate: true,
+          beforeDelete: false,
+          afterDelete: false,
+        },
+        { type: EntityMutationType.UPDATE, previousValue: existingEntity }
+      );
     });
     it('executes validators', async () => {
       const viewerContext = mock<ViewerContext>();
@@ -634,7 +664,10 @@ describe(EntityMutatorFactory, () => {
         .setField('stringField', 'huh2')
         .enforceUpdateAsync();
 
-      verifyValidatorCounts(viewerContext, validatorSpies, 1);
+      verifyValidatorCounts(viewerContext, validatorSpies, 1, {
+        type: EntityMutationType.UPDATE,
+        previousValue: existingEntity,
+      });
     });
   });
 
@@ -734,14 +767,19 @@ describe(EntityMutatorFactory, () => {
 
       await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
 
-      verifyTriggerCounts(viewerContext, triggerSpies, {
-        beforeCreate: false,
-        afterCreate: false,
-        beforeUpdate: false,
-        afterUpdate: false,
-        beforeDelete: true,
-        afterDelete: true,
-      });
+      verifyTriggerCounts(
+        viewerContext,
+        triggerSpies,
+        {
+          beforeCreate: false,
+          afterCreate: false,
+          beforeUpdate: false,
+          afterUpdate: false,
+          beforeDelete: true,
+          afterDelete: true,
+        },
+        { type: EntityMutationType.DELETE }
+      );
     });
 
     it('does not execute validators', async () => {
@@ -772,7 +810,7 @@ describe(EntityMutatorFactory, () => {
 
       await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
 
-      verifyValidatorCounts(viewerContext, validatorSpies, 0);
+      verifyValidatorCounts(viewerContext, validatorSpies, 0, { type: EntityMutationType.DELETE });
     });
   });
 

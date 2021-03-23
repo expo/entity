@@ -109,7 +109,7 @@ export default class EntityMutatorFactory<
       this.entityLoaderFactory,
       this.databaseAdapter,
       this.metricsAdapter,
-      existingEntity.getAllDatabaseFields()
+      existingEntity
     );
   }
 
