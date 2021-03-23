@@ -141,5 +141,5 @@ const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({
   entityClass: PostgresValidatorTestEntity,
   entityConfiguration: postgresTestEntityConfiguration,
   privacyPolicyClass: PostgresValidatorTestEntityPrivacyPolicy,
-  mutationValidators: [new ThrowConditionallyTrigger('name', 'beforeCreateAndBeforeUpdate')],
+  mutationValidators: () => [new ThrowConditionallyTrigger('name', 'beforeCreateAndBeforeUpdate')],
 });

@@ -159,7 +159,7 @@ const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({
   entityClass: PostgresTriggerTestEntity,
   entityConfiguration: postgresTestEntityConfiguration,
   privacyPolicyClass: PostgresTriggerTestEntityPrivacyPolicy,
-  mutationTriggers: {
+  mutationTriggers: () => ({
     beforeCreate: [new ThrowConditionallyTrigger('name', 'beforeCreate')],
     afterCreate: [new ThrowConditionallyTrigger('name', 'afterCreate')],
     beforeUpdate: [new ThrowConditionallyTrigger('name', 'beforeUpdate')],
@@ -169,5 +169,5 @@ const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({
     beforeAll: [new ThrowConditionallyTrigger('name', 'beforeAll')],
     afterAll: [new ThrowConditionallyTrigger('name', 'afterAll')],
     afterCommit: [new ThrowConditionallyNonTransactionalTrigger('name', 'afterCommit')],
-  },
+  }),
 });
