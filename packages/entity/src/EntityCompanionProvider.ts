@@ -73,14 +73,14 @@ export class EntityCompanionDefinition<
   >;
   readonly entityConfiguration: EntityConfiguration<TFields>;
   readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
-  readonly mutationValidators: EntityMutationValidator<
+  readonly mutationValidators: () => EntityMutationValidator<
     TFields,
     TID,
     TViewerContext,
     TEntity,
     TSelectedFields
   >[];
-  readonly mutationTriggers: EntityMutationTriggerConfiguration<
+  readonly mutationTriggers: () => EntityMutationTriggerConfiguration<
     TFields,
     TID,
     TViewerContext,
@@ -93,8 +93,8 @@ export class EntityCompanionDefinition<
     entityClass,
     entityConfiguration,
     privacyPolicyClass,
-    mutationValidators = [],
-    mutationTriggers = {},
+    mutationValidators = () => [],
+    mutationTriggers = () => ({}),
     entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as TSelectedFields[],
   }: {
     entityClass: IEntityClass<
@@ -107,14 +107,14 @@ export class EntityCompanionDefinition<
     >;
     entityConfiguration: EntityConfiguration<TFields>;
     privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
-    mutationValidators?: EntityMutationValidator<
+    mutationValidators?: () => EntityMutationValidator<
       TFields,
       TID,
       TViewerContext,
       TEntity,
       TSelectedFields
     >[];
-    mutationTriggers?: EntityMutationTriggerConfiguration<
+    mutationTriggers?: () => EntityMutationTriggerConfiguration<
       TFields,
       TID,
       TViewerContext,
@@ -213,8 +213,8 @@ export default class EntityCompanionProvider {
         entityCompanionDefinition.entityClass,
         tableDataCoordinator,
         entityCompanionDefinition.privacyPolicyClass,
-        entityCompanionDefinition.mutationValidators,
-        entityCompanionDefinition.mutationTriggers,
+        entityCompanionDefinition.mutationValidators(),
+        entityCompanionDefinition.mutationTriggers(),
         this.metricsAdapter
       );
     });
