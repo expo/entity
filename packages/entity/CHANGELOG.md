@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/expo/entity/compare/v0.13.0...v0.14.0) (2021-03-24)
+
+
+### Bug Fixes
+
+* mutation validator and trigger cyclic import structure ([#118](https://github.com/expo/entity/issues/118)) ([b11dbc0](https://github.com/expo/entity/commit/b11dbc087ba5ad13c748032698dd73279b7960b0))
+
+
+### Features
+
+* add mutation type to validator and trigger execute functions ([#119](https://github.com/expo/entity/issues/119)) ([ef40fa5](https://github.com/expo/entity/commit/ef40fa5e9cdf53e25e78a9423c698e6d1c9737af))
+
+
+
+
+
 # [0.13.0](https://github.com/expo/entity/compare/v0.12.0...v0.13.0) (2021-02-12)
 
 
