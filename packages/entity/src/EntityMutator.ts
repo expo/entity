@@ -21,6 +21,30 @@ import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
 import IEntityMetricsAdapter, { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
 
+export enum EntityMutationType {
+  CREATE,
+  UPDATE,
+  DELETE,
+}
+
+export type EntityMutationInfo<
+  TFields,
+  TID extends NonNullable<TFields[TSelectedFields]>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields
+> =
+  | {
+      type: EntityMutationType.CREATE;
+    }
+  | {
+      type: EntityMutationType.UPDATE;
+      previousValue: TEntity;
+    }
+  | {
+      type: EntityMutationType.DELETE;
+    };
+
 abstract class BaseMutator<
   TFields,
   TID extends NonNullable<TFields[TSelectedFields]>,
@@ -92,14 +116,15 @@ abstract class BaseMutator<
       | EntityMutationValidator<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
       | undefined,
     queryContext: EntityQueryContext,
-    entity: TEntity
+    entity: TEntity,
+    mutationInfo: EntityMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
   ): Promise<void> {
     if (!triggersOrValidators) {
       return;
     }
     await Promise.all(
       triggersOrValidators.map((triggerOrValidator) =>
-        triggerOrValidator.executeAsync(this.viewerContext, queryContext, entity)
+        triggerOrValidator.executeAsync(this.viewerContext, queryContext, entity, mutationInfo)
       )
     );
   }
@@ -114,12 +139,15 @@ abstract class BaseMutator<
           TSelectedFields
         >[]
       | undefined,
-    entity: TEntity
+    entity: TEntity,
+    mutationInfo: EntityMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
   ): Promise<void> {
     if (!triggers) {
       return;
     }
-    await Promise.all(triggers.map((trigger) => trigger.executeAsync(this.viewerContext, entity)));
+    await Promise.all(
+      triggers.map((trigger) => trigger.executeAsync(this.viewerContext, entity, mutationInfo))
+    );
   }
 }
 
@@ -202,17 +230,20 @@ export class CreateMutator<
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationValidators,
       queryContext,
-      temporaryEntityForPrivacyCheck
+      temporaryEntityForPrivacyCheck,
+      { type: EntityMutationType.CREATE }
     );
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
-      temporaryEntityForPrivacyCheck
+      temporaryEntityForPrivacyCheck,
+      { type: EntityMutationType.CREATE }
     );
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.beforeCreate,
       queryContext,
-      temporaryEntityForPrivacyCheck
+      temporaryEntityForPrivacyCheck,
+      { type: EntityMutationType.CREATE }
     );
 
     const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
@@ -230,19 +261,22 @@ export class CreateMutator<
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.afterCreate,
       queryContext,
-      newEntity
+      newEntity,
+      { type: EntityMutationType.CREATE }
     );
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.afterAll,
       queryContext,
-      newEntity
+      newEntity,
+      { type: EntityMutationType.CREATE }
     );
 
     queryContext.appendPostCommitCallback(
       this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
         this,
         this.mutationTriggers.afterCommit,
-        newEntity
+        newEntity,
+        { type: EntityMutationType.CREATE }
       )
     );
 
@@ -267,7 +301,7 @@ export class UpdateMutator<
   >,
   TSelectedFields extends keyof TFields
 > extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-  private readonly originalFieldsForEntity: Readonly<TFields>;
+  private readonly originalEntity: TEntity;
   private readonly fieldsForEntity: TFields;
   private readonly updatedFields: Partial<TFields> = {};
 
@@ -308,7 +342,7 @@ export class UpdateMutator<
     >,
     databaseAdapter: EntityDatabaseAdapter<TFields>,
     metricsAdapter: IEntityMetricsAdapter,
-    fieldsForEntity: Readonly<TFields>
+    originalEntity: TEntity
   ) {
     super(
       viewerContext,
@@ -322,8 +356,8 @@ export class UpdateMutator<
       databaseAdapter,
       metricsAdapter
     );
-    this.originalFieldsForEntity = { ...fieldsForEntity };
-    this.fieldsForEntity = { ...fieldsForEntity };
+    this.originalEntity = originalEntity;
+    this.fieldsForEntity = { ...originalEntity.getAllDatabaseFields() };
   }
 
   /**
@@ -384,17 +418,20 @@ export class UpdateMutator<
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationValidators,
       queryContext,
-      entityAboutToBeUpdated
+      entityAboutToBeUpdated,
+      { type: EntityMutationType.UPDATE, previousValue: this.originalEntity }
     );
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
-      entityAboutToBeUpdated
+      entityAboutToBeUpdated,
+      { type: EntityMutationType.UPDATE, previousValue: this.originalEntity }
     );
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.beforeUpdate,
       queryContext,
-      entityAboutToBeUpdated
+      entityAboutToBeUpdated,
+      { type: EntityMutationType.UPDATE, previousValue: this.originalEntity }
     );
 
     const updateResult = await this.databaseAdapter.updateAsync(
@@ -407,7 +444,10 @@ export class UpdateMutator<
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
 
     queryContext.appendPostCommitCallback(
-      entityLoader.invalidateFieldsAsync.bind(entityLoader, this.originalFieldsForEntity)
+      entityLoader.invalidateFieldsAsync.bind(
+        entityLoader,
+        this.originalEntity.getAllDatabaseFields()
+      )
     );
     queryContext.appendPostCommitCallback(
       entityLoader.invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity)
@@ -421,19 +461,22 @@ export class UpdateMutator<
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.afterUpdate,
       queryContext,
-      updatedEntity
+      updatedEntity,
+      { type: EntityMutationType.UPDATE, previousValue: this.originalEntity }
     );
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.afterAll,
       queryContext,
-      updatedEntity
+      updatedEntity,
+      { type: EntityMutationType.UPDATE, previousValue: this.originalEntity }
     );
 
     queryContext.appendPostCommitCallback(
       this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
         this,
         this.mutationTriggers.afterCommit,
-        updatedEntity
+        updatedEntity,
+        { type: EntityMutationType.UPDATE, previousValue: this.originalEntity }
       )
     );
 
@@ -564,12 +607,14 @@ export class DeleteMutator<
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
-      this.entity
+      this.entity,
+      { type: EntityMutationType.DELETE }
     );
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.beforeDelete,
       queryContext,
-      this.entity
+      this.entity,
+      { type: EntityMutationType.DELETE }
     );
 
     if (!skipDatabaseDeletion) {
@@ -588,19 +633,22 @@ export class DeleteMutator<
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.afterDelete,
       queryContext,
-      this.entity
+      this.entity,
+      { type: EntityMutationType.DELETE }
     );
     await this.executeMutationTriggersOrValidatorsAsync(
       this.mutationTriggers.afterAll,
       queryContext,
-      this.entity
+      this.entity,
+      { type: EntityMutationType.DELETE }
     );
 
     queryContext.appendPostCommitCallback(
       this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
         this,
         this.mutationTriggers.afterCommit,
-        this.entity
+        this.entity,
+        { type: EntityMutationType.DELETE }
       )
     );
 
