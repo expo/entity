@@ -32,7 +32,7 @@ export type EntityMutationInfo<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields
 > =
   | {
       type: EntityMutationType.CREATE;
