@@ -10,6 +10,7 @@ import {
   EntityMutationTrigger,
   EntityQueryContext,
   EntityNonTransactionalMutationTrigger,
+  EntityMutationInfo,
 } from '@expo/entity';
 import Knex from 'knex';
 
@@ -109,7 +110,13 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
   async executeAsync(
     _viewerContext: ViewerContext,
     _queryContext: EntityQueryContext,
-    entity: PostgresTriggerTestEntity
+    entity: PostgresTriggerTestEntity,
+    _mutationInfo: EntityMutationInfo<
+      PostgresTriggerTestEntityFields,
+      string,
+      ViewerContext,
+      PostgresTriggerTestEntity
+    >
   ): Promise<void> {
     if (entity.getField(this.fieldName) === this.badValue) {
       throw new Error(`${this.fieldName} cannot have value ${this.badValue}`);
