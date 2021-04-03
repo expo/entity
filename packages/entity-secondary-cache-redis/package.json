@@ -1,0 +1,40 @@
+{
+  "name": "@expo/entity-secondary-cache-redis",
+  "version": "0.14.1",
+  "description": "Redis secondary cache for @expo/entity",
+  "files": [
+    "build",
+    "src"
+  ],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "rm -rf build coverage coverage-integration",
+    "lint": "eslint src --ext '.ts'",
+    "test": "jest --rootDir . --config ../../resources/jest.config.js --passWithNoTests",
+    "integration": "../../resources/run-with-docker yarn integration-no-setup",
+    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir . --runInBand --passWithNoTests",
+    "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --exportDefault --delete"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "keywords": [
+    "entity"
+  ],
+  "author": "Expo",
+  "license": "MIT",
+  "peerDependencies": {
+    "@expo/entity": "*",
+    "@expo/entity-cache-adapter-redis": "*"
+  },
+  "dependencies": {
+    "ioredis": "^4.17.3"
+  },
+  "devDependencies": {
+    "@expo/entity": "^0.14.1",
+    "@expo/entity-cache-adapter-redis": "^0.14.1",
+    "nullthrows": "^1.1.1"
+  }
+}

@@ -38,6 +38,17 @@ export const mapMapAsync = async function <K, V, M>(
   return resultingMap;
 };
 
+export const mapKeys = <K, V, K2>(
+  map: ReadonlyMap<K, V>,
+  mapper: (key: K, value: V) => K2
+): Map<K2, V> => {
+  const resultingMap = new Map();
+  for (const [k, v] of map) {
+    resultingMap.set(mapper(k, v), v);
+  }
+  return resultingMap;
+};
+
 export const zipToMap = <K, V>(keys: readonly K[], values: readonly V[]): Map<K, V> => {
   invariant(
     keys.length === values.length,

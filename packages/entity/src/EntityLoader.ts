@@ -49,7 +49,7 @@ export default class EntityLoader<
       TSelectedFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
-    private readonly dataManager: EntityDataManager<TFields>
+    public readonly dataManager: EntityDataManager<TFields>
   ) {}
 
   /**
@@ -86,29 +86,8 @@ export default class EntityLoader<
       fieldName,
       fieldValues
     );
-    const fieldValuesToUncheckedEntityResults = mapMap(fieldValuesToFieldObjects, (fieldObjects) =>
-      this.tryConstructEntities(fieldObjects)
-    );
 
-    return await mapMapAsync(
-      fieldValuesToUncheckedEntityResults,
-      async (uncheckedEntityResults) => {
-        return await Promise.all(
-          uncheckedEntityResults.map(async (uncheckedEntityResult) => {
-            if (!uncheckedEntityResult.ok) {
-              return uncheckedEntityResult;
-            }
-            return await asyncResult(
-              this.privacyPolicy.authorizeReadAsync(
-                this.viewerContext,
-                this.queryContext,
-                uncheckedEntityResult.value
-              )
-            );
-          })
-        );
-      }
-    );
+    return await this.constructAndAuthorizeEntitiesAsync(fieldValuesToFieldObjects);
   }
 
   /**
@@ -314,11 +293,6 @@ export default class EntityLoader<
     await this.invalidateFieldsAsync(entity.getAllDatabaseFields());
   }
 
-  /**
-   * Wrap entity construction in try/catch and return Results. Used to prevent constructor errors
-   * thrown for one entity instantiation from interfering with other entity instantiatons of the same query.
-   * @param fieldsObjects - array of entity data objects to construct entities
-   */
   private tryConstructEntities(fieldsObjects: readonly TFields[]): readonly Result<TEntity>[] {
     return fieldsObjects.map((fieldsObject) => {
       try {
@@ -326,6 +300,36 @@ export default class EntityLoader<
       } catch (e) {
         return result(e);
       }
+    });
+  }
+
+  /**
+   * Construct and authorize entities from fields map, returning error results for entities that fail
+   * to construct or fail to authorize.
+   *
+   * @param map - map from an arbitrary key type to an array of entity field objects
+   */
+  public async constructAndAuthorizeEntitiesAsync<K>(
+    map: ReadonlyMap<K, readonly Readonly<TFields>[]>
+  ): Promise<ReadonlyMap<K, readonly Result<TEntity>[]>> {
+    const uncheckedEntityResultsMap = mapMap(map, (fieldObjects) =>
+      this.tryConstructEntities(fieldObjects)
+    );
+    return await mapMapAsync(uncheckedEntityResultsMap, async (uncheckedEntityResults) => {
+      return await Promise.all(
+        uncheckedEntityResults.map(async (uncheckedEntityResult) => {
+          if (!uncheckedEntityResult.ok) {
+            return uncheckedEntityResult;
+          }
+          return await asyncResult(
+            this.privacyPolicy.authorizeReadAsync(
+              this.viewerContext,
+              this.queryContext,
+              uncheckedEntityResult.value
+            )
+          );
+        })
+      );
     });
   }
 

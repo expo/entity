@@ -28,6 +28,8 @@ export { default as EntityNotFoundError } from './errors/EntityNotFoundError';
 export * from './EntityFields';
 export { default as EntityLoader } from './EntityLoader';
 export { default as EntityLoaderFactory } from './EntityLoaderFactory';
+export { default as EntitySecondaryCacheLoader } from './EntitySecondaryCacheLoader';
+export * from './EntitySecondaryCacheLoader';
 export * from './EntityMutator';
 export { default as EntityMutationValidator } from './EntityMutationValidator';
 export * from './EntityMutationTriggerConfiguration';

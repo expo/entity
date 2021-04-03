@@ -1,19 +1,15 @@
 import {
   EntityCacheAdapter,
   EntityConfiguration,
-  FieldTransformerMap,
   CacheLoadResult,
-  CacheStatus,
+  FieldTransformerMap,
+  mapKeys,
 } from '@expo/entity';
 import invariant from 'invariant';
 import { Redis } from 'ioredis';
 
+import GenericRedisCacher from './GenericRedisCacher';
 import { redisTransformerMap } from './RedisCommon';
-import wrapNativeRedisCall from './errors/wrapNativeRedisCall';
-
-// Sentinel value we store in Redis to negatively cache a database miss.
-// The sentinel value is distinct from any (positively) cached value.
-const DOES_NOT_EXIST_REDIS = '';
 
 export interface RedisCacheAdapterContext {
   /**
@@ -53,11 +49,18 @@ export interface RedisCacheAdapterContext {
 }
 
 export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+  private readonly genericRedisCacher: GenericRedisCacher;
   constructor(
     entityConfiguration: EntityConfiguration<TFields>,
     private readonly context: RedisCacheAdapterContext
   ) {
     super(entityConfiguration);
+
+    this.genericRedisCacher = new GenericRedisCacher({
+      redisClient: context.redisClient,
+      ttlSecondsNegative: context.ttlSecondsNegative,
+      ttlSecondsPositive: context.ttlSecondsPositive,
+    });
   }
 
   public getFieldTransformerMap(): FieldTransformerMap {
@@ -68,90 +71,45 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult>> {
-    if (fieldValues.length === 0) {
-      return new Map();
-    }
-
-    const redisKeys = fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue));
-    const redisResults = await wrapNativeRedisCall(() =>
-      this.context.redisClient.mget(...redisKeys)
+    const redisKeyMapping = new Map(
+      fieldValues.map((fieldValue) => [this.makeCacheKey(fieldName, fieldValue), fieldValue])
+    );
+    const cacherResults = await this.genericRedisCacher.loadManyAsync(
+      Array.from(redisKeyMapping.keys())
     );
 
-    const results = new Map<NonNullable<TFields[N]>, CacheLoadResult>();
-    for (let i = 0; i < fieldValues.length; i++) {
-      const fieldValue = fieldValues[i];
-      const redisResult = redisResults[i];
-
-      if (redisResult === DOES_NOT_EXIST_REDIS) {
-        results.set(fieldValue, {
-          status: CacheStatus.NEGATIVE,
-        });
-      } else if (redisResult) {
-        results.set(fieldValue, {
-          status: CacheStatus.HIT,
-          item: JSON.parse(redisResult),
-        });
-      } else {
-        results.set(fieldValue, {
-          status: CacheStatus.MISS,
-        });
-      }
-    }
-    return results;
+    return mapKeys(cacherResults, (k) => {
+      const fieldsKey = redisKeyMapping.get(k);
+      invariant(fieldsKey, 'Invalid key returned from generic redis cacher');
+      return fieldsKey;
+    });
   }
 
   public async cacheManyAsync<N extends keyof TFields>(
     fieldName: N,
     objectMap: ReadonlyMap<NonNullable<TFields[N]>, object>
   ): Promise<void> {
-    if (objectMap.size === 0) {
-      return;
-    }
-
-    let redisTransaction = this.context.redisClient.multi();
-    objectMap.forEach((object, fieldValue) => {
-      const redisKey = this.makeCacheKey(fieldName, fieldValue);
-      redisTransaction = redisTransaction.set(
-        redisKey,
-        JSON.stringify(object),
-        'EX',
-        this.context.ttlSecondsPositive
-      );
-    });
-    await wrapNativeRedisCall(() => redisTransaction.exec());
+    await this.genericRedisCacher.cacheManyAsync(
+      mapKeys(objectMap, (fieldValue) => this.makeCacheKey(fieldName, fieldValue))
+    );
   }
 
   public async cacheDBMissesAsync<N extends keyof TFields>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<void> {
-    if (fieldValues.length === 0) {
-      return;
-    }
-
-    let redisTransaction = this.context.redisClient.multi();
-    fieldValues.forEach((fieldValue) => {
-      const redisKey = this.makeCacheKey(fieldName, fieldValue);
-      redisTransaction = redisTransaction.set(
-        redisKey,
-        DOES_NOT_EXIST_REDIS,
-        'EX',
-        this.context.ttlSecondsNegative
-      );
-    });
-    await wrapNativeRedisCall(() => redisTransaction.exec());
+    await this.genericRedisCacher.cacheDBMissesAsync(
+      fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue))
+    );
   }
 
   public async invalidateManyAsync<N extends keyof TFields>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<void> {
-    if (fieldValues.length === 0) {
-      return;
-    }
-
-    const redisKeys = fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue));
-    await wrapNativeRedisCall(() => this.context.redisClient.del(...redisKeys));
+    await this.genericRedisCacher.invalidateManyAsync(
+      fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue))
+    );
   }
 
   private makeCacheKey<N extends keyof TFields>(

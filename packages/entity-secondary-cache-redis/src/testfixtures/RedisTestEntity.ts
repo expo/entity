@@ -3,7 +3,6 @@ import {
   EntityPrivacyPolicy,
   ViewerContext,
   UUIDField,
-  DateField,
   StringField,
   EntityConfiguration,
   EntityCompanionDefinition,
@@ -13,7 +12,6 @@ import {
 export type RedisTestEntityFields = {
   id: string;
   name: string;
-  dateField: Date | null;
 };
 
 export default class RedisTestEntity extends Entity<RedisTestEntityFields, string, ViewerContext> {
@@ -78,9 +76,6 @@ export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEnt
     }),
     name: new StringField({
       columnName: 'name',
-    }),
-    dateField: new DateField({
-      columnName: 'date_field',
     }),
   },
   databaseAdapterFlavor: 'postgres',
