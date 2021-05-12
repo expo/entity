@@ -5,6 +5,7 @@ import {
   CacheLoadResult,
   CacheStatus,
 } from '@expo/entity';
+import invariant from 'invariant';
 import { Redis } from 'ioredis';
 
 import { redisTransformerMap } from './RedisCommon';
@@ -157,11 +158,13 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     fieldName: N,
     fieldValue: NonNullable<TFields[N]>
   ): string {
+    const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
+    invariant(columnName, `database field mapping missing for ${fieldName}`);
     return this.context.makeKeyFn(
       this.context.cacheKeyPrefix,
       this.entityConfiguration.tableName,
-      `v${this.entityConfiguration.cacheKeyVersion}`,
-      fieldName as string,
+      `v2.${this.entityConfiguration.cacheKeyVersion}`,
+      columnName,
       String(fieldValue)
     );
   }
