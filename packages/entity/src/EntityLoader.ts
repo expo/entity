@@ -49,7 +49,7 @@ export default class EntityLoader<
       TSelectedFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
-    public readonly dataManager: EntityDataManager<TFields>
+    private readonly dataManager: EntityDataManager<TFields>
   ) {}
 
   /**
