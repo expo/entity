@@ -15,7 +15,7 @@
         redisCacheAdapterContext,
         (loadParams) => `${loadParams.id}`
       ),
-      RedisTestEntity.loader(vc1)
+      RedisTestEntity.loader(viewerContext)
     );
     ```
 3. Load entities through it:

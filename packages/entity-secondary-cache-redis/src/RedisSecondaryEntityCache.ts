@@ -15,9 +15,9 @@ import {
 import invariant from 'invariant';
 
 /**
- * A custom secondary read through entity cache is a way to add a custom second layer of caching for a particular
+ * A custom secondary read-through entity cache is a way to add a custom second layer of caching for a particular
  * single entity load. One common way this may be used is to add a second layer of caching in a hot path that makes
- * a call to {@link EntityLoader.loadManyByFieldEqualityConjunctionAsync} that returns a single entity.
+ * a call to {@link EntityLoader.loadManyByFieldEqualityConjunctionAsync} is guaranteed to return at most one entity.
  */
 export default class RedisSecondaryEntityCache<TFields, TLoadParams>
   implements ISecondaryEntityCache<TFields, TLoadParams> {
@@ -48,8 +48,8 @@ export default class RedisSecondaryEntityCache<TFields, TLoadParams>
     loadParamsArray: readonly Readonly<TLoadParams>[],
     fetcher: (
       fetcherLoadParamsArray: readonly Readonly<TLoadParams>[]
-    ) => Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields>>>
-  ): Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields>>> {
+    ) => Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>>
+  ): Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>> {
     const redisKeys = loadParamsArray.map(this.constructRedisKey);
     const redisKeyToLoadParamsMap = zipToMap(redisKeys, loadParamsArray);
 
@@ -68,7 +68,7 @@ export default class RedisSecondaryEntityCache<TFields, TLoadParams>
     );
 
     // put transformed cache hits in result map
-    const results: Map<Readonly<TLoadParams>, Readonly<TFields>> = new Map();
+    const results: Map<Readonly<TLoadParams>, Readonly<TFields> | null> = new Map();
     cacheLoadResults.forEach((cacheLoadResult, redisKey) => {
       if (cacheLoadResult.status === CacheStatus.HIT) {
         const loadParams = redisKeyToLoadParamsMap.get(redisKey);
@@ -94,8 +94,13 @@ export default class RedisSecondaryEntityCache<TFields, TLoadParams>
       const fetchResults = await fetcher(loadParamsToFetch);
 
       const fetchMisses = loadParamsToFetch.filter((loadParams) => {
-        return fetchResults.get(loadParams) === undefined;
+        // all values of fetchResults should be field objects or undefined
+        return !fetchResults.get(loadParams);
       });
+
+      for (const fetchMiss of fetchMisses) {
+        results.set(fetchMiss, null);
+      }
 
       const objectsToCache: Map<string, object> = new Map();
       for (const [loadParams, object] of fetchResults.entries()) {

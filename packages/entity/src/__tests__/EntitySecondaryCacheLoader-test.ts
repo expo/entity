@@ -87,7 +87,7 @@ describe(EntitySecondaryCacheLoader, () => {
   });
 
   describe('invalidateManyAsync', () => {
-    it('calls invalidate on the secondary cache loader', async () => {
+    it('calls invalidate on the secondary cache', async () => {
       const vc1 = new ViewerContext(createUnitTestEntityCompanionProvider());
 
       const createdEntity = await SimpleTestEntity.creator(vc1).enforceCreateAsync();

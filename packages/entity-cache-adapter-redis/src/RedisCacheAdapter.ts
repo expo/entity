@@ -71,17 +71,21 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult>> {
-    const redisKeyMapping = new Map(
+    const redisCacheKeyToFieldValueMapping = new Map(
       fieldValues.map((fieldValue) => [this.makeCacheKey(fieldName, fieldValue), fieldValue])
     );
-    const cacherResults = await this.genericRedisCacher.loadManyAsync(
-      Array.from(redisKeyMapping.keys())
+    const cacheResults = await this.genericRedisCacher.loadManyAsync(
+      Array.from(redisCacheKeyToFieldValueMapping.keys())
     );
 
-    return mapKeys(cacherResults, (k) => {
-      const fieldsKey = redisKeyMapping.get(k);
-      invariant(fieldsKey, 'Invalid key returned from generic redis cacher');
-      return fieldsKey;
+    return mapKeys(cacheResults, (redisCacheKey) => {
+      const fieldValue = redisCacheKeyToFieldValueMapping.get(redisCacheKey);
+      invariant(
+        fieldValue !== undefined,
+        'Unspecified cache key %s returned from generic Redis cacher',
+        redisCacheKey
+      );
+      return fieldValue;
     });
   }
 

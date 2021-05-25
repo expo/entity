@@ -78,6 +78,7 @@ export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEnt
     }),
     name: new StringField({
       columnName: 'name',
+      cache: true,
     }),
     dateField: new DateField({
       columnName: 'date_field',

@@ -16,6 +16,8 @@ class TestViewerContext extends ViewerContext {}
 
 type TestLoadParams = { id: string };
 
+const FAKE_ID = 'fake';
+
 class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
   TestLoadParams,
   RedisTestEntityFields,
@@ -24,15 +26,18 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
   RedisTestEntity,
   RedisTestEntityPrivacyPolicy
 > {
-  public loadCount = 0;
+  public databaseLoadCount = 0;
 
   protected async fetchObjectsFromDatabaseAsync(
     loadParamsArray: readonly Readonly<TestLoadParams>[]
-  ): Promise<ReadonlyMap<Readonly<TestLoadParams>, Readonly<RedisTestEntityFields>>> {
-    this.loadCount += loadParamsArray.length;
+  ): Promise<ReadonlyMap<Readonly<TestLoadParams>, Readonly<RedisTestEntityFields> | null>> {
+    this.databaseLoadCount += loadParamsArray.length;
 
     const emptyMap = new Map(loadParamsArray.map((p) => [p, null]));
     return await mapMapAsync(emptyMap, async (_value, loadParams) => {
+      if (loadParams.id === FAKE_ID) {
+        return null;
+      }
       return (
         await this.entityLoader
           .enforcing()
@@ -48,12 +53,8 @@ describe(RedisSecondaryEntityCache, () => {
   beforeAll(() => {
     redisCacheAdapterContext = {
       redisClient: new Redis(new URL(process.env.REDIS_URL!).toString()),
-      makeKeyFn(...parts: string[]): string {
-        const delimiter = ':';
-        const escapedParts = parts.map((part) =>
-          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
-        );
-        return escapedParts.join(delimiter);
+      makeKeyFn(..._parts: string[]): string {
+        throw new Error('should not be used by this test');
       },
       cacheKeyPrefix: 'test-',
       cacheKeyVersion: 1,
@@ -70,11 +71,11 @@ describe(RedisSecondaryEntityCache, () => {
   });
 
   it('Loads through secondary loader, caches, and invalidates', async () => {
-    const vc1 = new TestViewerContext(
+    const viewerContext = new TestViewerContext(
       createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
     );
 
-    const createdEntity = await RedisTestEntity.creator(vc1)
+    const createdEntity = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'wat')
       .enforceCreateAsync();
 
@@ -84,7 +85,7 @@ describe(RedisSecondaryEntityCache, () => {
         redisCacheAdapterContext,
         (loadParams) => `test-key-${loadParams.id}`
       ),
-      RedisTestEntity.loader(vc1)
+      RedisTestEntity.loader(viewerContext)
     );
 
     const loadParams = { id: createdEntity.getID() };
@@ -93,14 +94,14 @@ describe(RedisSecondaryEntityCache, () => {
       createdEntity.getID()
     );
 
-    expect(secondaryCacheLoader.loadCount).toEqual(1);
+    expect(secondaryCacheLoader.databaseLoadCount).toEqual(1);
 
     const results2 = await secondaryCacheLoader.loadManyAsync([loadParams]);
     expect(nullthrows(results2.get(loadParams)).enforceValue().getID()).toEqual(
       createdEntity.getID()
     );
 
-    expect(secondaryCacheLoader.loadCount).toEqual(1);
+    expect(secondaryCacheLoader.databaseLoadCount).toEqual(1);
 
     await secondaryCacheLoader.invalidateManyAsync([loadParams]);
 
@@ -109,6 +110,26 @@ describe(RedisSecondaryEntityCache, () => {
       createdEntity.getID()
     );
 
-    expect(secondaryCacheLoader.loadCount).toEqual(2);
+    expect(secondaryCacheLoader.databaseLoadCount).toEqual(2);
+  });
+
+  it('correctly handles uncached and unfetchable load params', async () => {
+    const viewerContext = new TestViewerContext(
+      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+    );
+
+    const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
+      new RedisSecondaryEntityCache(
+        redisTestEntityConfiguration,
+        redisCacheAdapterContext,
+        (loadParams) => `test-key-${loadParams.id}`
+      ),
+      RedisTestEntity.loader(viewerContext)
+    );
+
+    const loadParams = { id: FAKE_ID };
+    const results = await secondaryCacheLoader.loadManyAsync([loadParams]);
+    expect(results.size).toBe(1);
+    expect(results.get(loadParams)).toBe(null);
   });
 });
