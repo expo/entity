@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IncrementLoadCountEvent | Entity</title>
+	<title>GenericRedisCacheContext | Entity</title>
 	<meta name="description" content="Documentation for Entity">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,13 +55,13 @@
 					<a href="../modules.html">Entity</a>
 				</li>
 				<li>
-					<a href="../modules/_expo_entity.html">@expo/entity</a>
+					<a href="../modules/_expo_entity_cache_adapter_redis.html">@expo/entity-cache-adapter-redis</a>
 				</li>
 				<li>
-					<a href="_expo_entity.incrementloadcountevent.html">IncrementLoadCountEvent</a>
+					<a href="_expo_entity_cache_adapter_redis.genericrediscachecontext.html">GenericRedisCacheContext</a>
 				</li>
 			</ul>
-			<h1>Interface IncrementLoadCountEvent</h1>
+			<h1>Interface GenericRedisCacheContext</h1>
 		</div>
 	</div>
 </header>
@@ -72,7 +72,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IncrementLoadCountEvent</span>
+						<span class="target">GenericRedisCacheContext</span>
 					</li>
 				</ul>
 			</section>
@@ -83,8 +83,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.incrementloadcountevent.html#entityclassname" class="tsd-kind-icon">entity<wbr>Class<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.incrementloadcountevent.html#fieldvaluecount" class="tsd-kind-icon">field<wbr>Value<wbr>Count</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity_cache_adapter_redis.genericrediscachecontext.html#redisclient" class="tsd-kind-icon">redis<wbr>Client</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity_cache_adapter_redis.genericrediscachecontext.html#ttlsecondsnegative" class="tsd-kind-icon">ttl<wbr>Seconds<wbr>Negative</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity_cache_adapter_redis.genericrediscachecontext.html#ttlsecondspositive" class="tsd-kind-icon">ttl<wbr>Seconds<wbr>Positive</a></li>
 							</ul>
 						</section>
 					</div>
@@ -93,24 +94,51 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="entityclassname" class="tsd-anchor"></a>
-					<h3>entity<wbr>Class<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">entity<wbr>Class<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="redisclient" class="tsd-anchor"></a>
+					<h3>redis<wbr>Client</h3>
+					<div class="tsd-signature tsd-kind-icon">redis<wbr>Client<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Redis</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/4cba01e/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L28">packages/entity/src/metrics/IEntityMetricsAdapter.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/4cba01e/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L14">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:14</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Instance of ioredis.Redis</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="fieldvaluecount" class="tsd-anchor"></a>
-					<h3>field<wbr>Value<wbr>Count</h3>
-					<div class="tsd-signature tsd-kind-icon">field<wbr>Value<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="ttlsecondsnegative" class="tsd-anchor"></a>
+					<h3>ttl<wbr>Seconds<wbr>Negative</h3>
+					<div class="tsd-signature tsd-kind-icon">ttl<wbr>Seconds<wbr>Negative<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/4cba01e/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L27">packages/entity/src/metrics/IEntityMetricsAdapter.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/4cba01e/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L26">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:26</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>TTL for negatively caching database misses. Successive entity loads within
+							this TTL will be assumed not present in the database (unless invalidated).</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="ttlsecondspositive" class="tsd-anchor"></a>
+					<h3>ttl<wbr>Seconds<wbr>Positive</h3>
+					<div class="tsd-signature tsd-kind-icon">ttl<wbr>Seconds<wbr>Positive<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/4cba01e/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L20">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:20</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>TTL for caching database hits. Successive entity loads within this TTL
+							will be read from cache (unless invalidated).</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -120,10 +148,10 @@
 					<li class=" ">
 						<a href="../modules.html">Modules</a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/_expo_entity.html">@expo/entity</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/_expo_entity_cache_adapter_redis.html">@expo/entity-<wbr>cache-<wbr>adapter-<wbr>redis</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -133,21 +161,39 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity_cache_adapter_redis.genericrediscacher.html" class="tsd-kind-icon">Generic<wbr>Redis<wbr>Cacher</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../classes/_expo_entity_cache_adapter_redis.rediscacheadapter.html" class="tsd-kind-icon">Redis<wbr>Cache<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/_expo_entity_cache_adapter_redis.rediscacheadapterprovider.html" class="tsd-kind-icon">Redis<wbr>Cache<wbr>Adapter<wbr>Provider</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="_expo_entity.incrementloadcountevent.html" class="tsd-kind-icon">Increment<wbr>Load<wbr>Count<wbr>Event</a>
+						<a href="_expo_entity_cache_adapter_redis.genericrediscachecontext.html" class="tsd-kind-icon">Generic<wbr>Redis<wbr>Cache<wbr>Context</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_expo_entity.incrementloadcountevent.html#entityclassname" class="tsd-kind-icon">entity<wbr>Class<wbr>Name</a>
+								<a href="_expo_entity_cache_adapter_redis.genericrediscachecontext.html#redisclient" class="tsd-kind-icon">redis<wbr>Client</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_expo_entity.incrementloadcountevent.html#fieldvaluecount" class="tsd-kind-icon">field<wbr>Value<wbr>Count</a>
+								<a href="_expo_entity_cache_adapter_redis.genericrediscachecontext.html#ttlsecondsnegative" class="tsd-kind-icon">ttl<wbr>Seconds<wbr>Negative</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_expo_entity_cache_adapter_redis.genericrediscachecontext.html#ttlsecondspositive" class="tsd-kind-icon">ttl<wbr>Seconds<wbr>Positive</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_expo_entity_cache_adapter_redis.rediscacheadaptercontext.html" class="tsd-kind-icon">Redis<wbr>Cache<wbr>Adapter<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="../modules/_expo_entity_cache_adapter_redis.html#redistransformermap" class="tsd-kind-icon">redis<wbr>Transformer<wbr>Map</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
