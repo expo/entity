@@ -8,7 +8,7 @@ import {
   EntityDatabaseAdapterUniqueConstraintError,
   EntityDatabaseAdapterUnknownError,
 } from '@expo/entity';
-import { KnexTimeoutError } from 'knex';
+import { knex } from 'knex';
 
 function wrapNativePostgresError(
   error: Error & { code: string | undefined }
@@ -21,7 +21,7 @@ function wrapNativePostgresError(
 function translatePostgresError(
   error: Error & { code: string | undefined }
 ): EntityDatabaseAdapterError & Error {
-  if (error instanceof KnexTimeoutError) {
+  if (error instanceof knex.KnexTimeoutError) {
     return new EntityDatabaseAdapterTransientError(error.message, error);
   }
 

@@ -10,7 +10,7 @@ import {
 } from '@expo/entity';
 import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
-import Knex from 'knex';
+import { knex, Knex } from 'knex';
 import { URL } from 'url';
 
 import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
@@ -104,7 +104,7 @@ describe('Entity cache inconsistency', () => {
   let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
-    knexInstance = Knex({
+    knexInstance = knex({
       client: 'pg',
       connection: {
         user: process.env.PGUSER,

@@ -9,9 +9,9 @@
 During `EntityCompanionProvider` instantiation:
 
 ```typescript
-import Knex from 'knex';
+import { knex, Knex } from 'knex';
 
-const knexInstance = Knex({
+const knexInstance = knex({
   client: 'pg',
   connection: {
     user: process.env.PGUSER,

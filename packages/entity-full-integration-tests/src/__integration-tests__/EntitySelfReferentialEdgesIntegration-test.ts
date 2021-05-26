@@ -10,7 +10,7 @@ import {
 } from '@expo/entity';
 import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
-import Knex from 'knex';
+import { knex, Knex } from 'knex';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -166,7 +166,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
-    knexInstance = Knex({
+    knexInstance = knex({
       client: 'pg',
       connection: {
         user: process.env.PGUSER,

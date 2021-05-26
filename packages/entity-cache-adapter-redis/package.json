@@ -29,7 +29,7 @@
     "@expo/entity": "*"
   },
   "dependencies": {
-    "ioredis": "^4.17.3"
+    "ioredis": "^4.27.3"
   },
   "devDependencies": {
     "@expo/entity": "^0.14.1"

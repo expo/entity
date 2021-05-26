@@ -11,7 +11,7 @@ import {
   PostgresEntityDatabaseAdapterProvider,
   PostgresEntityQueryContextProvider,
 } from '@expo/entity-database-adapter-knex';
-import Knex from 'knex';
+import { Knex } from 'knex';
 
 export const createFullIntegrationTestEntityCompanionProvider = (
   knex: Knex,

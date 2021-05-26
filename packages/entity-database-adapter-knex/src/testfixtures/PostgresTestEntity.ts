@@ -14,7 +14,7 @@ import {
   EntityCompanionDefinition,
   Entity,
 } from '@expo/entity';
-import Knex from 'knex';
+import { Knex } from 'knex';
 
 type PostgresTestEntityFields = {
   id: string;

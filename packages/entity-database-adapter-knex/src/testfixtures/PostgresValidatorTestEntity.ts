@@ -11,7 +11,7 @@ import {
   EntityQueryContext,
   EntityMutationInfo,
 } from '@expo/entity';
-import Knex from 'knex';
+import { Knex } from 'knex';
 
 type PostgresValidatorTestEntityFields = {
   id: string;
