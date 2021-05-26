@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-secondary-cache-redis",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "description": "Redis secondary cache for @expo/entity",
   "files": [
     "build",
@@ -33,8 +33,8 @@
     "ioredis": "^4.17.3"
   },
   "devDependencies": {
-    "@expo/entity": "^0.14.1",
-    "@expo/entity-cache-adapter-redis": "^0.14.1",
+    "@expo/entity": "^0.15.0",
+    "@expo/entity-cache-adapter-redis": "^0.15.0",
     "nullthrows": "^1.1.1"
   }
 }
