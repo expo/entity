@@ -11,7 +11,7 @@
   "scripts": {
     "tsc": "tsc",
     "clean": "rm -rf build coverage coverage-integration",
-    "lint": "eslint src --ext '.ts'",
+    "lint": "eslint src",
     "test": "jest --rootDir . --config ../../resources/jest.config.js",
     "integration": "../../resources/run-with-docker yarn integration-no-setup",
     "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir . --runInBand --passWithNoTests",

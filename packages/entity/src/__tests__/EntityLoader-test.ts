@@ -89,6 +89,12 @@ describe(EntityLoader, () => {
     const entityResultNumber4 = await entityLoader.loadByFieldEqualingAsync('numberField', 4);
     expect(entityResultNumber4).toBeNull();
 
+    const entityResultDuplicateValues = await entityLoader
+      .enforcing()
+      .loadManyByFieldEqualingManyAsync('stringField', ['huh', 'huh']);
+    expect(entityResultDuplicateValues.size).toBe(1);
+    expect(entityResultDuplicateValues.get('huh')?.map((m) => m.getID())).toEqual([id1, id2]);
+
     await expect(entityLoader.loadByFieldEqualingAsync('stringField', 'huh')).rejects.toThrowError(
       'loadByFieldEqualing: Multiple entities of type TestEntity found for stringField=huh'
     );

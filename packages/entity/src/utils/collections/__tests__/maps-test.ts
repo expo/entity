@@ -7,6 +7,7 @@ import {
   reduceMap,
   filterMap,
   reduceMapAsync,
+  mapKeys,
 } from '../maps';
 
 describe(computeIfAbsent, () => {
@@ -41,6 +42,19 @@ describe(mapMapAsync, () => {
     const map = new Map<string, string>([['hello', 'world']]);
     const map2 = await mapMapAsync(map, async () => await Promise.resolve(2));
     expect(map2.get('hello')).toEqual(2);
+  });
+});
+
+describe(mapKeys, () => {
+  it('maps keys', async () => {
+    const map = new Map<string, string>([
+      ['hello', 'world'],
+      ['amphibian', 'creature'],
+    ]);
+    const map2 = await mapKeys(map, (k) => k.length);
+    expect(map2.size).toEqual(2);
+    expect(map2.get(5)).toEqual('world');
+    expect(map2.get(9)).toEqual('creature');
   });
 });
 

@@ -1,7 +1,7 @@
 {
-  "name": "@expo/entity-database-adapter-knex",
+  "name": "@expo/entity-secondary-cache-redis",
   "version": "0.14.1",
-  "description": "Knex database adapter for @expo/entity",
+  "description": "Redis secondary cache for @expo/entity",
   "files": [
     "build",
     "src"
@@ -26,12 +26,15 @@
   "author": "Expo",
   "license": "MIT",
   "peerDependencies": {
-    "@expo/entity": "*"
+    "@expo/entity": "*",
+    "@expo/entity-cache-adapter-redis": "*"
   },
   "dependencies": {
-    "knex": "^0.21.5"
+    "ioredis": "^4.17.3"
   },
   "devDependencies": {
-    "@expo/entity": "^0.14.1"
+    "@expo/entity": "^0.14.1",
+    "@expo/entity-cache-adapter-redis": "^0.14.1",
+    "nullthrows": "^1.1.1"
   }
 }
