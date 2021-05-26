@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-cache-adapter-redis",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "description": "Redis cache adapter for @expo/entity",
   "files": [
     "build",
@@ -32,6 +32,6 @@
     "ioredis": "^4.27.3"
   },
   "devDependencies": {
-    "@expo/entity": "^0.14.1"
+    "@expo/entity": "^0.15.0"
   }
 }

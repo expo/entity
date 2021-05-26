@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.15.0](https://github.com/expo/entity/compare/v0.14.1...v0.15.0) (2021-05-26)
+
+
+### Bug Fixes
+
+* upgrade ioredis, knex, and pg ([#125](https://github.com/expo/entity/issues/125)) ([7c43edf](https://github.com/expo/entity/commit/7c43edf3de37e8af13e2a99bd44f03f54803d9b9))
+* upgrade some other packages to fix dependabot alerts ([#126](https://github.com/expo/entity/issues/126)) ([226bffe](https://github.com/expo/entity/commit/226bffe0a95d7b8a3e9e9d46aebdb0edf1eeec1a))
+* use column name instead of field name for redis cache key ([#124](https://github.com/expo/entity/issues/124)) ([d78f452](https://github.com/expo/entity/commit/d78f452bb3ac5527069813a03f5b2264375bd8ab))
+
+
+### Features
+
+* secondary cache loader ([#123](https://github.com/expo/entity/issues/123)) ([4cba01e](https://github.com/expo/entity/commit/4cba01eb259c87d60b3026ce776e46f781363690))
+
+
+
+
+
 ## [0.14.1](https://github.com/expo/entity/compare/v0.14.0...v0.14.1) (2021-03-24)
 
 
