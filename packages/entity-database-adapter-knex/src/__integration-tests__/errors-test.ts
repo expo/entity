@@ -1,5 +1,5 @@
-import { ViewerContext } from '@expo/entity';
 import {
+  ViewerContext,
   EntityDatabaseAdapterCheckConstraintError,
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
@@ -7,8 +7,8 @@ import {
   EntityDatabaseAdapterTransientError,
   EntityDatabaseAdapterUniqueConstraintError,
   EntityDatabaseAdapterUnknownError,
-} from '@expo/entity/build/errors/EntityDatabaseAdapterError';
-import Knex from 'knex';
+} from '@expo/entity';
+import { knex, Knex } from 'knex';
 
 import ErrorsTestEntity from '../testfixtures/ErrorsTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
@@ -17,7 +17,7 @@ describe('postgres errors', () => {
   let knexInstance: Knex;
 
   beforeAll(() => {
-    knexInstance = Knex({
+    knexInstance = knex({
       client: 'pg',
       connection: {
         user: process.env.PGUSER,
@@ -45,7 +45,7 @@ describe('postgres errors', () => {
       .setField('fieldNonNull', 'hello')
       .enforceCreateAsync();
 
-    const shortTimeoutKnexInstance = Knex({
+    const shortTimeoutKnexInstance = knex({
       client: 'pg',
       connection: {
         user: process.env.PGUSER,

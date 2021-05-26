@@ -12,7 +12,7 @@ import {
   EntityNonTransactionalMutationTrigger,
   EntityMutationInfo,
 } from '@expo/entity';
-import Knex from 'knex';
+import { Knex } from 'knex';
 
 type PostgresTriggerTestEntityFields = {
   id: string;

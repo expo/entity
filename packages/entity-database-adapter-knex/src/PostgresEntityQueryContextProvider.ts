@@ -1,5 +1,5 @@
 import { EntityQueryContextProvider } from '@expo/entity';
-import Knex from 'knex';
+import { Knex } from 'knex';
 
 /**
  * Query context provider for knex (postgres).

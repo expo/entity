@@ -8,7 +8,7 @@ import {
   TableFieldSingleValueEqualityCondition,
   TableFieldMultiValueEqualityCondition,
 } from '@expo/entity';
-import Knex from 'knex';
+import { Knex } from 'knex';
 
 import wrapNativePostgresCall from './errors/wrapNativePostgresCall';
 

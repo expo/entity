@@ -8,7 +8,7 @@ import {
   Entity,
   NumberField,
 } from '@expo/entity';
-import Knex from 'knex';
+import { Knex } from 'knex';
 
 type InvalidTestEntityFields = {
   id: number;

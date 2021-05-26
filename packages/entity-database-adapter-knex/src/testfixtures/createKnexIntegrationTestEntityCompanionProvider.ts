@@ -4,7 +4,7 @@ import {
   EntityCompanionProvider,
   InMemoryFullCacheStubCacheAdapterProvider,
 } from '@expo/entity';
-import Knex from 'knex';
+import { Knex } from 'knex';
 
 import PostgresEntityDatabaseAdapterProvider from '../PostgresEntityDatabaseAdapterProvider';
 import PostgresEntityQueryContextProvider from '../PostgresEntityQueryContextProvider';

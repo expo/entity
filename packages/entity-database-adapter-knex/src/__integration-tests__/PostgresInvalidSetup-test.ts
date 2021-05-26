@@ -1,6 +1,6 @@
 import { ViewerContext } from '@expo/entity';
 import { enforceAsyncResult } from '@expo/results';
-import Knex from 'knex';
+import { knex, Knex } from 'knex';
 
 import InvalidTestEntity from '../testfixtures/InvalidTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
@@ -9,7 +9,7 @@ describe('postgres entity integration', () => {
   let knexInstance: Knex;
 
   beforeAll(() => {
-    knexInstance = Knex({
+    knexInstance = knex({
       client: 'pg',
       connection: {
         user: process.env.PGUSER,
