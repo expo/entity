@@ -97,6 +97,9 @@ export class EntityCompanionDefinition<
     mutationTriggers = () => ({}),
     entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as TSelectedFields[],
   }: {
+    /**
+     * The concrete Entity class for which this is the definition.
+     */
     entityClass: IEntityClass<
       TFields,
       TID,
@@ -105,8 +108,17 @@ export class EntityCompanionDefinition<
       TPrivacyPolicy,
       TSelectedFields
     >;
+    /**
+     * The {@link EntityConfiguration} for this entity.
+     */
     entityConfiguration: EntityConfiguration<TFields>;
+    /**
+     * The {@link EntityPrivacyPolicy} class for this entity.
+     */
     privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
+    /**
+     * An optional list of {@link EntityMutationValidator} for this entity.
+     */
     mutationValidators?: () => EntityMutationValidator<
       TFields,
       TID,
@@ -114,6 +126,9 @@ export class EntityCompanionDefinition<
       TEntity,
       TSelectedFields
     >[];
+    /**
+     * An optional list of {@link EntityMutationTrigger} for this entity.
+     */
     mutationTriggers?: () => EntityMutationTriggerConfiguration<
       TFields,
       TID,
@@ -121,6 +136,11 @@ export class EntityCompanionDefinition<
       TEntity,
       TSelectedFields
     >;
+    /**
+     * An optional subset of fields defined in the {@link EntityConfiguration} which belong to this entity.
+     * For use when multiple types of entities are backed by a single table ({@link EntityConfiguration}) yet
+     * only expose a subset of the fields.
+     */
     entitySelectedFields?: TSelectedFields[];
   }) {
     this.entityClass = entityClass;

@@ -30,12 +30,40 @@ export default class EntityConfiguration<TFields> {
     databaseAdapterFlavor,
     cacheAdapterFlavor,
   }: {
+    /**
+     * The field used to identify this entity. Must be a unique field in the table.
+     */
     idField: keyof TFields;
+
+    /**
+     * The name of the table where entities of this type are stored.
+     */
     tableName: string;
+
+    /**
+     * Map from each entity field to an {@link EntityFieldDefinition} specifying information about the field.
+     */
     schema: Record<keyof TFields, EntityFieldDefinition<any>>;
+
+    /**
+     * List of other entity types that reference this type in {@link EntityFieldDefinition} associations.
+     */
     getInboundEdges?: () => IEntityClass<any, any, any, any, any, any>[];
+
+    /**
+     * Cache key version for this entity type. Should be bumped when a field is added to, removed from, or changed
+     * in this entity and the underlying database table.
+     */
     cacheKeyVersion?: number;
+
+    /**
+     * Backing database and transaction type for this entity.
+     */
     databaseAdapterFlavor: DatabaseAdapterFlavor;
+
+    /**
+     * Cache system for this entity.
+     */
     cacheAdapterFlavor: CacheAdapterFlavor;
   }) {
     this.idField = idField;
