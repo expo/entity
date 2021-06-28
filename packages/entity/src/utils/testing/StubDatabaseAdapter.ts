@@ -76,13 +76,15 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
     const bField = objectB[currentOrderBy.columnName];
     switch (currentOrderBy.order) {
       case OrderByOrdering.DESCENDING:
-        return aField > bField
+        // simulate NULLS FIRST for DESC
+        return aField > bField || aField === null
           ? -1
           : aField < bField
           ? 1
           : this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
       case OrderByOrdering.ASCENDING:
-        return bField > aField
+        // simulate NULLS LAST for ASC
+        return bField > aField || bField === null
           ? -1
           : bField < aField
           ? 1

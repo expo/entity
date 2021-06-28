@@ -335,7 +335,7 @@ export default class EntityLoader<
 
   private validateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly TFields[N][]
   ): void {
     const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
     invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);

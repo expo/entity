@@ -192,6 +192,81 @@ describe(StubDatabaseAdapter, () => {
       expect(results).toHaveLength(3);
       expect(results.map((e) => e.stringField)).toEqual(['c', 'b', 'a']);
     });
+
+    it('supports null field values', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+        testEntityConfiguration,
+        StubDatabaseAdapter.convertFieldObjectsToDataStore(
+          testEntityConfiguration,
+          new Map([
+            [
+              testEntityConfiguration.tableName,
+              [
+                {
+                  customIdField: '1',
+                  testIndexedField: 'h1',
+                  numberField: 1,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: 'a',
+                },
+                {
+                  customIdField: '2',
+                  testIndexedField: 'h2',
+                  numberField: 2,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: 'b',
+                },
+                {
+                  customIdField: '3',
+                  testIndexedField: 'h3',
+                  numberField: 3,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+                {
+                  customIdField: '3',
+                  testIndexedField: 'h3',
+                  numberField: 3,
+                  stringField: 'b',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+              ],
+            ],
+          ])
+        )
+      );
+
+      const results = await databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
+        queryContext,
+        [{ fieldName: 'nullableField', fieldValue: null }],
+        {}
+      );
+      expect(results).toHaveLength(2);
+      expect(results[0].nullableField).toBeNull();
+
+      const results2 = await databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
+        queryContext,
+        [
+          { fieldName: 'nullableField', fieldValues: ['a', null] },
+          { fieldName: 'stringField', fieldValue: 'a' },
+        ],
+        {
+          orderBy: [
+            {
+              fieldName: 'nullableField',
+              order: OrderByOrdering.DESCENDING,
+            },
+          ],
+        }
+      );
+      expect(results2).toHaveLength(2);
+      expect(results2.map((e) => e.nullableField)).toEqual([null, 'a']);
+    });
   });
 
   describe('fetchManyByRawWhereClauseAsync', () => {
