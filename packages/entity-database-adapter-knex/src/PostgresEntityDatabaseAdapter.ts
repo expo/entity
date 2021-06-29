@@ -89,10 +89,24 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
 
     if (tableFieldSingleValueEqualityOperands.length > 0) {
       const whereObject: { [key: string]: any } = {};
-      for (const { tableField, tableValue } of tableFieldSingleValueEqualityOperands) {
-        whereObject[tableField] = tableValue;
+      const nonNullTableFieldSingleValueEqualityOperands = tableFieldSingleValueEqualityOperands.filter(
+        ({ tableValue }) => tableValue !== null
+      );
+      const nullTableFieldSingleValueEqualityOperands = tableFieldSingleValueEqualityOperands.filter(
+        ({ tableValue }) => tableValue === null
+      );
+
+      if (nonNullTableFieldSingleValueEqualityOperands.length > 0) {
+        for (const { tableField, tableValue } of nonNullTableFieldSingleValueEqualityOperands) {
+          whereObject[tableField] = tableValue;
+        }
+        query = query.where(whereObject);
       }
-      query = query.where(whereObject);
+      if (nullTableFieldSingleValueEqualityOperands.length > 0) {
+        for (const { tableField } of nullTableFieldSingleValueEqualityOperands) {
+          query = query.whereNull(tableField);
+        }
+      }
     }
 
     if (tableFieldMultiValueEqualityOperands.length > 0) {
@@ -102,7 +116,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
           builder.whereRaw('?? = ANY(?)', [tableField, [...nonNullTableValues]]);
           // there was at least one null, allow null in this equality clause
           if (nonNullTableValues.length !== tableValues.length) {
-            builder.orWhere(tableField, null);
+            builder.orWhereNull(tableField);
           }
         });
       }

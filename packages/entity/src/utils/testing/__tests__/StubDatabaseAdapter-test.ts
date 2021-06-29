@@ -228,9 +228,9 @@ describe(StubDatabaseAdapter, () => {
                   nullableField: null,
                 },
                 {
-                  customIdField: '3',
-                  testIndexedField: 'h3',
-                  numberField: 3,
+                  customIdField: '4',
+                  testIndexedField: 'h4',
+                  numberField: 4,
                   stringField: 'b',
                   dateField: new Date(),
                   nullableField: null,
@@ -392,5 +392,75 @@ describe(StubDatabaseAdapter, () => {
     await expect(databaseAdapter3.insertAsync(queryContext, {})).rejects.toThrowError(
       'Unsupported ID type for StubDatabaseAdapter: DateField'
     );
+  });
+
+  describe('compareByOrderBys', () => {
+    describe('comparison', () => {
+      it.each([
+        // nulls compare with 0
+        [OrderByOrdering.DESCENDING, null, 0, -1],
+        [OrderByOrdering.ASCENDING, null, 0, 1],
+        [OrderByOrdering.DESCENDING, 0, null, 1],
+        [OrderByOrdering.ASCENDING, 0, null, -1],
+
+        // nulls compare with nulls
+        [OrderByOrdering.DESCENDING, null, null, 0],
+        [OrderByOrdering.ASCENDING, null, null, 0],
+
+        // nulls compare with -1
+        [OrderByOrdering.DESCENDING, null, -1, -1],
+        [OrderByOrdering.ASCENDING, null, -1, 1],
+        [OrderByOrdering.DESCENDING, -1, null, 1],
+        [OrderByOrdering.ASCENDING, -1, null, -1],
+
+        // basic compares
+        [OrderByOrdering.ASCENDING, 'a', 'b', -1],
+        [OrderByOrdering.ASCENDING, 'b', 'a', 1],
+        [OrderByOrdering.DESCENDING, 'a', 'b', 1],
+        [OrderByOrdering.DESCENDING, 'b', 'a', -1],
+      ])('case (%p; %p; %p)', (order, v1, v2, expectedResult) => {
+        expect(
+          StubDatabaseAdapter['compareByOrderBys'](
+            [
+              {
+                columnName: 'hello',
+                order,
+              },
+            ],
+            {
+              hello: v1,
+            },
+            {
+              hello: v2,
+            }
+          )
+        ).toEqual(expectedResult);
+      });
+    });
+
+    describe('recursing', () => {
+      expect(
+        StubDatabaseAdapter['compareByOrderBys'](
+          [
+            {
+              columnName: 'hello',
+              order: OrderByOrdering.ASCENDING,
+            },
+            {
+              columnName: 'world',
+              order: OrderByOrdering.ASCENDING,
+            },
+          ],
+          {
+            hello: 'a',
+            world: 1,
+          },
+          {
+            hello: 'a',
+            world: 2,
+          }
+        )
+      ).toEqual(-1);
+    });
   });
 });
