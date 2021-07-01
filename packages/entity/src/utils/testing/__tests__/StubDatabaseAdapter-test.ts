@@ -192,6 +192,81 @@ describe(StubDatabaseAdapter, () => {
       expect(results).toHaveLength(3);
       expect(results.map((e) => e.stringField)).toEqual(['c', 'b', 'a']);
     });
+
+    it('supports null field values', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+        testEntityConfiguration,
+        StubDatabaseAdapter.convertFieldObjectsToDataStore(
+          testEntityConfiguration,
+          new Map([
+            [
+              testEntityConfiguration.tableName,
+              [
+                {
+                  customIdField: '1',
+                  testIndexedField: 'h1',
+                  numberField: 1,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: 'a',
+                },
+                {
+                  customIdField: '2',
+                  testIndexedField: 'h2',
+                  numberField: 2,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: 'b',
+                },
+                {
+                  customIdField: '3',
+                  testIndexedField: 'h3',
+                  numberField: 3,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+                {
+                  customIdField: '4',
+                  testIndexedField: 'h4',
+                  numberField: 4,
+                  stringField: 'b',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+              ],
+            ],
+          ])
+        )
+      );
+
+      const results = await databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
+        queryContext,
+        [{ fieldName: 'nullableField', fieldValue: null }],
+        {}
+      );
+      expect(results).toHaveLength(2);
+      expect(results[0].nullableField).toBeNull();
+
+      const results2 = await databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
+        queryContext,
+        [
+          { fieldName: 'nullableField', fieldValues: ['a', null] },
+          { fieldName: 'stringField', fieldValue: 'a' },
+        ],
+        {
+          orderBy: [
+            {
+              fieldName: 'nullableField',
+              order: OrderByOrdering.DESCENDING,
+            },
+          ],
+        }
+      );
+      expect(results2).toHaveLength(2);
+      expect(results2.map((e) => e.nullableField)).toEqual([null, 'a']);
+    });
   });
 
   describe('fetchManyByRawWhereClauseAsync', () => {
@@ -317,5 +392,75 @@ describe(StubDatabaseAdapter, () => {
     await expect(databaseAdapter3.insertAsync(queryContext, {})).rejects.toThrowError(
       'Unsupported ID type for StubDatabaseAdapter: DateField'
     );
+  });
+
+  describe('compareByOrderBys', () => {
+    describe('comparison', () => {
+      it.each([
+        // nulls compare with 0
+        [OrderByOrdering.DESCENDING, null, 0, -1],
+        [OrderByOrdering.ASCENDING, null, 0, 1],
+        [OrderByOrdering.DESCENDING, 0, null, 1],
+        [OrderByOrdering.ASCENDING, 0, null, -1],
+
+        // nulls compare with nulls
+        [OrderByOrdering.DESCENDING, null, null, 0],
+        [OrderByOrdering.ASCENDING, null, null, 0],
+
+        // nulls compare with -1
+        [OrderByOrdering.DESCENDING, null, -1, -1],
+        [OrderByOrdering.ASCENDING, null, -1, 1],
+        [OrderByOrdering.DESCENDING, -1, null, 1],
+        [OrderByOrdering.ASCENDING, -1, null, -1],
+
+        // basic compares
+        [OrderByOrdering.ASCENDING, 'a', 'b', -1],
+        [OrderByOrdering.ASCENDING, 'b', 'a', 1],
+        [OrderByOrdering.DESCENDING, 'a', 'b', 1],
+        [OrderByOrdering.DESCENDING, 'b', 'a', -1],
+      ])('case (%p; %p; %p)', (order, v1, v2, expectedResult) => {
+        expect(
+          StubDatabaseAdapter['compareByOrderBys'](
+            [
+              {
+                columnName: 'hello',
+                order,
+              },
+            ],
+            {
+              hello: v1,
+            },
+            {
+              hello: v2,
+            }
+          )
+        ).toEqual(expectedResult);
+      });
+    });
+
+    describe('recursing', () => {
+      expect(
+        StubDatabaseAdapter['compareByOrderBys'](
+          [
+            {
+              columnName: 'hello',
+              order: OrderByOrdering.ASCENDING,
+            },
+            {
+              columnName: 'world',
+              order: OrderByOrdering.ASCENDING,
+            },
+          ],
+          {
+            hello: 'a',
+            world: 1,
+          },
+          {
+            hello: 'a',
+            world: 2,
+          }
+        )
+      ).toEqual(-1);
+    });
   });
 });

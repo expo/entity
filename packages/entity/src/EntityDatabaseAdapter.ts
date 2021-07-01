@@ -9,12 +9,12 @@ import {
 
 interface SingleValueFieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> {
   fieldName: N;
-  fieldValue: NonNullable<TFields[N]>;
+  fieldValue: TFields[N];
 }
 
 interface MultiValueFieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> {
   fieldName: N;
-  fieldValues: readonly NonNullable<TFields[N]>[];
+  fieldValues: readonly TFields[N][];
 }
 
 export type FieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> =
