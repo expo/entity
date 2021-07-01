@@ -85,7 +85,7 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
           return 1;
         }
 
-        return aField > bField || aField === null
+        return aField > bField
           ? -1
           : aField < bField
           ? 1
@@ -101,7 +101,7 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
           return 1;
         }
 
-        return bField > aField || bField === null
+        return bField > aField
           ? -1
           : bField < aField
           ? 1
