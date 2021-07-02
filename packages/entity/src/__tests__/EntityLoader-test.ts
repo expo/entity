@@ -36,7 +36,7 @@ describe(EntityLoader, () => {
               {
                 customIdField: id1,
                 testIndexedField: 'h1',
-                numberField: 5,
+                intField: 5,
                 stringField: 'huh',
                 dateField: dateToInsert,
                 nullableField: null,
@@ -44,7 +44,7 @@ describe(EntityLoader, () => {
               {
                 customIdField: id2,
                 testIndexedField: 'h2',
-                numberField: 3,
+                intField: 3,
                 stringField: 'huh',
                 dateField: dateToInsert,
                 nullableField: null,
@@ -82,11 +82,11 @@ describe(EntityLoader, () => {
     );
     expect(entities.map((m) => m.getID())).toEqual([id1, id2]);
 
-    const entityResultNumber3 = await entityLoader.loadByFieldEqualingAsync('numberField', 3);
+    const entityResultNumber3 = await entityLoader.loadByFieldEqualingAsync('intField', 3);
     expect(entityResultNumber3).not.toBeNull();
     expect(entityResultNumber3!.enforceValue().getID()).toEqual(id2);
 
-    const entityResultNumber4 = await entityLoader.loadByFieldEqualingAsync('numberField', 4);
+    const entityResultNumber4 = await entityLoader.loadByFieldEqualingAsync('intField', 4);
     expect(entityResultNumber4).toBeNull();
 
     const entityResultDuplicateValues = await entityLoader
@@ -127,7 +127,7 @@ describe(EntityLoader, () => {
               {
                 customIdField: id1,
                 stringField: 'huh',
-                numberField: 4,
+                intField: 4,
                 testIndexedField: '4',
                 dateField: new Date(),
                 nullableField: null,
@@ -135,7 +135,7 @@ describe(EntityLoader, () => {
               {
                 customIdField: id2,
                 stringField: 'huh',
-                numberField: 4,
+                intField: 4,
                 testIndexedField: '5',
                 dateField: new Date(),
                 nullableField: null,
@@ -143,7 +143,7 @@ describe(EntityLoader, () => {
               {
                 customIdField: id3,
                 stringField: 'huh2',
-                numberField: 4,
+                intField: 4,
                 testIndexedField: '6',
                 dateField: new Date(),
                 nullableField: null,
@@ -178,7 +178,7 @@ describe(EntityLoader, () => {
           fieldValue: 'huh',
         },
         {
-          fieldName: 'numberField',
+          fieldName: 'intField',
           fieldValue: 4,
         },
       ])
@@ -215,7 +215,7 @@ describe(EntityLoader, () => {
                 customIdField: id1,
                 stringField: 'huh',
                 testIndexedField: '1',
-                numberField: 3,
+                intField: 3,
                 dateField: new Date(),
                 nullableField: null,
               },

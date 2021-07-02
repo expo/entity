@@ -1,7 +1,7 @@
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
-import { NumberField } from '../EntityFields';
+import { IntField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
@@ -14,7 +14,7 @@ export const numberKeyEntityConfiguration = new EntityConfiguration<NumberKeyFie
   idField: 'id',
   tableName: 'simple_test_entity_should_not_write_to_db',
   schema: {
-    id: new NumberField({
+    id: new IntField({
       columnName: 'custom_id',
     }),
   },

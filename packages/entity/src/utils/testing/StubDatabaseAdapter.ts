@@ -8,7 +8,7 @@ import EntityDatabaseAdapter, {
   TableQuerySelectionModifiers,
   OrderByOrdering,
 } from '../../EntityDatabaseAdapter';
-import { StringField, NumberField } from '../../EntityFields';
+import { StringField, IntField } from '../../EntityFields';
 import {
   getDatabaseFieldForEntityField,
   FieldTransformerMap,
@@ -161,7 +161,7 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
     invariant(idSchemaField, `No schema field found for ${this.entityConfiguration2.idField}`);
     if (idSchemaField instanceof StringField) {
       return uuidv4();
-    } else if (idSchemaField instanceof NumberField) {
+    } else if (idSchemaField instanceof IntField) {
       return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
     } else {
       throw new Error(

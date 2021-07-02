@@ -60,7 +60,7 @@ describe(ReadonlyEntity, () => {
         customIdField: '1',
         testIndexedField: '2',
         stringField: '3',
-        numberField: 4,
+        intField: 4,
         dateField: new Date(),
         nullableField: null,
       });

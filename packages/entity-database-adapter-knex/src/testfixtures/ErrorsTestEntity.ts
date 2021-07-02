@@ -6,7 +6,7 @@ import {
   EntityConfiguration,
   EntityCompanionDefinition,
   Entity,
-  NumberField,
+  IntField,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -144,19 +144,19 @@ export const ErrorsTestEntityConfiguration = new EntityConfiguration<ErrorsTestE
   idField: 'id',
   tableName: 'postgres_test_entities',
   schema: {
-    id: new NumberField({
+    id: new IntField({
       columnName: 'id',
     }),
     fieldNonNull: new StringField({
       columnName: 'field_non_null',
     }),
-    fieldForeignKey: new NumberField({
+    fieldForeignKey: new IntField({
       columnName: 'field_foreign_key',
     }),
     fieldUnique: new StringField({
       columnName: 'field_unique',
     }),
-    checkLessThan5: new NumberField({
+    checkLessThan5: new IntField({
       columnName: 'check_less_than_5',
     }),
     fieldExclusion: new StringField({
