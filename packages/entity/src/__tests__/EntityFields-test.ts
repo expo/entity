@@ -6,6 +6,7 @@ import {
   UUIDField,
   DateField,
   BooleanField,
+  IntField,
   FloatField,
   StringArrayField,
   JSONObjectField,
@@ -80,6 +81,7 @@ describeFieldTestCase(
 );
 describeFieldTestCase(new DateField({ columnName: 'wat' }), [new Date()], [Date.now()]);
 describeFieldTestCase(new BooleanField({ columnName: 'wat' }), [true, false], [0, 1, '']);
+describeFieldTestCase(new IntField({ columnName: 'wat' }), [1], ['1']);
 describeFieldTestCase(new FloatField({ columnName: 'wat' }), [1, 0.5, -0.5], ['1']);
 describeFieldTestCase(
   new StringArrayField({ columnName: 'wat' }),

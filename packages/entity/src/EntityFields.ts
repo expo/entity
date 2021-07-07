@@ -148,7 +148,7 @@ export class BooleanField extends EntityFieldDefinition<boolean> {
 
 export class IntField extends EntityFieldDefinition<number> {
   protected validateInputValueInternal(value: number): boolean {
-    return typeof value === 'number' && value % 1 === 0;
+    return typeof value === 'number' && Number.isInteger(value);
   }
 }
 
