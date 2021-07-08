@@ -6,7 +6,8 @@ import {
   UUIDField,
   DateField,
   BooleanField,
-  NumberField,
+  IntField,
+  FloatField,
   StringArrayField,
   JSONObjectField,
   EnumField,
@@ -80,7 +81,8 @@ describeFieldTestCase(
 );
 describeFieldTestCase(new DateField({ columnName: 'wat' }), [new Date()], [Date.now()]);
 describeFieldTestCase(new BooleanField({ columnName: 'wat' }), [true, false], [0, 1, '']);
-describeFieldTestCase(new NumberField({ columnName: 'wat' }), [1, 0.5, -0.5], ['1']);
+describeFieldTestCase(new IntField({ columnName: 'wat' }), [1], ['1', 0.5, true]);
+describeFieldTestCase(new FloatField({ columnName: 'wat' }), [1, 0.5, -0.5], ['1']);
 describeFieldTestCase(
   new StringArrayField({ columnName: 'wat' }),
   [[['what']] as any, [[]] as any], // jest test cases need extra wrapping array

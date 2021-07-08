@@ -6,7 +6,7 @@ import {
   EntityConfiguration,
   EntityCompanionDefinition,
   Entity,
-  NumberField,
+  IntField,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -95,7 +95,7 @@ export const invalidTestEntityConfiguration = new EntityConfiguration<InvalidTes
   idField: 'id',
   tableName: 'postgres_test_entities',
   schema: {
-    id: new NumberField({
+    id: new IntField({
       columnName: 'id',
     }),
     name: new StringField({

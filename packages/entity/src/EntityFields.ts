@@ -145,11 +145,19 @@ export class BooleanField extends EntityFieldDefinition<boolean> {
     return typeof value === 'boolean';
   }
 }
-export class NumberField extends EntityFieldDefinition<number> {
+
+export class IntField extends EntityFieldDefinition<number> {
+  protected validateInputValueInternal(value: number): boolean {
+    return typeof value === 'number' && Number.isInteger(value);
+  }
+}
+
+export class FloatField extends EntityFieldDefinition<number> {
   protected validateInputValueInternal(value: number): boolean {
     return typeof value === 'number';
   }
 }
+
 export class StringArrayField extends EntityFieldDefinition<string[]> {
   protected validateInputValueInternal(value: string[]): boolean {
     return Array.isArray(value) && value.every((subValue) => typeof subValue === 'string');

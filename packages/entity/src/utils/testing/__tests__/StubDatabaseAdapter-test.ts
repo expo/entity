@@ -32,7 +32,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: 'hello',
                   testIndexedField: 'h1',
-                  numberField: 5,
+                  intField: 5,
                   stringField: 'huh',
                   dateField: new Date(),
                   nullableField: null,
@@ -40,7 +40,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: 'world',
                   testIndexedField: 'h2',
-                  numberField: 3,
+                  intField: 3,
                   stringField: 'wat',
                   dateField: new Date(),
                   nullableField: null,
@@ -72,7 +72,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: 'hello',
                   testIndexedField: 'h1',
-                  numberField: 3,
+                  intField: 3,
                   stringField: 'a',
                   dateField: new Date(),
                   nullableField: null,
@@ -80,7 +80,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: 'world',
                   testIndexedField: 'h2',
-                  numberField: 3,
+                  intField: 3,
                   stringField: 'b',
                   dateField: new Date(),
                   nullableField: null,
@@ -88,7 +88,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: 'world',
                   testIndexedField: 'h2',
-                  numberField: 3,
+                  intField: 3,
                   stringField: 'c',
                   dateField: new Date(),
                   nullableField: null,
@@ -107,7 +107,7 @@ describe(StubDatabaseAdapter, () => {
             fieldValues: ['hello', 'world'],
           },
           {
-            fieldName: 'numberField',
+            fieldName: 'intField',
             fieldValue: 3,
           },
         ],
@@ -140,7 +140,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: 'hello',
                   testIndexedField: 'h1',
-                  numberField: 3,
+                  intField: 3,
                   stringField: 'a',
                   dateField: new Date(),
                   nullableField: null,
@@ -148,7 +148,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: 'world',
                   testIndexedField: 'h2',
-                  numberField: 3,
+                  intField: 3,
                   stringField: 'b',
                   dateField: new Date(),
                   nullableField: null,
@@ -156,7 +156,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: 'world',
                   testIndexedField: 'h2',
-                  numberField: 3,
+                  intField: 3,
                   stringField: 'c',
                   dateField: new Date(),
                   nullableField: null,
@@ -171,14 +171,14 @@ describe(StubDatabaseAdapter, () => {
         queryContext,
         [
           {
-            fieldName: 'numberField',
+            fieldName: 'intField',
             fieldValue: 3,
           },
         ],
         {
           orderBy: [
             {
-              fieldName: 'numberField',
+              fieldName: 'intField',
               order: OrderByOrdering.DESCENDING,
             },
             {
@@ -206,7 +206,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: '1',
                   testIndexedField: 'h1',
-                  numberField: 1,
+                  intField: 1,
                   stringField: 'a',
                   dateField: new Date(),
                   nullableField: 'a',
@@ -214,7 +214,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: '2',
                   testIndexedField: 'h2',
-                  numberField: 2,
+                  intField: 2,
                   stringField: 'a',
                   dateField: new Date(),
                   nullableField: 'b',
@@ -222,7 +222,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: '3',
                   testIndexedField: 'h3',
-                  numberField: 3,
+                  intField: 3,
                   stringField: 'a',
                   dateField: new Date(),
                   nullableField: null,
@@ -230,7 +230,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: '4',
                   testIndexedField: 'h4',
-                  numberField: 4,
+                  intField: 4,
                   stringField: 'b',
                   dateField: new Date(),
                   nullableField: null,
@@ -316,7 +316,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: 'hello',
                   testIndexedField: 'h1',
-                  numberField: 3,
+                  intField: 3,
                   stringField: 'a',
                   dateField: new Date(),
                   nullableField: null,
@@ -350,7 +350,7 @@ describe(StubDatabaseAdapter, () => {
                 {
                   customIdField: 'hello',
                   testIndexedField: 'h1',
-                  numberField: 3,
+                  intField: 3,
                   stringField: 'a',
                   dateField: new Date(),
                   nullableField: null,
