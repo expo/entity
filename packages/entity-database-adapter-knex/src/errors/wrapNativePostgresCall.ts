@@ -11,15 +11,17 @@ import {
 import { knex } from 'knex';
 
 function wrapNativePostgresError(
-  error: Error & { code: string | undefined }
+  error: Error & { code?: string }
 ): EntityDatabaseAdapterError & Error {
   const ret = translatePostgresError(error);
-  ret.stack = error.stack;
+  if (error.stack) {
+    ret.stack = error.stack;
+  }
   return ret;
 }
 
 function translatePostgresError(
-  error: Error & { code: string | undefined }
+  error: Error & { code?: string }
 ): EntityDatabaseAdapterError & Error {
   if (error instanceof knex.KnexTimeoutError) {
     return new EntityDatabaseAdapterTransientError(error.message, error);
@@ -45,6 +47,9 @@ export default async function wrapNativePostgresCall<T>(fn: () => Promise<T>): P
   try {
     return await fn();
   } catch (e) {
+    if (!(e instanceof Error)) {
+      throw e;
+    }
     throw wrapNativePostgresError(e);
   }
 }

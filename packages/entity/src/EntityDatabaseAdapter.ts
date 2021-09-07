@@ -69,12 +69,14 @@ export interface QuerySelectionModifiers<TFields> {
 }
 
 export interface TableQuerySelectionModifiers {
-  orderBy?: {
-    columnName: string;
-    order: OrderByOrdering;
-  }[];
-  offset?: number;
-  limit?: number;
+  orderBy:
+    | {
+        columnName: string;
+        order: OrderByOrdering;
+      }[]
+    | undefined;
+  offset: number | undefined;
+  limit: number | undefined;
 }
 
 /**
@@ -263,7 +265,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     return transformDatabaseObjectToFields(
       this.entityConfiguration,
       this.fieldTransformerMap,
-      results[0]
+      results[0]!
     );
   }
 
@@ -315,7 +317,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     return transformDatabaseObjectToFields(
       this.entityConfiguration,
       this.fieldTransformerMap,
-      results[0]
+      results[0]!
     );
   }
 

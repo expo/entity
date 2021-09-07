@@ -4,8 +4,14 @@ export default async function wrapNativeRedisCall<T>(fn: () => Promise<T>): Prom
   try {
     return await fn();
   } catch (e) {
+    if (!(e instanceof Error)) {
+      throw e;
+    }
+
     const error = new EntityCacheAdapterTransientError(e.message, e);
-    error.stack = e.stack;
+    if (e.stack) {
+      error.stack = e.stack;
+    }
     throw error;
   }
 }

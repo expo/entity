@@ -14,11 +14,11 @@ import { knex, Knex } from 'knex';
 const knexInstance = knex({
   client: 'pg',
   connection: {
-    user: process.env.PGUSER,
-    password: process.env.PGPASSWORD,
-    host: process.env.PGHOST,
-    port: parseInt(process.env.PGPORT!, 10),
-    database: process.env.PGDATABASE,
+    user: process.env['PGUSER'],
+    password: process.env['PGPASSWORD'],
+    host: process.env['PGHOST'],
+    port: parseInt(process.env['PGPORT']!, 10),
+    database: process.env['PGDATABASE'],
   },
 });
 

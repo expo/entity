@@ -298,7 +298,7 @@ describe(EntityDataManager, () => {
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
-    const objectInQuestion = objects.get(testEntityConfiguration.tableName)![1];
+    const objectInQuestion = objects.get(testEntityConfiguration.tableName)![1]!;
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
@@ -337,7 +337,7 @@ describe(EntityDataManager, () => {
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
-    const objectInQuestion = objects.get(testEntityConfiguration.tableName)![1];
+    const objectInQuestion = objects.get(testEntityConfiguration.tableName)![1]!;
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');

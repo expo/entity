@@ -261,7 +261,7 @@ export default abstract class EntityPrivacyPolicy<
     action: EntityAuthorizationAction
   ): Promise<TEntity> {
     for (let i = 0; i < ruleset.length; i++) {
-      const rule = ruleset[i];
+      const rule = ruleset[i]!;
       const ruleEvaluationResult = await rule.evaluateAsync(viewerContext, queryContext, entity);
       switch (ruleEvaluationResult) {
         case RuleEvaluationResult.DENY:

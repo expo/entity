@@ -45,8 +45,8 @@ describe('Two entities backed by the same table', () => {
     expect(successfulManyResults).toHaveLength(1);
     expect(failedManyResults).toHaveLength(1);
 
-    expect(successfulManyResults[0].enforceValue().getID()).toEqual(one.getID());
-    expect(failedManyResults[0].enforceError().message).toEqual(
+    expect(successfulManyResults[0]!.enforceValue().getID()).toEqual(one.getID());
+    expect(failedManyResults[0]!.enforceError().message).toEqual(
       'OneTestEntity must be instantiated with one data'
     );
 

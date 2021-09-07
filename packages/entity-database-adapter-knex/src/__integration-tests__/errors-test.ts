@@ -9,6 +9,7 @@ import {
   EntityDatabaseAdapterUnknownError,
 } from '@expo/entity';
 import { knex, Knex } from 'knex';
+import nullthrows from 'nullthrows';
 
 import ErrorsTestEntity from '../testfixtures/ErrorsTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
@@ -20,11 +21,11 @@ describe('postgres errors', () => {
     knexInstance = knex({
       client: 'pg',
       connection: {
-        user: process.env.PGUSER,
-        password: process.env.PGPASSWORD,
+        user: nullthrows(process.env['PGUSER']),
+        password: nullthrows(process.env['PGPASSWORD']),
         host: 'localhost',
-        port: parseInt(process.env.PGPORT!, 10),
-        database: process.env.PGDATABASE,
+        port: parseInt(process.env['PGPORT']!, 10),
+        database: nullthrows(process.env['PGDATABASE']),
       },
     });
   });
@@ -48,11 +49,11 @@ describe('postgres errors', () => {
     const shortTimeoutKnexInstance = knex({
       client: 'pg',
       connection: {
-        user: process.env.PGUSER,
-        password: process.env.PGPASSWORD,
+        user: nullthrows(process.env['PGUSER']),
+        password: nullthrows(process.env['PGPASSWORD']),
         host: 'localhost',
-        port: parseInt(process.env.PGPORT!, 10),
-        database: process.env.PGDATABASE,
+        port: parseInt(process.env['PGPORT']!, 10),
+        database: nullthrows(process.env['PGDATABASE']),
       },
       acquireConnectionTimeout: 1,
     });

@@ -40,7 +40,7 @@ export default class GenericRedisCacher {
 
     const results = new Map<string, CacheLoadResult>();
     for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
+      const key = keys[i]!;
       const redisResult = redisResults[i];
 
       if (redisResult === DOES_NOT_EXIST_REDIS) {

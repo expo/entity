@@ -125,15 +125,15 @@ const setUpMutationTriggerSpies = (
   keyof TestFields
 > => {
   return {
-    beforeCreate: [spy(mutationTriggers.beforeCreate![0])],
-    afterCreate: [spy(mutationTriggers.afterCreate![0])],
-    beforeUpdate: [spy(mutationTriggers.beforeUpdate![0])],
-    afterUpdate: [spy(mutationTriggers.afterUpdate![0])],
-    beforeDelete: [spy(mutationTriggers.beforeDelete![0])],
-    afterDelete: [spy(mutationTriggers.afterDelete![0])],
-    beforeAll: [spy(mutationTriggers.beforeAll![0])],
-    afterAll: [spy(mutationTriggers.afterAll![0])],
-    afterCommit: [spy(mutationTriggers.afterCommit![0])],
+    beforeCreate: [spy(mutationTriggers.beforeCreate![0]!)],
+    afterCreate: [spy(mutationTriggers.afterCreate![0]!)],
+    beforeUpdate: [spy(mutationTriggers.beforeUpdate![0]!)],
+    afterUpdate: [spy(mutationTriggers.afterUpdate![0]!)],
+    beforeDelete: [spy(mutationTriggers.beforeDelete![0]!)],
+    afterDelete: [spy(mutationTriggers.afterDelete![0]!)],
+    beforeAll: [spy(mutationTriggers.beforeAll![0]!)],
+    afterAll: [spy(mutationTriggers.afterAll![0]!)],
+    afterCommit: [spy(mutationTriggers.afterCommit![0]!)],
   };
 };
 
@@ -189,7 +189,7 @@ const verifyTriggerCounts = (
   });
 
   verify(
-    mutationTriggerSpies.beforeAll![0].executeAsync(
+    mutationTriggerSpies.beforeAll![0]!.executeAsync(
       viewerContext,
       anyOfClass(EntityTransactionalQueryContext),
       anyOfClass(TestEntity),
@@ -198,7 +198,7 @@ const verifyTriggerCounts = (
   ).once();
 
   verify(
-    mutationTriggerSpies.afterAll![0].executeAsync(
+    mutationTriggerSpies.afterAll![0]!.executeAsync(
       viewerContext,
       anyOfClass(EntityTransactionalQueryContext),
       anyOfClass(TestEntity),
@@ -207,7 +207,7 @@ const verifyTriggerCounts = (
   ).once();
 
   verify(
-    mutationTriggerSpies.afterCommit![0].executeAsync(
+    mutationTriggerSpies.afterCommit![0]!.executeAsync(
       viewerContext,
       anyOfClass(TestEntity),
       deepEqual(mutationInfo)

@@ -38,11 +38,15 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
       if (loadParams.id === FAKE_ID) {
         return null;
       }
-      return (
-        await this.entityLoader
-          .enforcing()
-          .loadManyByFieldEqualityConjunctionAsync([{ fieldName: 'id', fieldValue: loadParams.id }])
-      )[0].getAllFields();
+      return nullthrows(
+        (
+          await this.entityLoader
+            .enforcing()
+            .loadManyByFieldEqualityConjunctionAsync([
+              { fieldName: 'id', fieldValue: loadParams.id },
+            ])
+        )[0]
+      ).getAllFields();
     });
   }
 }
@@ -52,7 +56,7 @@ describe(RedisSecondaryEntityCache, () => {
 
   beforeAll(() => {
     redisCacheAdapterContext = {
-      redisClient: new Redis(new URL(process.env.REDIS_URL!).toString()),
+      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
       makeKeyFn(..._parts: string[]): string {
         throw new Error('should not be used by this test');
       },

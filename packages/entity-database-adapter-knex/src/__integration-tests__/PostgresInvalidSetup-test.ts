@@ -1,6 +1,7 @@
 import { ViewerContext } from '@expo/entity';
 import { enforceAsyncResult } from '@expo/results';
 import { knex, Knex } from 'knex';
+import nullthrows from 'nullthrows';
 
 import InvalidTestEntity from '../testfixtures/InvalidTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
@@ -12,11 +13,11 @@ describe('postgres entity integration', () => {
     knexInstance = knex({
       client: 'pg',
       connection: {
-        user: process.env.PGUSER,
-        password: process.env.PGPASSWORD,
+        user: nullthrows(process.env['PGUSER']),
+        password: nullthrows(process.env['PGPASSWORD']),
         host: 'localhost',
-        port: parseInt(process.env.PGPORT!, 10),
-        database: process.env.PGDATABASE,
+        port: parseInt(process.env['PGPORT']!, 10),
+        database: nullthrows(process.env['PGDATABASE']),
       },
     });
   });
