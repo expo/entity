@@ -298,6 +298,9 @@ export default class EntityLoader<
       try {
         return result(new this.entityClass(this.viewerContext, fieldsObject));
       } catch (e) {
+        if (!(e instanceof Error)) {
+          throw e;
+        }
         return result(e);
       }
     });

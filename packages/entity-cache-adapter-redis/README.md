@@ -12,7 +12,7 @@ During `EntityCompanionProvider` instantiation:
 import Redis from 'ioredis';
 
 const redisCacheAdapterContext = {
-  redisClient: new Redis(new URL(process.env.REDIS_URL!).toString()),
+  redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
   makeKeyFn(...parts: string[]): string {
     const delimiter = ':';
     const escapedParts = parts.map((part) =>

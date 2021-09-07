@@ -71,7 +71,7 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
       return 0;
     }
 
-    const currentOrderBy = orderBys[0];
+    const currentOrderBy = orderBys[0]!;
     const aField = objectA[currentOrderBy.columnName];
     const bField = objectB[currentOrderBy.columnName];
     switch (currentOrderBy.order) {
@@ -211,7 +211,7 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
       ...objectCollection[objectIndex],
       ...object,
     };
-    return [objectCollection[objectIndex]];
+    return [objectCollection[objectIndex]!];
   }
 
   protected async deleteInternalAsync(

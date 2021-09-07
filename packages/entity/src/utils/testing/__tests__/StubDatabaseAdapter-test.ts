@@ -247,7 +247,7 @@ describe(StubDatabaseAdapter, () => {
         {}
       );
       expect(results).toHaveLength(2);
-      expect(results[0].nullableField).toBeNull();
+      expect(results[0]!.nullableField).toBeNull();
 
       const results2 = await databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
         queryContext,

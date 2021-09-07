@@ -6,6 +6,7 @@ import {
 } from '@expo/entity';
 import { enforceAsyncResult } from '@expo/results';
 import { knex, Knex } from 'knex';
+import nullthrows from 'nullthrows';
 
 import PostgresTestEntity from '../testfixtures/PostgresTestEntity';
 import PostgresTriggerTestEntity from '../testfixtures/PostgresTriggerTestEntity';
@@ -19,11 +20,11 @@ describe('postgres entity integration', () => {
     knexInstance = knex({
       client: 'pg',
       connection: {
-        user: process.env.PGUSER,
-        password: process.env.PGPASSWORD,
+        user: nullthrows(process.env['PGUSER']),
+        password: nullthrows(process.env['PGPASSWORD']),
         host: 'localhost',
-        port: parseInt(process.env.PGPORT!, 10),
-        database: process.env.PGDATABASE,
+        port: parseInt(nullthrows(process.env['PGPORT']), 10),
+        database: nullthrows(process.env['PGDATABASE']),
       },
     });
   });
@@ -263,7 +264,7 @@ describe('postgres entity integration', () => {
         .enforcing()
         .loadManyByFieldEqualityConjunctionAsync([{ fieldName: 'name', fieldValue: null }]);
       expect(results).toHaveLength(2);
-      expect(results[0].getField('name')).toBeNull();
+      expect(results[0]!.getField('name')).toBeNull();
 
       const results2 = await PostgresTestEntity.loader(vc1)
         .enforcing()

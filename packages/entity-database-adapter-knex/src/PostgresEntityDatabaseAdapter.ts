@@ -10,7 +10,7 @@ import {
 } from '@expo/entity';
 import { Knex } from 'knex';
 
-import wrapNativePostgresCall from './errors/wrapNativePostgresCall';
+import wrapNativePostgresCallAsync from './errors/wrapNativePostgresCallAsync';
 
 export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDatabaseAdapter<TFields> {
   protected getFieldTransformerMap(): FieldTransformerMap {
@@ -45,7 +45,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     tableField: string,
     tableValues: readonly any[]
   ): Promise<object[]> {
-    return await wrapNativePostgresCall(() =>
+    return await wrapNativePostgresCallAsync(() =>
       queryInterface
         .select()
         .from(tableName)
@@ -123,7 +123,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     }
 
     query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
-    return await wrapNativePostgresCall(() => query);
+    return await wrapNativePostgresCallAsync(() => query);
   }
 
   protected async fetchManyByRawWhereClauseInternalAsync(
@@ -138,7 +138,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
       .from(tableName)
       .whereRaw(rawWhereClause, bindings as any);
     query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
-    return await wrapNativePostgresCall(() => query);
+    return await wrapNativePostgresCallAsync(() => query);
   }
 
   protected async insertInternalAsync(
@@ -146,7 +146,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     tableName: string,
     object: object
   ): Promise<object[]> {
-    return await wrapNativePostgresCall(() =>
+    return await wrapNativePostgresCallAsync(() =>
       queryInterface.insert(object).into(tableName).returning('*')
     );
   }
@@ -158,7 +158,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     id: any,
     object: object
   ): Promise<object[]> {
-    return await wrapNativePostgresCall(() =>
+    return await wrapNativePostgresCallAsync(() =>
       queryInterface.update(object).into(tableName).where(tableIdField, id).returning('*')
     );
   }
@@ -169,7 +169,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     tableIdField: string,
     id: any
   ): Promise<number> {
-    return await wrapNativePostgresCall(() =>
+    return await wrapNativePostgresCallAsync(() =>
       queryInterface.into(tableName).where(tableIdField, id).del()
     );
   }

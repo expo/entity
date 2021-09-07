@@ -2,6 +2,7 @@ import { ViewerContext } from '@expo/entity';
 import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
 import { knex, Knex } from 'knex';
+import nullthrows from 'nullthrows';
 import { URL } from 'url';
 
 import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
@@ -40,15 +41,15 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
     knexInstance = knex({
       client: 'pg',
       connection: {
-        user: process.env.PGUSER,
-        password: process.env.PGPASSWORD,
+        user: nullthrows(process.env['PGUSER']),
+        password: nullthrows(process.env['PGPASSWORD']),
         host: 'localhost',
-        port: parseInt(process.env.PGPORT!, 10),
-        database: process.env.PGDATABASE,
+        port: parseInt(nullthrows(process.env['PGPORT']), 10),
+        database: nullthrows(process.env['PGDATABASE']),
       },
     });
     redisCacheAdapterContext = {
-      redisClient: new Redis(new URL(process.env.REDIS_URL!).toString()),
+      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>

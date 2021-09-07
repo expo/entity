@@ -88,7 +88,7 @@ export interface EntityAssociationDefinition<
 export abstract class EntityFieldDefinition<T> {
   readonly columnName: string;
   readonly cache: boolean;
-  readonly association?: EntityAssociationDefinition<any, any, any, any, any, any>;
+  readonly association: EntityAssociationDefinition<any, any, any, any, any, any> | undefined;
   /**
    *
    * @param columnName - Column name in the database.
