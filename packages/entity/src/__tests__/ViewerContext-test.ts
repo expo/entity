@@ -17,12 +17,13 @@ describe(ViewerContext, () => {
     it('creates a new transactional query context', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      const didCreateTransaction = await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
-        'postgres',
-        async (queryContext) => {
-          return queryContext.isInTransaction();
-        }
-      );
+      const didCreateTransaction =
+        await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+          'postgres',
+          async (queryContext) => {
+            return queryContext.isInTransaction();
+          }
+        );
       expect(didCreateTransaction).toBe(true);
     });
   });

@@ -89,12 +89,10 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
 
     if (tableFieldSingleValueEqualityOperands.length > 0) {
       const whereObject: { [key: string]: any } = {};
-      const nonNullTableFieldSingleValueEqualityOperands = tableFieldSingleValueEqualityOperands.filter(
-        ({ tableValue }) => tableValue !== null
-      );
-      const nullTableFieldSingleValueEqualityOperands = tableFieldSingleValueEqualityOperands.filter(
-        ({ tableValue }) => tableValue === null
-      );
+      const nonNullTableFieldSingleValueEqualityOperands =
+        tableFieldSingleValueEqualityOperands.filter(({ tableValue }) => tableValue !== null);
+      const nullTableFieldSingleValueEqualityOperands =
+        tableFieldSingleValueEqualityOperands.filter(({ tableValue }) => tableValue === null);
 
       if (nonNullTableFieldSingleValueEqualityOperands.length > 0) {
         for (const { tableField, tableValue } of nonNullTableFieldSingleValueEqualityOperands) {

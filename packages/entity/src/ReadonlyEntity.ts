@@ -37,8 +37,9 @@ export default abstract class ReadonlyEntity<
     private readonly viewerContext: TViewerContext,
     private readonly databaseFields: Readonly<TFields>
   ) {
-    const companionDefinition = (this
-      .constructor as any).getCompanionDefinition() as EntityCompanionDefinition<
+    const companionDefinition = (
+      this.constructor as any
+    ).getCompanionDefinition() as EntityCompanionDefinition<
       TFields,
       TID,
       TViewerContext,

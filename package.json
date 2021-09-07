@@ -8,6 +8,7 @@
     "tsc": "lerna run tsc",
     "clean": "lerna run clean",
     "lint": "lerna run lint",
+    "lint-fix": "lerna run lint-fix",
     "test": "lerna run test",
     "integration": "./resources/run-with-docker lerna run integration-no-setup",
     "prepublish": "lerna link && lerna run clean",

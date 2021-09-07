@@ -527,28 +527,25 @@ describe(EntityMutatorFactory, () => {
 
       const id1 = uuidv4();
       const id2 = uuidv4();
-      const {
-        privacyPolicy,
-        entityMutatorFactory,
-        entityLoaderFactory,
-      } = createEntityMutatorFactory([
-        {
-          customIdField: id1,
-          stringField: 'huh',
-          testIndexedField: '3',
-          intField: 3,
-          dateField: new Date(),
-          nullableField: null,
-        },
-        {
-          customIdField: id2,
-          stringField: 'huh',
-          testIndexedField: '4',
-          intField: 3,
-          dateField: new Date(),
-          nullableField: null,
-        },
-      ]);
+      const { privacyPolicy, entityMutatorFactory, entityLoaderFactory } =
+        createEntityMutatorFactory([
+          {
+            customIdField: id1,
+            stringField: 'huh',
+            testIndexedField: '3',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+          {
+            customIdField: id2,
+            stringField: 'huh',
+            testIndexedField: '4',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ]);
 
       const spiedPrivacyPolicy = spy(privacyPolicy);
 
@@ -576,28 +573,25 @@ describe(EntityMutatorFactory, () => {
 
       const id1 = uuidv4();
       const id2 = uuidv4();
-      const {
-        mutationTriggers,
-        entityMutatorFactory,
-        entityLoaderFactory,
-      } = createEntityMutatorFactory([
-        {
-          customIdField: id1,
-          stringField: 'huh',
-          testIndexedField: '3',
-          intField: 3,
-          dateField: new Date(),
-          nullableField: null,
-        },
-        {
-          customIdField: id2,
-          stringField: 'huh',
-          testIndexedField: '4',
-          intField: 3,
-          dateField: new Date(),
-          nullableField: null,
-        },
-      ]);
+      const { mutationTriggers, entityMutatorFactory, entityLoaderFactory } =
+        createEntityMutatorFactory([
+          {
+            customIdField: id1,
+            stringField: 'huh',
+            testIndexedField: '3',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+          {
+            customIdField: id2,
+            stringField: 'huh',
+            testIndexedField: '4',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ]);
 
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
 
@@ -630,28 +624,25 @@ describe(EntityMutatorFactory, () => {
 
       const id1 = uuidv4();
       const id2 = uuidv4();
-      const {
-        mutationValidators,
-        entityMutatorFactory,
-        entityLoaderFactory,
-      } = createEntityMutatorFactory([
-        {
-          customIdField: id1,
-          stringField: 'huh',
-          testIndexedField: '3',
-          intField: 3,
-          dateField: new Date(),
-          nullableField: null,
-        },
-        {
-          customIdField: id2,
-          stringField: 'huh',
-          testIndexedField: '4',
-          intField: 3,
-          dateField: new Date(),
-          nullableField: null,
-        },
-      ]);
+      const { mutationValidators, entityMutatorFactory, entityLoaderFactory } =
+        createEntityMutatorFactory([
+          {
+            customIdField: id1,
+            stringField: 'huh',
+            testIndexedField: '3',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+          {
+            customIdField: id2,
+            stringField: 'huh',
+            testIndexedField: '4',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ]);
 
       const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
 
@@ -707,20 +698,17 @@ describe(EntityMutatorFactory, () => {
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
-      const {
-        privacyPolicy,
-        entityMutatorFactory,
-        entityLoaderFactory,
-      } = createEntityMutatorFactory([
-        {
-          customIdField: id1,
-          stringField: 'huh',
-          testIndexedField: '3',
-          intField: 3,
-          dateField: new Date(),
-          nullableField: null,
-        },
-      ]);
+      const { privacyPolicy, entityMutatorFactory, entityLoaderFactory } =
+        createEntityMutatorFactory([
+          {
+            customIdField: id1,
+            stringField: 'huh',
+            testIndexedField: '3',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ]);
 
       const spiedPrivacyPolicy = spy(privacyPolicy);
 
@@ -744,20 +732,17 @@ describe(EntityMutatorFactory, () => {
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
-      const {
-        mutationTriggers,
-        entityMutatorFactory,
-        entityLoaderFactory,
-      } = createEntityMutatorFactory([
-        {
-          customIdField: id1,
-          stringField: 'huh',
-          testIndexedField: '3',
-          intField: 3,
-          dateField: new Date(),
-          nullableField: null,
-        },
-      ]);
+      const { mutationTriggers, entityMutatorFactory, entityLoaderFactory } =
+        createEntityMutatorFactory([
+          {
+            customIdField: id1,
+            stringField: 'huh',
+            testIndexedField: '3',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ]);
 
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
 
@@ -787,20 +772,17 @@ describe(EntityMutatorFactory, () => {
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
-      const {
-        mutationValidators,
-        entityMutatorFactory,
-        entityLoaderFactory,
-      } = createEntityMutatorFactory([
-        {
-          customIdField: id1,
-          stringField: 'huh',
-          testIndexedField: '3',
-          intField: 3,
-          dateField: new Date(),
-          nullableField: null,
-        },
-      ]);
+      const { mutationValidators, entityMutatorFactory, entityLoaderFactory } =
+        createEntityMutatorFactory([
+          {
+            customIdField: id1,
+            stringField: 'huh',
+            testIndexedField: '3',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ]);
 
       const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
 

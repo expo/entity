@@ -71,7 +71,7 @@ export default class EntityAssociationLoader<
       .getLoaderFactory()
       .forLoad(queryContext);
 
-    return (await loader.loadByIDAsync((associatedEntityID as unknown) as TAssociatedID)) as Result<
+    return (await loader.loadByIDAsync(associatedEntityID as unknown as TAssociatedID)) as Result<
       null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity
     >;
   }
