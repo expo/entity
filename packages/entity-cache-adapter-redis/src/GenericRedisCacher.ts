@@ -1,7 +1,7 @@
 import { CacheLoadResult, CacheStatus } from '@expo/entity';
 import { Redis } from 'ioredis';
 
-import wrapNativeRedisCall from './errors/wrapNativeRedisCall';
+import wrapNativeRedisCallAsync from './errors/wrapNativeRedisCallAsync';
 
 // Sentinel value we store in Redis to negatively cache a database miss.
 // The sentinel value is distinct from any (positively) cached value.
@@ -36,7 +36,9 @@ export default class GenericRedisCacher {
       return new Map();
     }
 
-    const redisResults = await wrapNativeRedisCall(() => this.context.redisClient.mget(...keys));
+    const redisResults = await wrapNativeRedisCallAsync(() =>
+      this.context.redisClient.mget(...keys)
+    );
 
     const results = new Map<string, CacheLoadResult>();
     for (let i = 0; i < keys.length; i++) {
@@ -75,7 +77,7 @@ export default class GenericRedisCacher {
         this.context.ttlSecondsPositive
       );
     });
-    await wrapNativeRedisCall(() => redisTransaction.exec());
+    await wrapNativeRedisCallAsync(() => redisTransaction.exec());
   }
 
   public async cacheDBMissesAsync(keys: string[]): Promise<void> {
@@ -92,7 +94,7 @@ export default class GenericRedisCacher {
         this.context.ttlSecondsNegative
       );
     });
-    await wrapNativeRedisCall(() => redisTransaction.exec());
+    await wrapNativeRedisCallAsync(() => redisTransaction.exec());
   }
 
   public async invalidateManyAsync(keys: string[]): Promise<void> {
@@ -100,6 +102,6 @@ export default class GenericRedisCacher {
       return;
     }
 
-    await wrapNativeRedisCall(() => this.context.redisClient.del(...keys));
+    await wrapNativeRedisCallAsync(() => this.context.redisClient.del(...keys));
   }
 }

@@ -1,6 +1,6 @@
 import { EntityCacheAdapterTransientError } from '@expo/entity';
 
-export default async function wrapNativeRedisCall<T>(fn: () => Promise<T>): Promise<T> {
+export default async function wrapNativeRedisCallAsync<T>(fn: () => Promise<T>): Promise<T> {
   try {
     return await fn();
   } catch (e) {
