@@ -63,7 +63,7 @@ class PostgresTriggerTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   PostgresTriggerTestEntity
 > {
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTriggerTestEntityFields,
       string,
@@ -71,7 +71,7 @@ class PostgresTriggerTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       PostgresTriggerTestEntity
     >(),
   ];
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTriggerTestEntityFields,
       string,
@@ -79,7 +79,7 @@ class PostgresTriggerTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       PostgresTriggerTestEntity
     >(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTriggerTestEntityFields,
       string,
@@ -87,7 +87,7 @@ class PostgresTriggerTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       PostgresTriggerTestEntity
     >(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTriggerTestEntityFields,
       string,
@@ -144,23 +144,22 @@ class ThrowConditionallyNonTransactionalTrigger extends EntityNonTransactionalMu
   }
 }
 
-export const postgresTestEntityConfiguration = new EntityConfiguration<
-  PostgresTriggerTestEntityFields
->({
-  idField: 'id',
-  tableName: 'postgres_test_entities',
-  schema: {
-    id: new UUIDField({
-      columnName: 'id',
-      cache: true,
-    }),
-    name: new StringField({
-      columnName: 'name',
-    }),
-  },
-  databaseAdapterFlavor: 'postgres',
-  cacheAdapterFlavor: 'redis',
-});
+export const postgresTestEntityConfiguration =
+  new EntityConfiguration<PostgresTriggerTestEntityFields>({
+    idField: 'id',
+    tableName: 'postgres_test_entities',
+    schema: {
+      id: new UUIDField({
+        columnName: 'id',
+        cache: true,
+      }),
+      name: new StringField({
+        columnName: 'name',
+      }),
+    },
+    databaseAdapterFlavor: 'postgres',
+    cacheAdapterFlavor: 'redis',
+  });
 
 const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({
   entityClass: PostgresTriggerTestEntity,

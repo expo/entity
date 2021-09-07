@@ -28,16 +28,16 @@ export class DateIDTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   DateIDTestEntity
 > {
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, Date, ViewerContext, DateIDTestEntity>(),
   ];
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, Date, ViewerContext, DateIDTestEntity>(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, Date, ViewerContext, DateIDTestEntity>(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, Date, ViewerContext, DateIDTestEntity>(),
   ];
 }

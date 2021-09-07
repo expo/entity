@@ -21,16 +21,16 @@ class CategoryPrivacyPolicy extends EntityPrivacyPolicy<
   any,
   any
 > {
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<CategoryFields, string, TestViewerContext, any, any>(),
   ];
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<CategoryFields, string, TestViewerContext, any, any>(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<CategoryFields, string, TestViewerContext, any, any>(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<CategoryFields, string, TestViewerContext, any, any>(),
   ];
 }

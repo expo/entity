@@ -32,16 +32,16 @@ export class TestEntity2PrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   TestEntity2
 > {
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
   ];
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
   ];
 }

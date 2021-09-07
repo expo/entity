@@ -106,7 +106,7 @@ class ErrorsTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   ErrorsTestEntity
 > {
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       ErrorsTestEntityFields,
       number,
@@ -114,7 +114,7 @@ class ErrorsTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       ErrorsTestEntity
     >(),
   ];
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       ErrorsTestEntityFields,
       number,
@@ -122,7 +122,7 @@ class ErrorsTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       ErrorsTestEntity
     >(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       ErrorsTestEntityFields,
       number,
@@ -130,7 +130,7 @@ class ErrorsTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       ErrorsTestEntity
     >(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       ErrorsTestEntityFields,
       number,

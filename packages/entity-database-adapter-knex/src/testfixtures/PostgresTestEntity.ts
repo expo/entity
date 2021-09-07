@@ -81,7 +81,7 @@ class PostgresTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   PostgresTestEntity
 > {
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTestEntityFields,
       string,
@@ -89,7 +89,7 @@ class PostgresTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       PostgresTestEntity
     >(),
   ];
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTestEntityFields,
       string,
@@ -97,7 +97,7 @@ class PostgresTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       PostgresTestEntity
     >(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTestEntityFields,
       string,
@@ -105,7 +105,7 @@ class PostgresTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       PostgresTestEntity
     >(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTestEntityFields,
       string,

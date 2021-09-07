@@ -62,7 +62,7 @@ class PostgresValidatorTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   PostgresValidatorTestEntity
 > {
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresValidatorTestEntityFields,
       string,
@@ -70,7 +70,7 @@ class PostgresValidatorTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       PostgresValidatorTestEntity
     >(),
   ];
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresValidatorTestEntityFields,
       string,
@@ -78,7 +78,7 @@ class PostgresValidatorTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       PostgresValidatorTestEntity
     >(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresValidatorTestEntityFields,
       string,
@@ -86,7 +86,7 @@ class PostgresValidatorTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       PostgresValidatorTestEntity
     >(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresValidatorTestEntityFields,
       string,
@@ -126,23 +126,22 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
   }
 }
 
-export const postgresTestEntityConfiguration = new EntityConfiguration<
-  PostgresValidatorTestEntityFields
->({
-  idField: 'id',
-  tableName: 'postgres_test_entities',
-  schema: {
-    id: new UUIDField({
-      columnName: 'id',
-      cache: true,
-    }),
-    name: new StringField({
-      columnName: 'name',
-    }),
-  },
-  databaseAdapterFlavor: 'postgres',
-  cacheAdapterFlavor: 'redis',
-});
+export const postgresTestEntityConfiguration =
+  new EntityConfiguration<PostgresValidatorTestEntityFields>({
+    idField: 'id',
+    tableName: 'postgres_test_entities',
+    schema: {
+      id: new UUIDField({
+        columnName: 'id',
+        cache: true,
+      }),
+      name: new StringField({
+        columnName: 'name',
+      }),
+    },
+    databaseAdapterFlavor: 'postgres',
+    cacheAdapterFlavor: 'redis',
+  });
 
 const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({
   entityClass: PostgresValidatorTestEntity,

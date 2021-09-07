@@ -15,6 +15,7 @@
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
     "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
     "esModuleInterop": true,
     "types": ["jest", "node"]
   }
