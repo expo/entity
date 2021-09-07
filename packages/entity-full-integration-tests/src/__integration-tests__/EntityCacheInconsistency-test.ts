@@ -111,7 +111,7 @@ describe('Entity cache inconsistency', () => {
         user: nullthrows(process.env['PGUSER']),
         password: nullthrows(process.env['PGPASSWORD']),
         host: 'localhost',
-        port: parseInt(process.env['PGPORT']!, 10),
+        port: parseInt(nullthrows(process.env['PGPORT']), 10),
         database: nullthrows(process.env['PGDATABASE']),
       },
     });
