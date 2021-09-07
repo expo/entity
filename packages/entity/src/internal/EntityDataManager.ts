@@ -125,7 +125,8 @@ export default class EntityDataManager<TFields> {
     const results = await dataLoader.loadMany(fieldValues);
     const [values, errors] = partitionErrors(results);
     if (errors.length > 0) {
-      throw errors[0];
+      const error = errors[0]!;
+      throw error;
     }
 
     return zipToMap(fieldValues, values);
