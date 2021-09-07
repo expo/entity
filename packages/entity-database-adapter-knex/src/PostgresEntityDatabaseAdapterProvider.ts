@@ -7,7 +7,8 @@ import {
 import PostgresEntityDatabaseAdapter from './PostgresEntityDatabaseAdapter';
 
 export default class PostgresEntityDatabaseAdapterProvider
-  implements IEntityDatabaseAdapterProvider {
+  implements IEntityDatabaseAdapterProvider
+{
   getDatabaseAdapter<TFields>(
     entityConfiguration: EntityConfiguration<TFields>
   ): EntityDatabaseAdapter<TFields> {

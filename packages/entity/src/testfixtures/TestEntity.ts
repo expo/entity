@@ -51,16 +51,16 @@ export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   TestEntity
 > {
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
   ];
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
   ];
 }

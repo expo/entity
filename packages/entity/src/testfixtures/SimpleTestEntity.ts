@@ -31,7 +31,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   SimpleTestEntity,
   SimpleTestFieldSelection
 > {
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
       string,
@@ -40,7 +40,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       SimpleTestFieldSelection
     >(),
   ];
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
       string,
@@ -49,7 +49,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       SimpleTestFieldSelection
     >(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
       string,
@@ -58,7 +58,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       SimpleTestFieldSelection
     >(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
       string,

@@ -13,16 +13,16 @@ export default class NotePrivacyPolicy extends EntityPrivacyPolicy<
   ExampleViewerContext,
   NoteEntity
 > {
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<NoteFields, string, ExampleViewerContext, NoteEntity>(),
   ];
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AllowIfUserOwnerPrivacyRule<NoteFields, string, NoteEntity>('userID'),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AllowIfUserOwnerPrivacyRule<NoteFields, string, NoteEntity>('userID'),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AllowIfUserOwnerPrivacyRule<NoteFields, string, NoteEntity>('userID'),
   ];
 }

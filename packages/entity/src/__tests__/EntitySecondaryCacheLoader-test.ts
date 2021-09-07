@@ -35,9 +35,8 @@ describe(EntitySecondaryCacheLoader, () => {
       const createdEntity = await SimpleTestEntity.creator(vc1).enforceCreateAsync();
       const loadParams = { id: createdEntity.getID() };
 
-      const secondaryEntityCacheMock = mock<
-        ISecondaryEntityCache<SimpleTestFields, TestLoadParams>
-      >();
+      const secondaryEntityCacheMock =
+        mock<ISecondaryEntityCache<SimpleTestFields, TestLoadParams>>();
       when(
         secondaryEntityCacheMock.loadManyThroughAsync(deepEqual([loadParams]), anything())
       ).thenResolve(new Map());
@@ -61,9 +60,8 @@ describe(EntitySecondaryCacheLoader, () => {
       const createdEntity = await SimpleTestEntity.creator(vc1).enforceCreateAsync();
       const loadParams = { id: createdEntity.getID() };
 
-      const secondaryEntityCacheMock = mock<
-        ISecondaryEntityCache<SimpleTestFields, TestLoadParams>
-      >();
+      const secondaryEntityCacheMock =
+        mock<ISecondaryEntityCache<SimpleTestFields, TestLoadParams>>();
       when(
         secondaryEntityCacheMock.loadManyThroughAsync(deepEqual([loadParams]), anything())
       ).thenResolve(new Map([[loadParams, createdEntity.getAllFields()]]));
@@ -93,9 +91,8 @@ describe(EntitySecondaryCacheLoader, () => {
       const createdEntity = await SimpleTestEntity.creator(vc1).enforceCreateAsync();
       const loadParams = { id: createdEntity.getID() };
 
-      const secondaryEntityCacheMock = mock<
-        ISecondaryEntityCache<SimpleTestFields, TestLoadParams>
-      >();
+      const secondaryEntityCacheMock =
+        mock<ISecondaryEntityCache<SimpleTestFields, TestLoadParams>>();
       const secondaryEntityCache = instance(secondaryEntityCacheMock);
       const loader = SimpleTestEntity.loader(vc1);
       const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(secondaryEntityCache, loader);

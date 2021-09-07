@@ -57,7 +57,7 @@ class InvalidTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   InvalidTestEntity
 > {
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       InvalidTestEntityFields,
       number,
@@ -65,7 +65,7 @@ class InvalidTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       InvalidTestEntity
     >(),
   ];
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       InvalidTestEntityFields,
       number,
@@ -73,7 +73,7 @@ class InvalidTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       InvalidTestEntity
     >(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       InvalidTestEntityFields,
       number,
@@ -81,7 +81,7 @@ class InvalidTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       InvalidTestEntity
     >(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       InvalidTestEntityFields,
       number,

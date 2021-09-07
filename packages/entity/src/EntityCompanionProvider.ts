@@ -162,14 +162,10 @@ export class EntityCompanionDefinition<
  * {@link EntityCompanion} for each type of {@link Entity}.
  */
 export default class EntityCompanionProvider {
-  private readonly companionMap: Map<
-    string,
-    EntityCompanion<any, any, any, any, any, any>
-  > = new Map();
-  private readonly tableDataCoordinatorMap: Map<
-    string,
-    EntityTableDataCoordinator<any>
-  > = new Map();
+  private readonly companionMap: Map<string, EntityCompanion<any, any, any, any, any, any>> =
+    new Map();
+  private readonly tableDataCoordinatorMap: Map<string, EntityTableDataCoordinator<any>> =
+    new Map();
 
   /**
    * Instantiate an Entity framework.

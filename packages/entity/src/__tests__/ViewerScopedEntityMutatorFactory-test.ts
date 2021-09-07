@@ -10,9 +10,10 @@ describe(ViewerScopedEntityMutatorFactory, () => {
   it('correctly scopes viewer to entity mutations', async () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = instance(mock(EntityQueryContext));
-    const baseMutatorFactory = mock<
-      EntityMutatorFactory<TestFields, string, ViewerContext, TestEntity, TestEntityPrivacyPolicy>
-    >(EntityMutatorFactory);
+    const baseMutatorFactory =
+      mock<
+        EntityMutatorFactory<TestFields, string, ViewerContext, TestEntity, TestEntityPrivacyPolicy>
+      >(EntityMutatorFactory);
     const baseMutatorFactoryInstance = instance(baseMutatorFactory);
 
     const viewerScopedEntityLoader = new ViewerScopedEntityMutatorFactory<

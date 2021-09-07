@@ -131,7 +131,7 @@ export class StringField extends EntityFieldDefinition<string> {
   }
 }
 export class UUIDField extends StringField {
-  protected validateInputValueInternal(value: string): boolean {
+  protected override validateInputValueInternal(value: string): boolean {
     return validateUUID(value);
   }
 }

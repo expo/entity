@@ -20,7 +20,8 @@ import invariant from 'invariant';
  * a call to {@link EntityLoader.loadManyByFieldEqualityConjunctionAsync} is guaranteed to return at most one entity.
  */
 export default class RedisSecondaryEntityCache<TFields, TLoadParams>
-  implements ISecondaryEntityCache<TFields, TLoadParams> {
+  implements ISecondaryEntityCache<TFields, TLoadParams>
+{
   private readonly genericRedisCacher: GenericRedisCacher;
 
   constructor(

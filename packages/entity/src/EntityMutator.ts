@@ -211,10 +211,10 @@ export class CreateMutator<
   ): Promise<Result<TEntity>> {
     this.validateFields(this.fieldsForEntity);
 
-    const temporaryEntityForPrivacyCheck = new this.entityClass(this.viewerContext, ({
+    const temporaryEntityForPrivacyCheck = new this.entityClass(this.viewerContext, {
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
       ...this.fieldsForEntity,
-    } as unknown) as TFields);
+    } as unknown as TFields);
 
     const authorizeCreateResult = await asyncResult(
       this.privacyPolicy.authorizeCreateAsync(
@@ -680,7 +680,9 @@ export class DeleteMutator<
     }
     processedEntityIdentifiers.add(entity.getUniqueIdentifier());
 
-    const companionDefinition = (entity.constructor as any).getCompanionDefinition() as EntityCompanionDefinition<
+    const companionDefinition = (
+      entity.constructor as any
+    ).getCompanionDefinition() as EntityCompanionDefinition<
       TFields,
       TID,
       TViewerContext,

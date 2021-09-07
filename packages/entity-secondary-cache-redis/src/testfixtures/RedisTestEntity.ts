@@ -32,7 +32,7 @@ export class RedisTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   RedisTestEntity
 > {
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       RedisTestEntityFields,
       string,
@@ -40,7 +40,7 @@ export class RedisTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       RedisTestEntity
     >(),
   ];
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       RedisTestEntityFields,
       string,
@@ -48,7 +48,7 @@ export class RedisTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       RedisTestEntity
     >(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       RedisTestEntityFields,
       string,
@@ -56,7 +56,7 @@ export class RedisTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
       RedisTestEntity
     >(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       RedisTestEntityFields,
       string,

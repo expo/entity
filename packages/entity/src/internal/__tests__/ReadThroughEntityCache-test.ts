@@ -20,19 +20,21 @@ const makeEntityConfiguration = (cacheIdField: boolean): EntityConfiguration<Bla
     cacheAdapterFlavor: 'redis',
   });
 
-const createIdFetcher = (ids: string[]) => async <N extends keyof BlahFields>(
-  fetcherFieldValues: readonly NonNullable<BlahFields[N]>[]
-): Promise<ReadonlyMap<NonNullable<BlahFields[N]>, readonly Readonly<BlahFields>[]>> => {
-  const results = new Map();
-  fetcherFieldValues.forEach((v) => {
-    if (ids.includes(v)) {
-      results.set(v, [{ id: v }]);
-    } else {
-      results.set(v, []);
-    }
-  });
-  return results;
-};
+const createIdFetcher =
+  (ids: string[]) =>
+  async <N extends keyof BlahFields>(
+    fetcherFieldValues: readonly NonNullable<BlahFields[N]>[]
+  ): Promise<ReadonlyMap<NonNullable<BlahFields[N]>, readonly Readonly<BlahFields>[]>> => {
+    const results = new Map();
+    fetcherFieldValues.forEach((v) => {
+      if (ids.includes(v)) {
+        results.set(v, [{ id: v }]);
+      } else {
+        results.set(v, []);
+      }
+    });
+    return results;
+  };
 
 describe(ReadThroughEntityCache, () => {
   describe('readManyThroughAsync', () => {

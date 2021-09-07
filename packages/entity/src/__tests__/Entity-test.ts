@@ -102,7 +102,7 @@ class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   SimpleTestDenyUpdateEntity
 > {
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
@@ -110,7 +110,7 @@ class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
       SimpleTestDenyUpdateEntity
     >(),
   ];
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
@@ -118,7 +118,7 @@ class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
       SimpleTestDenyUpdateEntity
     >(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysDenyPrivacyPolicyRule<
       TestEntityFields,
       string,
@@ -126,7 +126,7 @@ class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
       SimpleTestDenyUpdateEntity
     >(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
@@ -142,7 +142,7 @@ class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   SimpleTestDenyDeleteEntity
 > {
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
@@ -150,7 +150,7 @@ class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
       SimpleTestDenyDeleteEntity
     >(),
   ];
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
@@ -158,7 +158,7 @@ class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
       SimpleTestDenyDeleteEntity
     >(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
@@ -166,7 +166,7 @@ class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
       SimpleTestDenyDeleteEntity
     >(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysDenyPrivacyPolicyRule<
       TestEntityFields,
       string,

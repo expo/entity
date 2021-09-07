@@ -66,19 +66,19 @@ class BlahEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   BlahEntity
 > {
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new DenyIfNotOwnerPrivacyPolicyRule(),
     new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new DenyIfNotOwnerPrivacyPolicyRule(),
     new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new DenyIfNotOwnerPrivacyPolicyRule(),
     new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
 }

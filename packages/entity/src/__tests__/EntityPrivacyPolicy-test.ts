@@ -33,16 +33,16 @@ class BlahEntity extends Entity<BlahFields, string, ViewerContext> {
 }
 
 class AlwaysDenyPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
 }
@@ -53,7 +53,7 @@ class DryRunAlwaysDenyPolicy extends AlwaysDenyPolicy {
     _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>
   ): void {}
 
-  protected getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
+  protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
     string,
     ViewerContext,
@@ -72,7 +72,7 @@ class LoggingEnforceAlwaysDenyPolicy extends AlwaysDenyPolicy {
     _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>
   ): void {}
 
-  protected getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
+  protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
     string,
     ViewerContext,
@@ -86,16 +86,16 @@ class LoggingEnforceAlwaysDenyPolicy extends AlwaysDenyPolicy {
 }
 
 class AlwaysAllowPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
 }
@@ -106,7 +106,7 @@ class DryRunAlwaysAllowPolicy extends AlwaysAllowPolicy {
     _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>
   ): void {}
 
-  protected getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
+  protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
     string,
     ViewerContext,
@@ -125,7 +125,7 @@ class LoggingEnforceAlwaysAllowPolicy extends AlwaysAllowPolicy {
     _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>
   ): void {}
 
-  protected getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
+  protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
     string,
     ViewerContext,
@@ -139,16 +139,16 @@ class LoggingEnforceAlwaysAllowPolicy extends AlwaysAllowPolicy {
 }
 
 class SkipAllPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
 }
@@ -169,10 +169,10 @@ class AlwaysThrowPrivacyPolicyRule extends PrivacyPolicyRule<
 }
 
 class ThrowAllPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
-  protected readonly createRules = [new AlwaysThrowPrivacyPolicyRule()];
-  protected readonly readRules = [new AlwaysThrowPrivacyPolicyRule()];
-  protected readonly updateRules = [new AlwaysThrowPrivacyPolicyRule()];
-  protected readonly deleteRules = [new AlwaysThrowPrivacyPolicyRule()];
+  protected override readonly createRules = [new AlwaysThrowPrivacyPolicyRule()];
+  protected override readonly readRules = [new AlwaysThrowPrivacyPolicyRule()];
+  protected override readonly updateRules = [new AlwaysThrowPrivacyPolicyRule()];
+  protected override readonly deleteRules = [new AlwaysThrowPrivacyPolicyRule()];
 }
 
 class DryRunThrowAllPolicy extends ThrowAllPolicy {
@@ -181,7 +181,7 @@ class DryRunThrowAllPolicy extends ThrowAllPolicy {
     _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>
   ): void {}
 
-  protected getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
+  protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
     string,
     ViewerContext,
@@ -200,7 +200,7 @@ class LoggingEnforceThrowAllPolicy extends ThrowAllPolicy {
     _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>
   ): void {}
 
-  protected getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
+  protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
     string,
     ViewerContext,
@@ -214,10 +214,10 @@ class LoggingEnforceThrowAllPolicy extends ThrowAllPolicy {
 }
 
 class EmptyPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
-  protected readonly createRules = [];
-  protected readonly readRules = [];
-  protected readonly updateRules = [];
-  protected readonly deleteRules = [];
+  protected override readonly createRules = [];
+  protected override readonly readRules = [];
+  protected override readonly updateRules = [];
+  protected override readonly deleteRules = [];
 }
 
 const blahEntityCompanionDefinition = new EntityCompanionDefinition({

@@ -28,16 +28,16 @@ export class NumberKeyPrivacyPolicy extends EntityPrivacyPolicy<
   ViewerContext,
   NumberKeyEntity
 > {
-  protected readonly readRules = [
+  protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
   ];
-  protected readonly createRules = [
+  protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
   ];
-  protected readonly updateRules = [
+  protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
   ];
-  protected readonly deleteRules = [
+  protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
   ];
 }
