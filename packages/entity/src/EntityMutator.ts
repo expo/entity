@@ -115,7 +115,7 @@ abstract class BaseMutator<
       | EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
       | EntityMutationValidator<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
       | undefined,
-    queryContext: EntityQueryContext,
+    queryContext: EntityTransactionalQueryContext,
     entity: TEntity,
     mutationInfo: EntityMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
   ): Promise<void> {
