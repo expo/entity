@@ -1,5 +1,5 @@
 import { EntityMutationInfo } from './EntityMutator';
-import { EntityQueryContext } from './EntityQueryContext';
+import { EntityTransactionalQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 
@@ -78,7 +78,7 @@ export abstract class EntityMutationTrigger<
 > {
   abstract executeAsync(
     viewerContext: TViewerContext,
-    queryContext: EntityQueryContext,
+    queryContext: EntityTransactionalQueryContext,
     entity: TEntity,
     mutationInfo: EntityMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
   ): Promise<void>;
