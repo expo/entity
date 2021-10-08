@@ -1,4 +1,3 @@
-import isIp from 'is-ip';
 import { validate as validateUUID } from 'uuid';
 
 import { EntityFieldDefinition } from './EntityFieldDefinition';
@@ -59,11 +58,5 @@ export class JSONArrayField extends EntityFieldDefinition<any[]> {
 export class MaybeJSONArrayField extends EntityFieldDefinition<any | any[]> {
   protected validateInputValueInternal(_value: any): boolean {
     return true;
-  }
-}
-
-export class INETField extends EntityFieldDefinition<string> {
-  protected validateInputValueInternal(value: string): boolean {
-    return !!isIp(value);
   }
 }
