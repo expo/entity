@@ -13,6 +13,7 @@ import {
   EnumField,
   JSONArrayField,
   MaybeJSONArrayField,
+  INETField,
 } from '../EntityFields';
 import describeFieldTestCase from '../utils/testing/describeFieldTestCase';
 
@@ -80,4 +81,17 @@ describeFieldTestCase(
   new MaybeJSONArrayField({ columnName: 'wat' }),
   [1, 'hello', [['hello']]], // jest test cases need extra wrapping array
   []
+);
+describeFieldTestCase(
+  new INETField({ columnName: 'wat' }),
+  [
+    '192.168.1.1',
+    '198.24.10.0/24',
+    '10.0.0.0',
+    '0:1:2:3:4:5:6:7',
+    '1:2:3:4:5:6:7:8/64',
+    '198.10/8',
+    'fedc:ba98:7654:3210:fedc:ba98:7654:3210',
+  ],
+  ['', 'abs', '0.0.0.x/0', '123.21.23', '1:2:3:4:5:6']
 );
