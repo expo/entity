@@ -1,7 +1,8 @@
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
-import { UUIDField, EntityEdgeDeletionBehavior } from '../EntityFields';
+import { EntityEdgeDeletionBehavior } from '../EntityFieldDefinition';
+import { UUIDField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import { CacheStatus } from '../internal/ReadThroughEntityCache';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';

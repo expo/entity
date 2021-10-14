@@ -5,7 +5,7 @@ import Entity, { IEntityClass } from './Entity';
 import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
-import { EntityEdgeDeletionBehavior } from './EntityFields';
+import { EntityEdgeDeletionBehavior } from './EntityFieldDefinition';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityMutationTriggerConfiguration, {
   EntityMutationTrigger,
