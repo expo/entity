@@ -1,6 +1,6 @@
 import { IEntityClass } from './Entity';
 import { DatabaseAdapterFlavor, CacheAdapterFlavor } from './EntityCompanionProvider';
-import { EntityFieldDefinition } from './EntityFields';
+import { EntityFieldDefinition } from './EntityFieldDefinition';
 import { mapMap, invertMap, reduceMap } from './utils/collections/maps';
 
 /**

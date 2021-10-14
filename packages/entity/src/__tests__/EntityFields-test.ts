@@ -1,7 +1,7 @@
 import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 
+import { EntityFieldDefinition } from '../EntityFieldDefinition';
 import {
-  EntityFieldDefinition,
   StringField,
   UUIDField,
   DateField,
@@ -14,6 +14,7 @@ import {
   JSONArrayField,
   MaybeJSONArrayField,
 } from '../EntityFields';
+import describeFieldTestCase from '../utils/testing/describeFieldTestCase';
 
 class TestFieldDefinition extends EntityFieldDefinition<string> {
   protected validateInputValueInternal(value: string): boolean {
@@ -52,26 +53,6 @@ describe(EntityFieldDefinition, () => {
     expect(fieldDefinition.validateInputValue('helloworld')).toBe(true);
   });
 });
-
-const describeFieldTestCase = <T>(
-  fieldDefinition: EntityFieldDefinition<T>,
-  validValues: T[],
-  invalidValues: any[]
-): void => {
-  describe(fieldDefinition.constructor.name, () => {
-    if (validValues.length > 0) {
-      test.each(validValues)(`${fieldDefinition.constructor.name}.valid %p`, (value) => {
-        expect(fieldDefinition.validateInputValue(value)).toBe(true);
-      });
-    }
-
-    if (invalidValues.length > 0) {
-      test.each(invalidValues)(`${fieldDefinition.constructor.name}.invalid %p`, (value) => {
-        expect(fieldDefinition.validateInputValue(value)).toBe(false);
-      });
-    }
-  });
-};
 
 describeFieldTestCase(new StringField({ columnName: 'wat' }), ['hello', ''], [1, true, {}, [[]]]);
 describeFieldTestCase(
