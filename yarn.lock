@@ -508,22 +508,27 @@
     minimist "^1.2.0"
 
 "@expo/entity-cache-adapter-redis@file:packages/entity-cache-adapter-redis":
-  version "0.17.0"
+  version "0.18.0"
   dependencies:
     ioredis "^4.27.3"
 
 "@expo/entity-database-adapter-knex@file:packages/entity-database-adapter-knex":
-  version "0.17.0"
+  version "0.18.0"
   dependencies:
     knex "^0.95.6"
 
+"@expo/entity-ip-address-field@file:packages/entity-ip-address-field":
+  version "0.18.0"
+  dependencies:
+    ip-address "^8.1.0"
+
 "@expo/entity-secondary-cache-redis@file:packages/entity-secondary-cache-redis":
-  version "0.17.0"
+  version "0.18.0"
   dependencies:
     ioredis "^4.17.3"
 
 "@expo/entity@file:packages/entity":
-  version "0.17.0"
+  version "0.18.0"
   dependencies:
     "@expo/results" "^1.0.0"
     dataloader "^2.0.0"
@@ -1909,6 +1914,11 @@
   dependencies:
     jest-diff "^25.2.1"
     pretty-format "^25.2.1"
+
+"@types/jsbn@^1.2.29":
+  version "1.2.29"
+  resolved "https://registry.yarnpkg.com/@types/jsbn/-/jsbn-1.2.29.tgz#28229bc0262c704a1506c3ed69a7d7e115bd7832"
+  integrity sha512-2dVz9LTEGWVj9Ov9zaDnpvqHFV+W4bXtU0EUEGAzWfdRNO3dlUuosdHpENI6/oQW+Kejn0hAjk6P/czs9h/hvg==
 
 "@types/json-schema@^7.0.3":
   version "7.0.4"
@@ -5257,6 +5267,14 @@ ioredis@^4.27.3:
     redis-parser "^3.0.0"
     standard-as-callback "^2.1.0"
 
+ip-address@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/ip-address/-/ip-address-8.1.0.tgz#1fe9b4509b51ff7d2fbbef4d3d26994d9915a459"
+  integrity sha512-Wz91gZKpNKoXtqvY8ScarKYwhXoK4r/b5QuT+uywe/azv0/nUCo7Bh0IRRI7F9DHR06kJNWtzMGLIbXavngbKA==
+  dependencies:
+    jsbn "1.1.0"
+    sprintf-js "1.1.2"
+
 ip-regex@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-2.1.0.tgz#fa78bf5d2e6913c911ce9f819ee5146bb6d844e9"
@@ -6043,6 +6061,11 @@ js-yaml@^3.13.1:
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
+
+jsbn@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-1.1.0.tgz#b01307cb29b618a1ed26ec79e911f803c4da0040"
+  integrity sha1-sBMHyym2GKHtJux56RH4A8TaAEA=
 
 jsbn@~0.1.0:
   version "0.1.1"
@@ -8703,6 +8726,11 @@ split@^1.0.0:
   integrity sha512-mTyOoPbrivtXnwnIxZRFYRrPNtEFKlpB2fvjSnCQUiAA6qAZzqwna5envK4uk6OIeP17CsdF3rSBGYVBsU0Tkg==
   dependencies:
     through "2"
+
+sprintf-js@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.1.2.tgz#da1765262bf8c0f571749f2ad6c26300207ae673"
+  integrity sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==
 
 sprintf-js@~1.0.2:
   version "1.0.3"
