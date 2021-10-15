@@ -1,4 +1,4 @@
-import describeFieldTestCase from '@expo/entity/build/utils/testing/describeFieldTestCase';
+import { describeFieldTestCase } from '@expo/entity';
 
 import { IPAddressField } from '../EntityFields';
 
