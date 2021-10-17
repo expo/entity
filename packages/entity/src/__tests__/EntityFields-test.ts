@@ -1,4 +1,5 @@
 import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5 } from 'uuid';
+import { EnumArrayField } from '..';
 
 import { EntityFieldDefinition } from '../EntityFieldDefinition';
 import {
@@ -71,6 +72,11 @@ describeFieldTestCase(
 );
 describeFieldTestCase(new JSONObjectField({ columnName: 'wat' }), [{}], [true, 'hello']);
 describeFieldTestCase(new EnumField({ columnName: 'wat' }), ['hello', 1], [true]);
+describeFieldTestCase(
+  new EnumArrayField({ columnName: 'wat' }),
+  [[['what', 1]] as any, [[]] as any], // jest test cases need extra wrapping array
+  [true, 'hello', 1]
+);
 describeFieldTestCase(
   new JSONArrayField({ columnName: 'wat' }),
   [[[1, 2]] as any, [['hello']] as any], // jest test cases need extra wrapping array

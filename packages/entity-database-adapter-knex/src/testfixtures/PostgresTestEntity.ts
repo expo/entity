@@ -6,6 +6,7 @@ import {
   StringField,
   BooleanField,
   StringArrayField,
+  EnumArrayField,
   JSONArrayField,
   JSONObjectField,
   DateField,
@@ -22,6 +23,7 @@ type PostgresTestEntityFields = {
   hasADog: boolean | null;
   hasACat: boolean | null;
   stringArray: string[] | null;
+  enumArray: string[] | null;
   jsonArrayField: string[] | null;
   jsonObjectField: {
     hello: string;
@@ -134,6 +136,9 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<PostgresT
     }),
     stringArray: new StringArrayField({
       columnName: 'string_array',
+    }),
+    enumArray: new EnumArrayField({
+      columnName: 'enum_array',
     }),
     jsonArrayField: new JSONArrayField({
       columnName: 'json_array_field',
