@@ -1,6 +1,6 @@
 import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5 } from 'uuid';
-import { EnumArrayField } from '..';
 
+import { EnumArrayField } from '..';
 import { EntityFieldDefinition } from '../EntityFieldDefinition';
 import {
   StringField,

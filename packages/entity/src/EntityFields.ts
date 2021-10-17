@@ -50,9 +50,12 @@ export class EnumField extends EntityFieldDefinition<string | number> {
     return typeof value === 'number' || typeof value === 'string';
   }
 }
-export class EnumArrayField extends EntityFieldDefinition<string|number[]> {
-  protected validateInputValueInternal(value: string|number[]): boolean {
-    return Array.isArray(value) && value.every((subValue) => typeof subValue === 'number' || typeof subValue === 'string');
+export class EnumArrayField extends EntityFieldDefinition<string | number[]> {
+  protected validateInputValueInternal(value: string | number[]): boolean {
+    return (
+      Array.isArray(value) &&
+      value.every((subValue) => typeof subValue === 'number' || typeof subValue === 'string')
+    );
   }
 }
 export class JSONArrayField extends EntityFieldDefinition<any[]> {
