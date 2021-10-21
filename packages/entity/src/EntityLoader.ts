@@ -16,6 +16,7 @@ import ViewerContext from './ViewerContext';
 import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import EntityDataManager from './internal/EntityDataManager';
+import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 import { mapMap, mapMapAsync } from './utils/collections/maps';
 
 /**
@@ -49,7 +50,8 @@ export default class EntityLoader<
       TSelectedFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
-    private readonly dataManager: EntityDataManager<TFields>
+    private readonly dataManager: EntityDataManager<TFields>,
+    protected readonly metricsAdapter: IEntityMetricsAdapter
   ) {}
 
   /**
@@ -216,7 +218,8 @@ export default class EntityLoader<
           this.privacyPolicy.authorizeReadAsync(
             this.viewerContext,
             this.queryContext,
-            uncheckedEntityResult.value
+            uncheckedEntityResult.value,
+            this.metricsAdapter
           )
         );
       })
@@ -269,7 +272,8 @@ export default class EntityLoader<
           this.privacyPolicy.authorizeReadAsync(
             this.viewerContext,
             this.queryContext,
-            uncheckedEntityResult.value
+            uncheckedEntityResult.value,
+            this.metricsAdapter
           )
         );
       })
@@ -328,7 +332,8 @@ export default class EntityLoader<
             this.privacyPolicy.authorizeReadAsync(
               this.viewerContext,
               this.queryContext,
-              uncheckedEntityResult.value
+              uncheckedEntityResult.value,
+              this.metricsAdapter
             )
           );
         })

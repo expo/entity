@@ -73,7 +73,7 @@ export default class EntityCompanion<
       TEntity,
       TSelectedFields
     >,
-    metricsAdapter: IEntityMetricsAdapter
+    private readonly metricsAdapter: IEntityMetricsAdapter
   ) {
     const privacyPolicy = new PrivacyPolicyClass();
     this.entityLoaderFactory = new EntityLoaderFactory<
@@ -87,7 +87,8 @@ export default class EntityCompanion<
       tableDataCoordinator.entityConfiguration,
       entityClass,
       privacyPolicy,
-      tableDataCoordinator.dataManager
+      tableDataCoordinator.dataManager,
+      metricsAdapter
     );
     this.entityMutatorFactory = new EntityMutatorFactory(
       tableDataCoordinator.entityConfiguration,
@@ -128,5 +129,12 @@ export default class EntityCompanion<
    */
   getQueryContextProvider(): EntityQueryContextProvider {
     return this.tableDataCoordinator.getQueryContextProvider();
+  }
+
+  /**
+   * Get the {@link IEntityMetricsAdapter} for this companion.
+   */
+  getMetricsAdapter(): IEntityMetricsAdapter {
+    return this.metricsAdapter;
   }
 }

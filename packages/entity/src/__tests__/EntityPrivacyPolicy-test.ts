@@ -1,4 +1,4 @@
-import { mock, instance, spy, verify, anyOfClass } from 'ts-mockito';
+import { mock, instance, spy, verify, anyOfClass, anything, objectContaining } from 'ts-mockito';
 
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
@@ -6,11 +6,15 @@ import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import EntityPrivacyPolicy, {
   EntityPrivacyPolicyEvaluator,
+  EntityAuthorizationAction,
   EntityPrivacyPolicyEvaluationMode,
 } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
+import IEntityMetricsAdapter, {
+  EntityMetricsAuthorizationResult,
+} from '../metrics/IEntityMetricsAdapter';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
 import AlwaysSkipPrivacyPolicyRule from '../rules/AlwaysSkipPrivacyPolicyRule';
@@ -237,143 +241,276 @@ const blahEntityCompanionDefinition = new EntityCompanionDefinition({
 });
 
 describe(EntityPrivacyPolicy, () => {
-  it('throws EntityNotAuthorizedError when deny', async () => {
-    const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityQueryContext));
-    const entity = new BlahEntity(viewerContext, { id: '1' });
-    const policy = new AlwaysDenyPolicy();
-    await expect(
-      policy.authorizeCreateAsync(viewerContext, queryContext, entity)
-    ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
+  describe(EntityPrivacyPolicyEvaluationMode.ENFORCE.toString(), () => {
+    it('throws EntityNotAuthorizedError when deny', async () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
+      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const policy = new AlwaysDenyPolicy();
+      await expect(
+        policy.authorizeCreateAsync(viewerContext, queryContext, entity, metricsAdapter)
+      ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
+      verify(
+        metricsAdapterMock.logAuthorizationEvent(
+          objectContaining({
+            entityClassName: entity.constructor.name,
+            action: EntityAuthorizationAction.CREATE,
+            evaluationResult: EntityMetricsAuthorizationResult.DENY,
+            privacyPolicyEvaluationMode: EntityPrivacyPolicyEvaluationMode.ENFORCE,
+          })
+        )
+      ).once();
+    });
+
+    it('returns entity when allowed', async () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
+      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const policy = new AlwaysAllowPolicy();
+      const approvedEntity = await policy.authorizeCreateAsync(
+        viewerContext,
+        queryContext,
+        entity,
+        metricsAdapter
+      );
+      expect(approvedEntity).toEqual(entity);
+      verify(
+        metricsAdapterMock.logAuthorizationEvent(
+          objectContaining({
+            entityClassName: entity.constructor.name,
+            action: EntityAuthorizationAction.CREATE,
+            evaluationResult: EntityMetricsAuthorizationResult.ALLOW,
+            privacyPolicyEvaluationMode: EntityPrivacyPolicyEvaluationMode.ENFORCE,
+          })
+        )
+      ).once();
+    });
+
+    it('throws EntityNotAuthorizedError when all skipped', async () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
+      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const policy = new SkipAllPolicy();
+      await expect(
+        policy.authorizeCreateAsync(viewerContext, queryContext, entity, metricsAdapter)
+      ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
+      verify(
+        metricsAdapterMock.logAuthorizationEvent(
+          objectContaining({
+            entityClassName: entity.constructor.name,
+            action: EntityAuthorizationAction.CREATE,
+            evaluationResult: EntityMetricsAuthorizationResult.DENY,
+            privacyPolicyEvaluationMode: EntityPrivacyPolicyEvaluationMode.ENFORCE,
+          })
+        )
+      ).once();
+    });
+
+    it('throws EntityNotAuthorizedError when empty policy', async () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
+      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const policy = new EmptyPolicy();
+      await expect(
+        policy.authorizeCreateAsync(viewerContext, queryContext, entity, metricsAdapter)
+      ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
+      verify(
+        metricsAdapterMock.logAuthorizationEvent(
+          objectContaining({
+            entityClassName: entity.constructor.name,
+            action: EntityAuthorizationAction.CREATE,
+            evaluationResult: EntityMetricsAuthorizationResult.DENY,
+            privacyPolicyEvaluationMode: EntityPrivacyPolicyEvaluationMode.ENFORCE,
+          })
+        )
+      ).once();
+    });
+
+    it('throws when rule throws', async () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
+      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const policy = new ThrowAllPolicy();
+      await expect(
+        policy.authorizeCreateAsync(viewerContext, queryContext, entity, metricsAdapter)
+      ).rejects.toThrowError('WooHoo!');
+      verify(metricsAdapterMock.logAuthorizationEvent(anything())).never();
+    });
   });
 
-  it('returns entity when allowed', async () => {
-    const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityQueryContext));
-    const entity = new BlahEntity(viewerContext, { id: '1' });
-    const policy = new AlwaysAllowPolicy();
-    const approvedEntity = await policy.authorizeCreateAsync(viewerContext, queryContext, entity);
-    expect(approvedEntity).toEqual(entity);
-  });
-
-  it('throws EntityNotAuthorizedError when all skipped', async () => {
-    const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityQueryContext));
-    const entity = new BlahEntity(viewerContext, { id: '1' });
-    const policy = new SkipAllPolicy();
-    await expect(
-      policy.authorizeCreateAsync(viewerContext, queryContext, entity)
-    ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
-  });
-
-  it('throws EntityNotAuthorizedError when empty policy', async () => {
-    const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityQueryContext));
-    const entity = new BlahEntity(viewerContext, { id: '1' });
-    const policy = new EmptyPolicy();
-    await expect(
-      policy.authorizeCreateAsync(viewerContext, queryContext, entity)
-    ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
-  });
-
-  it('throws when rule throws', async () => {
-    const viewerContext = instance(mock(ViewerContext));
-    const queryContext = instance(mock(EntityQueryContext));
-    const entity = new BlahEntity(viewerContext, { id: '1' });
-    const policy = new ThrowAllPolicy();
-    await expect(
-      policy.authorizeCreateAsync(viewerContext, queryContext, entity)
-    ).rejects.toThrowError('WooHoo!');
-  });
-
-  describe('dry run', () => {
+  describe(EntityPrivacyPolicyEvaluationMode.DRY_RUN.toString(), () => {
     it('returns entity when denied but calls denialHandler', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity(viewerContext, { id: '1' });
       const policy = new DryRunAlwaysDenyPolicy();
 
       const policySpy = spy(policy);
 
-      const approvedEntity = await policy.authorizeCreateAsync(viewerContext, queryContext, entity);
+      const approvedEntity = await policy.authorizeCreateAsync(
+        viewerContext,
+        queryContext,
+        entity,
+        metricsAdapter
+      );
       expect(approvedEntity).toEqual(entity);
 
       verify(policySpy.denyHandler(anyOfClass(EntityNotAuthorizedError))).once();
+
+      verify(
+        metricsAdapterMock.logAuthorizationEvent(
+          objectContaining({
+            entityClassName: entity.constructor.name,
+            action: EntityAuthorizationAction.CREATE,
+            evaluationResult: EntityMetricsAuthorizationResult.DENY,
+            privacyPolicyEvaluationMode: EntityPrivacyPolicyEvaluationMode.DRY_RUN,
+          })
+        )
+      ).once();
     });
 
     it('does not log when not denied', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity(viewerContext, { id: '1' });
       const policy = new DryRunAlwaysAllowPolicy();
 
       const policySpy = spy(policy);
 
-      const approvedEntity = await policy.authorizeCreateAsync(viewerContext, queryContext, entity);
+      const approvedEntity = await policy.authorizeCreateAsync(
+        viewerContext,
+        queryContext,
+        entity,
+        metricsAdapter
+      );
       expect(approvedEntity).toEqual(entity);
 
       verify(policySpy.denyHandler(anyOfClass(EntityNotAuthorizedError))).never();
+
+      verify(
+        metricsAdapterMock.logAuthorizationEvent(
+          objectContaining({
+            entityClassName: entity.constructor.name,
+            action: EntityAuthorizationAction.CREATE,
+            evaluationResult: EntityMetricsAuthorizationResult.ALLOW,
+            privacyPolicyEvaluationMode: EntityPrivacyPolicyEvaluationMode.DRY_RUN,
+          })
+        )
+      ).once();
     });
 
     it('passes through other errors', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity(viewerContext, { id: '1' });
       const policy = new DryRunThrowAllPolicy();
 
       const policySpy = spy(policy);
 
       await expect(
-        policy.authorizeCreateAsync(viewerContext, queryContext, entity)
+        policy.authorizeCreateAsync(viewerContext, queryContext, entity, metricsAdapter)
       ).rejects.toThrowError('WooHoo!');
 
       verify(policySpy.denyHandler(anyOfClass(EntityNotAuthorizedError))).never();
+
+      verify(metricsAdapterMock.logAuthorizationEvent(anything())).never();
     });
   });
 
-  describe('logging enforce', () => {
+  describe(EntityPrivacyPolicyEvaluationMode.ENFORCE_AND_LOG.toString(), () => {
     it('denies when denied but calls denialHandler', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity(viewerContext, { id: '1' });
       const policy = new LoggingEnforceAlwaysDenyPolicy();
 
       const policySpy = spy(policy);
 
       await expect(
-        policy.authorizeCreateAsync(viewerContext, queryContext, entity)
+        policy.authorizeCreateAsync(viewerContext, queryContext, entity, metricsAdapter)
       ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 
       verify(policySpy.denyHandler(anyOfClass(EntityNotAuthorizedError))).once();
+
+      verify(
+        metricsAdapterMock.logAuthorizationEvent(
+          objectContaining({
+            entityClassName: entity.constructor.name,
+            action: EntityAuthorizationAction.CREATE,
+            evaluationResult: EntityMetricsAuthorizationResult.DENY,
+            privacyPolicyEvaluationMode: EntityPrivacyPolicyEvaluationMode.ENFORCE_AND_LOG,
+          })
+        )
+      ).once();
     });
 
     it('does not log when not denied', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity(viewerContext, { id: '1' });
       const policy = new LoggingEnforceAlwaysAllowPolicy();
 
       const policySpy = spy(policy);
 
-      const approvedEntity = await policy.authorizeCreateAsync(viewerContext, queryContext, entity);
+      const approvedEntity = await policy.authorizeCreateAsync(
+        viewerContext,
+        queryContext,
+        entity,
+        metricsAdapter
+      );
       expect(approvedEntity).toEqual(entity);
 
       verify(policySpy.denyHandler(anyOfClass(EntityNotAuthorizedError))).never();
+
+      verify(
+        metricsAdapterMock.logAuthorizationEvent(
+          objectContaining({
+            entityClassName: entity.constructor.name,
+            action: EntityAuthorizationAction.CREATE,
+            evaluationResult: EntityMetricsAuthorizationResult.ALLOW,
+            privacyPolicyEvaluationMode: EntityPrivacyPolicyEvaluationMode.ENFORCE_AND_LOG,
+          })
+        )
+      ).once();
     });
 
     it('passes through other errors', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity(viewerContext, { id: '1' });
       const policy = new LoggingEnforceThrowAllPolicy();
 
       const policySpy = spy(policy);
 
       await expect(
-        policy.authorizeCreateAsync(viewerContext, queryContext, entity)
+        policy.authorizeCreateAsync(viewerContext, queryContext, entity, metricsAdapter)
       ).rejects.toThrowError('WooHoo!');
 
       verify(policySpy.denyHandler(anyOfClass(EntityNotAuthorizedError))).never();
+
+      verify(metricsAdapterMock.logAuthorizationEvent(anything())).never();
     });
   });
 });

@@ -174,7 +174,7 @@ export default class EntityCompanionProvider {
    * @param cacheAdapterFlavors - Cache adapter configurations for this instance
    */
   constructor(
-    private metricsAdapter: IEntityMetricsAdapter,
+    public readonly metricsAdapter: IEntityMetricsAdapter,
     private databaseAdapterFlavors: ReadonlyMap<
       DatabaseAdapterFlavor,
       DatabaseAdapterFlavorDefinition

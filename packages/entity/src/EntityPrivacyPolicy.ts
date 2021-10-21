@@ -2,6 +2,9 @@ import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import EntityNotAuthorizedError from './errors/EntityNotAuthorizedError';
+import IEntityMetricsAdapter, {
+  EntityMetricsAuthorizationResult,
+} from './metrics/IEntityMetricsAdapter';
 import PrivacyPolicyRule, { RuleEvaluationResult } from './rules/PrivacyPolicyRule';
 
 export enum EntityPrivacyPolicyEvaluationMode {
@@ -124,14 +127,16 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeCreateAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    entity: TEntity
+    entity: TEntity,
+    metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
     return await this.authorizeForRulesetAsync(
       this.createRules,
       viewerContext,
       queryContext,
       entity,
-      EntityAuthorizationAction.CREATE
+      EntityAuthorizationAction.CREATE,
+      metricsAdapter
     );
   }
 
@@ -146,14 +151,16 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeReadAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    entity: TEntity
+    entity: TEntity,
+    metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
     return await this.authorizeForRulesetAsync(
       this.readRules,
       viewerContext,
       queryContext,
       entity,
-      EntityAuthorizationAction.READ
+      EntityAuthorizationAction.READ,
+      metricsAdapter
     );
   }
 
@@ -168,14 +175,16 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeUpdateAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    entity: TEntity
+    entity: TEntity,
+    metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
     return await this.authorizeForRulesetAsync(
       this.updateRules,
       viewerContext,
       queryContext,
       entity,
-      EntityAuthorizationAction.UPDATE
+      EntityAuthorizationAction.UPDATE,
+      metricsAdapter
     );
   }
 
@@ -190,14 +199,16 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeDeleteAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    entity: TEntity
+    entity: TEntity,
+    metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
     return await this.authorizeForRulesetAsync(
       this.deleteRules,
       viewerContext,
       queryContext,
       entity,
-      EntityAuthorizationAction.DELETE
+      EntityAuthorizationAction.DELETE,
+      metricsAdapter
     );
   }
 
@@ -206,48 +217,95 @@ export default abstract class EntityPrivacyPolicy<
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     entity: TEntity,
-    action: EntityAuthorizationAction
+    action: EntityAuthorizationAction,
+    metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
     const privacyPolicyEvaluator = this.getPrivacyPolicyEvaluator(viewerContext);
     switch (privacyPolicyEvaluator.mode) {
       case EntityPrivacyPolicyEvaluationMode.ENFORCE:
-        return await this.authorizeForRulesetInnerAsync(
-          ruleset,
-          viewerContext,
-          queryContext,
-          entity,
-          action
-        );
-      case EntityPrivacyPolicyEvaluationMode.ENFORCE_AND_LOG:
         try {
-          return await this.authorizeForRulesetInnerAsync(
+          const result = await this.authorizeForRulesetInnerAsync(
             ruleset,
             viewerContext,
             queryContext,
             entity,
             action
           );
+          metricsAdapter.logAuthorizationEvent({
+            entityClassName: entity.constructor.name,
+            action,
+            evaluationResult: EntityMetricsAuthorizationResult.ALLOW,
+            privacyPolicyEvaluationMode: privacyPolicyEvaluator.mode,
+          });
+          return result;
+        } catch (e) {
+          if (!(e instanceof EntityNotAuthorizedError)) {
+            throw e;
+          }
+          metricsAdapter.logAuthorizationEvent({
+            entityClassName: entity.constructor.name,
+            action,
+            evaluationResult: EntityMetricsAuthorizationResult.DENY,
+            privacyPolicyEvaluationMode: privacyPolicyEvaluator.mode,
+          });
+          throw e;
+        }
+      case EntityPrivacyPolicyEvaluationMode.ENFORCE_AND_LOG:
+        try {
+          const result = await this.authorizeForRulesetInnerAsync(
+            ruleset,
+            viewerContext,
+            queryContext,
+            entity,
+            action
+          );
+          metricsAdapter.logAuthorizationEvent({
+            entityClassName: entity.constructor.name,
+            action,
+            evaluationResult: EntityMetricsAuthorizationResult.ALLOW,
+            privacyPolicyEvaluationMode: privacyPolicyEvaluator.mode,
+          });
+          return result;
         } catch (e) {
           if (!(e instanceof EntityNotAuthorizedError)) {
             throw e;
           }
           privacyPolicyEvaluator.denyHandler(e);
+          metricsAdapter.logAuthorizationEvent({
+            entityClassName: entity.constructor.name,
+            action,
+            evaluationResult: EntityMetricsAuthorizationResult.DENY,
+            privacyPolicyEvaluationMode: privacyPolicyEvaluator.mode,
+          });
           throw e;
         }
       case EntityPrivacyPolicyEvaluationMode.DRY_RUN:
         try {
-          return await this.authorizeForRulesetInnerAsync(
+          const result = await this.authorizeForRulesetInnerAsync(
             ruleset,
             viewerContext,
             queryContext,
             entity,
             action
           );
+          metricsAdapter.logAuthorizationEvent({
+            entityClassName: entity.constructor.name,
+            action,
+            evaluationResult: EntityMetricsAuthorizationResult.ALLOW,
+            privacyPolicyEvaluationMode: privacyPolicyEvaluator.mode,
+          });
+          return result;
         } catch (e) {
           if (!(e instanceof EntityNotAuthorizedError)) {
             throw e;
           }
           privacyPolicyEvaluator.denyHandler(e);
+          metricsAdapter.logAuthorizationEvent({
+            entityClassName: entity.constructor.name,
+            action,
+            evaluationResult: EntityMetricsAuthorizationResult.DENY,
+            privacyPolicyEvaluationMode: privacyPolicyEvaluator.mode,
+          });
           return entity;
         }
     }

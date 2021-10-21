@@ -78,6 +78,7 @@ describe(EntitySecondaryCacheLoader, () => {
         spiedPrivacyPolicy.authorizeReadAsync(
           vc1,
           anyOfClass(EntityNonTransactionalQueryContext),
+          anything(),
           anything()
         )
       ).once();
