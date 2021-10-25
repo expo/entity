@@ -220,7 +220,8 @@ export class CreateMutator<
       this.privacyPolicy.authorizeCreateAsync(
         this.viewerContext,
         queryContext,
-        temporaryEntityForPrivacyCheck
+        temporaryEntityForPrivacyCheck,
+        this.metricsAdapter
       )
     );
     if (!authorizeCreateResult.ok) {
@@ -408,7 +409,8 @@ export class UpdateMutator<
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
         queryContext,
-        entityAboutToBeUpdated
+        entityAboutToBeUpdated,
+        this.metricsAdapter
       )
     );
     if (!authorizeUpdateResult.ok) {
@@ -592,7 +594,12 @@ export class DeleteMutator<
     skipDatabaseDeletion: boolean
   ): Promise<Result<void>> {
     const authorizeDeleteResult = await asyncResult(
-      this.privacyPolicy.authorizeDeleteAsync(this.viewerContext, queryContext, this.entity)
+      this.privacyPolicy.authorizeDeleteAsync(
+        this.viewerContext,
+        queryContext,
+        this.entity,
+        this.metricsAdapter
+      )
     );
     if (!authorizeDeleteResult.ok) {
       return authorizeDeleteResult;

@@ -5,6 +5,7 @@ import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import ViewerScopedEntityLoaderFactory from './ViewerScopedEntityLoaderFactory';
 import ViewerScopedEntityMutatorFactory from './ViewerScopedEntityMutatorFactory';
+import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 
 /**
  * Provides a simpler API for loading and mutating entities by injecting the {@link ViewerContext}
@@ -75,5 +76,12 @@ export default class ViewerScopedEntityCompanion<
    */
   getQueryContextProvider(): EntityQueryContextProvider {
     return this.entityCompanion.getQueryContextProvider();
+  }
+
+  /**
+   * Get the {@link IEntityMetricsAdapter} for this companion.
+   */
+  getMetricsAdapter(): IEntityMetricsAdapter {
+    return this.entityCompanion.getMetricsAdapter();
   }
 }

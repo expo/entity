@@ -297,7 +297,8 @@ const createEntityMutatorFactory = (
     testEntityConfiguration,
     TestEntity,
     privacyPolicy,
-    dataManager
+    dataManager,
+    metricsAdapter
   );
   const entityMutatorFactory = new EntityMutatorFactory(
     testEntityConfiguration,
@@ -388,7 +389,8 @@ describe(EntityMutatorFactory, () => {
         spiedPrivacyPolicy.authorizeCreateAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
-          anyOfClass(TestEntity)
+          anyOfClass(TestEntity),
+          anything()
         )
       ).once();
     });
@@ -562,7 +564,8 @@ describe(EntityMutatorFactory, () => {
         spiedPrivacyPolicy.authorizeUpdateAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
-          anyOfClass(TestEntity)
+          anyOfClass(TestEntity),
+          anything()
         )
       ).once();
     });
@@ -722,7 +725,8 @@ describe(EntityMutatorFactory, () => {
         spiedPrivacyPolicy.authorizeDeleteAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
-          anyOfClass(TestEntity)
+          anyOfClass(TestEntity),
+          anything()
         )
       ).once();
     });
@@ -894,21 +898,24 @@ describe(EntityMutatorFactory, () => {
       privacyPolicyMock.authorizeCreateAsync(
         viewerContext,
         anyOfClass(EntityTransactionalQueryContext),
-        anyOfClass(SimpleTestEntity)
+        anyOfClass(SimpleTestEntity),
+        anything()
       )
     ).thenReject(rejectionError);
     when(
       privacyPolicyMock.authorizeUpdateAsync(
         viewerContext,
         anyOfClass(EntityTransactionalQueryContext),
-        anyOfClass(SimpleTestEntity)
+        anyOfClass(SimpleTestEntity),
+        anything()
       )
     ).thenReject(rejectionError);
     when(
       privacyPolicyMock.authorizeDeleteAsync(
         viewerContext,
         anyOfClass(EntityTransactionalQueryContext),
-        anyOfClass(SimpleTestEntity)
+        anyOfClass(SimpleTestEntity),
+        anything()
       )
     ).thenReject(rejectionError);
 

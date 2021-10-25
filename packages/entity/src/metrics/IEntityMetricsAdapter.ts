@@ -1,3 +1,8 @@
+import {
+  EntityAuthorizationAction,
+  EntityPrivacyPolicyEvaluationMode,
+} from '../EntityPrivacyPolicy';
+
 export enum EntityMetricsLoadType {
   LOAD_MANY,
   LOAD_MANY_EQUALITY_CONJUNCTION,
@@ -28,11 +33,29 @@ export interface IncrementLoadCountEvent {
   entityClassName: string;
 }
 
+export enum EntityMetricsAuthorizationResult {
+  DENY,
+  ALLOW,
+}
+
+export interface EntityMetricsAuthorizationEvent {
+  entityClassName: string;
+  action: EntityAuthorizationAction;
+  evaluationResult: EntityMetricsAuthorizationResult;
+  privacyPolicyEvaluationMode: EntityPrivacyPolicyEvaluationMode;
+}
+
 /**
  * An interface for gathering metrics about the Entity framework. Information about
  * entity load and mutation operations is piped to an instance of this adapter.
  */
 export default interface IEntityMetricsAdapter {
+  /**
+   * Called when a {@link EntityPrivacyPolicy} authorization succeeds or fails.
+   * @param authorizationEvent - info about the authorization event
+   */
+  logAuthorizationEvent(authorizationEvent: EntityMetricsAuthorizationEvent): void;
+
   /**
    * Called when any load occurs.
    * @param loadEvent - info about the load event

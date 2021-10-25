@@ -118,6 +118,7 @@ export const testEntityCompanion = new EntityCompanionDefinition({
 describe(EntityLoader, () => {
   it('handles thrown errors and literals from constructor', async () => {
     const viewerContext = instance(mock(ViewerContext));
+    const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(
@@ -147,7 +148,7 @@ describe(EntityLoader, () => {
       databaseAdapter,
       entityCache,
       StubQueryContextProvider,
-      instance(mock<IEntityMetricsAdapter>()),
+      metricsAdapter,
       TestEntity.name
     );
     const entityLoader = new EntityLoader(
@@ -156,7 +157,8 @@ describe(EntityLoader, () => {
       testEntityConfiguration,
       TestEntity,
       privacyPolicy,
-      dataManager
+      dataManager,
+      metricsAdapter
     );
 
     let capturedThrownThing1: any;

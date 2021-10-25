@@ -6,6 +6,7 @@ import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import EntityDataManager from './internal/EntityDataManager';
+import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 
 /**
  * The primary entry point for loading entities.
@@ -35,7 +36,8 @@ export default class EntityLoaderFactory<
       TSelectedFields
     >,
     private readonly privacyPolicyClass: TPrivacyPolicy,
-    private readonly dataManager: EntityDataManager<TFields>
+    private readonly dataManager: EntityDataManager<TFields>,
+    protected readonly metricsAdapter: IEntityMetricsAdapter
   ) {}
 
   /**
@@ -53,7 +55,8 @@ export default class EntityLoaderFactory<
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicyClass,
-      this.dataManager
+      this.dataManager,
+      this.metricsAdapter
     );
   }
 }

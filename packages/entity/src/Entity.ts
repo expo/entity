@@ -243,12 +243,16 @@ export default abstract class Entity<
       .getQueryContextProvider()
       .getQueryContext()
   ): Promise<boolean> {
+    const companion = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this);
     const privacyPolicy = new (this.getCompanionDefinition().privacyPolicyClass)();
     const evaluationResult = await asyncResult(
       privacyPolicy.authorizeUpdateAsync(
         existingEntity.getViewerContext(),
         queryContext,
-        existingEntity
+        existingEntity,
+        companion.getMetricsAdapter()
       )
     );
     return evaluationResult.ok;
@@ -292,12 +296,16 @@ export default abstract class Entity<
       .getQueryContextProvider()
       .getQueryContext()
   ): Promise<boolean> {
+    const companion = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this);
     const privacyPolicy = new (this.getCompanionDefinition().privacyPolicyClass)();
     const evaluationResult = await asyncResult(
       privacyPolicy.authorizeDeleteAsync(
         existingEntity.getViewerContext(),
         queryContext,
-        existingEntity
+        existingEntity,
+        companion.getMetricsAdapter()
       )
     );
     return evaluationResult.ok;
