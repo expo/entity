@@ -98,6 +98,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.NoOpEntityMetricsAdapter.html#incrementDataManagerCacheLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Cache<wbr>Load<wbr>Count</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.NoOpEntityMetricsAdapter.html#incrementDataManagerDatabaseLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Database<wbr>Load<wbr>Count</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.NoOpEntityMetricsAdapter.html#incrementDataManagerDataloaderLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Dataloader<wbr>Load<wbr>Count</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.NoOpEntityMetricsAdapter.html#logAuthorizationEvent" class="tsd-kind-icon">log<wbr>Authorization<wbr>Event</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.NoOpEntityMetricsAdapter.html#logDataManagerLoadEvent" class="tsd-kind-icon">log<wbr>Data<wbr>Manager<wbr>Load<wbr>Event</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.NoOpEntityMetricsAdapter.html#logMutatorMutationEvent" class="tsd-kind-icon">log<wbr>Mutator<wbr>Mutation<wbr>Event</a></li>
 							</ul>
@@ -135,7 +136,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html">IEntityMetricsAdapter</a>.<a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerCacheLoadCount">incrementDataManagerCacheLoadCount</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/1405a91/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L13">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:13</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7cf54d8/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L15">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:15</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -166,7 +167,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html">IEntityMetricsAdapter</a>.<a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerDatabaseLoadCount">incrementDataManagerDatabaseLoadCount</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/1405a91/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L14">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7cf54d8/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L16">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:16</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -197,7 +198,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html">IEntityMetricsAdapter</a>.<a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerDataloaderLoadCount">incrementDataManagerDataloaderLoadCount</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/1405a91/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L10">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7cf54d8/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L12">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:12</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -217,6 +218,35 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="logAuthorizationEvent" class="tsd-anchor"></a>
+					<h3>log<wbr>Authorization<wbr>Event</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">log<wbr>Authorization<wbr>Event<span class="tsd-signature-symbol">(</span>_authorizationEvent<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.EntityMetricsAuthorizationEvent.html" class="tsd-signature-type" data-tsd-kind="Interface">EntityMetricsAuthorizationEvent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html">IEntityMetricsAdapter</a>.<a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html#logAuthorizationEvent">logAuthorizationEvent</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7cf54d8/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L9">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:9</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Called when a <a href="_expo_entity.EntityPrivacyPolicy.html">EntityPrivacyPolicy</a> authorization succeeds or fails.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>_authorizationEvent: <a href="../interfaces/_expo_entity.EntityMetricsAuthorizationEvent.html" class="tsd-signature-type" data-tsd-kind="Interface">EntityMetricsAuthorizationEvent</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="logDataManagerLoadEvent" class="tsd-anchor"></a>
 					<h3>log<wbr>Data<wbr>Manager<wbr>Load<wbr>Event</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -227,7 +257,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html">IEntityMetricsAdapter</a>.<a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html#logDataManagerLoadEvent">logDataManagerLoadEvent</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/1405a91/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L8">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7cf54d8/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L10">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:10</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -256,7 +286,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html">IEntityMetricsAdapter</a>.<a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html#logMutatorMutationEvent">logMutatorMutationEvent</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/1405a91/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L9">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:9</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7cf54d8/packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts#L11">packages/entity/src/metrics/NoOpEntityMetricsAdapter.ts:11</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -311,6 +341,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_expo_entity.NoOpEntityMetricsAdapter.html#incrementDataManagerDataloaderLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Dataloader<wbr>Load<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_expo_entity.NoOpEntityMetricsAdapter.html#logAuthorizationEvent" class="tsd-kind-icon">log<wbr>Authorization<wbr>Event</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_expo_entity.NoOpEntityMetricsAdapter.html#logDataManagerLoadEvent" class="tsd-kind-icon">log<wbr>Data<wbr>Manager<wbr>Load<wbr>Event</a>
