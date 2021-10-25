@@ -34,8 +34,8 @@ export interface IncrementLoadCountEvent {
 }
 
 export enum EntityMetricsAuthorizationResult {
-  ALLOW,
   DENY,
+  ALLOW,
 }
 
 export interface EntityMetricsAuthorizationEvent {
