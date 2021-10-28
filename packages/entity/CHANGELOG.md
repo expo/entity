@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.19.0](https://github.com/expo/entity/compare/v0.18.0...v0.19.0) (2021-10-28)
+
+
+### Features
+
+* add authorization metrics ([#142](https://github.com/expo/entity/issues/142)) ([7cf54d8](https://github.com/expo/entity/commit/7cf54d83c52e104159a3e2e675cdda2d29afe204))
+
+
+
+
+
 # [0.18.0](https://github.com/expo/entity/compare/v0.17.0...v0.18.0) (2021-10-14)
 
 
