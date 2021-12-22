@@ -43,13 +43,33 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
 }
 
 export class EntityTransactionalQueryContext extends EntityQueryContext {
+  private readonly postCommitInvalidationCallbacks: PostCommitCallback[] = [];
   private readonly postCommitCallbacks: PostCommitCallback[] = [];
 
+  /**
+   * Schedule a post-commit cache invalidation callback. These are run before normal
+   * post-commit callbacks in order to have cache consistency in normal post-commit callbacks.
+   *
+   * @param callback - callback to schedule
+   */
+  public appendPostCommitInvalidationCallback(callback: PostCommitCallback): void {
+    this.postCommitInvalidationCallbacks.push(callback);
+  }
+
+  /**
+   * Schedule a post-commit callback. These will be run after the transaction has
+   * been committed.
+   * @param callback - callback to schedule
+   */
   public appendPostCommitCallback(callback: PostCommitCallback): void {
     this.postCommitCallbacks.push(callback);
   }
 
   public async runPostCommitCallbacksAsync(): Promise<void> {
+    const invalidationCallbacks = [...this.postCommitInvalidationCallbacks];
+    this.postCommitInvalidationCallbacks.length = 0;
+    await Promise.all(invalidationCallbacks.map((callback) => callback()));
+
     const callbacks = [...this.postCommitCallbacks];
     this.postCommitCallbacks.length = 0;
     await Promise.all(callbacks.map((callback) => callback()));

@@ -250,7 +250,7 @@ export class CreateMutator<
     const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
-    queryContext.appendPostCommitCallback(
+    queryContext.appendPostCommitInvalidationCallback(
       entityLoader.invalidateFieldsAsync.bind(entityLoader, insertResult)
     );
 
@@ -445,13 +445,13 @@ export class UpdateMutator<
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
 
-    queryContext.appendPostCommitCallback(
+    queryContext.appendPostCommitInvalidationCallback(
       entityLoader.invalidateFieldsAsync.bind(
         entityLoader,
         this.originalEntity.getAllDatabaseFields()
       )
     );
-    queryContext.appendPostCommitCallback(
+    queryContext.appendPostCommitInvalidationCallback(
       entityLoader.invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity)
     );
 
@@ -633,7 +633,7 @@ export class DeleteMutator<
     }
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
-    queryContext.appendPostCommitCallback(
+    queryContext.appendPostCommitInvalidationCallback(
       entityLoader.invalidateFieldsAsync.bind(entityLoader, this.entity.getAllDatabaseFields())
     );
 
