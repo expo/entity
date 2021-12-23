@@ -2,8 +2,8 @@ import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
+import { EntityMutationType, EntityTriggerMutationInfo } from '../EntityMutationInfo';
 import { EntityNonTransactionalMutationTrigger } from '../EntityMutationTriggerConfiguration';
-import { EntityMutationType, EntityMutationInfo } from '../EntityMutator';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
@@ -74,7 +74,7 @@ class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutation
   async executeAsync(
     viewerContext: ViewerContext,
     entity: BlahEntity,
-    mutationInfo: EntityMutationInfo<BlahFields, string, ViewerContext, BlahEntity>
+    mutationInfo: EntityTriggerMutationInfo<BlahFields, string, ViewerContext, BlahEntity>
   ): Promise<void> {
     if (mutationInfo.type === EntityMutationType.DELETE) {
       const entityLoaded = await BlahEntity.loader(viewerContext)
