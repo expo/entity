@@ -90,7 +90,7 @@ class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutation
 }
 
 describe('EntityMutator', () => {
-  test('cache concistency with post-commit callbacks', async () => {
+  test('cache consistency with post-commit callbacks', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
 
