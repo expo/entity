@@ -93,9 +93,7 @@ abstract class BaseMutator<
   }
 
   protected async executeMutationValidatorsAsync(
-    validators:
-      | EntityMutationValidator<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
-      | undefined,
+    validators: EntityMutationValidator<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
     queryContext: EntityTransactionalQueryContext,
     entity: TEntity,
     mutationInfo: EntityValidatorMutationInfo<
@@ -106,9 +104,6 @@ abstract class BaseMutator<
       TSelectedFields
     >
   ): Promise<void> {
-    if (!validators) {
-      return;
-    }
     await Promise.all(
       validators.map((validator) =>
         validator.executeAsync(this.viewerContext, queryContext, entity, mutationInfo)
