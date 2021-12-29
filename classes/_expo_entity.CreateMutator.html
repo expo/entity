@@ -144,8 +144,9 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.CreateMutator.html#createInTransactionAsync" class="tsd-kind-icon">create<wbr>InTransaction<wbr>Async</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.CreateMutator.html#createInternalAsync" class="tsd-kind-icon">create<wbr>Internal<wbr>Async</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.CreateMutator.html#enforceCreateAsync" class="tsd-kind-icon">enforce<wbr>Create<wbr>Async</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.CreateMutator.html#executeMutationTriggersOrValidatorsAsync" class="tsd-kind-icon">execute<wbr>Mutation<wbr>Triggers<wbr>OrValidators<wbr>Async</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.CreateMutator.html#executeNonTransactionalMutationTriggersOrValidatorsAsync" class="tsd-kind-icon">execute<wbr>Non<wbr>Transactional<wbr>Mutation<wbr>Triggers<wbr>OrValidators<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.CreateMutator.html#executeMutationTriggersAsync" class="tsd-kind-icon">execute<wbr>Mutation<wbr>Triggers<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.CreateMutator.html#executeMutationValidatorsAsync" class="tsd-kind-icon">execute<wbr>Mutation<wbr>Validators<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.CreateMutator.html#executeNonTransactionalMutationTriggersAsync" class="tsd-kind-icon">execute<wbr>Non<wbr>Transactional<wbr>Mutation<wbr>Triggers<wbr>Async</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_expo_entity.CreateMutator.html#setField" class="tsd-kind-icon">set<wbr>Field</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.CreateMutator.html#validateFields" class="tsd-kind-icon">validate<wbr>Fields</a></li>
 							</ul>
@@ -166,7 +167,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from BaseMutator&lt;TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields&gt;.constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/efa131e/packages/entity/src/EntityMutator.ts#L62">packages/entity/src/EntityMutator.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L44">packages/entity/src/EntityMutator.ts:44</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -268,7 +269,7 @@
 					<div class="tsd-signature tsd-kind-icon">fields<wbr>For<wbr>Entity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/efa131e/packages/entity/src/EntityMutator.ts#L171">packages/entity/src/EntityMutator.ts:171</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L171">packages/entity/src/EntityMutator.ts:171</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -333,7 +334,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/efa131e/packages/entity/src/EntityMutator.ts#L188">packages/entity/src/EntityMutator.ts:188</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L188">packages/entity/src/EntityMutator.ts:188</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -357,7 +358,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/efa131e/packages/entity/src/EntityMutator.ts#L203">packages/entity/src/EntityMutator.ts:203</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L203">packages/entity/src/EntityMutator.ts:203</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -374,7 +375,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/efa131e/packages/entity/src/EntityMutator.ts#L209">packages/entity/src/EntityMutator.ts:209</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L209">packages/entity/src/EntityMutator.ts:209</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -397,7 +398,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/efa131e/packages/entity/src/EntityMutator.ts#L199">packages/entity/src/EntityMutator.ts:199</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L199">packages/entity/src/EntityMutator.ts:199</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -410,23 +411,23 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-					<a name="executeMutationTriggersOrValidatorsAsync" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> execute<wbr>Mutation<wbr>Triggers<wbr>OrValidators<wbr>Async</h3>
+					<a name="executeMutationTriggersAsync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> execute<wbr>Mutation<wbr>Triggers<wbr>Async</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-						<li class="tsd-signature tsd-kind-icon">execute<wbr>Mutation<wbr>Triggers<wbr>OrValidators<wbr>Async<span class="tsd-signature-symbol">(</span>triggersOrValidators<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="_expo_entity.EntityMutationValidator.html" class="tsd-signature-type" data-tsd-kind="Class">EntityMutationValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="_expo_entity.EntityMutationTrigger.html" class="tsd-signature-type" data-tsd-kind="Class">EntityMutationTrigger</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityTransactionalQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityTransactionalQueryContext</a>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, mutationInfo<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#EntityMutationInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityMutationInfo</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">execute<wbr>Mutation<wbr>Triggers<wbr>Async<span class="tsd-signature-symbol">(</span>triggers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="_expo_entity.EntityMutationTrigger.html" class="tsd-signature-type" data-tsd-kind="Class">EntityMutationTrigger</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityTransactionalQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityTransactionalQueryContext</a>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, mutationInfo<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#EntityTriggerMutationInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityTriggerMutationInfo</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from BaseMutator.executeMutationTriggersOrValidatorsAsync</p>
+								<p>Inherited from BaseMutator.executeMutationTriggersAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/efa131e/packages/entity/src/EntityMutator.ts#L113">packages/entity/src/EntityMutator.ts:113</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L114">packages/entity/src/EntityMutator.ts:114</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>triggersOrValidators: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="_expo_entity.EntityMutationValidator.html" class="tsd-signature-type" data-tsd-kind="Class">EntityMutationValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="_expo_entity.EntityMutationTrigger.html" class="tsd-signature-type" data-tsd-kind="Class">EntityMutationTrigger</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>triggers: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="_expo_entity.EntityMutationTrigger.html" class="tsd-signature-type" data-tsd-kind="Class">EntityMutationTrigger</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
 									<h5>queryContext: <a href="_expo_entity.EntityTransactionalQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityTransactionalQueryContext</a></h5>
@@ -435,7 +436,7 @@
 									<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
 								</li>
 								<li>
-									<h5>mutationInfo: <a href="../modules/_expo_entity.html#EntityMutationInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityMutationInfo</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>mutationInfo: <a href="../modules/_expo_entity.html#EntityTriggerMutationInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityTriggerMutationInfo</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -443,17 +444,50 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-					<a name="executeNonTransactionalMutationTriggersOrValidatorsAsync" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> execute<wbr>Non<wbr>Transactional<wbr>Mutation<wbr>Triggers<wbr>OrValidators<wbr>Async</h3>
+					<a name="executeMutationValidatorsAsync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> execute<wbr>Mutation<wbr>Validators<wbr>Async</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-						<li class="tsd-signature tsd-kind-icon">execute<wbr>Non<wbr>Transactional<wbr>Mutation<wbr>Triggers<wbr>OrValidators<wbr>Async<span class="tsd-signature-symbol">(</span>triggers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="_expo_entity.EntityNonTransactionalMutationTrigger.html" class="tsd-signature-type" data-tsd-kind="Class">EntityNonTransactionalMutationTrigger</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, mutationInfo<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#EntityMutationInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityMutationInfo</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">execute<wbr>Mutation<wbr>Validators<wbr>Async<span class="tsd-signature-symbol">(</span>validators<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityMutationValidator.html" class="tsd-signature-type" data-tsd-kind="Class">EntityMutationValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityTransactionalQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityTransactionalQueryContext</a>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, mutationInfo<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#EntityValidatorMutationInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityValidatorMutationInfo</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from BaseMutator.executeNonTransactionalMutationTriggersOrValidatorsAsync</p>
+								<p>Inherited from BaseMutator.executeMutationValidatorsAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/efa131e/packages/entity/src/EntityMutator.ts#L132">packages/entity/src/EntityMutator.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L95">packages/entity/src/EntityMutator.ts:95</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>validators: <a href="_expo_entity.EntityMutationValidator.html" class="tsd-signature-type" data-tsd-kind="Class">EntityMutationValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>queryContext: <a href="_expo_entity.EntityTransactionalQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityTransactionalQueryContext</a></h5>
+								</li>
+								<li>
+									<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
+								</li>
+								<li>
+									<h5>mutationInfo: <a href="../modules/_expo_entity.html#EntityValidatorMutationInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityValidatorMutationInfo</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="executeNonTransactionalMutationTriggersAsync" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> execute<wbr>Non<wbr>Transactional<wbr>Mutation<wbr>Triggers<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">execute<wbr>Non<wbr>Transactional<wbr>Mutation<wbr>Triggers<wbr>Async<span class="tsd-signature-symbol">(</span>triggers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="_expo_entity.EntityNonTransactionalMutationTrigger.html" class="tsd-signature-type" data-tsd-kind="Class">EntityNonTransactionalMutationTrigger</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, mutationInfo<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#EntityTriggerMutationInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityTriggerMutationInfo</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from BaseMutator.executeNonTransactionalMutationTriggersAsync</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L132">packages/entity/src/EntityMutator.ts:132</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -465,7 +499,7 @@
 									<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
 								</li>
 								<li>
-									<h5>mutationInfo: <a href="../modules/_expo_entity.html#EntityMutationInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityMutationInfo</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>mutationInfo: <a href="../modules/_expo_entity.html#EntityTriggerMutationInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityTriggerMutationInfo</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -482,7 +516,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/efa131e/packages/entity/src/EntityMutator.ts#L178">packages/entity/src/EntityMutator.ts:178</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L178">packages/entity/src/EntityMutator.ts:178</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -526,7 +560,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from BaseMutator.validateFields</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/efa131e/packages/entity/src/EntityMutator.ts#L101">packages/entity/src/EntityMutator.ts:101</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3727191/packages/entity/src/EntityMutator.ts#L83">packages/entity/src/EntityMutator.ts:83</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -614,10 +648,13 @@
 								<a href="_expo_entity.CreateMutator.html#enforceCreateAsync" class="tsd-kind-icon">enforce<wbr>Create<wbr>Async</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="_expo_entity.CreateMutator.html#executeMutationTriggersOrValidatorsAsync" class="tsd-kind-icon">execute<wbr>Mutation<wbr>Triggers<wbr>OrValidators<wbr>Async</a>
+								<a href="_expo_entity.CreateMutator.html#executeMutationTriggersAsync" class="tsd-kind-icon">execute<wbr>Mutation<wbr>Triggers<wbr>Async</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="_expo_entity.CreateMutator.html#executeNonTransactionalMutationTriggersOrValidatorsAsync" class="tsd-kind-icon">execute<wbr>Non<wbr>Transactional<wbr>Mutation<wbr>Triggers<wbr>OrValidators<wbr>Async</a>
+								<a href="_expo_entity.CreateMutator.html#executeMutationValidatorsAsync" class="tsd-kind-icon">execute<wbr>Mutation<wbr>Validators<wbr>Async</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="_expo_entity.CreateMutator.html#executeNonTransactionalMutationTriggersAsync" class="tsd-kind-icon">execute<wbr>Non<wbr>Transactional<wbr>Mutation<wbr>Triggers<wbr>Async</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 								<a href="_expo_entity.CreateMutator.html#setField" class="tsd-kind-icon">set<wbr>Field</a>
