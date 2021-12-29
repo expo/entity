@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.20.0](https://github.com/expo/entity/compare/v0.19.0...v0.20.0) (2021-12-29)
+
+**Note:** Version bump only for package @expo/entity-full-integration-tests
+
+
+
+
+
 # [0.19.0](https://github.com/expo/entity/compare/v0.18.0...v0.19.0) (2021-10-28)
 
 **Note:** Version bump only for package @expo/entity-full-integration-tests
