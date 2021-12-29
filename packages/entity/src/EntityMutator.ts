@@ -7,6 +7,12 @@ import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import { EntityEdgeDeletionBehavior } from './EntityFieldDefinition';
 import EntityLoaderFactory from './EntityLoaderFactory';
+import {
+  EntityValidatorMutationInfo,
+  EntityMutationType,
+  EntityTriggerMutationInfo,
+  EntityMutationTriggerDeleteCascadeInfo,
+} from './EntityMutationInfo';
 import EntityMutationTriggerConfiguration, {
   EntityMutationTrigger,
   EntityNonTransactionalMutationTrigger,
@@ -20,30 +26,6 @@ import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError'
 import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
 import IEntityMetricsAdapter, { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
-
-export enum EntityMutationType {
-  CREATE,
-  UPDATE,
-  DELETE,
-}
-
-export type EntityMutationInfo<
-  TFields,
-  TID extends NonNullable<TFields[TSelectedFields]>,
-  TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
-> =
-  | {
-      type: EntityMutationType.CREATE;
-    }
-  | {
-      type: EntityMutationType.UPDATE;
-      previousValue: TEntity;
-    }
-  | {
-      type: EntityMutationType.DELETE;
-    };
 
 abstract class BaseMutator<
   TFields,
@@ -110,26 +92,44 @@ abstract class BaseMutator<
     }
   }
 
-  protected async executeMutationTriggersOrValidatorsAsync(
-    triggersOrValidators:
-      | EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
-      | EntityMutationValidator<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
-      | undefined,
+  protected async executeMutationValidatorsAsync(
+    validators: EntityMutationValidator<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
     queryContext: EntityTransactionalQueryContext,
     entity: TEntity,
-    mutationInfo: EntityMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+    mutationInfo: EntityValidatorMutationInfo<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >
   ): Promise<void> {
-    if (!triggersOrValidators) {
-      return;
-    }
     await Promise.all(
-      triggersOrValidators.map((triggerOrValidator) =>
-        triggerOrValidator.executeAsync(this.viewerContext, queryContext, entity, mutationInfo)
+      validators.map((validator) =>
+        validator.executeAsync(this.viewerContext, queryContext, entity, mutationInfo)
       )
     );
   }
 
-  protected async executeNonTransactionalMutationTriggersOrValidatorsAsync(
+  protected async executeMutationTriggersAsync(
+    triggers:
+      | EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
+      | undefined,
+    queryContext: EntityTransactionalQueryContext,
+    entity: TEntity,
+    mutationInfo: EntityTriggerMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+  ): Promise<void> {
+    if (!triggers) {
+      return;
+    }
+    await Promise.all(
+      triggers.map((trigger) =>
+        trigger.executeAsync(this.viewerContext, queryContext, entity, mutationInfo)
+      )
+    );
+  }
+
+  protected async executeNonTransactionalMutationTriggersAsync(
     triggers:
       | EntityNonTransactionalMutationTrigger<
           TFields,
@@ -140,7 +140,7 @@ abstract class BaseMutator<
         >[]
       | undefined,
     entity: TEntity,
-    mutationInfo: EntityMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+    mutationInfo: EntityTriggerMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
   ): Promise<void> {
     if (!triggers) {
       return;
@@ -228,19 +228,19 @@ export class CreateMutator<
       return authorizeCreateResult;
     }
 
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationValidatorsAsync(
       this.mutationValidators,
       queryContext,
       temporaryEntityForPrivacyCheck,
       { type: EntityMutationType.CREATE }
     );
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
       temporaryEntityForPrivacyCheck,
       { type: EntityMutationType.CREATE }
     );
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeCreate,
       queryContext,
       temporaryEntityForPrivacyCheck,
@@ -259,13 +259,13 @@ export class CreateMutator<
       .enforcing()
       .loadByIDAsync(unauthorizedEntityAfterInsert.getID());
 
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterCreate,
       queryContext,
       newEntity,
       { type: EntityMutationType.CREATE }
     );
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterAll,
       queryContext,
       newEntity,
@@ -273,7 +273,7 @@ export class CreateMutator<
     );
 
     queryContext.appendPostCommitCallback(
-      this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
+      this.executeNonTransactionalMutationTriggersAsync.bind(
         this,
         this.mutationTriggers.afterCommit,
         newEntity,
@@ -417,19 +417,19 @@ export class UpdateMutator<
       return authorizeUpdateResult;
     }
 
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationValidatorsAsync(
       this.mutationValidators,
       queryContext,
       entityAboutToBeUpdated,
       { type: EntityMutationType.UPDATE, previousValue: this.originalEntity }
     );
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
       entityAboutToBeUpdated,
       { type: EntityMutationType.UPDATE, previousValue: this.originalEntity }
     );
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeUpdate,
       queryContext,
       entityAboutToBeUpdated,
@@ -460,13 +460,13 @@ export class UpdateMutator<
       .enforcing()
       .loadByIDAsync(unauthorizedEntityAfterUpdate.getID());
 
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterUpdate,
       queryContext,
       updatedEntity,
       { type: EntityMutationType.UPDATE, previousValue: this.originalEntity }
     );
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterAll,
       queryContext,
       updatedEntity,
@@ -474,7 +474,7 @@ export class UpdateMutator<
     );
 
     queryContext.appendPostCommitCallback(
-      this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
+      this.executeNonTransactionalMutationTriggersAsync.bind(
         this,
         this.mutationTriggers.afterCommit,
         updatedEntity,
@@ -565,7 +565,7 @@ export class DeleteMutator<
       this.metricsAdapter,
       EntityMetricsMutationType.DELETE,
       this.entityClass.name
-    )(this.deleteInTransactionAsync());
+    )(this.deleteInTransactionAsync(new Set(), false, null));
   }
 
   /**
@@ -576,14 +576,16 @@ export class DeleteMutator<
   }
 
   private async deleteInTransactionAsync(
-    processedEntityIdentifiersFromTransitiveDeletions: Set<string> = new Set(),
-    skipDatabaseDeletion: boolean = false
+    processedEntityIdentifiersFromTransitiveDeletions: Set<string>,
+    skipDatabaseDeletion: boolean,
+    cascadingDeleteCause: EntityMutationTriggerDeleteCascadeInfo | null
   ): Promise<Result<void>> {
     return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
       this.deleteInternalAsync(
         innerQueryContext,
         processedEntityIdentifiersFromTransitiveDeletions,
-        skipDatabaseDeletion
+        skipDatabaseDeletion,
+        cascadingDeleteCause
       )
     );
   }
@@ -591,7 +593,8 @@ export class DeleteMutator<
   private async deleteInternalAsync(
     queryContext: EntityTransactionalQueryContext,
     processedEntityIdentifiersFromTransitiveDeletions: Set<string>,
-    skipDatabaseDeletion: boolean
+    skipDatabaseDeletion: boolean,
+    cascadingDeleteCause: EntityMutationTriggerDeleteCascadeInfo | null
   ): Promise<Result<void>> {
     const authorizeDeleteResult = await asyncResult(
       this.privacyPolicy.authorizeDeleteAsync(
@@ -608,20 +611,21 @@ export class DeleteMutator<
     await this.processEntityDeletionForInboundEdgesAsync(
       this.entity,
       queryContext,
-      processedEntityIdentifiersFromTransitiveDeletions
+      processedEntityIdentifiersFromTransitiveDeletions,
+      cascadingDeleteCause
     );
 
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
       this.entity,
-      { type: EntityMutationType.DELETE }
+      { type: EntityMutationType.DELETE, cascadingDeleteCause }
     );
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeDelete,
       queryContext,
       this.entity,
-      { type: EntityMutationType.DELETE }
+      { type: EntityMutationType.DELETE, cascadingDeleteCause }
     );
 
     if (!skipDatabaseDeletion) {
@@ -637,25 +641,25 @@ export class DeleteMutator<
       entityLoader.invalidateFieldsAsync.bind(entityLoader, this.entity.getAllDatabaseFields())
     );
 
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterDelete,
       queryContext,
       this.entity,
-      { type: EntityMutationType.DELETE }
+      { type: EntityMutationType.DELETE, cascadingDeleteCause }
     );
-    await this.executeMutationTriggersOrValidatorsAsync(
+    await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterAll,
       queryContext,
       this.entity,
-      { type: EntityMutationType.DELETE }
+      { type: EntityMutationType.DELETE, cascadingDeleteCause }
     );
 
     queryContext.appendPostCommitCallback(
-      this.executeNonTransactionalMutationTriggersOrValidatorsAsync.bind(
+      this.executeNonTransactionalMutationTriggersAsync.bind(
         this,
         this.mutationTriggers.afterCommit,
         this.entity,
-        { type: EntityMutationType.DELETE }
+        { type: EntityMutationType.DELETE, cascadingDeleteCause }
       )
     );
 
@@ -679,7 +683,8 @@ export class DeleteMutator<
   private async processEntityDeletionForInboundEdgesAsync(
     entity: TEntity,
     queryContext: EntityTransactionalQueryContext,
-    processedEntityIdentifiers: Set<string>
+    processedEntityIdentifiers: Set<string>,
+    cascadingDeleteCause: EntityMutationTriggerDeleteCascadeInfo | null
   ): Promise<void> {
     // prevent infinite reference cycles by keeping track of entities already processed
     if (processedEntityIdentifiers.has(entity.getUniqueIdentifier())) {
@@ -752,7 +757,11 @@ export class DeleteMutator<
                       .forDelete(inboundReferenceEntity, queryContext)
                       .deleteInTransactionAsync(
                         processedEntityIdentifiers,
-                        /* skipDatabaseDeletion */ true // deletion is handled by DB
+                        /* skipDatabaseDeletion */ true, // deletion is handled by DB
+                        {
+                          entity,
+                          cascadingDeleteCause,
+                        }
                       )
                   )
                 );
@@ -776,7 +785,11 @@ export class DeleteMutator<
                       .forDelete(inboundReferenceEntity, queryContext)
                       .deleteInTransactionAsync(
                         processedEntityIdentifiers,
-                        /* skipDatabaseDeletion */ false
+                        /* skipDatabaseDeletion */ false,
+                        {
+                          entity,
+                          cascadingDeleteCause,
+                        }
                       )
                   )
                 );

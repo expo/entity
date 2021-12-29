@@ -1,4 +1,4 @@
-import { EntityMutationInfo } from './EntityMutator';
+import { EntityValidatorMutationInfo } from './EntityMutationInfo';
 import { EntityTransactionalQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -18,6 +18,12 @@ export default abstract class EntityMutationValidator<
     viewerContext: TViewerContext,
     queryContext: EntityTransactionalQueryContext,
     entity: TEntity,
-    mutationInfo: EntityMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+    mutationInfo: EntityValidatorMutationInfo<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >
   ): Promise<void>;
 }

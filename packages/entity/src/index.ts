@@ -33,6 +33,7 @@ export { default as EntitySecondaryCacheLoader } from './EntitySecondaryCacheLoa
 export * from './EntitySecondaryCacheLoader';
 export * from './EntityMutator';
 export { default as EntityMutationValidator } from './EntityMutationValidator';
+export * from './EntityMutationInfo';
 export * from './EntityMutationTriggerConfiguration';
 export { default as EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
 export { default as EntityMutatorFactory } from './EntityMutatorFactory';

@@ -14,12 +14,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
 import EntityLoaderFactory from '../EntityLoaderFactory';
+import {
+  EntityMutationType,
+  EntityTriggerMutationInfo,
+  EntityValidatorMutationInfo,
+} from '../EntityMutationInfo';
 import EntityMutationTriggerConfiguration, {
   EntityMutationTrigger,
   EntityNonTransactionalMutationTrigger,
 } from '../EntityMutationTriggerConfiguration';
 import EntityMutationValidator from '../EntityMutationValidator';
-import { EntityMutationInfo, EntityMutationType } from '../EntityMutator';
 import EntityMutatorFactory from '../EntityMutatorFactory';
 import { EntityTransactionalQueryContext, EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
@@ -53,7 +57,7 @@ class TestMutationTrigger extends EntityMutationTrigger<
     _viewerContext: ViewerContext,
     _queryContext: EntityQueryContext,
     _entity: TestEntity,
-    _mutationInfo: EntityMutationInfo<
+    _mutationInfo: EntityTriggerMutationInfo<
       TestFields,
       string,
       ViewerContext,
@@ -95,7 +99,13 @@ const verifyValidatorCounts = (
     keyof TestFields
   >[],
   expectedCalls: number,
-  mutationInfo: EntityMutationInfo<TestFields, string, ViewerContext, TestEntity, keyof TestFields>
+  mutationInfo: EntityValidatorMutationInfo<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  >
 ): void => {
   for (const validator of mutationValidatorSpies) {
     verify(
@@ -164,7 +174,13 @@ const verifyTriggerCounts = (
     >,
     boolean
   >,
-  mutationInfo: EntityMutationInfo<TestFields, string, ViewerContext, TestEntity, keyof TestFields>
+  mutationInfo: EntityTriggerMutationInfo<
+    TestFields,
+    string,
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  >
 ): void => {
   Object.keys(executed).forEach((s) => {
     if ((executed as any)[s]) {
@@ -767,7 +783,7 @@ describe(EntityMutatorFactory, () => {
           beforeDelete: true,
           afterDelete: true,
         },
-        { type: EntityMutationType.DELETE }
+        { type: EntityMutationType.DELETE, cascadingDeleteCause: null }
       );
     });
 
@@ -796,7 +812,9 @@ describe(EntityMutatorFactory, () => {
 
       await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
 
-      verifyValidatorCounts(viewerContext, validatorSpies, 0, { type: EntityMutationType.DELETE });
+      verifyValidatorCounts(viewerContext, validatorSpies, 0, {
+        type: EntityMutationType.DELETE as any,
+      });
     });
   });
 

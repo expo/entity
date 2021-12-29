@@ -9,7 +9,7 @@ import {
   Entity,
   EntityMutationTrigger,
   EntityQueryContext,
-  EntityMutationInfo,
+  EntityValidatorMutationInfo,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -113,7 +113,7 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
     _viewerContext: ViewerContext,
     _queryContext: EntityQueryContext,
     entity: PostgresValidatorTestEntity,
-    _mutationInfo: EntityMutationInfo<
+    _mutationInfo: EntityValidatorMutationInfo<
       PostgresValidatorTestEntityFields,
       string,
       ViewerContext,

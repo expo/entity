@@ -1,4 +1,4 @@
-import { EntityMutationInfo } from './EntityMutator';
+import { EntityTriggerMutationInfo } from './EntityMutationInfo';
 import { EntityTransactionalQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -80,7 +80,7 @@ export abstract class EntityMutationTrigger<
     viewerContext: TViewerContext,
     queryContext: EntityTransactionalQueryContext,
     entity: TEntity,
-    mutationInfo: EntityMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+    mutationInfo: EntityTriggerMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
   ): Promise<void>;
 }
 
@@ -98,6 +98,6 @@ export abstract class EntityNonTransactionalMutationTrigger<
   abstract executeAsync(
     viewerContext: TViewerContext,
     entity: TEntity,
-    mutationInfo: EntityMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+    mutationInfo: EntityTriggerMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
   ): Promise<void>;
 }
