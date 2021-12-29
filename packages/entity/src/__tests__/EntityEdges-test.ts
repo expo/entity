@@ -137,13 +137,13 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       }
 
       if (mutationInfo.cascadingDeleteCause === null) {
-        throw new Error('GrandChild entity should have casade delete cause');
+        throw new Error('GrandChild entity should have cascade delete cause');
       }
 
       const cascadingDeleteCauseEntity = mutationInfo.cascadingDeleteCause.entity;
       if (!(cascadingDeleteCauseEntity instanceof ChildEntity)) {
         throw new Error(
-          'GrandChild entity should have casade delete cause entity of type ChildEntity'
+          'GrandChild entity should have cascade delete cause entity of type ChildEntity'
         );
       }
 
