@@ -1,7 +1,7 @@
 {
   "name": "@expo/entity-example",
   "private": true,
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "An example integration of the @expo/entity framework",
   "scripts": {
     "tsc": "tsc",
@@ -23,7 +23,7 @@
   "author": "Expo",
   "license": "MIT",
   "dependencies": {
-    "@expo/entity": "^0.20.0",
+    "@expo/entity": "^0.21.0",
     "apollo-server-koa": "^2.16.1",
     "graphql": "^15.3.0",
     "koa": "^2.13.0",
