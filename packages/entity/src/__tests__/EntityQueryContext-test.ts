@@ -10,43 +10,32 @@ describe(EntityQueryContext, () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
 
-      let preCommitFirstCallCount = 0;
-      let preCommitSecondCallCount = 0;
-      let postCommitCallCount = 0;
-      let postCommitInvalidationCallCount = 0;
-
-      const preCommitFirstCallback = async (): Promise<void> => {
-        preCommitFirstCallCount++;
-      };
-      const preCommitSecondCallback = async (): Promise<void> => {
-        preCommitSecondCallCount++;
-      };
-      const postCommitInvalidationCallback = async (): Promise<void> => {
-        postCommitInvalidationCallCount++;
+      const preCommitFirstCallback = jest.fn(async (): Promise<void> => {});
+      const preCommitSecondCallback = jest.fn(async (): Promise<void> => {});
+      const postCommitInvalidationCallback = jest.fn(async (): Promise<void> => {
         invariant(
-          preCommitFirstCallCount === 1,
-          'preCommitInvalidation should be called before postCommits'
+          preCommitFirstCallback.mock.calls.length === 1,
+          'preCommit should be called before postCommitInvalidation'
         );
         invariant(
-          preCommitSecondCallCount === 1,
-          'preCommitInvalidation should be called before postCommits'
+          preCommitSecondCallback.mock.calls.length === 1,
+          'preCommit should be called before postCommitInvalidation'
         );
-      };
-      const postCommitCallback = async (): Promise<void> => {
-        postCommitCallCount++;
+      });
+      const postCommitCallback = jest.fn(async (): Promise<void> => {
         invariant(
-          preCommitFirstCallCount === 1,
-          'preCommitInvalidation should be called before postCommits'
-        );
-        invariant(
-          preCommitSecondCallCount === 1,
-          'preCommitInvalidation should be called before postCommits'
+          preCommitFirstCallback.mock.calls.length === 1,
+          'preCommit should be called before postCommit'
         );
         invariant(
-          postCommitInvalidationCallCount === 1,
+          preCommitSecondCallback.mock.calls.length === 1,
+          'preCommit should be called before postCommit'
+        );
+        invariant(
+          postCommitInvalidationCallback.mock.calls.length === 1,
           'postCommitInvalidation should be called before postCommit'
         );
-      };
+      });
 
       await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
         'postgres',
@@ -58,30 +47,21 @@ describe(EntityQueryContext, () => {
         }
       );
 
-      expect(preCommitFirstCallCount).toBe(1);
-      expect(preCommitSecondCallCount).toBe(1);
-      expect(postCommitCallCount).toBe(1);
-      expect(postCommitInvalidationCallCount).toBe(1);
+      expect(preCommitFirstCallback).toHaveBeenCalledTimes(1);
+      expect(preCommitSecondCallback).toHaveBeenCalledTimes(1);
+      expect(postCommitCallback).toHaveBeenCalledTimes(1);
+      expect(postCommitInvalidationCallback).toHaveBeenCalledTimes(1);
     });
 
     it('prevents transaction from finishing when precommit throws (post commit callbacks are not called)', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
 
-      let preCommitCallCount = 0;
-      let postCommitCallCount = 0;
-      let postCommitInvalidationCallCount = 0;
-
-      const preCommitCallback = async (): Promise<void> => {
-        preCommitCallCount++;
+      const preCommitCallback = jest.fn(async (): Promise<void> => {
         throw new Error('wat');
-      };
-      const postCommitInvalidationCallback = async (): Promise<void> => {
-        postCommitInvalidationCallCount++;
-      };
-      const postCommitCallback = async (): Promise<void> => {
-        postCommitCallCount++;
-      };
+      });
+      const postCommitInvalidationCallback = jest.fn(async (): Promise<void> => {});
+      const postCommitCallback = jest.fn(async (): Promise<void> => {});
 
       await expect(
         viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
@@ -94,9 +74,9 @@ describe(EntityQueryContext, () => {
         )
       ).rejects.toThrowError('wat');
 
-      expect(preCommitCallCount).toBe(1);
-      expect(postCommitCallCount).toBe(0);
-      expect(postCommitInvalidationCallCount).toBe(0);
+      expect(preCommitCallback).toHaveBeenCalledTimes(1);
+      expect(postCommitCallback).toHaveBeenCalledTimes(0);
+      expect(postCommitInvalidationCallback).toHaveBeenCalledTimes(0);
     });
   });
 });

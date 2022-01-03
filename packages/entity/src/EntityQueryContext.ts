@@ -1,3 +1,5 @@
+import assert from 'assert';
+
 import EntityQueryContextProvider from './EntityQueryContextProvider';
 
 export type PostCommitCallback = (...args: any) => Promise<any>;
@@ -53,11 +55,18 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
   private readonly preCommitCallbacks: { callback: PreCommitCallback; order: number }[] = [];
 
   /**
-   * Schedule a pre-commit callback. These will be run within the transaction.
+   * Schedule a pre-commit callback. These will be run within the transaction right before it is
+   * committed, and will be run in the order specified. Ordering of callbacks scheduled with the
+   * same value for the order parameter is undefined within that ordering group.
    * @param callback - callback to schedule
-   * @param order - order in which this should be run, with higher numbers running later than lower numbers
+   * @param order - order in which this should be run relative to other scheduled pre-commit callbacks,
+   *                with higher numbers running later than lower numbers.
    */
   public appendPreCommitCallback(callback: PreCommitCallback, order: number): void {
+    assert(
+      order >= Number.MIN_SAFE_INTEGER && order <= Number.MAX_SAFE_INTEGER,
+      `Invalid order specified: ${order}`
+    );
     this.preCommitCallbacks.push({ callback, order });
   }
 
