@@ -96,6 +96,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.EntityTransactionalQueryContext.html#postCommitCallbacks" class="tsd-kind-icon">post<wbr>Commit<wbr>Callbacks</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.EntityTransactionalQueryContext.html#postCommitInvalidationCallbacks" class="tsd-kind-icon">post<wbr>Commit<wbr>Invalidation<wbr>Callbacks</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.EntityTransactionalQueryContext.html#preCommitCallbacks" class="tsd-kind-icon">pre<wbr>Commit<wbr>Callbacks</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -103,10 +104,12 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.EntityTransactionalQueryContext.html#appendPostCommitCallback" class="tsd-kind-icon">append<wbr>Post<wbr>Commit<wbr>Callback</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.EntityTransactionalQueryContext.html#appendPostCommitInvalidationCallback" class="tsd-kind-icon">append<wbr>Post<wbr>Commit<wbr>Invalidation<wbr>Callback</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.EntityTransactionalQueryContext.html#appendPreCommitCallback" class="tsd-kind-icon">append<wbr>Pre<wbr>Commit<wbr>Callback</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_expo_entity.EntityTransactionalQueryContext.html#getQueryInterface" class="tsd-kind-icon">get<wbr>Query<wbr>Interface</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_expo_entity.EntityTransactionalQueryContext.html#isInTransaction" class="tsd-kind-icon">is<wbr>InTransaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite"><a href="_expo_entity.EntityTransactionalQueryContext.html#runInTransactionIfNotInTransactionAsync" class="tsd-kind-icon">run<wbr>InTransaction<wbr>IfNot<wbr>InTransaction<wbr>Async</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.EntityTransactionalQueryContext.html#runPostCommitCallbacksAsync" class="tsd-kind-icon">run<wbr>Post<wbr>Commit<wbr>Callbacks<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity.EntityTransactionalQueryContext.html#runPreCommitCallbacksAsync" class="tsd-kind-icon">run<wbr>Pre<wbr>Commit<wbr>Callbacks<wbr>Async</a></li>
 							</ul>
 						</section>
 					</div>
@@ -125,7 +128,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_expo_entity.EntityQueryContext.html">EntityQueryContext</a>.<a href="_expo_entity.EntityQueryContext.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9965719/packages/entity/src/EntityQueryContext.ts#L13">packages/entity/src/EntityQueryContext.ts:13</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L19">packages/entity/src/EntityQueryContext.ts:19</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -147,7 +150,7 @@
 					<div class="tsd-signature tsd-kind-icon">post<wbr>Commit<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <a href="../modules/_expo_entity.html#PostCommitCallback" class="tsd-signature-type" data-tsd-kind="Type alias">PostCommitCallback</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/9965719/packages/entity/src/EntityQueryContext.ts#L47">packages/entity/src/EntityQueryContext.ts:47</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L53">packages/entity/src/EntityQueryContext.ts:53</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -157,7 +160,17 @@
 					<div class="tsd-signature tsd-kind-icon">post<wbr>Commit<wbr>Invalidation<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <a href="../modules/_expo_entity.html#PostCommitCallback" class="tsd-signature-type" data-tsd-kind="Type alias">PostCommitCallback</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/9965719/packages/entity/src/EntityQueryContext.ts#L46">packages/entity/src/EntityQueryContext.ts:46</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L52">packages/entity/src/EntityQueryContext.ts:52</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="preCommitCallbacks" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> pre<wbr>Commit<wbr>Callbacks</h3>
+					<div class="tsd-signature tsd-kind-icon">pre<wbr>Commit<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>callback<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#PreCommitCallback" class="tsd-signature-type" data-tsd-kind="Type alias">PreCommitCallback</a><span class="tsd-signature-symbol">; </span>order<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L55">packages/entity/src/EntityQueryContext.ts:55</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -174,7 +187,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9965719/packages/entity/src/EntityQueryContext.ts#L64">packages/entity/src/EntityQueryContext.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L87">packages/entity/src/EntityQueryContext.ts:87</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -206,7 +219,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9965719/packages/entity/src/EntityQueryContext.ts#L55">packages/entity/src/EntityQueryContext.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L78">packages/entity/src/EntityQueryContext.ts:78</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -228,6 +241,46 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="appendPreCommitCallback" class="tsd-anchor"></a>
+					<h3>append<wbr>Pre<wbr>Commit<wbr>Callback</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">append<wbr>Pre<wbr>Commit<wbr>Callback<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#PreCommitCallback" class="tsd-signature-type" data-tsd-kind="Type alias">PreCommitCallback</a>, order<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L65">packages/entity/src/EntityQueryContext.ts:65</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Schedule a pre-commit callback. These will be run within the transaction right before it is
+										committed, and will be run in the order specified. Ordering of callbacks scheduled with the
+									same value for the order parameter is undefined within that ordering group.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>callback: <a href="../modules/_expo_entity.html#PreCommitCallback" class="tsd-signature-type" data-tsd-kind="Type alias">PreCommitCallback</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>callback to schedule</p>
+									</div>
+								</li>
+								<li>
+									<h5>order: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>order in which this should be run relative to other scheduled pre-commit callbacks,
+										with higher numbers running later than lower numbers.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="getQueryInterface" class="tsd-anchor"></a>
 					<h3>get<wbr>Query<wbr>Interface</h3>
@@ -239,7 +292,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_expo_entity.EntityQueryContext.html">EntityQueryContext</a>.<a href="_expo_entity.EntityQueryContext.html#getQueryInterface">getQueryInterface</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9965719/packages/entity/src/EntityQueryContext.ts#L17">packages/entity/src/EntityQueryContext.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L23">packages/entity/src/EntityQueryContext.ts:23</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -257,7 +310,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_expo_entity.EntityQueryContext.html">EntityQueryContext</a>.<a href="_expo_entity.EntityQueryContext.html#isInTransaction">isInTransaction</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9965719/packages/entity/src/EntityQueryContext.ts#L78">packages/entity/src/EntityQueryContext.ts:78</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L112">packages/entity/src/EntityQueryContext.ts:112</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -275,7 +328,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_expo_entity.EntityQueryContext.html">EntityQueryContext</a>.<a href="_expo_entity.EntityQueryContext.html#runInTransactionIfNotInTransactionAsync">runInTransactionIfNotInTransactionAsync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9965719/packages/entity/src/EntityQueryContext.ts#L82">packages/entity/src/EntityQueryContext.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L116">packages/entity/src/EntityQueryContext.ts:116</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -322,7 +375,24 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9965719/packages/entity/src/EntityQueryContext.ts#L68">packages/entity/src/EntityQueryContext.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L102">packages/entity/src/EntityQueryContext.ts:102</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="runPreCommitCallbacksAsync" class="tsd-anchor"></a>
+					<h3>run<wbr>Pre<wbr>Commit<wbr>Callbacks<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">run<wbr>Pre<wbr>Commit<wbr>Callbacks<wbr>Async<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/f1d9847/packages/entity/src/EntityQueryContext.ts#L91">packages/entity/src/EntityQueryContext.ts:91</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -364,11 +434,17 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_expo_entity.EntityTransactionalQueryContext.html#postCommitInvalidationCallbacks" class="tsd-kind-icon">post<wbr>Commit<wbr>Invalidation<wbr>Callbacks</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_expo_entity.EntityTransactionalQueryContext.html#preCommitCallbacks" class="tsd-kind-icon">pre<wbr>Commit<wbr>Callbacks</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_expo_entity.EntityTransactionalQueryContext.html#appendPostCommitCallback" class="tsd-kind-icon">append<wbr>Post<wbr>Commit<wbr>Callback</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_expo_entity.EntityTransactionalQueryContext.html#appendPostCommitInvalidationCallback" class="tsd-kind-icon">append<wbr>Post<wbr>Commit<wbr>Invalidation<wbr>Callback</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_expo_entity.EntityTransactionalQueryContext.html#appendPreCommitCallback" class="tsd-kind-icon">append<wbr>Pre<wbr>Commit<wbr>Callback</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="_expo_entity.EntityTransactionalQueryContext.html#getQueryInterface" class="tsd-kind-icon">get<wbr>Query<wbr>Interface</a>
@@ -381,6 +457,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_expo_entity.EntityTransactionalQueryContext.html#runPostCommitCallbacksAsync" class="tsd-kind-icon">run<wbr>Post<wbr>Commit<wbr>Callbacks<wbr>Async</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_expo_entity.EntityTransactionalQueryContext.html#runPreCommitCallbacksAsync" class="tsd-kind-icon">run<wbr>Pre<wbr>Commit<wbr>Callbacks<wbr>Async</a>
 							</li>
 						</ul>
 					</li>
