@@ -600,4 +600,37 @@ describe('postgres entity integration', () => {
       });
     });
   });
+
+  describe('queryContext callback behavior', () => {
+    it('calls callbacks correctly', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      let preCommitCallCount = 0;
+      let postCommitCallCount = 0;
+
+      await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+        queryContext.appendPostCommitCallback(async () => {
+          postCommitCallCount++;
+        });
+        queryContext.appendPreCommitCallback(async () => {
+          preCommitCallCount++;
+        }, 0);
+      });
+
+      await expect(
+        vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+          queryContext.appendPostCommitCallback(async () => {
+            postCommitCallCount++;
+          });
+          queryContext.appendPreCommitCallback(async () => {
+            preCommitCallCount++;
+            throw Error('wat');
+          }, 0);
+        })
+      ).rejects.toThrowError('wat');
+
+      expect(preCommitCallCount).toBe(2);
+      expect(postCommitCallCount).toBe(1);
+    });
+  });
 });

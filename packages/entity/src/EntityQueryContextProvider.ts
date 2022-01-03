@@ -38,6 +38,7 @@ export default abstract class EntityQueryContextProvider {
     >()(async (queryInterface) => {
       const queryContext = new EntityTransactionalQueryContext(queryInterface);
       const result = await transactionScope(queryContext);
+      await queryContext.runPreCommitCallbacksAsync();
       return [result, queryContext];
     });
     await queryContext.runPostCommitCallbacksAsync();

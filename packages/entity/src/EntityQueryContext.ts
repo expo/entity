@@ -1,6 +1,12 @@
+import assert from 'assert';
+
 import EntityQueryContextProvider from './EntityQueryContextProvider';
 
 export type PostCommitCallback = (...args: any) => Promise<any>;
+export type PreCommitCallback = (
+  queryContext: EntityTransactionalQueryContext,
+  ...args: any
+) => Promise<any>;
 
 /**
  * Entity framework representation of transactional and non-transactional database
@@ -46,10 +52,27 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
   private readonly postCommitInvalidationCallbacks: PostCommitCallback[] = [];
   private readonly postCommitCallbacks: PostCommitCallback[] = [];
 
+  private readonly preCommitCallbacks: { callback: PreCommitCallback; order: number }[] = [];
+
+  /**
+   * Schedule a pre-commit callback. These will be run within the transaction right before it is
+   * committed, and will be run in the order specified. Ordering of callbacks scheduled with the
+   * same value for the order parameter is undefined within that ordering group.
+   * @param callback - callback to schedule
+   * @param order - order in which this should be run relative to other scheduled pre-commit callbacks,
+   *                with higher numbers running later than lower numbers.
+   */
+  public appendPreCommitCallback(callback: PreCommitCallback, order: number): void {
+    assert(
+      order >= Number.MIN_SAFE_INTEGER && order <= Number.MAX_SAFE_INTEGER,
+      `Invalid order specified: ${order}`
+    );
+    this.preCommitCallbacks.push({ callback, order });
+  }
+
   /**
    * Schedule a post-commit cache invalidation callback. These are run before normal
    * post-commit callbacks in order to have cache consistency in normal post-commit callbacks.
-   *
    * @param callback - callback to schedule
    */
   public appendPostCommitInvalidationCallback(callback: PostCommitCallback): void {
@@ -63,6 +86,17 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
    */
   public appendPostCommitCallback(callback: PostCommitCallback): void {
     this.postCommitCallbacks.push(callback);
+  }
+
+  public async runPreCommitCallbacksAsync(): Promise<void> {
+    const callbacks = [...this.preCommitCallbacks]
+      .sort((a, b) => a.order - b.order)
+      .map((c) => c.callback);
+    this.preCommitCallbacks.length = 0;
+
+    for (const callback of callbacks) {
+      await callback(this);
+    }
   }
 
   public async runPostCommitCallbacksAsync(): Promise<void> {
