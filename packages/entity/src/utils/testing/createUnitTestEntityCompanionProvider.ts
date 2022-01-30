@@ -30,6 +30,12 @@ export const createUnitTestEntityCompanionProvider = (
           cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
         },
       ],
+      [
+        'local-memory-and-redis',
+        {
+          cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
+        },
+      ],
     ])
   );
 };
