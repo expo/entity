@@ -3,11 +3,6 @@ import invariant from 'invariant';
 import EntityCacheAdapter from '../EntityCacheAdapter';
 import EntityConfiguration from '../EntityConfiguration';
 import { filterMap } from '../utils/collections/maps';
-import {
-  FieldTransformerMap,
-  transformCacheObjectToFields,
-  transformFieldsToCacheObject,
-} from './EntityFieldTransformationUtils';
 
 export enum CacheStatus {
   HIT,
@@ -15,10 +10,10 @@ export enum CacheStatus {
   NEGATIVE,
 }
 
-export type CacheLoadResult =
+export type CacheLoadResult<TFields> =
   | {
       status: CacheStatus.HIT;
-      item: Readonly<object>;
+      item: Readonly<TFields>;
     }
   | {
       status: CacheStatus.MISS;
@@ -32,14 +27,10 @@ export type CacheLoadResult =
  * {@link EntityCacheAdapter} within the {@link EntityDataManager}.
  */
 export default class ReadThroughEntityCache<TFields> {
-  private readonly fieldTransformerMap: FieldTransformerMap;
-
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
     private readonly entityCacheAdapter: EntityCacheAdapter<TFields>
-  ) {
-    this.fieldTransformerMap = entityCacheAdapter.getFieldTransformerMap();
-  }
+  ) {}
 
   private isFieldCacheable<N extends keyof TFields>(fieldName: N): boolean {
     return this.entityConfiguration.cacheableKeys.has(fieldName);
@@ -91,13 +82,7 @@ export default class ReadThroughEntityCache<TFields> {
     const results: Map<NonNullable<TFields[N]>, readonly Readonly<TFields>[]> = new Map();
     cacheLoadResults.forEach((cacheLoadResult, fieldValue) => {
       if (cacheLoadResult.status === CacheStatus.HIT) {
-        results.set(fieldValue, [
-          transformCacheObjectToFields(
-            this.entityConfiguration,
-            this.fieldTransformerMap,
-            cacheLoadResult.item
-          ),
-        ]);
+        results.set(fieldValue, [cacheLoadResult.item]);
       }
     });
 
@@ -110,7 +95,7 @@ export default class ReadThroughEntityCache<TFields> {
         return !objectsFromFulfillerForFv || objectsFromFulfillerForFv.length === 0;
       });
 
-      const objectsToCache: Map<NonNullable<TFields[N]>, object> = new Map();
+      const objectsToCache: Map<NonNullable<TFields[N]>, Readonly<TFields>> = new Map();
       for (const [fieldValue, objects] of dbFetchResults.entries()) {
         if (objects.length > 1) {
           // multiple objects received for what was supposed to be a unique query, don't add to return map nor cache
@@ -123,14 +108,7 @@ export default class ReadThroughEntityCache<TFields> {
         }
         const uniqueObject = objects[0];
         if (uniqueObject) {
-          objectsToCache.set(
-            fieldValue,
-            transformFieldsToCacheObject(
-              this.entityConfiguration,
-              this.fieldTransformerMap,
-              uniqueObject
-            )
-          );
+          objectsToCache.set(fieldValue, uniqueObject);
           results.set(fieldValue, [uniqueObject]);
         }
       }

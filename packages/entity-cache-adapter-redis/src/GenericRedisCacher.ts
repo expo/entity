@@ -1,6 +1,13 @@
-import { CacheLoadResult, CacheStatus } from '@expo/entity';
+import {
+  CacheLoadResult,
+  CacheStatus,
+  EntityConfiguration,
+  transformCacheObjectToFields,
+  transformFieldsToCacheObject,
+} from '@expo/entity';
 import { Redis } from 'ioredis';
 
+import { redisTransformerMap } from './RedisCommon';
 import wrapNativeRedisCallAsync from './errors/wrapNativeRedisCallAsync';
 
 // Sentinel value we store in Redis to negatively cache a database miss.
@@ -26,12 +33,15 @@ export interface GenericRedisCacheContext {
   ttlSecondsNegative: number;
 }
 
-export default class GenericRedisCacher {
-  constructor(private readonly context: GenericRedisCacheContext) {}
+export default class GenericRedisCacher<TFields> {
+  constructor(
+    private readonly context: GenericRedisCacheContext,
+    private readonly entityConfiguration: EntityConfiguration<TFields>
+  ) {}
 
   public async loadManyAsync(
     keys: readonly string[]
-  ): Promise<ReadonlyMap<string, CacheLoadResult>> {
+  ): Promise<ReadonlyMap<string, CacheLoadResult<TFields>>> {
     if (keys.length === 0) {
       return new Map();
     }
@@ -40,7 +50,7 @@ export default class GenericRedisCacher {
       this.context.redisClient.mget(...keys)
     );
 
-    const results = new Map<string, CacheLoadResult>();
+    const results = new Map<string, CacheLoadResult<TFields>>();
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]!;
       const redisResult = redisResults[i];
@@ -52,7 +62,11 @@ export default class GenericRedisCacher {
       } else if (redisResult) {
         results.set(key, {
           status: CacheStatus.HIT,
-          item: JSON.parse(redisResult),
+          item: transformCacheObjectToFields(
+            this.entityConfiguration,
+            redisTransformerMap,
+            JSON.parse(redisResult)
+          ),
         });
       } else {
         results.set(key, {
@@ -63,7 +77,7 @@ export default class GenericRedisCacher {
     return results;
   }
 
-  public async cacheManyAsync(objectMap: ReadonlyMap<string, object>): Promise<void> {
+  public async cacheManyAsync(objectMap: ReadonlyMap<string, Readonly<TFields>>): Promise<void> {
     if (objectMap.size === 0) {
       return;
     }
@@ -72,7 +86,9 @@ export default class GenericRedisCacher {
     objectMap.forEach((object, key) => {
       redisTransaction = redisTransaction.set(
         key,
-        JSON.stringify(object),
+        JSON.stringify(
+          transformFieldsToCacheObject(this.entityConfiguration, redisTransformerMap, object)
+        ),
         'EX',
         this.context.ttlSecondsPositive
       );

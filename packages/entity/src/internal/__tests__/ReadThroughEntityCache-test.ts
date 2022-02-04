@@ -40,7 +40,6 @@ describe(ReadThroughEntityCache, () => {
   describe('readManyThroughAsync', () => {
     it('fetches from DB upon cache miss and caches the result', async () => {
       const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
-      when(cacheAdapterMock.getFieldTransformerMap()).thenReturn(new Map());
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher(['wat', 'who']);
@@ -77,7 +76,6 @@ describe(ReadThroughEntityCache, () => {
 
     it('does not fetch from the DB or cache results when all cache fetches are hits', async () => {
       const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
-      when(cacheAdapterMock.getFieldTransformerMap()).thenReturn(new Map());
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher(['wat', 'who']);
@@ -114,7 +112,6 @@ describe(ReadThroughEntityCache, () => {
 
     it('negatively caches db misses', async () => {
       const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
-      when(cacheAdapterMock.getFieldTransformerMap()).thenReturn(new Map());
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
 
@@ -135,7 +132,6 @@ describe(ReadThroughEntityCache, () => {
 
     it('does not return or fetch negatively cached results from DB', async () => {
       const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
-      when(cacheAdapterMock.getFieldTransformerMap()).thenReturn(new Map());
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher([]);
@@ -153,7 +149,6 @@ describe(ReadThroughEntityCache, () => {
 
     it('does a mix and match of hit, miss, and negative', async () => {
       const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
-      when(cacheAdapterMock.getFieldTransformerMap()).thenReturn(new Map());
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher(['wat', 'who', 'why']);
@@ -189,51 +184,12 @@ describe(ReadThroughEntityCache, () => {
 
     it('does not call into cache for field that is not cacheable', async () => {
       const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
-      when(cacheAdapterMock.getFieldTransformerMap()).thenReturn(new Map());
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(false), cacheAdapter);
       const fetcher = createIdFetcher(['wat']);
       const result = await entityCache.readManyThroughAsync('id', ['wat'], fetcher);
       verify(cacheAdapterMock.loadManyAsync('id', anything())).never();
       expect(result).toEqual(new Map([['wat', [{ id: 'wat' }]]]));
-    });
-
-    it('transforms fields for cache storage', async () => {
-      const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
-      when(cacheAdapterMock.getFieldTransformerMap()).thenReturn(
-        new Map([
-          [
-            UUIDField.name,
-            {
-              read: (val) => val.split('-')[0],
-              write: (val) => `${val}-in-cache`,
-            },
-          ],
-        ])
-      );
-      const cacheAdapter = instance(cacheAdapterMock);
-      const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
-      const fetcher = createIdFetcher(['wat', 'who']);
-
-      when(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who']))).thenResolve(
-        new Map([
-          ['wat', { status: CacheStatus.MISS }],
-          ['who', { status: CacheStatus.HIT, item: { id: 'who-in-cache' } }],
-        ])
-      );
-
-      const result = await entityCache.readManyThroughAsync('id', ['wat', 'who'], fetcher);
-
-      verify(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who']))).once();
-      verify(
-        cacheAdapterMock.cacheManyAsync('id', deepEqual(new Map([['wat', { id: 'wat-in-cache' }]])))
-      ).once();
-      expect(result).toEqual(
-        new Map([
-          ['wat', [{ id: 'wat' }]],
-          ['who', [{ id: 'who' }]],
-        ])
-      );
     });
   });
 
