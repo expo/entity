@@ -1,15 +1,8 @@
-import {
-  EntityCacheAdapter,
-  EntityConfiguration,
-  CacheLoadResult,
-  FieldTransformerMap,
-  mapKeys,
-} from '@expo/entity';
+import { EntityCacheAdapter, EntityConfiguration, CacheLoadResult, mapKeys } from '@expo/entity';
 import invariant from 'invariant';
 import { Redis } from 'ioredis';
 
 import GenericRedisCacher from './GenericRedisCacher';
-import { redisTransformerMap } from './RedisCommon';
 
 export interface RedisCacheAdapterContext {
   /**
@@ -49,28 +42,27 @@ export interface RedisCacheAdapterContext {
 }
 
 export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
-  private readonly genericRedisCacher: GenericRedisCacher;
+  private readonly genericRedisCacher: GenericRedisCacher<TFields>;
   constructor(
     entityConfiguration: EntityConfiguration<TFields>,
     private readonly context: RedisCacheAdapterContext
   ) {
     super(entityConfiguration);
 
-    this.genericRedisCacher = new GenericRedisCacher({
-      redisClient: context.redisClient,
-      ttlSecondsNegative: context.ttlSecondsNegative,
-      ttlSecondsPositive: context.ttlSecondsPositive,
-    });
-  }
-
-  public getFieldTransformerMap(): FieldTransformerMap {
-    return redisTransformerMap;
+    this.genericRedisCacher = new GenericRedisCacher(
+      {
+        redisClient: context.redisClient,
+        ttlSecondsNegative: context.ttlSecondsNegative,
+        ttlSecondsPositive: context.ttlSecondsPositive,
+      },
+      entityConfiguration
+    );
   }
 
   public async loadManyAsync<N extends keyof TFields>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult>> {
+  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
     const redisCacheKeyToFieldValueMapping = new Map(
       fieldValues.map((fieldValue) => [this.makeCacheKey(fieldName, fieldValue), fieldValue])
     );
@@ -91,7 +83,7 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
 
   public async cacheManyAsync<N extends keyof TFields>(
     fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, object>
+    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>
   ): Promise<void> {
     await this.genericRedisCacher.cacheManyAsync(
       mapKeys(objectMap, (fieldValue) => this.makeCacheKey(fieldName, fieldValue))

@@ -1,5 +1,4 @@
 import EntityConfiguration from './EntityConfiguration';
-import { FieldTransformerMap } from './internal/EntityFieldTransformationUtils';
 import { CacheLoadResult } from './internal/ReadThroughEntityCache';
 
 /**
@@ -10,13 +9,6 @@ export default abstract class EntityCacheAdapter<TFields> {
   constructor(protected readonly entityConfiguration: EntityConfiguration<TFields>) {}
 
   /**
-   * Transformer definitions for field types. Used to modify values as they are read from or written to
-   * the cache. Override in concrete subclasses to change transformation behavior.
-   * If a field type is not present in the map, then fields of that type will not be transformed.
-   */
-  public abstract getFieldTransformerMap(): FieldTransformerMap;
-
-  /**
    * Load many objects from cache.
    * @param fieldName - object field being queried
    * @param fieldValues - fieldName field values being queried
@@ -25,7 +17,7 @@ export default abstract class EntityCacheAdapter<TFields> {
   public abstract loadManyAsync<N extends keyof TFields>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult>>;
+  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>>;
 
   /**
    * Cache many objects fetched from the DB.
@@ -34,7 +26,7 @@ export default abstract class EntityCacheAdapter<TFields> {
    */
   public abstract cacheManyAsync<N extends keyof TFields>(
     fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, object>
+    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>
   ): Promise<void>;
 
   /**
