@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.22.0](https://github.com/expo/entity/compare/v0.21.0...v0.22.0) (2022-02-04)
+
+
+### Features
+
+* Upgrade knex to 1.x in `@expo/entity-database-adapter-knex` ([#150](https://github.com/expo/entity/issues/150)) ([e1b0ee5](https://github.com/expo/entity/commit/e1b0ee528175646239d88aa71ffce73983eeb52f))
+
+
+
+
+
 # [0.21.0](https://github.com/expo/entity/compare/v0.20.0...v0.21.0) (2022-01-03)
 
 
