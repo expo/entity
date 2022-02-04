@@ -1,5 +1,4 @@
 import EntityConfiguration from './EntityConfiguration';
-import { FieldTransformerMap } from './internal/EntityFieldTransformationUtils';
 import { CacheLoadResult } from './internal/ReadThroughEntityCache';
 
 /**
@@ -8,13 +7,6 @@ import { CacheLoadResult } from './internal/ReadThroughEntityCache';
  */
 export default abstract class EntityCacheAdapter<TFields> {
   constructor(protected readonly entityConfiguration: EntityConfiguration<TFields>) {}
-
-  /**
-   * Transformer definitions for field types. Used to modify values as they are read from or written to
-   * the cache. Override in concrete subclasses to change transformation behavior.
-   * If a field type is not present in the map, then fields of that type will not be transformed.
-   */
-  public abstract getFieldTransformerMap(): FieldTransformerMap;
 
   /**
    * Load many objects from cache.

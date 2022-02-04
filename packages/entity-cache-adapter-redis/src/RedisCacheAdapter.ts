@@ -4,6 +4,9 @@ import {
   CacheLoadResult,
   FieldTransformerMap,
   mapKeys,
+  transformCacheObjectToFields,
+  CacheStatus,
+  transformFieldsToCacheObject,
 } from '@expo/entity';
 import invariant from 'invariant';
 import { Redis } from 'ioredis';
@@ -49,6 +52,12 @@ export interface RedisCacheAdapterContext {
 }
 
 export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+  /**
+   * Transformer definitions for field types. Used to modify values as they are read from or written to
+   * the cache. Override in concrete subclasses to change transformation behavior.
+   * If a field type is not present in the map, then fields of that type will not be transformed.
+   */
+  private readonly redisFieldTransformer: FieldTransformerMap = redisTransformerMap;
   private readonly genericRedisCacher: GenericRedisCacher;
   constructor(
     entityConfiguration: EntityConfiguration<TFields>,
@@ -63,10 +72,6 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     });
   }
 
-  public getFieldTransformerMap(): FieldTransformerMap {
-    return redisTransformerMap;
-  }
-
   public async loadManyAsync<N extends keyof TFields>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
@@ -74,9 +79,24 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     const redisCacheKeyToFieldValueMapping = new Map(
       fieldValues.map((fieldValue) => [this.makeCacheKey(fieldName, fieldValue), fieldValue])
     );
-    const cacheResults = await this.genericRedisCacher.loadManyAsync(
+    const rawCacheResults = await this.genericRedisCacher.loadManyAsync(
       Array.from(redisCacheKeyToFieldValueMapping.keys())
     );
+    const cacheResults = new Map<string, CacheLoadResult>();
+    for (const [redisCacheKey, rawCacheResult] of rawCacheResults) {
+      if (rawCacheResult.status === CacheStatus.HIT) {
+        cacheResults.set(redisCacheKey, {
+          status: CacheStatus.HIT,
+          item: transformCacheObjectToFields(
+            this.entityConfiguration,
+            this.redisFieldTransformer,
+            rawCacheResult.item
+          ),
+        });
+      } else {
+        cacheResults.set(redisCacheKey, rawCacheResult);
+      }
+    }
 
     return mapKeys(cacheResults, (redisCacheKey) => {
       const fieldValue = redisCacheKeyToFieldValueMapping.get(redisCacheKey);
@@ -93,8 +113,19 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     fieldName: N,
     objectMap: ReadonlyMap<NonNullable<TFields[N]>, object>
   ): Promise<void> {
+    const cacheObjectMap = new Map<NonNullable<TFields[N]>, object>();
+    for (const [fieldValue, object] of objectMap) {
+      cacheObjectMap.set(
+        fieldValue,
+        transformFieldsToCacheObject(
+          this.entityConfiguration,
+          this.redisFieldTransformer,
+          object as Readonly<TFields>
+        )
+      );
+    }
     await this.genericRedisCacher.cacheManyAsync(
-      mapKeys(objectMap, (fieldValue) => this.makeCacheKey(fieldName, fieldValue))
+      mapKeys(cacheObjectMap, (fieldValue) => this.makeCacheKey(fieldName, fieldValue))
     );
   }
 

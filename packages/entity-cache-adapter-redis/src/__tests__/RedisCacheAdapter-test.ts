@@ -1,4 +1,4 @@
-import { CacheStatus, UUIDField, EntityConfiguration } from '@expo/entity';
+import { CacheStatus, UUIDField, EntityConfiguration, DateField } from '@expo/entity';
 import { Redis, Pipeline } from 'ioredis';
 import { mock, when, instance, anything, verify } from 'ts-mockito';
 
@@ -6,6 +6,7 @@ import RedisCacheAdapter from '../RedisCacheAdapter';
 
 type BlahFields = {
   id: string;
+  date: Date | null;
 };
 
 const entityConfiguration = new EntityConfiguration<BlahFields>({
@@ -13,6 +14,7 @@ const entityConfiguration = new EntityConfiguration<BlahFields>({
   tableName: 'blah',
   schema: {
     id: new UUIDField({ columnName: 'id', cache: true }),
+    date: new DateField({ columnName: 'date' }),
   },
   databaseAdapterFlavor: 'postgres',
   cacheAdapterFlavor: 'redis',
@@ -62,6 +64,40 @@ describe(RedisCacheAdapter, () => {
       const results = await cacheAdapter.loadManyAsync('id', []);
       expect(results).toEqual(new Map());
     });
+
+    it('transforms a cache object to an Entity object', async () => {
+      const redisResults = new Map();
+
+      const mockRedisClient = mock<Redis>();
+
+      // need to have one anything() for each element of spread, in this case 1
+      when(mockRedisClient.mget(anything())).thenCall(async (...keys) =>
+        keys.map((k) => redisResults.get(k) ?? null)
+      );
+
+      const cacheAdapter = new RedisCacheAdapter(entityConfiguration, {
+        redisClient: instance(mockRedisClient),
+        makeKeyFn: (...parts) => parts.join(':'),
+        cacheKeyVersion: 1,
+        cacheKeyPrefix: 'hello-',
+        ttlSecondsPositive: 1,
+        ttlSecondsNegative: 2,
+      });
+
+      const date = new Date();
+      redisResults.set(
+        cacheAdapter['makeCacheKey']('id', 'wat'),
+        JSON.stringify({ id: 'wat', date: date.toISOString() })
+      );
+
+      const results = await cacheAdapter.loadManyAsync('id', ['wat']);
+
+      expect(results.get('wat')).toMatchObject({
+        status: CacheStatus.HIT,
+        item: { id: 'wat', date },
+      });
+      expect(results.size).toBe(1);
+    });
   });
 
   describe('cacheManyAsync', () => {
@@ -94,6 +130,41 @@ describe(RedisCacheAdapter, () => {
       const cacheKey = cacheAdapter['makeCacheKey']('id', 'wat');
       expect(redisResults.get(cacheKey)).toMatchObject({
         value: JSON.stringify({ id: 'wat' }),
+        code: 'EX',
+        ttl: 1,
+      });
+    });
+
+    it('transforms an Entity object to a cache object', async () => {
+      const redisResults = new Map();
+
+      const mockPipeline = mock<Pipeline>();
+      when(mockPipeline.set(anything(), anything(), anything(), anything())).thenCall(
+        (key, value, code, ttl) => {
+          redisResults.set(key, { value, code, ttl });
+          return pipeline;
+        }
+      );
+      when(mockPipeline.exec()).thenResolve({} as any);
+      const pipeline = instance(mockPipeline);
+
+      const mockRedisClient = mock<Redis>();
+      when(mockRedisClient.multi()).thenReturn(pipeline);
+
+      const cacheAdapter = new RedisCacheAdapter(entityConfiguration, {
+        redisClient: instance(mockRedisClient),
+        makeKeyFn: (...parts) => parts.join(':'),
+        cacheKeyVersion: 1,
+        cacheKeyPrefix: 'hello-',
+        ttlSecondsPositive: 1,
+        ttlSecondsNegative: 2,
+      });
+      const date = new Date();
+      await cacheAdapter.cacheManyAsync('id', new Map([['wat', { id: 'wat', date }]]));
+
+      const cacheKey = cacheAdapter['makeCacheKey']('id', 'wat');
+      expect(redisResults.get(cacheKey)).toMatchObject({
+        value: JSON.stringify({ id: 'wat', date: date.toISOString() }),
         code: 'EX',
         ttl: 1,
       });
