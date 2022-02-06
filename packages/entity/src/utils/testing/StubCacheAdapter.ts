@@ -3,7 +3,6 @@ import invariant from 'invariant';
 import EntityCacheAdapter from '../../EntityCacheAdapter';
 import EntityConfiguration from '../../EntityConfiguration';
 import IEntityCacheAdapterProvider from '../../IEntityCacheAdapterProvider';
-import { FieldTransformerMap } from '../../internal/EntityFieldTransformationUtils';
 import { CacheStatus, CacheLoadResult } from '../../internal/ReadThroughEntityCache';
 
 export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
@@ -62,10 +61,6 @@ export class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapt
     readonly cache: Map<string, Readonly<TFields>>
   ) {
     super(entityConfiguration);
-  }
-
-  public getFieldTransformerMap(): FieldTransformerMap {
-    return new Map();
   }
 
   public async loadManyAsync<N extends keyof TFields>(
