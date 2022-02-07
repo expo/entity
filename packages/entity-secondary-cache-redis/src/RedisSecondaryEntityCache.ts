@@ -3,15 +3,9 @@ import {
   EntityConfiguration,
   filterMap,
   ISecondaryEntityCache,
-  transformCacheObjectToFields,
-  transformFieldsToCacheObject,
   zipToMap,
 } from '@expo/entity';
-import {
-  GenericRedisCacheContext,
-  GenericRedisCacher,
-  redisTransformerMap,
-} from '@expo/entity-cache-adapter-redis';
+import { GenericRedisCacheContext, GenericRedisCacher } from '@expo/entity-cache-adapter-redis';
 import invariant from 'invariant';
 
 /**
@@ -22,14 +16,14 @@ import invariant from 'invariant';
 export default class RedisSecondaryEntityCache<TFields, TLoadParams>
   implements ISecondaryEntityCache<TFields, TLoadParams>
 {
-  private readonly genericRedisCacher: GenericRedisCacher;
+  private readonly genericRedisCacher: GenericRedisCacher<TFields>;
 
   constructor(
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    entityConfiguration: EntityConfiguration<TFields>,
     genericRedisCacheContext: GenericRedisCacheContext,
     private readonly constructRedisKey: (params: Readonly<TLoadParams>) => string
   ) {
-    this.genericRedisCacher = new GenericRedisCacher(genericRedisCacheContext);
+    this.genericRedisCacher = new GenericRedisCacher(genericRedisCacheContext, entityConfiguration);
   }
 
   /**
@@ -74,14 +68,7 @@ export default class RedisSecondaryEntityCache<TFields, TLoadParams>
       if (cacheLoadResult.status === CacheStatus.HIT) {
         const loadParams = redisKeyToLoadParamsMap.get(redisKey);
         invariant(loadParams !== undefined, 'load params should be in redis key map');
-        results.set(
-          loadParams,
-          transformCacheObjectToFields(
-            this.entityConfiguration,
-            redisTransformerMap,
-            cacheLoadResult.item
-          )
-        );
+        results.set(loadParams, cacheLoadResult.item);
       }
     });
 
@@ -103,13 +90,10 @@ export default class RedisSecondaryEntityCache<TFields, TLoadParams>
         results.set(fetchMiss, null);
       }
 
-      const objectsToCache: Map<string, object> = new Map();
+      const objectsToCache: Map<string, Readonly<TFields>> = new Map();
       for (const [loadParams, object] of fetchResults.entries()) {
         if (object) {
-          objectsToCache.set(
-            this.constructRedisKey(loadParams),
-            transformFieldsToCacheObject(this.entityConfiguration, redisTransformerMap, object)
-          );
+          objectsToCache.set(this.constructRedisKey(loadParams), object);
           results.set(loadParams, object);
         }
       }
