@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0](https://github.com/expo/entity/compare/v0.22.0...v1.0.0) (2022-02-09)
+
+**Note:** Version bump only for package @expo/entity
+
+
+
+
+
 # [0.22.0](https://github.com/expo/entity/compare/v0.21.0...v0.22.0) (2022-02-04)
 
 **Note:** Version bump only for package @expo/entity
