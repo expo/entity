@@ -5,10 +5,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [1.0.0](https://github.com/expo/entity/compare/v0.22.0...v1.0.0) (2022-02-09)
 
-**Note:** Version bump only for package @expo/entity-cache-adapter-redis
+### Chores
 
-
-
+* Move data transforming responsibilities to the CacheAdapter instead of the ReadThroughEntityCache. ([#153](https://github.com/expo/entity/pull/153))
 
 
 # [0.22.0](https://github.com/expo/entity/compare/v0.21.0...v0.22.0) (2022-02-04)
