@@ -28,6 +28,9 @@ export enum EntityEdgeDeletionBehavior {
   SET_NULL,
 }
 
+/**
+ * Defines an association between entities. An association is primarily used to define cascading deletion behavior.
+ */
 export interface EntityAssociationDefinition<
   TViewerContext extends ViewerContext,
   TAssociatedFields,
@@ -83,6 +86,10 @@ export interface EntityAssociationDefinition<
   edgeDeletionBehavior?: EntityEdgeDeletionBehavior;
 }
 
+/**
+ * Definition for a field referencing a column in the underlying database. Specifies things like
+ * cache behavior and associations, and handles input validation.
+ */
 export abstract class EntityFieldDefinition<T> {
   readonly columnName: string;
   readonly cache: boolean;
@@ -93,6 +100,7 @@ export abstract class EntityFieldDefinition<T> {
    * @param cache - Whether or not to cache loaded instances of the entity by this field. The column name is
    *              used to derive a cache key for the cache entry. If true, this column must be able uniquely
    *              identify the entity.
+   * @param association - Defines the association behavior for an entity that this column references.
    */
   constructor({
     columnName,
