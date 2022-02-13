@@ -4,6 +4,7 @@
  * @module @expo/entity
  */
 
+export { default as GenericSecondaryEntityCache } from './GenericSecondaryEntityCache';
 export { default as EnforcingEntityLoader } from './EnforcingEntityLoader';
 export { default as Entity } from './Entity';
 export * from './Entity';
@@ -43,6 +44,7 @@ export * from './EntityQueryContext';
 export { default as IEntityCacheAdapterProvider } from './IEntityCacheAdapterProvider';
 export { default as IEntityDatabaseAdapterProvider } from './IEntityDatabaseAdapterProvider';
 export { default as EntityQueryContextProvider } from './EntityQueryContextProvider';
+export { default as IEntityGenericCacher } from './IEntityGenericCacher';
 export { default as ReadonlyEntity } from './ReadonlyEntity';
 export { default as ViewerContext } from './ViewerContext';
 export { default as ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';

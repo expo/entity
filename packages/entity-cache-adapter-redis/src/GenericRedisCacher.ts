@@ -4,6 +4,7 @@ import {
   EntityConfiguration,
   transformCacheObjectToFields,
   transformFieldsToCacheObject,
+  IEntityGenericCacher,
 } from '@expo/entity';
 import { Redis } from 'ioredis';
 
@@ -33,7 +34,7 @@ export interface GenericRedisCacheContext {
   ttlSecondsNegative: number;
 }
 
-export default class GenericRedisCacher<TFields> {
+export default class GenericRedisCacher<TFields> implements IEntityGenericCacher<TFields> {
   constructor(
     private readonly context: GenericRedisCacheContext,
     private readonly entityConfiguration: EntityConfiguration<TFields>
