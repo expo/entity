@@ -1,7 +1,9 @@
-import { CacheStatus, filterMap, ISecondaryEntityCache, zipToMap } from '@expo/entity';
 import invariant from 'invariant';
 
+import { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
 import IEntityGenericCacher from './IEntityGenericCacher';
+import { CacheStatus } from './internal/ReadThroughEntityCache';
+import { filterMap, zipToMap } from './utils/collections/maps';
 
 /**
  * A custom secondary read-through entity cache is a way to add a custom second layer of caching for a particular
