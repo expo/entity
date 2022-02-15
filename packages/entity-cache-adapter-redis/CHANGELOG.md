@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### Chores
+
+* Refactor cachers to use an abstract class and interface  ([#157](https://github.com/expo/entity/pull/157)) 
+
 # [0.23.0](https://github.com/expo/entity/compare/v0.22.0...v0.23.0) (2022-02-09)
 
 ### Chores
