@@ -12,6 +12,10 @@ export const createLocalMemoryIntegrationTestEntityCompanionProvider = (
   localMemoryOptions: { maxSize?: number; ttlSeconds?: number } = {},
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
 ): EntityCompanionProvider => {
+  const localMemoryCacheAdapterProvider =
+    localMemoryOptions.maxSize === 0 && localMemoryOptions.ttlSeconds === 0
+      ? LocalMemoryCacheAdapterProvider.getNoOpProvider()
+      : LocalMemoryCacheAdapterProvider.getProvider(localMemoryOptions);
   return new EntityCompanionProvider(
     metricsAdapter,
     new Map([
@@ -27,9 +31,18 @@ export const createLocalMemoryIntegrationTestEntityCompanionProvider = (
       [
         'local-memory',
         {
-          cacheAdapterProvider: LocalMemoryCacheAdapterProvider.getProvider(localMemoryOptions),
+          cacheAdapterProvider: localMemoryCacheAdapterProvider,
         },
       ],
     ])
+  );
+};
+
+export const createNoopLocalMemoryIntegrationTestEntityCompanionProvider = (
+  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
+): EntityCompanionProvider => {
+  return createLocalMemoryIntegrationTestEntityCompanionProvider(
+    { maxSize: 0, ttlSeconds: 0 },
+    metricsAdapter
   );
 };

@@ -5,7 +5,10 @@ import GenericLocalMemoryCacher from '../GenericLocalMemoryCacher';
 import LocalMemoryCacheAdapter from '../LocalMemoryCacheAdapter';
 import { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider';
 import LocalMemoryTestEntity from '../testfixtures/LocalMemoryTestEntity';
-import { createLocalMemoryIntegrationTestEntityCompanionProvider } from '../testfixtures/createLocalMemoryIntegrationTestEntityCompanionProvider';
+import {
+  createLocalMemoryIntegrationTestEntityCompanionProvider,
+  createNoopLocalMemoryIntegrationTestEntityCompanionProvider,
+} from '../testfixtures/createLocalMemoryIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}
 
@@ -124,5 +127,54 @@ describe(LocalMemoryCacheAdapter, () => {
       cacheKeyMaker('id', entity1WithVc2.getID()),
     ]);
     expect(genericLocalMemoryCacherLoadManySpy).toBeCalledTimes(2);
+  });
+
+  it('respects the parameters of a noop cache', async () => {
+    const viewerContext = new TestViewerContext(
+      createNoopLocalMemoryIntegrationTestEntityCompanionProvider()
+    );
+    const cacheAdapter = viewerContext.entityCompanionProvider.getCompanionForEntity(
+      LocalMemoryTestEntity,
+      LocalMemoryTestEntity.getCompanionDefinition()
+    )['tableDataCoordinator']['cacheAdapter'];
+    const cacheKeyMaker = cacheAdapter['makeCacheKey'].bind(cacheAdapter);
+
+    const date = new Date();
+    const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
+      .setField('name', 'blah')
+      .setField('dateField', date)
+      .enforceCreateAsync();
+
+    // loading an entity will try to put it in cache but it's a noop cache, so it should be a miss
+    const entity1 = await LocalMemoryTestEntity.loader(viewerContext)
+      .enforcing()
+      .loadByIDAsync(entity1Created.getID());
+
+    const entitySpecificGenericCacher =
+      LocalMemoryCacheAdapterProvider.localMemoryCacheAdapterMap.get(
+        LocalMemoryTestEntity.getCompanionDefinition().entityConfiguration.tableName
+      )!['genericLocalMemoryCacher'];
+    const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
+      cacheKeyMaker('id', entity1.getID()),
+    ]);
+    const cachedValue = cachedResult.get(cacheKeyMaker('id', entity1.getID()))!;
+    expect(cachedValue).toMatchObject({
+      status: CacheStatus.MISS,
+    });
+
+    // a non existent db fetch should try to write negative result ('') but it's a noop cache, so it should be a miss
+    const nonExistentId = uuidv4();
+
+    const entityNonExistentResult = await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(
+      nonExistentId
+    );
+    expect(entityNonExistentResult.ok).toBe(false);
+
+    const nonExistentCachedResult = await entitySpecificGenericCacher.loadManyAsync([
+      cacheKeyMaker('id', nonExistentId),
+    ]);
+    expect(nonExistentCachedResult.get(cacheKeyMaker('id', nonExistentId))).toMatchObject({
+      status: CacheStatus.MISS,
+    });
   });
 });
