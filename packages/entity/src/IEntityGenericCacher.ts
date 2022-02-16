@@ -9,7 +9,7 @@ export default interface IEntityGenericCacher<TFields> {
 
   cacheManyAsync(objectMap: ReadonlyMap<string, Readonly<TFields>>): Promise<void>;
 
-  cacheDBMissesAsync(keys: string[]): Promise<void>;
+  cacheDBMissesAsync(keys: readonly string[]): Promise<void>;
 
-  invalidateManyAsync(keys: string[]): Promise<void>;
+  invalidateManyAsync(keys: readonly string[]): Promise<void>;
 }

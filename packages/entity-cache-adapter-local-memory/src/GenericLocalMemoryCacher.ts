@@ -1,4 +1,4 @@
-import { CacheLoadResult, CacheStatus } from '@expo/entity';
+import { CacheLoadResult, CacheStatus, IEntityGenericCacher } from '@expo/entity';
 import LRUCache from 'lru-cache';
 
 // Sentinel value we store in local memory to negatively cache a database miss.
@@ -77,8 +77,8 @@ type LRUCacheOptionsV7<K, V> = {
   updateRecencyOnHas?: boolean;
 };
 
-export default class GenericLocalMemoryCacher<TFields> {
-  constructor(private readonly lruCache: LocalMemoryCache<TFields>) {}
+export default class GenericLocalMemoryCacher<TFields> implements IEntityGenericCacher<TFields> {
+  constructor(private readonly localMemoryCache: LocalMemoryCache<TFields>) {}
 
   static createLRUCache<TFields>(
     options: { maxSize?: number; ttlSeconds?: number } = {}
@@ -95,7 +95,7 @@ export default class GenericLocalMemoryCacher<TFields> {
     return new LRUCache<string, LocalMemoryCacheValue<TFields>>(lruCacheOptions as any);
   }
 
-  static createNoOpLRUCache<TFields>(): LocalMemoryCache<TFields> {
+  static createNoOpCache<TFields>(): LocalMemoryCache<TFields> {
     return new LRUCache<string, LocalMemoryCacheValue<TFields>>({
       max: 0,
       maxAge: -1,
@@ -107,7 +107,7 @@ export default class GenericLocalMemoryCacher<TFields> {
   ): Promise<ReadonlyMap<string, CacheLoadResult<TFields>>> {
     const cacheResults = new Map<string, CacheLoadResult<TFields>>();
     for (const key of keys) {
-      const cacheResult = this.lruCache.get(key);
+      const cacheResult = this.localMemoryCache.get(key);
       if (cacheResult === DOES_NOT_EXIST_LOCAL_MEMORY_CACHE) {
         cacheResults.set(key, {
           status: CacheStatus.NEGATIVE,
@@ -128,19 +128,19 @@ export default class GenericLocalMemoryCacher<TFields> {
 
   public async cacheManyAsync(objectMap: ReadonlyMap<string, Readonly<TFields>>): Promise<void> {
     for (const [key, item] of objectMap) {
-      this.lruCache.set(key, item);
+      this.localMemoryCache.set(key, item);
     }
   }
 
-  public async cacheDBMissesAsync(keys: string[]): Promise<void> {
+  public async cacheDBMissesAsync(keys: readonly string[]): Promise<void> {
     for (const key of keys) {
-      this.lruCache.set(key, DOES_NOT_EXIST_LOCAL_MEMORY_CACHE);
+      this.localMemoryCache.set(key, DOES_NOT_EXIST_LOCAL_MEMORY_CACHE);
     }
   }
 
-  public async invalidateManyAsync(keys: string[]): Promise<void> {
+  public async invalidateManyAsync(keys: readonly string[]): Promise<void> {
     for (const key of keys) {
-      this.lruCache.del(key);
+      this.localMemoryCache.del(key);
     }
   }
 

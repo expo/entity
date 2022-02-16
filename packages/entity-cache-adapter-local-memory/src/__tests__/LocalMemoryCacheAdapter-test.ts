@@ -64,16 +64,16 @@ describe(LocalMemoryCacheAdapter, () => {
 
   describe('cacheManyAsync', () => {
     it('correctly caches all objects', async () => {
-      const lruCache = GenericLocalMemoryCacher.createLRUCache<BlahFields>({
+      const localMemoryCache = GenericLocalMemoryCacher.createLRUCache<BlahFields>({
         maxSize: Number.MAX_SAFE_INTEGER,
         ttlSeconds: Number.MAX_SAFE_INTEGER,
       });
 
-      const cacheAdapter = new LocalMemoryCacheAdapter(entityConfiguration, lruCache);
+      const cacheAdapter = new LocalMemoryCacheAdapter(entityConfiguration, localMemoryCache);
       await cacheAdapter.cacheManyAsync('id', new Map([['test-id-1', { id: 'test-id-1' }]]));
 
       const cacheKey = cacheAdapter['makeCacheKey']('id', 'test-id-1');
-      expect(lruCache.get(cacheKey)).toMatchObject({
+      expect(localMemoryCache.get(cacheKey)).toMatchObject({
         id: 'test-id-1',
       });
     });
@@ -81,27 +81,27 @@ describe(LocalMemoryCacheAdapter, () => {
 
   describe('cacheDBMissesAsync', () => {
     it('correctly caches misses', async () => {
-      const lruCache = GenericLocalMemoryCacher.createLRUCache<BlahFields>({
+      const localMemoryCache = GenericLocalMemoryCacher.createLRUCache<BlahFields>({
         maxSize: Number.MAX_SAFE_INTEGER,
         ttlSeconds: Number.MAX_SAFE_INTEGER,
       });
 
-      const cacheAdapter = new LocalMemoryCacheAdapter(entityConfiguration, lruCache);
+      const cacheAdapter = new LocalMemoryCacheAdapter(entityConfiguration, localMemoryCache);
       await cacheAdapter.cacheDBMissesAsync('id', ['test-id-1']);
 
       const cacheKey = cacheAdapter['makeCacheKey']('id', 'test-id-1');
-      expect(lruCache.get(cacheKey)).toEqual(DOES_NOT_EXIST_LOCAL_MEMORY_CACHE);
+      expect(localMemoryCache.get(cacheKey)).toEqual(DOES_NOT_EXIST_LOCAL_MEMORY_CACHE);
     });
   });
 
   describe('invalidateManyAsync', () => {
     it('invalidates correctly', async () => {
-      const lruCache = GenericLocalMemoryCacher.createLRUCache<BlahFields>({
+      const localMemoryCache = GenericLocalMemoryCacher.createLRUCache<BlahFields>({
         maxSize: Number.MAX_SAFE_INTEGER,
         ttlSeconds: Number.MAX_SAFE_INTEGER,
       });
 
-      const cacheAdapter = new LocalMemoryCacheAdapter(entityConfiguration, lruCache);
+      const cacheAdapter = new LocalMemoryCacheAdapter(entityConfiguration, localMemoryCache);
       await cacheAdapter.cacheManyAsync('id', new Map([['test-id-1', { id: 'test-id-1' }]]));
       await cacheAdapter.cacheDBMissesAsync('id', ['test-id-2']);
       await cacheAdapter.invalidateManyAsync('id', ['test-id-1', 'test-id-2']);

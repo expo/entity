@@ -14,7 +14,7 @@ export class LocalMemoryCacheAdapterProvider implements IEntityCacheAdapterProvi
 
   static getNoOpProvider(): IEntityCacheAdapterProvider {
     return new LocalMemoryCacheAdapterProvider(<TFields>() =>
-      GenericLocalMemoryCacher.createNoOpLRUCache<TFields>()
+      GenericLocalMemoryCacher.createNoOpCache<TFields>()
     );
   }
 
@@ -26,7 +26,9 @@ export class LocalMemoryCacheAdapterProvider implements IEntityCacheAdapterProvi
     );
   }
 
-  private constructor(private readonly lruCacheCreator: <TFields>() => LocalMemoryCache<TFields>) {}
+  private constructor(
+    private readonly localMemoryCacheCreator: <TFields>() => LocalMemoryCache<TFields>
+  ) {}
 
   public getCacheAdapter<TFields>(
     entityConfiguration: EntityConfiguration<TFields>
@@ -35,8 +37,8 @@ export class LocalMemoryCacheAdapterProvider implements IEntityCacheAdapterProvi
       LocalMemoryCacheAdapterProvider.localMemoryCacheAdapterMap,
       entityConfiguration.tableName,
       () => {
-        const lruCache = this.lruCacheCreator<TFields>();
-        return new LocalMemoryCacheAdapter(entityConfiguration, lruCache);
+        const localMemoryCache = this.localMemoryCacheCreator<TFields>();
+        return new LocalMemoryCacheAdapter(entityConfiguration, localMemoryCache);
       }
     );
   }
