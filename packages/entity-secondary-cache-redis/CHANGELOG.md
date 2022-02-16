@@ -5,8 +5,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [0.24.0](https://github.com/expo/entity/compare/v0.23.0...v0.24.0) (2022-02-16)
 
-**Note:** Version bump only for package @expo/entity-secondary-cache-redis
+### Chores
 
+* Refactor cachers to use an abstract class and interface  ([#157](https://github.com/expo/entity/pull/157))
 
 
 
