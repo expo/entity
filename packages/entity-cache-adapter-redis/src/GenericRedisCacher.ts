@@ -97,7 +97,7 @@ export default class GenericRedisCacher<TFields> implements IEntityGenericCacher
     await wrapNativeRedisCallAsync(() => redisTransaction.exec());
   }
 
-  public async cacheDBMissesAsync(keys: string[]): Promise<void> {
+  public async cacheDBMissesAsync(keys: readonly string[]): Promise<void> {
     if (keys.length === 0) {
       return;
     }
@@ -114,7 +114,7 @@ export default class GenericRedisCacher<TFields> implements IEntityGenericCacher
     await wrapNativeRedisCallAsync(() => redisTransaction.exec());
   }
 
-  public async invalidateManyAsync(keys: string[]): Promise<void> {
+  public async invalidateManyAsync(keys: readonly string[]): Promise<void> {
     if (keys.length === 0) {
       return;
     }

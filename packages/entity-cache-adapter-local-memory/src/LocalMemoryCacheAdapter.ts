@@ -8,10 +8,10 @@ export default class LocalMemoryCacheAdapter<TFields> extends EntityCacheAdapter
 
   constructor(
     entityConfiguration: EntityConfiguration<TFields>,
-    lruCache: LocalMemoryCache<TFields>
+    localMemoryCache: LocalMemoryCache<TFields>
   ) {
     super(entityConfiguration);
-    this.genericLocalMemoryCacher = new GenericLocalMemoryCacher(lruCache);
+    this.genericLocalMemoryCacher = new GenericLocalMemoryCacher(localMemoryCache);
   }
 
   public async loadManyAsync<N extends keyof TFields>(
@@ -29,7 +29,7 @@ export default class LocalMemoryCacheAdapter<TFields> extends EntityCacheAdapter
       const fieldValue = localMemoryCacheKeyToFieldValueMapping.get(cacheKey);
       invariant(
         fieldValue !== undefined,
-        'Unspecified cache key %s returned from generic Local Memory cacher',
+        'Unspecified cache key %s returned from generic local memory cacher',
         cacheKey
       );
       return fieldValue;
