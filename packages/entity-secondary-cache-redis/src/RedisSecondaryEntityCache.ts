@@ -1,4 +1,9 @@
-import { EntityConfiguration, GenericSecondaryEntityCache } from '@expo/entity';
+import {
+  EntityConfiguration,
+  GenericSecondaryEntityCache,
+  Parts,
+  SimplePartsCacher,
+} from '@expo/entity';
 import { GenericRedisCacheContext, GenericRedisCacher } from '@expo/entity-cache-adapter-redis';
 
 /**
@@ -13,8 +18,15 @@ export default class RedisSecondaryEntityCache<
   constructor(
     entityConfiguration: EntityConfiguration<TFields>,
     genericRedisCacheContext: GenericRedisCacheContext,
-    constructRedisKey: (params: Readonly<TLoadParams>) => string
+    makeRedisSpecificKey: (...parts: Parts) => string,
+    getParts: (params: Readonly<TLoadParams>) => Parts
   ) {
-    super(new GenericRedisCacher(genericRedisCacheContext, entityConfiguration), constructRedisKey);
+    super(
+      new SimplePartsCacher(
+        new GenericRedisCacher(genericRedisCacheContext, entityConfiguration),
+        makeRedisSpecificKey
+      ),
+      getParts
+    );
   }
 }

@@ -87,7 +87,8 @@ describe(RedisSecondaryEntityCache, () => {
       new RedisSecondaryEntityCache(
         redisTestEntityConfiguration,
         redisCacheAdapterContext,
-        (loadParams) => `test-key-${loadParams.id}`
+        (...parts) => parts.join(':redis-specific-delimiter:'),
+        (loadParams) => [`test-key-${loadParams.id}`]
       ),
       RedisTestEntity.loader(viewerContext)
     );
@@ -126,7 +127,8 @@ describe(RedisSecondaryEntityCache, () => {
       new RedisSecondaryEntityCache(
         redisTestEntityConfiguration,
         redisCacheAdapterContext,
-        (loadParams) => `test-key-${loadParams.id}`
+        (...parts) => parts.join(':redis-specific-delimiter:'),
+        (loadParams) => [`test-key-${loadParams.id}`]
       ),
       RedisTestEntity.loader(viewerContext)
     );

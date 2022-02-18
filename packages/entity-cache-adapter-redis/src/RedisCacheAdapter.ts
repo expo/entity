@@ -1,4 +1,5 @@
-import { EntityCacheAdapter, EntityConfiguration, CacheLoadResult, mapKeys } from '@expo/entity';
+import { EntityConfiguration, PartsCacheAdapter, Parts } from '@expo/entity';
+import SimplePartsCacher from '@expo/entity/build/SimplePartsCacher';
 import invariant from 'invariant';
 import { Redis } from 'ioredis';
 
@@ -41,85 +42,36 @@ export interface RedisCacheAdapterContext {
   ttlSecondsNegative: number;
 }
 
-export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
-  private readonly genericRedisCacher: GenericRedisCacher<TFields>;
+export default class RedisCacheAdapter<TFields> extends PartsCacheAdapter<TFields> {
   constructor(
     entityConfiguration: EntityConfiguration<TFields>,
     private readonly context: RedisCacheAdapterContext
   ) {
-    super(entityConfiguration);
-
-    this.genericRedisCacher = new GenericRedisCacher(
-      {
-        redisClient: context.redisClient,
-        ttlSecondsNegative: context.ttlSecondsNegative,
-        ttlSecondsPositive: context.ttlSecondsPositive,
-      },
-      entityConfiguration
+    super(
+      entityConfiguration,
+      new SimplePartsCacher(
+        new GenericRedisCacher(
+          {
+            redisClient: context.redisClient,
+            ttlSecondsNegative: context.ttlSecondsNegative,
+            ttlSecondsPositive: context.ttlSecondsPositive,
+          },
+          entityConfiguration
+        ),
+        context.makeKeyFn
+      )
     );
   }
 
-  public async loadManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
-    const redisCacheKeyToFieldValueMapping = new Map(
-      fieldValues.map((fieldValue) => [this.makeCacheKey(fieldName, fieldValue), fieldValue])
-    );
-    const cacheResults = await this.genericRedisCacher.loadManyAsync(
-      Array.from(redisCacheKeyToFieldValueMapping.keys())
-    );
-
-    return mapKeys(cacheResults, (redisCacheKey) => {
-      const fieldValue = redisCacheKeyToFieldValueMapping.get(redisCacheKey);
-      invariant(
-        fieldValue !== undefined,
-        'Unspecified cache key %s returned from generic Redis cacher',
-        redisCacheKey
-      );
-      return fieldValue;
-    });
-  }
-
-  public async cacheManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>
-  ): Promise<void> {
-    await this.genericRedisCacher.cacheManyAsync(
-      mapKeys(objectMap, (fieldValue) => this.makeCacheKey(fieldName, fieldValue))
-    );
-  }
-
-  public async cacheDBMissesAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
-  ): Promise<void> {
-    await this.genericRedisCacher.cacheDBMissesAsync(
-      fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue))
-    );
-  }
-
-  public async invalidateManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
-  ): Promise<void> {
-    await this.genericRedisCacher.invalidateManyAsync(
-      fieldValues.map((fieldValue) => this.makeCacheKey(fieldName, fieldValue))
-    );
-  }
-
-  private makeCacheKey<N extends keyof TFields>(
-    fieldName: N,
-    fieldValue: NonNullable<TFields[N]>
-  ): string {
+  getParts<N extends keyof TFields>(fieldName: N, fieldValue: NonNullable<TFields[N]>): Parts {
     const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
     invariant(columnName, `database field mapping missing for ${fieldName}`);
-    return this.context.makeKeyFn(
+    return [
       this.context.cacheKeyPrefix,
       this.entityConfiguration.tableName,
       `v2.${this.entityConfiguration.cacheKeyVersion}`,
       columnName,
-      String(fieldValue)
-    );
+      String(fieldValue),
+    ];
   }
 }

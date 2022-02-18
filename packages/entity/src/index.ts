@@ -45,6 +45,11 @@ export { default as IEntityCacheAdapterProvider } from './IEntityCacheAdapterPro
 export { default as IEntityDatabaseAdapterProvider } from './IEntityDatabaseAdapterProvider';
 export { default as EntityQueryContextProvider } from './EntityQueryContextProvider';
 export { default as IEntityGenericCacher } from './IEntityGenericCacher';
+export { default as SimplePartsCacher } from './SimplePartsCacher';
+export { default as PartsCacher } from './PartsCacher';
+export * from './PartsCacher';
+export { default as PartsCacheAdapter } from './PartsCacheAdapter';
+export { default as ComposedPartsCacher } from './ComposedPartsCacher';
 export { default as ReadonlyEntity } from './ReadonlyEntity';
 export { default as ViewerContext } from './ViewerContext';
 export { default as ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';

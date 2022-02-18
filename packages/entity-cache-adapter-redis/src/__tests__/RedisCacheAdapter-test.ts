@@ -39,8 +39,11 @@ describe(RedisCacheAdapter, () => {
         ttlSecondsNegative: 2,
       });
 
-      redisResults.set(cacheAdapter['makeCacheKey']('id', 'wat'), JSON.stringify({ id: 'wat' }));
-      redisResults.set(cacheAdapter['makeCacheKey']('id', 'who'), '');
+      redisResults.set(
+        cacheAdapter['partsCacher']['makeCacheKey']('id', 'wat'),
+        JSON.stringify({ id: 'wat' })
+      );
+      redisResults.set(cacheAdapter['partsCacher']['makeCacheKey']('id', 'who'), '');
 
       const results = await cacheAdapter.loadManyAsync('id', ['wat', 'who', 'why']);
 
@@ -91,7 +94,7 @@ describe(RedisCacheAdapter, () => {
       });
       await cacheAdapter.cacheManyAsync('id', new Map([['wat', { id: 'wat' }]]));
 
-      const cacheKey = cacheAdapter['makeCacheKey']('id', 'wat');
+      const cacheKey = cacheAdapter['partsCacher']['makeCacheKey']('id', 'wat');
       expect(redisResults.get(cacheKey)).toMatchObject({
         value: JSON.stringify({ id: 'wat' }),
         code: 'EX',
@@ -126,7 +129,7 @@ describe(RedisCacheAdapter, () => {
       });
       await cacheAdapter.cacheDBMissesAsync('id', ['wat']);
 
-      const cacheKey = cacheAdapter['makeCacheKey']('id', 'wat');
+      const cacheKey = cacheAdapter['partsCacher']['makeCacheKey']('id', 'wat');
       expect(redisResults.get(cacheKey)).toMatchObject({
         value: '',
         code: 'EX',
@@ -150,7 +153,7 @@ describe(RedisCacheAdapter, () => {
       });
       await cacheAdapter.invalidateManyAsync('id', ['wat']);
 
-      const cacheKey = cacheAdapter['makeCacheKey']('id', 'wat');
+      const cacheKey = cacheAdapter['partsCacher']['makeCacheKey']('id', 'wat');
       verify(mockRedisClient.del(cacheKey)).once();
     });
 

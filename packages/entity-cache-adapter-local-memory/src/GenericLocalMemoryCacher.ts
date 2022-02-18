@@ -143,12 +143,4 @@ export default class GenericLocalMemoryCacher<TFields> implements IEntityGeneric
       this.localMemoryCache.del(key);
     }
   }
-
-  public makeCacheKey(parts: string[]): string {
-    const delimiter = ':';
-    const escapedParts = parts.map((part) =>
-      part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
-    );
-    return escapedParts.join(delimiter);
-  }
 }

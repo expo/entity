@@ -72,7 +72,7 @@ describe(LocalMemoryCacheAdapter, () => {
       const cacheAdapter = new LocalMemoryCacheAdapter(entityConfiguration, localMemoryCache);
       await cacheAdapter.cacheManyAsync('id', new Map([['test-id-1', { id: 'test-id-1' }]]));
 
-      const cacheKey = cacheAdapter['makeCacheKey']('id', 'test-id-1');
+      const cacheKey = cacheAdapter['partsCacher']['makeCacheKey']('id', 'test-id-1');
       expect(localMemoryCache.get(cacheKey)).toMatchObject({
         id: 'test-id-1',
       });
@@ -89,7 +89,7 @@ describe(LocalMemoryCacheAdapter, () => {
       const cacheAdapter = new LocalMemoryCacheAdapter(entityConfiguration, localMemoryCache);
       await cacheAdapter.cacheDBMissesAsync('id', ['test-id-1']);
 
-      const cacheKey = cacheAdapter['makeCacheKey']('id', 'test-id-1');
+      const cacheKey = cacheAdapter['partsCacher']['makeCacheKey']('id', 'test-id-1');
       expect(localMemoryCache.get(cacheKey)).toEqual(DOES_NOT_EXIST_LOCAL_MEMORY_CACHE);
     });
   });

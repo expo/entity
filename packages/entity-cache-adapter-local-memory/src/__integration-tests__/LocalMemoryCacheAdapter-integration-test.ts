@@ -41,7 +41,7 @@ describe(LocalMemoryCacheAdapter, () => {
     const entitySpecificGenericCacher =
       LocalMemoryCacheAdapterProvider.localMemoryCacheAdapterMap.get(
         LocalMemoryTestEntity.getCompanionDefinition().entityConfiguration.tableName
-      )!['genericLocalMemoryCacher'];
+      )!['partsCacher']['cacher'];
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),
     ]);
@@ -153,7 +153,7 @@ describe(LocalMemoryCacheAdapter, () => {
     const entitySpecificGenericCacher =
       LocalMemoryCacheAdapterProvider.localMemoryCacheAdapterMap.get(
         LocalMemoryTestEntity.getCompanionDefinition().entityConfiguration.tableName
-      )!['genericLocalMemoryCacher'];
+      )!['partsCacher']['cacher'];
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),
     ]);
