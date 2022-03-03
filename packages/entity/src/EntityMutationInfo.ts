@@ -22,9 +22,19 @@ export type EntityValidatorMutationInfo<
       previousValue: TEntity;
     };
 
-export type EntityMutationTriggerDeleteCascadeInfo<> = {
+/**
+ * Information about a cascading deletion.
+ */
+export type EntityCascadingDeletionInfo = {
+  /**
+   * The entity that is being mutated at this step in the cascaded deletion.
+   */
   entity: Entity<any, any, any, any>;
-  cascadingDeleteCause: EntityMutationTriggerDeleteCascadeInfo | null;
+
+  /**
+   * The cascade deletion that caused this mutation.
+   */
+  cascadingDeleteCause: EntityCascadingDeletionInfo | null;
 };
 
 export type EntityTriggerMutationInfo<
@@ -43,5 +53,5 @@ export type EntityTriggerMutationInfo<
     }
   | {
       type: EntityMutationType.DELETE;
-      cascadingDeleteCause: EntityMutationTriggerDeleteCascadeInfo | null;
+      cascadingDeleteCause: EntityCascadingDeletionInfo | null;
     };

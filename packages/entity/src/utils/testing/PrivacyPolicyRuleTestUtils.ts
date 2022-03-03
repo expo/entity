@@ -1,3 +1,4 @@
+import { EntityPrivacyPolicyEvaluationContext } from '../../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../../EntityQueryContext';
 import ReadonlyEntity from '../../ReadonlyEntity';
 import ViewerContext from '../../ViewerContext';
@@ -12,6 +13,7 @@ export interface Case<
 > {
   viewerContext: TViewerContext;
   queryContext: EntityQueryContext;
+  evaluationContext: EntityPrivacyPolicyEvaluationContext;
   entity: TEntity;
 }
 
@@ -48,9 +50,11 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
     if (allowCases && allowCases.size > 0) {
       describe('allow cases', () => {
         test.each(Array.from(allowCases.keys()))('%p', async (caseKey) => {
-          const { viewerContext, queryContext, entity } = await allowCases.get(caseKey)!();
+          const { viewerContext, queryContext, evaluationContext, entity } = await allowCases.get(
+            caseKey
+          )!();
           await expect(
-            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, entity)
+            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity)
           ).resolves.toEqual(RuleEvaluationResult.ALLOW);
         });
       });
@@ -59,9 +63,11 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
     if (skipCases && skipCases.size > 0) {
       describe('skip cases', () => {
         test.each(Array.from(skipCases.keys()))('%p', async (caseKey) => {
-          const { viewerContext, queryContext, entity } = await skipCases.get(caseKey)!();
+          const { viewerContext, queryContext, evaluationContext, entity } = await skipCases.get(
+            caseKey
+          )!();
           await expect(
-            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, entity)
+            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity)
           ).resolves.toEqual(RuleEvaluationResult.SKIP);
         });
       });
@@ -70,9 +76,11 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
     if (denyCases && denyCases.size > 0) {
       describe('deny cases', () => {
         test.each(Array.from(denyCases.keys()))('%p', async (caseKey) => {
-          const { viewerContext, queryContext, entity } = await denyCases.get(caseKey)!();
+          const { viewerContext, queryContext, evaluationContext, entity } = await denyCases.get(
+            caseKey
+          )!();
           await expect(
-            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, entity)
+            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity)
           ).resolves.toEqual(RuleEvaluationResult.DENY);
         });
       });

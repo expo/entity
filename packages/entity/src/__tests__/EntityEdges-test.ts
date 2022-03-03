@@ -5,10 +5,13 @@ import { EntityEdgeDeletionBehavior } from '../EntityFieldDefinition';
 import { UUIDField } from '../EntityFields';
 import { EntityTriggerMutationInfo, EntityMutationType } from '../EntityMutationInfo';
 import { EntityMutationTrigger } from '../EntityMutationTriggerConfiguration';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
-import { EntityTransactionalQueryContext } from '../EntityQueryContext';
+import EntityPrivacyPolicy, {
+  EntityPrivacyPolicyEvaluationContext,
+  EntityAuthorizationAction,
+} from '../EntityPrivacyPolicy';
+import { EntityTransactionalQueryContext, EntityQueryContext } from '../EntityQueryContext';
 import { CacheStatus } from '../internal/ReadThroughEntityCache';
-import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
+import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
 import TestViewerContext from '../testfixtures/TestViewerContext';
 import { InMemoryFullCacheStubCacheAdapter } from '../utils/testing/StubCacheAdapter';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
@@ -27,34 +30,82 @@ interface GrandChildFields {
   parent_id: string;
 }
 
-class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
-  any,
-  string,
-  TestViewerContext,
-  any,
-  any
-> {
-  protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
-  ];
-  protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
-  ];
-  protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
-  ];
-  protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
-  ];
-}
-
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
   const triggerExecutionCounts = {
-    parent: 0,
-    child: 0,
-    grandchild: 0,
+    ParentEntity: 0,
+    ChildEntity: 0,
+    GrandChildEntity: 0,
   };
+
+  const privacyPolicyEvaluationRecords = {
+    shouldRecord: false,
+    ParentEntity: {
+      [EntityAuthorizationAction.CREATE]: [],
+      [EntityAuthorizationAction.READ]: [],
+      [EntityAuthorizationAction.UPDATE]: [],
+      [EntityAuthorizationAction.DELETE]: [],
+    },
+    ChildEntity: {
+      [EntityAuthorizationAction.CREATE]: [],
+      [EntityAuthorizationAction.READ]: [],
+      [EntityAuthorizationAction.UPDATE]: [],
+      [EntityAuthorizationAction.DELETE]: [],
+    },
+    GrandChildEntity: {
+      [EntityAuthorizationAction.CREATE]: [],
+      [EntityAuthorizationAction.READ]: [],
+      [EntityAuthorizationAction.UPDATE]: [],
+      [EntityAuthorizationAction.DELETE]: [],
+    },
+  };
+
+  class AlwaysAllowPrivacyPolicyRuleThatRecords extends PrivacyPolicyRule<
+    any,
+    string,
+    TestViewerContext,
+    any,
+    any
+  > {
+    constructor(private readonly action: EntityAuthorizationAction) {
+      super();
+    }
+
+    async evaluateAsync(
+      _viewerContext: TestViewerContext,
+      _queryContext: EntityQueryContext,
+      evaluationContext: EntityPrivacyPolicyEvaluationContext,
+      entity: any
+    ): Promise<RuleEvaluationResult> {
+      if (privacyPolicyEvaluationRecords.shouldRecord) {
+        (privacyPolicyEvaluationRecords as any)[entity.constructor.name][this.action].push(
+          evaluationContext
+        );
+      }
+      return RuleEvaluationResult.ALLOW;
+    }
+  }
+
+  class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
+    any,
+    string,
+    TestViewerContext,
+    any,
+    any
+  > {
+    protected override readonly readRules = [
+      new AlwaysAllowPrivacyPolicyRuleThatRecords(EntityAuthorizationAction.READ),
+    ];
+    protected override readonly createRules = [
+      new AlwaysAllowPrivacyPolicyRuleThatRecords(EntityAuthorizationAction.CREATE),
+    ];
+    protected override readonly updateRules = [
+      new AlwaysAllowPrivacyPolicyRuleThatRecords(EntityAuthorizationAction.UPDATE),
+    ];
+    protected override readonly deleteRules = [
+      new AlwaysAllowPrivacyPolicyRuleThatRecords(EntityAuthorizationAction.DELETE),
+    ];
+  }
 
   class ParentCheckInfoTrigger extends EntityMutationTrigger<
     ParentFields,
@@ -76,7 +127,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         throw new Error('Parent entity should not have casade delete cause');
       }
 
-      triggerExecutionCounts.parent++;
+      triggerExecutionCounts.ParentEntity++;
     }
   }
 
@@ -111,7 +162,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         throw new Error('Child entity should not have two-level casade delete cause');
       }
 
-      triggerExecutionCounts.child++;
+      triggerExecutionCounts.ChildEntity++;
     }
   }
 
@@ -165,7 +216,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         throw new Error('GrandChild entity should not have three-level casade delete cause');
       }
 
-      triggerExecutionCounts.grandchild++;
+      triggerExecutionCounts.GrandChildEntity++;
     }
   }
 
@@ -297,14 +348,20 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     ChildEntity,
     GrandChildEntity,
     triggerExecutionCounts,
+    privacyPolicyEvaluationRecords,
   };
 };
 
 describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
     it('deletes', async () => {
-      const { ParentEntity, ChildEntity, GrandChildEntity, triggerExecutionCounts } =
-        makeEntityClasses(EntityEdgeDeletionBehavior.CASCADE_DELETE);
+      const {
+        ParentEntity,
+        ChildEntity,
+        GrandChildEntity,
+        triggerExecutionCounts,
+        privacyPolicyEvaluationRecords,
+      } = makeEntityClasses(EntityEdgeDeletionBehavior.CASCADE_DELETE);
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
@@ -326,7 +383,9 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
       ).resolves.not.toBeNull();
 
+      privacyPolicyEvaluationRecords.shouldRecord = true;
       await ParentEntity.enforceDeleteAsync(parent);
+      privacyPolicyEvaluationRecords.shouldRecord = false;
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
@@ -340,17 +399,82 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
       // two calls for each trigger, one beforeDelete, one afterDelete
       expect(triggerExecutionCounts).toMatchObject({
-        parent: 2,
-        child: 2,
-        grandchild: 2,
+        ParentEntity: 2,
+        ChildEntity: 2,
+        GrandChildEntity: 2,
+      });
+
+      expect(privacyPolicyEvaluationRecords).toMatchObject({
+        ParentEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+          [EntityAuthorizationAction.READ]: [],
+          [EntityAuthorizationAction.UPDATE]: [],
+          // one DELETE auth action for parent (since it's being deleted)
+          [EntityAuthorizationAction.DELETE]: [{ cascadingDeleteCause: null }],
+        },
+        ChildEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+          // one READ auth action for child in order to delete via cascade
+          [EntityAuthorizationAction.READ]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ParentEntity),
+                cascadingDeleteCause: null,
+              },
+            },
+          ],
+          [EntityAuthorizationAction.UPDATE]: [],
+          // one DELETE auth action for child (since it's being deleted via cascade)
+          [EntityAuthorizationAction.DELETE]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ParentEntity),
+                cascadingDeleteCause: null,
+              },
+            },
+          ],
+        },
+        GrandChildEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+          // one READ auth action for grandchild in order to delete via cascade
+          [EntityAuthorizationAction.READ]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ChildEntity),
+                cascadingDeleteCause: {
+                  entity: expect.any(ParentEntity),
+                  cascadingDeleteCause: null,
+                },
+              },
+            },
+          ],
+          [EntityAuthorizationAction.UPDATE]: [],
+          // one DELETE auth action for grandchild (since it's being deleted via cascade)
+          [EntityAuthorizationAction.DELETE]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ChildEntity),
+                cascadingDeleteCause: {
+                  entity: expect.any(ParentEntity),
+                  cascadingDeleteCause: null,
+                },
+              },
+            },
+          ],
+        },
       });
     });
   });
 
   describe('EntityEdgeDeletionBehavior.SET_NULL', () => {
     it('sets null', async () => {
-      const { ParentEntity, ChildEntity, GrandChildEntity, triggerExecutionCounts } =
-        makeEntityClasses(EntityEdgeDeletionBehavior.SET_NULL);
+      const {
+        ParentEntity,
+        ChildEntity,
+        GrandChildEntity,
+        triggerExecutionCounts,
+        privacyPolicyEvaluationRecords,
+      } = makeEntityClasses(EntityEdgeDeletionBehavior.SET_NULL);
 
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
@@ -373,7 +497,9 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
       ).resolves.not.toBeNull();
 
+      privacyPolicyEvaluationRecords.shouldRecord = true;
       await ParentEntity.enforceDeleteAsync(parent);
+      privacyPolicyEvaluationRecords.shouldRecord = false;
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
@@ -392,17 +518,70 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       // two calls for only parent trigger, one beforeDelete, one afterDelete
       // when using set null the descendants aren't deleted
       expect(triggerExecutionCounts).toMatchObject({
-        parent: 2,
-        child: 0,
-        grandchild: 0,
+        ParentEntity: 2,
+        ChildEntity: 0,
+        GrandChildEntity: 0,
+      });
+
+      expect(privacyPolicyEvaluationRecords).toMatchObject({
+        ParentEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+          [EntityAuthorizationAction.READ]: [],
+          [EntityAuthorizationAction.UPDATE]: [],
+          // one DELETE auth action for parent (since it's being deleted)
+          [EntityAuthorizationAction.DELETE]: [{ cascadingDeleteCause: null }],
+        },
+        ChildEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+
+          // two READs auth action for Child during parent deletion:
+          // 1. Read to initiate the SET_NULL (to update the entity)
+          // 1. Read automatically post-update
+          // no other entities are read since it is not cascaded past first entity
+          [EntityAuthorizationAction.READ]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ParentEntity),
+                cascadingDeleteCause: null,
+              },
+            },
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ParentEntity),
+                cascadingDeleteCause: null,
+              },
+            },
+          ],
+          // one UPDATE to set null
+          [EntityAuthorizationAction.UPDATE]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ParentEntity),
+                cascadingDeleteCause: null,
+              },
+            },
+          ],
+          [EntityAuthorizationAction.DELETE]: [],
+        },
+        GrandChildEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+          [EntityAuthorizationAction.READ]: [],
+          [EntityAuthorizationAction.UPDATE]: [],
+          [EntityAuthorizationAction.DELETE]: [],
+        },
       });
     });
   });
 
   describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     it('invalidates the cache', async () => {
-      const { ParentEntity, ChildEntity, GrandChildEntity, triggerExecutionCounts } =
-        makeEntityClasses(EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE);
+      const {
+        ParentEntity,
+        ChildEntity,
+        GrandChildEntity,
+        triggerExecutionCounts,
+        privacyPolicyEvaluationRecords,
+      } = makeEntityClasses(EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE);
 
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
@@ -447,7 +626,9 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       ]);
       expect(grandChildCachedBefore.get(child.getID())?.status).toEqual(CacheStatus.HIT);
 
+      privacyPolicyEvaluationRecords.shouldRecord = true;
       await ParentEntity.enforceDeleteAsync(parent);
+      privacyPolicyEvaluationRecords.shouldRecord = false;
 
       const childCachedAfter = await childCacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
       expect(childCachedAfter.get(parent.getID())?.status).toEqual(CacheStatus.MISS);
@@ -469,9 +650,69 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
       // two calls for each trigger, one beforeDelete, one afterDelete
       expect(triggerExecutionCounts).toMatchObject({
-        parent: 2,
-        child: 2,
-        grandchild: 2,
+        ParentEntity: 2,
+        ChildEntity: 2,
+        GrandChildEntity: 2,
+      });
+
+      expect(privacyPolicyEvaluationRecords).toMatchObject({
+        ParentEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+          [EntityAuthorizationAction.READ]: [],
+          [EntityAuthorizationAction.UPDATE]: [],
+          // one DELETE auth action for parent (since it's being deleted)
+          [EntityAuthorizationAction.DELETE]: [{ cascadingDeleteCause: null }],
+        },
+        ChildEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+          // one READ auth action for child in order to delete via cascade
+          [EntityAuthorizationAction.READ]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ParentEntity),
+                cascadingDeleteCause: null,
+              },
+            },
+          ],
+          [EntityAuthorizationAction.UPDATE]: [],
+          // one DELETE auth action for child (since it's being deleted via cascade)
+          [EntityAuthorizationAction.DELETE]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ParentEntity),
+                cascadingDeleteCause: null,
+              },
+            },
+          ],
+        },
+        GrandChildEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+          // one READ auth action for grandchild in order to delete via cascade
+          [EntityAuthorizationAction.READ]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ChildEntity),
+                cascadingDeleteCause: {
+                  entity: expect.any(ParentEntity),
+                  cascadingDeleteCause: null,
+                },
+              },
+            },
+          ],
+          [EntityAuthorizationAction.UPDATE]: [],
+          // one DELETE auth action for grandchild (since it's being deleted via cascade)
+          [EntityAuthorizationAction.DELETE]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ChildEntity),
+                cascadingDeleteCause: {
+                  entity: expect.any(ParentEntity),
+                  cascadingDeleteCause: null,
+                },
+              },
+            },
+          ],
+        },
       });
     });
   });

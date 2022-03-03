@@ -1,7 +1,7 @@
 import { IEntityClass } from './Entity';
 import EntityConfiguration from './EntityConfiguration';
 import EntityLoader from './EntityLoader';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -47,11 +47,13 @@ export default class EntityLoaderFactory<
    */
   forLoad(
     viewerContext: TViewerContext,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
   ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new EntityLoader(
       viewerContext,
       queryContext,
+      privacyPolicyEvaluationContext,
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicyClass,

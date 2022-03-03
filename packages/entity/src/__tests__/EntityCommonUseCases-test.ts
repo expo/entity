@@ -5,7 +5,7 @@ import Entity from '../Entity';
 import EntityCompanionProvider, { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
+import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
@@ -51,6 +51,7 @@ class DenyIfNotOwnerPrivacyPolicyRule extends PrivacyPolicyRule<
   async evaluateAsync(
     viewerContext: TestUserViewerContext,
     _queryContext: EntityQueryContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: BlahEntity
   ): Promise<RuleEvaluationResult> {
     if (viewerContext.getUserID() === entity.getField('ownerID')) {

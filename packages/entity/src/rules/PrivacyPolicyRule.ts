@@ -1,3 +1,4 @@
+import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
@@ -45,6 +46,7 @@ export default abstract class PrivacyPolicyRule<
   abstract evaluateAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: TEntity
   ): Promise<RuleEvaluationResult>;
 }
