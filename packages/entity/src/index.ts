@@ -4,6 +4,8 @@
  * @module @expo/entity
  */
 
+export { default as ComposedEntityCacheAdapter } from './ComposedEntityCacheAdapter';
+export { default as ComposedSecondaryEntityCache } from './ComposedSecondaryEntityCache';
 export { default as GenericSecondaryEntityCache } from './GenericSecondaryEntityCache';
 export { default as EnforcingEntityLoader } from './EnforcingEntityLoader';
 export { default as Entity } from './Entity';
