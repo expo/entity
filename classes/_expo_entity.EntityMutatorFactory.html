@@ -139,7 +139,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/6b6e70e/packages/entity/src/EntityMutatorFactory.ts#L30">packages/entity/src/EntityMutatorFactory.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3a81a4c/packages/entity/src/EntityMutatorFactory.ts#L30">packages/entity/src/EntityMutatorFactory.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -201,13 +201,13 @@
 					<a name="forCreate" class="tsd-anchor"></a>
 					<h3>for<wbr>Create</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">for<wbr>Create<span class="tsd-signature-symbol">(</span>viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityQueryContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.CreateMutator.html" class="tsd-signature-type" data-tsd-kind="Class">CreateMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">for<wbr>Create<span class="tsd-signature-symbol">(</span>viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityQueryContext</a>, privacyPolicyEvaluationContext<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#EntityPrivacyPolicyEvaluationContext" class="tsd-signature-type" data-tsd-kind="Type alias">EntityPrivacyPolicyEvaluationContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.CreateMutator.html" class="tsd-signature-type" data-tsd-kind="Class">CreateMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/6b6e70e/packages/entity/src/EntityMutatorFactory.ts#L73">packages/entity/src/EntityMutatorFactory.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3a81a4c/packages/entity/src/EntityMutatorFactory.ts#L73">packages/entity/src/EntityMutatorFactory.ts:73</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -229,6 +229,9 @@
 										<p>query context in which to perform the create</p>
 									</div>
 								</li>
+								<li>
+									<h5>privacyPolicyEvaluationContext: <a href="../modules/_expo_entity.html#EntityPrivacyPolicyEvaluationContext" class="tsd-signature-type" data-tsd-kind="Type alias">EntityPrivacyPolicyEvaluationContext</a></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_expo_entity.CreateMutator.html" class="tsd-signature-type" data-tsd-kind="Class">CreateMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>mutator for creating an entity</p>
@@ -239,13 +242,13 @@
 					<a name="forDelete" class="tsd-anchor"></a>
 					<h3>for<wbr>Delete</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">for<wbr>Delete<span class="tsd-signature-symbol">(</span>existingEntity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityQueryContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.DeleteMutator.html" class="tsd-signature-type" data-tsd-kind="Class">DeleteMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">for<wbr>Delete<span class="tsd-signature-symbol">(</span>existingEntity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityQueryContext</a>, privacyPolicyEvaluationContext<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#EntityPrivacyPolicyEvaluationContext" class="tsd-signature-type" data-tsd-kind="Type alias">EntityPrivacyPolicyEvaluationContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.DeleteMutator.html" class="tsd-signature-type" data-tsd-kind="Class">DeleteMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/6b6e70e/packages/entity/src/EntityMutatorFactory.ts#L121">packages/entity/src/EntityMutatorFactory.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3a81a4c/packages/entity/src/EntityMutatorFactory.ts#L125">packages/entity/src/EntityMutatorFactory.ts:125</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -267,6 +270,9 @@
 										<p>query context in which to perform the delete</p>
 									</div>
 								</li>
+								<li>
+									<h5>privacyPolicyEvaluationContext: <a href="../modules/_expo_entity.html#EntityPrivacyPolicyEvaluationContext" class="tsd-signature-type" data-tsd-kind="Type alias">EntityPrivacyPolicyEvaluationContext</a></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_expo_entity.DeleteMutator.html" class="tsd-signature-type" data-tsd-kind="Class">DeleteMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
@@ -276,13 +282,13 @@
 					<a name="forUpdate" class="tsd-anchor"></a>
 					<h3>for<wbr>Update</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">for<wbr>Update<span class="tsd-signature-symbol">(</span>existingEntity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityQueryContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.UpdateMutator.html" class="tsd-signature-type" data-tsd-kind="Class">UpdateMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">for<wbr>Update<span class="tsd-signature-symbol">(</span>existingEntity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityQueryContext</a>, privacyPolicyEvaluationContext<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#EntityPrivacyPolicyEvaluationContext" class="tsd-signature-type" data-tsd-kind="Type alias">EntityPrivacyPolicyEvaluationContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.UpdateMutator.html" class="tsd-signature-type" data-tsd-kind="Class">UpdateMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/6b6e70e/packages/entity/src/EntityMutatorFactory.ts#L97">packages/entity/src/EntityMutatorFactory.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/3a81a4c/packages/entity/src/EntityMutatorFactory.ts#L99">packages/entity/src/EntityMutatorFactory.ts:99</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -303,6 +309,9 @@
 									<div class="tsd-comment tsd-typography">
 										<p>query context in which to perform the update</p>
 									</div>
+								</li>
+								<li>
+									<h5>privacyPolicyEvaluationContext: <a href="../modules/_expo_entity.html#EntityPrivacyPolicyEvaluationContext" class="tsd-signature-type" data-tsd-kind="Type alias">EntityPrivacyPolicyEvaluationContext</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_expo_entity.UpdateMutator.html" class="tsd-signature-type" data-tsd-kind="Class">UpdateMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
