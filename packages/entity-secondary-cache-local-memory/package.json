@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-secondary-cache-local-memory",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "description": "Local memory secondary cache for @expo/entity",
   "files": [
     "build",
@@ -30,10 +30,9 @@
     "@expo/entity": "*",
     "@expo/entity-cache-adapter-local-memory": "*"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@expo/entity": "^0.24.0",
-    "@expo/entity-cache-adapter-local-memory": "^0.24.0",
+    "@expo/entity": "^0.25.0",
+    "@expo/entity-cache-adapter-local-memory": "^0.25.0",
     "nullthrows": "^1.1.1"
   }
 }

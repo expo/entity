@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.25.0](https://github.com/expo/entity/compare/v0.24.0...v0.25.0) (2022-03-10)
+
+
+### Features
+
+* privacy policy evaluation context ([#162](https://github.com/expo/entity/issues/162)) ([3a81a4c](https://github.com/expo/entity/commit/3a81a4c059e2e995eb800e35e76b3d432c22b23f))
+
+
+
+
+
 # [0.24.0](https://github.com/expo/entity/compare/v0.23.0...v0.24.0) (2022-02-16)
 
 **Note:** Version bump only for package @expo/entity-example

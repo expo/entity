@@ -1,7 +1,7 @@
 {
   "name": "@expo/entity-full-integration-tests",
   "private": true,
-  "version": "0.24.0",
+  "version": "0.25.0",
   "description": "Full redis and knex integration tests for the entity framework",
   "scripts": {
     "tsc": "tsc",
@@ -27,8 +27,8 @@
     "@expo/entity-database-adapter-knex": "*"
   },
   "devDependencies": {
-    "@expo/entity": "^0.24.0",
-    "@expo/entity-cache-adapter-redis": "^0.24.0",
-    "@expo/entity-database-adapter-knex": "^0.24.0"
+    "@expo/entity": "^0.25.0",
+    "@expo/entity-cache-adapter-redis": "^0.25.0",
+    "@expo/entity-database-adapter-knex": "^0.25.0"
   }
 }
