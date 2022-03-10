@@ -3,6 +3,7 @@ import {
   ReadonlyEntity,
   EntityQueryContext,
   RuleEvaluationResult,
+  EntityPrivacyPolicyEvaluationContext,
 } from '@expo/entity';
 
 import { ExampleViewerContext } from '../viewerContexts';
@@ -34,6 +35,7 @@ export default class AllowIfUserOwnerPrivacyRule<
   async evaluateAsync(
     viewerContext: ExampleViewerContext,
     _queryContext: EntityQueryContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: TEntity
   ): Promise<RuleEvaluationResult> {
     if (viewerContext.isUserViewerContext()) {

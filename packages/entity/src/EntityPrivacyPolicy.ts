@@ -1,3 +1,4 @@
+import { EntityCascadingDeletionInfo } from './EntityMutationInfo';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -6,6 +7,17 @@ import IEntityMetricsAdapter, {
   EntityMetricsAuthorizationResult,
 } from './metrics/IEntityMetricsAdapter';
 import PrivacyPolicyRule, { RuleEvaluationResult } from './rules/PrivacyPolicyRule';
+
+/**
+ * Information about the reason this privacy policy is being evaluated.
+ */
+export type EntityPrivacyPolicyEvaluationContext = {
+  /**
+   * When this privacy policy is being evaluated as a result of a cascading deletion, this will be populated
+   * with information on the cascading delete.
+   */
+  cascadingDeleteCause: EntityCascadingDeletionInfo | null;
+};
 
 export enum EntityPrivacyPolicyEvaluationMode {
   ENFORCE,
@@ -127,6 +139,7 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeCreateAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: TEntity,
     metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
@@ -134,6 +147,7 @@ export default abstract class EntityPrivacyPolicy<
       this.createRules,
       viewerContext,
       queryContext,
+      evaluationContext,
       entity,
       EntityAuthorizationAction.CREATE,
       metricsAdapter
@@ -151,6 +165,7 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeReadAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: TEntity,
     metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
@@ -158,6 +173,7 @@ export default abstract class EntityPrivacyPolicy<
       this.readRules,
       viewerContext,
       queryContext,
+      evaluationContext,
       entity,
       EntityAuthorizationAction.READ,
       metricsAdapter
@@ -175,6 +191,7 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeUpdateAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: TEntity,
     metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
@@ -182,6 +199,7 @@ export default abstract class EntityPrivacyPolicy<
       this.updateRules,
       viewerContext,
       queryContext,
+      evaluationContext,
       entity,
       EntityAuthorizationAction.UPDATE,
       metricsAdapter
@@ -199,6 +217,7 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeDeleteAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: TEntity,
     metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
@@ -206,6 +225,7 @@ export default abstract class EntityPrivacyPolicy<
       this.deleteRules,
       viewerContext,
       queryContext,
+      evaluationContext,
       entity,
       EntityAuthorizationAction.DELETE,
       metricsAdapter
@@ -216,6 +236,7 @@ export default abstract class EntityPrivacyPolicy<
     ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: TEntity,
     action: EntityAuthorizationAction,
     metricsAdapter: IEntityMetricsAdapter
@@ -228,6 +249,7 @@ export default abstract class EntityPrivacyPolicy<
             ruleset,
             viewerContext,
             queryContext,
+            evaluationContext,
             entity,
             action
           );
@@ -256,6 +278,7 @@ export default abstract class EntityPrivacyPolicy<
             ruleset,
             viewerContext,
             queryContext,
+            evaluationContext,
             entity,
             action
           );
@@ -285,6 +308,7 @@ export default abstract class EntityPrivacyPolicy<
             ruleset,
             viewerContext,
             queryContext,
+            evaluationContext,
             entity,
             action
           );
@@ -315,12 +339,18 @@ export default abstract class EntityPrivacyPolicy<
     ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: TEntity,
     action: EntityAuthorizationAction
   ): Promise<TEntity> {
     for (let i = 0; i < ruleset.length; i++) {
       const rule = ruleset[i]!;
-      const ruleEvaluationResult = await rule.evaluateAsync(viewerContext, queryContext, entity);
+      const ruleEvaluationResult = await rule.evaluateAsync(
+        viewerContext,
+        queryContext,
+        evaluationContext,
+        entity
+      );
       switch (ruleEvaluationResult) {
         case RuleEvaluationResult.DENY:
           throw new EntityNotAuthorizedError<

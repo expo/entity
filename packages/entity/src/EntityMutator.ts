@@ -11,14 +11,14 @@ import {
   EntityValidatorMutationInfo,
   EntityMutationType,
   EntityTriggerMutationInfo,
-  EntityMutationTriggerDeleteCascadeInfo,
+  EntityCascadingDeletionInfo,
 } from './EntityMutationInfo';
 import EntityMutationTriggerConfiguration, {
   EntityMutationTrigger,
   EntityNonTransactionalMutationTrigger,
 } from './EntityMutationTriggerConfiguration';
 import EntityMutationValidator from './EntityMutationValidator';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -44,6 +44,7 @@ abstract class BaseMutator<
   constructor(
     protected readonly viewerContext: TViewerContext,
     protected readonly queryContext: EntityQueryContext,
+    protected readonly privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext,
     protected readonly entityConfiguration: EntityConfiguration<TFields>,
     protected readonly entityClass: IEntityClass<
       TFields,
@@ -220,6 +221,7 @@ export class CreateMutator<
       this.privacyPolicy.authorizeCreateAsync(
         this.viewerContext,
         queryContext,
+        this.privacyPolicyEvaluationContext,
         temporaryEntityForPrivacyCheck,
         this.metricsAdapter
       )
@@ -249,7 +251,11 @@ export class CreateMutator<
 
     const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
+    const entityLoader = this.entityLoaderFactory.forLoad(
+      this.viewerContext,
+      queryContext,
+      this.privacyPolicyEvaluationContext
+    );
     queryContext.appendPostCommitInvalidationCallback(
       entityLoader.invalidateFieldsAsync.bind(entityLoader, insertResult)
     );
@@ -309,6 +315,7 @@ export class UpdateMutator<
   constructor(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext,
     entityConfiguration: EntityConfiguration<TFields>,
     entityClass: IEntityClass<
       TFields,
@@ -348,6 +355,7 @@ export class UpdateMutator<
     super(
       viewerContext,
       queryContext,
+      privacyPolicyEvaluationContext,
       entityConfiguration,
       entityClass,
       privacyPolicy,
@@ -409,6 +417,7 @@ export class UpdateMutator<
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
         queryContext,
+        this.privacyPolicyEvaluationContext,
         entityAboutToBeUpdated,
         this.metricsAdapter
       )
@@ -443,7 +452,11 @@ export class UpdateMutator<
       this.updatedFields
     );
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
+    const entityLoader = this.entityLoaderFactory.forLoad(
+      this.viewerContext,
+      queryContext,
+      this.privacyPolicyEvaluationContext
+    );
 
     queryContext.appendPostCommitInvalidationCallback(
       entityLoader.invalidateFieldsAsync.bind(
@@ -506,6 +519,7 @@ export class DeleteMutator<
   constructor(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext,
     entityConfiguration: EntityConfiguration<TFields>,
     entityClass: IEntityClass<
       TFields,
@@ -545,6 +559,7 @@ export class DeleteMutator<
     super(
       viewerContext,
       queryContext,
+      privacyPolicyEvaluationContext,
       entityConfiguration,
       entityClass,
       privacyPolicy,
@@ -578,7 +593,7 @@ export class DeleteMutator<
   private async deleteInTransactionAsync(
     processedEntityIdentifiersFromTransitiveDeletions: Set<string>,
     skipDatabaseDeletion: boolean,
-    cascadingDeleteCause: EntityMutationTriggerDeleteCascadeInfo | null
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null
   ): Promise<Result<void>> {
     return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
       this.deleteInternalAsync(
@@ -594,12 +609,13 @@ export class DeleteMutator<
     queryContext: EntityTransactionalQueryContext,
     processedEntityIdentifiersFromTransitiveDeletions: Set<string>,
     skipDatabaseDeletion: boolean,
-    cascadingDeleteCause: EntityMutationTriggerDeleteCascadeInfo | null
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null
   ): Promise<Result<void>> {
     const authorizeDeleteResult = await asyncResult(
       this.privacyPolicy.authorizeDeleteAsync(
         this.viewerContext,
         queryContext,
+        { cascadingDeleteCause },
         this.entity,
         this.metricsAdapter
       )
@@ -636,7 +652,9 @@ export class DeleteMutator<
       );
     }
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
+    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
+      cascadingDeleteCause,
+    });
     queryContext.appendPostCommitInvalidationCallback(
       entityLoader.invalidateFieldsAsync.bind(entityLoader, this.entity.getAllDatabaseFields())
     );
@@ -684,7 +702,7 @@ export class DeleteMutator<
     entity: TEntity,
     queryContext: EntityTransactionalQueryContext,
     processedEntityIdentifiers: Set<string>,
-    cascadingDeleteCause: EntityMutationTriggerDeleteCascadeInfo | null
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null
   ): Promise<void> {
     // prevent infinite reference cycles by keeping track of entities already processed
     if (processedEntityIdentifiers.has(entity.getUniqueIdentifier())) {
@@ -732,10 +750,15 @@ export class DeleteMutator<
               .getViewerScopedEntityCompanionForClass(entityClass)
               .getMutatorFactory();
 
+            const newCascadingDeleteCause = {
+              entity,
+              cascadingDeleteCause,
+            };
+
             let inboundReferenceEntities: readonly ReadonlyEntity<any, any, any, any>[];
             if (associatedEntityLookupByField) {
               inboundReferenceEntities = await loaderFactory
-                .forLoad(queryContext)
+                .forLoad(queryContext, { cascadingDeleteCause: newCascadingDeleteCause })
                 .enforcing()
                 .loadManyByFieldEqualingAsync(
                   fieldName,
@@ -743,7 +766,7 @@ export class DeleteMutator<
                 );
             } else {
               inboundReferenceEntities = await loaderFactory
-                .forLoad(queryContext)
+                .forLoad(queryContext, { cascadingDeleteCause: newCascadingDeleteCause })
                 .enforcing()
                 .loadManyByFieldEqualingAsync(fieldName, entity.getID());
             }
@@ -754,14 +777,13 @@ export class DeleteMutator<
                 await Promise.all(
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     mutatorFactory
-                      .forDelete(inboundReferenceEntity, queryContext)
+                      .forDelete(inboundReferenceEntity, queryContext, {
+                        cascadingDeleteCause: newCascadingDeleteCause,
+                      })
                       .deleteInTransactionAsync(
                         processedEntityIdentifiers,
                         /* skipDatabaseDeletion */ true, // deletion is handled by DB
-                        {
-                          entity,
-                          cascadingDeleteCause,
-                        }
+                        newCascadingDeleteCause
                       )
                   )
                 );
@@ -771,7 +793,9 @@ export class DeleteMutator<
                 await Promise.all(
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     mutatorFactory
-                      .forUpdate(inboundReferenceEntity, queryContext)
+                      .forUpdate(inboundReferenceEntity, queryContext, {
+                        cascadingDeleteCause: newCascadingDeleteCause,
+                      })
                       .setField(fieldName, null)
                       .enforceUpdateAsync()
                   )
@@ -782,14 +806,13 @@ export class DeleteMutator<
                 await Promise.all(
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     mutatorFactory
-                      .forDelete(inboundReferenceEntity, queryContext)
+                      .forDelete(inboundReferenceEntity, queryContext, {
+                        cascadingDeleteCause: newCascadingDeleteCause,
+                      })
                       .deleteInTransactionAsync(
                         processedEntityIdentifiers,
                         /* skipDatabaseDeletion */ false,
-                        {
-                          entity,
-                          cascadingDeleteCause,
-                        }
+                        newCascadingDeleteCause
                       )
                   )
                 );

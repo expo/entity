@@ -5,7 +5,7 @@ import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityMutationTriggerConfiguration from './EntityMutationTriggerConfiguration';
 import EntityMutationValidator from './EntityMutationValidator';
 import { CreateMutator, UpdateMutator, DeleteMutator } from './EntityMutator';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ViewerContext from './ViewerContext';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
@@ -72,11 +72,13 @@ export default class EntityMutatorFactory<
    */
   forCreate(
     viewerContext: TViewerContext,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
   ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new CreateMutator(
       viewerContext,
       queryContext,
+      privacyPolicyEvaluationContext,
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicy,
@@ -96,11 +98,13 @@ export default class EntityMutatorFactory<
    */
   forUpdate(
     existingEntity: TEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
   ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new UpdateMutator(
       existingEntity.getViewerContext(),
       queryContext,
+      privacyPolicyEvaluationContext,
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicy,
@@ -120,11 +124,13 @@ export default class EntityMutatorFactory<
    */
   forDelete(
     existingEntity: TEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
   ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new DeleteMutator(
       existingEntity.getViewerContext(),
       queryContext,
+      privacyPolicyEvaluationContext,
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicy,

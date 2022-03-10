@@ -69,7 +69,7 @@ export default abstract class Entity<
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
-      .forCreate(queryContext);
+      .forCreate(queryContext, { cascadingDeleteCause: null });
   }
 
   /**
@@ -111,7 +111,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
-      .forUpdate(existingEntity, queryContext);
+      .forUpdate(existingEntity, queryContext, { cascadingDeleteCause: null });
   }
 
   /**
@@ -152,7 +152,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
-      .forDelete(existingEntity, queryContext)
+      .forDelete(existingEntity, queryContext, { cascadingDeleteCause: null })
       .deleteAsync();
   }
 
@@ -194,7 +194,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
-      .forDelete(existingEntity, queryContext)
+      .forDelete(existingEntity, queryContext, { cascadingDeleteCause: null })
       .enforceDeleteAsync();
   }
 
@@ -251,6 +251,7 @@ export default abstract class Entity<
       privacyPolicy.authorizeUpdateAsync(
         existingEntity.getViewerContext(),
         queryContext,
+        { cascadingDeleteCause: null },
         existingEntity,
         companion.getMetricsAdapter()
       )
@@ -304,6 +305,7 @@ export default abstract class Entity<
       privacyPolicy.authorizeDeleteAsync(
         existingEntity.getViewerContext(),
         queryContext,
+        { cascadingDeleteCause: null },
         existingEntity,
         companion.getMetricsAdapter()
       )

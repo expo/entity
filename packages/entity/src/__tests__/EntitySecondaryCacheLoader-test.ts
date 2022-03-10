@@ -79,6 +79,7 @@ describe(EntitySecondaryCacheLoader, () => {
           vc1,
           anyOfClass(EntityNonTransactionalQueryContext),
           anything(),
+          anything(),
           anything()
         )
       ).once();

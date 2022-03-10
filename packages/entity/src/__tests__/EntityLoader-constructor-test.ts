@@ -5,7 +5,7 @@ import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { StringField } from '../EntityFields';
 import EntityLoader from '../EntityLoader';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
+import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
 import EntityDataManager from '../internal/EntityDataManager';
 import ReadThroughEntityCache from '../internal/ReadThroughEntityCache';
@@ -118,6 +118,7 @@ export const testEntityCompanion = new EntityCompanionDefinition({
 describe(EntityLoader, () => {
   it('handles thrown errors and literals from constructor', async () => {
     const viewerContext = instance(mock(ViewerContext));
+    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -154,6 +155,7 @@ describe(EntityLoader, () => {
     const entityLoader = new EntityLoader(
       viewerContext,
       queryContext,
+      privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
       privacyPolicy,

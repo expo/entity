@@ -1,6 +1,6 @@
 import { CreateMutator, UpdateMutator, DeleteMutator } from './EntityMutator';
 import EntityMutatorFactory from './EntityMutatorFactory';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -35,22 +35,37 @@ export default class ViewerScopedEntityMutatorFactory<
   ) {}
 
   forCreate(
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
   ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return this.entityMutatorFactory.forCreate(this.viewerContext, queryContext);
+    return this.entityMutatorFactory.forCreate(
+      this.viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext
+    );
   }
 
   forUpdate(
     existingEntity: TEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
   ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return this.entityMutatorFactory.forUpdate(existingEntity, queryContext);
+    return this.entityMutatorFactory.forUpdate(
+      existingEntity,
+      queryContext,
+      privacyPolicyEvaluationContext
+    );
   }
 
   forDelete(
     existingEntity: TEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
   ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return this.entityMutatorFactory.forDelete(existingEntity, queryContext);
+    return this.entityMutatorFactory.forDelete(
+      existingEntity,
+      queryContext,
+      privacyPolicyEvaluationContext
+    );
   }
 }

@@ -1,3 +1,4 @@
+import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
@@ -16,6 +17,7 @@ export default class AlwaysDenyPrivacyPolicyRule<
   async evaluateAsync(
     _viewerContext: TViewerContext,
     _queryContext: EntityQueryContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext,
     _entity: TEntity
   ): Promise<RuleEvaluationResult> {
     return RuleEvaluationResult.DENY;

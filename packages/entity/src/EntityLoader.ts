@@ -9,7 +9,7 @@ import {
   QuerySelectionModifiers,
   isSingleValueFieldEqualityCondition,
 } from './EntityDatabaseAdapter';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -40,6 +40,7 @@ export default class EntityLoader<
   constructor(
     private readonly viewerContext: TViewerContext,
     private readonly queryContext: EntityQueryContext,
+    private readonly privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext,
     private readonly entityConfiguration: EntityConfiguration<TFields>,
     private readonly entityClass: IEntityClass<
       TFields,
@@ -218,6 +219,7 @@ export default class EntityLoader<
           this.privacyPolicy.authorizeReadAsync(
             this.viewerContext,
             this.queryContext,
+            this.privacyPolicyEvaluationContext,
             uncheckedEntityResult.value,
             this.metricsAdapter
           )
@@ -272,6 +274,7 @@ export default class EntityLoader<
           this.privacyPolicy.authorizeReadAsync(
             this.viewerContext,
             this.queryContext,
+            this.privacyPolicyEvaluationContext,
             uncheckedEntityResult.value,
             this.metricsAdapter
           )
@@ -332,6 +335,7 @@ export default class EntityLoader<
             this.privacyPolicy.authorizeReadAsync(
               this.viewerContext,
               this.queryContext,
+              this.privacyPolicyEvaluationContext,
               uncheckedEntityResult.value,
               this.metricsAdapter
             )

@@ -1,6 +1,6 @@
 import EntityLoader from './EntityLoader';
 import EntityLoaderFactory from './EntityLoaderFactory';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -35,8 +35,13 @@ export default class ViewerScopedEntityLoaderFactory<
   ) {}
 
   forLoad(
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
   ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return this.entityLoaderFactory.forLoad(this.viewerContext, queryContext);
+    return this.entityLoaderFactory.forLoad(
+      this.viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext
+    );
   }
 }
