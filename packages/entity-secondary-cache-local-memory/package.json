@@ -1,0 +1,39 @@
+{
+  "name": "@expo/entity-secondary-cache-local-memory",
+  "version": "0.24.0",
+  "description": "Local memory secondary cache for @expo/entity",
+  "files": [
+    "build",
+    "src"
+  ],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "rm -rf build coverage coverage-integration",
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix",
+    "test": "jest --rootDir . --config ../../resources/jest.config.js --passWithNoTests",
+    "integration": "../../resources/run-with-docker yarn integration-no-setup",
+    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir . --runInBand --passWithNoTests",
+    "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --exportDefault --delete"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "keywords": [
+    "entity"
+  ],
+  "author": "Expo",
+  "license": "MIT",
+  "peerDependencies": {
+    "@expo/entity": "*",
+    "@expo/entity-cache-adapter-local-memory": "*"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@expo/entity": "^0.24.0",
+    "@expo/entity-cache-adapter-local-memory": "^0.24.0",
+    "nullthrows": "^1.1.1"
+  }
+}

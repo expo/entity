@@ -6,9 +6,9 @@ import {
   StubDatabaseAdapterProvider,
 } from '@expo/entity';
 
-import { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider';
+import LocalMemoryCacheAdapterProvider from '../LocalMemoryCacheAdapterProvider';
 
-export const createLocalMemoryIntegrationTestEntityCompanionProvider = (
+export const createLocalMemoryTestEntityCompanionProvider = (
   localMemoryOptions: { maxSize?: number; ttlSeconds?: number } = {},
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
 ): EntityCompanionProvider => {
@@ -41,7 +41,7 @@ export const createLocalMemoryIntegrationTestEntityCompanionProvider = (
 export const createNoopLocalMemoryIntegrationTestEntityCompanionProvider = (
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
 ): EntityCompanionProvider => {
-  return createLocalMemoryIntegrationTestEntityCompanionProvider(
+  return createLocalMemoryTestEntityCompanionProvider(
     { maxSize: 0, ttlSeconds: 0 },
     metricsAdapter
   );
