@@ -48,6 +48,7 @@
     "@expo/entity-cache-adapter-redis": "file:packages/entity-cache-adapter-redis",
     "@expo/entity-database-adapter-knex": "file:packages/entity-database-adapter-knex",
     "@expo/entity-secondary-cache-redis": "file:packages/entity-secondary-cache-redis",
+    "@expo/entity-secondary-cache-local-memory": "file:packages/entity-secondary-cache-local-memory",
     "@expo/entity-ip-address-field": "file:packages/entity-ip-address-field"
   }
 }

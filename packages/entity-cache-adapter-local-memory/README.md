@@ -3,6 +3,8 @@
 Cross-request [LRU](https://github.com/isaacs/node-lru-cache) cache adapter for `@expo/entity`. Use
 this cache with caution - it is nonstandard. The cache is shared between requests in the node process.
 
+[Documentation](https://expo.github.io/entity/modules/_expo_cache_adapter_local_memory.html)
+
 ## Why NOT use this cache
 
 Because this is an in-memory cache, cross-box invalidation is not possible. Do not use this cache

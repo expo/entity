@@ -8,7 +8,7 @@ import {
 import GenericLocalMemoryCacher, { LocalMemoryCache } from './GenericLocalMemoryCacher';
 import LocalMemoryCacheAdapter from './LocalMemoryCacheAdapter';
 
-export class LocalMemoryCacheAdapterProvider implements IEntityCacheAdapterProvider {
+export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdapterProvider {
   // local memory cache adapters should be shared/reused across requests
   static localMemoryCacheAdapterMap = new Map<string, LocalMemoryCacheAdapter<any>>();
 

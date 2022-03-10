@@ -3,12 +3,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 import GenericLocalMemoryCacher from '../GenericLocalMemoryCacher';
 import LocalMemoryCacheAdapter from '../LocalMemoryCacheAdapter';
-import { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider';
+import LocalMemoryCacheAdapterProvider from '../LocalMemoryCacheAdapterProvider';
 import LocalMemoryTestEntity from '../testfixtures/LocalMemoryTestEntity';
 import {
-  createLocalMemoryIntegrationTestEntityCompanionProvider,
+  createLocalMemoryTestEntityCompanionProvider,
   createNoopLocalMemoryIntegrationTestEntityCompanionProvider,
-} from '../testfixtures/createLocalMemoryIntegrationTestEntityCompanionProvider';
+} from '../testfixtures/createLocalMemoryTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}
 
@@ -18,9 +18,7 @@ describe(LocalMemoryCacheAdapter, () => {
   });
 
   it('has correct caching behavior', async () => {
-    const viewerContext = new TestViewerContext(
-      createLocalMemoryIntegrationTestEntityCompanionProvider()
-    );
+    const viewerContext = new TestViewerContext(createLocalMemoryTestEntityCompanionProvider());
     const cacheAdapter = viewerContext.entityCompanionProvider.getCompanionForEntity(
       LocalMemoryTestEntity,
       LocalMemoryTestEntity.getCompanionDefinition()
@@ -90,9 +88,7 @@ describe(LocalMemoryCacheAdapter, () => {
       GenericLocalMemoryCacher.prototype as unknown as any,
       'loadManyAsync'
     );
-    const viewerContext = new TestViewerContext(
-      createLocalMemoryIntegrationTestEntityCompanionProvider()
-    );
+    const viewerContext = new TestViewerContext(createLocalMemoryTestEntityCompanionProvider());
 
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
@@ -106,9 +102,7 @@ describe(LocalMemoryCacheAdapter, () => {
       .loadByIDAsync(entity1Created.getID());
 
     // load entity with a different request
-    const viewerContext2 = new TestViewerContext(
-      createLocalMemoryIntegrationTestEntityCompanionProvider()
-    );
+    const viewerContext2 = new TestViewerContext(createLocalMemoryTestEntityCompanionProvider());
     const entity1WithVc2 = await LocalMemoryTestEntity.loader(viewerContext2)
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
