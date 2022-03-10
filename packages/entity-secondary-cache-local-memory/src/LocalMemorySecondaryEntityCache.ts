@@ -6,6 +6,10 @@ import {
 
 /**
  * A local memory {@link GenericSecondaryEntityCache}.
+ *
+ * @remarks
+ *
+ * TLoadParams must be JSON stringifyable.
  */
 export default class LocalMemorySecondaryEntityCache<
   TFields,
