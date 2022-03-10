@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.25.1](https://github.com/expo/entity/compare/v0.25.0...v0.25.1) (2022-03-10)
+
+
+### Bug Fixes
+
+* add composed cache to index ([#166](https://github.com/expo/entity/issues/166)) ([5c82edc](https://github.com/expo/entity/commit/5c82edcd9f26854878d29950a05852e117bbd723))
+
+
+
+
+
 # [0.25.0](https://github.com/expo/entity/compare/v0.24.0...v0.25.0) (2022-03-10)
 
 
