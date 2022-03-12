@@ -5,8 +5,7 @@ describe(GenericLocalMemoryCacher, () => {
     it('creates a cache with default options', () => {
       const cache = GenericLocalMemoryCacher.createLRUCache();
       expect(cache.max).toBe(10000);
-      expect(cache.maxSize).toBe(10000);
-      expect(cache.ttl).toBe(10000);
+      expect(cache.maxAge).toBe(10000);
     });
 
     it('respects specified options', () => {
@@ -15,8 +14,7 @@ describe(GenericLocalMemoryCacher, () => {
         maxSize: 10,
       });
       expect(cache.max).toBe(10);
-      expect(cache.maxSize).toBe(10);
-      expect(cache.ttl).toBe(3000);
+      expect(cache.maxAge).toBe(3000);
     });
   });
 

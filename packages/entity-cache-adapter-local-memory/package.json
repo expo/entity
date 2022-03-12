@@ -30,7 +30,7 @@
     "@expo/entity": "*"
   },
   "dependencies": {
-    "lru-cache": "^7.3.1"
+    "lru-cache": "^6.0.0"
   },
   "devDependencies": {
     "@expo/entity": "^0.25.2"
