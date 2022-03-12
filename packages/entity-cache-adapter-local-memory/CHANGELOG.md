@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.25.3](https://github.com/expo/entity/compare/v0.25.2...v0.25.3) (2022-03-12)
+
+
+### Bug Fixes
+
+* lock lru-cache to v6.0.0 ([#170](https://github.com/expo/entity/issues/170)) ([293868b](https://github.com/expo/entity/commit/293868b1a73df9f749216af68b1ae94ac22ac2b9))
+
+
+
+
+
 ## [0.25.2](https://github.com/expo/entity/compare/v0.25.1...v0.25.2) (2022-03-12)
 
 
