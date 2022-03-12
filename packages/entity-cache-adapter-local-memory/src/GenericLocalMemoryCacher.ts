@@ -7,76 +7,6 @@ export const DOES_NOT_EXIST_LOCAL_MEMORY_CACHE = Symbol('doesNotExist');
 type LocalMemoryCacheValue<TFields> = Readonly<TFields> | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
 export type LocalMemoryCache<TFields> = LRUCache<string, LocalMemoryCacheValue<TFields>>;
 
-type LRUCacheOptionsV7<K, V> = {
-  /**
-   * the number of most recently used items to keep.
-   * note that we may store fewer items than this if maxSize is hit.
-   */
-  max: number;
-
-  /**
-   * if you wish to track item size, you must provide a maxSize
-   * note that we still will only keep up to max *actual items*,
-   * so size tracking may cause fewer than max items to be stored.
-   * At the extreme, a single item of maxSize size will cause everything
-   * else in the cache to be dropped when it is added.  Use with caution!
-   * Note also that size tracking can negatively impact performance,
-   * though for most cases, only minimally.
-   */
-
-  maxSize?: number;
-
-  /**
-   * function to calculate size of items.  useful if storing strings or
-   * buffers or other items where memory size depends on the object itself.
-   * also note that oversized items do NOT immediately get dropped from
-   * the cache, though they will cause faster turnover in the storage.
-   */
-  sizeCalculation?: (value: V, key: K) => number;
-
-  /**
-   * function to call when the item is removed from the cache
-   * Note that using this can negatively impact performance.
-   */
-  dispose?: (value: V, key: K) => void;
-
-  /**
-   * max time to live for items before they are considered stale
-   * note that stale items are NOT preemptively removed by default,
-   * and MAY live in the cache, contributing to its LRU max, long after
-   * they have expired.
-   * Also, as this cache is optimized for LRU/MRU operations, some of
-   * the staleness/TTL checks will reduce performance, as they will incur
-   * overhead by deleting items.
-   * Must be a positive integer in ms, defaults to 0, which means "no TTL"
-   */
-  ttl?: number;
-
-  /**
-   * return stale items from cache.get() before disposing of them
-   * boolean, default false
-   */
-  allowStale?: boolean;
-
-  /**
-   * update the age of items on cache.get(), renewing their TTL
-   * boolean, default false
-   */
-  updateAgeOnGet?: boolean;
-
-  /**
-   * update the age of items on cache.has(), renewing their TTL
-   * boolean, default false
-   */
-  updateAgeOnHas?: boolean;
-
-  /**
-   * update the "recently-used"-ness of items on cache.has()
-   * boolean, default false
-   */
-  updateRecencyOnHas?: boolean;
-};
-
 export default class GenericLocalMemoryCacher<TFields> implements IEntityGenericCacher<TFields> {
   constructor(private readonly localMemoryCache: LocalMemoryCache<TFields>) {}
 
@@ -86,21 +16,17 @@ export default class GenericLocalMemoryCacher<TFields> implements IEntityGeneric
     const DEFAULT_LRU_CACHE_MAX_AGE_SECONDS = 10;
     const DEFAULT_LRU_CACHE_SIZE = 10000;
     const maxAgeSeconds = options.ttlSeconds ?? DEFAULT_LRU_CACHE_MAX_AGE_SECONDS;
-    const lruCacheOptions: LRUCacheOptionsV7<string, TFields> = {
+    return new LRUCache<string, LocalMemoryCacheValue<TFields>>({
       max: options.maxSize ?? DEFAULT_LRU_CACHE_SIZE,
-      maxSize: options.maxSize ?? DEFAULT_LRU_CACHE_SIZE,
-      sizeCalculation: (value: LocalMemoryCacheValue<TFields>) =>
-        value === DOES_NOT_EXIST_LOCAL_MEMORY_CACHE ? 0 : 1,
-      ttl: maxAgeSeconds * 1000, // convert to ms
-    };
-    return new LRUCache<string, LocalMemoryCacheValue<TFields>>(lruCacheOptions as any);
+      length: (value) => (value === DOES_NOT_EXIST_LOCAL_MEMORY_CACHE ? 0 : 1),
+      maxAge: maxAgeSeconds * 1000, // convert to ms
+    });
   }
 
   static createNoOpCache<TFields>(): LocalMemoryCache<TFields> {
     return new LRUCache<string, LocalMemoryCacheValue<TFields>>({
-      max: 1,
-      maxSize: 1,
-      sizeCalculation: () => 10, // make all things larger than max size
+      max: 0,
+      maxAge: -1,
     });
   }
 
@@ -142,7 +68,7 @@ export default class GenericLocalMemoryCacher<TFields> implements IEntityGeneric
 
   public async invalidateManyAsync(keys: readonly string[]): Promise<void> {
     for (const key of keys) {
-      this.localMemoryCache.delete(key);
+      this.localMemoryCache.del(key);
     }
   }
 
