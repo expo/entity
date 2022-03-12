@@ -88,6 +88,7 @@ export default class GenericLocalMemoryCacher<TFields> implements IEntityGeneric
     const maxAgeSeconds = options.ttlSeconds ?? DEFAULT_LRU_CACHE_MAX_AGE_SECONDS;
     const lruCacheOptions: LRUCacheOptionsV7<string, TFields> = {
       max: options.maxSize ?? DEFAULT_LRU_CACHE_SIZE,
+      maxSize: options.maxSize ?? DEFAULT_LRU_CACHE_SIZE,
       sizeCalculation: (value: LocalMemoryCacheValue<TFields>) =>
         value === DOES_NOT_EXIST_LOCAL_MEMORY_CACHE ? 0 : 1,
       ttl: maxAgeSeconds * 1000, // convert to ms
@@ -97,8 +98,9 @@ export default class GenericLocalMemoryCacher<TFields> implements IEntityGeneric
 
   static createNoOpCache<TFields>(): LocalMemoryCache<TFields> {
     return new LRUCache<string, LocalMemoryCacheValue<TFields>>({
-      max: 0,
-      maxAge: -1,
+      max: 1,
+      maxSize: 1,
+      sizeCalculation: () => 10, // make all things larger than max size
     });
   }
 
@@ -140,7 +142,7 @@ export default class GenericLocalMemoryCacher<TFields> implements IEntityGeneric
 
   public async invalidateManyAsync(keys: readonly string[]): Promise<void> {
     for (const key of keys) {
-      this.localMemoryCache.del(key);
+      this.localMemoryCache.delete(key);
     }
   }
 

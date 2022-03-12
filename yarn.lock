@@ -508,37 +508,35 @@
     minimist "^1.2.0"
 
 "@expo/entity-cache-adapter-local-memory@file:packages/entity-cache-adapter-local-memory":
-  version "0.24.0"
+  version "0.25.1"
   dependencies:
     lru-cache "^7.3.1"
 
 "@expo/entity-cache-adapter-redis@file:packages/entity-cache-adapter-redis":
-  version "0.24.0"
+  version "0.25.1"
   dependencies:
     ioredis "^4.27.3"
 
 "@expo/entity-database-adapter-knex@file:packages/entity-database-adapter-knex":
-  version "0.24.0"
+  version "0.25.1"
   dependencies:
     knex "^1.0.2"
 
 "@expo/entity-ip-address-field@file:packages/entity-ip-address-field":
-  version "0.24.0"
+  version "0.25.1"
   dependencies:
     ip-address "^8.1.0"
 
 "@expo/entity-secondary-cache-local-memory@file:packages/entity-secondary-cache-local-memory":
-  version "0.24.0"
-  dependencies:
-    ioredis "^4.17.3"
+  version "0.25.1"
 
 "@expo/entity-secondary-cache-redis@file:packages/entity-secondary-cache-redis":
-  version "0.24.0"
+  version "0.25.1"
   dependencies:
     ioredis "^4.17.3"
 
 "@expo/entity@file:packages/entity":
-  version "0.24.0"
+  version "0.25.1"
   dependencies:
     "@expo/results" "^1.0.0"
     dataloader "^2.0.0"
@@ -2005,10 +2003,10 @@
   resolved "https://registry.yarnpkg.com/@types/long/-/long-4.0.1.tgz#459c65fa1867dafe6a8f322c4c51695663cc55e9"
   integrity sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==
 
-"@types/lru-cache@^5.1.1":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@types/lru-cache/-/lru-cache-5.1.1.tgz#c48c2e27b65d2a153b19bfc1a317e30872e01eef"
-  integrity sha512-ssE3Vlrys7sdIzs5LOxCzTVMsU7i9oa/IaW92wF32JFb3CVczqOkru2xspuKczHEbG3nvmPY7IFqVmGGHdNbYw==
+"@types/lru-cache@^7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@types/lru-cache/-/lru-cache-7.4.0.tgz#74e50606962cb90448d928d6f0c7c872592fc84d"
+  integrity sha512-jZ/Tb2/3vXw4VYd9AImFC/n6XT3WywZNAxwY8Ox9eM87M9ta9G7KzCx4aKo2Zllvr02k40eY328cjOO3WuK5Kw==
 
 "@types/mime@*":
   version "2.0.1"
@@ -6581,9 +6579,9 @@ lru-cache@^6.0.0:
     yallist "^4.0.0"
 
 lru-cache@^7.3.1:
-  version "7.3.1"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.3.1.tgz#7702e80694ec2bf19865567a469f2b081fcf53f5"
-  integrity sha512-nX1x4qUrKqwbIAhv4s9et4FIUVzNOpeY07bsjGUy8gwJrXH/wScImSQqXErmo/b2jZY2r0mohbLA9zVj7u1cNw==
+  version "7.4.4"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.4.4.tgz#a3dabc394ec07e2285af52fd24d0d74b3ac71c29"
+  integrity sha512-2XbUJmlpIbmc9JvNNmtLzHlF31srxoDxuiQiwBHic7RZyHyltbTdzoO6maRqpdEhOOG5GD80EXvzAU0wR15ccg==
 
 lunr@^2.3.9:
   version "2.3.9"
