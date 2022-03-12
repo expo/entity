@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.25.2](https://github.com/expo/entity/compare/v0.25.1...v0.25.2) (2022-03-12)
+
+
+### Bug Fixes
+
+* lru-cache yarn workspace version resolution ([#168](https://github.com/expo/entity/issues/168)) ([e76ca8c](https://github.com/expo/entity/commit/e76ca8c2f72da84aa372a64ef1898ade220ed0a8))
+
+
+
+
+
 ## [0.25.1](https://github.com/expo/entity/compare/v0.25.0...v0.25.1) (2022-03-10)
 
 
