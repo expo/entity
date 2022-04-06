@@ -159,11 +159,9 @@ class TestSecondaryLocalMemoryCacheLoader extends EntitySecondaryCacheLoader<
       }
       return nullthrows(
         (
-          await this.entityLoader
-            .enforcing()
-            .loadManyByFieldEqualityConjunctionAsync([
-              { fieldName: 'id', fieldValue: loadParams.id },
-            ])
+          await this.entityLoader.loadManyByFieldEqualityConjunctionAsync([
+            { fieldName: 'id', fieldValue: loadParams.id },
+          ])
         )[0]
       ).getAllFields();
     });

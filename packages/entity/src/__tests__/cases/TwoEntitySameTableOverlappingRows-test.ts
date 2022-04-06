@@ -18,7 +18,7 @@ describe('Two entities backed by the same table', () => {
     expect(entity1).toBeInstanceOf(OneTestEntity);
 
     const entity2 = await TwoTestEntity.loader(viewerContext)
-      .enforcing()
+
       .loadByIDAsync(entity1.getID());
     expect(entity2).toBeInstanceOf(TwoTestEntity);
 
@@ -33,7 +33,7 @@ describe('Two entities backed by the same table', () => {
     });
 
     const loaded1 = await OneTestEntity.loader(viewerContext)
-      .enforcing()
+
       .loadByIDAsync(entity1.getID());
     expect(loaded1.getAllFields()).toMatchObject({
       id: updated2.getID(),
@@ -51,7 +51,7 @@ describe('Two entities backed by the same table', () => {
       .enforceCreateAsync();
 
     const loadedEntity = await TwoTestEntity.loader(viewerContext)
-      .enforcing()
+
       .loadByFieldEqualingAsync('other_field', 'huh');
     expect(loadedEntity?.getAllFields()).toMatchObject({
       id: entity.getID(),
@@ -60,12 +60,12 @@ describe('Two entities backed by the same table', () => {
     });
 
     const loaded1 = await OneTestEntity.loader(viewerContext)
-      .enforcing()
+
       .loadByIDAsync(entity.getID());
     await OneTestEntity.updater(loaded1).setField('fake_field', 'world').enforceUpdateAsync();
 
     const loaded2 = await TwoTestEntity.loader(viewerContext)
-      .enforcing()
+
       .loadByFieldEqualingAsync('other_field', 'huh');
     expect(loaded2?.getAllFields()).toMatchObject({
       id: entity.getID(),
@@ -74,7 +74,7 @@ describe('Two entities backed by the same table', () => {
     });
 
     const loaded22 = await TwoTestEntity.loader(viewerContext)
-      .enforcing()
+
       .loadByFieldEqualingAsync('fake_field', 'world');
     expect(loaded22?.getAllFields()).toMatchObject({
       id: entity.getID(),

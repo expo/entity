@@ -78,7 +78,7 @@ class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutation
   ): Promise<void> {
     if (mutationInfo.type === EntityMutationType.DELETE) {
       const entityLoaded = await BlahEntity.loader(viewerContext)
-        .enforcing()
+
         .loadByIDNullableAsync(entity.getID());
       if (entityLoaded) {
         throw new Error(
@@ -97,7 +97,7 @@ describe('EntityMutator', () => {
     // put it in cache
     const entity = await BlahEntity.creator(viewerContext).enforceCreateAsync();
     const entityLoaded = await BlahEntity.loader(viewerContext)
-      .enforcing()
+
       .loadByIDAsync(entity.getID());
 
     await BlahEntity.enforceDeleteAsync(entityLoaded);

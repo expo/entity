@@ -32,9 +32,9 @@ describe(LocalMemoryCacheAdapter, () => {
       .enforceCreateAsync();
 
     // loading an entity should put it in cache
-    const entity1 = await LocalMemoryTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(entity1Created.getID());
+    const entity1 = await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(
+      entity1Created.getID()
+    );
 
     const entitySpecificGenericCacher =
       LocalMemoryCacheAdapterProvider.localMemoryCacheAdapterMap.get(
@@ -97,15 +97,13 @@ describe(LocalMemoryCacheAdapter, () => {
       .enforceCreateAsync();
 
     // loading an entity should put it in cache
-    await LocalMemoryTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(entity1Created.getID());
+    await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(entity1Created.getID());
 
     // load entity with a different request
     const viewerContext2 = new TestViewerContext(createLocalMemoryTestEntityCompanionProvider());
-    const entity1WithVc2 = await LocalMemoryTestEntity.loader(viewerContext2)
-      .enforcing()
-      .loadByIDAsync(entity1Created.getID());
+    const entity1WithVc2 = await LocalMemoryTestEntity.loader(viewerContext2).loadByIDAsync(
+      entity1Created.getID()
+    );
 
     const cacheAdapter = viewerContext.entityCompanionProvider.getCompanionForEntity(
       LocalMemoryTestEntity,
@@ -140,9 +138,9 @@ describe(LocalMemoryCacheAdapter, () => {
       .enforceCreateAsync();
 
     // loading an entity will try to put it in cache but it's a noop cache, so it should be a miss
-    const entity1 = await LocalMemoryTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(entity1Created.getID());
+    const entity1 = await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(
+      entity1Created.getID()
+    );
 
     const entitySpecificGenericCacher =
       LocalMemoryCacheAdapterProvider.localMemoryCacheAdapterMap.get(

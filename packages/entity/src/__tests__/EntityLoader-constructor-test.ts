@@ -165,14 +165,14 @@ describe(EntityLoader, () => {
 
     let capturedThrownThing1: any;
     try {
-      await entityLoader.loadByIDAsync(ID_SENTINEL_THROW_LITERAL);
+      await entityLoader.resultLoader.loadByIDAsync(ID_SENTINEL_THROW_LITERAL);
     } catch (e) {
       capturedThrownThing1 = e;
     }
     expect(capturedThrownThing1).not.toBeInstanceOf(Error);
     expect(capturedThrownThing1).toEqual('hello');
 
-    const result = await entityLoader.loadByIDAsync(ID_SENTINEL_THROW_ERROR);
+    const result = await entityLoader.resultLoader.loadByIDAsync(ID_SENTINEL_THROW_ERROR);
     expect(result.ok).toBe(false);
     expect(result.enforceError().message).toEqual('world');
   });

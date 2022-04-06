@@ -78,36 +78,39 @@ describe(EntityLoader, () => {
       dataManager,
       metricsAdapter
     );
-    const entity = await enforceAsyncResult(entityLoader.loadByIDAsync(id1));
+    const entity = await enforceAsyncResult(entityLoader.resultLoader.loadByIDAsync(id1));
     expect(entity.getID()).toEqual(id1);
     expect(entity.getField('dateField')).toEqual(dateToInsert);
 
     const entities = await enforceResultsAsync(
-      entityLoader.loadManyByFieldEqualingAsync('stringField', 'huh')
+      entityLoader.resultLoader.loadManyByFieldEqualingAsync('stringField', 'huh')
     );
     expect(entities.map((m) => m.getID())).toEqual([id1, id2]);
 
-    const entityResultNumber3 = await entityLoader.loadByFieldEqualingAsync('intField', 3);
+    const entityResultNumber3 = await entityLoader.resultLoader.loadByFieldEqualingAsync('intField', 3);
     expect(entityResultNumber3).not.toBeNull();
     expect(entityResultNumber3!.enforceValue().getID()).toEqual(id2);
 
-    const entityResultNumber4 = await entityLoader.loadByFieldEqualingAsync('intField', 4);
+    const entityResultNumber4 = await entityLoader.resultLoader.loadByFieldEqualingAsync('intField', 4);
     expect(entityResultNumber4).toBeNull();
 
-    const entityResultDuplicateValues = await entityLoader
-      .enforcing()
-      .loadManyByFieldEqualingManyAsync('stringField', ['huh', 'huh']);
+    const entityResultDuplicateValues = await entityLoader.loadManyByFieldEqualingManyAsync(
+      'stringField',
+      ['huh', 'huh']
+    );
     expect(entityResultDuplicateValues.size).toBe(1);
     expect(entityResultDuplicateValues.get('huh')?.map((m) => m.getID())).toEqual([id1, id2]);
 
-    await expect(entityLoader.loadByFieldEqualingAsync('stringField', 'huh')).rejects.toThrowError(
+    await expect(
+      entityLoader.resultLoader.loadByFieldEqualingAsync('stringField', 'huh')
+    ).rejects.toThrowError(
       'loadByFieldEqualing: Multiple entities of type TestEntity found for stringField=huh'
     );
 
-    await expect(entityLoader.loadByIDNullableAsync(uuidv4())).resolves.toBeNull();
-    await expect(entityLoader.loadByIDNullableAsync(id1)).resolves.not.toBeNull();
+    await expect(entityLoader.resultLoader.loadByIDNullableAsync(uuidv4())).resolves.toBeNull();
+    await expect(entityLoader.resultLoader.loadByIDNullableAsync(id1)).resolves.not.toBeNull();
 
-    await expect(entityLoader.loadByIDAsync('not-a-uuid')).rejects.toThrowError(
+    await expect(entityLoader.resultLoader.loadByIDAsync('not-a-uuid')).rejects.toThrowError(
       'Entity field not valid: TestEntity (customIdField = not-a-uuid)'
     );
   });
@@ -181,7 +184,7 @@ describe(EntityLoader, () => {
       metricsAdapter
     );
     const entities = await enforceResultsAsync(
-      entityLoader.loadManyByFieldEqualityConjunctionAsync([
+      entityLoader.resultLoader.loadManyByFieldEqualityConjunctionAsync([
         {
           fieldName: 'stringField',
           fieldValue: 'huh',
@@ -204,7 +207,7 @@ describe(EntityLoader, () => {
     ).twice();
 
     await expect(
-      entityLoader.loadManyByFieldEqualityConjunctionAsync([
+      entityLoader.resultLoader.loadManyByFieldEqualityConjunctionAsync([
         { fieldName: 'customIdField', fieldValue: 'not-a-uuid' },
       ])
     ).rejects.toThrowError('Entity field not valid: TestEntity (customIdField = not-a-uuid)');
@@ -261,7 +264,7 @@ describe(EntityLoader, () => {
       dataManager,
       metricsAdapter
     );
-    const entity = await enforceAsyncResult(entityLoader.loadByIDAsync(id1));
+    const entity = await enforceAsyncResult(entityLoader.resultLoader.loadByIDAsync(id1));
     verify(
       spiedPrivacyPolicy.authorizeReadAsync(
         viewerContext,
@@ -395,7 +398,7 @@ describe(EntityLoader, () => {
       metricsAdapter
     );
 
-    const entityResult = await entityLoader.loadByIDAsync(id1);
+    const entityResult = await entityLoader.resultLoader.loadByIDAsync(id1);
     expect(entityResult.ok).toBe(false);
     expect(entityResult.reason).toEqual(rejectionError);
     expect(entityResult.value).toBe(undefined);
@@ -430,21 +433,21 @@ describe(EntityLoader, () => {
 
     const loadByValue = uuidv4();
 
+    await expect(entityLoader.resultLoader.loadByIDAsync(loadByValue)).rejects.toEqual(error);
     await expect(entityLoader.loadByIDAsync(loadByValue)).rejects.toEqual(error);
-    await expect(entityLoader.enforcing().loadByIDAsync(loadByValue)).rejects.toEqual(error);
-    await expect(entityLoader.loadManyByIDsAsync([loadByValue])).rejects.toEqual(error);
-    await expect(entityLoader.loadManyByIDsAsync([loadByValue])).rejects.toEqual(error);
+    await expect(entityLoader.resultLoader.loadManyByIDsAsync([loadByValue])).rejects.toEqual(error);
+    await expect(entityLoader.resultLoader.loadManyByIDsAsync([loadByValue])).rejects.toEqual(error);
+    await expect(
+      entityLoader.resultLoader.loadManyByFieldEqualingAsync('customIdField', loadByValue)
+    ).rejects.toEqual(error);
     await expect(
       entityLoader.loadManyByFieldEqualingAsync('customIdField', loadByValue)
     ).rejects.toEqual(error);
     await expect(
-      entityLoader.enforcing().loadManyByFieldEqualingAsync('customIdField', loadByValue)
+      entityLoader.resultLoader.loadManyByFieldEqualingManyAsync('customIdField', [loadByValue])
     ).rejects.toEqual(error);
     await expect(
       entityLoader.loadManyByFieldEqualingManyAsync('customIdField', [loadByValue])
-    ).rejects.toEqual(error);
-    await expect(
-      entityLoader.enforcing().loadManyByFieldEqualingManyAsync('customIdField', [loadByValue])
     ).rejects.toEqual(error);
   });
 });

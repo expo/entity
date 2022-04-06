@@ -1,23 +1,14 @@
-import { Result, asyncResult, result } from '@expo/results';
-import invariant from 'invariant';
-
-import EnforcingEntityLoader from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
 import EntityConfiguration from './EntityConfiguration';
-import {
-  FieldEqualityCondition,
-  QuerySelectionModifiers,
-  isSingleValueFieldEqualityCondition,
-} from './EntityDatabaseAdapter';
+import { FieldEqualityCondition, QuerySelectionModifiers } from './EntityDatabaseAdapter';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
+import EntityResultLoader from './EntityResultLoader';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
-import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError';
-import EntityNotFoundError from './errors/EntityNotFoundError';
 import EntityDataManager from './internal/EntityDataManager';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
-import { mapMap, mapMapAsync } from './utils/collections/maps';
+import { mapMap } from './utils/collections/maps';
 
 /**
  * The primary interface for loading entities. All normal loads are batched,
@@ -37,12 +28,24 @@ export default class EntityLoader<
   >,
   TSelectedFields extends keyof TFields
 > {
+  /**
+   * Result-based view on an entity loader. All loads through this loader will wrap their results in Result.
+   */
+  public readonly resultLoader: EntityResultLoader<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >;
+
   constructor(
-    private readonly viewerContext: TViewerContext,
-    private readonly queryContext: EntityQueryContext,
-    private readonly privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext,
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
-    private readonly entityClass: IEntityClass<
+    viewerContext: TViewerContext,
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext,
+    entityConfiguration: EntityConfiguration<TFields>,
+    entityClass: IEntityClass<
       TFields,
       TID,
       TViewerContext,
@@ -50,133 +53,105 @@ export default class EntityLoader<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly privacyPolicy: TPrivacyPolicy,
+    privacyPolicy: TPrivacyPolicy,
     private readonly dataManager: EntityDataManager<TFields>,
     protected readonly metricsAdapter: IEntityMetricsAdapter
-  ) {}
-
-  /**
-   * Enforcing view on this entity loader. All loads through this view are
-   * guaranteed to be the values of successful results (or null for some loader methods),
-   * and will throw otherwise.
-   */
-  enforcing(): EnforcingEntityLoader<
-    TFields,
-    TID,
-    TViewerContext,
-    TEntity,
-    TPrivacyPolicy,
-    TSelectedFields
-  > {
-    return new EnforcingEntityLoader(this);
+  ) {
+    this.resultLoader = new EntityResultLoader(
+      viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+      entityConfiguration,
+      entityClass,
+      privacyPolicy,
+      dataManager,
+      metricsAdapter
+    );
   }
 
   /**
    * Load many entities where fieldName is one of fieldValues.
    * @param fieldName - entity field being queried
    * @param fieldValues - fieldName field values being queried
-   * @returns map from fieldValue to entity results that match the query for that fieldValue,
-   *          where result errors can be UnauthorizedError
+   * @returns map from fieldValue to entities that match the query for that fieldValue
    */
   async loadManyByFieldEqualingManyAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
-    this.validateFieldValues(fieldName, fieldValues);
-
-    const fieldValuesToFieldObjects = await this.dataManager.loadManyByFieldEqualingAsync(
-      this.queryContext,
+  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly TEntity[]>> {
+    const fieldValuesToResults = await this.resultLoader.loadManyByFieldEqualingManyAsync(
       fieldName,
       fieldValues
     );
-
-    return await this.constructAndAuthorizeEntitiesAsync(fieldValuesToFieldObjects);
+    return mapMap(fieldValuesToResults, (results) =>
+      results.map((result) => result.enforceValue())
+    );
   }
 
   /**
    * Load many entities where fieldName equals fieldValue.
    * @param fieldName - entity field being queried
    * @param fieldValue - fieldName field value being queried
-   * @returns array of entity results that match the query for fieldValue, where result error can be UnauthorizedError
+   * @returns array of entities that match the query for fieldValue
    */
   async loadManyByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValue: NonNullable<TFields[N]>
-  ): Promise<readonly Result<TEntity>[]> {
-    const entityResults = await this.loadManyByFieldEqualingManyAsync(fieldName, [fieldValue]);
-    const entityResultsForFieldValue = entityResults.get(fieldValue);
-    invariant(
-      entityResultsForFieldValue !== undefined,
-      `${fieldValue} should be guaranteed to be present in returned map of entities`
+  ): Promise<readonly TEntity[]> {
+    const entityResults = await this.resultLoader.loadManyByFieldEqualingAsync(
+      fieldName,
+      fieldValue
     );
-    return entityResultsForFieldValue!;
+    return entityResults.map((result) => result.enforceValue());
   }
 
   /**
    * Load an entity where fieldName equals fieldValue, or null if no entity exists.
    * @param uniqueFieldName - entity field being queried
    * @param fieldValue - uniqueFieldName field value being queried
-   * @returns entity result where uniqueFieldName equals fieldValue, or null if no entity matches the condition.
+   * @returns entity where uniqueFieldName equals fieldValue, or null if no entity matches the condition.
    * @throws when multiple entities match the condition
    */
   async loadByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     uniqueFieldName: N,
     fieldValue: NonNullable<TFields[N]>
-  ): Promise<Result<TEntity> | null> {
-    const entityResults = await this.loadManyByFieldEqualingAsync(uniqueFieldName, fieldValue);
-    invariant(
-      entityResults.length <= 1,
-      `loadByFieldEqualing: Multiple entities of type ${this.entityClass.name} found for ${uniqueFieldName}=${fieldValue}`
+  ): Promise<TEntity | null> {
+    const entityResult = await this.resultLoader.loadByFieldEqualingAsync(
+      uniqueFieldName,
+      fieldValue
     );
-    return entityResults[0] ?? null;
+    return entityResult ? entityResult.enforceValue() : null;
   }
 
   /**
    * Loads an entity by a specified ID.
    * @param id - ID of the entity
-   * @returns entity result for matching ID, where result error can be UnauthorizedError or EntityNotFoundError.
+   * @returns entity for matching ID
    */
-  async loadByIDAsync(id: TID): Promise<Result<TEntity>> {
-    const entityResults = await this.loadManyByIDsAsync([id]);
-    const entityResult = entityResults.get(id);
-    if (entityResult === undefined) {
-      return result(
-        new EntityNotFoundError(this.entityClass, this.entityConfiguration.idField, id)
-      );
-    }
-    return entityResult;
+  async loadByIDAsync(id: TID): Promise<TEntity> {
+    const entityResult = await this.resultLoader.loadByIDAsync(id);
+    return entityResult.enforceValue();
   }
 
   /**
    * Load an entity by a specified ID, or return null if non-existent.
    * @param id - ID of the entity
-   * @returns entity result for matching ID, or null if no entity exists for ID.
+   * @returns entity for matching ID, or null if no entity exists for ID.
    */
-  async loadByIDNullableAsync(id: TID): Promise<Result<TEntity> | null> {
-    return await this.loadByFieldEqualingAsync(
-      this.entityConfiguration.idField as TSelectedFields,
-      id
-    );
+  async loadByIDNullableAsync(id: TID): Promise<TEntity | null> {
+    const entityResult = await this.resultLoader.loadByIDNullableAsync(id);
+    return entityResult ? entityResult.enforceValue() : null;
   }
 
   /**
    * Loads many entities for a list of IDs.
    * @param viewerContext - viewer context of loading user
    * @param ids - IDs of the entities to load
-   * @returns map from ID to corresponding entity result, where result error can be UnauthorizedError or EntityNotFoundError.
+   * @returns map from ID to corresponding entity
    */
-  async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, Result<TEntity>>> {
-    const entityResults = (await this.loadManyByFieldEqualingManyAsync(
-      this.entityConfiguration.idField as TSelectedFields,
-      ids
-    )) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
-    return mapMap(entityResults, (entityResultsForId, id) => {
-      const entityResult = entityResultsForId[0];
-      return (
-        entityResult ??
-        result(new EntityNotFoundError(this.entityClass, this.entityConfiguration.idField, id))
-      );
-    });
+  async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, TEntity>> {
+    const entityResults = await this.resultLoader.loadManyByIDsAsync(ids);
+    return mapMap(entityResults, (result) => result.enforceValue());
   }
 
   /**
@@ -191,41 +166,17 @@ export default class EntityLoader<
    *
    * @param fieldEqualityOperands - list of field equality WHERE clause operand specifications
    * @param querySelectionModifiers - limit, offset, and orderBy for the query
-   * @returns array of entity results that match the query, where result error can be UnauthorizedError
+   * @returns array of entities that match the query
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
-  ): Promise<readonly Result<TEntity>[]> {
-    for (const fieldEqualityOperand of fieldEqualityOperands) {
-      const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
-        ? [fieldEqualityOperand.fieldValue]
-        : fieldEqualityOperand.fieldValues;
-      this.validateFieldValues(fieldEqualityOperand.fieldName, fieldValues);
-    }
-
-    const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
-      this.queryContext,
+  ): Promise<readonly TEntity[]> {
+    const entityResults = await this.resultLoader.loadManyByFieldEqualityConjunctionAsync(
       fieldEqualityOperands,
       querySelectionModifiers
     );
-    const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
-    return await Promise.all(
-      uncheckedEntityResults.map(async (uncheckedEntityResult) => {
-        if (!uncheckedEntityResult.ok) {
-          return uncheckedEntityResult;
-        }
-        return await asyncResult(
-          this.privacyPolicy.authorizeReadAsync(
-            this.viewerContext,
-            this.queryContext,
-            this.privacyPolicyEvaluationContext,
-            uncheckedEntityResult.value,
-            this.metricsAdapter
-          )
-        );
-      })
-    );
+    return entityResults.map((result) => result.enforceValue());
   }
 
   /**
@@ -248,7 +199,7 @@ export default class EntityLoader<
    * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
    * @param bindings - array of positional bindings or object of named bindings
    * @param querySelectionModifiers - limit, offset, and orderBy for the query
-   * @returns array of entity results that match the query, where result error can be UnauthorizedError
+   * @returns array of entities that match the query
    * @throws Error when rawWhereClause or bindings are invalid
    *
    * @deprecated prefer caching loaders
@@ -257,30 +208,13 @@ export default class EntityLoader<
     rawWhereClause: string,
     bindings: any[] | object,
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
-  ): Promise<readonly Result<TEntity>[]> {
-    const fieldObjects = await this.dataManager.loadManyByRawWhereClauseAsync(
-      this.queryContext,
+  ): Promise<readonly TEntity[]> {
+    const entityResults = await this.resultLoader.loadManyByRawWhereClauseAsync(
       rawWhereClause,
       bindings,
       querySelectionModifiers
     );
-    const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
-    return await Promise.all(
-      uncheckedEntityResults.map(async (uncheckedEntityResult) => {
-        if (!uncheckedEntityResult.ok) {
-          return uncheckedEntityResult;
-        }
-        return await asyncResult(
-          this.privacyPolicy.authorizeReadAsync(
-            this.viewerContext,
-            this.queryContext,
-            this.privacyPolicyEvaluationContext,
-            uncheckedEntityResult.value,
-            this.metricsAdapter
-          )
-        );
-      })
-    );
+    return entityResults.map((result) => result.enforceValue());
   }
 
   /**
@@ -298,64 +232,5 @@ export default class EntityLoader<
    */
   async invalidateEntityAsync(entity: TEntity): Promise<void> {
     await this.invalidateFieldsAsync(entity.getAllDatabaseFields());
-  }
-
-  private tryConstructEntities(fieldsObjects: readonly TFields[]): readonly Result<TEntity>[] {
-    return fieldsObjects.map((fieldsObject) => {
-      try {
-        return result(new this.entityClass(this.viewerContext, fieldsObject));
-      } catch (e) {
-        if (!(e instanceof Error)) {
-          throw e;
-        }
-        return result(e);
-      }
-    });
-  }
-
-  /**
-   * Construct and authorize entities from fields map, returning error results for entities that fail
-   * to construct or fail to authorize.
-   *
-   * @param map - map from an arbitrary key type to an array of entity field objects
-   */
-  public async constructAndAuthorizeEntitiesAsync<K>(
-    map: ReadonlyMap<K, readonly Readonly<TFields>[]>
-  ): Promise<ReadonlyMap<K, readonly Result<TEntity>[]>> {
-    const uncheckedEntityResultsMap = mapMap(map, (fieldObjects) =>
-      this.tryConstructEntities(fieldObjects)
-    );
-    return await mapMapAsync(uncheckedEntityResultsMap, async (uncheckedEntityResults) => {
-      return await Promise.all(
-        uncheckedEntityResults.map(async (uncheckedEntityResult) => {
-          if (!uncheckedEntityResult.ok) {
-            return uncheckedEntityResult;
-          }
-          return await asyncResult(
-            this.privacyPolicy.authorizeReadAsync(
-              this.viewerContext,
-              this.queryContext,
-              this.privacyPolicyEvaluationContext,
-              uncheckedEntityResult.value,
-              this.metricsAdapter
-            )
-          );
-        })
-      );
-    });
-  }
-
-  private validateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
-    fieldName: N,
-    fieldValues: readonly TFields[N][]
-  ): void {
-    const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
-    invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
-    for (const fieldValue of fieldValues) {
-      const isInputValid = fieldDefinition.validateInputValue(fieldValue);
-      if (!isInputValid) {
-        throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
-      }
-    }
   }
 }

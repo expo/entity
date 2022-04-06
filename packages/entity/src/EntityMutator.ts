@@ -261,9 +261,7 @@ export class CreateMutator<
     );
 
     const unauthorizedEntityAfterInsert = new this.entityClass(this.viewerContext, insertResult);
-    const newEntity = await entityLoader
-      .enforcing()
-      .loadByIDAsync(unauthorizedEntityAfterInsert.getID());
+    const newEntity = await entityLoader.loadByIDAsync(unauthorizedEntityAfterInsert.getID());
 
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterCreate,
@@ -469,9 +467,7 @@ export class UpdateMutator<
     );
 
     const unauthorizedEntityAfterUpdate = new this.entityClass(this.viewerContext, updateResult);
-    const updatedEntity = await entityLoader
-      .enforcing()
-      .loadByIDAsync(unauthorizedEntityAfterUpdate.getID());
+    const updatedEntity = await entityLoader.loadByIDAsync(unauthorizedEntityAfterUpdate.getID());
 
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterUpdate,
@@ -759,7 +755,7 @@ export class DeleteMutator<
             if (associatedEntityLookupByField) {
               inboundReferenceEntities = await loaderFactory
                 .forLoad(queryContext, { cascadingDeleteCause: newCascadingDeleteCause })
-                .enforcing()
+
                 .loadManyByFieldEqualingAsync(
                   fieldName,
                   entity.getField(associatedEntityLookupByField as any)
@@ -767,7 +763,7 @@ export class DeleteMutator<
             } else {
               inboundReferenceEntities = await loaderFactory
                 .forLoad(queryContext, { cascadingDeleteCause: newCascadingDeleteCause })
-                .enforcing()
+
                 .loadManyByFieldEqualingAsync(fieldName, entity.getID());
             }
 

@@ -46,16 +46,14 @@ export const resolvers: IResolvers<any, GraphqlContext> = {
       return viewerContext.userID;
     },
     async noteByID(_root, args, { viewerContext }) {
-      return await NoteEntity.loader(viewerContext).enforcing().loadByIDAsync(args.id);
+      return await NoteEntity.loader(viewerContext).loadByIDAsync(args.id);
     },
   } as IResolverObject<any, GraphqlContext>,
 
   User: {
     id: (root) => root,
     async notes(root, _args, { viewerContext }) {
-      return await NoteEntity.loader(viewerContext)
-        .enforcing()
-        .loadManyByFieldEqualingAsync('userID', root);
+      return await NoteEntity.loader(viewerContext).loadManyByFieldEqualingAsync('userID', root);
     },
   } as IResolverObject<string, GraphqlContext>,
 
@@ -79,18 +77,14 @@ export const resolvers: IResolvers<any, GraphqlContext> = {
         .enforceCreateAsync();
     },
     async updateNote(_root, args, { viewerContext }) {
-      const existingNote = await NoteEntity.loader(viewerContext)
-        .enforcing()
-        .loadByIDAsync(args.id);
+      const existingNote = await NoteEntity.loader(viewerContext).loadByIDAsync(args.id);
       return await NoteEntity.updater(existingNote)
         .setField('title', args.note.title)
         .setField('body', args.note.body)
         .enforceUpdateAsync();
     },
     async deleteNote(_root, args, { viewerContext }) {
-      const existingNote = await NoteEntity.loader(viewerContext)
-        .enforcing()
-        .loadByIDAsync(args.id);
+      const existingNote = await NoteEntity.loader(viewerContext).loadByIDAsync(args.id);
       await NoteEntity.enforceDeleteAsync(existingNote);
       return existingNote;
     },

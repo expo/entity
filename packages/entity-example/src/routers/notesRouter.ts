@@ -19,9 +19,10 @@ router.get('/', async (ctx: ExampleContext) => {
   const viewerContext = ctx.state.viewerContext;
   let notes: readonly NoteEntity[] = [];
   if (viewerContext.isUserViewerContext()) {
-    notes = await NoteEntity.loader(viewerContext)
-      .enforcing()
-      .loadManyByFieldEqualingAsync('userID', viewerContext.userID);
+    notes = await NoteEntity.loader(viewerContext).loadManyByFieldEqualingAsync(
+      'userID',
+      viewerContext.userID
+    );
   }
   ctx.body = {
     notes: notes.map((note) => note.getAllFields()),

@@ -153,10 +153,8 @@ describe('Entity cache inconsistency', () => {
       .enforceCreateAsync();
 
     // put entities in cache and dataloader
-    await TestEntity.loader(viewerContext).enforcing().loadByIDAsync(entity1.getID());
-    await TestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByFieldEqualingAsync('other_string', 'hello');
+    await TestEntity.loader(viewerContext).loadByIDAsync(entity1.getID());
+    await TestEntity.loader(viewerContext).loadByFieldEqualingAsync('other_string', 'hello');
 
     let openBarrier1: () => void;
     const barrier1 = new Promise<void>((resolve) => {
@@ -179,7 +177,7 @@ describe('Entity cache inconsistency', () => {
         const viewerContextInternal = new ViewerContext(
           createFullIntegrationTestEntityCompanionProvider(knexInstance, redisCacheAdapterContext)
         );
-        await TestEntity.loader(viewerContextInternal).enforcing().loadByIDAsync(entity1.getID());
+        await TestEntity.loader(viewerContextInternal).loadByIDAsync(entity1.getID());
 
         openBarrier2!();
       })(),
@@ -203,12 +201,11 @@ describe('Entity cache inconsistency', () => {
       createFullIntegrationTestEntityCompanionProvider(knexInstance, redisCacheAdapterContext)
     );
 
-    const loadedById = await TestEntity.loader(viewerContextLast)
-      .enforcing()
-      .loadByIDAsync(entity1.getID());
-    const loadedByField = await TestEntity.loader(viewerContextLast)
-      .enforcing()
-      .loadByFieldEqualingAsync('other_string', 'hello');
+    const loadedById = await TestEntity.loader(viewerContextLast).loadByIDAsync(entity1.getID());
+    const loadedByField = await TestEntity.loader(viewerContextLast).loadByFieldEqualingAsync(
+      'other_string',
+      'hello'
+    );
 
     expect(loadedById.getField('third_string')).toEqual('updated');
     expect(loadedByField!.getField('third_string')).toEqual('updated');

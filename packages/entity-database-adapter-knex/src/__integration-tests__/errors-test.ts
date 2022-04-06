@@ -60,7 +60,7 @@ describe('postgres errors', () => {
     const vc2 = new ViewerContext(
       createKnexIntegrationTestEntityCompanionProvider(shortTimeoutKnexInstance)
     );
-    await expect(ErrorsTestEntity.loader(vc2).enforcing().loadByIDAsync(1)).rejects.toThrow(
+    await expect(ErrorsTestEntity.loader(vc2).loadByIDAsync(1)).rejects.toThrow(
       EntityDatabaseAdapterTransientError
     );
     await shortTimeoutKnexInstance.destroy();

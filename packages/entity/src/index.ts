@@ -7,7 +7,7 @@
 export { default as ComposedEntityCacheAdapter } from './ComposedEntityCacheAdapter';
 export { default as ComposedSecondaryEntityCache } from './ComposedSecondaryEntityCache';
 export { default as GenericSecondaryEntityCache } from './GenericSecondaryEntityCache';
-export { default as EnforcingEntityLoader } from './EnforcingEntityLoader';
+export { default as EntityResultLoader } from './EntityResultLoader';
 export { default as Entity } from './Entity';
 export * from './Entity';
 export { default as EntityAssociationLoader } from './EntityAssociationLoader';

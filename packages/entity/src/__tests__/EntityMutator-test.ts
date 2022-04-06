@@ -530,7 +530,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id2)
+          .resultLoader.loadByIDAsync(id2)
       );
 
       const updatedEntity = await entityMutatorFactory
@@ -545,7 +545,7 @@ describe(EntityMutatorFactory, () => {
       const reloadedEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id2)
+          .resultLoader.loadByIDAsync(id2)
       );
       expect(reloadedEntity.getAllFields()).toMatchObject(updatedEntity.getAllFields());
     });
@@ -582,7 +582,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id2)
+          .resultLoader.loadByIDAsync(id2)
       );
 
       await entityMutatorFactory
@@ -633,7 +633,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id2)
+          .resultLoader.loadByIDAsync(id2)
       );
 
       await entityMutatorFactory
@@ -687,7 +687,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id2)
+          .resultLoader.loadByIDAsync(id2)
       );
 
       await entityMutatorFactory
@@ -723,7 +723,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id1)
+          .resultLoader.loadByIDAsync(id1)
       );
       expect(existingEntity).toBeTruthy();
 
@@ -735,7 +735,7 @@ describe(EntityMutatorFactory, () => {
         enforceAsyncResult(
           entityLoaderFactory
             .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-            .loadByIDAsync(id1)
+            .resultLoader.loadByIDAsync(id1)
         )
       ).rejects.toBeInstanceOf(Error);
     });
@@ -763,7 +763,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id1)
+          .resultLoader.loadByIDAsync(id1)
       );
 
       await entityMutatorFactory
@@ -804,7 +804,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id1)
+          .resultLoader.loadByIDAsync(id1)
       );
 
       await entityMutatorFactory
@@ -849,7 +849,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id1)
+          .resultLoader.loadByIDAsync(id1)
       );
 
       await entityMutatorFactory
@@ -882,7 +882,7 @@ describe(EntityMutatorFactory, () => {
     const entites1 = await enforceResultsAsync(
       entityLoaderFactory
         .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-        .loadManyByFieldEqualingAsync('stringField', 'huh')
+        .resultLoader.loadManyByFieldEqualingAsync('stringField', 'huh')
     );
     expect(entites1).toHaveLength(1);
 
@@ -896,7 +896,7 @@ describe(EntityMutatorFactory, () => {
     const entities2 = await enforceResultsAsync(
       entityLoaderFactory
         .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-        .loadManyByFieldEqualingAsync('stringField', 'huh')
+        .resultLoader.loadManyByFieldEqualingAsync('stringField', 'huh')
     );
     expect(entities2).toHaveLength(2);
   });

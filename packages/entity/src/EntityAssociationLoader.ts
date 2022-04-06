@@ -71,7 +71,9 @@ export default class EntityAssociationLoader<
       .getLoaderFactory()
       .forLoad(queryContext, { cascadingDeleteCause: null });
 
-    return (await loader.loadByIDAsync(associatedEntityID as unknown as TAssociatedID)) as Result<
+    return (await loader.resultLoader.loadByIDAsync(
+      associatedEntityID as unknown as TAssociatedID
+    )) as Result<
       null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity
     >;
   }
@@ -124,7 +126,7 @@ export default class EntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getLoaderFactory()
       .forLoad(queryContext, { cascadingDeleteCause: null });
-    return await loader.loadManyByFieldEqualingAsync(
+    return await loader.resultLoader.loadManyByFieldEqualingAsync(
       associatedEntityFieldContainingThisID,
       thisID as any
     );
@@ -181,7 +183,7 @@ export default class EntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getLoaderFactory()
       .forLoad(queryContext, { cascadingDeleteCause: null });
-    return await loader.loadByFieldEqualingAsync(
+    return await loader.resultLoader.loadByFieldEqualingAsync(
       associatedEntityLookupByField,
       associatedFieldValue as any
     );
@@ -239,7 +241,7 @@ export default class EntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getLoaderFactory()
       .forLoad(queryContext, { cascadingDeleteCause: null });
-    return await loader.loadManyByFieldEqualingAsync(
+    return await loader.resultLoader.loadManyByFieldEqualingAsync(
       associatedEntityLookupByField,
       associatedFieldValue as any
     );

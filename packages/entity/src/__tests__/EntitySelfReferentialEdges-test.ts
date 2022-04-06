@@ -98,25 +98,25 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
       .enforceCreateAsync();
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(parentCategory.getID())
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(subCategory.getID())
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subSubCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(subSubCategory.getID())
     ).resolves.not.toBeNull();
 
     await CategoryEntity.enforceDeleteAsync(parentCategory);
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(parentCategory.getID())
     ).resolves.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(subCategory.getID())
     ).resolves.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subSubCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(subSubCategory.getID())
     ).resolves.toBeNull();
   });
 
@@ -137,10 +137,10 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
     await CategoryEntity.enforceDeleteAsync(categoryA);
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(categoryA.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(categoryA.getID())
     ).resolves.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(categoryB.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(categoryB.getID())
     ).resolves.toBeNull();
   });
 });
@@ -161,29 +161,29 @@ describe('EntityEdgeDeletionBehavior.SET_NULL', () => {
       .enforceCreateAsync();
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(parentCategory.getID())
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(subCategory.getID())
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subSubCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(subSubCategory.getID())
     ).resolves.not.toBeNull();
 
     await CategoryEntity.enforceDeleteAsync(parentCategory);
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(parentCategory.getID())
     ).resolves.toBeNull();
 
-    const loadedSubCategory = await CategoryEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(subCategory.getID());
+    const loadedSubCategory = await CategoryEntity.loader(viewerContext).loadByIDAsync(
+      subCategory.getID()
+    );
     expect(loadedSubCategory.getField('parent_category_id')).toBeNull();
 
-    const loadedSubSubCategory = await CategoryEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(subSubCategory.getID());
+    const loadedSubSubCategory = await CategoryEntity.loader(viewerContext).loadByIDAsync(
+      subSubCategory.getID()
+    );
     expect(loadedSubSubCategory.getField('parent_category_id')).not.toBeNull();
   });
 
@@ -203,9 +203,9 @@ describe('EntityEdgeDeletionBehavior.SET_NULL', () => {
 
     await CategoryEntity.enforceDeleteAsync(categoryA);
 
-    const loadedCategoryB = await CategoryEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(categoryB.getID());
+    const loadedCategoryB = await CategoryEntity.loader(viewerContext).loadByIDAsync(
+      categoryB.getID()
+    );
     expect(loadedCategoryB.getField('parent_category_id')).toBeNull();
   });
 });
@@ -228,17 +228,19 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
       .enforceCreateAsync();
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(parentCategory.getID())
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext)
-        .enforcing()
-        .loadByFieldEqualingAsync('parent_category_id', parentCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByFieldEqualingAsync(
+        'parent_category_id',
+        parentCategory.getID()
+      )
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext)
-        .enforcing()
-        .loadByFieldEqualingAsync('parent_category_id', subCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByFieldEqualingAsync(
+        'parent_category_id',
+        subCategory.getID()
+      )
     ).resolves.not.toBeNull();
 
     const categoryCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(
@@ -271,13 +273,13 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     expect(subSubCategoryCachedAfter.get(subCategory.getID())?.status).toEqual(CacheStatus.MISS);
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(parentCategory.getID())
     ).resolves.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(subCategory.getID())
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subSubCategory.getID())
+      CategoryEntity.loader(viewerContext).loadByIDNullableAsync(subSubCategory.getID())
     ).resolves.not.toBeNull();
   });
 
@@ -298,14 +300,16 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
       .enforceUpdateAsync();
 
     await expect(
-      CategoryEntity.loader(viewerContext)
-        .enforcing()
-        .loadByFieldEqualingAsync('parent_category_id', categoryA.getID())
+      CategoryEntity.loader(viewerContext).loadByFieldEqualingAsync(
+        'parent_category_id',
+        categoryA.getID()
+      )
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext)
-        .enforcing()
-        .loadByFieldEqualingAsync('parent_category_id', categoryB.getID())
+      CategoryEntity.loader(viewerContext).loadByFieldEqualingAsync(
+        'parent_category_id',
+        categoryB.getID()
+      )
     ).resolves.not.toBeNull();
 
     const categoryCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(

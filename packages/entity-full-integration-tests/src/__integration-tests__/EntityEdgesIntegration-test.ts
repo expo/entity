@@ -87,22 +87,20 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).loadByIDNullableAsync(parent.getID())
       ).resolves.not.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext)
-          .enforcing()
-          .loadByFieldEqualingAsync('parent_id', parent.getID())
+        ChildEntity.loader(viewerContext).loadByFieldEqualingAsync('parent_id', parent.getID())
       ).resolves.not.toBeNull();
 
       await ParentEntity.enforceDeleteAsync(parent);
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).loadByIDNullableAsync(parent.getID())
       ).resolves.toBeNull();
 
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext).loadByIDNullableAsync(child.getID())
       ).resolves.toBeNull();
     });
   });
