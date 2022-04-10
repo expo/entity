@@ -1,6 +1,6 @@
 import { EntityCacheAdapter, EntityConfiguration, CacheLoadResult, mapKeys } from '@expo/entity';
 import invariant from 'invariant';
-import { Redis } from 'ioredis';
+import type { Redis } from 'ioredis';
 
 import GenericRedisCacher from './GenericRedisCacher';
 

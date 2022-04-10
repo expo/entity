@@ -30,12 +30,10 @@
     "@expo/entity": "*",
     "@expo/entity-cache-adapter-redis": "*"
   },
-  "dependencies": {
-    "ioredis": "^4.17.3"
-  },
   "devDependencies": {
     "@expo/entity": "^0.25.3",
     "@expo/entity-cache-adapter-redis": "^0.25.3",
+    "ioredis": "^5.0.4",
     "nullthrows": "^1.1.1"
   }
 }
