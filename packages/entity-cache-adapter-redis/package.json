@@ -27,12 +27,11 @@
   "author": "Expo",
   "license": "MIT",
   "peerDependencies": {
-    "@expo/entity": "*"
-  },
-  "dependencies": {
-    "ioredis": "^4.27.3"
+    "@expo/entity": "*",
+    "ioredis": ">=5"
   },
   "devDependencies": {
-    "@expo/entity": "^0.25.3"
+    "@expo/entity": "^0.25.3",
+    "ioredis": "^5.0.4"
   }
 }
