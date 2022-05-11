@@ -29,6 +29,12 @@ export abstract class EntityQueryContext {
   ): Promise<T>;
 }
 
+/**
+ * Entity framework representation of a non-transactional query execution unit.
+ * When supplied to {@link EntityMutator} and {@link EntityLoader} methods, they will be
+ * run independently of any running transaction (though mutations start their own
+ * independent transactions internally when not being run in a transaction).
+ */
 export class EntityNonTransactionalQueryContext extends EntityQueryContext {
   constructor(
     queryInterface: any,
@@ -48,6 +54,11 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
   }
 }
 
+/**
+ * Entity framework representation of a transactional query execution unit. When supplied
+ * to {@link EntityMutator} and {@link EntityLoader} methods, those methods and their
+ * dependent triggers and validators will run within the transaction.
+ */
 export class EntityTransactionalQueryContext extends EntityQueryContext {
   private readonly postCommitInvalidationCallbacks: PostCommitCallback[] = [];
   private readonly postCommitCallbacks: PostCommitCallback[] = [];
