@@ -19,9 +19,24 @@ export type EntityPrivacyPolicyEvaluationContext = {
   cascadingDeleteCause: EntityCascadingDeletionInfo | null;
 };
 
+/**
+ * Evaluation mode for a {@link EntityPrivacyPolicy}. Useful when transitioning to
+ * using Entity for privacy.
+ */
 export enum EntityPrivacyPolicyEvaluationMode {
+  /**
+   * Enforce this privacy policy. Throw upon denial.
+   */
   ENFORCE,
+
+  /**
+   * Do not enforce this privacy policy. Always allow but log when it would have denied.
+   */
   DRY_RUN,
+
+  /**
+   * Enforce this privacy policy. Throw and log upon denial.
+   */
   ENFORCE_AND_LOG,
 }
 

@@ -11,7 +11,10 @@ import {
   timeAndLogLoadEventAsync,
   timeAndLogLoadMapEventAsync,
 } from '../metrics/EntityMetricsUtils';
-import IEntityMetricsAdapter, { EntityMetricsLoadType } from '../metrics/IEntityMetricsAdapter';
+import IEntityMetricsAdapter, {
+  EntityMetricsLoadType,
+  IncrementLoadCountEventType,
+} from '../metrics/IEntityMetricsAdapter';
 import { computeIfAbsent, zipToMap } from '../utils/collections/maps';
 import ReadThroughEntityCache from './ReadThroughEntityCache';
 
@@ -57,7 +60,8 @@ export default class EntityDataManager<TFields> {
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
-    this.metricsAdapter.incrementDataManagerCacheLoadCount({
+    this.metricsAdapter.incrementDataManagerLoadCount({
+      type: IncrementLoadCountEventType.CACHE,
       fieldValueCount: fieldValues.length,
       entityClassName: this.entityClassName,
     });
@@ -65,7 +69,8 @@ export default class EntityDataManager<TFields> {
       fieldName,
       fieldValues,
       async (fetcherValues) => {
-        this.metricsAdapter.incrementDataManagerDatabaseLoadCount({
+        this.metricsAdapter.incrementDataManagerLoadCount({
+          type: IncrementLoadCountEventType.DATABASE,
           fieldValueCount: fieldValues.length,
           entityClassName: this.entityClassName,
         });
@@ -117,7 +122,8 @@ export default class EntityDataManager<TFields> {
       return await this.databaseAdapter.fetchManyWhereAsync(queryContext, fieldName, fieldValues);
     }
 
-    this.metricsAdapter.incrementDataManagerDataloaderLoadCount({
+    this.metricsAdapter.incrementDataManagerLoadCount({
+      type: IncrementLoadCountEventType.DATALOADER,
       fieldValueCount: fieldValues.length,
       entityClassName: this.entityClassName,
     });
