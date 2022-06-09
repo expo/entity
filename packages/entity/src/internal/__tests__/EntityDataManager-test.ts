@@ -4,7 +4,6 @@ import {
   when,
   anything,
   verify,
-  anyNumber,
   objectContaining,
   spy,
   anyString,
@@ -13,7 +12,10 @@ import {
 } from 'ts-mockito';
 
 import EntityDatabaseAdapter from '../../EntityDatabaseAdapter';
-import IEntityMetricsAdapter, { EntityMetricsLoadType } from '../../metrics/IEntityMetricsAdapter';
+import IEntityMetricsAdapter, {
+  EntityMetricsLoadType,
+  IncrementLoadCountEventType,
+} from '../../metrics/IEntityMetricsAdapter';
 import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
 import TestEntity, { testEntityConfiguration, TestFields } from '../../testfixtures/TestEntity';
 import {
@@ -519,24 +521,27 @@ describe(EntityDataManager, () => {
     ).once();
 
     verify(
-      metricsAdapterMock.incrementDataManagerDataloaderLoadCount(
+      metricsAdapterMock.incrementDataManagerLoadCount(
         deepEqual({
+          type: IncrementLoadCountEventType.DATALOADER,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
         })
       )
     ).once();
     verify(
-      metricsAdapterMock.incrementDataManagerCacheLoadCount(
+      metricsAdapterMock.incrementDataManagerLoadCount(
         deepEqual({
+          type: IncrementLoadCountEventType.CACHE,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
         })
       )
     ).once();
     verify(
-      metricsAdapterMock.incrementDataManagerDatabaseLoadCount(
+      metricsAdapterMock.incrementDataManagerLoadCount(
         deepEqual({
+          type: IncrementLoadCountEventType.DATABASE,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
         })
@@ -565,9 +570,7 @@ describe(EntityDataManager, () => {
       )
     ).once();
 
-    verify(metricsAdapterMock.incrementDataManagerDataloaderLoadCount(anyNumber())).never();
-    verify(metricsAdapterMock.incrementDataManagerCacheLoadCount(anyNumber())).never();
-    verify(metricsAdapterMock.incrementDataManagerDatabaseLoadCount(anyNumber())).never();
+    verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).never();
   });
 
   it('throws when a load-by value is null or undefined', async () => {
