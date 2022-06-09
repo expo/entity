@@ -70,7 +70,7 @@ export enum IncrementLoadCountEventType {
   CACHE,
 
   /**
-   * Type for when a database load is initiated due to a dataloader and cache miss.
+   * Type for when a database load is initiated due to a dataloader and cache miss, when an entity query doesn't support caching, or during a transaction.
    */
   DATABASE,
 }
