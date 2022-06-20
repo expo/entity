@@ -30,7 +30,7 @@ router.get('/', async (ctx: ExampleContext) => {
 
 router.get('/:id', async (ctx: ExampleContext) => {
   const viewerContext = ctx.state.viewerContext;
-  const noteResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params.id);
+  const noteResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params['id']!);
   if (!noteResult.ok) {
     ctx.throw(403, noteResult.reason);
   }
@@ -69,7 +69,7 @@ router.put('/:id', async (ctx: ExampleContext) => {
   const viewerContext = ctx.state.viewerContext;
   const { title, body } = ctx.request.body;
 
-  const noteLoadResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params.id);
+  const noteLoadResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params['id']!);
   if (!noteLoadResult.ok) {
     ctx.throw(403, noteLoadResult.reason);
   }
@@ -90,7 +90,7 @@ router.put('/:id', async (ctx: ExampleContext) => {
 router.delete('/:id', async (ctx: ExampleContext) => {
   const viewerContext = ctx.state.viewerContext;
 
-  const noteLoadResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params.id);
+  const noteLoadResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params['id']!);
   if (!noteLoadResult.ok) {
     ctx.throw(403, noteLoadResult.reason);
   }

@@ -126,7 +126,9 @@ export default class EntityLoader<
     const entityResults = await this.loadManyByFieldEqualingAsync(uniqueFieldName, fieldValue);
     invariant(
       entityResults.length <= 1,
-      `loadByFieldEqualing: Multiple entities of type ${this.entityClass.name} found for ${uniqueFieldName}=${fieldValue}`
+      `loadByFieldEqualing: Multiple entities of type ${this.entityClass.name} found for ${String(
+        uniqueFieldName
+      )}=${fieldValue}`
     );
     return entityResults[0] ?? null;
   }
@@ -350,7 +352,7 @@ export default class EntityLoader<
     fieldValues: readonly TFields[N][]
   ): void {
     const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
-    invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
+    invariant(fieldDefinition, `must have field definition for field = ${String(fieldName)}`);
     for (const fieldValue of fieldValues) {
       const isInputValid = fieldDefinition.validateInputValue(fieldValue);
       if (!isInputValid) {

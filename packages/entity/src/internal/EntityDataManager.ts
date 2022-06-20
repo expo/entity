@@ -113,7 +113,9 @@ export default class EntityDataManager<TFields> {
     );
     if (nullOrUndefinedValueIndex >= 0) {
       throw new Error(
-        `Invalid load: ${this.entityClassName} (${fieldName} = ${fieldValues[nullOrUndefinedValueIndex]})`
+        `Invalid load: ${this.entityClassName} (${String(fieldName)} = ${
+          fieldValues[nullOrUndefinedValueIndex]
+        })`
       );
     }
 

@@ -34,6 +34,6 @@ export default class EntityInvalidFieldValueError<
     fieldName: N,
     fieldValue?: TFields[N]
   ) {
-    super(`Entity field not valid: ${entityClass.name} (${fieldName} = ${fieldValue})`);
+    super(`Entity field not valid: ${entityClass.name} (${String(fieldName)} = ${fieldValue})`);
   }
 }
