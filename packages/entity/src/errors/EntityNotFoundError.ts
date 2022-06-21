@@ -34,6 +34,6 @@ export default class EntityNotFoundError<
     fieldName: N,
     fieldValue: TFields[N]
   ) {
-    super(`Entity not found: ${entityClass.name} (${fieldName} = ${fieldValue})`);
+    super(`Entity not found: ${entityClass.name} (${String(fieldName)} = ${fieldValue})`);
   }
 }

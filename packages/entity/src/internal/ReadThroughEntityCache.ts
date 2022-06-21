@@ -102,7 +102,9 @@ export default class ReadThroughEntityCache<TFields> {
           // TODO(wschurman): emit or throw here since console may not be available
           // eslint-disable-next-line no-console
           console.warn(
-            `unique key ${fieldName} in ${this.entityConfiguration.tableName} returned multiple rows for ${fieldValue}`
+            `unique key ${String(fieldName)} in ${
+              this.entityConfiguration.tableName
+            } returned multiple rows for ${fieldValue}`
           );
           continue;
         }

@@ -24,7 +24,7 @@ export const getDatabaseFieldForEntityField = <TFields>(
   entityField: keyof TFields
 ): string => {
   const databaseField = entityConfiguration.entityToDBFieldsKeyMapping.get(entityField);
-  invariant(databaseField, `database field mapping missing for ${entityField}`);
+  invariant(databaseField, `database field mapping missing for ${String(entityField)}`);
   return databaseField!;
 };
 

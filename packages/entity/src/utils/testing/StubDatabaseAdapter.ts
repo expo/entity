@@ -158,7 +158,10 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
 
   private generateRandomID(): any {
     const idSchemaField = this.entityConfiguration2.schema.get(this.entityConfiguration2.idField);
-    invariant(idSchemaField, `No schema field found for ${this.entityConfiguration2.idField}`);
+    invariant(
+      idSchemaField,
+      `No schema field found for ${String(this.entityConfiguration2.idField)}`
+    );
     if (idSchemaField instanceof StringField) {
       return uuidv4();
     } else if (idSchemaField instanceof IntField) {

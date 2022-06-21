@@ -113,7 +113,7 @@ export default class RedisCacheAdapter<TFields> extends EntityCacheAdapter<TFiel
     fieldValue: NonNullable<TFields[N]>
   ): string {
     const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
-    invariant(columnName, `database field mapping missing for ${fieldName}`);
+    invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
     return this.context.makeKeyFn(
       this.context.cacheKeyPrefix,
       this.entityConfiguration.tableName,

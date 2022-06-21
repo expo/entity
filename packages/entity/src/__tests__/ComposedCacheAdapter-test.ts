@@ -95,7 +95,7 @@ class TestLocalCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
     fieldValue: NonNullable<TFields[N]>
   ): string {
     const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
-    invariant(columnName, `database field mapping missing for ${fieldName}`);
+    invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
     const parts = [
       this.entityConfiguration.tableName,
       `${this.entityConfiguration.cacheKeyVersion}`,
