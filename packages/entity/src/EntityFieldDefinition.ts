@@ -121,12 +121,20 @@ export abstract class EntityFieldDefinition<T> {
    * - EntityLoader.loadByFieldValue - to ensure the value being loaded by is a valid value
    * - EntityMutator.setField - to ensure the value being set is a valid value
    */
-  public validateInputValue(value: T | null | undefined): boolean {
+  public validateAndTransformInputValue(
+    value: T | null | undefined
+  ): { isValid: false } | { isValid: true; transformedValue: T | null | undefined } {
     if (value === null || value === undefined) {
-      return true;
+      return { isValid: true, transformedValue: value };
     }
 
-    return this.validateInputValueInternal(value);
+    return this.validateAndTransformInputValueInternal(value);
   }
-  protected abstract validateInputValueInternal(value: T): boolean;
+  protected abstract validateAndTransformInputValueInternal(
+    value: T
+  ): { isValid: false } | { isValid: true; transformedValue: T };
+
+  public transformInputValue(value: T): T {
+    return value;
+  }
 }

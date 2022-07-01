@@ -6,8 +6,28 @@ import { EntityFieldDefinition } from './EntityFieldDefinition';
  * {@link EntityFieldDefinition} for a column with a JS string type.
  */
 export class StringField extends EntityFieldDefinition<string> {
-  protected validateInputValueInternal(value: string): boolean {
-    return typeof value === 'string';
+  protected validateAndTransformInputValueInternal(
+    value: string
+  ): { isValid: false } | { isValid: true; transformedValue: string } {
+    return typeof value === 'string'
+      ? { isValid: true, transformedValue: value }
+      : { isValid: false };
+  }
+}
+
+/**
+ * {@link EntityFieldDefinition} for a column with a JS string type in which
+ * stored values are lower-cased.
+ */
+export class LowercaseStringField extends StringField {
+  protected override validateAndTransformInputValueInternal(
+    value: string
+  ): { isValid: false } | { isValid: true; transformedValue: string } {
+    const superValue = super.validateAndTransformInputValueInternal(value);
+    if (superValue.isValid) {
+      return { isValid: true, transformedValue: superValue.transformedValue.toLowerCase() };
+    }
+    return { isValid: false };
   }
 }
 
@@ -16,8 +36,14 @@ export class StringField extends EntityFieldDefinition<string> {
  * Enforces that the string is a valid UUID.
  */
 export class UUIDField extends StringField {
-  protected override validateInputValueInternal(value: string): boolean {
-    return validateUUID(value);
+  public override validateAndTransformInputValueInternal(
+    value: string
+  ): { isValid: false } | { isValid: true; transformedValue: string } {
+    const superValue = super.validateAndTransformInputValueInternal(value);
+    if (superValue.isValid && validateUUID(superValue.transformedValue)) {
+      return { isValid: true, transformedValue: superValue.transformedValue };
+    }
+    return { isValid: false };
   }
 }
 
@@ -25,8 +51,10 @@ export class UUIDField extends StringField {
  * {@link EntityFieldDefinition} for a column with a JS Date type.
  */
 export class DateField extends EntityFieldDefinition<Date> {
-  protected validateInputValueInternal(value: Date): boolean {
-    return value instanceof Date;
+  protected validateAndTransformInputValueInternal(
+    value: Date
+  ): { isValid: false } | { isValid: true; transformedValue: Date } {
+    return value instanceof Date ? { isValid: true, transformedValue: value } : { isValid: false };
   }
 }
 
@@ -34,8 +62,12 @@ export class DateField extends EntityFieldDefinition<Date> {
  * {@link EntityFieldDefinition} for a column with a JS boolean type.
  */
 export class BooleanField extends EntityFieldDefinition<boolean> {
-  protected validateInputValueInternal(value: boolean): boolean {
-    return typeof value === 'boolean';
+  protected validateAndTransformInputValueInternal(
+    value: boolean
+  ): { isValid: false } | { isValid: true; transformedValue: boolean } {
+    return typeof value === 'boolean'
+      ? { isValid: true, transformedValue: value }
+      : { isValid: false };
   }
 }
 
@@ -44,8 +76,12 @@ export class BooleanField extends EntityFieldDefinition<boolean> {
  * Enforces that the number is an integer.
  */
 export class IntField extends EntityFieldDefinition<number> {
-  protected validateInputValueInternal(value: number): boolean {
-    return typeof value === 'number' && Number.isInteger(value);
+  protected validateAndTransformInputValueInternal(
+    value: number
+  ): { isValid: false } | { isValid: true; transformedValue: number } {
+    return typeof value === 'number' && Number.isInteger(value)
+      ? { isValid: true, transformedValue: value }
+      : { isValid: false };
   }
 }
 
@@ -54,8 +90,12 @@ export class IntField extends EntityFieldDefinition<number> {
  * Enforces that the number is a float (which includes integers in JS).
  */
 export class FloatField extends EntityFieldDefinition<number> {
-  protected validateInputValueInternal(value: number): boolean {
-    return typeof value === 'number';
+  protected validateAndTransformInputValueInternal(
+    value: number
+  ): { isValid: false } | { isValid: true; transformedValue: number } {
+    return typeof value === 'number'
+      ? { isValid: true, transformedValue: value }
+      : { isValid: false };
   }
 }
 
@@ -64,8 +104,12 @@ export class FloatField extends EntityFieldDefinition<number> {
  * Enforces that every member of the string array is a string.
  */
 export class StringArrayField extends EntityFieldDefinition<string[]> {
-  protected validateInputValueInternal(value: string[]): boolean {
-    return Array.isArray(value) && value.every((subValue) => typeof subValue === 'string');
+  protected validateAndTransformInputValueInternal(
+    value: string[]
+  ): { isValid: false } | { isValid: true; transformedValue: string[] } {
+    return Array.isArray(value) && value.every((subValue) => typeof subValue === 'string')
+      ? { isValid: true, transformedValue: value }
+      : { isValid: false };
   }
 }
 
@@ -73,8 +117,12 @@ export class StringArrayField extends EntityFieldDefinition<string[]> {
  * {@link EntityFieldDefinition} for a column with a JS JSON object type.
  */
 export class JSONObjectField extends EntityFieldDefinition<object> {
-  protected validateInputValueInternal(value: object): boolean {
-    return typeof value === 'object' && !Array.isArray(value);
+  protected validateAndTransformInputValueInternal(
+    value: object
+  ): { isValid: false } | { isValid: true; transformedValue: object } {
+    return typeof value === 'object' && !Array.isArray(value)
+      ? { isValid: true, transformedValue: value }
+      : { isValid: false };
   }
 }
 
@@ -82,8 +130,12 @@ export class JSONObjectField extends EntityFieldDefinition<object> {
  * {@link EntityFieldDefinition} for a enum column with a JS string or number type.
  */
 export class EnumField extends EntityFieldDefinition<string | number> {
-  protected validateInputValueInternal(value: string | number): boolean {
-    return typeof value === 'number' || typeof value === 'string';
+  protected validateAndTransformInputValueInternal(
+    value: string | number
+  ): { isValid: false } | { isValid: true; transformedValue: string | number } {
+    return typeof value === 'number' || typeof value === 'string'
+      ? { isValid: true, transformedValue: value }
+      : { isValid: false };
   }
 }
 
@@ -91,8 +143,10 @@ export class EnumField extends EntityFieldDefinition<string | number> {
  * {@link EntityFieldDefinition} for a column with a JS JSON array type.
  */
 export class JSONArrayField extends EntityFieldDefinition<any[]> {
-  protected validateInputValueInternal(value: any[]): boolean {
-    return Array.isArray(value);
+  protected validateAndTransformInputValueInternal(
+    value: any[]
+  ): { isValid: false } | { isValid: true; transformedValue: any[] } {
+    return Array.isArray(value) ? { isValid: true, transformedValue: value } : { isValid: false };
   }
 }
 
@@ -101,7 +155,9 @@ export class JSONArrayField extends EntityFieldDefinition<any[]> {
  * Does not do any validation.
  */
 export class MaybeJSONArrayField extends EntityFieldDefinition<any | any[]> {
-  protected validateInputValueInternal(_value: any): boolean {
-    return true;
+  protected validateAndTransformInputValueInternal(
+    value: any
+  ): { isValid: false } | { isValid: true; transformedValue: any } {
+    return { isValid: true, transformedValue: value };
   }
 }

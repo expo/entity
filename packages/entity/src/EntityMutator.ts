@@ -81,16 +81,22 @@ abstract class BaseMutator<
     protected readonly metricsAdapter: IEntityMetricsAdapter
   ) {}
 
-  protected validateFields(fields: Partial<TFields>): void {
+  protected validateAndTransformFields(fields: Partial<TFields>): Partial<TFields> {
+    const result: Partial<TFields> = {};
+
     for (const fieldName in fields) {
       const fieldValue = fields[fieldName];
       const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
       invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
-      const isInputValid = fieldDefinition.validateInputValue(fieldValue);
-      if (!isInputValid) {
+      const validationResult = fieldDefinition.validateAndTransformInputValue(fieldValue);
+      if (validationResult.isValid) {
+        result[fieldName] = validationResult.transformedValue;
+      } else {
         throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
       }
     }
+
+    return result;
   }
 
   protected async executeMutationValidatorsAsync(
@@ -210,11 +216,13 @@ export class CreateMutator<
   private async createInternalAsync(
     queryContext: EntityTransactionalQueryContext
   ): Promise<Result<TEntity>> {
-    this.validateFields(this.fieldsForEntity);
+    const transformedAndValidatedFieldsForEntity = this.validateAndTransformFields(
+      this.fieldsForEntity
+    );
 
     const temporaryEntityForPrivacyCheck = new this.entityClass(this.viewerContext, {
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
-      ...this.fieldsForEntity,
+      ...transformedAndValidatedFieldsForEntity,
     } as unknown as TFields);
 
     const authorizeCreateResult = await asyncResult(
@@ -249,7 +257,10 @@ export class CreateMutator<
       { type: EntityMutationType.CREATE }
     );
 
-    const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
+    const insertResult = await this.databaseAdapter.insertAsync(
+      queryContext,
+      transformedAndValidatedFieldsForEntity
+    );
 
     const entityLoader = this.entityLoaderFactory.forLoad(
       this.viewerContext,
@@ -409,9 +420,14 @@ export class UpdateMutator<
   private async updateInternalAsync(
     queryContext: EntityTransactionalQueryContext
   ): Promise<Result<TEntity>> {
-    this.validateFields(this.updatedFields);
+    const transformedAndValidatedFieldsForEntity = this.validateAndTransformFields(
+      this.fieldsForEntity
+    ) as TFields;
 
-    const entityAboutToBeUpdated = new this.entityClass(this.viewerContext, this.fieldsForEntity);
+    const entityAboutToBeUpdated = new this.entityClass(
+      this.viewerContext,
+      transformedAndValidatedFieldsForEntity
+    );
     const authorizeUpdateResult = await asyncResult(
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
@@ -464,7 +480,7 @@ export class UpdateMutator<
       )
     );
     queryContext.appendPostCommitInvalidationCallback(
-      entityLoader.invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity)
+      entityLoader.invalidateFieldsAsync.bind(entityLoader, transformedAndValidatedFieldsForEntity)
     );
 
     const unauthorizedEntityAfterUpdate = new this.entityClass(this.viewerContext, updateResult);

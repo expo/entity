@@ -41,6 +41,7 @@ describe(EntityLoader, () => {
                 testIndexedField: 'h1',
                 intField: 5,
                 stringField: 'huh',
+                lowercasedField: 'lw1',
                 dateField: dateToInsert,
                 nullableField: null,
               },
@@ -49,6 +50,7 @@ describe(EntityLoader, () => {
                 testIndexedField: 'h2',
                 intField: 3,
                 stringField: 'huh',
+                lowercasedField: 'lw2',
                 dateField: dateToInsert,
                 nullableField: null,
               },
@@ -86,6 +88,11 @@ describe(EntityLoader, () => {
       entityLoader.loadManyByFieldEqualingAsync('stringField', 'huh')
     );
     expect(entities.map((m) => m.getID())).toEqual([id1, id2]);
+
+    const entitiesLoadedTransformedField = await enforceResultsAsync(
+      entityLoader.loadManyByFieldEqualingAsync('lowercasedField', 'LW1')
+    );
+    expect(entitiesLoadedTransformedField.map((m) => m.getID())).toEqual([id1]);
 
     const entityResultNumber3 = await entityLoader.loadByFieldEqualingAsync('intField', 3);
     expect(entityResultNumber3).not.toBeNull();
@@ -134,6 +141,7 @@ describe(EntityLoader, () => {
               {
                 customIdField: id1,
                 stringField: 'huh',
+                lowercasedField: 'lw1',
                 intField: 4,
                 testIndexedField: '4',
                 dateField: new Date(),
@@ -142,6 +150,7 @@ describe(EntityLoader, () => {
               {
                 customIdField: id2,
                 stringField: 'huh',
+                lowercasedField: 'lw2',
                 intField: 4,
                 testIndexedField: '5',
                 dateField: new Date(),
@@ -150,6 +159,7 @@ describe(EntityLoader, () => {
               {
                 customIdField: id3,
                 stringField: 'huh2',
+                lowercasedField: 'lw3',
                 intField: 4,
                 testIndexedField: '6',
                 dateField: new Date(),
@@ -231,6 +241,7 @@ describe(EntityLoader, () => {
               {
                 customIdField: id1,
                 stringField: 'huh',
+                lowercasedField: 'lw1',
                 testIndexedField: '1',
                 intField: 3,
                 dateField: new Date(),

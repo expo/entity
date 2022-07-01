@@ -7,6 +7,7 @@ import {
   TableQuerySelectionModifiers,
   TableFieldSingleValueEqualityCondition,
   TableFieldMultiValueEqualityCondition,
+  LowercaseStringField,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -34,6 +35,12 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
            * http://knexjs.org/#Schema-json
            */
           write: (val: any[] | any) => (Array.isArray(val) ? JSON.stringify(val) : val),
+        },
+      ],
+      [
+        LowercaseStringField.name,
+        {
+          write: (val: any) => (typeof val === 'string' ? val.toLowerCase() : val),
         },
       ],
     ]);

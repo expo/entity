@@ -1,4 +1,4 @@
-import { DateField } from '@expo/entity';
+import { DateField, LowercaseStringField } from '@expo/entity';
 
 export const redisTransformerMap = new Map([
   [
@@ -20,6 +20,12 @@ export const redisTransformerMap = new Map([
        */
       write: (val: Date) => val?.toISOString() ?? null,
       read: (val: any) => (val ? new Date(val) : val),
+    },
+  ],
+  [
+    LowercaseStringField.name,
+    {
+      write: (val: any) => (typeof val === 'string' ? val.toLowerCase() : val),
     },
   ],
 ]);

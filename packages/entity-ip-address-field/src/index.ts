@@ -4,4 +4,4 @@
  * @module @expo/entity-ip-address-field
  */
 
-export * from './EntityFields';
+export * from './IPAddressField';

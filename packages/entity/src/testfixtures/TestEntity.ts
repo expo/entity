@@ -3,7 +3,7 @@ import { result, Result } from '@expo/results';
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
-import { UUIDField, StringField, DateField, IntField } from '../EntityFields';
+import { UUIDField, StringField, DateField, IntField, LowercaseStringField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
@@ -12,6 +12,7 @@ export type TestFields = {
   customIdField: string;
   testIndexedField: string;
   stringField: string;
+  lowercasedField: string;
   intField: number;
   dateField: Date;
   nullableField: string | null;
@@ -30,6 +31,9 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields>({
     }),
     stringField: new StringField({
       columnName: 'string_field',
+    }),
+    lowercasedField: new LowercaseStringField({
+      columnName: 'lowercase_field',
     }),
     intField: new IntField({
       columnName: 'number_field',
@@ -86,6 +90,7 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
         customIdField: testValue,
         testIndexedField: 'hello',
         stringField: 'hello',
+        lowercasedField: 'hello',
         intField: 1,
         dateField: new Date(),
         nullableField: null,

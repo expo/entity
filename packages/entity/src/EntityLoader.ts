@@ -82,12 +82,15 @@ export default class EntityLoader<
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
-    this.validateFieldValues(fieldName, fieldValues);
+    const validatedAndTransformedFieldValues = this.validateAndTransformFieldValues(
+      fieldName,
+      fieldValues
+    );
 
     const fieldValuesToFieldObjects = await this.dataManager.loadManyByFieldEqualingAsync(
       this.queryContext,
       fieldName,
-      fieldValues
+      validatedAndTransformedFieldValues
     );
 
     return await this.constructAndAuthorizeEntitiesAsync(fieldValuesToFieldObjects);
@@ -199,16 +202,29 @@ export default class EntityLoader<
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
   ): Promise<readonly Result<TEntity>[]> {
-    for (const fieldEqualityOperand of fieldEqualityOperands) {
-      const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
-        ? [fieldEqualityOperand.fieldValue]
-        : fieldEqualityOperand.fieldValues;
-      this.validateFieldValues(fieldEqualityOperand.fieldName, fieldValues);
-    }
+    const validatedAndTransformedFieldEqualityOperands: FieldEqualityCondition<TFields, N>[] =
+      fieldEqualityOperands.map((fieldEqualityOperand) => {
+        if (isSingleValueFieldEqualityCondition(fieldEqualityOperand)) {
+          return {
+            ...fieldEqualityOperand,
+            fieldValue: this.validateAndTransformFieldValues(fieldEqualityOperand.fieldName, [
+              fieldEqualityOperand.fieldValue,
+            ])[0]!,
+          };
+        } else {
+          return {
+            ...fieldEqualityOperand,
+            fieldValues: this.validateAndTransformFieldValues(
+              fieldEqualityOperand.fieldName,
+              fieldEqualityOperand.fieldValues
+            ),
+          };
+        }
+      });
 
     const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
       this.queryContext,
-      fieldEqualityOperands,
+      validatedAndTransformedFieldEqualityOperands,
       querySelectionModifiers
     );
     const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
@@ -347,17 +363,19 @@ export default class EntityLoader<
     });
   }
 
-  private validateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
-    fieldName: N,
-    fieldValues: readonly TFields[N][]
-  ): void {
+  private validateAndTransformFieldValues<
+    N extends keyof Pick<TFields, TSelectedFields>,
+    T extends TFields[N]
+  >(fieldName: N, fieldValues: readonly T[]): readonly T[] {
     const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
     invariant(fieldDefinition, `must have field definition for field = ${String(fieldName)}`);
-    for (const fieldValue of fieldValues) {
-      const isInputValid = fieldDefinition.validateInputValue(fieldValue);
-      if (!isInputValid) {
+    return fieldValues.map((fieldValue) => {
+      const result = fieldDefinition.validateAndTransformInputValue(fieldValue);
+      if (result.isValid) {
+        return result.transformedValue;
+      } else {
         throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
       }
-    }
+    });
   }
 }
