@@ -15,8 +15,8 @@ export enum EntityEdgeDeletionBehavior {
 
   /**
    * Invalidate the cache for all entities that reference the entity
-   *  being deleted through this field. This is most useful when the database itself expresses
-   * foreign keys and cascading set nulls and the entity framework just needs to be
+   * being deleted through this field. This is most useful when the database itself expresses
+   * foreign keys and cascading "SET NULL"s and the entity framework just needs to be
    * kept consistent with the state of the database.
    */
   SET_NULL_INVALIDATE_CACHE_ONLY,

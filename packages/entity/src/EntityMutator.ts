@@ -396,6 +396,14 @@ export class UpdateMutator<
   }
 
   private async updateInTransactionAsync(
+    skipDatabaseUpdate: true,
+    cascadingDeleteCause: EntityCascadingDeletionInfo
+  ): Promise<Result<TEntity>>;
+  private async updateInTransactionAsync(
+    skipDatabaseUpdate: false,
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null
+  ): Promise<Result<TEntity>>;
+  private async updateInTransactionAsync(
     skipDatabaseUpdate: boolean,
     cascadingDeleteCause: EntityCascadingDeletionInfo | null
   ): Promise<Result<TEntity>> {

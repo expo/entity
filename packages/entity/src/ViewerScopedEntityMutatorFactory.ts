@@ -36,13 +36,8 @@ export default class ViewerScopedEntityMutatorFactory<
 
   forCreate(
     queryContext: EntityQueryContext
-    // privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
   ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return this.entityMutatorFactory.forCreate(
-      this.viewerContext,
-      queryContext
-      // privacyPolicyEvaluationContext
-    );
+    return this.entityMutatorFactory.forCreate(this.viewerContext, queryContext);
   }
 
   forUpdate(

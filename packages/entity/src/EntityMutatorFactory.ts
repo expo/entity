@@ -73,12 +73,10 @@ export default class EntityMutatorFactory<
   forCreate(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext
-    // privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
   ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new CreateMutator(
       viewerContext,
       queryContext,
-      // privacyPolicyEvaluationContext,
       this.entityConfiguration,
       this.entityClass,
       this.privacyPolicy,
