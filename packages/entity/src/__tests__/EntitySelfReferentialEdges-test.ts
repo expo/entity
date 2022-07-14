@@ -213,7 +213,7 @@ describe('EntityEdgeDeletionBehavior.SET_NULL', () => {
 describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
   it('invalidates the cache', async () => {
     const { CategoryEntity } = makeEntityClass(
-      EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE
+      EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY
     );
 
     const companionProvider = createUnitTestEntityCompanionProvider();
@@ -283,7 +283,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
 
   it('handles cycles', async () => {
     const { CategoryEntity } = makeEntityClass(
-      EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE
+      EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY
     );
 
     const companionProvider = createUnitTestEntityCompanionProvider();

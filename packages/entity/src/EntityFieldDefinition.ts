@@ -5,13 +5,21 @@ import ViewerContext from './ViewerContext';
 
 export enum EntityEdgeDeletionBehavior {
   /**
-   * Default. Invalidate the cache for all entities that reference the entity
+   * Invalidate the cache for all entities that reference the entity
    * being deleted through this field, and transitively run deletions on those entities.
    * This is most useful when the database itself expresses foreign
-   * keys and cascading deletes or set nulls and the entity framework just needs to
+   * keys and cascading deletes and the entity framework just needs to
    * be kept consistent with the state of the database.
    */
-  CASCADE_DELETE_INVALIDATE_CACHE,
+  CASCADE_DELETE_INVALIDATE_CACHE_ONLY,
+
+  /**
+   * Invalidate the cache for all entities that reference the entity
+   *  being deleted through this field. This is most useful when the database itself expresses
+   * foreign keys and cascading set nulls and the entity framework just needs to be
+   * kept consistent with the state of the database.
+   */
+  SET_NULL_INVALIDATE_CACHE_ONLY,
 
   /**
    * Delete all entities that reference the entity being deleted through this field. This is very similar
@@ -74,16 +82,17 @@ export interface EntityAssociationDefinition<
    *
    * @remarks
    * The entity framework doesn't prescribe a one-size-fits-all solution for referential
-   * integrity; instead it exposes mechanisms that supports both database foreign key constraints
+   * integrity; instead it exposes mechanisms that support both database foreign key constraints
    * and implicit entity-specified foreign keys. Choosing which approach to use often depends on
    * application requirements, and sometimes even a mix-and-match is the right choice.
    *
    * - If referential integrity is critical to your application, database foreign key constraints
-   *   combined with {@link EntityEdgeDeletionBehavior.CASACDE_DELETE_INVALIDATE_CACHE} are recommended.
+   *   combined with {@link EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY} or
+   *   {@link EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY} are recommended.
    * - If the database being used doesn't support foreign keys, then using the entity framework for referential
    *   integrity is recommended.
    */
-  edgeDeletionBehavior?: EntityEdgeDeletionBehavior;
+  edgeDeletionBehavior: EntityEdgeDeletionBehavior;
 }
 
 /**

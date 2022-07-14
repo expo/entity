@@ -92,11 +92,8 @@ async function createOrTruncatePostgresTables(knex: Knex): Promise<void> {
 }
 
 async function dropPostgresTable(knex: Knex): Promise<void> {
-  if (await knex.schema.hasTable('children')) {
-    await knex.schema.dropTable('children');
-  }
-  if (await knex.schema.hasTable('parents')) {
-    await knex.schema.dropTable('parents');
+  if (await knex.schema.hasTable('testentities')) {
+    await knex.schema.dropTable('testentities');
   }
 }
 

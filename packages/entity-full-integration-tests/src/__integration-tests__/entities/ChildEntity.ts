@@ -56,7 +56,7 @@ const childEntityConfiguration = new EntityConfiguration<ChildFields>({
       cache: true,
       association: {
         getAssociatedEntityClass: () => ParentEntity,
-        edgeDeletionBehavior: EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE,
+        edgeDeletionBehavior: EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY,
       },
     }),
   },

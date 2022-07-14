@@ -1,3 +1,5 @@
+import invariant from 'invariant';
+
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
@@ -33,9 +35,13 @@ interface GrandChildFields {
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
   const triggerExecutionCounts = {
-    ParentEntity: 0,
-    ChildEntity: 0,
-    GrandChildEntity: 0,
+    ParentEntityDeletion: 0,
+    ChildEntityDeletion: 0,
+    GrandChildEntityDeletion: 0,
+
+    ParentEntityUpdate: 0,
+    ChildEntityUpdate: 0,
+    GrandChildEntityUpdate: 0,
   };
 
   const privacyPolicyEvaluationRecords = {
@@ -107,7 +113,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     ];
   }
 
-  class ParentCheckInfoTrigger extends EntityMutationTrigger<
+  class ParentCheckInfoDeletionTrigger extends EntityMutationTrigger<
     ParentFields,
     string,
     TestViewerContext,
@@ -119,19 +125,37 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _entity: ParentEntity,
       mutationInfo: EntityTriggerMutationInfo<ParentFields, string, TestViewerContext, ParentEntity>
     ): Promise<void> {
-      if (mutationInfo.type !== EntityMutationType.DELETE) {
-        return;
-      }
-
+      invariant(mutationInfo.type === EntityMutationType.DELETE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause !== null) {
         throw new Error('Parent entity should not have casade delete cause');
       }
 
-      triggerExecutionCounts.ParentEntity++;
+      triggerExecutionCounts.ParentEntityDeletion++;
     }
   }
 
-  class ChildCheckInfoTrigger extends EntityMutationTrigger<
+  class ParentCheckInfoUpdateTrigger extends EntityMutationTrigger<
+    ParentFields,
+    string,
+    TestViewerContext,
+    ParentEntity
+  > {
+    async executeAsync(
+      _viewerContext: TestViewerContext,
+      _queryContext: EntityTransactionalQueryContext,
+      _entity: ParentEntity,
+      mutationInfo: EntityTriggerMutationInfo<ParentFields, string, TestViewerContext, ParentEntity>
+    ): Promise<void> {
+      invariant(mutationInfo.type === EntityMutationType.UPDATE, 'invalid EntityMutationType');
+      if (mutationInfo.cascadingDeleteCause !== null) {
+        throw new Error('Parent entity should not have casade delete cause');
+      }
+
+      triggerExecutionCounts.ParentEntityUpdate++;
+    }
+  }
+
+  class ChildCheckInfoDeletionTrigger extends EntityMutationTrigger<
     ChildFields,
     string,
     TestViewerContext,
@@ -143,10 +167,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _entity: ChildEntity,
       mutationInfo: EntityTriggerMutationInfo<ChildFields, string, TestViewerContext, ChildEntity>
     ): Promise<void> {
-      if (mutationInfo.type !== EntityMutationType.DELETE) {
-        return;
-      }
-
+      invariant(mutationInfo.type === EntityMutationType.DELETE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause === null) {
         throw new Error('Child entity should have casade delete cause');
       }
@@ -162,11 +183,43 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         throw new Error('Child entity should not have two-level casade delete cause');
       }
 
-      triggerExecutionCounts.ChildEntity++;
+      triggerExecutionCounts.ChildEntityDeletion++;
     }
   }
 
-  class GrandChildCheckInfoTrigger extends EntityMutationTrigger<
+  class ChildCheckInfoUpdateTrigger extends EntityMutationTrigger<
+    ChildFields,
+    string,
+    TestViewerContext,
+    ChildEntity
+  > {
+    async executeAsync(
+      _viewerContext: TestViewerContext,
+      _queryContext: EntityTransactionalQueryContext,
+      _entity: ChildEntity,
+      mutationInfo: EntityTriggerMutationInfo<ChildFields, string, TestViewerContext, ChildEntity>
+    ): Promise<void> {
+      invariant(mutationInfo.type === EntityMutationType.UPDATE, 'invalid EntityMutationType');
+      if (mutationInfo.cascadingDeleteCause === null) {
+        throw new Error('Child entity should have casade delete cause');
+      }
+
+      const cascadingDeleteCauseEntity = mutationInfo.cascadingDeleteCause.entity;
+      if (!(cascadingDeleteCauseEntity instanceof ParentEntity)) {
+        throw new Error('Child entity should have casade delete cause entity of type ParentEntity');
+      }
+
+      const secondLevelCascadingDeleteCause =
+        mutationInfo.cascadingDeleteCause.cascadingDeleteCause;
+      if (secondLevelCascadingDeleteCause) {
+        throw new Error('Child entity should not have two-level casade delete cause');
+      }
+
+      triggerExecutionCounts.ChildEntityUpdate++;
+    }
+  }
+
+  class GrandChildCheckInfoDeletionTrigger extends EntityMutationTrigger<
     GrandChildFields,
     string,
     TestViewerContext,
@@ -183,10 +236,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         GrandChildEntity
       >
     ): Promise<void> {
-      if (mutationInfo.type !== EntityMutationType.DELETE) {
-        return;
-      }
-
+      invariant(mutationInfo.type === EntityMutationType.DELETE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause === null) {
         throw new Error('GrandChild entity should have cascade delete cause');
       }
@@ -216,7 +266,58 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         throw new Error('GrandChild entity should not have three-level casade delete cause');
       }
 
-      triggerExecutionCounts.GrandChildEntity++;
+      triggerExecutionCounts.GrandChildEntityDeletion++;
+    }
+  }
+
+  class GrandChildCheckInfoUpdateTrigger extends EntityMutationTrigger<
+    GrandChildFields,
+    string,
+    TestViewerContext,
+    GrandChildEntity
+  > {
+    async executeAsync(
+      _viewerContext: TestViewerContext,
+      _queryContext: EntityTransactionalQueryContext,
+      _entity: GrandChildEntity,
+      mutationInfo: EntityTriggerMutationInfo<
+        GrandChildFields,
+        string,
+        TestViewerContext,
+        GrandChildEntity
+      >
+    ): Promise<void> {
+      invariant(mutationInfo.type === EntityMutationType.UPDATE, 'invalid EntityMutationType');
+      if (mutationInfo.cascadingDeleteCause === null) {
+        throw new Error('GrandChild entity should have cascade delete cause');
+      }
+
+      const cascadingDeleteCauseEntity = mutationInfo.cascadingDeleteCause.entity;
+      if (!(cascadingDeleteCauseEntity instanceof ChildEntity)) {
+        throw new Error(
+          'GrandChild entity should have cascade delete cause entity of type ChildEntity'
+        );
+      }
+
+      const secondLevelCascadingDeleteCause =
+        mutationInfo.cascadingDeleteCause.cascadingDeleteCause;
+      if (!secondLevelCascadingDeleteCause) {
+        throw new Error('GrandChild entity should have two-level casade delete cause');
+      }
+
+      const secondLevelCascadingDeleteCauseEntity = secondLevelCascadingDeleteCause.entity;
+      if (!(secondLevelCascadingDeleteCauseEntity instanceof ParentEntity)) {
+        throw new Error(
+          'GrandChild entity should have second level casade delete cause entity of type ParentEntity'
+        );
+      }
+
+      const thirdLevelCascadingDeleteCause = secondLevelCascadingDeleteCause.cascadingDeleteCause;
+      if (thirdLevelCascadingDeleteCause) {
+        throw new Error('GrandChild entity should not have three-level casade delete cause');
+      }
+
+      triggerExecutionCounts.GrandChildEntityUpdate++;
     }
   }
 
@@ -318,8 +419,11 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     entityConfiguration: parentEntityConfiguration,
     privacyPolicyClass: TestEntityPrivacyPolicy,
     mutationTriggers: () => ({
-      beforeDelete: [new ParentCheckInfoTrigger()],
-      afterDelete: [new ParentCheckInfoTrigger()],
+      beforeDelete: [new ParentCheckInfoDeletionTrigger()],
+      afterDelete: [new ParentCheckInfoDeletionTrigger()],
+
+      beforeUpdate: [new ParentCheckInfoUpdateTrigger()],
+      afterUpdate: [new ParentCheckInfoUpdateTrigger()],
     }),
   });
 
@@ -328,8 +432,11 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     entityConfiguration: childEntityConfiguration,
     privacyPolicyClass: TestEntityPrivacyPolicy,
     mutationTriggers: () => ({
-      beforeDelete: [new ChildCheckInfoTrigger()],
-      afterDelete: [new ChildCheckInfoTrigger()],
+      beforeDelete: [new ChildCheckInfoDeletionTrigger()],
+      afterDelete: [new ChildCheckInfoDeletionTrigger()],
+
+      beforeUpdate: [new ChildCheckInfoUpdateTrigger()],
+      afterUpdate: [new ChildCheckInfoUpdateTrigger()],
     }),
   });
 
@@ -338,8 +445,11 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     entityConfiguration: grandChildEntityConfiguration,
     privacyPolicyClass: TestEntityPrivacyPolicy,
     mutationTriggers: () => ({
-      beforeDelete: [new GrandChildCheckInfoTrigger()],
-      afterDelete: [new GrandChildCheckInfoTrigger()],
+      beforeDelete: [new GrandChildCheckInfoDeletionTrigger()],
+      afterDelete: [new GrandChildCheckInfoDeletionTrigger()],
+
+      beforeUpdate: [new GrandChildCheckInfoUpdateTrigger()],
+      afterUpdate: [new GrandChildCheckInfoUpdateTrigger()],
     }),
   });
 
@@ -399,9 +509,13 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
       // two calls for each trigger, one beforeDelete, one afterDelete
       expect(triggerExecutionCounts).toMatchObject({
-        ParentEntity: 2,
-        ChildEntity: 2,
-        GrandChildEntity: 2,
+        ParentEntityDeletion: 2,
+        ChildEntityDeletion: 2,
+        GrandChildEntityDeletion: 2,
+
+        ParentEntityUpdate: 0,
+        ChildEntityUpdate: 0,
+        GrandChildEntityUpdate: 0,
       });
 
       expect(privacyPolicyEvaluationRecords).toMatchObject({
@@ -518,9 +632,13 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       // two calls for only parent trigger, one beforeDelete, one afterDelete
       // when using set null the descendants aren't deleted
       expect(triggerExecutionCounts).toMatchObject({
-        ParentEntity: 2,
-        ChildEntity: 0,
-        GrandChildEntity: 0,
+        ParentEntityDeletion: 2,
+        ChildEntityDeletion: 0,
+        GrandChildEntityDeletion: 0,
+
+        ParentEntityUpdate: 0,
+        ChildEntityUpdate: 2,
+        GrandChildEntityUpdate: 0,
       });
 
       expect(privacyPolicyEvaluationRecords).toMatchObject({
@@ -573,7 +691,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
     });
   });
 
-  describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
+  describe('EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY', () => {
     it('invalidates the cache', async () => {
       const {
         ParentEntity,
@@ -581,7 +699,140 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         GrandChildEntity,
         triggerExecutionCounts,
         privacyPolicyEvaluationRecords,
-      } = makeEntityClasses(EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE);
+      } = makeEntityClasses(EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY);
+
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new TestViewerContext(companionProvider);
+
+      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
+      const child = await ChildEntity.creator(viewerContext)
+        .setField('parent_id', parent.getID())
+        .enforceCreateAsync();
+      const grandchild = await GrandChildEntity.creator(viewerContext)
+        .setField('parent_id', child.getID())
+        .enforceCreateAsync();
+
+      await expect(
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+      ).resolves.not.toBeNull();
+      await expect(
+        ChildEntity.loader(viewerContext)
+          .enforcing()
+          .loadByFieldEqualingAsync('parent_id', parent.getID())
+      ).resolves.not.toBeNull();
+      await expect(
+        GrandChildEntity.loader(viewerContext)
+          .enforcing()
+          .loadByFieldEqualingAsync('parent_id', child.getID())
+      ).resolves.not.toBeNull();
+
+      const childCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(ChildEntity)[
+        'entityCompanion'
+      ]['tableDataCoordinator']['cacheAdapter'] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
+      const childCachedBefore = await childCacheAdapter.loadManyAsync('parent_id', [
+        parent.getID(),
+      ]);
+      expect(childCachedBefore.get(parent.getID())?.status).toEqual(CacheStatus.HIT);
+
+      const grandChildCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(
+        GrandChildEntity
+      )['entityCompanion']['tableDataCoordinator'][
+        'cacheAdapter'
+      ] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
+      const grandChildCachedBefore = await grandChildCacheAdapter.loadManyAsync('parent_id', [
+        child.getID(),
+      ]);
+      expect(grandChildCachedBefore.get(child.getID())?.status).toEqual(CacheStatus.HIT);
+
+      privacyPolicyEvaluationRecords.shouldRecord = true;
+      await ParentEntity.enforceDeleteAsync(parent);
+      privacyPolicyEvaluationRecords.shouldRecord = false;
+
+      const childCachedAfter = await childCacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
+      expect(childCachedAfter.get(parent.getID())?.status).toEqual(CacheStatus.MISS);
+
+      const grandChildCachedAfter = await grandChildCacheAdapter.loadManyAsync('parent_id', [
+        child.getID(),
+      ]);
+      expect(grandChildCachedAfter.get(child.getID())?.status).toEqual(CacheStatus.HIT);
+
+      await expect(
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+      ).resolves.toBeNull();
+
+      const loadedChild = await ChildEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDAsync(child.getID());
+      expect(loadedChild).not.toBeNull();
+
+      const loadedGrandchild = await GrandChildEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDAsync(grandchild.getID());
+      expect(loadedGrandchild.getField('parent_id')).toEqual(loadedChild.getID());
+
+      // two calls for only parent trigger, one beforeDelete, one afterDelete
+      // when using set null the descendants aren't deleted
+      expect(triggerExecutionCounts).toMatchObject({
+        ParentEntityDeletion: 2,
+        ChildEntityDeletion: 0,
+        GrandChildEntityDeletion: 0,
+
+        ParentEntityUpdate: 0,
+        ChildEntityUpdate: 2,
+        GrandChildEntityUpdate: 0,
+      });
+
+      expect(privacyPolicyEvaluationRecords).toMatchObject({
+        ParentEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+          [EntityAuthorizationAction.READ]: [],
+          [EntityAuthorizationAction.UPDATE]: [],
+          // one DELETE auth action for parent (since it's being deleted)
+          [EntityAuthorizationAction.DELETE]: [{ cascadingDeleteCause: null }],
+        },
+        ChildEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+
+          // one READ auth action for child in order to update via cascade
+          // no other entities are read since it is not cascaded past first entity
+          [EntityAuthorizationAction.READ]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ParentEntity),
+                cascadingDeleteCause: null,
+              },
+            },
+          ],
+          // one UPDATE to set null
+          [EntityAuthorizationAction.UPDATE]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ParentEntity),
+                cascadingDeleteCause: null,
+              },
+            },
+          ],
+          [EntityAuthorizationAction.DELETE]: [],
+        },
+        GrandChildEntity: {
+          [EntityAuthorizationAction.CREATE]: [],
+          [EntityAuthorizationAction.READ]: [],
+          [EntityAuthorizationAction.UPDATE]: [],
+          [EntityAuthorizationAction.DELETE]: [],
+        },
+      });
+    });
+  });
+
+  describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY', () => {
+    it('invalidates the cache', async () => {
+      const {
+        ParentEntity,
+        ChildEntity,
+        GrandChildEntity,
+        triggerExecutionCounts,
+        privacyPolicyEvaluationRecords,
+      } = makeEntityClasses(EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY);
 
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
@@ -650,9 +901,13 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
       // two calls for each trigger, one beforeDelete, one afterDelete
       expect(triggerExecutionCounts).toMatchObject({
-        ParentEntity: 2,
-        ChildEntity: 2,
-        GrandChildEntity: 2,
+        ParentEntityDeletion: 2,
+        ChildEntityDeletion: 2,
+        GrandChildEntityDeletion: 2,
+
+        ParentEntityUpdate: 0,
+        ChildEntityUpdate: 0,
+        GrandChildEntityUpdate: 0,
       });
 
       expect(privacyPolicyEvaluationRecords).toMatchObject({

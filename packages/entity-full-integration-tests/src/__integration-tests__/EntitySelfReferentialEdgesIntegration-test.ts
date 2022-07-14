@@ -135,26 +135,40 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
 
   await knex.schema.createTable(othersTableName, (table) => {
     table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
-    if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE) {
+    if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY) {
       table
         .uuid('parent_category_id')
         .references('id')
         .inTable(categoriesTableName)
         .unique()
         .onDelete('cascade');
+    } else if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY) {
+      table
+        .uuid('parent_category_id')
+        .references('id')
+        .inTable(categoriesTableName)
+        .unique()
+        .onDelete('set null');
     } else {
       table.uuid('parent_category_id').unique();
     }
   });
 
   await knex.schema.alterTable(categoriesTableName, (table) => {
-    if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE) {
+    if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY) {
       table
         .uuid('parent_other_id')
         .references('id')
         .inTable(othersTableName)
         .unique()
         .onDelete('cascade');
+    } else if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY) {
+      table
+        .uuid('parent_other_id')
+        .references('id')
+        .inTable(othersTableName)
+        .unique()
+        .onDelete('set null');
     } else {
       table.uuid('parent_other_id').unique();
     }
@@ -200,8 +214,9 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
   it.each([
     EntityEdgeDeletionBehavior.CASCADE_DELETE,
-    EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE,
+    EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY,
     EntityEdgeDeletionBehavior.SET_NULL,
+    EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY,
   ])('behavior: %p', async (edgeDeletionBehavior) => {
     const { CategoryEntity, OtherEntity } = await makeEntityClasses(
       knexInstance,
@@ -223,6 +238,14 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
     await CategoryEntity.enforceDeleteAsync(category1);
 
     if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.SET_NULL) {
+      await expect(
+        CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID())
+      ).resolves.toBeNull();
+      const otherLoaded = await OtherEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(other1.getID());
+      expect(otherLoaded?.getField('parent_category_id')).toBeNull();
+    } else if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY) {
       await expect(
         CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID())
       ).resolves.toBeNull();

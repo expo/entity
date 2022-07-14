@@ -69,7 +69,7 @@ export default abstract class Entity<
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
-      .forCreate(queryContext, { cascadingDeleteCause: null });
+      .forCreate(queryContext);
   }
 
   /**
@@ -111,7 +111,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
-      .forUpdate(existingEntity, queryContext, { cascadingDeleteCause: null });
+      .forUpdate(existingEntity, queryContext);
   }
 
   /**
@@ -152,7 +152,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
-      .forDelete(existingEntity, queryContext, { cascadingDeleteCause: null })
+      .forDelete(existingEntity, queryContext)
       .deleteAsync();
   }
 
@@ -194,7 +194,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
-      .forDelete(existingEntity, queryContext, { cascadingDeleteCause: null })
+      .forDelete(existingEntity, queryContext)
       .enforceDeleteAsync();
   }
 
