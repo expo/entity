@@ -20,6 +20,7 @@ export type EntityValidatorMutationInfo<
   | {
       type: EntityMutationType.UPDATE;
       previousValue: TEntity;
+      cascadingDeleteCause: EntityCascadingDeletionInfo | null;
     };
 
 /**
@@ -50,6 +51,7 @@ export type EntityTriggerMutationInfo<
   | {
       type: EntityMutationType.UPDATE;
       previousValue: TEntity;
+      cascadingDeleteCause: EntityCascadingDeletionInfo | null;
     }
   | {
       type: EntityMutationType.DELETE;

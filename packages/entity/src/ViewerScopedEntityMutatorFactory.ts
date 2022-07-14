@@ -1,6 +1,6 @@
 import { CreateMutator, UpdateMutator, DeleteMutator } from './EntityMutator';
 import EntityMutatorFactory from './EntityMutatorFactory';
-import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
+import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -35,37 +35,22 @@ export default class ViewerScopedEntityMutatorFactory<
   ) {}
 
   forCreate(
-    queryContext: EntityQueryContext,
-    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
+    queryContext: EntityQueryContext
   ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return this.entityMutatorFactory.forCreate(
-      this.viewerContext,
-      queryContext,
-      privacyPolicyEvaluationContext
-    );
+    return this.entityMutatorFactory.forCreate(this.viewerContext, queryContext);
   }
 
   forUpdate(
     existingEntity: TEntity,
-    queryContext: EntityQueryContext,
-    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
+    queryContext: EntityQueryContext
   ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return this.entityMutatorFactory.forUpdate(
-      existingEntity,
-      queryContext,
-      privacyPolicyEvaluationContext
-    );
+    return this.entityMutatorFactory.forUpdate(existingEntity, queryContext);
   }
 
   forDelete(
     existingEntity: TEntity,
-    queryContext: EntityQueryContext,
-    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
+    queryContext: EntityQueryContext
   ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return this.entityMutatorFactory.forDelete(
-      existingEntity,
-      queryContext,
-      privacyPolicyEvaluationContext
-    );
+    return this.entityMutatorFactory.forDelete(existingEntity, queryContext);
   }
 }

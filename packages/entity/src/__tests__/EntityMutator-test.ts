@@ -341,7 +341,6 @@ describe(EntityMutatorFactory, () => {
   describe('forCreate', () => {
     it('creates entities', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -365,7 +364,7 @@ describe(EntityMutatorFactory, () => {
         },
       ]);
       const newEntity = await entityMutatorFactory
-        .forCreate(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .forCreate(viewerContext, queryContext)
         .setField('stringField', 'huh')
         .enforceCreateAsync();
       expect(newEntity).toBeTruthy();
@@ -373,7 +372,6 @@ describe(EntityMutatorFactory, () => {
 
     it('checks privacy', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -400,7 +398,7 @@ describe(EntityMutatorFactory, () => {
       const spiedPrivacyPolicy = spy(privacyPolicy);
 
       await entityMutatorFactory
-        .forCreate(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .forCreate(viewerContext, queryContext)
         .setField('stringField', 'huh')
         .enforceCreateAsync();
 
@@ -408,7 +406,7 @@ describe(EntityMutatorFactory, () => {
         spiedPrivacyPolicy.authorizeCreateAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
-          privacyPolicyEvaluationContext,
+          deepEqual({ cascadingDeleteCause: null }),
           anyOfClass(TestEntity),
           anything()
         )
@@ -417,7 +415,6 @@ describe(EntityMutatorFactory, () => {
 
     it('executes triggers', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -444,7 +441,7 @@ describe(EntityMutatorFactory, () => {
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
 
       await entityMutatorFactory
-        .forCreate(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .forCreate(viewerContext, queryContext)
         .setField('stringField', 'huh')
         .enforceCreateAsync();
 
@@ -465,7 +462,6 @@ describe(EntityMutatorFactory, () => {
 
     it('executes validators', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -492,7 +488,7 @@ describe(EntityMutatorFactory, () => {
       const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
 
       await entityMutatorFactory
-        .forCreate(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .forCreate(viewerContext, queryContext)
         .setField('stringField', 'huh')
         .enforceCreateAsync();
 
@@ -534,7 +530,7 @@ describe(EntityMutatorFactory, () => {
       );
 
       const updatedEntity = await entityMutatorFactory
-        .forUpdate(existingEntity, queryContext, privacyPolicyEvaluationContext)
+        .forUpdate(existingEntity, queryContext)
         .setField('stringField', 'huh2')
         .enforceUpdateAsync();
 
@@ -586,7 +582,7 @@ describe(EntityMutatorFactory, () => {
       );
 
       await entityMutatorFactory
-        .forUpdate(existingEntity, queryContext, privacyPolicyEvaluationContext)
+        .forUpdate(existingEntity, queryContext)
         .setField('stringField', 'huh2')
         .enforceUpdateAsync();
 
@@ -594,7 +590,7 @@ describe(EntityMutatorFactory, () => {
         spiedPrivacyPolicy.authorizeUpdateAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
-          privacyPolicyEvaluationContext,
+          deepEqual({ cascadingDeleteCause: null }),
           anyOfClass(TestEntity),
           anything()
         )
@@ -637,7 +633,7 @@ describe(EntityMutatorFactory, () => {
       );
 
       await entityMutatorFactory
-        .forUpdate(existingEntity, queryContext, privacyPolicyEvaluationContext)
+        .forUpdate(existingEntity, queryContext)
         .setField('stringField', 'huh2')
         .enforceUpdateAsync();
 
@@ -652,7 +648,11 @@ describe(EntityMutatorFactory, () => {
           beforeDelete: false,
           afterDelete: false,
         },
-        { type: EntityMutationType.UPDATE, previousValue: existingEntity }
+        {
+          type: EntityMutationType.UPDATE,
+          previousValue: existingEntity,
+          cascadingDeleteCause: null,
+        }
       );
     });
     it('executes validators', async () => {
@@ -691,13 +691,14 @@ describe(EntityMutatorFactory, () => {
       );
 
       await entityMutatorFactory
-        .forUpdate(existingEntity, queryContext, privacyPolicyEvaluationContext)
+        .forUpdate(existingEntity, queryContext)
         .setField('stringField', 'huh2')
         .enforceUpdateAsync();
 
       verifyValidatorCounts(viewerContext, validatorSpies, 1, {
         type: EntityMutationType.UPDATE,
         previousValue: existingEntity,
+        cascadingDeleteCause: null,
       });
     });
   });
@@ -727,9 +728,7 @@ describe(EntityMutatorFactory, () => {
       );
       expect(existingEntity).toBeTruthy();
 
-      await entityMutatorFactory
-        .forDelete(existingEntity, queryContext, privacyPolicyEvaluationContext)
-        .enforceDeleteAsync();
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
 
       await expect(
         enforceAsyncResult(
@@ -766,9 +765,7 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id1)
       );
 
-      await entityMutatorFactory
-        .forDelete(existingEntity, queryContext, privacyPolicyEvaluationContext)
-        .enforceDeleteAsync();
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
 
       verify(
         spiedPrivacyPolicy.authorizeDeleteAsync(
@@ -807,9 +804,7 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id1)
       );
 
-      await entityMutatorFactory
-        .forDelete(existingEntity, queryContext, privacyPolicyEvaluationContext)
-        .enforceDeleteAsync();
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
 
       verifyTriggerCounts(
         viewerContext,
@@ -852,9 +847,7 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id1)
       );
 
-      await entityMutatorFactory
-        .forDelete(existingEntity, queryContext, privacyPolicyEvaluationContext)
-        .enforceDeleteAsync();
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
 
       verifyValidatorCounts(viewerContext, validatorSpies, 0, {
         type: EntityMutationType.DELETE as any,
@@ -888,7 +881,7 @@ describe(EntityMutatorFactory, () => {
 
     await enforceAsyncResult(
       entityMutatorFactory
-        .forCreate(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .forCreate(viewerContext, queryContext)
         .setField('stringField', 'huh')
         .createAsync()
     );
@@ -903,7 +896,6 @@ describe(EntityMutatorFactory, () => {
 
   it('throws error when field not valid', async () => {
     const viewerContext = mock<ViewerContext>();
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const id1 = uuidv4();
     const { entityMutatorFactory } = createEntityMutatorFactory([
@@ -919,19 +911,19 @@ describe(EntityMutatorFactory, () => {
 
     await expect(
       entityMutatorFactory
-        .forCreate(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .forCreate(viewerContext, queryContext)
         .setField('stringField', 10 as any)
         .createAsync()
     ).rejects.toThrowError('Entity field not valid: TestEntity (stringField = 10)');
 
     const createdEntity = await entityMutatorFactory
-      .forCreate(viewerContext, queryContext, privacyPolicyEvaluationContext)
+      .forCreate(viewerContext, queryContext)
       .setField('stringField', 'hello')
       .enforceCreateAsync();
 
     await expect(
       entityMutatorFactory
-        .forUpdate(createdEntity, queryContext, privacyPolicyEvaluationContext)
+        .forUpdate(createdEntity, queryContext)
         .setField('stringField', 10 as any)
         .updateAsync()
     ).rejects.toThrowError('Entity field not valid: TestEntity (stringField = 10)');
@@ -939,7 +931,6 @@ describe(EntityMutatorFactory, () => {
 
   it('returns error result when not authorized to create', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicyMock = mock(SimpleTestEntityPrivacyPolicy);
     const databaseAdapter = instance(mock<EntityDatabaseAdapter<SimpleTestFields>>());
@@ -999,7 +990,7 @@ describe(EntityMutatorFactory, () => {
     );
 
     const entityCreateResult = await entityMutatorFactory
-      .forCreate(viewerContext, queryContext, privacyPolicyEvaluationContext)
+      .forCreate(viewerContext, queryContext)
       .createAsync();
     expect(entityCreateResult.ok).toBe(false);
     expect(entityCreateResult.reason).toEqual(rejectionError);
@@ -1011,14 +1002,14 @@ describe(EntityMutatorFactory, () => {
     });
 
     const entityUpdateResult = await entityMutatorFactory
-      .forUpdate(fakeEntity, queryContext, privacyPolicyEvaluationContext)
+      .forUpdate(fakeEntity, queryContext)
       .updateAsync();
     expect(entityUpdateResult.ok).toBe(false);
     expect(entityUpdateResult.reason).toEqual(rejectionError);
     expect(entityUpdateResult.value).toBe(undefined);
 
     const entityDeleteResult = await entityMutatorFactory
-      .forDelete(fakeEntity, queryContext, privacyPolicyEvaluationContext)
+      .forDelete(fakeEntity, queryContext)
       .deleteAsync();
     expect(entityDeleteResult.ok).toBe(false);
     expect(entityDeleteResult.reason).toEqual(rejectionError);
@@ -1027,7 +1018,6 @@ describe(EntityMutatorFactory, () => {
 
   it('throws error when db adapter throws', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(SimpleTestEntityPrivacyPolicy));
     const databaseAdapterMock = mock<EntityDatabaseAdapter<SimpleTestFields>>();
@@ -1083,48 +1073,37 @@ describe(EntityMutatorFactory, () => {
     });
 
     await expect(
-      entityMutatorFactory
-        .forCreate(viewerContext, queryContext, privacyPolicyEvaluationContext)
-        .createAsync()
+      entityMutatorFactory.forCreate(viewerContext, queryContext).createAsync()
     ).rejects.toEqual(rejectionError);
     await expect(
-      entityMutatorFactory
-        .forUpdate(fakeEntity, queryContext, privacyPolicyEvaluationContext)
-        .updateAsync()
+      entityMutatorFactory.forUpdate(fakeEntity, queryContext).updateAsync()
     ).rejects.toEqual(rejectionError);
     await expect(
-      entityMutatorFactory
-        .forDelete(fakeEntity, queryContext, privacyPolicyEvaluationContext)
-        .deleteAsync()
+      entityMutatorFactory.forDelete(fakeEntity, queryContext).deleteAsync()
     ).rejects.toEqual(rejectionError);
   });
 
   it('records metrics appropriately', async () => {
     const viewerContext = mock<ViewerContext>();
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const { entityMutatorFactory, metricsAdapter } = createEntityMutatorFactory([]);
     const spiedMetricsAdapter = spy(metricsAdapter);
 
     const newEntity = await enforceAsyncResult(
       entityMutatorFactory
-        .forCreate(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .forCreate(viewerContext, queryContext)
         .setField('stringField', 'huh')
         .createAsync()
     );
 
     await enforceAsyncResult(
       entityMutatorFactory
-        .forUpdate(newEntity, queryContext, privacyPolicyEvaluationContext)
+        .forUpdate(newEntity, queryContext)
         .setField('stringField', 'wat')
         .updateAsync()
     );
 
-    await enforceAsyncResult(
-      entityMutatorFactory
-        .forDelete(newEntity, queryContext, privacyPolicyEvaluationContext)
-        .deleteAsync()
-    );
+    await enforceAsyncResult(entityMutatorFactory.forDelete(newEntity, queryContext).deleteAsync());
 
     verify(
       spiedMetricsAdapter.logMutatorMutationEvent(
