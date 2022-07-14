@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.26.0](https://github.com/expo/entity/compare/v0.25.3...v0.26.0) (2022-07-14)
+
+
+### Features
+
+* update ioredis to v5, make it a devDependency of the cache packages ([#172](https://github.com/expo/entity/issues/172)) ([9fcfbf7](https://github.com/expo/entity/commit/9fcfbf746a61554cefedf7fb0f1a3a9056b58ffe))
+
+
+
+
+
 ## [0.25.3](https://github.com/expo/entity/compare/v0.25.2...v0.25.3) (2022-03-12)
 
 **Note:** Version bump only for package @expo/entity-secondary-cache-redis
