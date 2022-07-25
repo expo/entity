@@ -4,10 +4,11 @@ import EntityCacheAdapter from './EntityCacheAdapter';
 import EntityConfiguration from './EntityConfiguration';
 import { CacheStatus, CacheLoadResult } from './internal/ReadThroughEntityCache';
 
+/**
+ * A {@link EntityCacheAdapter} that composes other {@link EntityCacheAdapter} instances.
+ */
 export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
   /**
-   * A {@link EntityCacheAdapter} that composes other {@link EntityCacheAdapter} instances.
-   *
    * @param entityConfiguration - configuration for entity being loaded
    * @param cacheAdapters - list of cache adapters to compose in order of precedence.
    *                        Earlier cache adapters are read from first and written to (including invalidations) last.

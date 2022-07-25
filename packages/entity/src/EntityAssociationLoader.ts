@@ -6,6 +6,11 @@ import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 
+/**
+ * An association loader is a set of convenience methods for loading entities
+ * associated with an entity. In relational databases, these entities are often referenced
+ * by foreign keys.
+ */
 export default class EntityAssociationLoader<
   TFields,
   TID extends NonNullable<TFields[TSelectedFields]>,

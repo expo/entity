@@ -2,12 +2,13 @@ import nullthrows from 'nullthrows';
 
 import { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
 
+/**
+ * A {@link ISecondaryEntityCache} that composes other {@link ISecondaryEntityCache} instances.
+ */
 export default class ComposedSecondaryEntityCache<TLoadParams, TFields>
   implements ISecondaryEntityCache<TFields, TLoadParams>
 {
   /**
-   * A {@link ISecondaryEntityCache} that composes other {@link ISecondaryEntityCache} instances.
-   *
    * @param secondaryEntityCaches - list of caches to compose in order of precedence.
    *                                Earlier caches are read from first and written to (including invalidations) last.
    *                                Typically, caches closer to the application should be ordered before caches closer to the database.
