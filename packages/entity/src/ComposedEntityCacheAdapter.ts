@@ -26,9 +26,13 @@ export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdap
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
     const retMap = new Map<NonNullable<TFields[N]>, CacheLoadResult<TFields>>();
+    const fulfilledFieldValuesByCacheIndex: NonNullable<TFields[N]>[][] = this.cacheAdapters.map(
+      () => []
+    );
 
     let unfulfilledFieldValues = fieldValues;
-    for (const cacheAdapter of this.cacheAdapters) {
+    for (let i = 0; i < this.cacheAdapters.length; i++) {
+      const cacheAdapter = nullthrows(this.cacheAdapters[i]);
       const cacheResultsFromAdapter = await cacheAdapter.loadManyAsync(
         fieldName,
         unfulfilledFieldValues
@@ -40,9 +44,33 @@ export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdap
           newUnfulfilledFieldValues.push(fieldValue);
         } else {
           retMap.set(fieldValue, cacheResult);
+          const fulfilledFieldValues = nullthrows(fulfilledFieldValuesByCacheIndex[i]);
+          fulfilledFieldValues.push(fieldValue);
         }
       }
       unfulfilledFieldValues = newUnfulfilledFieldValues;
+    }
+
+    // Recache values from higher layers that were not found in lower layers
+    for (let i = 0; i < this.cacheAdapters.length; i++) {
+      const cacheAdapter = nullthrows(this.cacheAdapters[i]);
+      const hitsToCache = new Map<NonNullable<TFields[N]>, Readonly<TFields>>();
+      const missesToCache: NonNullable<TFields[N]>[] = [];
+      for (let j = i + 1; j < this.cacheAdapters.length; j++) {
+        const fulfilledFieldValues = nullthrows(fulfilledFieldValuesByCacheIndex[j]);
+        fulfilledFieldValues.forEach((fieldValue) => {
+          const cacheResult = nullthrows(retMap.get(fieldValue));
+          if (cacheResult.status === CacheStatus.HIT) {
+            hitsToCache.set(fieldValue, cacheResult.item);
+          } else if (cacheResult.status === CacheStatus.NEGATIVE) {
+            missesToCache.push(fieldValue);
+          }
+        });
+      }
+      await Promise.all([
+        cacheAdapter.cacheManyAsync(fieldName, hitsToCache),
+        cacheAdapter.cacheDBMissesAsync(fieldName, missesToCache),
+      ]);
     }
 
     for (const fieldValue of unfulfilledFieldValues) {
