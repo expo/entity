@@ -162,11 +162,11 @@ describe(ComposedEntityCacheAdapter, () => {
     });
 
     it('returns fallback adapter results primary is empty', async () => {
-      const { primaryCacheAdapter, cacheAdapter } = makeTestCacheAdapters();
+      const { fallbackCacheAdapter, cacheAdapter } = makeTestCacheAdapters();
 
       const cacheHits = new Map<string, Readonly<BlahFields>>([['test-id-1', { id: 'test-id-1' }]]);
-      await primaryCacheAdapter.cacheManyAsync('id', cacheHits);
-      await primaryCacheAdapter.cacheDBMissesAsync('id', ['test-id-2']);
+      await fallbackCacheAdapter.cacheManyAsync('id', cacheHits);
+      await fallbackCacheAdapter.cacheDBMissesAsync('id', ['test-id-2']);
 
       const results = await cacheAdapter.loadManyAsync('id', [
         'test-id-1',
@@ -181,6 +181,31 @@ describe(ComposedEntityCacheAdapter, () => {
       expect(results.get('test-id-2')).toMatchObject({ status: CacheStatus.NEGATIVE });
       expect(results.get('test-id-3')).toMatchObject({ status: CacheStatus.MISS });
       expect(results.size).toBe(3);
+    });
+
+    it('populates primary adapter with fallback adapter results', async () => {
+      const { primaryCacheAdapter, fallbackCacheAdapter, cacheAdapter } = makeTestCacheAdapters();
+
+      const cacheHits = new Map<string, Readonly<BlahFields>>([['test-id-1', { id: 'test-id-1' }]]);
+      await fallbackCacheAdapter.cacheManyAsync('id', cacheHits);
+      await fallbackCacheAdapter.cacheDBMissesAsync('id', ['test-id-2']);
+
+      // should populate primary cache with fallback cache results
+      await cacheAdapter.loadManyAsync('id', ['test-id-1', 'test-id-2', 'test-id-3']);
+
+      const primaryResults = await primaryCacheAdapter.loadManyAsync('id', [
+        'test-id-1',
+        'test-id-2',
+        'test-id-3',
+      ]);
+
+      expect(primaryResults.get('test-id-1')).toMatchObject({
+        status: CacheStatus.HIT,
+        item: { id: 'test-id-1' },
+      });
+      expect(primaryResults.get('test-id-2')).toMatchObject({ status: CacheStatus.NEGATIVE });
+      expect(primaryResults.get('test-id-3')).toMatchObject({ status: CacheStatus.MISS });
+      expect(primaryResults.size).toBe(3);
     });
 
     it('returns empty map when passed empty array of fieldValues', async () => {

@@ -13,6 +13,7 @@ export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdap
    * @param cacheAdapters - list of cache adapters to compose in order of precedence.
    *                        Earlier cache adapters are read from first and written to (including invalidations) last.
    *                        Typically, caches closer to the application should be ordered before caches closer to the database.
+   *                        A lower layer cache is closer to the database, while a higher layer cache is closer to the application.
    */
   constructor(
     entityConfiguration: EntityConfiguration<TFields>,
@@ -48,13 +49,19 @@ export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdap
         }
       }
       unfulfilledFieldValues = newUnfulfilledFieldValues;
+      if (unfulfilledFieldValues.length === 0) {
+        break;
+      }
     }
 
-    // Recache values from higher layers that were not found in lower layers
-    for (let i = 0; i < this.cacheAdapters.length; i++) {
+    // Recache values from lower layers that were not found in higher layers
+    // Write to lower layers first
+    for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
       const hitsToCache = new Map<NonNullable<TFields[N]>, Readonly<TFields>>();
       const missesToCache: NonNullable<TFields[N]>[] = [];
+
+      // Loop over all lower layer caches to collect hits and misses
       for (let j = i + 1; j < this.cacheAdapters.length; j++) {
         const fulfilledFieldValues = nullthrows(fulfilledFieldValuesByCacheIndex[j]);
         fulfilledFieldValues.forEach((fieldValue) => {
@@ -66,10 +73,15 @@ export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdap
           }
         });
       }
-      await Promise.all([
-        cacheAdapter.cacheManyAsync(fieldName, hitsToCache),
-        cacheAdapter.cacheDBMissesAsync(fieldName, missesToCache),
-      ]);
+
+      const promises = [];
+      if (hitsToCache.size > 0) {
+        promises.push(cacheAdapter.cacheManyAsync(fieldName, hitsToCache));
+      }
+      if (missesToCache.length > 0) {
+        promises.push(cacheAdapter.cacheDBMissesAsync(fieldName, missesToCache));
+      }
+      await Promise.all(promises);
     }
 
     for (const fieldValue of unfulfilledFieldValues) {
