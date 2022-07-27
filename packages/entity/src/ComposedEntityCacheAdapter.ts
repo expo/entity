@@ -44,8 +44,7 @@ export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdap
           newUnfulfilledFieldValues.push(fieldValue);
         } else {
           retMap.set(fieldValue, cacheResult);
-          const fulfilledFieldValues = nullthrows(fulfilledFieldValuesByCacheIndex[i]);
-          fulfilledFieldValues.push(fieldValue);
+          nullthrows(fulfilledFieldValuesByCacheIndex[i]).push(fieldValue);
         }
       }
       unfulfilledFieldValues = newUnfulfilledFieldValues;
