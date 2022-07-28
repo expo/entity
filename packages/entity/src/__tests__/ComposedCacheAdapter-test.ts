@@ -206,6 +206,20 @@ describe(ComposedEntityCacheAdapter, () => {
       expect(primaryResults.get('test-id-2')).toMatchObject({ status: CacheStatus.NEGATIVE });
       expect(primaryResults.get('test-id-3')).toMatchObject({ status: CacheStatus.MISS });
       expect(primaryResults.size).toBe(3);
+
+      // ensure that populating the primary cache doesn't change the output
+      const composedResults = await cacheAdapter.loadManyAsync('id', [
+        'test-id-1',
+        'test-id-2',
+        'test-id-3',
+      ]);
+      expect(composedResults.get('test-id-1')).toMatchObject({
+        status: CacheStatus.HIT,
+        item: { id: 'test-id-1' },
+      });
+      expect(composedResults.get('test-id-2')).toMatchObject({ status: CacheStatus.NEGATIVE });
+      expect(composedResults.get('test-id-3')).toMatchObject({ status: CacheStatus.MISS });
+      expect(composedResults.size).toBe(3);
     });
 
     it('returns empty map when passed empty array of fieldValues', async () => {

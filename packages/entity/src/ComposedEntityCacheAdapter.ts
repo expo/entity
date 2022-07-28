@@ -60,7 +60,7 @@ export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdap
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
       const hitsToCache = new Map<NonNullable<TFields[N]>, Readonly<TFields>>();
-      const missesToCache: NonNullable<TFields[N]>[] = [];
+      const negativesToCache: NonNullable<TFields[N]>[] = [];
 
       // Loop over all lower layer caches to collect hits and misses
       for (let j = i + 1; j < this.cacheAdapters.length; j++) {
@@ -70,7 +70,7 @@ export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdap
           if (cacheResult.status === CacheStatus.HIT) {
             hitsToCache.set(fieldValue, cacheResult.item);
           } else if (cacheResult.status === CacheStatus.NEGATIVE) {
-            missesToCache.push(fieldValue);
+            negativesToCache.push(fieldValue);
           }
         });
       }
@@ -79,8 +79,8 @@ export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdap
       if (hitsToCache.size > 0) {
         promises.push(cacheAdapter.cacheManyAsync(fieldName, hitsToCache));
       }
-      if (missesToCache.length > 0) {
-        promises.push(cacheAdapter.cacheDBMissesAsync(fieldName, missesToCache));
+      if (negativesToCache.length > 0) {
+        promises.push(cacheAdapter.cacheDBMissesAsync(fieldName, negativesToCache));
       }
       await Promise.all(promises);
     }
