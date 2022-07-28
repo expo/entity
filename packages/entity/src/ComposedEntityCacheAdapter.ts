@@ -27,7 +27,8 @@ export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdap
     fieldValues: readonly NonNullable<TFields[N]>[]
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
     const retMap = new Map<NonNullable<TFields[N]>, CacheLoadResult<TFields>>();
-    const fulfilledFieldValuesByCacheIndex: NonNullable<TFields[N]>[][] = this.cacheAdapters.map(
+    const fulfilledFieldValuesByCacheIndex: NonNullable<TFields[N]>[][] = Array.from(
+      { length: this.cacheAdapters.length },
       () => []
     );
 
