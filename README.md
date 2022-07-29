@@ -82,10 +82,10 @@ Note: The entity framework instance should not be shared across multiple request
 
 To release a new version, let's say `v1.0.0` for example:
 1. `git checkout -b bump-v1.0.0`
-1. `yarn lerna version minor -- --no-push --conventional-commits`
+1. `yarn lerna version [patch|minor|major] -- --no-push --conventional-commits`
 1. `git push -u origin bump-v1.0.0`
 1. Create a PR from the `bump-v1.0.0` branch, wait for tests, and commit the PR using GitHub interface.
-1. `git checkout master && git pull`
+1. `git checkout main && git pull`
 1. `git tag -d v1.0.0`
 1. `git tag v1.0.0`
 1. `git push origin v1.0.0`
