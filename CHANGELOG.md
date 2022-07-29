@@ -5,7 +5,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [0.26.1](https://github.com/expo/entity/compare/v0.26.0...v0.26.1) (2022-07-28)
 
-**Note:** Version bump only for package root
+
+### Features
+
+* recache to higher cache levels when loading from a composed cache ([#182](https://github.com/expo/entity/pull/182))
 
 
 
