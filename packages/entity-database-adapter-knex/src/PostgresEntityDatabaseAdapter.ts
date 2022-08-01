@@ -57,13 +57,19 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     query: Knex.QueryBuilder,
     querySelectionModifiers: TableQuerySelectionModifiers
   ): Knex.QueryBuilder {
-    const { orderBy, offset, limit } = querySelectionModifiers;
+    const { orderBy, offset, limit, orderByRaw } = querySelectionModifiers;
 
     let ret = query;
 
     if (orderBy !== undefined) {
       for (const orderBySpecification of orderBy) {
         ret = ret.orderBy(orderBySpecification.columnName, orderBySpecification.order);
+      }
+    }
+
+    if (orderByRaw !== undefined) {
+      for (const orderByRawSpecification of orderByRaw) {
+        ret = ret.orderByRaw(orderByRawSpecification.clause);
       }
     }
 

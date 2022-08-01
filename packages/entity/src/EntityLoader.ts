@@ -192,7 +192,7 @@ export default class EntityLoader<
    * `WHERE hello = 1 AND world = ANY({2, 3})`
    *
    * @param fieldEqualityOperands - list of field equality WHERE clause operand specifications
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query
+   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
@@ -249,7 +249,7 @@ export default class EntityLoader<
    *
    * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
    * @param bindings - array of positional bindings or object of named bindings
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query
+   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    * @throws Error when rawWhereClause or bindings are invalid
    *

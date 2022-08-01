@@ -233,6 +233,53 @@ describe('postgres entity integration', () => {
       expect(results.map((e) => e.getField('name'))).toEqual(['b', 'a']);
     });
 
+    it('supports raw order by clause', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(PostgresTestEntity.creator(vc1).setField('name', 'a').createAsync());
+
+      await enforceAsyncResult(PostgresTestEntity.creator(vc1).setField('name', 'b').createAsync());
+
+      await enforceAsyncResult(PostgresTestEntity.creator(vc1).setField('name', 'c').createAsync());
+
+      const results = await PostgresTestEntity.loader(vc1)
+        .enforcing()
+        .loadManyByFieldEqualityConjunctionAsync([], {
+          limit: 2,
+          offset: 1,
+          orderByRaw: [
+            {
+              clause: 'name DESC',
+            },
+          ],
+        });
+      expect(results).toHaveLength(2);
+      expect(results.map((e) => e.getField('name'))).toEqual(['b', 'a']);
+    });
+
+    it('throws with invalid order by clause', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      await enforceAsyncResult(
+        PostgresTestEntity.creator(vc1)
+          .setField('name', 'hello')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .createAsync()
+      );
+
+      await expect(
+        PostgresTestEntity.loader(vc1)
+          .enforcing()
+          .loadManyByFieldEqualityConjunctionAsync([], {
+            orderByRaw: [
+              {
+                clause: 'invalid_column DESC',
+              },
+            ],
+          })
+      ).rejects.toThrow();
+    });
+
     it('supports null field values', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(

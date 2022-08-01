@@ -48,15 +48,27 @@ export enum OrderByOrdering {
 /**
  * SQL modifiers that only affect the selection but not the projection.
  */
-export interface QuerySelectionModifiers<TFields> {
-  /**
-   * Order the entities by specified columns and orders.
-   */
-  orderBy?: {
-    fieldName: keyof TFields;
-    order: OrderByOrdering;
-  }[];
-
+export type QuerySelectionModifiers<TFields> = (
+  | {
+      /**
+       * Order the entities by specified columns and orders.
+       */
+      orderBy?: {
+        fieldName: keyof TFields;
+        order: OrderByOrdering;
+      }[];
+      orderByRaw?: never;
+    }
+  | {
+      /**
+       * Order the entities by a raw SQL `ORDER BY` clause.
+       */
+      orderByRaw?: {
+        clause: string;
+      }[];
+      orderBy?: never;
+    }
+) & {
   /**
    * Skip the specified number of entities queried before returning.
    */
@@ -66,13 +78,18 @@ export interface QuerySelectionModifiers<TFields> {
    * Limit the number of entities returned.
    */
   limit?: number;
-}
+};
 
 export interface TableQuerySelectionModifiers {
   orderBy:
     | {
         columnName: string;
         order: OrderByOrdering;
+      }[]
+    | undefined;
+  orderByRaw:
+    | {
+        clause: string;
       }[]
     | undefined;
   offset: number | undefined;
@@ -149,7 +166,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
    *
    * @param queryContext - query context with which to perform the fetch
    * @param fieldEqualityOperands - list of field equality where clause operand specifications
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query
+   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
    * @returns array of objects matching the query
    */
   async fetchManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
@@ -367,6 +384,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     querySelectionModifiers: QuerySelectionModifiers<TFields>
   ): TableQuerySelectionModifiers {
     const orderBy = querySelectionModifiers.orderBy;
+    const orderByRaw = querySelectionModifiers.orderByRaw;
     return {
       orderBy:
         orderBy !== undefined
@@ -378,6 +396,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
               order: orderBySpecification.order,
             }))
           : undefined,
+      orderByRaw: orderByRaw !== undefined ? orderByRaw : undefined,
       offset: querySelectionModifiers.offset,
       limit: querySelectionModifiers.limit,
     };
