@@ -3,6 +3,7 @@ import {
   createUnitTestEntityCompanionProvider,
   enforceResultsAsync,
   ViewerContext,
+  EntityDatabaseAdapterUnknownError,
 } from '@expo/entity';
 import { enforceAsyncResult } from '@expo/results';
 import { knex, Knex } from 'knex';
@@ -247,11 +248,7 @@ describe('postgres entity integration', () => {
         .loadManyByFieldEqualityConjunctionAsync([], {
           limit: 2,
           offset: 1,
-          orderByRaw: [
-            {
-              clause: 'name DESC',
-            },
-          ],
+          orderByRaw: 'name DESC',
         });
       expect(results).toHaveLength(2);
       expect(results.map((e) => e.getField('name'))).toEqual(['b', 'a']);
@@ -268,16 +265,10 @@ describe('postgres entity integration', () => {
       );
 
       await expect(
-        PostgresTestEntity.loader(vc1)
-          .enforcing()
-          .loadManyByFieldEqualityConjunctionAsync([], {
-            orderByRaw: [
-              {
-                clause: 'invalid_column DESC',
-              },
-            ],
-          })
-      ).rejects.toThrow();
+        PostgresTestEntity.loader(vc1).enforcing().loadManyByFieldEqualityConjunctionAsync([], {
+          orderByRaw: 'invalid_column DESC',
+        })
+      ).rejects.toThrow(EntityDatabaseAdapterUnknownError);
     });
 
     it('supports null field values', async () => {

@@ -68,9 +68,7 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     }
 
     if (orderByRaw !== undefined) {
-      for (const orderByRawSpecification of orderByRaw) {
-        ret = ret.orderByRaw(orderByRawSpecification.clause);
-      }
+      ret = ret.orderByRaw(orderByRaw);
     }
 
     if (offset !== undefined) {
