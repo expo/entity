@@ -63,9 +63,7 @@ export type QuerySelectionModifiers<TFields> = (
       /**
        * Order the entities by a raw SQL `ORDER BY` clause.
        */
-      orderByRaw?: {
-        clause: string;
-      }[];
+      orderByRaw?: string;
       orderBy?: never;
     }
 ) & {
@@ -87,11 +85,7 @@ export interface TableQuerySelectionModifiers {
         order: OrderByOrdering;
       }[]
     | undefined;
-  orderByRaw:
-    | {
-        clause: string;
-      }[]
-    | undefined;
+  orderByRaw: string | undefined;
   offset: number | undefined;
   limit: number | undefined;
 }
