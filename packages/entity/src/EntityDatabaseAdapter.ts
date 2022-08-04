@@ -48,7 +48,7 @@ export enum OrderByOrdering {
 /**
  * SQL modifiers that only affect the selection but not the projection.
  */
-export type QuerySelectionModifiers<TFields> = {
+export interface QuerySelectionModifiers<TFields> {
   /**
    * Order the entities by specified columns and orders.
    */
@@ -66,7 +66,15 @@ export type QuerySelectionModifiers<TFields> = {
    * Limit the number of entities returned.
    */
   limit?: number;
-};
+}
+
+export interface QuerySelectionModifiersWithOrderByRaw<TFields>
+  extends QuerySelectionModifiers<TFields> {
+  /**
+   * Order the entities by a raw SQL `ORDER BY` clause.
+   */
+  orderByRaw?: string;
+}
 
 export interface TableQuerySelectionModifiers {
   orderBy:
@@ -75,9 +83,12 @@ export interface TableQuerySelectionModifiers {
         order: OrderByOrdering;
       }[]
     | undefined;
-  orderByRaw: string | undefined;
   offset: number | undefined;
   limit: number | undefined;
+}
+
+export interface TableQuerySelectionModifiersWithOrderByRaw extends TableQuerySelectionModifiers {
+  orderByRaw: string | undefined;
 }
 
 /**
@@ -208,14 +219,14 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiers<TFields> & { orderByRaw?: string }
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>
   ): Promise<readonly Readonly<TFields>[]> {
     const results = await this.fetchManyByRawWhereClauseInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       rawWhereClause,
       bindings,
-      this.convertToTableQueryModifiers(querySelectionModifiers)
+      this.convertToTableQueryModifiersWithOrderByRaw(querySelectionModifiers)
     );
 
     return results.map((result) =>
@@ -228,7 +239,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     tableName: string,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: TableQuerySelectionModifiers
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw
   ): Promise<object[]>;
 
   /**
@@ -364,11 +375,19 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     id: any
   ): Promise<number>;
 
+  private convertToTableQueryModifiersWithOrderByRaw(
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>
+  ): TableQuerySelectionModifiersWithOrderByRaw {
+    return {
+      ...this.convertToTableQueryModifiers(querySelectionModifiers),
+      orderByRaw: querySelectionModifiers.orderByRaw,
+    };
+  }
+
   private convertToTableQueryModifiers(
-    querySelectionModifiers: QuerySelectionModifiers<TFields> & { orderByRaw?: string }
+    querySelectionModifiers: QuerySelectionModifiers<TFields>
   ): TableQuerySelectionModifiers {
     const orderBy = querySelectionModifiers.orderBy;
-    const orderByRaw = querySelectionModifiers.orderByRaw;
     return {
       orderBy:
         orderBy !== undefined
@@ -380,7 +399,6 @@ export default abstract class EntityDatabaseAdapter<TFields> {
               order: orderBySpecification.order,
             }))
           : undefined,
-      orderByRaw: orderByRaw !== undefined ? orderByRaw : undefined,
       offset: querySelectionModifiers.offset,
       limit: querySelectionModifiers.limit,
     };
