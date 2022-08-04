@@ -132,7 +132,7 @@ export default class EnforcingEntityLoader<
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
+    querySelectionModifiers: QuerySelectionModifiers<TFields> & { orderByRaw?: string } = {}
   ): Promise<readonly TEntity[]> {
     const entityResults = await this.entityLoader.loadManyByRawWhereClauseAsync(
       rawWhereClause,

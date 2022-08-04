@@ -3,7 +3,6 @@ import {
   createUnitTestEntityCompanionProvider,
   enforceResultsAsync,
   ViewerContext,
-  EntityDatabaseAdapterUnknownError,
 } from '@expo/entity';
 import { enforceAsyncResult } from '@expo/results';
 import { knex, Knex } from 'knex';
@@ -234,43 +233,6 @@ describe('postgres entity integration', () => {
       expect(results.map((e) => e.getField('name'))).toEqual(['b', 'a']);
     });
 
-    it('supports raw order by clause', async () => {
-      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-
-      await enforceAsyncResult(PostgresTestEntity.creator(vc1).setField('name', 'a').createAsync());
-
-      await enforceAsyncResult(PostgresTestEntity.creator(vc1).setField('name', 'b').createAsync());
-
-      await enforceAsyncResult(PostgresTestEntity.creator(vc1).setField('name', 'c').createAsync());
-
-      const results = await PostgresTestEntity.loader(vc1)
-        .enforcing()
-        .loadManyByFieldEqualityConjunctionAsync([], {
-          limit: 2,
-          offset: 1,
-          orderByRaw: 'name DESC',
-        });
-      expect(results).toHaveLength(2);
-      expect(results.map((e) => e.getField('name'))).toEqual(['b', 'a']);
-    });
-
-    it('throws with invalid order by clause', async () => {
-      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-      await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1)
-          .setField('name', 'hello')
-          .setField('hasACat', false)
-          .setField('hasADog', true)
-          .createAsync()
-      );
-
-      await expect(
-        PostgresTestEntity.loader(vc1).enforcing().loadManyByFieldEqualityConjunctionAsync([], {
-          orderByRaw: 'invalid_column DESC',
-        })
-      ).rejects.toThrow(EntityDatabaseAdapterUnknownError);
-    });
-
     it('supports null field values', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(
@@ -417,6 +379,15 @@ describe('postgres entity integration', () => {
 
       expect(resultsMultipleOrderBy).toHaveLength(3);
       expect(resultsMultipleOrderBy.map((e) => e.getField('name'))).toEqual(['c', 'b', 'a']);
+
+      const resultsOrderByRaw = await PostgresTestEntity.loader(vc1)
+        .enforcing()
+        .loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
+          orderByRaw: 'has_a_dog ASC, name DESC',
+        });
+
+      expect(resultsOrderByRaw).toHaveLength(3);
+      expect(resultsOrderByRaw.map((e) => e.getField('name'))).toEqual(['c', 'b', 'a']);
     });
   });
 

@@ -146,7 +146,7 @@ export default class EntityDataManager<TFields> {
    *
    * @param queryContext - query context in which to perform the load
    * @param fieldEqualityOperands - list of field equality where clause operand specifications
-   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
+   * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of objects matching the query
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
@@ -180,7 +180,7 @@ export default class EntityDataManager<TFields> {
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
+    querySelectionModifiers: QuerySelectionModifiers<TFields> & { orderByRaw?: string }
   ): Promise<readonly Readonly<TFields>[]> {
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,

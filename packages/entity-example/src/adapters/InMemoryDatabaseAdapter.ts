@@ -100,11 +100,6 @@ class InMemoryDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
       );
     }
 
-    const orderByRaw = querySelectionModifiers.orderByRaw;
-    if (orderByRaw !== undefined) {
-      throw new Error('Raw ORDER BY clauses not supported for InMemoryDatabaseAdapter');
-    }
-
     const offset = querySelectionModifiers.offset;
     if (offset !== undefined) {
       filteredObjects = filteredObjects.slice(offset);

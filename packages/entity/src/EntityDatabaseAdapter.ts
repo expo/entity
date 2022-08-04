@@ -48,25 +48,15 @@ export enum OrderByOrdering {
 /**
  * SQL modifiers that only affect the selection but not the projection.
  */
-export type QuerySelectionModifiers<TFields> = (
-  | {
-      /**
-       * Order the entities by specified columns and orders.
-       */
-      orderBy?: {
-        fieldName: keyof TFields;
-        order: OrderByOrdering;
-      }[];
-      orderByRaw?: never;
-    }
-  | {
-      /**
-       * Order the entities by a raw SQL `ORDER BY` clause.
-       */
-      orderByRaw?: string;
-      orderBy?: never;
-    }
-) & {
+export type QuerySelectionModifiers<TFields> = {
+  /**
+   * Order the entities by specified columns and orders.
+   */
+  orderBy?: {
+    fieldName: keyof TFields;
+    order: OrderByOrdering;
+  }[];
+
   /**
    * Skip the specified number of entities queried before returning.
    */
@@ -218,7 +208,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
+    querySelectionModifiers: QuerySelectionModifiers<TFields> & { orderByRaw?: string }
   ): Promise<readonly Readonly<TFields>[]> {
     const results = await this.fetchManyByRawWhereClauseInternalAsync(
       queryContext.getQueryInterface(),
@@ -375,7 +365,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
   ): Promise<number>;
 
   private convertToTableQueryModifiers(
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
+    querySelectionModifiers: QuerySelectionModifiers<TFields> & { orderByRaw?: string }
   ): TableQuerySelectionModifiers {
     const orderBy = querySelectionModifiers.orderBy;
     const orderByRaw = querySelectionModifiers.orderByRaw;
