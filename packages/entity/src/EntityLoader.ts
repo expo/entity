@@ -8,6 +8,7 @@ import {
   FieldEqualityCondition,
   QuerySelectionModifiers,
   isSingleValueFieldEqualityCondition,
+  QuerySelectionModifiersWithOrderByRaw,
 } from './EntityDatabaseAdapter';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
@@ -192,7 +193,7 @@ export default class EntityLoader<
    * `WHERE hello = 1 AND world = ANY({2, 3})`
    *
    * @param fieldEqualityOperands - list of field equality WHERE clause operand specifications
-   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
+   * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
@@ -258,7 +259,7 @@ export default class EntityLoader<
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields> = {}
   ): Promise<readonly Result<TEntity>[]> {
     const fieldObjects = await this.dataManager.loadManyByRawWhereClauseAsync(
       this.queryContext,

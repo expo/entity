@@ -3,6 +3,7 @@ import DataLoader from 'dataloader';
 import EntityDatabaseAdapter, {
   FieldEqualityCondition,
   QuerySelectionModifiers,
+  QuerySelectionModifiersWithOrderByRaw,
 } from '../EntityDatabaseAdapter';
 import { EntityQueryContext } from '../EntityQueryContext';
 import EntityQueryContextProvider from '../EntityQueryContextProvider';
@@ -180,7 +181,7 @@ export default class EntityDataManager<TFields> {
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiers<TFields> & { orderByRaw?: string }
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>
   ): Promise<readonly Readonly<TFields>[]> {
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,

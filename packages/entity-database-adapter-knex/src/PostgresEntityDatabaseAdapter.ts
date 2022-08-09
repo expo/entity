@@ -7,6 +7,7 @@ import {
   TableQuerySelectionModifiers,
   TableFieldSingleValueEqualityCondition,
   TableFieldMultiValueEqualityCondition,
+  TableQuerySelectionModifiersWithOrderByRaw,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -53,11 +54,25 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     );
   }
 
+  private applyQueryModifiersToQueryOrderByRaw(
+    query: Knex.QueryBuilder,
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw
+  ): Knex.QueryBuilder {
+    let ret = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
+
+    const { orderByRaw } = querySelectionModifiers;
+    if (orderByRaw !== undefined) {
+      ret = ret.orderByRaw(orderByRaw);
+    }
+
+    return ret;
+  }
+
   private applyQueryModifiersToQuery(
     query: Knex.QueryBuilder,
     querySelectionModifiers: TableQuerySelectionModifiers
   ): Knex.QueryBuilder {
-    const { orderBy, offset, limit, orderByRaw } = querySelectionModifiers;
+    const { orderBy, offset, limit } = querySelectionModifiers;
 
     let ret = query;
 
@@ -65,10 +80,6 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
       for (const orderBySpecification of orderBy) {
         ret = ret.orderBy(orderBySpecification.columnName, orderBySpecification.order);
       }
-    }
-
-    if (orderByRaw !== undefined) {
-      ret = ret.orderByRaw(orderByRaw);
     }
 
     if (offset !== undefined) {
@@ -133,13 +144,13 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     tableName: string,
     rawWhereClause: string,
     bindings: object | any[],
-    querySelectionModifiers: TableQuerySelectionModifiers
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw
   ): Promise<object[]> {
     let query = queryInterface
       .select()
       .from(tableName)
       .whereRaw(rawWhereClause, bindings as any);
-    query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
+    query = this.applyQueryModifiersToQueryOrderByRaw(query, querySelectionModifiers);
     return await wrapNativePostgresCallAsync(() => query);
   }
 
