@@ -68,6 +68,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A <a href="_expo_entity.EntityCacheAdapter.html">EntityCacheAdapter</a> that composes other <a href="_expo_entity.EntityCacheAdapter.html">EntityCacheAdapter</a> instances.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-type-parameters">
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
@@ -130,14 +137,9 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_expo_entity.EntityCacheAdapter.html">EntityCacheAdapter</a>.<a href="_expo_entity.EntityCacheAdapter.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/ComposedEntityCacheAdapter.ts#L16">packages/entity/src/ComposedEntityCacheAdapter.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/ComposedEntityCacheAdapter.ts#L18">packages/entity/src/ComposedEntityCacheAdapter.ts:18</a></li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>A <a href="_expo_entity.EntityCacheAdapter.html">EntityCacheAdapter</a> that composes other <a href="_expo_entity.EntityCacheAdapter.html">EntityCacheAdapter</a> instances.</p>
-								</div>
-							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
@@ -160,7 +162,8 @@
 										<div class="lead">
 											<p>list of cache adapters to compose in order of precedence.
 												Earlier cache adapters are read from first and written to (including invalidations) last.
-											Typically, caches closer to the application should be ordered before caches closer to the database.</p>
+												Typically, caches closer to the application should be ordered before caches closer to the database.
+											A lower layer cache is closer to the database, while a higher layer cache is closer to the application.</p>
 										</div>
 									</div>
 								</li>
@@ -194,7 +197,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_expo_entity.EntityCacheAdapter.html">EntityCacheAdapter</a>.<a href="_expo_entity.EntityCacheAdapter.html#cacheDBMissesAsync">cacheDBMissesAsync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/ComposedEntityCacheAdapter.ts#L65">packages/entity/src/ComposedEntityCacheAdapter.ts:65</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/ComposedEntityCacheAdapter.ts#L106">packages/entity/src/ComposedEntityCacheAdapter.ts:106</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -232,7 +235,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_expo_entity.EntityCacheAdapter.html">EntityCacheAdapter</a>.<a href="_expo_entity.EntityCacheAdapter.html#cacheManyAsync">cacheManyAsync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/ComposedEntityCacheAdapter.ts#L54">packages/entity/src/ComposedEntityCacheAdapter.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/ComposedEntityCacheAdapter.ts#L95">packages/entity/src/ComposedEntityCacheAdapter.ts:95</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -270,7 +273,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_expo_entity.EntityCacheAdapter.html">EntityCacheAdapter</a>.<a href="_expo_entity.EntityCacheAdapter.html#invalidateManyAsync">invalidateManyAsync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/ComposedEntityCacheAdapter.ts#L76">packages/entity/src/ComposedEntityCacheAdapter.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/ComposedEntityCacheAdapter.ts#L117">packages/entity/src/ComposedEntityCacheAdapter.ts:117</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -308,7 +311,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_expo_entity.EntityCacheAdapter.html">EntityCacheAdapter</a>.<a href="_expo_entity.EntityCacheAdapter.html#loadManyAsync">loadManyAsync</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/ComposedEntityCacheAdapter.ts#L23">packages/entity/src/ComposedEntityCacheAdapter.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/ComposedEntityCacheAdapter.ts#L25">packages/entity/src/ComposedEntityCacheAdapter.ts:25</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

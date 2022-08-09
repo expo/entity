@@ -134,7 +134,6 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.UpdateMutator.html#mutationValidators" class="tsd-kind-icon">mutation<wbr>Validators</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.UpdateMutator.html#originalEntity" class="tsd-kind-icon">original<wbr>Entity</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.UpdateMutator.html#privacyPolicy" class="tsd-kind-icon">privacy<wbr>Policy</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.UpdateMutator.html#privacyPolicyEvaluationContext" class="tsd-kind-icon">privacy<wbr>Policy<wbr>Evaluation<wbr>Context</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.UpdateMutator.html#queryContext" class="tsd-kind-icon">query<wbr>Context</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_expo_entity.UpdateMutator.html#updatedFields" class="tsd-kind-icon">updated<wbr>Fields</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_expo_entity.UpdateMutator.html#viewerContext" class="tsd-kind-icon">viewer<wbr>Context</a></li>
@@ -163,14 +162,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Update<wbr>Mutator&lt;TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields&gt;<span class="tsd-signature-symbol">(</span>viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityQueryContext</a>, privacyPolicyEvaluationContext<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#EntityPrivacyPolicyEvaluationContext" class="tsd-signature-type" data-tsd-kind="Type alias">EntityPrivacyPolicyEvaluationContext</a>, entityConfiguration<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityConfiguration.html" class="tsd-signature-type" data-tsd-kind="Class">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, entityClass<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.IEntityClass.html" class="tsd-signature-type" data-tsd-kind="Interface">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span>, privacyPolicy<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TPrivacyPolicy</span>, mutationValidators<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityMutationValidator.html" class="tsd-signature-type" data-tsd-kind="Class">EntityMutationValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, mutationTriggers<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.EntityMutationTriggerConfiguration.html" class="tsd-signature-type" data-tsd-kind="Interface">EntityMutationTriggerConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span>, entityLoaderFactory<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityLoaderFactory.html" class="tsd-signature-type" data-tsd-kind="Class">EntityLoaderFactory</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span>, databaseAdapter<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityDatabaseAdapter.html" class="tsd-signature-type" data-tsd-kind="Class">EntityDatabaseAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, metricsAdapter<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html" class="tsd-signature-type" data-tsd-kind="Interface">IEntityMetricsAdapter</a>, originalEntity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.UpdateMutator.html" class="tsd-signature-type" data-tsd-kind="Class">UpdateMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Update<wbr>Mutator&lt;TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields&gt;<span class="tsd-signature-symbol">(</span>viewerContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TViewerContext</span>, queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityQueryContext</a>, entityConfiguration<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityConfiguration.html" class="tsd-signature-type" data-tsd-kind="Class">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, entityClass<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.IEntityClass.html" class="tsd-signature-type" data-tsd-kind="Interface">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span>, privacyPolicy<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TPrivacyPolicy</span>, mutationValidators<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityMutationValidator.html" class="tsd-signature-type" data-tsd-kind="Class">EntityMutationValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, mutationTriggers<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.EntityMutationTriggerConfiguration.html" class="tsd-signature-type" data-tsd-kind="Interface">EntityMutationTriggerConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span>, entityLoaderFactory<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityLoaderFactory.html" class="tsd-signature-type" data-tsd-kind="Class">EntityLoaderFactory</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span>, databaseAdapter<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityDatabaseAdapter.html" class="tsd-signature-type" data-tsd-kind="Class">EntityDatabaseAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span>, metricsAdapter<span class="tsd-signature-symbol">: </span><a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html" class="tsd-signature-type" data-tsd-kind="Interface">IEntityMetricsAdapter</a>, originalEntity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.UpdateMutator.html" class="tsd-signature-type" data-tsd-kind="Class">UpdateMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides BaseMutator&lt;TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields&gt;.constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L315">packages/entity/src/EntityMutator.ts:315</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L312">packages/entity/src/EntityMutator.ts:312</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -201,9 +200,6 @@
 								</li>
 								<li>
 									<h5>queryContext: <a href="_expo_entity.EntityQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityQueryContext</a></h5>
-								</li>
-								<li>
-									<h5>privacyPolicyEvaluationContext: <a href="../modules/_expo_entity.html#EntityPrivacyPolicyEvaluationContext" class="tsd-signature-type" data-tsd-kind="Type alias">EntityPrivacyPolicyEvaluationContext</a></h5>
 								</li>
 								<li>
 									<h5>entityConfiguration: <a href="_expo_entity.EntityConfiguration.html" class="tsd-signature-type" data-tsd-kind="Class">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
@@ -278,7 +274,7 @@
 					<div class="tsd-signature tsd-kind-icon">fields<wbr>For<wbr>Entity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TFields</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L312">packages/entity/src/EntityMutator.ts:312</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L309">packages/entity/src/EntityMutator.ts:309</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -312,7 +308,7 @@
 					<div class="tsd-signature tsd-kind-icon">original<wbr>Entity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TEntity</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L311">packages/entity/src/EntityMutator.ts:311</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L308">packages/entity/src/EntityMutator.ts:308</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -322,14 +318,6 @@
 					<div class="tsd-signature tsd-kind-icon">privacy<wbr>Policy<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TPrivacyPolicy</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from BaseMutator.privacyPolicy</p>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-					<a name="privacyPolicyEvaluationContext" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> privacy<wbr>Policy<wbr>Evaluation<wbr>Context</h3>
-					<div class="tsd-signature tsd-kind-icon">privacy<wbr>Policy<wbr>Evaluation<wbr>Context<span class="tsd-signature-symbol">:</span> <a href="../modules/_expo_entity.html#EntityPrivacyPolicyEvaluationContext" class="tsd-signature-type" data-tsd-kind="Type alias">EntityPrivacyPolicyEvaluationContext</a></div>
-					<aside class="tsd-sources">
-						<p>Inherited from BaseMutator.privacyPolicyEvaluationContext</p>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
@@ -346,7 +334,7 @@
 					<div class="tsd-signature tsd-kind-icon">updated<wbr>Fields<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L313">packages/entity/src/EntityMutator.ts:313</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L310">packages/entity/src/EntityMutator.ts:310</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -371,7 +359,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L400">packages/entity/src/EntityMutator.ts:400</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L394">packages/entity/src/EntityMutator.ts:394</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -394,7 +382,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from BaseMutator.executeMutationTriggersAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L115">packages/entity/src/EntityMutator.ts:115</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L114">packages/entity/src/EntityMutator.ts:114</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -427,7 +415,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from BaseMutator.executeMutationValidatorsAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L96">packages/entity/src/EntityMutator.ts:96</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L95">packages/entity/src/EntityMutator.ts:95</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -460,7 +448,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from BaseMutator.executeNonTransactionalMutationTriggersAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L133">packages/entity/src/EntityMutator.ts:133</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L132">packages/entity/src/EntityMutator.ts:132</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -489,7 +477,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L377">packages/entity/src/EntityMutator.ts:377</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L372">packages/entity/src/EntityMutator.ts:372</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -532,14 +520,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L389">packages/entity/src/EntityMutator.ts:389</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L383">packages/entity/src/EntityMutator.ts:383</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Commit the changes to the entity after authorizing against update privacy rules.
-										Invalidates all caches for pre-update entity and caches the updated entity if not in a
-									transactional query context.</p>
+									Invalidates all caches for pre-update entity.</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -551,15 +538,42 @@
 					<a name="updateInTransactionAsync" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> update<wbr>InTransaction<wbr>Async</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">update<wbr>InTransaction<wbr>Async<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">update<wbr>InTransaction<wbr>Async<span class="tsd-signature-symbol">(</span>skipDatabaseUpdate<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">true</span>, cascadingDeleteCause<span class="tsd-signature-symbol">: </span><a href="../modules/_expo_entity.html#EntityCascadingDeletionInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityCascadingDeletionInfo</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">update<wbr>InTransaction<wbr>Async<span class="tsd-signature-symbol">(</span>skipDatabaseUpdate<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">false</span>, cascadingDeleteCause<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../modules/_expo_entity.html#EntityCascadingDeletionInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityCascadingDeletionInfo</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L404">packages/entity/src/EntityMutator.ts:404</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L398">packages/entity/src/EntityMutator.ts:398</a></li>
 								</ul>
 							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>skipDatabaseUpdate: <span class="tsd-signature-type">true</span></h5>
+								</li>
+								<li>
+									<h5>cascadingDeleteCause: <a href="../modules/_expo_entity.html#EntityCascadingDeletionInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityCascadingDeletionInfo</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L402">packages/entity/src/EntityMutator.ts:402</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>skipDatabaseUpdate: <span class="tsd-signature-type">false</span></h5>
+								</li>
+								<li>
+									<h5>cascadingDeleteCause: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../modules/_expo_entity.html#EntityCascadingDeletionInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityCascadingDeletionInfo</a></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -568,19 +582,25 @@
 					<a name="updateInternalAsync" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> update<wbr>Internal<wbr>Async</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">update<wbr>Internal<wbr>Async<span class="tsd-signature-symbol">(</span>queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityTransactionalQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityTransactionalQueryContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Internal<wbr>Async<span class="tsd-signature-symbol">(</span>queryContext<span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityTransactionalQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityTransactionalQueryContext</a>, skipDatabaseUpdate<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, cascadingDeleteCause<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../modules/_expo_entity.html#EntityCascadingDeletionInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityCascadingDeletionInfo</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L410">packages/entity/src/EntityMutator.ts:410</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L415">packages/entity/src/EntityMutator.ts:415</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>queryContext: <a href="_expo_entity.EntityTransactionalQueryContext.html" class="tsd-signature-type" data-tsd-kind="Class">EntityTransactionalQueryContext</a></h5>
+								</li>
+								<li>
+									<h5>skipDatabaseUpdate: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>cascadingDeleteCause: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../modules/_expo_entity.html#EntityCascadingDeletionInfo" class="tsd-signature-type" data-tsd-kind="Type alias">EntityCascadingDeletionInfo</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -598,7 +618,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from BaseMutator.validateFields</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/EntityMutator.ts#L84">packages/entity/src/EntityMutator.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/EntityMutator.ts#L83">packages/entity/src/EntityMutator.ts:83</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -669,9 +689,6 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="_expo_entity.UpdateMutator.html#privacyPolicy" class="tsd-kind-icon">privacy<wbr>Policy</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="_expo_entity.UpdateMutator.html#privacyPolicyEvaluationContext" class="tsd-kind-icon">privacy<wbr>Policy<wbr>Evaluation<wbr>Context</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="_expo_entity.UpdateMutator.html#queryContext" class="tsd-kind-icon">query<wbr>Context</a>

@@ -68,6 +68,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Event used to record dataloader, cache, and database load counts in <a href="../classes/_expo_entity.EntityDataManager.html">EntityDataManager</a>.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -85,6 +92,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.IncrementLoadCountEvent.html#entityClassName" class="tsd-kind-icon">entity<wbr>Class<wbr>Name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.IncrementLoadCountEvent.html#fieldValueCount" class="tsd-kind-icon">field<wbr>Value<wbr>Count</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.IncrementLoadCountEvent.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,9 +106,14 @@
 					<div class="tsd-signature tsd-kind-icon">entity<wbr>Class<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L33">packages/entity/src/metrics/IEntityMetricsAdapter.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L95">packages/entity/src/metrics/IEntityMetricsAdapter.ts:95</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class name of the <a href="../classes/_expo_entity.Entity.html">Entity</a> being loaded.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="fieldValueCount" class="tsd-anchor"></a>
@@ -108,9 +121,29 @@
 					<div class="tsd-signature tsd-kind-icon">field<wbr>Value<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L32">packages/entity/src/metrics/IEntityMetricsAdapter.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L90">packages/entity/src/metrics/IEntityMetricsAdapter.ts:90</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Number of field values being loaded for this call.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="../enums/_expo_entity.IncrementLoadCountEventType.html" class="tsd-signature-type" data-tsd-kind="Enumeration">IncrementLoadCountEventType</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L85">packages/entity/src/metrics/IEntityMetricsAdapter.ts:85</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Type of this event.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -143,6 +176,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_expo_entity.IncrementLoadCountEvent.html#fieldValueCount" class="tsd-kind-icon">field<wbr>Value<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_expo_entity.IncrementLoadCountEvent.html#type" class="tsd-kind-icon">type</a>
 							</li>
 						</ul>
 					</li>

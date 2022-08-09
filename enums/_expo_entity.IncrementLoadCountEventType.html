@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>EntityMetricsAuthorizationEvent | Entity</title>
+	<title>IncrementLoadCountEventType | Entity</title>
 	<meta name="description" content="Documentation for Entity">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -58,93 +58,78 @@
 					<a href="../modules/_expo_entity.html">@expo/entity</a>
 				</li>
 				<li>
-					<a href="_expo_entity.EntityMetricsAuthorizationEvent.html">EntityMetricsAuthorizationEvent</a>
+					<a href="_expo_entity.IncrementLoadCountEventType.html">IncrementLoadCountEventType</a>
 				</li>
 			</ul>
-			<h1>Interface EntityMetricsAuthorizationEvent</h1>
+			<h1>Enumeration IncrementLoadCountEventType</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Event used to record a singe <a href="../classes/_expo_entity.EntityPrivacyPolicy.html">EntityPrivacyPolicy</a> authorization.</p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">EntityMetricsAuthorizationEvent</span>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.EntityMetricsAuthorizationEvent.html#action" class="tsd-kind-icon">action</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.EntityMetricsAuthorizationEvent.html#entityClassName" class="tsd-kind-icon">entity<wbr>Class<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.EntityMetricsAuthorizationEvent.html#evaluationResult" class="tsd-kind-icon">evaluation<wbr>Result</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity.EntityMetricsAuthorizationEvent.html#privacyPolicyEvaluationMode" class="tsd-kind-icon">privacy<wbr>Policy<wbr>Evaluation<wbr>Mode</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_expo_entity.IncrementLoadCountEventType.html#CACHE" class="tsd-kind-icon">CACHE</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_expo_entity.IncrementLoadCountEventType.html#DATABASE" class="tsd-kind-icon">DATABASE</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_expo_entity.IncrementLoadCountEventType.html#DATALOADER" class="tsd-kind-icon">DATALOADER</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="action" class="tsd-anchor"></a>
-					<h3>action</h3>
-					<div class="tsd-signature tsd-kind-icon">action<span class="tsd-signature-symbol">:</span> <a href="../enums/_expo_entity.EntityAuthorizationAction.html" class="tsd-signature-type" data-tsd-kind="Enumeration">EntityAuthorizationAction</a></div>
+				<h2>Enumeration members</h2>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="CACHE" class="tsd-anchor"></a>
+					<h3>CACHE</h3>
+					<div class="tsd-signature tsd-kind-icon">CACHE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L111">packages/entity/src/metrics/IEntityMetricsAdapter.ts:111</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="entityClassName" class="tsd-anchor"></a>
-					<h3>entity<wbr>Class<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">entity<wbr>Class<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L110">packages/entity/src/metrics/IEntityMetricsAdapter.ts:110</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L70">packages/entity/src/metrics/IEntityMetricsAdapter.ts:70</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Class name of the <a href="../classes/_expo_entity.Entity.html">Entity</a> being authorized.</p>
+							<p>Type for when a cache load is initiated due to a dataloader miss.</p>
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="evaluationResult" class="tsd-anchor"></a>
-					<h3>evaluation<wbr>Result</h3>
-					<div class="tsd-signature tsd-kind-icon">evaluation<wbr>Result<span class="tsd-signature-symbol">:</span> <a href="../enums/_expo_entity.EntityMetricsAuthorizationResult.html" class="tsd-signature-type" data-tsd-kind="Enumeration">EntityMetricsAuthorizationResult</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="DATABASE" class="tsd-anchor"></a>
+					<h3>DATABASE</h3>
+					<div class="tsd-signature tsd-kind-icon">DATABASE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 2</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L112">packages/entity/src/metrics/IEntityMetricsAdapter.ts:112</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L75">packages/entity/src/metrics/IEntityMetricsAdapter.ts:75</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Type for when a database load is initiated due to a dataloader and cache miss, when an entity query doesn&#39;t support caching, or during a transaction.</p>
+						</div>
+					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="privacyPolicyEvaluationMode" class="tsd-anchor"></a>
-					<h3>privacy<wbr>Policy<wbr>Evaluation<wbr>Mode</h3>
-					<div class="tsd-signature tsd-kind-icon">privacy<wbr>Policy<wbr>Evaluation<wbr>Mode<span class="tsd-signature-symbol">:</span> <a href="../enums/_expo_entity.EntityPrivacyPolicyEvaluationMode.html" class="tsd-signature-type" data-tsd-kind="Enumeration">EntityPrivacyPolicyEvaluationMode</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="DATALOADER" class="tsd-anchor"></a>
+					<h3>DATALOADER</h3>
+					<div class="tsd-signature tsd-kind-icon">DATALOADER<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L113">packages/entity/src/metrics/IEntityMetricsAdapter.ts:113</a></li>
+							<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L65">packages/entity/src/metrics/IEntityMetricsAdapter.ts:65</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Type for when a dataloader load is initiated via the standard load methods
+							since all loads go through a dataloader.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -169,20 +154,17 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="_expo_entity.EntityMetricsAuthorizationEvent.html" class="tsd-kind-icon">Entity<wbr>Metrics<wbr>Authorization<wbr>Event</a>
+					<li class="current tsd-kind-enum tsd-parent-kind-module">
+						<a href="_expo_entity.IncrementLoadCountEventType.html" class="tsd-kind-icon">Increment<wbr>Load<wbr>Count<wbr>Event<wbr>Type</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_expo_entity.EntityMetricsAuthorizationEvent.html#action" class="tsd-kind-icon">action</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="_expo_entity.IncrementLoadCountEventType.html#CACHE" class="tsd-kind-icon">CACHE</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_expo_entity.EntityMetricsAuthorizationEvent.html#entityClassName" class="tsd-kind-icon">entity<wbr>Class<wbr>Name</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="_expo_entity.IncrementLoadCountEventType.html#DATABASE" class="tsd-kind-icon">DATABASE</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_expo_entity.EntityMetricsAuthorizationEvent.html#evaluationResult" class="tsd-kind-icon">evaluation<wbr>Result</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_expo_entity.EntityMetricsAuthorizationEvent.html#privacyPolicyEvaluationMode" class="tsd-kind-icon">privacy<wbr>Policy<wbr>Evaluation<wbr>Mode</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="_expo_entity.IncrementLoadCountEventType.html#DATALOADER" class="tsd-kind-icon">DATALOADER</a>
 							</li>
 						</ul>
 					</li>
@@ -207,7 +189,6 @@
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>

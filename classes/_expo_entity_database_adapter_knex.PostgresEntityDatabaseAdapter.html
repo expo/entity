@@ -103,6 +103,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_expo_entity_database_adapter_knex.PostgresEntityDatabaseAdapter.html#applyQueryModifiersToQuery" class="tsd-kind-icon">apply<wbr>Query<wbr>Modifiers<wbr>ToQuery</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_expo_entity_database_adapter_knex.PostgresEntityDatabaseAdapter.html#applyQueryModifiersToQueryOrderByRaw" class="tsd-kind-icon">apply<wbr>Query<wbr>Modifiers<wbr>ToQuery<wbr>Order<wbr>ByRaw</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited"><a href="_expo_entity_database_adapter_knex.PostgresEntityDatabaseAdapter.html#deleteAsync" class="tsd-kind-icon">delete<wbr>Async</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="_expo_entity_database_adapter_knex.PostgresEntityDatabaseAdapter.html#deleteInternalAsync" class="tsd-kind-icon">delete<wbr>Internal<wbr>Async</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited"><a href="_expo_entity_database_adapter_knex.PostgresEntityDatabaseAdapter.html#fetchManyByFieldEqualityConjunctionAsync" class="tsd-kind-icon">fetch<wbr>Many<wbr>ByField<wbr>Equality<wbr>Conjunction<wbr>Async</a></li>
@@ -134,7 +135,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from EntityDatabaseAdapter&lt;TFields&gt;.constructor</p>
 								<ul>
-									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:63</li>
+									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:72</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -166,7 +167,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L56">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L71">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:71</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -176,6 +177,32 @@
 								</li>
 								<li>
 									<h5>querySelectionModifiers: <span class="tsd-signature-type">TableQuerySelectionModifiers</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="applyQueryModifiersToQueryOrderByRaw" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> apply<wbr>Query<wbr>Modifiers<wbr>ToQuery<wbr>Order<wbr>ByRaw</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">apply<wbr>Query<wbr>Modifiers<wbr>ToQuery<wbr>Order<wbr>ByRaw<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, querySelectionModifiers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TableQuerySelectionModifiersWithOrderByRaw</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L57">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:57</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>query: <span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>querySelectionModifiers: <span class="tsd-signature-type">TableQuerySelectionModifiersWithOrderByRaw</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -193,7 +220,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from EntityDatabaseAdapter.deleteAsync</p>
 								<ul>
-									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:129</li>
+									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:138</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -243,7 +270,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.deleteInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L164">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:164</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L179">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:179</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -276,7 +303,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from EntityDatabaseAdapter.fetchManyByFieldEqualityConjunctionAsync</p>
 								<ul>
-									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:89</li>
+									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:98</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -308,7 +335,7 @@
 								<li>
 									<h5>querySelectionModifiers: <span class="tsd-signature-type">QuerySelectionModifiers</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>limit, offset, and orderBy for the query</p>
+										<p>limit, offset, orderBy, and orderByRaw for the query</p>
 									</div>
 								</li>
 							</ul>
@@ -328,7 +355,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.fetchManyByFieldEqualityConjunctionInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L81">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:81</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L96">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:96</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -357,14 +384,14 @@
 					<a name="fetchManyByRawWhereClauseAsync" class="tsd-anchor"></a>
 					<h3>fetch<wbr>Many<wbr>ByRaw<wbr>Where<wbr>Clause<wbr>Async</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">fetch<wbr>Many<wbr>ByRaw<wbr>Where<wbr>Clause<wbr>Async<span class="tsd-signature-symbol">(</span>queryContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EntityQueryContext</span>, rawWhereClause<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bindings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, querySelectionModifiers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">QuerySelectionModifiers</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">fetch<wbr>Many<wbr>ByRaw<wbr>Where<wbr>Clause<wbr>Async<span class="tsd-signature-symbol">(</span>queryContext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EntityQueryContext</span>, rawWhereClause<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bindings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, querySelectionModifiers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">QuerySelectionModifiersWithOrderByRaw</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from EntityDatabaseAdapter.fetchManyByRawWhereClauseAsync</p>
 								<ul>
-									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:100</li>
+									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:109</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -393,7 +420,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>querySelectionModifiers: <span class="tsd-signature-type">QuerySelectionModifiers</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>querySelectionModifiers: <span class="tsd-signature-type">QuerySelectionModifiersWithOrderByRaw</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>limit, offset, and orderBy for the query</p>
 									</div>
@@ -408,14 +435,14 @@
 					<a name="fetchManyByRawWhereClauseInternalAsync" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> fetch<wbr>Many<wbr>ByRaw<wbr>Where<wbr>Clause<wbr>Internal<wbr>Async</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
-						<li class="tsd-signature tsd-kind-icon">fetch<wbr>Many<wbr>ByRaw<wbr>Where<wbr>Clause<wbr>Internal<wbr>Async<span class="tsd-signature-symbol">(</span>queryInterface<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Knex</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span>, tableName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, rawWhereClause<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bindings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, querySelectionModifiers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TableQuerySelectionModifiers</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">fetch<wbr>Many<wbr>ByRaw<wbr>Where<wbr>Clause<wbr>Internal<wbr>Async<span class="tsd-signature-symbol">(</span>queryInterface<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Knex</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span>, tableName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, rawWhereClause<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bindings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, querySelectionModifiers<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TableQuerySelectionModifiersWithOrderByRaw</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.fetchManyByRawWhereClauseInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L127">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:127</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L142">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:142</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -433,7 +460,7 @@
 									<h5>bindings: <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
-									<h5>querySelectionModifiers: <span class="tsd-signature-type">TableQuerySelectionModifiers</span></h5>
+									<h5>querySelectionModifiers: <span class="tsd-signature-type">TableQuerySelectionModifiersWithOrderByRaw</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -451,7 +478,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from EntityDatabaseAdapter.fetchManyWhereAsync</p>
 								<ul>
-									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:78</li>
+									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:87</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -499,7 +526,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.fetchManyWhereInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L42">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L43">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -532,7 +559,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.getFieldTransformerMap</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L16">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L17">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:17</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">FieldTransformerMap</span></h4>
@@ -550,7 +577,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from EntityDatabaseAdapter.insertAsync</p>
 								<ul>
-									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:109</li>
+									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:118</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -589,7 +616,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.insertInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L142">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:142</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L157">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:157</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -619,7 +646,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from EntityDatabaseAdapter.updateAsync</p>
 								<ul>
-									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:120</li>
+									<li>Defined in packages/entity/build/EntityDatabaseAdapter.d.ts:129</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -676,7 +703,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides EntityDatabaseAdapter.updateInternalAsync</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L152">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:152</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts#L167">packages/entity-database-adapter-knex/src/PostgresEntityDatabaseAdapter.ts:167</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -732,6 +759,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_expo_entity_database_adapter_knex.PostgresEntityDatabaseAdapter.html#applyQueryModifiersToQuery" class="tsd-kind-icon">apply<wbr>Query<wbr>Modifiers<wbr>ToQuery</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_expo_entity_database_adapter_knex.PostgresEntityDatabaseAdapter.html#applyQueryModifiersToQueryOrderByRaw" class="tsd-kind-icon">apply<wbr>Query<wbr>Modifiers<wbr>ToQuery<wbr>Order<wbr>ByRaw</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited">
 								<a href="_expo_entity_database_adapter_knex.PostgresEntityDatabaseAdapter.html#deleteAsync" class="tsd-kind-icon">delete<wbr>Async</a>

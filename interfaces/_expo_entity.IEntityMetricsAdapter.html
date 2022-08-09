@@ -97,9 +97,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerCacheLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Cache<wbr>Load<wbr>Count</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerDatabaseLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Database<wbr>Load<wbr>Count</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerDataloaderLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Dataloader<wbr>Load<wbr>Count</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Load<wbr>Count</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_expo_entity.IEntityMetricsAdapter.html#logAuthorizationEvent" class="tsd-kind-icon">log<wbr>Authorization<wbr>Event</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_expo_entity.IEntityMetricsAdapter.html#logDataManagerLoadEvent" class="tsd-kind-icon">log<wbr>Data<wbr>Manager<wbr>Load<wbr>Event</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_expo_entity.IEntityMetricsAdapter.html#logMutatorMutationEvent" class="tsd-kind-icon">log<wbr>Mutator<wbr>Mutation<wbr>Event</a></li>
@@ -111,82 +109,23 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="incrementDataManagerCacheLoadCount" class="tsd-anchor"></a>
-					<h3>increment<wbr>Data<wbr>Manager<wbr>Cache<wbr>Load<wbr>Count</h3>
+					<a name="incrementDataManagerLoadCount" class="tsd-anchor"></a>
+					<h3>increment<wbr>Data<wbr>Manager<wbr>Load<wbr>Count</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Cache<wbr>Load<wbr>Count<span class="tsd-signature-symbol">(</span>incrementLoadCountEvent<span class="tsd-signature-symbol">: </span><a href="_expo_entity.IncrementLoadCountEvent.html" class="tsd-signature-type" data-tsd-kind="Interface">IncrementLoadCountEvent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Load<wbr>Count<span class="tsd-signature-symbol">(</span>incrementLoadCountEvent<span class="tsd-signature-symbol">: </span><a href="_expo_entity.IncrementLoadCountEvent.html" class="tsd-signature-type" data-tsd-kind="Interface">IncrementLoadCountEvent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L84">packages/entity/src/metrics/IEntityMetricsAdapter.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L145">packages/entity/src/metrics/IEntityMetricsAdapter.ts:145</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Called when a cache load is initiated via the standard
-										load methods (not equality conjunction or raw). Occurs upon a dataloader
-									miss.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>incrementLoadCountEvent: <a href="_expo_entity.IncrementLoadCountEvent.html" class="tsd-signature-type" data-tsd-kind="Interface">IncrementLoadCountEvent</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="incrementDataManagerDatabaseLoadCount" class="tsd-anchor"></a>
-					<h3>increment<wbr>Data<wbr>Manager<wbr>Database<wbr>Load<wbr>Count</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Database<wbr>Load<wbr>Count<span class="tsd-signature-symbol">(</span>incrementLoadCountEvent<span class="tsd-signature-symbol">: </span><a href="_expo_entity.IncrementLoadCountEvent.html" class="tsd-signature-type" data-tsd-kind="Interface">IncrementLoadCountEvent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L92">packages/entity/src/metrics/IEntityMetricsAdapter.ts:92</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Called when a database load is initiated via the standard
-										load methods (not equality conjunction or raw). Occurs upon a cache
-									miss or when fetching an uncacheable field.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>incrementLoadCountEvent: <a href="_expo_entity.IncrementLoadCountEvent.html" class="tsd-signature-type" data-tsd-kind="Interface">IncrementLoadCountEvent</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="incrementDataManagerDataloaderLoadCount" class="tsd-anchor"></a>
-					<h3>increment<wbr>Data<wbr>Manager<wbr>Dataloader<wbr>Load<wbr>Count</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Dataloader<wbr>Load<wbr>Count<span class="tsd-signature-symbol">(</span>incrementLoadCountEvent<span class="tsd-signature-symbol">: </span><a href="_expo_entity.IncrementLoadCountEvent.html" class="tsd-signature-type" data-tsd-kind="Interface">IncrementLoadCountEvent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L76">packages/entity/src/metrics/IEntityMetricsAdapter.ts:76</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Called when a dataloader load is initiated via the standard
-									load methods (not equality conjunction or raw).</p>
+									<p>Called when a dataloader, cache, or database load is initiated via the standard
+										load methods (not equality conjunction or raw). Most commonly used for logging
+									a waterfall to determine dataloader and cache hit rates and ratios.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -209,7 +148,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L57">packages/entity/src/metrics/IEntityMetricsAdapter.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L125">packages/entity/src/metrics/IEntityMetricsAdapter.ts:125</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -240,7 +179,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L63">packages/entity/src/metrics/IEntityMetricsAdapter.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L131">packages/entity/src/metrics/IEntityMetricsAdapter.ts:131</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -271,7 +210,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/expo/entity/blob/9fcfbf7/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L69">packages/entity/src/metrics/IEntityMetricsAdapter.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/expo/entity/blob/7829d90/packages/entity/src/metrics/IEntityMetricsAdapter.ts#L137">packages/entity/src/metrics/IEntityMetricsAdapter.ts:137</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -319,13 +258,7 @@
 						<a href="_expo_entity.IEntityMetricsAdapter.html" class="tsd-kind-icon">IEntity<wbr>Metrics<wbr>Adapter</a>
 						<ul>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerCacheLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Cache<wbr>Load<wbr>Count</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerDatabaseLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Database<wbr>Load<wbr>Count</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerDataloaderLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Dataloader<wbr>Load<wbr>Count</a>
+								<a href="_expo_entity.IEntityMetricsAdapter.html#incrementDataManagerLoadCount" class="tsd-kind-icon">increment<wbr>Data<wbr>Manager<wbr>Load<wbr>Count</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_expo_entity.IEntityMetricsAdapter.html#logAuthorizationEvent" class="tsd-kind-icon">log<wbr>Authorization<wbr>Event</a>
