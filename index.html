@@ -69,19 +69,11 @@
 <a href="#releasing" id="releasing" style="color: inherit; text-decoration: none;">
   <h2>Releasing</h2>
 </a>
-<p>To release a new version, let&#39;s say <code>v1.0.0</code> for example:</p>
+<p>To release a new version:</p>
 <ol>
-<li><code>git checkout -b bump-v1.0.0</code></li>
-<li><code>yarn lerna version [patch|minor|major] -- --no-push --conventional-commits</code></li>
-<li><code>git push -u origin bump-v1.0.0</code></li>
-<li>Create a PR from the <code>bump-v1.0.0</code> branch, wait for tests, and commit the PR using GitHub interface.</li>
-<li><code>git checkout main &amp;&amp; git pull</code></li>
-<li><code>git tag -d v1.0.0</code></li>
-<li><code>git tag v1.0.0</code></li>
-<li><code>git push origin v1.0.0</code></li>
+<li><code>git checkout main</code></li>
+<li><code>yarn lerna publish [patch|minor|major] -- --conventional-commits</code></li>
 <li>In GitHub release interface, create a new release from the tag, copy changelog changes to release description.</li>
-<li><code>yarn clean &amp;&amp; yarn tsc</code></li>
-<li>In each public subpackage, run <code>npm publish</code> and enter 2FA token.</li>
 </ol>
 
 <a href="#license" id="license" style="color: inherit; text-decoration: none;">
