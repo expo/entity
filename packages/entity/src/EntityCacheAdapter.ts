@@ -32,7 +32,7 @@ export default abstract class EntityCacheAdapter<TFields> {
   /**
    * Negatively cache objects that could not be found in the cache or DB.
    * @param fieldName - object field being queried
-   * @param fieldValues - fieldValues for objects reported as {@link CacheStatus.NEGATIVE}
+   * @param fieldValues - fieldValues for objects reported as CacheStatus.NEGATIVE
    *                    in the cache and not found in the DB.
    */
   public abstract cacheDBMissesAsync<N extends keyof TFields>(

@@ -1,6 +1,6 @@
 import EntityQueryContextProvider from '../../EntityQueryContextProvider';
 
-class StubQueryContextProvider extends EntityQueryContextProvider {
+export class StubQueryContextProvider extends EntityQueryContextProvider {
   protected getQueryInterface(): any {
     return {};
   }

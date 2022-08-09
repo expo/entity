@@ -5,7 +5,7 @@ import {
 } from '@expo/entity-cache-adapter-local-memory';
 
 /**
- * A local memory {@link GenericSecondaryEntityCache}.
+ * A local memory GenericSecondaryEntityCache.
  *
  * @remarks
  *

@@ -87,8 +87,8 @@ export interface EntityAssociationDefinition<
    * application requirements, and sometimes even a mix-and-match is the right choice.
    *
    * - If referential integrity is critical to your application, database foreign key constraints
-   *   combined with {@link EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY} or
-   *   {@link EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY} are recommended.
+   *   combined with EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY or
+   *   EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY are recommended.
    * - If the database being used doesn't support foreign keys, then using the entity framework for referential
    *   integrity is recommended.
    */

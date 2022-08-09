@@ -17,7 +17,7 @@ export interface Case<
   entity: TEntity;
 }
 
-type CaseMap<
+export type CaseMap<
   TFields,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,

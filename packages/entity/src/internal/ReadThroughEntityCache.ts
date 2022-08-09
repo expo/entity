@@ -23,8 +23,8 @@ export type CacheLoadResult<TFields> =
     };
 
 /**
- * A read-through entity cache is responsible for coordinating {@link EntityDatabaseAdapter} and
- * {@link EntityCacheAdapter} within the {@link EntityDataManager}.
+ * A read-through entity cache is responsible for coordinating EntityDatabaseAdapter and
+ * EntityCacheAdapter within the EntityDataManager.
  */
 export default class ReadThroughEntityCache<TFields> {
   constructor(

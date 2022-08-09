@@ -3,7 +3,7 @@ import { validate as validateUUID } from 'uuid';
 import { EntityFieldDefinition } from './EntityFieldDefinition';
 
 /**
- * {@link EntityFieldDefinition} for a column with a JS string type.
+ * EntityFieldDefinition for a column with a JS string type.
  */
 export class StringField extends EntityFieldDefinition<string> {
   protected validateInputValueInternal(value: string): boolean {
@@ -12,7 +12,7 @@ export class StringField extends EntityFieldDefinition<string> {
 }
 
 /**
- * {@link EntityFieldDefinition} for a column with a JS string type.
+ * EntityFieldDefinition for a column with a JS string type.
  * Enforces that the string is a valid UUID.
  */
 export class UUIDField extends StringField {
@@ -22,7 +22,7 @@ export class UUIDField extends StringField {
 }
 
 /**
- * {@link EntityFieldDefinition} for a column with a JS Date type.
+ * EntityFieldDefinition for a column with a JS Date type.
  */
 export class DateField extends EntityFieldDefinition<Date> {
   protected validateInputValueInternal(value: Date): boolean {
@@ -31,7 +31,7 @@ export class DateField extends EntityFieldDefinition<Date> {
 }
 
 /**
- * {@link EntityFieldDefinition} for a column with a JS boolean type.
+ * EntityFieldDefinition for a column with a JS boolean type.
  */
 export class BooleanField extends EntityFieldDefinition<boolean> {
   protected validateInputValueInternal(value: boolean): boolean {
@@ -40,7 +40,7 @@ export class BooleanField extends EntityFieldDefinition<boolean> {
 }
 
 /**
- * {@link EntityFieldDefinition} for a column with a JS number type.
+ * EntityFieldDefinition for a column with a JS number type.
  * Enforces that the number is an integer.
  */
 export class IntField extends EntityFieldDefinition<number> {
@@ -50,7 +50,7 @@ export class IntField extends EntityFieldDefinition<number> {
 }
 
 /**
- * {@link EntityFieldDefinition} for a column with a JS number type.
+ * EntityFieldDefinition for a column with a JS number type.
  * Enforces that the number is a float (which includes integers in JS).
  */
 export class FloatField extends EntityFieldDefinition<number> {
@@ -60,7 +60,7 @@ export class FloatField extends EntityFieldDefinition<number> {
 }
 
 /**
- * {@link EntityFieldDefinition} for a column with a JS string array type.
+ * EntityFieldDefinition for a column with a JS string array type.
  * Enforces that every member of the string array is a string.
  */
 export class StringArrayField extends EntityFieldDefinition<string[]> {
@@ -70,7 +70,7 @@ export class StringArrayField extends EntityFieldDefinition<string[]> {
 }
 
 /**
- * {@link EntityFieldDefinition} for a column with a JS JSON object type.
+ * EntityFieldDefinition for a column with a JS JSON object type.
  */
 export class JSONObjectField extends EntityFieldDefinition<object> {
   protected validateInputValueInternal(value: object): boolean {
@@ -79,7 +79,7 @@ export class JSONObjectField extends EntityFieldDefinition<object> {
 }
 
 /**
- * {@link EntityFieldDefinition} for a enum column with a JS string or number type.
+ * EntityFieldDefinition for a enum column with a JS string or number type.
  */
 export class EnumField extends EntityFieldDefinition<string | number> {
   protected validateInputValueInternal(value: string | number): boolean {
@@ -88,7 +88,7 @@ export class EnumField extends EntityFieldDefinition<string | number> {
 }
 
 /**
- * {@link EntityFieldDefinition} for a column with a JS JSON array type.
+ * EntityFieldDefinition for a column with a JS JSON array type.
  */
 export class JSONArrayField extends EntityFieldDefinition<any[]> {
   protected validateInputValueInternal(value: any[]): boolean {
@@ -97,7 +97,7 @@ export class JSONArrayField extends EntityFieldDefinition<any[]> {
 }
 
 /**
- * {@link EntityFieldDefinition} for a column that may be a JS JSON array type.
+ * EntityFieldDefinition for a column that may be a JS JSON array type.
  * Does not do any validation.
  */
 export class MaybeJSONArrayField extends EntityFieldDefinition<any | any[]> {

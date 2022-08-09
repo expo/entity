@@ -20,7 +20,7 @@ export default abstract class EntityQueryContextProvider {
   protected abstract getQueryInterface(): any;
 
   /**
-   * Vend a transaction runner for use in {@link runInTransactionAsync}.
+   * Vend a transaction runner for use in runInTransactionAsync.
    */
   protected abstract createTransactionRunner<T>(): (
     transactionScope: (queryInterface: any) => Promise<T>

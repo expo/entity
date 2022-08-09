@@ -251,7 +251,7 @@ export default class EntityAssociationLoader<
   }
 
   /**
-   * Load an associated entity by folding a sequence of {@link EntityLoadThroughDirective}. At each
+   * Load an associated entity by folding a sequence of EntityLoadThroughDirective. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
    * @param loadDirectives - associated entity load directives instructing each step of the fold
    * @param queryContext - query context in which to perform the loads
@@ -285,7 +285,7 @@ export default class EntityAssociationLoader<
   ): Promise<Result<TEntity2> | null>;
 
   /**
-   * Load an associated entity by folding a sequence of {@link EntityLoadThroughDirective}. At each
+   * Load an associated entity by folding a sequence of EntityLoadThroughDirective. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
    * @param loadDirectives - associated entity load directives instructing each step of the fold
    * @param queryContext - query context in which to perform the loads
@@ -340,7 +340,7 @@ export default class EntityAssociationLoader<
   ): Promise<Result<TEntity3> | null>;
 
   /**
-   * Load an associated entity by folding a sequence of {@link EntityLoadThroughDirective}. At each
+   * Load an associated entity by folding a sequence of EntityLoadThroughDirective. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
    * @param loadDirectives - associated entity load directives instructing each step of the fold
    * @param queryContext - query context in which to perform the loads
@@ -416,7 +416,7 @@ export default class EntityAssociationLoader<
   ): Promise<Result<TEntity4> | null>;
 
   /**
-   * Load an associated entity by folding a sequence of {@link EntityLoadThroughDirective}. At each
+   * Load an associated entity by folding a sequence of EntityLoadThroughDirective. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
    * @param loadDirectives - associated entity load directives instructing each step of the fold
    * @param queryContext - query context in which to perform the loads

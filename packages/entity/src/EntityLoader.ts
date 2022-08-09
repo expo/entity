@@ -22,7 +22,7 @@ import { mapMap, mapMapAsync } from './utils/collections/maps';
 
 /**
  * The primary interface for loading entities. All normal loads are batched,
- * cached, and authorized against the entity's {@link EntityPrivacyPolicy}.
+ * cached, and authorized against the entity's EntityPrivacyPolicy.
  */
 export default class EntityLoader<
   TFields,
@@ -245,8 +245,8 @@ export default class EntityLoader<
    * bindings: `[1]`
    * Entites returned `WHERE id = 1`
    *
-   * {@link http://knexjs.org/#Builder-whereRaw}
-   * {@link http://knexjs.org/#Raw-Bindings}
+   * http://knexjs.org/#Builder-whereRaw
+   * http://knexjs.org/#Raw-Bindings
    *
    * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
    * @param bindings - array of positional bindings or object of named bindings
@@ -287,7 +287,7 @@ export default class EntityLoader<
   }
 
   /**
-   * Invalidate all caches for an entity's fields. Exposed primarily for internal use by {@link EntityMutator}.
+   * Invalidate all caches for an entity's fields. Exposed primarily for internal use by EntityMutator.
    * @param objectFields - entity data object to be invalidated
    */
   async invalidateFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {

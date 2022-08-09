@@ -32,7 +32,7 @@ export enum RuleEvaluationResult {
  * rule in the privacy policy. If all rules in the policy SKIP, the policy is denied.
  *
  * Returning DENY from a rule is useful in a few notable cases:
- * - Preventing a CRUD action on an entity ({@link AlwaysDenyPrivacyPolicyRule})
+ * - Preventing a CRUD action on an entity (AlwaysDenyPrivacyPolicyRule)
  * - Blocking. For example, a user blocks another user from seeing their posts, and the rule
  *   would be named something like `DenyIfViewerHasBeenBlockedPrivacyPolicyRule`.
  */

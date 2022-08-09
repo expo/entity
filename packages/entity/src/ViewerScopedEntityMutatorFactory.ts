@@ -6,7 +6,7 @@ import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 
 /**
- * Provides a cleaner API for mutating entities by passing through the {@link ViewerContext}.
+ * Provides a cleaner API for mutating entities by passing through the ViewerContext.
  */
 export default class ViewerScopedEntityMutatorFactory<
   TFields,

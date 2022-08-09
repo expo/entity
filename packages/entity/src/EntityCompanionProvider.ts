@@ -109,15 +109,15 @@ export class EntityCompanionDefinition<
       TSelectedFields
     >;
     /**
-     * The {@link EntityConfiguration} for this entity.
+     * The EntityConfiguration for this entity.
      */
     entityConfiguration: EntityConfiguration<TFields>;
     /**
-     * The {@link EntityPrivacyPolicy} class for this entity.
+     * The EntityPrivacyPolicy class for this entity.
      */
     privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
     /**
-     * An optional list of {@link EntityMutationValidator} for this entity.
+     * An optional list of EntityMutationValidator for this entity.
      */
     mutationValidators?: () => EntityMutationValidator<
       TFields,
@@ -127,7 +127,7 @@ export class EntityCompanionDefinition<
       TSelectedFields
     >[];
     /**
-     * An optional list of {@link EntityMutationTrigger} for this entity.
+     * An optional list of EntityMutationTrigger for this entity.
      */
     mutationTriggers?: () => EntityMutationTriggerConfiguration<
       TFields,
@@ -137,8 +137,8 @@ export class EntityCompanionDefinition<
       TSelectedFields
     >;
     /**
-     * An optional subset of fields defined in the {@link EntityConfiguration} which belong to this entity.
-     * For use when multiple types of entities are backed by a single table ({@link EntityConfiguration}) yet
+     * An optional subset of fields defined in the EntityConfiguration which belong to this entity.
+     * For use when multiple types of entities are backed by a single table (EntityConfiguration) yet
      * only expose a subset of the fields.
      */
     entitySelectedFields?: TSelectedFields[];
@@ -155,11 +155,11 @@ export class EntityCompanionDefinition<
 /**
  * An instance of the Entity framework.
  *
- * Required to create a {@link ViewerContext}, which is the application entry point
+ * Required to create a ViewerContext, which is the application entry point
  * into the framework.
  *
  * Internally, this is a lazy entity companion factory that instantiates and caches one
- * {@link EntityCompanion} for each type of {@link Entity}.
+ * EntityCompanion for each type of Entity.
  */
 export default class EntityCompanionProvider {
   private readonly companionMap: Map<string, EntityCompanion<any, any, any, any, any, any>> =
@@ -169,7 +169,7 @@ export default class EntityCompanionProvider {
 
   /**
    * Instantiate an Entity framework.
-   * @param metricsAdapter - An {@link IEntityMetricsAdapter} for collecting metrics on this instance
+   * @param metricsAdapter - An IEntityMetricsAdapter for collecting metrics on this instance
    * @param databaseAdapterFlavors - Database adapter configurations for this instance
    * @param cacheAdapterFlavors - Cache adapter configurations for this instance
    */

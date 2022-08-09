@@ -60,7 +60,7 @@ export const mapMapAsync = async function <K, V, M>(
 
 /**
  * Create a new Map by associating the value of each key with mapper executed for each key in the source map.
- * The opposite of {@link mapMap}. In the event two source keys map to the same result key, the second source key's
+ * The opposite of mapMap. In the event two source keys map to the same result key, the second source key's
  * value will overwrite the first, in which case the cardinality of the returned map may be smaller than the
  * source map's.
  *
