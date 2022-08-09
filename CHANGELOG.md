@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.27.0](https://github.com/expo/entity/compare/v0.26.1...v0.27.0) (2022-08-09)
+
+
+### Features
+
+* add orderByRaw to loadManyByRawWhereClauseAsync ([#185](https://github.com/expo/entity/issues/185)) ([2817d78](https://github.com/expo/entity/commit/2817d78392dfecd0093111c24d581bdf01dba06d))
+
+
+
+
+
 ## [0.26.1](https://github.com/expo/entity/compare/v0.26.0...v0.26.1) (2022-07-28)
 
 
