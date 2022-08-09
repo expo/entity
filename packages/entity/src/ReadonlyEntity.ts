@@ -82,7 +82,7 @@ export default abstract class ReadonlyEntity<
   }
 
   /**
-   * @returns {@link EntityAssociationLoader} for this entity
+   * @returns EntityAssociationLoader for this entity
    */
   associationLoader(): EntityAssociationLoader<
     TFields,

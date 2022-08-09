@@ -40,7 +40,7 @@ export interface ISecondaryEntityCache<TFields, TLoadParams> {
  * when the underlying data of a cache key could be stale.
  *
  * This is most commonly used to further optimize hot paths that cannot make use of normal entity cache loading
- * due to use of a non-unique-field-based {@link EntityLoader} method like `loadManyByFieldEqualityConjunctionAsync` or
+ * due to use of a non-unique-field-based EntityLoader method like `loadManyByFieldEqualityConjunctionAsync` or
  * `loadManyByRawWhereClauseAsync`.
  */
 export default abstract class EntitySecondaryCacheLoader<

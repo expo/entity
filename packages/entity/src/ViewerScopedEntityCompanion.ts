@@ -8,7 +8,7 @@ import ViewerScopedEntityMutatorFactory from './ViewerScopedEntityMutatorFactory
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 
 /**
- * Provides a simpler API for loading and mutating entities by injecting the {@link ViewerContext}
+ * Provides a simpler API for loading and mutating entities by injecting the ViewerContext
  * from the viewer-scoped entity companion provider.
  */
 export default class ViewerScopedEntityCompanion<
@@ -79,7 +79,7 @@ export default class ViewerScopedEntityCompanion<
   }
 
   /**
-   * Get the {@link IEntityMetricsAdapter} for this companion.
+   * Get the IEntityMetricsAdapter for this companion.
    */
   getMetricsAdapter(): IEntityMetricsAdapter {
     return this.entityCompanion.getMetricsAdapter();

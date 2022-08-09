@@ -21,9 +21,9 @@ import ReadThroughEntityCache from './ReadThroughEntityCache';
 
 /**
  * A data manager is responsible for orchestrating multiple sources of entity
- * data including local caches, {@link EntityCacheAdapter}, and {@link EntityDatabaseAdapter}.
+ * data including local caches, EntityCacheAdapter, and EntityDatabaseAdapter.
  *
- * It is also responsible for invalidating all sources of data when mutated using {@link EntityMutator}.
+ * It is also responsible for invalidating all sources of data when mutated using EntityMutator.
  */
 export default class EntityDataManager<TFields> {
   private readonly fieldDataLoaders: Map<

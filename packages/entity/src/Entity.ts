@@ -11,19 +11,19 @@ import ViewerContext from './ViewerContext';
  * Entity is a privacy-first data model.
  *
  * A instance of an entity represents a single "row" of persisted data in a database that a
- * viewer, represented by the corresponding {@link ViewerContext}, has permission to read.
+ * viewer, represented by the corresponding ViewerContext, has permission to read.
  *
  * Create, read, update, and delete permissions for an entity are declaratively defined using an
- * {@link EntityPrivacyPolicy}.
+ * EntityPrivacyPolicy.
  *
- * Entites are loaded through an {@link EntityLoader}, which is responsible for
+ * Entites are loaded through an EntityLoader, which is responsible for
  * orchestrating fetching, caching, and authorization of reading "rows".
  *
- * Entities are mutated and deleted through an {@link EntityMutator}, which is responsible for
+ * Entities are mutated and deleted through an EntityMutator, which is responsible for
  * orchestrating database writes, cache invalidation, and authorization of writing "rows".
  *
  * All concrete entity implementations should extend this class and provide their
- * own {@link EntityCompanionDefinition}.
+ * own EntityCompanionDefinition.
  */
 export default abstract class Entity<
   TFields,

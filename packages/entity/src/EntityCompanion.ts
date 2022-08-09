@@ -132,7 +132,7 @@ export default class EntityCompanion<
   }
 
   /**
-   * Get the {@link IEntityMetricsAdapter} for this companion.
+   * Get the IEntityMetricsAdapter for this companion.
    */
   getMetricsAdapter(): IEntityMetricsAdapter {
     return this.metricsAdapter;

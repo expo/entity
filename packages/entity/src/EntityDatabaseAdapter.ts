@@ -7,12 +7,18 @@ import {
   FieldTransformerMap,
 } from './internal/EntityFieldTransformationUtils';
 
-interface SingleValueFieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> {
+export interface SingleValueFieldEqualityCondition<
+  TFields,
+  N extends keyof TFields = keyof TFields
+> {
   fieldName: N;
   fieldValue: TFields[N];
 }
 
-interface MultiValueFieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> {
+export interface MultiValueFieldEqualityCondition<
+  TFields,
+  N extends keyof TFields = keyof TFields
+> {
   fieldName: N;
   fieldValues: readonly TFields[N][];
 }

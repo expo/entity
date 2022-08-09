@@ -700,7 +700,7 @@ export class DeleteMutator<
   /**
    * Finds all entities referencing the specified entity and either deletes them, nullifies
    * their references to the specified entity, or invalidates the cache depending on the
-   * {@link OnDeleteBehavior} of the field referencing the specified entity.
+   * OnDeleteBehavior of the field referencing the specified entity.
    *
    * @remarks
    * This works by doing reverse fan-out queries:

@@ -10,16 +10,16 @@ export enum EntityMetricsLoadType {
 }
 
 /**
- * Event about a single call to an {@link EntityLoader} method.
+ * Event about a single call to an EntityLoader method.
  */
 export interface EntityMetricsLoadEvent {
   /**
-   * {@link EntityMetricsLoadType} for this load.
+   * EntityMetricsLoadType for this load.
    */
   type: EntityMetricsLoadType;
 
   /**
-   * Class name of the {@link Entity} being loaded.
+   * Class name of the Entity being loaded.
    */
   entityClassName: string;
 
@@ -42,12 +42,12 @@ export enum EntityMetricsMutationType {
 
 export interface EntityMetricsMutationEvent {
   /**
-   * {@link EntityMetricsMutationType} for this mutation.
+   * EntityMetricsMutationType for this mutation.
    */
   type: EntityMetricsMutationType;
 
   /**
-   * Class name of the {@link Entity} being mutated.
+   * Class name of the Entity being mutated.
    */
   entityClassName: string;
 
@@ -76,7 +76,7 @@ export enum IncrementLoadCountEventType {
 }
 
 /**
- * Event used to record dataloader, cache, and database load counts in {@link EntityDataManager}.
+ * Event used to record dataloader, cache, and database load counts in EntityDataManager.
  */
 export interface IncrementLoadCountEvent {
   /**
@@ -90,7 +90,7 @@ export interface IncrementLoadCountEvent {
   fieldValueCount: number;
 
   /**
-   * Class name of the {@link Entity} being loaded.
+   * Class name of the Entity being loaded.
    */
   entityClassName: string;
 }
@@ -101,11 +101,11 @@ export enum EntityMetricsAuthorizationResult {
 }
 
 /**
- * Event used to record a singe {@link EntityPrivacyPolicy} authorization.
+ * Event used to record a singe EntityPrivacyPolicy authorization.
  */
 export interface EntityMetricsAuthorizationEvent {
   /**
-   * Class name of the {@link Entity} being authorized.
+   * Class name of the Entity being authorized.
    */
   entityClassName: string;
   action: EntityAuthorizationAction;
@@ -119,7 +119,7 @@ export interface EntityMetricsAuthorizationEvent {
  */
 export default interface IEntityMetricsAdapter {
   /**
-   * Called when a {@link EntityPrivacyPolicy} authorization succeeds or fails.
+   * Called when a EntityPrivacyPolicy authorization succeeds or fails.
    * @param authorizationEvent - info about the authorization event
    */
   logAuthorizationEvent(authorizationEvent: EntityMetricsAuthorizationEvent): void;

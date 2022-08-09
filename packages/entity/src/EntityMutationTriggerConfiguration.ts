@@ -85,7 +85,7 @@ export abstract class EntityMutationTrigger<
 }
 
 /**
- * A non-transactional trigger is like a {@link EntityMutationTrigger} but used for afterCommit triggers
+ * A non-transactional trigger is like a EntityMutationTrigger but used for afterCommit triggers
  * since they explicitly occur outside of the transaction.
  */
 export abstract class EntityNonTransactionalMutationTrigger<

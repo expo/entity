@@ -41,12 +41,12 @@ export default class EntityConfiguration<TFields> {
     tableName: string;
 
     /**
-     * Map from each entity field to an {@link EntityFieldDefinition} specifying information about the field.
+     * Map from each entity field to an EntityFieldDefinition specifying information about the field.
      */
     schema: Record<keyof TFields, EntityFieldDefinition<any>>;
 
     /**
-     * List of other entity types that reference this type in {@link EntityFieldDefinition} associations.
+     * List of other entity types that reference this type in EntityFieldDefinition associations.
      */
     getInboundEdges?: () => IEntityClass<any, any, any, any, any, any>[];
 

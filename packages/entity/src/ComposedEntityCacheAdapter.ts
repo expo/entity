@@ -5,7 +5,7 @@ import EntityConfiguration from './EntityConfiguration';
 import { CacheStatus, CacheLoadResult } from './internal/ReadThroughEntityCache';
 
 /**
- * A {@link EntityCacheAdapter} that composes other {@link EntityCacheAdapter} instances.
+ * A EntityCacheAdapter that composes other EntityCacheAdapter instances.
  */
 export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
   /**

@@ -20,7 +20,7 @@ export type EntityPrivacyPolicyEvaluationContext = {
 };
 
 /**
- * Evaluation mode for a {@link EntityPrivacyPolicy}. Useful when transitioning to
+ * Evaluation mode for a EntityPrivacyPolicy. Useful when transitioning to
  * using Entity for privacy.
  */
 export enum EntityPrivacyPolicyEvaluationMode {
@@ -75,7 +75,7 @@ export enum EntityAuthorizationAction {
  *
  * @remarks
  *
- * A privacy policy declares lists of {@link PrivacyPolicyRule} for create, read, update, and delete actions
+ * A privacy policy declares lists of PrivacyPolicyRule for create, read, update, and delete actions
  * for an entity and provides logic for authorizing an entity against rules.
  *
  * Evaluation of a list of rules is performed according the following example. This allows constructing of
@@ -149,7 +149,7 @@ export default abstract class EntityPrivacyPolicy<
    * @param queryContext - query context in which to perform the create authorization
    * @param entity - entity to authorize
    * @returns entity if authorized
-   * @throws {@link EntityNotAuthorizedError} when not authorized
+   * @throws EntityNotAuthorizedError when not authorized
    */
   async authorizeCreateAsync(
     viewerContext: TViewerContext,
@@ -175,7 +175,7 @@ export default abstract class EntityPrivacyPolicy<
    * @param queryContext - query context in which to perform the read authorization
    * @param entity - entity to authorize
    * @returns entity if authorized
-   * @throws {@link EntityNotAuthorizedError} when not authorized
+   * @throws EntityNotAuthorizedError when not authorized
    */
   async authorizeReadAsync(
     viewerContext: TViewerContext,
@@ -201,7 +201,7 @@ export default abstract class EntityPrivacyPolicy<
    * @param queryContext - query context in which to perform the update authorization
    * @param entity - entity to authorize
    * @returns entity if authorized
-   * @throws {@link EntityNotAuthorizedError} when not authorized
+   * @throws EntityNotAuthorizedError when not authorized
    */
   async authorizeUpdateAsync(
     viewerContext: TViewerContext,
@@ -227,7 +227,7 @@ export default abstract class EntityPrivacyPolicy<
    * @param queryContext - query context in which to perform the delete authorization
    * @param entity - entity to authorize
    * @returns entity if authorized
-   * @throws {@link EntityNotAuthorizedError} when not authorized
+   * @throws EntityNotAuthorizedError when not authorized
    */
   async authorizeDeleteAsync(
     viewerContext: TViewerContext,

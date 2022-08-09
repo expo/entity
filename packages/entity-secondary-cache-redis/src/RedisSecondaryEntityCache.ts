@@ -2,7 +2,7 @@ import { EntityConfiguration, GenericSecondaryEntityCache } from '@expo/entity';
 import { GenericRedisCacheContext, GenericRedisCacher } from '@expo/entity-cache-adapter-redis';
 
 /**
- * A redis {@link GenericSecondaryEntityCache}.
+ * A redis GenericSecondaryEntityCache.
  */
 export default class RedisSecondaryEntityCache<
   TFields,
