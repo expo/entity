@@ -7,6 +7,7 @@ import {
   TableQuerySelectionModifiers,
   TableFieldSingleValueEqualityCondition,
   TableFieldMultiValueEqualityCondition,
+  TableQuerySelectionModifiersWithOrderByRaw,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -51,6 +52,20 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
         .from(tableName)
         .whereRaw('?? = ANY(?)', [tableField, tableValues as any[]])
     );
+  }
+
+  private applyQueryModifiersToQueryOrderByRaw(
+    query: Knex.QueryBuilder,
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw
+  ): Knex.QueryBuilder {
+    let ret = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
+
+    const { orderByRaw } = querySelectionModifiers;
+    if (orderByRaw !== undefined) {
+      ret = ret.orderByRaw(orderByRaw);
+    }
+
+    return ret;
   }
 
   private applyQueryModifiersToQuery(
@@ -129,13 +144,13 @@ export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDataba
     tableName: string,
     rawWhereClause: string,
     bindings: object | any[],
-    querySelectionModifiers: TableQuerySelectionModifiers
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw
   ): Promise<object[]> {
     let query = queryInterface
       .select()
       .from(tableName)
       .whereRaw(rawWhereClause, bindings as any);
-    query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
+    query = this.applyQueryModifiersToQueryOrderByRaw(query, querySelectionModifiers);
     return await wrapNativePostgresCallAsync(() => query);
   }
 

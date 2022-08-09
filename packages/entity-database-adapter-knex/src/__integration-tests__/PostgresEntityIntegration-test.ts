@@ -379,6 +379,15 @@ describe('postgres entity integration', () => {
 
       expect(resultsMultipleOrderBy).toHaveLength(3);
       expect(resultsMultipleOrderBy.map((e) => e.getField('name'))).toEqual(['c', 'b', 'a']);
+
+      const resultsOrderByRaw = await PostgresTestEntity.loader(vc1)
+        .enforcing()
+        .loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
+          orderByRaw: 'has_a_dog ASC, name DESC',
+        });
+
+      expect(resultsOrderByRaw).toHaveLength(3);
+      expect(resultsOrderByRaw.map((e) => e.getField('name'))).toEqual(['c', 'b', 'a']);
     });
   });
 

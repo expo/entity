@@ -68,6 +68,14 @@ export interface QuerySelectionModifiers<TFields> {
   limit?: number;
 }
 
+export interface QuerySelectionModifiersWithOrderByRaw<TFields>
+  extends QuerySelectionModifiers<TFields> {
+  /**
+   * Order the entities by a raw SQL `ORDER BY` clause.
+   */
+  orderByRaw?: string;
+}
+
 export interface TableQuerySelectionModifiers {
   orderBy:
     | {
@@ -77,6 +85,10 @@ export interface TableQuerySelectionModifiers {
     | undefined;
   offset: number | undefined;
   limit: number | undefined;
+}
+
+export interface TableQuerySelectionModifiersWithOrderByRaw extends TableQuerySelectionModifiers {
+  orderByRaw: string | undefined;
 }
 
 /**
@@ -149,7 +161,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
    *
    * @param queryContext - query context with which to perform the fetch
    * @param fieldEqualityOperands - list of field equality where clause operand specifications
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query
+   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
    * @returns array of objects matching the query
    */
   async fetchManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
@@ -207,14 +219,14 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>
   ): Promise<readonly Readonly<TFields>[]> {
     const results = await this.fetchManyByRawWhereClauseInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       rawWhereClause,
       bindings,
-      this.convertToTableQueryModifiers(querySelectionModifiers)
+      this.convertToTableQueryModifiersWithOrderByRaw(querySelectionModifiers)
     );
 
     return results.map((result) =>
@@ -227,7 +239,7 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     tableName: string,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: TableQuerySelectionModifiers
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw
   ): Promise<object[]>;
 
   /**
@@ -362,6 +374,15 @@ export default abstract class EntityDatabaseAdapter<TFields> {
     tableIdField: string,
     id: any
   ): Promise<number>;
+
+  private convertToTableQueryModifiersWithOrderByRaw(
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>
+  ): TableQuerySelectionModifiersWithOrderByRaw {
+    return {
+      ...this.convertToTableQueryModifiers(querySelectionModifiers),
+      orderByRaw: querySelectionModifiers.orderByRaw,
+    };
+  }
 
   private convertToTableQueryModifiers(
     querySelectionModifiers: QuerySelectionModifiers<TFields>

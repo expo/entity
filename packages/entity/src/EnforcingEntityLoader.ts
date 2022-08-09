@@ -1,4 +1,8 @@
-import { FieldEqualityCondition, QuerySelectionModifiers } from './EntityDatabaseAdapter';
+import {
+  FieldEqualityCondition,
+  QuerySelectionModifiers,
+  QuerySelectionModifiersWithOrderByRaw,
+} from './EntityDatabaseAdapter';
 import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import ReadonlyEntity from './ReadonlyEntity';
@@ -132,7 +136,7 @@ export default class EnforcingEntityLoader<
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields> = {}
   ): Promise<readonly TEntity[]> {
     const entityResults = await this.entityLoader.loadManyByRawWhereClauseAsync(
       rawWhereClause,

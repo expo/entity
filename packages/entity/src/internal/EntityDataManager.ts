@@ -3,6 +3,7 @@ import DataLoader from 'dataloader';
 import EntityDatabaseAdapter, {
   FieldEqualityCondition,
   QuerySelectionModifiers,
+  QuerySelectionModifiersWithOrderByRaw,
 } from '../EntityDatabaseAdapter';
 import { EntityQueryContext } from '../EntityQueryContext';
 import EntityQueryContextProvider from '../EntityQueryContextProvider';
@@ -173,14 +174,14 @@ export default class EntityDataManager<TFields> {
    * @param queryContext - query context in which to perform the load
    * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
    * @param bindings - array of positional bindings or object of named bindings
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query
+   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
    * @returns array of objects matching the query
    */
   async loadManyByRawWhereClauseAsync(
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>
   ): Promise<readonly Readonly<TFields>[]> {
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
