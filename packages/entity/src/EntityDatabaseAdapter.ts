@@ -7,6 +7,9 @@ import {
   FieldTransformerMap,
 } from './internal/EntityFieldTransformationUtils';
 
+/**
+ * Equality operand that is used for selecting entities with a field with a single value.
+ */
 export interface SingleValueFieldEqualityCondition<
   TFields,
   N extends keyof TFields = keyof TFields
@@ -15,6 +18,9 @@ export interface SingleValueFieldEqualityCondition<
   fieldValue: TFields[N];
 }
 
+/**
+ * Equality operand that is used for selecting entities with a field matching one of multiple values.
+ */
 export interface MultiValueFieldEqualityCondition<
   TFields,
   N extends keyof TFields = keyof TFields
@@ -23,6 +29,10 @@ export interface MultiValueFieldEqualityCondition<
   fieldValues: readonly TFields[N][];
 }
 
+/**
+ * A single equality operand for use in a selection clause.
+ * See EntityLoader.loadManyByFieldEqualityConjunctionAsync documentation for examples.
+ */
 export type FieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> =
   | SingleValueFieldEqualityCondition<TFields, N>
   | MultiValueFieldEqualityCondition<TFields, N>;

@@ -183,16 +183,16 @@ export default class EntityLoader<
   }
 
   /**
-   * Loads many entities matching the conjunction of WHERE clauses constructed from specified operands.
+   * Loads many entities matching the selection constructed from the conjunction of specified operands.
    * Entities loaded using this method are not batched or cached.
    *
    * @example
    * fieldEqualityOperands:
    * `[{fieldName: 'hello', fieldValue: 1}, {fieldName: 'world', fieldValues: [2, 3]}]`
-   * Entities returned:
+   * Entities returned with a SQL EntityDatabaseAdapter:
    * `WHERE hello = 1 AND world = ANY({2, 3})`
    *
-   * @param fieldEqualityOperands - list of field equality WHERE clause operand specifications
+   * @param fieldEqualityOperands - list of field equality selection operand specifications
    * @param querySelectionModifiers - limit, offset, and orderBy for the query
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    */
