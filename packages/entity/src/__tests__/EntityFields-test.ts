@@ -11,8 +11,6 @@ import {
   StringArrayField,
   JSONObjectField,
   EnumField,
-  JSONArrayField,
-  MaybeJSONArrayField,
 } from '../EntityFields';
 import describeFieldTestCase from '../utils/testing/describeFieldTestCase';
 
@@ -71,13 +69,3 @@ describeFieldTestCase(
 );
 describeFieldTestCase(new JSONObjectField({ columnName: 'wat' }), [{}], [true, 'hello']);
 describeFieldTestCase(new EnumField({ columnName: 'wat' }), ['hello', 1], [true]);
-describeFieldTestCase(
-  new JSONArrayField({ columnName: 'wat' }),
-  [[[1, 2]] as any, [['hello']] as any], // jest test cases need extra wrapping array
-  [1, 'hello']
-);
-describeFieldTestCase(
-  new MaybeJSONArrayField({ columnName: 'wat' }),
-  [1, 'hello', [['hello']]], // jest test cases need extra wrapping array
-  []
-);

@@ -2,8 +2,6 @@ import {
   EntityDatabaseAdapter,
   FieldTransformerMap,
   FieldTransformer,
-  JSONArrayField,
-  MaybeJSONArrayField,
   TableQuerySelectionModifiers,
   TableFieldSingleValueEqualityCondition,
   TableFieldMultiValueEqualityCondition,
@@ -11,6 +9,7 @@ import {
 } from '@expo/entity';
 import { Knex } from 'knex';
 
+import { JSONArrayField, MaybeJSONArrayField } from './EntityFields';
 import wrapNativePostgresCallAsync from './errors/wrapNativePostgresCallAsync';
 
 export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDatabaseAdapter<TFields> {

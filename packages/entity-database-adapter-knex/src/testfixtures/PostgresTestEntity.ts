@@ -6,15 +6,15 @@ import {
   StringField,
   BooleanField,
   StringArrayField,
-  JSONArrayField,
   JSONObjectField,
   DateField,
-  MaybeJSONArrayField,
   EntityConfiguration,
   EntityCompanionDefinition,
   Entity,
 } from '@expo/entity';
 import { Knex } from 'knex';
+
+import { BigIntField, JSONArrayField, MaybeJSONArrayField } from '../EntityFields';
 
 type PostgresTestEntityFields = {
   id: string;
@@ -28,6 +28,7 @@ type PostgresTestEntityFields = {
   } | null;
   dateField: Date | null;
   maybeJsonArrayField: string[] | { hello: string } | null;
+  bigintField: string | null;
 };
 
 export default class PostgresTestEntity extends Entity<
@@ -61,6 +62,7 @@ export default class PostgresTestEntity extends Entity<
         table.jsonb('json_object_field');
         table.dateTime('date_field', { useTz: true });
         table.jsonb('maybe_json_array_field');
+        table.bigint('bigint_field');
       });
     }
     await knex.into(tableName).truncate();
@@ -146,6 +148,9 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<PostgresT
     }),
     maybeJsonArrayField: new MaybeJSONArrayField({
       columnName: 'maybe_json_array_field',
+    }),
+    bigintField: new BigIntField({
+      columnName: 'bigint_field',
     }),
   },
   databaseAdapterFlavor: 'postgres',

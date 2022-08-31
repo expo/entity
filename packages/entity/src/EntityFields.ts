@@ -86,22 +86,3 @@ export class EnumField extends EntityFieldDefinition<string | number> {
     return typeof value === 'number' || typeof value === 'string';
   }
 }
-
-/**
- * EntityFieldDefinition for a column with a JS JSON array type.
- */
-export class JSONArrayField extends EntityFieldDefinition<any[]> {
-  protected validateInputValueInternal(value: any[]): boolean {
-    return Array.isArray(value);
-  }
-}
-
-/**
- * EntityFieldDefinition for a column that may be a JS JSON array type.
- * Does not do any validation.
- */
-export class MaybeJSONArrayField extends EntityFieldDefinition<any | any[]> {
-  protected validateInputValueInternal(_value: any): boolean {
-    return true;
-  }
-}
