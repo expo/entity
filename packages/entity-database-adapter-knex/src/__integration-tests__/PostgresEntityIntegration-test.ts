@@ -157,6 +157,27 @@ describe('postgres entity integration', () => {
     });
   });
 
+  describe('BIGINT fields', () => {
+    it('supports BIGINT fields', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      let entity = await enforceAsyncResult(
+        PostgresTestEntity.creator(vc1).setField('bigintField', '72057594037928038').createAsync()
+      );
+      expect(entity.getField('bigintField')).toEqual('72057594037928038');
+
+      entity = await enforceAsyncResult(
+        PostgresTestEntity.updater(entity).setField('bigintField', '10').updateAsync()
+      );
+      expect(entity.getField('bigintField')).toEqual('10');
+
+      entity = await enforceAsyncResult(
+        PostgresTestEntity.updater(entity).setField('bigintField', '-10').updateAsync()
+      );
+      expect(entity.getField('bigintField')).toEqual('-10');
+    });
+  });
+
   describe('conjunction field equality loading', () => {
     it('supports single fieldValue and multiple fieldValues', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
