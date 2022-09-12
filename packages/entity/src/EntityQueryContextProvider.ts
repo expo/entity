@@ -1,6 +1,7 @@
 import {
   EntityTransactionalQueryContext,
   EntityNonTransactionalQueryContext,
+  EntityNestedTransactionalQueryContext,
 } from './EntityQueryContext';
 
 /**
@@ -26,6 +27,10 @@ export default abstract class EntityQueryContextProvider {
     transactionScope: (queryInterface: any) => Promise<T>
   ) => Promise<T>;
 
+  protected abstract createNestedTransactionRunner<T>(
+    outerQueryInterface: any
+  ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T>;
+
   /**
    * Start a transaction and execute the provided transaction-scoped closure within the transaction.
    * @param transactionScope - async callback to execute within the transaction
@@ -36,12 +41,39 @@ export default abstract class EntityQueryContextProvider {
     const [returnedValue, queryContext] = await this.createTransactionRunner<
       [T, EntityTransactionalQueryContext]
     >()(async (queryInterface) => {
-      const queryContext = new EntityTransactionalQueryContext(queryInterface);
+      const queryContext = new EntityTransactionalQueryContext(queryInterface, this);
       const result = await transactionScope(queryContext);
       await queryContext.runPreCommitCallbacksAsync();
       return [result, queryContext];
     });
     await queryContext.runPostCommitCallbacksAsync();
+    return returnedValue;
+  }
+
+  /**
+   * Start a nested transaction from the specified parent transaction and execure the
+   * provided nested-transaction-scoped closure within the nested transaction.
+   * @param outerQueryContext - the query context of the parent transaction
+   * @param transactionScope - async callback to execute within the nested transaction
+   */
+  async runInNestedTransactionAsync<T>(
+    outerQueryContext: EntityTransactionalQueryContext,
+    transactionScope: (innerQueryContext: EntityNestedTransactionalQueryContext) => Promise<T>
+  ): Promise<T> {
+    const [returnedValue, innerQueryContex] = await this.createNestedTransactionRunner<
+      [T, EntityNestedTransactionalQueryContext]
+    >(outerQueryContext.getQueryInterface())(async (innerQueryInterface) => {
+      const innerQueryContext = new EntityNestedTransactionalQueryContext(
+        innerQueryInterface,
+        outerQueryContext,
+        this
+      );
+      const result = await transactionScope(innerQueryContext);
+      await innerQueryContext.runPreCommitCallbacksAsync();
+      return [result, innerQueryContext];
+    });
+    // post-commit callbacks are appended to parent transaction instead of run, but only after the transaction has succeeded
+    innerQueryContex.transferPostCommitCallbacksToParent();
     return returnedValue;
   }
 }

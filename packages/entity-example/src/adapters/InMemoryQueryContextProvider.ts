@@ -10,4 +10,10 @@ export default class InMemoryQueryContextProvider extends EntityQueryContextProv
   ) => Promise<T> {
     return (transactionScope) => Promise.resolve(transactionScope({}));
   }
+
+  protected createNestedTransactionRunner<T>(
+    _outerQueryInterface: any
+  ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
+    return (transactionScope) => Promise.resolve(transactionScope({}));
+  }
 }

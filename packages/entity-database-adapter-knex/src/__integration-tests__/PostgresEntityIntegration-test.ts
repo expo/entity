@@ -636,6 +636,7 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       let preCommitCallCount = 0;
+      let preCommitInnerCallCount = 0;
       let postCommitCallCount = 0;
 
       await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
@@ -645,6 +646,28 @@ describe('postgres entity integration', () => {
         queryContext.appendPreCommitCallback(async () => {
           preCommitCallCount++;
         }, 0);
+
+        await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
+          innerQueryContext.appendPostCommitCallback(async () => {
+            postCommitCallCount++;
+          });
+          innerQueryContext.appendPreCommitCallback(async () => {
+            preCommitInnerCallCount++;
+          }, 0);
+        });
+
+        // this one throws so its post commit shouldn't execute
+        try {
+          await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
+            innerQueryContext.appendPostCommitCallback(async () => {
+              postCommitCallCount++;
+            });
+            innerQueryContext.appendPreCommitCallback(async () => {
+              preCommitInnerCallCount++;
+              throw Error('wat');
+            }, 0);
+          });
+        } catch {}
       });
 
       await expect(
@@ -660,7 +683,8 @@ describe('postgres entity integration', () => {
       ).rejects.toThrowError('wat');
 
       expect(preCommitCallCount).toBe(2);
-      expect(postCommitCallCount).toBe(1);
+      expect(preCommitInnerCallCount).toBe(2);
+      expect(postCommitCallCount).toBe(2);
     });
   });
 });
