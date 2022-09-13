@@ -18,4 +18,10 @@ export default class PostgresEntityQueryContextProvider extends EntityQueryConte
   ) => Promise<T> {
     return (transactionScope) => this.knexInstance.transaction(transactionScope);
   }
+
+  protected createNestedTransactionRunner<T>(
+    outerQueryInterface: any
+  ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
+    return (transactionScope) => (outerQueryInterface as Knex).transaction(transactionScope);
+  }
 }

@@ -78,5 +78,55 @@ describe(EntityQueryContext, () => {
       expect(postCommitCallback).toHaveBeenCalledTimes(0);
       expect(postCommitInvalidationCallback).toHaveBeenCalledTimes(0);
     });
+
+    it('calls callbacks correctly for nested transactions', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+
+      const preCommitCallback = jest.fn(async (): Promise<void> => {});
+      const preCommitNestedCallback = jest.fn(async (): Promise<void> => {});
+      const preCommitNestedCallbackThrow = jest.fn(async (): Promise<void> => {
+        throw new Error('wat');
+      });
+      const postCommitInvalidationCallback = jest.fn(async (): Promise<void> => {});
+      const postCommitCallback = jest.fn(async (): Promise<void> => {});
+
+      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          queryContext.appendPostCommitCallback(postCommitCallback);
+          queryContext.appendPostCommitInvalidationCallback(postCommitInvalidationCallback);
+          queryContext.appendPreCommitCallback(preCommitCallback, 0);
+
+          await Promise.all([
+            queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
+              innerQueryContext.appendPostCommitCallback(postCommitCallback);
+              innerQueryContext.appendPostCommitInvalidationCallback(
+                postCommitInvalidationCallback
+              );
+              innerQueryContext.appendPreCommitCallback(preCommitNestedCallback, 0);
+            }),
+            (async () => {
+              try {
+                await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
+                  // these two shouldn't be called
+                  innerQueryContext.appendPostCommitCallback(postCommitCallback);
+                  innerQueryContext.appendPostCommitInvalidationCallback(
+                    postCommitInvalidationCallback
+                  );
+                  innerQueryContext.appendPreCommitCallback(preCommitNestedCallbackThrow, 0);
+                });
+              } catch {}
+            })(),
+          ]);
+        }
+      );
+
+      expect(preCommitCallback).toHaveBeenCalledTimes(1);
+      expect(preCommitNestedCallback).toHaveBeenCalledTimes(1);
+      expect(preCommitNestedCallbackThrow).toHaveBeenCalledTimes(1);
+      expect(postCommitCallback).toHaveBeenCalledTimes(2);
+      expect(postCommitInvalidationCallback).toHaveBeenCalledTimes(2);
+    });
   });
 });

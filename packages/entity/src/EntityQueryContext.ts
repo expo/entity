@@ -65,6 +65,13 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
 
   private readonly preCommitCallbacks: { callback: PreCommitCallback; order: number }[] = [];
 
+  constructor(
+    queryInterface: any,
+    private readonly entityQueryContextProvider: EntityQueryContextProvider
+  ) {
+    super(queryInterface);
+  }
+
   /**
    * Schedule a pre-commit callback. These will be run within the transaction right before it is
    * committed, and will be run in the order specified. Ordering of callbacks scheduled with the
@@ -128,5 +135,58 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
   ): Promise<T> {
     return await transactionScope(this);
+  }
+
+  async runInNestedTransactionAsync<T>(
+    transactionScope: (innerQueryContext: EntityTransactionalQueryContext) => Promise<T>
+  ): Promise<T> {
+    return await this.entityQueryContextProvider.runInNestedTransactionAsync(
+      this,
+      transactionScope
+    );
+  }
+}
+
+/**
+ * Entity framework representation of a nested transactional query execution unit. When supplied
+ * to EntityMutator and EntityLoader methods, those methods and their
+ * dependent triggers and validators will run within the nested transaction.
+ *
+ * This exists to forward post-commit callbacks to the parent query context.
+ */
+export class EntityNestedTransactionalQueryContext extends EntityTransactionalQueryContext {
+  private readonly postCommitInvalidationCallbacksToTransfer: PostCommitCallback[] = [];
+  private readonly postCommitCallbacksToTransfer: PostCommitCallback[] = [];
+
+  constructor(
+    queryInterface: any,
+    private readonly parentQueryContext: EntityTransactionalQueryContext,
+    entityQueryContextProvider: EntityQueryContextProvider
+  ) {
+    super(queryInterface, entityQueryContextProvider);
+  }
+
+  public override appendPostCommitCallback(callback: PostCommitCallback): void {
+    this.postCommitInvalidationCallbacksToTransfer.push(callback);
+  }
+
+  public override appendPostCommitInvalidationCallback(callback: PostCommitCallback): void {
+    this.postCommitCallbacksToTransfer.push(callback);
+  }
+
+  public override runPostCommitCallbacksAsync(): Promise<void> {
+    throw new Error(
+      'Must not call runPostCommitCallbacksAsync on EntityNestedTransactionalQueryContext'
+    );
+  }
+
+  public transferPostCommitCallbacksToParent(): void {
+    for (const callback of this.postCommitInvalidationCallbacksToTransfer) {
+      this.parentQueryContext.appendPostCommitInvalidationCallback(callback);
+    }
+
+    for (const callback of this.postCommitCallbacksToTransfer) {
+      this.parentQueryContext.appendPostCommitCallback(callback);
+    }
   }
 }
