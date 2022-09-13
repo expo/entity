@@ -60,7 +60,7 @@ export default abstract class EntityQueryContextProvider {
     outerQueryContext: EntityTransactionalQueryContext,
     transactionScope: (innerQueryContext: EntityNestedTransactionalQueryContext) => Promise<T>
   ): Promise<T> {
-    const [returnedValue, innerQueryContex] = await this.createNestedTransactionRunner<
+    const [returnedValue, innerQueryContext] = await this.createNestedTransactionRunner<
       [T, EntityNestedTransactionalQueryContext]
     >(outerQueryContext.getQueryInterface())(async (innerQueryInterface) => {
       const innerQueryContext = new EntityNestedTransactionalQueryContext(
@@ -73,7 +73,7 @@ export default abstract class EntityQueryContextProvider {
       return [result, innerQueryContext];
     });
     // post-commit callbacks are appended to parent transaction instead of run, but only after the transaction has succeeded
-    innerQueryContex.transferPostCommitCallbacksToParent();
+    innerQueryContext.transferPostCommitCallbacksToParent();
     return returnedValue;
   }
 }

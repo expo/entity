@@ -51,11 +51,11 @@ describe(PostgresEntityQueryContextProvider, () => {
       // ensure the outer transaction is not aborted due to postgres error in inner transaction,
       // in this case the error triggered is a unique constraint violation
       try {
-        await queryContext.runInNestedTransactionAsync(async (innerQueryContex) => {
-          const entity = await PostgresUniqueTestEntity.loader(vc1, innerQueryContex)
+        await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
+          const entity = await PostgresUniqueTestEntity.loader(vc1, innerQueryContext)
             .enforcing()
             .loadByIDAsync(id);
-          await PostgresUniqueTestEntity.updater(entity, innerQueryContex)
+          await PostgresUniqueTestEntity.updater(entity, innerQueryContext)
             .setField('name', 'unique')
             .enforceUpdateAsync();
         });
@@ -81,8 +81,8 @@ describe(PostgresEntityQueryContextProvider, () => {
     ).getID();
 
     await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
-      await queryContext.runInNestedTransactionAsync(async (innerQueryContex) => {
-        await innerQueryContex.runInNestedTransactionAsync(async (innerQueryContex2) => {
+      await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
+        await innerQueryContext.runInNestedTransactionAsync(async (innerQueryContex2) => {
           await innerQueryContex2.runInNestedTransactionAsync(async (innerQueryContex3) => {
             const entity = await PostgresUniqueTestEntity.loader(vc1, innerQueryContex3)
               .enforcing()
