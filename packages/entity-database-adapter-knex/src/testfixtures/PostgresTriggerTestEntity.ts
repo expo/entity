@@ -35,13 +35,11 @@ export default class PostgresTriggerTestEntity extends Entity<
   }
 
   public static async createOrTruncatePostgresTable(knex: Knex): Promise<void> {
-    await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"'); // for uuid_generate_v4()
-
     const tableName = this.getCompanionDefinition().entityConfiguration.tableName;
     const hasTable = await knex.schema.hasTable(tableName);
     if (!hasTable) {
       await knex.schema.createTable(tableName, (table) => {
-        table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
+        table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
         table.string('name');
       });
     }

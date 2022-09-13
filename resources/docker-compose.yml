@@ -7,7 +7,7 @@ services:
     volumes:
       - redis_data:/data
   postgres:
-    image: postgres:9.6
+    image: postgres:14
     ports:
       - "${PGPORT}:5432"
     volumes:

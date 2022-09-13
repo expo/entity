@@ -10,15 +10,13 @@ import ChildEntity from './entities/ChildEntity';
 import ParentEntity from './entities/ParentEntity';
 
 async function createOrTruncatePostgresTables(knex: Knex): Promise<void> {
-  await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"'); // for uuid_generate_v4()
-
   await knex.schema.createTable('parents', (table) => {
-    table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
+    table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
   });
   await knex.into('parents').truncate();
 
   await knex.schema.createTable('children', (table) => {
-    table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
+    table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
     table.uuid('parent_id').references('id').inTable('parents').onDelete('cascade').unique();
   });
   await knex.into('children').truncate();
