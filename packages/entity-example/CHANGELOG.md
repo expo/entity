@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.28.0](https://github.com/expo/entity/compare/v0.27.0...v0.28.0) (2022-09-13)
+
+
+### Features
+
+* nested transactions ([#194](https://github.com/expo/entity/issues/194)) ([a77b914](https://github.com/expo/entity/commit/a77b914ad6dc018d1e309c9caf4971088a553ecf))
+
+
+
+
+
 # [0.27.0](https://github.com/expo/entity/compare/v0.26.1...v0.27.0) (2022-08-09)
 
 **Note:** Version bump only for package @expo/entity-example
