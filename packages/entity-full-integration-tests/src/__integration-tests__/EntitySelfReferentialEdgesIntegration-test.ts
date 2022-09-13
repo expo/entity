@@ -127,14 +127,12 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
     privacyPolicyClass: PrivacyPolicy,
   });
 
-  await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"'); // for uuid_generate_v4()
-
   await knex.schema.createTable(categoriesTableName, (table) => {
-    table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
+    table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
   });
 
   await knex.schema.createTable(othersTableName, (table) => {
-    table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
+    table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
     if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY) {
       table
         .uuid('parent_category_id')

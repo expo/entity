@@ -81,10 +81,8 @@ const testEntityCompanion = new EntityCompanionDefinition({
 });
 
 async function createOrTruncatePostgresTables(knex: Knex): Promise<void> {
-  await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"'); // for uuid_generate_v4()
-
   await knex.schema.createTable('testentities', (table) => {
-    table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
+    table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
     table.string('other_string').notNullable();
     table.string('third_string').notNullable();
   });
