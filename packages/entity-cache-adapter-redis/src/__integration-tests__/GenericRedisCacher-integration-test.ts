@@ -2,8 +2,7 @@ import { CacheStatus, ViewerContext } from '@expo/entity';
 import Redis from 'ioredis';
 import { URL } from 'url';
 
-import GenericRedisCacher from '../GenericRedisCacher';
-import { RedisCacheAdapterContext } from '../RedisCacheAdapter';
+import GenericRedisCacher, { RedisCacheAdapterContext } from '../GenericRedisCacher';
 import RedisTestEntity, {
   redisTestEntityConfiguration,
   RedisTestEntityFields,
@@ -44,11 +43,7 @@ describe(GenericRedisCacher, () => {
       createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
     );
     const genericRedisCacher = new GenericRedisCacher(
-      {
-        redisClient: redisCacheAdapterContext.redisClient,
-        ttlSecondsNegative: redisCacheAdapterContext.ttlSecondsNegative,
-        ttlSecondsPositive: redisCacheAdapterContext.ttlSecondsPositive,
-      },
+      redisCacheAdapterContext,
       redisTestEntityConfiguration
     );
     const date = new Date();
@@ -79,11 +74,7 @@ describe(GenericRedisCacher, () => {
   });
   it('has correct negative caching behaviour', async () => {
     const genericRedisCacher = new GenericRedisCacher(
-      {
-        redisClient: redisCacheAdapterContext.redisClient,
-        ttlSecondsNegative: redisCacheAdapterContext.ttlSecondsNegative,
-        ttlSecondsPositive: redisCacheAdapterContext.ttlSecondsPositive,
-      },
+      redisCacheAdapterContext,
       redisTestEntityConfiguration
     );
 
@@ -98,11 +89,7 @@ describe(GenericRedisCacher, () => {
       createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
     );
     const genericRedisCacher = new GenericRedisCacher(
-      {
-        redisClient: redisCacheAdapterContext.redisClient,
-        ttlSecondsNegative: redisCacheAdapterContext.ttlSecondsNegative,
-        ttlSecondsPositive: redisCacheAdapterContext.ttlSecondsPositive,
-      },
+      redisCacheAdapterContext,
       redisTestEntityConfiguration
     );
     const date = new Date();

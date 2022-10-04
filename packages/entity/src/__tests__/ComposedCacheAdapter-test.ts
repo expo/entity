@@ -1,9 +1,9 @@
 import invariant from 'invariant';
 
 import ComposedEntityCacheAdapter from '../ComposedEntityCacheAdapter';
-import EntityCacheAdapter from '../EntityCacheAdapter';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
+import IEntityCacheAdapter from '../IEntityCacheAdapter';
 import { CacheLoadResult, CacheStatus } from '../internal/ReadThroughEntityCache';
 
 type BlahFields = {
@@ -23,13 +23,11 @@ const entityConfiguration = new EntityConfiguration<BlahFields>({
 export const DOES_NOT_EXIST_LOCAL_MEMORY_CACHE = Symbol('doesNotExist');
 type LocalMemoryCacheValue<TFields> = Readonly<TFields> | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
 
-class TestLocalCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+class TestLocalCacheAdapter<TFields> implements IEntityCacheAdapter<TFields> {
   constructor(
-    entityConfiguration: EntityConfiguration<TFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields>,
     private readonly cache: Map<string, LocalMemoryCacheValue<TFields>>
-  ) {
-    super(entityConfiguration);
-  }
+  ) {}
 
   public async loadManyAsync<N extends keyof TFields>(
     fieldName: N,
@@ -123,10 +121,7 @@ function makeTestCacheAdapters(): {
   const fallbackCache = new Map();
   const fallbackCacheAdapter = new TestLocalCacheAdapter(entityConfiguration, fallbackCache);
 
-  const cacheAdapter = new ComposedEntityCacheAdapter(entityConfiguration, [
-    primaryCacheAdapter,
-    fallbackCacheAdapter,
-  ]);
+  const cacheAdapter = new ComposedEntityCacheAdapter([primaryCacheAdapter, fallbackCacheAdapter]);
 
   return {
     primaryCache,
@@ -229,7 +224,7 @@ describe(ComposedEntityCacheAdapter, () => {
     });
 
     it('handles 0 cache adapter compose case', async () => {
-      const cacheAdapter = new ComposedEntityCacheAdapter(entityConfiguration, []);
+      const cacheAdapter = new ComposedEntityCacheAdapter<any>([]);
       const results = await cacheAdapter.loadManyAsync('id', []);
       expect(results).toEqual(new Map());
     });

@@ -180,6 +180,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
 
     const secondaryCacheLoader = new TestSecondaryLocalMemoryCacheLoader(
       new LocalMemorySecondaryEntityCache(
+        localMemoryTestEntityConfiguration,
         GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({})
       ),
       LocalMemoryTestEntity.loader(viewerContext)
@@ -215,6 +216,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
 
     const secondaryCacheLoader = new TestSecondaryLocalMemoryCacheLoader(
       new LocalMemorySecondaryEntityCache(
+        localMemoryTestEntityConfiguration,
         GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({})
       ),
       LocalMemoryTestEntity.loader(viewerContext)

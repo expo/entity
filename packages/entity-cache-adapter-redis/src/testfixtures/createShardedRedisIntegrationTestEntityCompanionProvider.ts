@@ -6,11 +6,11 @@ import {
   StubDatabaseAdapterProvider,
 } from '@expo/entity';
 
-import { RedisCacheAdapterContext } from '../GenericRedisCacher';
-import RedisCacheAdapterProvider from '../RedisCacheAdapterProvider';
+import { ShardedRedisCacheAdapterContext } from '../ShardedGenericRedisCacher';
+import ShardedRedisCacheAdapterProvider from '../ShardedRedisCacheAdapterProvider';
 
-export const createRedisIntegrationTestEntityCompanionProvider = (
-  redisCacheAdapterContext: RedisCacheAdapterContext,
+export const createShardedRedisIntegrationTestEntityCompanionProvider = (
+  shardedRedisCacheAdapterContext: ShardedRedisCacheAdapterContext,
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
@@ -28,7 +28,9 @@ export const createRedisIntegrationTestEntityCompanionProvider = (
       [
         'redis',
         {
-          cacheAdapterProvider: new RedisCacheAdapterProvider(redisCacheAdapterContext),
+          cacheAdapterProvider: new ShardedRedisCacheAdapterProvider(
+            shardedRedisCacheAdapterContext
+          ),
         },
       ],
     ])

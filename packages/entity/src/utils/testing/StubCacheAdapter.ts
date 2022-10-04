@@ -1,19 +1,19 @@
 import invariant from 'invariant';
 
-import EntityCacheAdapter from '../../EntityCacheAdapter';
 import EntityConfiguration from '../../EntityConfiguration';
+import IEntityCacheAdapter from '../../IEntityCacheAdapter';
 import IEntityCacheAdapterProvider from '../../IEntityCacheAdapterProvider';
 import { CacheStatus, CacheLoadResult } from '../../internal/ReadThroughEntityCache';
 
 export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
   getCacheAdapter<TFields>(
-    entityConfiguration: EntityConfiguration<TFields>
-  ): EntityCacheAdapter<TFields> {
-    return new NoCacheStubCacheAdapter(entityConfiguration);
+    _entityConfiguration: EntityConfiguration<TFields>
+  ): IEntityCacheAdapter<TFields> {
+    return new NoCacheStubCacheAdapter();
   }
 }
 
-export class NoCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+export class NoCacheStubCacheAdapter<TFields> implements IEntityCacheAdapter<TFields> {
   public async loadManyAsync<N extends keyof TFields>(
     _fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[]
@@ -47,7 +47,7 @@ export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAd
 
   getCacheAdapter<TFields>(
     entityConfiguration: EntityConfiguration<TFields>
-  ): EntityCacheAdapter<TFields> {
+  ): IEntityCacheAdapter<TFields> {
     return new InMemoryFullCacheStubCacheAdapter(
       entityConfiguration,
       this.cache as Map<string, Readonly<TFields>>
@@ -55,13 +55,11 @@ export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAd
   }
 }
 
-export class InMemoryFullCacheStubCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+export class InMemoryFullCacheStubCacheAdapter<TFields> implements IEntityCacheAdapter<TFields> {
   constructor(
-    entityConfiguration: EntityConfiguration<TFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields>,
     readonly cache: Map<string, Readonly<TFields>>
-  ) {
-    super(entityConfiguration);
-  }
+  ) {}
 
   public async loadManyAsync<N extends keyof TFields>(
     fieldName: N,

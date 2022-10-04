@@ -4,13 +4,13 @@ import Redis from 'ioredis';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import RedisCacheAdapter, { RedisCacheAdapterContext } from '../RedisCacheAdapter';
+import GenericRedisCacher, { RedisCacheAdapterContext } from '../GenericRedisCacher';
 import RedisTestEntity from '../testfixtures/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtures/createRedisIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}
 
-describe(RedisCacheAdapter, () => {
+describe(GenericRedisCacher, () => {
   let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
@@ -41,11 +41,11 @@ describe(RedisCacheAdapter, () => {
     const viewerContext = new TestViewerContext(
       createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
     );
-    const cacheAdapter = viewerContext.entityCompanionProvider.getCompanionForEntity(
+    const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
       RedisTestEntity,
       RedisTestEntity.getCompanionDefinition()
-    )['tableDataCoordinator']['cacheAdapter'];
-    const cacheKeyMaker = cacheAdapter['makeCacheKey'].bind(cacheAdapter);
+    )['tableDataCoordinator']['cacheAdapter']['genericCacher'];
+    const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')

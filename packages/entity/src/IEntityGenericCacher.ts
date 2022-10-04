@@ -12,4 +12,6 @@ export default interface IEntityGenericCacher<TFields> {
   cacheDBMissesAsync(keys: readonly string[]): Promise<void>;
 
   invalidateManyAsync(keys: readonly string[]): Promise<void>;
+
+  makeCacheKey<N extends keyof TFields>(fieldName: N, fieldValue: NonNullable<TFields[N]>): string;
 }

@@ -6,5 +6,4 @@
 
 export { default as GenericLocalMemoryCacher } from './GenericLocalMemoryCacher';
 export * from './GenericLocalMemoryCacher';
-export { default as LocalMemoryCacheAdapter } from './LocalMemoryCacheAdapter';
 export { default as LocalMemoryCacheAdapterProvider } from './LocalMemoryCacheAdapterProvider';

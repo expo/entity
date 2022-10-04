@@ -1,26 +1,19 @@
 import nullthrows from 'nullthrows';
 
-import EntityCacheAdapter from './EntityCacheAdapter';
-import EntityConfiguration from './EntityConfiguration';
+import IEntityCacheAdapter from './IEntityCacheAdapter';
 import { CacheStatus, CacheLoadResult } from './internal/ReadThroughEntityCache';
 
 /**
- * A EntityCacheAdapter that composes other EntityCacheAdapter instances.
+ * An IEntityCacheAdapter that composes other IEntityCacheAdapter instances.
  */
-export default class ComposedEntityCacheAdapter<TFields> extends EntityCacheAdapter<TFields> {
+export default class ComposedEntityCacheAdapter<TFields> implements IEntityCacheAdapter<TFields> {
   /**
-   * @param entityConfiguration - configuration for entity being loaded
    * @param cacheAdapters - list of cache adapters to compose in order of precedence.
    *                        Earlier cache adapters are read from first and written to (including invalidations) last.
    *                        Typically, caches closer to the application should be ordered before caches closer to the database.
    *                        A lower layer cache is closer to the database, while a higher layer cache is closer to the application.
    */
-  constructor(
-    entityConfiguration: EntityConfiguration<TFields>,
-    private readonly cacheAdapters: EntityCacheAdapter<TFields>[]
-  ) {
-    super(entityConfiguration);
-  }
+  constructor(private readonly cacheAdapters: IEntityCacheAdapter<TFields>[]) {}
 
   public async loadManyAsync<N extends keyof TFields>(
     fieldName: N,
