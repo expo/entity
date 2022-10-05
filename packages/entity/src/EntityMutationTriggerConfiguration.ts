@@ -45,7 +45,7 @@ export default interface EntityMutationTriggerConfiguration<
    */
   beforeAll?: EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
   /**
-   * Trigger set that runs within the transaction but before the entity is created in, updated in, or deleted from
+   * Trigger set that runs within the transaction but after the entity is created in, updated in, or deleted from
    * the database and the cache is invalidated.
    */
   afterAll?: EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
