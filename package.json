@@ -16,6 +16,7 @@
     "barrelsby": "lerna run barrelsby"
   },
   "devDependencies": {
+    "@expo/batcher": "^1.0.0",
     "@expo/entity": "file:packages/entity",
     "@expo/results": "^1.0.0",
     "@types/invariant": "^2.2.33",
