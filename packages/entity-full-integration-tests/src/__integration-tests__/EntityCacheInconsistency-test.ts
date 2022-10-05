@@ -97,6 +97,7 @@ async function dropPostgresTable(knex: Knex): Promise<void> {
 
 describe('Entity cache inconsistency', () => {
   let knexInstance: Knex;
+  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
   let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
@@ -111,7 +112,7 @@ describe('Entity cache inconsistency', () => {
       },
     });
     redisCacheAdapterContext = {
-      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
+      redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -128,13 +129,13 @@ describe('Entity cache inconsistency', () => {
 
   beforeEach(async () => {
     await createOrTruncatePostgresTables(knexInstance);
-    await redisCacheAdapterContext.redisClient.flushdb();
+    await redisClient.flushdb();
   });
 
   afterAll(async () => {
     await dropPostgresTable(knexInstance);
     await knexInstance.destroy();
-    redisCacheAdapterContext.redisClient.disconnect();
+    redisClient.disconnect();
   });
 
   test('lots of updates in long-ish running transactions', async () => {

@@ -6,6 +6,12 @@ services:
       - "${REDIS_PORT}:6379"
     volumes:
       - redis_data:/data
+  redis2:
+    image: redis
+    ports:
+      - "${REDIS_PORT_2}:6379"
+    volumes:
+      - redis_data_2:/data
   postgres:
     image: postgres:14
     ports:
@@ -20,3 +26,4 @@ services:
 volumes:
   postgres_data: {}
   redis_data: {}
+  redis_data_2: {}
