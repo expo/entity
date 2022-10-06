@@ -6,7 +6,6 @@ import {
   transformFieldsToCacheObject,
   IEntityGenericCacher,
 } from '@expo/entity';
-import { Redis } from 'ioredis';
 
 import { redisTransformerMap } from './RedisCommon';
 import wrapNativeRedisCallAsync from './errors/wrapNativeRedisCallAsync';
@@ -15,11 +14,22 @@ import wrapNativeRedisCallAsync from './errors/wrapNativeRedisCallAsync';
 // The sentinel value is distinct from any (positively) cached value.
 const DOES_NOT_EXIST_REDIS = '';
 
+export interface IRedisTransaction {
+  set(key: string, value: string, secondsToken: 'EX', seconds: number): this;
+  exec(): Promise<any>;
+}
+
+export interface IRedis {
+  mget(...args: [...keys: string[]]): Promise<(string | null)[]>;
+  multi(): IRedisTransaction;
+  del(...args: [...keys: string[]]): Promise<any>;
+}
+
 export interface GenericRedisCacheContext {
   /**
    * Instance of ioredis.Redis
    */
-  redisClient: Redis;
+  redisClient: IRedis;
 
   /**
    * TTL for caching database hits. Successive entity loads within this TTL

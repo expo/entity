@@ -33,6 +33,7 @@ async function dropPostgresTable(knex: Knex): Promise<void> {
 
 describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   let knexInstance: Knex;
+  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
   let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
@@ -47,7 +48,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       },
     });
     redisCacheAdapterContext = {
-      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
+      redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -64,13 +65,13 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
   beforeEach(async () => {
     await createOrTruncatePostgresTables(knexInstance);
-    await redisCacheAdapterContext.redisClient.flushdb();
+    await redisClient.flushdb();
   });
 
   afterAll(async () => {
     await dropPostgresTable(knexInstance);
     await knexInstance.destroy();
-    redisCacheAdapterContext.redisClient.disconnect();
+    redisClient.disconnect();
   });
 
   describe('EntityEdgeDeletionBehavior.INVALIDATE_CACHE', () => {
