@@ -13,11 +13,12 @@ import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtur
 class TestViewerContext extends ViewerContext {}
 
 describe(GenericRedisCacher, () => {
+  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
   let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
     redisCacheAdapterContext = {
-      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
+      redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -33,10 +34,10 @@ describe(GenericRedisCacher, () => {
   });
 
   beforeEach(async () => {
-    await redisCacheAdapterContext.redisClient.flushdb();
+    await redisClient.flushdb();
   });
   afterAll(async () => {
-    redisCacheAdapterContext.redisClient.disconnect();
+    redisClient.disconnect();
   });
 
   it('has correct caching and loading behavior', async () => {
@@ -62,7 +63,7 @@ describe(GenericRedisCacher, () => {
     ]);
     await genericRedisCacher.cacheManyAsync(objectMap);
 
-    const cachedJSON = await redisCacheAdapterContext.redisClient.get(testKey);
+    const cachedJSON = await redisClient.get(testKey);
     const cachedValue = JSON.parse(cachedJSON!);
     expect(cachedValue).toMatchObject({
       id: entity1Created.getID(),

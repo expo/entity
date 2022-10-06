@@ -9,11 +9,12 @@ import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtur
 class TestViewerContext extends ViewerContext {}
 
 describe(RedisCacheAdapter, () => {
+  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
   let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
     redisCacheAdapterContext = {
-      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
+      redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -29,11 +30,11 @@ describe(RedisCacheAdapter, () => {
   });
 
   beforeEach(async () => {
-    await redisCacheAdapterContext.redisClient.flushdb();
+    await redisClient.flushdb();
   });
 
   it('throws when redis is disconnected', async () => {
-    redisCacheAdapterContext.redisClient.disconnect();
+    redisClient.disconnect();
 
     const vc1 = new TestViewerContext(
       createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)

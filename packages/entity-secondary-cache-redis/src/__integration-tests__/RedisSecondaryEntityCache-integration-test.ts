@@ -52,11 +52,12 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
 }
 
 describe(RedisSecondaryEntityCache, () => {
+  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
   let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
     redisCacheAdapterContext = {
-      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
+      redisClient,
       makeKeyFn(..._parts: string[]): string {
         throw new Error('should not be used by this test');
       },
@@ -68,10 +69,10 @@ describe(RedisSecondaryEntityCache, () => {
   });
 
   beforeEach(async () => {
-    await redisCacheAdapterContext.redisClient.flushdb();
+    await redisClient.flushdb();
   });
   afterAll(async () => {
-    redisCacheAdapterContext.redisClient.disconnect();
+    redisClient.disconnect();
   });
 
   it('Loads through secondary loader, caches, and invalidates', async () => {

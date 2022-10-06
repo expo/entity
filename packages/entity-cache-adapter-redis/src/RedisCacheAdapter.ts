@@ -1,14 +1,13 @@
 import { EntityCacheAdapter, EntityConfiguration, CacheLoadResult, mapKeys } from '@expo/entity';
 import invariant from 'invariant';
-import type { Redis } from 'ioredis';
 
-import GenericRedisCacher from './GenericRedisCacher';
+import GenericRedisCacher, { IRedis } from './GenericRedisCacher';
 
 export interface RedisCacheAdapterContext {
   /**
    * Instance of ioredis.Redis
    */
-  redisClient: Redis;
+  redisClient: IRedis;
 
   /**
    * Create a key string for key parts (cache key prefix, versions, entity name, etc).

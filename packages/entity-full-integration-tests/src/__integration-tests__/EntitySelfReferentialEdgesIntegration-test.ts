@@ -176,6 +176,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
 };
 describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   let knexInstance: Knex;
+  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
   let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
@@ -190,7 +191,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       },
     });
     redisCacheAdapterContext = {
-      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
+      redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -207,7 +208,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
   afterAll(async () => {
     await knexInstance.destroy();
-    redisCacheAdapterContext.redisClient.disconnect();
+    redisClient.disconnect();
   });
 
   it.each([

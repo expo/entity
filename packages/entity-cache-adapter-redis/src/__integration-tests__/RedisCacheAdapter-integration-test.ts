@@ -11,11 +11,12 @@ import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtur
 class TestViewerContext extends ViewerContext {}
 
 describe(RedisCacheAdapter, () => {
+  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
   let redisCacheAdapterContext: RedisCacheAdapterContext;
 
   beforeAll(() => {
     redisCacheAdapterContext = {
-      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
+      redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -31,10 +32,10 @@ describe(RedisCacheAdapter, () => {
   });
 
   beforeEach(async () => {
-    await redisCacheAdapterContext.redisClient.flushdb();
+    await redisClient.flushdb();
   });
   afterAll(async () => {
-    redisCacheAdapterContext.redisClient.disconnect();
+    redisClient.disconnect();
   });
 
   it('has correct caching behavior', async () => {
@@ -56,9 +57,7 @@ describe(RedisCacheAdapter, () => {
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
 
-    const cachedJSON = await redisCacheAdapterContext.redisClient.get(
-      cacheKeyMaker('id', entity1.getID())
-    );
+    const cachedJSON = await redisClient.get(cacheKeyMaker('id', entity1.getID()));
     const cachedValue = JSON.parse(cachedJSON!);
     expect(cachedValue).toMatchObject({
       id: entity1.getID(),
@@ -73,9 +72,7 @@ describe(RedisCacheAdapter, () => {
     );
     expect(entityNonExistentResult.ok).toBe(false);
 
-    const nonExistentCachedValue = await redisCacheAdapterContext.redisClient.get(
-      cacheKeyMaker('id', nonExistentId)
-    );
+    const nonExistentCachedValue = await redisClient.get(cacheKeyMaker('id', nonExistentId));
     expect(nonExistentCachedValue).toEqual('');
 
     // load again through entities framework to ensure it reads negative result
@@ -86,9 +83,7 @@ describe(RedisCacheAdapter, () => {
 
     // invalidate from cache to ensure it invalidates correctly
     await RedisTestEntity.loader(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
-    const cachedValueNull = await redisCacheAdapterContext.redisClient.get(
-      cacheKeyMaker('id', entity1.getID())
-    );
+    const cachedValueNull = await redisClient.get(cacheKeyMaker('id', entity1.getID()));
     expect(cachedValueNull).toBe(null);
   });
 
