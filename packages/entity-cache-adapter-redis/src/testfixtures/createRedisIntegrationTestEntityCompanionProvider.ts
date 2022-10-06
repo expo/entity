@@ -9,6 +9,9 @@ import {
 import { RedisCacheAdapterContext } from '../RedisCacheAdapter';
 import RedisCacheAdapterProvider from '../RedisCacheAdapterProvider';
 
+// share across all in calls in test to simulate postgres
+const adapterProvider = new StubDatabaseAdapterProvider();
+
 export const createRedisIntegrationTestEntityCompanionProvider = (
   redisCacheAdapterContext: RedisCacheAdapterContext,
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
@@ -19,7 +22,7 @@ export const createRedisIntegrationTestEntityCompanionProvider = (
       [
         'postgres',
         {
-          adapterProvider: new StubDatabaseAdapterProvider(),
+          adapterProvider,
           queryContextProvider: StubQueryContextProvider,
         },
       ],
