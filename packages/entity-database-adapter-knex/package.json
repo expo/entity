@@ -30,7 +30,7 @@
     "@expo/entity": "*"
   },
   "dependencies": {
-    "knex": "^1.0.2"
+    "knex": "^2.3.0"
   },
   "devDependencies": {
     "@expo/entity": "^0.29.0",
