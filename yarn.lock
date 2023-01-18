@@ -373,31 +373,31 @@
   integrity sha512-reebgVwjf8VfZxSXU7e+UjpXGwcUTIMpWR9FY54Oh70ulhXrQiZei62B4D9bH3SVYMwnDGzifHJ8INRrJ+0L1g==
 
 "@expo/entity-cache-adapter-local-memory@file:packages/entity-cache-adapter-local-memory":
-  version "0.29.0"
+  version "0.30.0"
   dependencies:
     lru-cache "^6.0.0"
 
 "@expo/entity-cache-adapter-redis@file:packages/entity-cache-adapter-redis":
-  version "0.29.0"
+  version "0.30.0"
 
 "@expo/entity-database-adapter-knex@file:packages/entity-database-adapter-knex":
-  version "0.29.0"
+  version "0.30.0"
   dependencies:
-    knex "^2.3.0"
+    knex "^2.4.1"
 
 "@expo/entity-ip-address-field@file:packages/entity-ip-address-field":
-  version "0.29.0"
+  version "0.30.0"
   dependencies:
     ip-address "^8.1.0"
 
 "@expo/entity-secondary-cache-local-memory@file:packages/entity-secondary-cache-local-memory":
-  version "0.29.0"
+  version "0.30.0"
 
 "@expo/entity-secondary-cache-redis@file:packages/entity-secondary-cache-redis":
-  version "0.29.0"
+  version "0.30.0"
 
 "@expo/entity@file:packages/entity":
-  version "0.29.0"
+  version "0.30.0"
   dependencies:
     "@expo/results" "^1.0.0"
     dataloader "^2.0.0"
@@ -6082,10 +6082,10 @@ kleur@^3.0.3:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
-knex@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/knex/-/knex-2.3.0.tgz#87fa2a9553d7cafb125d7a0645256fbe29ef5967"
-  integrity sha512-WMizPaq9wRMkfnwKXKXgBZeZFOSHGdtoSz5SaLAVNs3WRDfawt9O89T4XyH52PETxjV8/kRk0Yf+8WBEP/zbYw==
+knex@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/knex/-/knex-2.4.1.tgz#eff21a905e102a306a9c43ea11d984b0f54c4583"
+  integrity sha512-5wylehvnTOE8EdypPFakccA1zgo6Lp+TNultncvBUCUD0PasY+PLVa9qPrTFCioxPSPVha1u9ye2niAVVbLM0Q==
   dependencies:
     colorette "2.0.19"
     commander "^9.1.0"
