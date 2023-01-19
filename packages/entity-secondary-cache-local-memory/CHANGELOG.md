@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.31.0](https://github.com/expo/entity/compare/v0.30.0...v0.31.0) (2023-01-19)
+
+**Note:** Version bump only for package @expo/entity-secondary-cache-local-memory
+
+
+
+
+
 # [0.30.0](https://github.com/expo/entity/compare/v0.29.0...v0.30.0) (2022-12-23)
 
 **Note:** Version bump only for package @expo/entity-secondary-cache-local-memory
