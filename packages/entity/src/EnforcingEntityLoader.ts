@@ -118,6 +118,22 @@ export default class EnforcingEntityLoader<
    * Enforcing version of entity loader method by the same name.
    * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
    */
+  async loadFirstByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
+    querySelectionModifiers: Omit<QuerySelectionModifiers<TFields>, 'limit'> &
+      Required<Pick<QuerySelectionModifiers<TFields>, 'orderBy'>>
+  ): Promise<TEntity | null> {
+    const entityResult = await this.entityLoader.loadFirstByFieldEqualityConjunctionAsync(
+      fieldEqualityOperands,
+      querySelectionModifiers
+    );
+    return entityResult ? entityResult.enforceValue() : null;
+  }
+
+  /**
+   * Enforcing version of entity loader method by the same name.
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
+   */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {}

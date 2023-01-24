@@ -222,6 +222,46 @@ describe(EnforcingEntityLoader, () => {
     });
   });
 
+  describe('loadFirstByFieldEqualityConjunction', () => {
+    it('throws when result is unsuccessful', async () => {
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
+      const rejection = new Error();
+      when(
+        entityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+      ).thenResolve(result(rejection));
+      const entityLoader = instance(entityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
+      await expect(
+        enforcingEntityLoader.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+      ).rejects.toThrow(rejection);
+    });
+
+    it('returns value when result is successful', async () => {
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
+      const resolved = {};
+      when(
+        entityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+      ).thenResolve(result(resolved));
+      const entityLoader = instance(entityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
+      await expect(
+        enforcingEntityLoader.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+      ).resolves.toEqual(resolved);
+    });
+
+    it('returns null when the query is successful but no rows match', async () => {
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
+      when(
+        entityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+      ).thenResolve(null);
+      const entityLoader = instance(entityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
+      await expect(
+        enforcingEntityLoader.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+      ).resolves.toBeNull();
+    });
+  });
+
   describe('loadManyByFieldEqualityConjunction', () => {
     it('throws when result is unsuccessful', async () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
