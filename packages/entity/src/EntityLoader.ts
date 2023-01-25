@@ -183,6 +183,32 @@ export default class EntityLoader<
   }
 
   /**
+   * Loads the first entity matching the selection constructed from the conjunction of specified
+   * operands, or null if no matching entity exists. Entities loaded using this method are not
+   * batched or cached.
+   *
+   * This is a convenience method for {@link loadManyByFieldEqualityConjunctionAsync}. However, the
+   * `orderBy` option must be specified to define what "first" means. If ordering doesn't matter,
+   * explicitly pass in an empty array.
+   *
+   * @param fieldEqualityOperands - list of field equality selection operand specifications
+   * @param querySelectionModifiers - orderBy and optional offset for the query
+   * @returns the first entity results that matches the query, where result error can be
+   *  UnauthorizedError
+   */
+  async loadFirstByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
+    querySelectionModifiers: Omit<QuerySelectionModifiers<TFields>, 'limit'> &
+      Required<Pick<QuerySelectionModifiers<TFields>, 'orderBy'>>
+  ): Promise<Result<TEntity> | null> {
+    const results = await this.loadManyByFieldEqualityConjunctionAsync(fieldEqualityOperands, {
+      ...querySelectionModifiers,
+      limit: 1,
+    });
+    return results[0] ?? null;
+  }
+
+  /**
    * Loads many entities matching the selection constructed from the conjunction of specified operands.
    * Entities loaded using this method are not batched or cached.
    *

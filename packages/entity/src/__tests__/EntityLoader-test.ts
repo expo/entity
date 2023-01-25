@@ -2,6 +2,7 @@ import { enforceAsyncResult } from '@expo/results';
 import { mock, instance, verify, spy, deepEqual, anyOfClass, anything, when } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
+import { OrderByOrdering } from '../EntityDatabaseAdapter';
 import EntityLoader from '../EntityLoader';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
@@ -208,6 +209,101 @@ describe(EntityLoader, () => {
         { fieldName: 'customIdField', fieldValue: 'not-a-uuid' },
       ])
     ).rejects.toThrowError('Entity field not valid: TestEntity (customIdField = not-a-uuid)');
+  });
+
+  it('loads entities with loadFirstByFieldEqualityConjunction', async () => {
+    const privacyPolicy = new TestEntityPrivacyPolicy();
+    const spiedPrivacyPolicy = spy(privacyPolicy);
+    const viewerContext = instance(mock(ViewerContext));
+    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+    const queryContext = StubQueryContextProvider.getQueryContext();
+
+    const id1 = uuidv4();
+    const id2 = uuidv4();
+    const id3 = uuidv4();
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      testEntityConfiguration,
+      StubDatabaseAdapter.convertFieldObjectsToDataStore(
+        testEntityConfiguration,
+        new Map([
+          [
+            testEntityConfiguration.tableName,
+            [
+              {
+                customIdField: id1,
+                stringField: 'huh',
+                intField: 4,
+                testIndexedField: '4',
+                dateField: new Date(),
+                nullableField: null,
+              },
+              {
+                customIdField: id2,
+                stringField: 'huh',
+                intField: 4,
+                testIndexedField: '5',
+                dateField: new Date(),
+                nullableField: null,
+              },
+              {
+                customIdField: id3,
+                stringField: 'huh2',
+                intField: 4,
+                testIndexedField: '6',
+                dateField: new Date(),
+                nullableField: null,
+              },
+            ],
+          ],
+        ])
+      )
+    );
+    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const dataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      instance(mock<IEntityMetricsAdapter>()),
+      TestEntity.name
+    );
+    const entityLoader = new EntityLoader(
+      viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+      testEntityConfiguration,
+      TestEntity,
+      privacyPolicy,
+      dataManager,
+      metricsAdapter
+    );
+    const result = await entityLoader.loadFirstByFieldEqualityConjunctionAsync(
+      [
+        {
+          fieldName: 'stringField',
+          fieldValue: 'huh',
+        },
+        {
+          fieldName: 'intField',
+          fieldValue: 4,
+        },
+      ],
+      { orderBy: [{ fieldName: 'testIndexedField', order: OrderByOrdering.DESCENDING }] }
+    );
+    expect(result).not.toBeNull();
+    expect(result!.ok).toBe(true);
+    expect(result!.enforceValue().getField('testIndexedField')).toEqual('5');
+    verify(
+      spiedPrivacyPolicy.authorizeReadAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        anyOfClass(TestEntity),
+        anything()
+      )
+    ).once();
   });
 
   it('authorizes loaded entities', async () => {
