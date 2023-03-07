@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+
+# [0.31.1](https://github.com/expo/entity/compare/v0.31.0...v0.31.1) (2023-03-06)
+
+### Features
+* add loadFirstByFieldEqualityConjunction, a convenience method ([#206](https://github.com/expo/entity/pull/206)) ([1934216](https://github.com/expo/entity/commit/1934216b70572cf2b9693e0f14939f49b90427dd))
+
 # [0.31.0](https://github.com/expo/entity/compare/v0.30.0...v0.31.0) (2023-01-19)
 
 **Note:** Version bump only for package root
@@ -136,7 +142,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Chores
 
-* Refactor cachers to use an abstract class and interface  ([#157](https://github.com/expo/entity/pull/157)) 
+* Refactor cachers to use an abstract class and interface  ([#157](https://github.com/expo/entity/pull/157))
 
 
 
