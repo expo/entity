@@ -8,6 +8,18 @@ export type PreCommitCallback = (
   ...args: any
 ) => Promise<any>;
 
+export enum TransactionIsolationLevel {
+  READ_UNCOMMITTED,
+  READ_COMMITTED,
+  SNAPSHOT,
+  REPEATABLE_READ,
+  SERIALIZABLE,
+}
+
+export type TransactionConfig = {
+  isolationLevel?: TransactionIsolationLevel;
+};
+
 /**
  * Entity framework representation of transactional and non-transactional database
  * query execution units.
@@ -25,7 +37,8 @@ export abstract class EntityQueryContext {
   }
 
   abstract runInTransactionIfNotInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
+    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
+    transactionConfig?: TransactionConfig
   ): Promise<T>;
 }
 
@@ -48,9 +61,13 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
   }
 
   async runInTransactionIfNotInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
+    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
+    transactionConfig?: TransactionConfig
   ): Promise<T> {
-    return await this.entityQueryContextProvider.runInTransactionAsync(transactionScope);
+    return await this.entityQueryContextProvider.runInTransactionAsync(
+      transactionScope,
+      transactionConfig
+    );
   }
 }
 
@@ -132,8 +149,13 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
   }
 
   async runInTransactionIfNotInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
+    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
+    transactionConfig?: TransactionConfig
   ): Promise<T> {
+    assert(
+      transactionConfig === undefined,
+      'should not pass transactionConfig to an already created transaction'
+    );
     return await transactionScope(this);
   }
 

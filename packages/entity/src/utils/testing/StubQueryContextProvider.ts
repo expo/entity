@@ -1,3 +1,4 @@
+import { TransactionConfig } from '../../EntityQueryContext';
 import EntityQueryContextProvider from '../../EntityQueryContextProvider';
 
 export class StubQueryContextProvider extends EntityQueryContextProvider {
@@ -5,14 +6,15 @@ export class StubQueryContextProvider extends EntityQueryContextProvider {
     return {};
   }
 
-  protected createTransactionRunner<T>(): (
-    transactionScope: (queryInterface: any) => Promise<T>
-  ) => Promise<T> {
+  protected createTransactionRunner<T>(
+    _transactionConfig?: TransactionConfig
+  ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
     return (transactionScope) => Promise.resolve(transactionScope({}));
   }
 
   protected createNestedTransactionRunner<T>(
-    _outerQueryInterface: any
+    _outerQueryInterface: any,
+    _transactionConfig?: TransactionConfig
   ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
     return (transactionScope) => Promise.resolve(transactionScope({}));
   }

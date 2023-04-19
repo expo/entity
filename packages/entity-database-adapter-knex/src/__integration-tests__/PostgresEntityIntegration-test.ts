@@ -3,6 +3,7 @@ import {
   createUnitTestEntityCompanionProvider,
   enforceResultsAsync,
   ViewerContext,
+  TransactionIsolationLevel,
 } from '@expo/entity';
 import { enforceAsyncResult } from '@expo/results';
 import { knex, Knex } from 'knex';
@@ -109,6 +110,44 @@ describe('postgres entity integration', () => {
       PostgresTestEntity.loader(vc1).loadManyByFieldEqualingAsync('name', 'hello')
     );
     expect(entities).toHaveLength(1);
+  });
+
+  it('passes transaction config into transactions', async () => {
+    const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+    const firstEntity = await enforceAsyncResult(
+      PostgresTestEntity.creator(vc1).setField('name', 'hello').createAsync()
+    );
+
+    const loadAndUpdateAsync = async (newName: string): Promise<{ error?: Error }> => {
+      try {
+        await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
+          'postgres',
+          async (queryContext) => {
+            const entity = await PostgresTestEntity.loader(vc1, queryContext)
+              .enforcing()
+              .loadByIDAsync(firstEntity.getID());
+            await PostgresTestEntity.updater(entity, queryContext)
+              .setField('name', newName)
+              .enforceUpdateAsync();
+          },
+          { isolationLevel: TransactionIsolationLevel.SERIALIZABLE }
+        );
+        return {};
+      } catch (e) {
+        return { error: e as Error };
+      }
+    };
+
+    // do some parallel updates to trigger serializable error in at least some of them
+    const results = await Promise.all([
+      loadAndUpdateAsync('hello2'),
+      loadAndUpdateAsync('hello3'),
+      loadAndUpdateAsync('hello4'),
+      loadAndUpdateAsync('hello5'),
+    ]);
+
+    expect(results.filter((r) => (r.error as any)?.cause?.code === '40001').length > 0).toBe(true);
   });
 
   describe('JSON fields', () => {
