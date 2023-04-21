@@ -1,6 +1,6 @@
 import invariant from 'invariant';
 
-import { EntityQueryContext } from '../EntityQueryContext';
+import { EntityQueryContext, TransactionIsolationLevel } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
@@ -127,6 +127,28 @@ describe(EntityQueryContext, () => {
       expect(preCommitNestedCallbackThrow).toHaveBeenCalledTimes(1);
       expect(postCommitCallback).toHaveBeenCalledTimes(2);
       expect(postCommitInvalidationCallback).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('transaction config', () => {
+    it('passes it into the provider', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+
+      const queryContextProvider =
+        companionProvider.getQueryContextProviderForDatabaseAdaptorFlavor('postgres');
+      const queryContextProviderSpy = jest.spyOn(queryContextProvider, 'runInTransactionAsync');
+
+      const transactionScopeFn = async (): Promise<any> => {};
+      const transactionConfig = { isolationLevel: TransactionIsolationLevel.SERIALIZABLE };
+
+      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        'postgres',
+        transactionScopeFn,
+        transactionConfig
+      );
+
+      expect(queryContextProviderSpy).toHaveBeenCalledWith(transactionScopeFn, transactionConfig);
     });
   });
 });

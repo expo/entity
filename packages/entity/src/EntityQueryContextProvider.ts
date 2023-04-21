@@ -2,6 +2,7 @@ import {
   EntityTransactionalQueryContext,
   EntityNonTransactionalQueryContext,
   EntityNestedTransactionalQueryContext,
+  TransactionConfig,
 } from './EntityQueryContext';
 
 /**
@@ -23,9 +24,9 @@ export default abstract class EntityQueryContextProvider {
   /**
    * Vend a transaction runner for use in runInTransactionAsync.
    */
-  protected abstract createTransactionRunner<T>(): (
-    transactionScope: (queryInterface: any) => Promise<T>
-  ) => Promise<T>;
+  protected abstract createTransactionRunner<T>(
+    transactionConfig?: TransactionConfig
+  ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T>;
 
   protected abstract createNestedTransactionRunner<T>(
     outerQueryInterface: any
@@ -36,11 +37,12 @@ export default abstract class EntityQueryContextProvider {
    * @param transactionScope - async callback to execute within the transaction
    */
   async runInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>
+    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
+    transactionConfig?: TransactionConfig
   ): Promise<T> {
     const [returnedValue, queryContext] = await this.createTransactionRunner<
       [T, EntityTransactionalQueryContext]
-    >()(async (queryInterface) => {
+    >(transactionConfig)(async (queryInterface) => {
       const queryContext = new EntityTransactionalQueryContext(queryInterface, this);
       const result = await transactionScope(queryContext);
       await queryContext.runPreCommitCallbacksAsync();

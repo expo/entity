@@ -1,7 +1,11 @@
 import { IEntityClass } from './Entity';
 import EntityCompanionProvider, { DatabaseAdapterFlavor } from './EntityCompanionProvider';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
+import {
+  EntityQueryContext,
+  EntityTransactionalQueryContext,
+  TransactionConfig,
+} from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerScopedEntityCompanion from './ViewerScopedEntityCompanion';
 import ViewerScopedEntityCompanionProvider from './ViewerScopedEntityCompanionProvider';
@@ -82,11 +86,12 @@ export default class ViewerContext {
    */
   async runInTransactionForDatabaseAdaptorFlavorAsync<TResult>(
     databaseAdaptorFlavor: DatabaseAdapterFlavor,
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<TResult>
+    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<TResult>,
+    transactionConfig?: TransactionConfig
   ): Promise<TResult> {
     return await this.entityCompanionProvider
       .getQueryContextProviderForDatabaseAdaptorFlavor(databaseAdaptorFlavor)
       .getQueryContext()
-      .runInTransactionIfNotInTransactionAsync(transactionScope);
+      .runInTransactionIfNotInTransactionAsync(transactionScope, transactionConfig);
   }
 }
