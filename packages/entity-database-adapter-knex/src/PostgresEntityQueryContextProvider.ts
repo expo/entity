@@ -30,16 +30,9 @@ export default class PostgresEntityQueryContextProvider extends EntityQueryConte
   }
 
   protected createNestedTransactionRunner<T>(
-    outerQueryInterface: any,
-    transactionConfig?: TransactionConfig
+    outerQueryInterface: any
   ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
-    return (transactionScope) =>
-      (outerQueryInterface as Knex).transaction(
-        transactionScope,
-        transactionConfig
-          ? PostgresEntityQueryContextProvider.convertTransactionConfig(transactionConfig)
-          : undefined
-      );
+    return (transactionScope) => (outerQueryInterface as Knex).transaction(transactionScope);
   }
 
   private static convertTransactionConfig(
@@ -49,12 +42,8 @@ export default class PostgresEntityQueryContextProvider extends EntityQueryConte
       isolationLevel: TransactionIsolationLevel
     ): Knex.IsolationLevels => {
       switch (isolationLevel) {
-        case TransactionIsolationLevel.READ_UNCOMMITTED:
-          return 'read uncommitted';
         case TransactionIsolationLevel.READ_COMMITTED:
           return 'read committed';
-        case TransactionIsolationLevel.SNAPSHOT:
-          return 'snapshot';
         case TransactionIsolationLevel.REPEATABLE_READ:
           return 'repeatable read';
         case TransactionIsolationLevel.SERIALIZABLE:

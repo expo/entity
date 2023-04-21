@@ -9,11 +9,9 @@ export type PreCommitCallback = (
 ) => Promise<any>;
 
 export enum TransactionIsolationLevel {
-  READ_UNCOMMITTED,
-  READ_COMMITTED,
-  SNAPSHOT,
-  REPEATABLE_READ,
-  SERIALIZABLE,
+  READ_COMMITTED = 'READ_COMMITTED',
+  REPEATABLE_READ = 'REPEATABLE_READ',
+  SERIALIZABLE = 'SERIALIZABLE',
 }
 
 export type TransactionConfig = {
@@ -154,7 +152,7 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
   ): Promise<T> {
     assert(
       transactionConfig === undefined,
-      'should not pass transactionConfig to an already created transaction'
+      'Should not pass transactionConfig to a nested transaction'
     );
     return await transactionScope(this);
   }

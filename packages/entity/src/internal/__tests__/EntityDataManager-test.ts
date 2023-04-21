@@ -385,7 +385,8 @@ describe(EntityDataManager, () => {
         return await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', [
           '1',
         ]);
-      }
+      },
+      {}
     );
 
     expect(entityDatas.get('1')).toHaveLength(1);

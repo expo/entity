@@ -13,8 +13,7 @@ export class StubQueryContextProvider extends EntityQueryContextProvider {
   }
 
   protected createNestedTransactionRunner<T>(
-    _outerQueryInterface: any,
-    _transactionConfig?: TransactionConfig
+    _outerQueryInterface: any
   ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
     return (transactionScope) => Promise.resolve(transactionScope({}));
   }
