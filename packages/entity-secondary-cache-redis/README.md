@@ -12,7 +12,7 @@
     const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
       new RedisSecondaryEntityCache(
         redisTestEntityConfiguration,
-        redisCacheAdapterContext,
+        genericRedisCacheContext,
         (loadParams) => `${loadParams.id}`
       ),
       RedisTestEntity.loader(viewerContext)

@@ -2,8 +2,7 @@ import { CacheStatus, ViewerContext } from '@expo/entity';
 import Redis from 'ioredis';
 import { URL } from 'url';
 
-import GenericRedisCacher from '../GenericRedisCacher';
-import { RedisCacheAdapterContext } from '../RedisCacheAdapter';
+import GenericRedisCacher, { GenericRedisCacheContext } from '../GenericRedisCacher';
 import RedisTestEntity, {
   redisTestEntityConfiguration,
   RedisTestEntityFields,
@@ -13,12 +12,11 @@ import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtur
 class TestViewerContext extends ViewerContext {}
 
 describe(GenericRedisCacher, () => {
-  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
-  let redisCacheAdapterContext: RedisCacheAdapterContext;
+  let genericRedisCacheContext: GenericRedisCacheContext;
 
   beforeAll(() => {
-    redisCacheAdapterContext = {
-      redisClient,
+    genericRedisCacheContext = {
+      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -34,22 +32,18 @@ describe(GenericRedisCacher, () => {
   });
 
   beforeEach(async () => {
-    await redisClient.flushdb();
+    await (genericRedisCacheContext.redisClient as Redis).flushdb();
   });
   afterAll(async () => {
-    redisClient.disconnect();
+    (genericRedisCacheContext.redisClient as Redis).disconnect();
   });
 
   it('has correct caching and loading behavior', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
     const genericRedisCacher = new GenericRedisCacher(
-      {
-        redisClient: redisCacheAdapterContext.redisClient,
-        ttlSecondsNegative: redisCacheAdapterContext.ttlSecondsNegative,
-        ttlSecondsPositive: redisCacheAdapterContext.ttlSecondsPositive,
-      },
+      genericRedisCacheContext,
       redisTestEntityConfiguration
     );
     const date = new Date();
@@ -63,7 +57,7 @@ describe(GenericRedisCacher, () => {
     ]);
     await genericRedisCacher.cacheManyAsync(objectMap);
 
-    const cachedJSON = await redisClient.get(testKey);
+    const cachedJSON = await (genericRedisCacheContext.redisClient as Redis).get(testKey);
     const cachedValue = JSON.parse(cachedJSON!);
     expect(cachedValue).toMatchObject({
       id: entity1Created.getID(),
@@ -80,11 +74,7 @@ describe(GenericRedisCacher, () => {
   });
   it('has correct negative caching behaviour', async () => {
     const genericRedisCacher = new GenericRedisCacher(
-      {
-        redisClient: redisCacheAdapterContext.redisClient,
-        ttlSecondsNegative: redisCacheAdapterContext.ttlSecondsNegative,
-        ttlSecondsPositive: redisCacheAdapterContext.ttlSecondsPositive,
-      },
+      genericRedisCacheContext,
       redisTestEntityConfiguration
     );
 
@@ -96,14 +86,10 @@ describe(GenericRedisCacher, () => {
   });
   it('has correct invalidation behaviour', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
     const genericRedisCacher = new GenericRedisCacher(
-      {
-        redisClient: redisCacheAdapterContext.redisClient,
-        ttlSecondsNegative: redisCacheAdapterContext.ttlSecondsNegative,
-        ttlSecondsPositive: redisCacheAdapterContext.ttlSecondsPositive,
-      },
+      genericRedisCacheContext,
       redisTestEntityConfiguration
     );
     const date = new Date();

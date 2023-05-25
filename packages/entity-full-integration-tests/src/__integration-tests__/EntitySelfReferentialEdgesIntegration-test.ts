@@ -8,7 +8,7 @@ import {
   UUIDField,
   EntityEdgeDeletionBehavior,
 } from '@expo/entity';
-import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
+import { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
@@ -173,7 +173,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
 describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   let knexInstance: Knex;
   const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
-  let redisCacheAdapterContext: RedisCacheAdapterContext;
+  let genericRedisCacheContext: GenericRedisCacheContext;
 
   beforeAll(() => {
     knexInstance = knex({
@@ -186,7 +186,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         database: nullthrows(process.env['PGDATABASE']),
       },
     });
-    redisCacheAdapterContext = {
+    genericRedisCacheContext = {
       redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
@@ -219,7 +219,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
     );
 
     const viewerContext = new ViewerContext(
-      createFullIntegrationTestEntityCompanionProvider(knexInstance, redisCacheAdapterContext)
+      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
     );
 
     const category1 = await CategoryEntity.creator(viewerContext).enforceCreateAsync();

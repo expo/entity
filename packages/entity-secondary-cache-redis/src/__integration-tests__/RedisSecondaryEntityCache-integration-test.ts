@@ -1,5 +1,5 @@
 import { EntitySecondaryCacheLoader, mapMapAsync, ViewerContext } from '@expo/entity';
-import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
+import { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
 import nullthrows from 'nullthrows';
 import { URL } from 'url';
@@ -53,10 +53,10 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
 
 describe(RedisSecondaryEntityCache, () => {
   const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
-  let redisCacheAdapterContext: RedisCacheAdapterContext;
+  let genericRedisCacheContext: GenericRedisCacheContext;
 
   beforeAll(() => {
-    redisCacheAdapterContext = {
+    genericRedisCacheContext = {
       redisClient,
       makeKeyFn(..._parts: string[]): string {
         throw new Error('should not be used by this test');
@@ -77,7 +77,7 @@ describe(RedisSecondaryEntityCache, () => {
 
   it('Loads through secondary loader, caches, and invalidates', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
 
     const createdEntity = await RedisTestEntity.creator(viewerContext)
@@ -87,7 +87,7 @@ describe(RedisSecondaryEntityCache, () => {
     const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
       new RedisSecondaryEntityCache(
         redisTestEntityConfiguration,
-        redisCacheAdapterContext,
+        genericRedisCacheContext,
         (loadParams) => `test-key-${loadParams.id}`
       ),
       RedisTestEntity.loader(viewerContext)
@@ -120,13 +120,13 @@ describe(RedisSecondaryEntityCache, () => {
 
   it('correctly handles uncached and unfetchable load params', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
 
     const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
       new RedisSecondaryEntityCache(
         redisTestEntityConfiguration,
-        redisCacheAdapterContext,
+        genericRedisCacheContext,
         (loadParams) => `test-key-${loadParams.id}`
       ),
       RedisTestEntity.loader(viewerContext)

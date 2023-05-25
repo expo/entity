@@ -8,7 +8,7 @@ import {
   UUIDField,
   StringField,
 } from '@expo/entity';
-import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
+import { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
@@ -96,7 +96,7 @@ async function dropPostgresTable(knex: Knex): Promise<void> {
 describe('Entity cache inconsistency', () => {
   let knexInstance: Knex;
   const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
-  let redisCacheAdapterContext: RedisCacheAdapterContext;
+  let genericRedisCacheContext: GenericRedisCacheContext;
 
   beforeAll(() => {
     knexInstance = knex({
@@ -109,7 +109,7 @@ describe('Entity cache inconsistency', () => {
         database: nullthrows(process.env['PGDATABASE']),
       },
     });
-    redisCacheAdapterContext = {
+    genericRedisCacheContext = {
       redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
@@ -138,7 +138,7 @@ describe('Entity cache inconsistency', () => {
 
   test('lots of updates in long-ish running transactions', async () => {
     const viewerContext = new ViewerContext(
-      createFullIntegrationTestEntityCompanionProvider(knexInstance, redisCacheAdapterContext)
+      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
     );
 
     const entity1 = await TestEntity.creator(viewerContext)
@@ -171,7 +171,7 @@ describe('Entity cache inconsistency', () => {
         await barrier1;
 
         const viewerContextInternal = new ViewerContext(
-          createFullIntegrationTestEntityCompanionProvider(knexInstance, redisCacheAdapterContext)
+          createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
         );
         await TestEntity.loader(viewerContextInternal).enforcing().loadByIDAsync(entity1.getID());
 
@@ -194,7 +194,7 @@ describe('Entity cache inconsistency', () => {
 
     // ensure cache consistency
     const viewerContextLast = new ViewerContext(
-      createFullIntegrationTestEntityCompanionProvider(knexInstance, redisCacheAdapterContext)
+      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
     );
 
     const loadedById = await TestEntity.loader(viewerContextLast)

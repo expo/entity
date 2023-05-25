@@ -11,7 +11,7 @@ During `EntityCompanionProvider` instantiation:
 ```typescript
 import Redis from 'ioredis';
 
-const redisCacheAdapterContext = {
+const genericRedisCacherContext = {
   redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
   makeKeyFn(...parts: string[]): string {
     const delimiter = ':';
@@ -36,7 +36,7 @@ export const createDefaultEntityCompanionProvider = (
     },
     {
       ['redis']: {
-        cacheAdapterProvider: new RedisCacheAdapterProvider(redisCacheAdapterContext),
+        cacheAdapterProvider: new RedisCacheAdapterProvider(genericRedisCacheContext),
       },
     }
   );

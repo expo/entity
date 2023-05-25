@@ -1,4 +1,10 @@
-import { CacheLoadResult, CacheStatus, IEntityGenericCacher } from '@expo/entity';
+import {
+  CacheLoadResult,
+  CacheStatus,
+  EntityConfiguration,
+  IEntityGenericCacher,
+} from '@expo/entity';
+import invariant from 'invariant';
 import LRUCache from 'lru-cache';
 
 // Sentinel value we store in local memory to negatively cache a database miss.
@@ -8,7 +14,10 @@ type LocalMemoryCacheValue<TFields> = Readonly<TFields> | typeof DOES_NOT_EXIST_
 export type LocalMemoryCache<TFields> = LRUCache<string, LocalMemoryCacheValue<TFields>>;
 
 export default class GenericLocalMemoryCacher<TFields> implements IEntityGenericCacher<TFields> {
-  constructor(private readonly localMemoryCache: LocalMemoryCache<TFields>) {}
+  constructor(
+    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly localMemoryCache: LocalMemoryCache<TFields>
+  ) {}
 
   static createLRUCache<TFields>(
     options: { maxSize?: number; ttlSeconds?: number } = {}
@@ -72,7 +81,19 @@ export default class GenericLocalMemoryCacher<TFields> implements IEntityGeneric
     }
   }
 
-  public makeCacheKey(parts: string[]): string {
+  public makeCacheKey<N extends keyof TFields>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>
+  ): string {
+    const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
+    invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
+    const parts = [
+      this.entityConfiguration.tableName,
+      `${this.entityConfiguration.cacheKeyVersion}`,
+      columnName,
+      String(fieldValue),
+    ];
+
     const delimiter = ':';
     const escapedParts = parts.map((part) =>
       part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)

@@ -1,5 +1,5 @@
 import { ViewerContext } from '@expo/entity';
-import { RedisCacheAdapterContext } from '@expo/entity-cache-adapter-redis';
+import { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
@@ -34,7 +34,7 @@ async function dropPostgresTable(knex: Knex): Promise<void> {
 describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   let knexInstance: Knex;
   const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
-  let redisCacheAdapterContext: RedisCacheAdapterContext;
+  let genericRedisCacheContext: GenericRedisCacheContext;
 
   beforeAll(() => {
     knexInstance = knex({
@@ -47,7 +47,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         database: nullthrows(process.env['PGDATABASE']),
       },
     });
-    redisCacheAdapterContext = {
+    genericRedisCacheContext = {
       redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
@@ -77,7 +77,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   describe('EntityEdgeDeletionBehavior.INVALIDATE_CACHE', () => {
     it('invalidates the cache', async () => {
       const viewerContext = new ViewerContext(
-        createFullIntegrationTestEntityCompanionProvider(knexInstance, redisCacheAdapterContext)
+        createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
       );
 
       const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();

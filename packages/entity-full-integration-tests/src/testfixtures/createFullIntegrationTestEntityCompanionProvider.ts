@@ -4,7 +4,7 @@ import {
   EntityCompanionProvider,
 } from '@expo/entity';
 import {
-  RedisCacheAdapterContext,
+  GenericRedisCacheContext,
   RedisCacheAdapterProvider,
 } from '@expo/entity-cache-adapter-redis';
 import {
@@ -15,7 +15,7 @@ import { Knex } from 'knex';
 
 export const createFullIntegrationTestEntityCompanionProvider = (
   knex: Knex,
-  redisCacheAdapterContext: RedisCacheAdapterContext,
+  genericRedisCacheContext: GenericRedisCacheContext,
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
@@ -33,7 +33,7 @@ export const createFullIntegrationTestEntityCompanionProvider = (
       [
         'redis',
         {
-          cacheAdapterProvider: new RedisCacheAdapterProvider(redisCacheAdapterContext),
+          cacheAdapterProvider: new RedisCacheAdapterProvider(genericRedisCacheContext),
         },
       ],
     ])
