@@ -45,20 +45,22 @@ class BlahEntity extends Entity<BlahFields, string, ViewerContext> {
   }
 }
 
+const blahConfiguration = new EntityConfiguration<BlahFields>({
+  idField: 'id',
+  tableName: 'blah_table',
+  schema: {
+    id: new UUIDField({
+      columnName: 'id',
+      cache: true,
+    }),
+  },
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
+});
+
 const blahCompanion = new EntityCompanionDefinition({
   entityClass: BlahEntity,
-  entityConfiguration: new EntityConfiguration<BlahFields>({
-    idField: 'id',
-    tableName: 'blah_table',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-        cache: true,
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'redis',
-  }),
+  entityConfiguration: blahConfiguration,
   privacyPolicyClass: BlahEntityPrivacyPolicy,
   mutationTriggers: () => ({
     afterCommit: [new TestNonTransactionalMutationTrigger()],

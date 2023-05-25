@@ -84,23 +84,25 @@ class BlahEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
+const blahConfiguration = new EntityConfiguration<BlahFields>({
+  idField: 'id',
+  tableName: 'blah_table',
+  schema: {
+    id: new UUIDField({
+      columnName: 'id',
+      cache: true,
+    }),
+    ownerID: new UUIDField({
+      columnName: 'owner_id',
+    }),
+  },
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
+});
+
 const blahCompanion = new EntityCompanionDefinition({
   entityClass: BlahEntity,
-  entityConfiguration: new EntityConfiguration<BlahFields>({
-    idField: 'id',
-    tableName: 'blah_table',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-        cache: true,
-      }),
-      ownerID: new UUIDField({
-        columnName: 'owner_id',
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'redis',
-  }),
+  entityConfiguration: blahConfiguration,
   privacyPolicyClass: BlahEntityPrivacyPolicy,
 });
 

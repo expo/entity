@@ -31,6 +31,27 @@ export default class NoteEntity extends Entity<NoteFields, string, ExampleViewer
   }
 }
 
+const noteEntityConfiguration = new EntityConfiguration<NoteFields>({
+  idField: 'id',
+  tableName: 'notes',
+  schema: {
+    id: new UUIDField({
+      columnName: 'id',
+    }),
+    userID: new UUIDField({
+      columnName: 'user_id',
+    }),
+    title: new StringField({
+      columnName: 'title',
+    }),
+    body: new StringField({
+      columnName: 'body',
+    }),
+  },
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
+});
+
 /**
  * The companion provides configuration instructions to the Entity framework for this type
  * of entity. In some languages, this would be representable as "abstract" static members
@@ -38,25 +59,6 @@ export default class NoteEntity extends Entity<NoteFields, string, ExampleViewer
  */
 export const noteEntityCompanion = new EntityCompanionDefinition({
   entityClass: NoteEntity,
-  entityConfiguration: new EntityConfiguration<NoteFields>({
-    idField: 'id',
-    tableName: 'notes',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-      }),
-      userID: new UUIDField({
-        columnName: 'user_id',
-      }),
-      title: new StringField({
-        columnName: 'title',
-      }),
-      body: new StringField({
-        columnName: 'body',
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'redis',
-  }),
+  entityConfiguration: noteEntityConfiguration,
   privacyPolicyClass: NotePrivacyPolicy,
 });

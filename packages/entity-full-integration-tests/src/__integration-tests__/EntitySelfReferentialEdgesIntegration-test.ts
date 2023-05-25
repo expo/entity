@@ -74,7 +74,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
   const categoryEntityConfiguration = new EntityConfiguration<CategoryFields>({
     idField: 'id',
     tableName: categoriesTableName,
-    getInboundEdges: () => [OtherEntity],
+    getInboundEdges: async () => [OtherEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
@@ -84,7 +84,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
         columnName: 'parent_other_id',
         cache: true,
         association: {
-          getAssociatedEntityClass: () => OtherEntity,
+          getAssociatedEntityClass: async () => OtherEntity,
           edgeDeletionBehavior,
         },
       }),
@@ -102,7 +102,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
   const otherEntityConfiguration = new EntityConfiguration<OtherFields>({
     idField: 'id',
     tableName: othersTableName,
-    getInboundEdges: () => [CategoryEntity],
+    getInboundEdges: async () => [CategoryEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
@@ -112,7 +112,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
         columnName: 'parent_category_id',
         cache: true,
         association: {
-          getAssociatedEntityClass: () => CategoryEntity,
+          getAssociatedEntityClass: async () => CategoryEntity,
           edgeDeletionBehavior,
         },
       }),

@@ -226,19 +226,21 @@ class EmptyPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext,
   protected override readonly deleteRules = [];
 }
 
+const blahConfiguration = new EntityConfiguration<BlahFields>({
+  idField: 'id',
+  tableName: 'blah_table',
+  schema: {
+    id: new UUIDField({
+      columnName: 'id',
+    }),
+  },
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
+});
+
 const blahEntityCompanionDefinition = new EntityCompanionDefinition({
   entityClass: BlahEntity,
-  entityConfiguration: new EntityConfiguration<BlahFields>({
-    idField: 'id',
-    tableName: 'blah_table',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'redis',
-  }),
+  entityConfiguration: blahConfiguration,
   privacyPolicyClass: AlwaysDenyPolicy,
 });
 

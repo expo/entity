@@ -61,13 +61,15 @@ export interface EntityAssociationDefinition<
   /**
    * Class of entity on the other end of this edge.
    */
-  getAssociatedEntityClass: () => IEntityClass<
-    TAssociatedFields,
-    TAssociatedID,
-    TViewerContext,
-    TAssociatedEntity,
-    TAssociatedPrivacyPolicy,
-    TAssociatedSelectedFields
+  getAssociatedEntityClass: () => Promise<
+    IEntityClass<
+      TAssociatedFields,
+      TAssociatedID,
+      TViewerContext,
+      TAssociatedEntity,
+      TAssociatedPrivacyPolicy,
+      TAssociatedSelectedFields
+    >
   >;
 
   /**

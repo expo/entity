@@ -734,7 +734,7 @@ export class DeleteMutator<
       TSelectedFields
     >;
     const entityConfiguration = companionDefinition.entityConfiguration;
-    const inboundEdges = entityConfiguration.getInboundEdges();
+    const inboundEdges = await entityConfiguration.getInboundEdges();
     await Promise.all(
       inboundEdges.map(async (entityClass) => {
         return await mapMapAsync(
@@ -745,9 +745,9 @@ export class DeleteMutator<
               return;
             }
 
-            const associatedConfiguration = association
-              .getAssociatedEntityClass()
-              .getCompanionDefinition().entityConfiguration;
+            const associatedConfiguration = (
+              await association.getAssociatedEntityClass()
+            ).getCompanionDefinition().entityConfiguration;
             if (associatedConfiguration !== entityConfiguration) {
               return;
             }

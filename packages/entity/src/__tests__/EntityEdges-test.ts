@@ -360,7 +360,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
   const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
     idField: 'id',
     tableName: 'parents',
-    getInboundEdges: () => [ChildEntity],
+    getInboundEdges: async () => [ChildEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
@@ -374,7 +374,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
   const childEntityConfiguration = new EntityConfiguration<ChildFields>({
     idField: 'id',
     tableName: 'children',
-    getInboundEdges: () => [GrandChildEntity],
+    getInboundEdges: async () => [GrandChildEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
@@ -384,7 +384,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         columnName: 'parent_id',
         cache: true,
         association: {
-          getAssociatedEntityClass: () => ParentEntity,
+          getAssociatedEntityClass: async () => ParentEntity,
           edgeDeletionBehavior,
         },
       }),
@@ -405,7 +405,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         columnName: 'parent_id',
         cache: true,
         association: {
-          getAssociatedEntityClass: () => ChildEntity,
+          getAssociatedEntityClass: async () => ChildEntity,
           edgeDeletionBehavior,
         },
       }),

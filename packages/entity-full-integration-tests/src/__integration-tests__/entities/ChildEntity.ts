@@ -55,7 +55,7 @@ const childEntityConfiguration = new EntityConfiguration<ChildFields>({
       columnName: 'parent_id',
       cache: true,
       association: {
-        getAssociatedEntityClass: () => ParentEntity,
+        getAssociatedEntityClass: async () => ParentEntity,
         edgeDeletionBehavior: EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY,
       },
     }),

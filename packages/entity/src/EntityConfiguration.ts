@@ -13,7 +13,7 @@ export default class EntityConfiguration<TFields> {
   readonly cacheableKeys: ReadonlySet<keyof TFields>;
   readonly cacheKeyVersion: number;
 
-  readonly getInboundEdges: () => IEntityClass<any, any, any, any, any, any>[];
+  readonly getInboundEdges: () => Promise<IEntityClass<any, any, any, any, any, any>[]>;
   readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>;
   readonly entityToDBFieldsKeyMapping: ReadonlyMap<keyof TFields, string>;
   readonly dbToEntityFieldsKeyMapping: ReadonlyMap<string, keyof TFields>;
@@ -25,7 +25,7 @@ export default class EntityConfiguration<TFields> {
     idField,
     tableName,
     schema,
-    getInboundEdges = () => [],
+    getInboundEdges = async () => [],
     cacheKeyVersion = 0,
     databaseAdapterFlavor,
     cacheAdapterFlavor,
@@ -48,7 +48,7 @@ export default class EntityConfiguration<TFields> {
     /**
      * List of other entity types that reference this type in EntityFieldDefinition associations.
      */
-    getInboundEdges?: () => IEntityClass<any, any, any, any, any, any>[];
+    getInboundEdges?: () => Promise<IEntityClass<any, any, any, any, any, any>[]>;
 
     /**
      * Cache key version for this entity type. Should be bumped when a field is added to, removed from, or changed
