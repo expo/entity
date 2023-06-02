@@ -1,5 +1,4 @@
-import { IEntityClass } from './Entity';
-import EntityConfiguration from './EntityConfiguration';
+import EntityCompanion from './EntityCompanion';
 import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
@@ -12,7 +11,7 @@ import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
  * The primary entry point for loading entities.
  */
 export default class EntityLoaderFactory<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -26,8 +25,7 @@ export default class EntityLoaderFactory<
   TSelectedFields extends keyof TFields
 > {
   constructor(
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
-    private readonly entityClass: IEntityClass<
+    private readonly entityCompanion: EntityCompanion<
       TFields,
       TID,
       TViewerContext,
@@ -35,7 +33,6 @@ export default class EntityLoaderFactory<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly privacyPolicyClass: TPrivacyPolicy,
     private readonly dataManager: EntityDataManager<TFields>,
     protected readonly metricsAdapter: IEntityMetricsAdapter
   ) {}
@@ -54,9 +51,10 @@ export default class EntityLoaderFactory<
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
-      this.entityConfiguration,
-      this.entityClass,
-      this.privacyPolicyClass,
+      this.entityCompanion.entityCompanionDefinition.entityConfiguration,
+      this.entityCompanion.entityCompanionDefinition.entityClass,
+      this.entityCompanion.entityCompanionDefinition.entitySelectedFields,
+      this.entityCompanion.privacyPolicy,
       this.dataManager,
       this.metricsAdapter
     );

@@ -1,4 +1,5 @@
 import Entity, { IEntityClass } from './Entity';
+import EntityCompanionProvider from './EntityCompanionProvider';
 import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import EntityLoaderFactory from './EntityLoaderFactory';
@@ -14,7 +15,7 @@ import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
  * The primary interface for creating, mutating, and deleting entities.
  */
 export default class EntityMutatorFactory<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -28,6 +29,7 @@ export default class EntityMutatorFactory<
   TSelectedFields extends keyof TFields = keyof TFields
 > {
   constructor(
+    private readonly entityCompanionProvider: EntityCompanionProvider,
     private readonly entityConfiguration: EntityConfiguration<TFields>,
     private readonly entityClass: IEntityClass<
       TFields,
@@ -75,6 +77,7 @@ export default class EntityMutatorFactory<
     queryContext: EntityQueryContext
   ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new CreateMutator(
+      this.entityCompanionProvider,
       viewerContext,
       queryContext,
       this.entityConfiguration,
@@ -99,6 +102,7 @@ export default class EntityMutatorFactory<
     queryContext: EntityQueryContext
   ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new UpdateMutator(
+      this.entityCompanionProvider,
       existingEntity.getViewerContext(),
       queryContext,
       this.entityConfiguration,
@@ -123,6 +127,7 @@ export default class EntityMutatorFactory<
     queryContext: EntityQueryContext
   ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new DeleteMutator(
+      this.entityCompanionProvider,
       existingEntity.getViewerContext(),
       queryContext,
       this.entityConfiguration,

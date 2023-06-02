@@ -27,21 +27,24 @@ export default class ErrorsTestEntity extends Entity<
   number,
   ViewerContext
 > {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     ErrorsTestEntityFields,
     number,
     ViewerContext,
     ErrorsTestEntity,
     ErrorsTestEntityPrivacyPolicy
   > {
-    return errorsTestEntityCompanionDefinition;
+    return {
+      entityClass: ErrorsTestEntity,
+      entityConfiguration: ErrorsTestEntityConfiguration,
+      privacyPolicyClass: ErrorsTestEntityPrivacyPolicy,
+    };
   }
 
   public static async createOrTruncatePostgresTable(knex: Knex): Promise<void> {
     await knex.raw('CREATE EXTENSION IF NOT EXISTS "btree_gist"'); // for gist exclusion on varchar
 
-    const tableName = this.getCompanionDefinition().entityConfiguration.tableName;
-
+    const tableName = 'postgres_test_entities';
     const hasForeignTable = await knex.schema.hasTable(foreignTableName);
     if (!hasForeignTable) {
       await knex.schema.createTable(foreignTableName, (table) => {
@@ -87,7 +90,7 @@ export default class ErrorsTestEntity extends Entity<
   }
 
   public static async dropPostgresTable(knex: Knex): Promise<void> {
-    const tableName = this.getCompanionDefinition().entityConfiguration.tableName;
+    const tableName = 'postgres_test_entities';
     const hasTable = await knex.schema.hasTable(tableName);
     if (hasTable) {
       await knex.schema.dropTable(tableName);
@@ -168,10 +171,4 @@ export const ErrorsTestEntityConfiguration = new EntityConfiguration<ErrorsTestE
   },
   databaseAdapterFlavor: 'postgres',
   cacheAdapterFlavor: 'redis',
-});
-
-const errorsTestEntityCompanionDefinition = new EntityCompanionDefinition({
-  entityClass: ErrorsTestEntity,
-  entityConfiguration: ErrorsTestEntityConfiguration,
-  privacyPolicyClass: ErrorsTestEntityPrivacyPolicy,
 });

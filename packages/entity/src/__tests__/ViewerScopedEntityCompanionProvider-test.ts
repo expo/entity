@@ -4,7 +4,7 @@ import EntityCompanionProvider from '../EntityCompanionProvider';
 import ViewerContext from '../ViewerContext';
 import ViewerScopedEntityCompanion from '../ViewerScopedEntityCompanion';
 import ViewerScopedEntityCompanionProvider from '../ViewerScopedEntityCompanionProvider';
-import TestEntity, { testEntityCompanion } from '../testfixtures/TestEntity';
+import TestEntity from '../testfixtures/TestEntity';
 
 describe(ViewerScopedEntityCompanionProvider, () => {
   it('returns viewer scoped entity companion', () => {
@@ -15,10 +15,7 @@ describe(ViewerScopedEntityCompanionProvider, () => {
       vc
     );
     expect(
-      viewerScopedEntityCompanionProvider.getViewerScopedCompanionForEntity(
-        TestEntity,
-        testEntityCompanion
-      )
+      viewerScopedEntityCompanionProvider.getViewerScopedCompanionForEntity(TestEntity)
     ).toBeInstanceOf(ViewerScopedEntityCompanion);
   });
 });

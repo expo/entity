@@ -26,7 +26,12 @@ describe(Entity, () => {
       const data = {
         id: 'what',
       };
-      const testEntity = new SimpleTestEntity(viewerContext, data);
+      const testEntity = new SimpleTestEntity({
+        viewerContext,
+        id: 'what',
+        databaseFields: data,
+        selectedFields: data,
+      });
       expect(SimpleTestEntity.updater(testEntity)).toBeInstanceOf(UpdateMutator);
     });
   });
@@ -38,7 +43,12 @@ describe(Entity, () => {
       const data = {
         id: 'what',
       };
-      const testEntity = new SimpleTestDenyDeleteEntity(viewerContext, data);
+      const testEntity = new SimpleTestDenyDeleteEntity({
+        viewerContext,
+        id: 'what',
+        databaseFields: data,
+        selectedFields: data,
+      });
       const canViewerUpdate = await SimpleTestDenyDeleteEntity.canViewerUpdateAsync(testEntity);
       expect(canViewerUpdate).toBe(true);
     });
@@ -49,7 +59,12 @@ describe(Entity, () => {
       const data = {
         id: 'what',
       };
-      const testEntity = new SimpleTestDenyUpdateEntity(viewerContext, data);
+      const testEntity = new SimpleTestDenyUpdateEntity({
+        viewerContext,
+        id: 'what',
+        databaseFields: data,
+        selectedFields: data,
+      });
       const canViewerUpdate = await SimpleTestDenyUpdateEntity.canViewerUpdateAsync(testEntity);
       expect(canViewerUpdate).toBe(false);
     });
@@ -62,7 +77,12 @@ describe(Entity, () => {
       const data = {
         id: 'what',
       };
-      const testEntity = new SimpleTestDenyUpdateEntity(viewerContext, data);
+      const testEntity = new SimpleTestDenyUpdateEntity({
+        viewerContext,
+        id: 'what',
+        databaseFields: data,
+        selectedFields: data,
+      });
       const canViewerDelete = await SimpleTestDenyUpdateEntity.canViewerDeleteAsync(testEntity);
       expect(canViewerDelete).toBe(true);
     });
@@ -73,7 +93,12 @@ describe(Entity, () => {
       const data = {
         id: 'what',
       };
-      const testEntity = new SimpleTestDenyDeleteEntity(viewerContext, data);
+      const testEntity = new SimpleTestDenyDeleteEntity({
+        viewerContext,
+        id: 'what',
+        databaseFields: data,
+        selectedFields: data,
+      });
       const canViewerDelete = await SimpleTestDenyDeleteEntity.canViewerDeleteAsync(testEntity);
       expect(canViewerDelete).toBe(false);
     });
@@ -177,37 +202,33 @@ class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
 }
 
 class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     TestEntityFields,
     string,
     ViewerContext,
     SimpleTestDenyUpdateEntity,
     SimpleTestDenyUpdateEntityPrivacyPolicy
   > {
-    return simpleTestDenyUpdateEntityCompanion;
+    return {
+      entityClass: SimpleTestDenyUpdateEntity,
+      entityConfiguration: testEntityConfiguration,
+      privacyPolicyClass: SimpleTestDenyUpdateEntityPrivacyPolicy,
+    };
   }
 }
 
-const simpleTestDenyUpdateEntityCompanion = new EntityCompanionDefinition({
-  entityClass: SimpleTestDenyUpdateEntity,
-  entityConfiguration: testEntityConfiguration,
-  privacyPolicyClass: SimpleTestDenyUpdateEntityPrivacyPolicy,
-});
-
 class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     TestEntityFields,
     string,
     ViewerContext,
     SimpleTestDenyDeleteEntity,
     SimpleTestDenyDeleteEntityPrivacyPolicy
   > {
-    return simpleTestDenyDeleteEntityCompanion;
+    return {
+      entityClass: SimpleTestDenyDeleteEntity,
+      entityConfiguration: testEntityConfiguration,
+      privacyPolicyClass: SimpleTestDenyDeleteEntityPrivacyPolicy,
+    };
   }
 }
-
-const simpleTestDenyDeleteEntityCompanion = new EntityCompanionDefinition({
-  entityClass: SimpleTestDenyDeleteEntity,
-  entityConfiguration: testEntityConfiguration,
-  privacyPolicyClass: SimpleTestDenyDeleteEntityPrivacyPolicy,
-});

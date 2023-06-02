@@ -41,7 +41,7 @@ export enum EntityPrivacyPolicyEvaluationMode {
 }
 
 export type EntityPrivacyPolicyEvaluator<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -92,7 +92,7 @@ export enum EntityAuthorizationAction {
  * ```
  */
 export default abstract class EntityPrivacyPolicy<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

@@ -43,19 +43,17 @@ export class DateIDTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
 }
 
 export default class DateIDTestEntity extends Entity<DateIDTestFields, Date, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     DateIDTestFields,
     Date,
     ViewerContext,
     DateIDTestEntity,
     DateIDTestEntityPrivacyPolicy
   > {
-    return dateIDTestEntityCompanion;
+    return {
+      entityClass: DateIDTestEntity,
+      entityConfiguration: dateIDTestEntityConfiguration,
+      privacyPolicyClass: DateIDTestEntityPrivacyPolicy,
+    };
   }
 }
-
-export const dateIDTestEntityCompanion = new EntityCompanionDefinition({
-  entityClass: DateIDTestEntity,
-  entityConfiguration: dateIDTestEntityConfiguration,
-  privacyPolicyClass: DateIDTestEntityPrivacyPolicy,
-});

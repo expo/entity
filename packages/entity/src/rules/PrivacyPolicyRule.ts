@@ -37,7 +37,7 @@ export enum RuleEvaluationResult {
  *   would be named something like `DenyIfViewerHasBeenBlockedPrivacyPolicyRule`.
  */
 export default abstract class PrivacyPolicyRule<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

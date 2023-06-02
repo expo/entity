@@ -26,14 +26,28 @@ type BlahFields = {
 };
 
 class BlahEntity extends Entity<BlahFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
     string,
     ViewerContext,
     BlahEntity,
     any
   > {
-    return blahEntityCompanionDefinition;
+    return {
+      entityClass: BlahEntity,
+      entityConfiguration: new EntityConfiguration<BlahFields>({
+        idField: 'id',
+        tableName: 'blah_table',
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+          }),
+        },
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
+      }),
+      privacyPolicyClass: AlwaysDenyPolicy,
+    };
   }
 }
 
@@ -226,22 +240,6 @@ class EmptyPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext,
   protected override readonly deleteRules = [];
 }
 
-const blahEntityCompanionDefinition = new EntityCompanionDefinition({
-  entityClass: BlahEntity,
-  entityConfiguration: new EntityConfiguration<BlahFields>({
-    idField: 'id',
-    tableName: 'blah_table',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'redis',
-  }),
-  privacyPolicyClass: AlwaysDenyPolicy,
-});
-
 describe(EntityPrivacyPolicy, () => {
   describe(EntityPrivacyPolicyEvaluationMode.ENFORCE.toString(), () => {
     it('throws EntityNotAuthorizedError when deny', async () => {
@@ -250,7 +248,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new AlwaysDenyPolicy();
       await expect(
         policy.authorizeCreateAsync(
@@ -279,7 +282,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new AlwaysAllowPolicy();
       const approvedEntity = await policy.authorizeCreateAsync(
         viewerContext,
@@ -307,7 +315,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new SkipAllPolicy();
       await expect(
         policy.authorizeCreateAsync(
@@ -336,7 +349,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new EmptyPolicy();
       await expect(
         policy.authorizeCreateAsync(
@@ -365,7 +383,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new ThrowAllPolicy();
       await expect(
         policy.authorizeCreateAsync(
@@ -387,7 +410,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new DryRunAlwaysDenyPolicy();
 
       const policySpy = spy(policy);
@@ -421,7 +449,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new DryRunAlwaysAllowPolicy();
 
       const policySpy = spy(policy);
@@ -455,7 +488,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new DryRunThrowAllPolicy();
 
       const policySpy = spy(policy);
@@ -483,7 +521,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new LoggingEnforceAlwaysDenyPolicy();
 
       const policySpy = spy(policy);
@@ -518,7 +561,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new LoggingEnforceAlwaysAllowPolicy();
 
       const policySpy = spy(policy);
@@ -552,7 +600,12 @@ describe(EntityPrivacyPolicy, () => {
       const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
-      const entity = new BlahEntity(viewerContext, { id: '1' });
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
       const policy = new LoggingEnforceThrowAllPolicy();
 
       const policySpy = spy(policy);

@@ -12,7 +12,10 @@ import {
 } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
+import EntityCompanionProvider from '../EntityCompanionProvider';
+import EntityConfiguration from '../EntityConfiguration';
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
+import EntityLoader from '../EntityLoader';
 import EntityLoaderFactory from '../EntityLoaderFactory';
 import {
   EntityMutationType,
@@ -27,6 +30,7 @@ import EntityMutationValidator from '../EntityMutationValidator';
 import EntityMutatorFactory from '../EntityMutatorFactory';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityTransactionalQueryContext, EntityQueryContext } from '../EntityQueryContext';
+import IEntityDatabaseAdapterProvider from '../IEntityDatabaseAdapterProvider';
 import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import EntityDataManager from '../internal/EntityDataManager';
@@ -299,10 +303,39 @@ const createEntityMutatorFactory = (
       new Map([[testEntityConfiguration.tableName, existingObjects]])
     )
   );
+  const customStubDatabaseAdapterProvider: IEntityDatabaseAdapterProvider = {
+    getDatabaseAdapter<TFields>(
+      _entityConfiguration: EntityConfiguration<TFields>
+    ): EntityDatabaseAdapter<TFields> {
+      return databaseAdapter as any as EntityDatabaseAdapter<TFields>;
+    },
+  };
   const metricsAdapter = new NoOpEntityMetricsAdapter();
   const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
   const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
   const entityCache = new ReadThroughEntityCache<TestFields>(testEntityConfiguration, cacheAdapter);
+
+  const companionProvider = new EntityCompanionProvider(
+    metricsAdapter,
+    new Map([
+      [
+        'postgres',
+        {
+          adapterProvider: customStubDatabaseAdapterProvider,
+          queryContextProvider: StubQueryContextProvider,
+        },
+      ],
+    ]),
+    new Map([
+      [
+        'redis',
+        {
+          cacheAdapterProvider,
+        },
+      ],
+    ])
+  );
+
   const dataManager = new EntityDataManager(
     databaseAdapter,
     entityCache,
@@ -311,13 +344,12 @@ const createEntityMutatorFactory = (
     TestEntity.name
   );
   const entityLoaderFactory = new EntityLoaderFactory(
-    testEntityConfiguration,
-    TestEntity,
-    privacyPolicy,
+    companionProvider.getCompanionForEntity(TestEntity),
     dataManager,
     metricsAdapter
   );
   const entityMutatorFactory = new EntityMutatorFactory(
+    companionProvider,
     testEntityConfiguration,
     TestEntity,
     privacyPolicy,
@@ -930,12 +962,40 @@ describe(EntityMutatorFactory, () => {
   });
 
   it('returns error result when not authorized to create', async () => {
+    const entityCompanionProvider = instance(mock(EntityCompanionProvider));
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicyMock = mock(SimpleTestEntityPrivacyPolicy);
     const databaseAdapter = instance(mock<EntityDatabaseAdapter<SimpleTestFields>>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const entityLoaderFactory = instance(
+
+    const id1 = uuidv4();
+    const fakeEntity = new SimpleTestEntity({
+      viewerContext,
+      id: id1,
+      selectedFields: {
+        id: id1,
+      },
+      databaseFields: {
+        id: id1,
+      },
+    });
+
+    const entityLoaderMock =
+      mock<
+        EntityLoader<
+          SimpleTestFields,
+          string,
+          ViewerContext,
+          SimpleTestEntity,
+          SimpleTestEntityPrivacyPolicy,
+          keyof SimpleTestFields
+        >
+      >(EntityLoader);
+    when(entityLoaderMock.constructEntity(anything())).thenReturn(fakeEntity);
+    const entityLoader = instance(entityLoaderMock);
+
+    const entityLoaderFactoryMock =
       mock<
         EntityLoaderFactory<
           SimpleTestFields,
@@ -945,8 +1005,15 @@ describe(EntityMutatorFactory, () => {
           SimpleTestEntityPrivacyPolicy,
           keyof SimpleTestFields
         >
-      >(EntityLoaderFactory)
-    );
+      >(EntityLoaderFactory);
+    when(
+      entityLoaderFactoryMock.forLoad(
+        viewerContext,
+        anyOfClass(EntityTransactionalQueryContext),
+        anything()
+      )
+    ).thenReturn(entityLoader);
+    const entityLoaderFactory = instance(entityLoaderFactoryMock);
 
     const rejectionError = new Error();
 
@@ -979,6 +1046,7 @@ describe(EntityMutatorFactory, () => {
     ).thenReject(rejectionError);
 
     const entityMutatorFactory = new EntityMutatorFactory(
+      entityCompanionProvider,
       simpleTestEntityConfiguration,
       SimpleTestEntity,
       instance(privacyPolicyMock),
@@ -996,11 +1064,6 @@ describe(EntityMutatorFactory, () => {
     expect(entityCreateResult.reason).toEqual(rejectionError);
     expect(entityCreateResult.value).toBe(undefined);
 
-    const id1 = uuidv4();
-    const fakeEntity = new SimpleTestEntity(viewerContext, {
-      id: id1,
-    });
-
     const entityUpdateResult = await entityMutatorFactory
       .forUpdate(fakeEntity, queryContext)
       .updateAsync();
@@ -1017,12 +1080,46 @@ describe(EntityMutatorFactory, () => {
   });
 
   it('throws error when db adapter throws', async () => {
+    const entityCompanionProviderMock = mock(EntityCompanionProvider);
+    when(entityCompanionProviderMock.getCompanionForEntity(SimpleTestEntity)).thenReturn({
+      entityCompanionDefinition: SimpleTestEntity.defineCompanionDefinition(),
+    } as any);
+
+    const entityCompanionProvider = instance(entityCompanionProviderMock);
+
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(SimpleTestEntityPrivacyPolicy));
     const databaseAdapterMock = mock<EntityDatabaseAdapter<SimpleTestFields>>();
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const entityLoaderFactory = instance(
+
+    const id1 = uuidv4();
+    const fakeEntity = new SimpleTestEntity({
+      viewerContext,
+      id: id1,
+      selectedFields: {
+        id: id1,
+      },
+      databaseFields: {
+        id: id1,
+      },
+    });
+
+    const entityLoaderMock =
+      mock<
+        EntityLoader<
+          SimpleTestFields,
+          string,
+          ViewerContext,
+          SimpleTestEntity,
+          SimpleTestEntityPrivacyPolicy,
+          keyof SimpleTestFields
+        >
+      >(EntityLoader);
+    when(entityLoaderMock.constructEntity(anything())).thenReturn(fakeEntity);
+    const entityLoader = instance(entityLoaderMock);
+
+    const entityLoaderFactoryMock =
       mock<
         EntityLoaderFactory<
           SimpleTestFields,
@@ -1032,8 +1129,15 @@ describe(EntityMutatorFactory, () => {
           SimpleTestEntityPrivacyPolicy,
           keyof SimpleTestFields
         >
-      >(EntityLoaderFactory)
-    );
+      >(EntityLoaderFactory);
+    when(
+      entityLoaderFactoryMock.forLoad(
+        viewerContext,
+        anyOfClass(EntityTransactionalQueryContext),
+        anything()
+      )
+    ).thenReturn(entityLoader);
+    const entityLoaderFactory = instance(entityLoaderFactoryMock);
 
     const rejectionError = new Error();
 
@@ -1057,6 +1161,7 @@ describe(EntityMutatorFactory, () => {
     ).thenReject(rejectionError);
 
     const entityMutatorFactory = new EntityMutatorFactory(
+      entityCompanionProvider,
       simpleTestEntityConfiguration,
       SimpleTestEntity,
       privacyPolicy,
@@ -1066,11 +1171,6 @@ describe(EntityMutatorFactory, () => {
       instance(databaseAdapterMock),
       metricsAdapter
     );
-
-    const id1 = uuidv4();
-    const fakeEntity = new SimpleTestEntity(viewerContext, {
-      id: id1,
-    });
 
     await expect(
       entityMutatorFactory.forCreate(viewerContext, queryContext).createAsync()

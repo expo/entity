@@ -31,14 +31,32 @@ type BlahFields = {
 };
 
 class BlahEntity extends Entity<BlahFields, string, TestUserViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
     string,
     TestUserViewerContext,
     BlahEntity,
     BlahEntityPrivacyPolicy
   > {
-    return blahCompanion;
+    return {
+      entityClass: BlahEntity,
+      entityConfiguration: new EntityConfiguration<BlahFields>({
+        idField: 'id',
+        tableName: 'blah_table',
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+            cache: true,
+          }),
+          ownerID: new UUIDField({
+            columnName: 'owner_id',
+          }),
+        },
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
+      }),
+      privacyPolicyClass: BlahEntityPrivacyPolicy,
+    };
   }
 }
 
@@ -83,26 +101,6 @@ class BlahEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
 }
-
-const blahCompanion = new EntityCompanionDefinition({
-  entityClass: BlahEntity,
-  entityConfiguration: new EntityConfiguration<BlahFields>({
-    idField: 'id',
-    tableName: 'blah_table',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-        cache: true,
-      }),
-      ownerID: new UUIDField({
-        columnName: 'owner_id',
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'redis',
-  }),
-  privacyPolicyClass: BlahEntityPrivacyPolicy,
-});
 
 it('runs through a common workflow', async () => {
   // will be one entity companion provider for each request, so

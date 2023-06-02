@@ -8,7 +8,7 @@ import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
  * Privacy policy rule that always allows.
  */
 export default class AlwaysAllowPrivacyPolicyRule<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

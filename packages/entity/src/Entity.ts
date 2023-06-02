@@ -26,7 +26,7 @@ import ViewerContext from './ViewerContext';
  * own EntityCompanionDefinition.
  */
 export default abstract class Entity<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TSelectedFields extends keyof TFields = keyof TFields
@@ -38,7 +38,7 @@ export default abstract class Entity<
    * @returns mutator for creating an entity
    */
   static creator<
-    TMFields,
+    TMFields extends object,
     TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
@@ -79,7 +79,7 @@ export default abstract class Entity<
    * @returns mutator for updating existingEntity
    */
   static updater<
-    TMFields,
+    TMFields extends object,
     TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
@@ -120,7 +120,7 @@ export default abstract class Entity<
    * @param queryContext - query context in which to perform the delete
    */
   static deleteAsync<
-    TMFields,
+    TMFields extends object,
     TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
@@ -162,7 +162,7 @@ export default abstract class Entity<
    * @param queryContext - query context in which to perform the delete
    */
   static enforceDeleteAsync<
-    TMFields,
+    TMFields extends object,
     TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
@@ -215,7 +215,7 @@ export default abstract class Entity<
    * @param queryContext - query context in which to perform the check
    */
   static async canViewerUpdateAsync<
-    TMFields,
+    TMFields extends object,
     TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
@@ -246,7 +246,7 @@ export default abstract class Entity<
     const companion = existingEntity
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this);
-    const privacyPolicy = new (this.getCompanionDefinition().privacyPolicyClass)();
+    const privacyPolicy = companion.entityCompanion.privacyPolicy;
     const evaluationResult = await asyncResult(
       privacyPolicy.authorizeUpdateAsync(
         existingEntity.getViewerContext(),
@@ -269,7 +269,7 @@ export default abstract class Entity<
    * @param queryContext - query context in which to perform the check
    */
   static async canViewerDeleteAsync<
-    TMFields,
+    TMFields extends object,
     TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
@@ -300,7 +300,7 @@ export default abstract class Entity<
     const companion = existingEntity
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this);
-    const privacyPolicy = new (this.getCompanionDefinition().privacyPolicyClass)();
+    const privacyPolicy = companion.entityCompanion.privacyPolicy;
     const evaluationResult = await asyncResult(
       privacyPolicy.authorizeDeleteAsync(
         existingEntity.getViewerContext(),
@@ -318,7 +318,7 @@ export default abstract class Entity<
  * An interface to pass in constructor (class) of an Entity as a function argument.
  */
 export interface IEntityClass<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -331,8 +331,13 @@ export interface IEntityClass<
   >,
   TSelectedFields extends keyof TFields = keyof TFields
 > {
-  new (viewerContext: TViewerContext, obj: Readonly<TFields>): TEntity;
-  getCompanionDefinition(): EntityCompanionDefinition<
+  new (constructorParam: {
+    viewerContext: TViewerContext;
+    id: TID;
+    databaseFields: Readonly<TFields>;
+    selectedFields: Readonly<Pick<TFields, TSelectedFields>>;
+  }): TEntity;
+  defineCompanionDefinition(): EntityCompanionDefinition<
     TFields,
     TID,
     TViewerContext,

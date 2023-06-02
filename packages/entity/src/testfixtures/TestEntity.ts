@@ -66,14 +66,18 @@ export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
 }
 
 export default class TestEntity extends Entity<TestFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
     ViewerContext,
     TestEntity,
     TestEntityPrivacyPolicy
   > {
-    return testEntityCompanion;
+    return {
+      entityClass: TestEntity,
+      entityConfiguration: testEntityConfiguration,
+      privacyPolicyClass: TestEntityPrivacyPolicy,
+    };
   }
 
   getBlah(): string {
@@ -81,14 +85,20 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
   }
 
   static async hello(viewerContext: ViewerContext, testValue: string): Promise<Result<TestEntity>> {
+    const fields = {
+      customIdField: testValue,
+      testIndexedField: 'hello',
+      stringField: 'hello',
+      intField: 1,
+      dateField: new Date(),
+      nullableField: null,
+    };
     return result(
-      new TestEntity(viewerContext, {
-        customIdField: testValue,
-        testIndexedField: 'hello',
-        stringField: 'hello',
-        intField: 1,
-        dateField: new Date(),
-        nullableField: null,
+      new TestEntity({
+        viewerContext,
+        id: testValue,
+        databaseFields: fields,
+        selectedFields: fields,
       })
     );
   }
@@ -105,9 +115,3 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
     return testValue;
   }
 }
-
-export const testEntityCompanion = new EntityCompanionDefinition({
-  entityClass: TestEntity,
-  entityConfiguration: testEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
-});

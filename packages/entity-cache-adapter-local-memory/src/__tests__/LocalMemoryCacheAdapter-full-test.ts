@@ -19,10 +19,10 @@ describe(LocalMemoryCacheAdapter, () => {
 
   it('has correct caching behavior', async () => {
     const viewerContext = new TestViewerContext(createLocalMemoryTestEntityCompanionProvider());
-    const cacheAdapter = viewerContext.entityCompanionProvider.getCompanionForEntity(
-      LocalMemoryTestEntity,
-      LocalMemoryTestEntity.getCompanionDefinition()
-    )['tableDataCoordinator']['cacheAdapter'];
+    const cacheAdapter =
+      viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)[
+        'tableDataCoordinator'
+      ]['cacheAdapter'];
     const cacheKeyMaker = cacheAdapter['makeCacheKey'].bind(cacheAdapter);
 
     const date = new Date();
@@ -38,7 +38,8 @@ describe(LocalMemoryCacheAdapter, () => {
 
     const entitySpecificGenericCacher =
       LocalMemoryCacheAdapterProvider.localMemoryCacheAdapterMap.get(
-        LocalMemoryTestEntity.getCompanionDefinition().entityConfiguration.tableName
+        viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)
+          .entityCompanionDefinition.entityConfiguration.tableName
       )!['genericLocalMemoryCacher'];
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),
@@ -107,10 +108,10 @@ describe(LocalMemoryCacheAdapter, () => {
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
 
-    const cacheAdapter = viewerContext.entityCompanionProvider.getCompanionForEntity(
-      LocalMemoryTestEntity,
-      LocalMemoryTestEntity.getCompanionDefinition()
-    )['tableDataCoordinator']['cacheAdapter'];
+    const cacheAdapter =
+      viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)[
+        'tableDataCoordinator'
+      ]['cacheAdapter'];
     const cacheKeyMaker = cacheAdapter['makeCacheKey'].bind(cacheAdapter);
     expect(entity1WithVc2.getAllFields()).toMatchObject({
       id: entity1WithVc2.getID(),
@@ -127,10 +128,10 @@ describe(LocalMemoryCacheAdapter, () => {
     const viewerContext = new TestViewerContext(
       createNoopLocalMemoryIntegrationTestEntityCompanionProvider()
     );
-    const cacheAdapter = viewerContext.entityCompanionProvider.getCompanionForEntity(
-      LocalMemoryTestEntity,
-      LocalMemoryTestEntity.getCompanionDefinition()
-    )['tableDataCoordinator']['cacheAdapter'];
+    const cacheAdapter =
+      viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)[
+        'tableDataCoordinator'
+      ]['cacheAdapter'];
     const cacheKeyMaker = cacheAdapter['makeCacheKey'].bind(cacheAdapter);
 
     const date = new Date();
@@ -146,7 +147,8 @@ describe(LocalMemoryCacheAdapter, () => {
 
     const entitySpecificGenericCacher =
       LocalMemoryCacheAdapterProvider.localMemoryCacheAdapterMap.get(
-        LocalMemoryTestEntity.getCompanionDefinition().entityConfiguration.tableName
+        viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)
+          .entityCompanionDefinition.entityConfiguration.tableName
       )!['genericLocalMemoryCacher'];
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),

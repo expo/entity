@@ -8,7 +8,7 @@ export enum EntityMutationType {
 }
 
 export type EntityValidatorMutationInfo<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -39,7 +39,7 @@ export type EntityCascadingDeletionInfo = {
 };
 
 export type EntityTriggerMutationInfo<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,

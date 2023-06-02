@@ -12,7 +12,7 @@ import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
  * from the viewer-scoped entity companion provider.
  */
 export default class ViewerScopedEntityCompanion<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -26,7 +26,7 @@ export default class ViewerScopedEntityCompanion<
   TSelectedFields extends keyof TFields
 > {
   constructor(
-    private readonly entityCompanion: EntityCompanion<
+    public readonly entityCompanion: EntityCompanion<
       TFields,
       TID,
       TViewerContext,

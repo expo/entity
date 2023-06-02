@@ -130,7 +130,7 @@ class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerCon
 }
 
 class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFields> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
     ViewerContext,
@@ -138,12 +138,17 @@ class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFie
     TestEntityPrivacyPolicy,
     OneTestFields
   > {
-    return oneTestEntityCompanion;
+    return {
+      entityClass: OneTestEntity,
+      entityConfiguration: testEntityConfiguration,
+      privacyPolicyClass: TestEntityPrivacyPolicy,
+      entitySelectedFields: ['id', 'fake_field'],
+    };
   }
 }
 
 class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFields> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
     ViewerContext,
@@ -151,20 +156,11 @@ class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFie
     TestEntityPrivacyPolicy,
     TwoTestFields
   > {
-    return twoTestEntityCompanion;
+    return {
+      entityClass: TwoTestEntity,
+      entityConfiguration: testEntityConfiguration,
+      privacyPolicyClass: TestEntityPrivacyPolicy,
+      entitySelectedFields: ['id', 'other_field', 'fake_field'],
+    };
   }
 }
-
-const oneTestEntityCompanion = new EntityCompanionDefinition({
-  entityClass: OneTestEntity,
-  entityConfiguration: testEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
-  entitySelectedFields: ['id', 'fake_field'],
-});
-
-const twoTestEntityCompanion = new EntityCompanionDefinition({
-  entityClass: TwoTestEntity,
-  entityConfiguration: testEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
-  entitySelectedFields: ['id', 'other_field', 'fake_field'],
-});

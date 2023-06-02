@@ -8,7 +8,7 @@ import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
  * A no-op policy rule that always skips.
  */
 export default class AlwaysSkipPrivacyPolicyRule<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

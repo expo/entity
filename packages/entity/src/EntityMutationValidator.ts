@@ -8,7 +8,7 @@ import ViewerContext from './ViewerContext';
  * same transaction as the mutation itself before creating or updating an entity.
  */
 export default abstract class EntityMutationValidator<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

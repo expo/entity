@@ -15,7 +15,12 @@ describe(ReadonlyEntity, () => {
       const data = {
         id: 'what',
       };
-      const testEntity = new SimpleTestEntity(viewerContext, data);
+      const testEntity = new SimpleTestEntity({
+        viewerContext,
+        id: 'what',
+        databaseFields: data,
+        selectedFields: data,
+      });
       expect(testEntity.getID()).toEqual('what');
     });
   });
@@ -26,7 +31,12 @@ describe(ReadonlyEntity, () => {
       const data = {
         id: 'what',
       };
-      const testEntity = new SimpleTestEntity(viewerContext, data);
+      const testEntity = new SimpleTestEntity({
+        viewerContext,
+        id: 'what',
+        databaseFields: data,
+        selectedFields: data,
+      });
       expect(testEntity.toString()).toEqual('SimpleTestEntity[what]');
     });
   });
@@ -34,11 +44,25 @@ describe(ReadonlyEntity, () => {
   describe('getUniqueIdentifier', () => {
     it('returns a different value for two different entities of the same type', () => {
       const viewerContext = instance(mock(ViewerContext));
-      const testEntity = new SimpleTestEntity(viewerContext, {
+      const testEntity = new SimpleTestEntity({
+        viewerContext,
         id: '1',
+        databaseFields: {
+          id: '1',
+        },
+        selectedFields: {
+          id: '1',
+        },
       });
-      const testEntity2 = new SimpleTestEntity(viewerContext, {
+      const testEntity2 = new SimpleTestEntity({
+        viewerContext,
         id: '2',
+        databaseFields: {
+          id: '2',
+        },
+        selectedFields: {
+          id: '2',
+        },
       });
       expect(testEntity.getUniqueIdentifier()).not.toEqual(testEntity2.getUniqueIdentifier());
     });
@@ -47,22 +71,43 @@ describe(ReadonlyEntity, () => {
       const viewerContext = instance(mock(ViewerContext));
       const viewerContext2 = instance(mock(ViewerContext));
       const data = { id: '1' };
-      const testEntity = new SimpleTestEntity(viewerContext, data);
-      const testEntity2 = new SimpleTestEntity(viewerContext2, data);
+      const testEntity = new SimpleTestEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: data,
+        selectedFields: data,
+      });
+      const testEntity2 = new SimpleTestEntity({
+        viewerContext: viewerContext2,
+        id: '1',
+        databaseFields: data,
+        selectedFields: data,
+      });
       expect(testEntity.getUniqueIdentifier()).toEqual(testEntity2.getUniqueIdentifier());
     });
 
     it('returns a different value for different entities even if same ID', () => {
       const viewerContext = instance(mock(ViewerContext));
       const data = { id: '1' };
-      const testEntity = new SimpleTestEntity(viewerContext, data);
-      const testEntity2 = new TestEntity(viewerContext, {
+      const testEntity = new SimpleTestEntity({
+        viewerContext,
+        id: 'what',
+        databaseFields: data,
+        selectedFields: data,
+      });
+      const data2 = {
         customIdField: '1',
         testIndexedField: '2',
         stringField: '3',
         intField: 4,
         dateField: new Date(),
         nullableField: null,
+      };
+      const testEntity2 = new TestEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: data2,
+        selectedFields: data2,
       });
       expect(testEntity.getUniqueIdentifier()).not.toEqual(testEntity2.getUniqueIdentifier());
     });
@@ -72,16 +117,27 @@ describe(ReadonlyEntity, () => {
     const viewerContext = instance(mock(ViewerContext));
     const dataWithoutID = {};
     expect(() => {
-      new SimpleTestEntity(viewerContext, dataWithoutID as any); // eslint-disable-line no-new
+      // eslint-disable-next-line no-new
+      new SimpleTestEntity({
+        viewerContext,
+        id: undefined as any,
+        databaseFields: dataWithoutID as any,
+        selectedFields: dataWithoutID as any,
+      });
     }).toThrow();
   });
 
-  it('returns correct viewerContext from instantiation', () => {
+  it('returns correct viewerCo}ntext from instantiation', () => {
     const viewerContext = instance(mock(ViewerContext));
     const data = {
       id: 'what',
     };
-    const testEntity = new SimpleTestEntity(viewerContext, data);
+    const testEntity = new SimpleTestEntity({
+      viewerContext,
+      id: 'what',
+      databaseFields: data,
+      selectedFields: data,
+    });
     expect(testEntity.getViewerContext()).toBe(viewerContext);
   });
 
@@ -90,7 +146,12 @@ describe(ReadonlyEntity, () => {
     const data = {
       id: 'what',
     };
-    const testEntity = new SimpleTestEntity(viewerContext, data);
+    const testEntity = new SimpleTestEntity({
+      viewerContext,
+      id: 'what',
+      databaseFields: data,
+      selectedFields: data,
+    });
     expect(testEntity.getField('id')).toEqual('what');
     expect(testEntity.getAllFields()).toEqual(data);
   });
@@ -102,7 +163,12 @@ describe(ReadonlyEntity, () => {
       const data = {
         id: 'what',
       };
-      const testEntity = new SimpleTestEntity(viewerContext, data);
+      const testEntity = new SimpleTestEntity({
+        viewerContext,
+        id: 'what',
+        databaseFields: data,
+        selectedFields: data,
+      });
       expect(testEntity.associationLoader()).toBeInstanceOf(EntityAssociationLoader);
     });
   });

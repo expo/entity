@@ -47,19 +47,17 @@ export class TestEntity2PrivacyPolicy extends EntityPrivacyPolicy<
 }
 
 export default class TestEntity2 extends Entity<Test2Fields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     Test2Fields,
     string,
     ViewerContext,
     TestEntity2,
     TestEntity2PrivacyPolicy
   > {
-    return testEntity2Companion;
+    return {
+      entityClass: TestEntity2,
+      entityConfiguration: testEntity2Configuration,
+      privacyPolicyClass: TestEntity2PrivacyPolicy,
+    };
   }
 }
-
-export const testEntity2Companion = new EntityCompanionDefinition({
-  entityClass: TestEntity2,
-  entityConfiguration: testEntity2Configuration,
-  privacyPolicyClass: TestEntity2PrivacyPolicy,
-});

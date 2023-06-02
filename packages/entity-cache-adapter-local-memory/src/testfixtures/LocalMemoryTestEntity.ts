@@ -21,14 +21,18 @@ export default class LocalMemoryTestEntity extends Entity<
   string,
   ViewerContext
 > {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     LocalMemoryTestEntityFields,
     string,
     ViewerContext,
     LocalMemoryTestEntity,
     LocalMemoryTestEntityPrivacyPolicy
   > {
-    return localMemoryTestEntityCompanionDefinition;
+    return {
+      entityClass: LocalMemoryTestEntity,
+      entityConfiguration: localMemoryTestEntityConfiguration,
+      privacyPolicyClass: LocalMemoryTestEntityPrivacyPolicy,
+    };
   }
 }
 
@@ -92,9 +96,3 @@ export const localMemoryTestEntityConfiguration =
     databaseAdapterFlavor: 'postgres',
     cacheAdapterFlavor: 'local-memory',
   });
-
-const localMemoryTestEntityCompanionDefinition = new EntityCompanionDefinition({
-  entityClass: LocalMemoryTestEntity,
-  entityConfiguration: localMemoryTestEntityConfiguration,
-  privacyPolicyClass: LocalMemoryTestEntityPrivacyPolicy,
-});

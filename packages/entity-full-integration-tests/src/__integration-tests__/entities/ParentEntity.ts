@@ -30,33 +30,29 @@ class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerCon
 }
 
 export default class ParentEntity extends Entity<ParentFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     ParentFields,
     string,
     ViewerContext,
     ParentEntity,
     TestEntityPrivacyPolicy
   > {
-    return parentEntityCompanion;
+    return {
+      entityClass: ParentEntity,
+      entityConfiguration: new EntityConfiguration<ParentFields>({
+        idField: 'id',
+        tableName: 'parents',
+        inboundEdges: [ChildEntity],
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+            cache: true,
+          }),
+        },
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
+      }),
+      privacyPolicyClass: TestEntityPrivacyPolicy,
+    };
   }
 }
-
-const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
-  idField: 'id',
-  tableName: 'parents',
-  getInboundEdges: () => [ChildEntity],
-  schema: {
-    id: new UUIDField({
-      columnName: 'id',
-      cache: true,
-    }),
-  },
-  databaseAdapterFlavor: 'postgres',
-  cacheAdapterFlavor: 'redis',
-});
-
-const parentEntityCompanion = new EntityCompanionDefinition({
-  entityClass: ParentEntity,
-  entityConfiguration: parentEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
-});

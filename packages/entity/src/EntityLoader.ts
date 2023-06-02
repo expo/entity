@@ -1,5 +1,6 @@
 import { Result, asyncResult, result } from '@expo/results';
 import invariant from 'invariant';
+import nullthrows from 'nullthrows';
 
 import EnforcingEntityLoader from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
@@ -14,6 +15,7 @@ import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './Ent
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
+import { pick } from './entityUtils';
 import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import EntityDataManager from './internal/EntityDataManager';
@@ -25,7 +27,7 @@ import { mapMap, mapMapAsync } from './utils/collections/maps';
  * cached, and authorized against the entity's EntityPrivacyPolicy.
  */
 export default class EntityLoader<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -51,6 +53,7 @@ export default class EntityLoader<
       TPrivacyPolicy,
       TSelectedFields
     >,
+    private readonly entitySelectedFields: TSelectedFields[] | undefined,
     private readonly privacyPolicy: TPrivacyPolicy,
     private readonly dataManager: EntityDataManager<TFields>,
     protected readonly metricsAdapter: IEntityMetricsAdapter
@@ -332,13 +335,27 @@ export default class EntityLoader<
   private tryConstructEntities(fieldsObjects: readonly TFields[]): readonly Result<TEntity>[] {
     return fieldsObjects.map((fieldsObject) => {
       try {
-        return result(new this.entityClass(this.viewerContext, fieldsObject));
+        return result(this.constructEntity(fieldsObject));
       } catch (e) {
         if (!(e instanceof Error)) {
           throw e;
         }
         return result(e);
       }
+    });
+  }
+
+  public constructEntity(fieldsObject: TFields): TEntity {
+    const idField = this.entityConfiguration.idField;
+    const id = nullthrows(fieldsObject[idField], 'must provide ID to create an entity');
+    const entitySelectedFields =
+      this.entitySelectedFields ?? Array.from(this.entityConfiguration.schema.keys());
+    const selectedFields = pick(fieldsObject, entitySelectedFields);
+    return new this.entityClass({
+      viewerContext: this.viewerContext,
+      id: id as TID,
+      databaseFields: fieldsObject,
+      selectedFields,
     });
   }
 

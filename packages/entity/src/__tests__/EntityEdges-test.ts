@@ -322,45 +322,78 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
   }
 
   class ParentEntity extends Entity<ParentFields, string, TestViewerContext> {
-    static getCompanionDefinition(): EntityCompanionDefinition<
+    static defineCompanionDefinition(): EntityCompanionDefinition<
       ParentFields,
       string,
       TestViewerContext,
       ParentEntity,
       TestEntityPrivacyPolicy
     > {
-      return parentEntityCompanion;
+      return {
+        entityClass: ParentEntity,
+        entityConfiguration: parentEntityConfiguration,
+        privacyPolicyClass: TestEntityPrivacyPolicy,
+        mutationTriggers: {
+          beforeDelete: [new ParentCheckInfoDeletionTrigger()],
+          afterDelete: [new ParentCheckInfoDeletionTrigger()],
+
+          beforeUpdate: [new ParentCheckInfoUpdateTrigger()],
+          afterUpdate: [new ParentCheckInfoUpdateTrigger()],
+        },
+      };
     }
   }
 
   class ChildEntity extends Entity<ChildFields, string, TestViewerContext> {
-    static getCompanionDefinition(): EntityCompanionDefinition<
+    static defineCompanionDefinition(): EntityCompanionDefinition<
       ChildFields,
       string,
       TestViewerContext,
       ChildEntity,
       TestEntityPrivacyPolicy
     > {
-      return childEntityCompanion;
+      return {
+        entityClass: ChildEntity,
+        entityConfiguration: childEntityConfiguration,
+        privacyPolicyClass: TestEntityPrivacyPolicy,
+        mutationTriggers: {
+          beforeDelete: [new ChildCheckInfoDeletionTrigger()],
+          afterDelete: [new ChildCheckInfoDeletionTrigger()],
+
+          beforeUpdate: [new ChildCheckInfoUpdateTrigger()],
+          afterUpdate: [new ChildCheckInfoUpdateTrigger()],
+        },
+      };
     }
   }
 
   class GrandChildEntity extends Entity<GrandChildFields, string, TestViewerContext> {
-    static getCompanionDefinition(): EntityCompanionDefinition<
+    static defineCompanionDefinition(): EntityCompanionDefinition<
       GrandChildFields,
       string,
       TestViewerContext,
       GrandChildEntity,
       TestEntityPrivacyPolicy
     > {
-      return grandChildEntityCompanion;
+      return {
+        entityClass: GrandChildEntity,
+        entityConfiguration: grandChildEntityConfiguration,
+        privacyPolicyClass: TestEntityPrivacyPolicy,
+        mutationTriggers: {
+          beforeDelete: [new GrandChildCheckInfoDeletionTrigger()],
+          afterDelete: [new GrandChildCheckInfoDeletionTrigger()],
+
+          beforeUpdate: [new GrandChildCheckInfoUpdateTrigger()],
+          afterUpdate: [new GrandChildCheckInfoUpdateTrigger()],
+        },
+      };
     }
   }
 
   const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
     idField: 'id',
     tableName: 'parents',
-    getInboundEdges: () => [ChildEntity],
+    inboundEdges: [ChildEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
@@ -374,7 +407,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
   const childEntityConfiguration = new EntityConfiguration<ChildFields>({
     idField: 'id',
     tableName: 'children',
-    getInboundEdges: () => [GrandChildEntity],
+    inboundEdges: [GrandChildEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
@@ -384,7 +417,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         columnName: 'parent_id',
         cache: true,
         association: {
-          getAssociatedEntityClass: () => ParentEntity,
+          associatedEntityClass: ParentEntity,
           edgeDeletionBehavior,
         },
       }),
@@ -405,52 +438,13 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         columnName: 'parent_id',
         cache: true,
         association: {
-          getAssociatedEntityClass: () => ChildEntity,
+          associatedEntityClass: ChildEntity,
           edgeDeletionBehavior,
         },
       }),
     },
     databaseAdapterFlavor: 'postgres',
     cacheAdapterFlavor: 'redis',
-  });
-
-  const parentEntityCompanion = new EntityCompanionDefinition({
-    entityClass: ParentEntity,
-    entityConfiguration: parentEntityConfiguration,
-    privacyPolicyClass: TestEntityPrivacyPolicy,
-    mutationTriggers: () => ({
-      beforeDelete: [new ParentCheckInfoDeletionTrigger()],
-      afterDelete: [new ParentCheckInfoDeletionTrigger()],
-
-      beforeUpdate: [new ParentCheckInfoUpdateTrigger()],
-      afterUpdate: [new ParentCheckInfoUpdateTrigger()],
-    }),
-  });
-
-  const childEntityCompanion = new EntityCompanionDefinition({
-    entityClass: ChildEntity,
-    entityConfiguration: childEntityConfiguration,
-    privacyPolicyClass: TestEntityPrivacyPolicy,
-    mutationTriggers: () => ({
-      beforeDelete: [new ChildCheckInfoDeletionTrigger()],
-      afterDelete: [new ChildCheckInfoDeletionTrigger()],
-
-      beforeUpdate: [new ChildCheckInfoUpdateTrigger()],
-      afterUpdate: [new ChildCheckInfoUpdateTrigger()],
-    }),
-  });
-
-  const grandChildEntityCompanion = new EntityCompanionDefinition({
-    entityClass: GrandChildEntity,
-    entityConfiguration: grandChildEntityConfiguration,
-    privacyPolicyClass: TestEntityPrivacyPolicy,
-    mutationTriggers: () => ({
-      beforeDelete: [new GrandChildCheckInfoDeletionTrigger()],
-      afterDelete: [new GrandChildCheckInfoDeletionTrigger()],
-
-      beforeUpdate: [new GrandChildCheckInfoUpdateTrigger()],
-      afterUpdate: [new GrandChildCheckInfoUpdateTrigger()],
-    }),
   });
 
   return {

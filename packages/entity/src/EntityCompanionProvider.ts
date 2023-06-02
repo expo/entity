@@ -49,8 +49,8 @@ export interface CacheAdapterFlavorDefinition {
  * Definition for constructing a companion for an entity. Defines the core set of objects
  * used to power the entity framework for a particular type of entity.
  */
-export class EntityCompanionDefinition<
-  TFields,
+export interface EntityCompanionDefinition<
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -63,6 +63,9 @@ export class EntityCompanionDefinition<
   >,
   TSelectedFields extends keyof TFields = keyof TFields
 > {
+  /**
+   * The concrete Entity class for which this is the definition.
+   */
   readonly entityClass: IEntityClass<
     TFields,
     TID,
@@ -71,85 +74,45 @@ export class EntityCompanionDefinition<
     TPrivacyPolicy,
     TSelectedFields
   >;
+
+  /**
+   * The EntityConfiguration for this entity.
+   */
   readonly entityConfiguration: EntityConfiguration<TFields>;
+
+  /**
+   * The EntityPrivacyPolicy class for this entity.
+   */
   readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
-  readonly mutationValidators: () => EntityMutationValidator<
+
+  /**
+   * An optional list of EntityMutationValidator for this entity.
+   */
+  readonly mutationValidators?: EntityMutationValidator<
     TFields,
     TID,
     TViewerContext,
     TEntity,
     TSelectedFields
   >[];
-  readonly mutationTriggers: () => EntityMutationTriggerConfiguration<
+
+  /**
+   * An optional list of EntityMutationTrigger for this entity.
+   */
+  readonly mutationTriggers?: EntityMutationTriggerConfiguration<
     TFields,
     TID,
     TViewerContext,
     TEntity,
     TSelectedFields
   >;
-  readonly entitySelectedFields: TSelectedFields[];
 
-  constructor({
-    entityClass,
-    entityConfiguration,
-    privacyPolicyClass,
-    mutationValidators = () => [],
-    mutationTriggers = () => ({}),
-    entitySelectedFields = Array.from(entityConfiguration.schema.keys()) as TSelectedFields[],
-  }: {
-    /**
-     * The concrete Entity class for which this is the definition.
-     */
-    entityClass: IEntityClass<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntity,
-      TPrivacyPolicy,
-      TSelectedFields
-    >;
-    /**
-     * The EntityConfiguration for this entity.
-     */
-    entityConfiguration: EntityConfiguration<TFields>;
-    /**
-     * The EntityPrivacyPolicy class for this entity.
-     */
-    privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
-    /**
-     * An optional list of EntityMutationValidator for this entity.
-     */
-    mutationValidators?: () => EntityMutationValidator<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntity,
-      TSelectedFields
-    >[];
-    /**
-     * An optional list of EntityMutationTrigger for this entity.
-     */
-    mutationTriggers?: () => EntityMutationTriggerConfiguration<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntity,
-      TSelectedFields
-    >;
-    /**
-     * An optional subset of fields defined in the EntityConfiguration which belong to this entity.
-     * For use when multiple types of entities are backed by a single table (EntityConfiguration) yet
-     * only expose a subset of the fields.
-     */
-    entitySelectedFields?: TSelectedFields[];
-  }) {
-    this.entityClass = entityClass;
-    this.entityConfiguration = entityConfiguration;
-    this.privacyPolicyClass = privacyPolicyClass;
-    this.mutationValidators = mutationValidators;
-    this.mutationTriggers = mutationTriggers;
-    this.entitySelectedFields = entitySelectedFields;
-  }
+  /**
+   * An optional subset of fields defined in the EntityConfiguration which belong to this entity.
+   * For use when multiple types of entities are backed by a single table (EntityConfiguration) yet
+   * only expose a subset of the fields.
+   */
+  readonly entitySelectedFields?: TSelectedFields[];
 }
 
 /**
@@ -162,6 +125,10 @@ export class EntityCompanionDefinition<
  * EntityCompanion for each type of Entity.
  */
 export default class EntityCompanionProvider {
+  private readonly companionDefinitionMap: Map<
+    string,
+    EntityCompanionDefinition<any, any, any, any, any, any>
+  > = new Map();
   private readonly companionMap: Map<string, EntityCompanion<any, any, any, any, any, any>> =
     new Map();
   private readonly tableDataCoordinatorMap: Map<string, EntityTableDataCoordinator<any>> =
@@ -187,10 +154,9 @@ export default class EntityCompanionProvider {
    * companion is constructed using the configuration provided by the factory.
    *
    * @param entityClass - entity class to load
-   * @param factory - entity companion factory
    */
   getCompanionForEntity<
-    TFields,
+    TFields extends object,
     TID extends NonNullable<TFields[TSelectedFields]>,
     TViewerContext extends ViewerContext,
     TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -210,27 +176,22 @@ export default class EntityCompanionProvider {
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
-    >,
-    entityCompanionDefinition: EntityCompanionDefinition<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntity,
-      TPrivacyPolicy,
-      TSelectedFields
     >
   ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+    const entityCompanionDefinition = computeIfAbsent(
+      this.companionDefinitionMap,
+      entityClass.name,
+      () => entityClass.defineCompanionDefinition()
+    );
     const tableDataCoordinator = this.getTableDataCoordinatorForEntity(
       entityCompanionDefinition.entityConfiguration,
       entityClass.name
     );
     return computeIfAbsent(this.companionMap, entityClass.name, () => {
       return new EntityCompanion(
-        entityCompanionDefinition.entityClass,
+        this,
+        entityCompanionDefinition,
         tableDataCoordinator,
-        entityCompanionDefinition.privacyPolicyClass,
-        entityCompanionDefinition.mutationValidators(),
-        entityCompanionDefinition.mutationTriggers(),
         this.metricsAdapter
       );
     });
