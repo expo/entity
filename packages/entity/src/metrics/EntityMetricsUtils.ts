@@ -1,8 +1,8 @@
-import { reduceMap } from '../utils/collections/maps';
 import IEntityMetricsAdapter, {
   EntityMetricsLoadType,
   EntityMetricsMutationType,
 } from './IEntityMetricsAdapter';
+import { reduceMap } from '../utils/collections/maps';
 
 export const timeAndLogLoadEventAsync =
   (

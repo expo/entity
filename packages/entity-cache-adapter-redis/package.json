@@ -19,7 +19,7 @@
     "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --exportDefault --delete"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=16"
   },
   "keywords": [
     "entity"

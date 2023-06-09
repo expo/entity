@@ -1,9 +1,9 @@
-import EntityCompanionProvider from '../../EntityCompanionProvider';
-import IEntityMetricsAdapter from '../../metrics/IEntityMetricsAdapter';
-import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
 import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter';
 import StubDatabaseAdapterProvider from './StubDatabaseAdapterProvider';
 import StubQueryContextProvider from './StubQueryContextProvider';
+import EntityCompanionProvider from '../../EntityCompanionProvider';
+import IEntityMetricsAdapter from '../../metrics/IEntityMetricsAdapter';
+import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
 
 /**
  * Entity companion provider for use in unit tests. All database and cache implementations

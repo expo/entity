@@ -1,7 +1,7 @@
+import StubDatabaseAdapter from './StubDatabaseAdapter';
 import EntityConfiguration from '../../EntityConfiguration';
 import EntityDatabaseAdapter from '../../EntityDatabaseAdapter';
 import IEntityDatabaseAdapterProvider from '../../IEntityDatabaseAdapterProvider';
-import StubDatabaseAdapter from './StubDatabaseAdapter';
 
 export default class StubDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
   private readonly objectCollection = new Map();

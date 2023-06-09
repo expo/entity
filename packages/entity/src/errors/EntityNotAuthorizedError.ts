@@ -1,7 +1,7 @@
+import EntityError, { EntityErrorCode, EntityErrorState } from './EntityError';
 import { EntityAuthorizationAction } from '../EntityPrivacyPolicy';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
-import EntityError, { EntityErrorCode, EntityErrorState } from './EntityError';
 
 export default class EntityNotAuthorizedError<
   TFields extends object,

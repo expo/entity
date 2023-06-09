@@ -1,8 +1,8 @@
+import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
-import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
 
 /**
  * Privacy policy rule that always allows.

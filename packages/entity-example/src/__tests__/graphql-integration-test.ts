@@ -2,10 +2,11 @@ import http from 'http';
 import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
 
-import app from '../app';
+import createAppAsync from '../app';
 
 describe('graphql', () => {
   it('allows CRUD of user notes', async () => {
+    const app = await createAppAsync();
     const server = request(http.createServer(app.callback()));
 
     const userId = uuidv4();
@@ -117,6 +118,7 @@ describe('graphql', () => {
   });
 
   it('disallows anonymous note creation', async () => {
+    const app = await createAppAsync();
     const server = request(http.createServer(app.callback()));
     const createResponse1 = await server.post('/graphql').send({
       query: `mutation($note: NoteInput!) { addNote(note: $note) { id, title, body } }`,
@@ -133,6 +135,7 @@ describe('graphql', () => {
   });
 
   it('disallows cross-user note impersonation', async () => {
+    const app = await createAppAsync();
     const server = request(http.createServer(app.callback()));
 
     const userId = uuidv4();

@@ -2,15 +2,17 @@ import http from 'http';
 import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
 
-import app from '../app';
+import createAppAsync from '../app';
 
 describe('notesRouter', () => {
   it('returns empty array for logged-out', async () => {
+    const app = await createAppAsync();
     const response = await request(http.createServer(app.callback())).get('/notes/').send();
     expect(response.body.notes).toEqual([]);
   });
 
   it('allows CRUD of user notes', async () => {
+    const app = await createAppAsync();
     const server = request(http.createServer(app.callback()));
 
     const userId = uuidv4();
@@ -84,6 +86,7 @@ describe('notesRouter', () => {
   });
 
   it('disallows anonymous note creation', async () => {
+    const app = await createAppAsync();
     const server = request(http.createServer(app.callback()));
     const createResponse1 = await server.post('/notes/').send({
       title: 'track',
@@ -94,6 +97,7 @@ describe('notesRouter', () => {
   });
 
   it('disallows cross-user note impersonation', async () => {
+    const app = await createAppAsync();
     const server = request(http.createServer(app.callback()));
     const userId = uuidv4();
     const userId2 = uuidv4();

@@ -1,4 +1,4 @@
-import { gql, IResolvers, IResolverObject } from 'apollo-server-koa';
+import { IResolvers, IObjectTypeResolver } from '@graphql-tools/utils';
 
 import NoteEntity from './entities/NoteEntity';
 import { ExampleViewerContext } from './viewerContexts';
@@ -7,7 +7,7 @@ type GraphqlContext = {
   viewerContext: ExampleViewerContext;
 };
 
-export const typeDefs = gql`
+export const typeDefs = `#graphql
   type User {
     id: ID!
     notes: [Note]!
@@ -48,7 +48,7 @@ export const resolvers: IResolvers<any, GraphqlContext> = {
     async noteByID(_root, args, { viewerContext }) {
       return await NoteEntity.loader(viewerContext).enforcing().loadByIDAsync(args.id);
     },
-  } as IResolverObject<any, GraphqlContext>,
+  } as IObjectTypeResolver<any, GraphqlContext>,
 
   User: {
     id: (root) => root,
@@ -57,14 +57,14 @@ export const resolvers: IResolvers<any, GraphqlContext> = {
         .enforcing()
         .loadManyByFieldEqualingAsync('userID', root);
     },
-  } as IResolverObject<string, GraphqlContext>,
+  } as IObjectTypeResolver<string, GraphqlContext>,
 
   Note: {
     id: (root) => root.getID(),
     title: (root) => root.getField('title'),
     body: (root) => root.getField('body'),
     user: (root) => root.getField('userID'),
-  } as IResolverObject<NoteEntity, GraphqlContext>,
+  } as IObjectTypeResolver<NoteEntity, GraphqlContext>,
 
   Mutation: {
     async addNote(_root, args, { viewerContext }) {
@@ -94,5 +94,5 @@ export const resolvers: IResolvers<any, GraphqlContext> = {
       await NoteEntity.enforceDeleteAsync(existingNote);
       return existingNote;
     },
-  } as IResolverObject<any, GraphqlContext>,
+  } as IObjectTypeResolver<any, GraphqlContext>,
 };
