@@ -19,7 +19,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">GenericRedisCacheContext</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/4b18010/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L28">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:28</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L29">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:29</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -27,19 +27,59 @@
 <div class="tsd-accordion-details">
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Properties</h3>
-<div class="tsd-index-list"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#redisClient" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-1024-path"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)" id="icon-1024-text"></path></svg><span>redis<wbr/>Client</span></a>
+<div class="tsd-index-list"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#cacheKeyPrefix" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-1024-path"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)" id="icon-1024-text"></path></svg><span>cache<wbr/>Key<wbr/>Prefix</span></a>
+<a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#cacheKeyVersion" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>cache<wbr/>Key<wbr/>Version</span></a>
+<a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#makeKeyFn" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>make<wbr/>Key<wbr/>Fn</span></a>
+<a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#redisClient" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>redis<wbr/>Client</span></a>
 <a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#ttlSecondsNegative" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>ttl<wbr/>Seconds<wbr/>Negative</span></a>
 <a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#ttlSecondsPositive" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>ttl<wbr/>Seconds<wbr/>Positive</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="cacheKeyPrefix" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>cache<wbr/>Key<wbr/>Prefix</span><a href="#cacheKeyPrefix" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></h3>
+<div class="tsd-signature">cache<wbr/>Key<wbr/>Prefix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>Prefix prepended to all entity cache keys. Useful for adding a short, human-readable
+distintion for entity keys, e.g. <code>ent-</code></p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L51">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:51</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="cacheKeyVersion" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>cache<wbr/>Key<wbr/>Version</span><a href="#cacheKeyVersion" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">cache<wbr/>Key<wbr/>Version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>Global cache version for the entity framework. Bumping this version will
+invalidate the cache for all entities at once.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L45">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:45</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="makeKeyFn" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>make<wbr/>Key<wbr/>Fn</span><a href="#makeKeyFn" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">make<wbr/>Key<wbr/>Fn<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>parts<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span></div>
+<div class="tsd-type-declaration">
+<h4>Type declaration</h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter-signature">
+<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-interface">
+<li class="tsd-signature" id="__type.__type-1"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>parts<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Create a key string for key parts (cache key prefix, versions, entity name, etc).
+Most commonly a simple <code>parts.join(&#39;:&#39;)</code>. See integration test for example.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span>parts: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4></li></ul></li></ul></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L39">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:39</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="redisClient" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>redis<wbr/>Client</span><a href="#redisClient" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></h3>
+<h3 class="tsd-anchor-link"><span>redis<wbr/>Client</span><a href="#redisClient" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">redis<wbr/>Client<span class="tsd-signature-symbol">:</span> <a href="_expo_entity_cache_adapter_redis.IRedis.html" class="tsd-signature-type" data-tsd-kind="Interface">IRedis</a></div>
 <div class="tsd-comment tsd-typography"><p>Instance of ioredis.Redis</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/4b18010/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L32">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:32</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L33">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:33</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="ttlSecondsNegative" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>ttl<wbr/>Seconds<wbr/>Negative</span><a href="#ttlSecondsNegative" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">ttl<wbr/>Seconds<wbr/>Negative<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -47,7 +87,7 @@
 this TTL will be assumed not present in the database (unless invalidated).</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/4b18010/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L44">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:44</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L63">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:63</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="ttlSecondsPositive" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>ttl<wbr/>Seconds<wbr/>Positive</span><a href="#ttlSecondsPositive" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">ttl<wbr/>Seconds<wbr/>Positive<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -55,7 +95,7 @@ this TTL will be assumed not present in the database (unless invalidated).</p>
 will be read from cache (unless invalidated).</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/4b18010/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L38">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:38</a></li></ul></aside></section></section></div>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L57">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:57</a></li></ul></aside></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -84,6 +124,9 @@ will be read from cache (unless invalidated).</p>
 <ul>
 <li class="current tsd-kind-interface tsd-parent-kind-module"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-256-path"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)" id="icon-256-text"></path></svg><span>Generic<wbr/>Redis<wbr/>Cache<wbr/>Context</span></a>
 <ul>
+<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#cacheKeyPrefix" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>cache<wbr/>Key<wbr/>Prefix</a></li>
+<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#cacheKeyVersion" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>cache<wbr/>Key<wbr/>Version</a></li>
+<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#makeKeyFn" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>make<wbr/>Key<wbr/>Fn</a></li>
 <li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#redisClient" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>redis<wbr/>Client</a></li>
 <li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#ttlSecondsNegative" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>ttl<wbr/>Seconds<wbr/>Negative</a></li>
 <li class="tsd-kind-property tsd-parent-kind-interface"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacheContext.html#ttlSecondsPositive" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>ttl<wbr/>Seconds<wbr/>Positive</a></li></ul></li></ul></nav></div></div>

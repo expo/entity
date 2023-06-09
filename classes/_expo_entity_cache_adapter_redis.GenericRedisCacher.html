@@ -28,7 +28,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="tsd-signature-type">default</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">TFields</span><span class="tsd-signature-symbol">&gt;</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/4b18010/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L47">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:47</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L66">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:66</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -44,6 +44,7 @@
 <a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html#cacheManyAsync" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>cache<wbr/>Many<wbr/>Async</span></a>
 <a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html#invalidateManyAsync" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>invalidate<wbr/>Many<wbr/>Async</span></a>
 <a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html#loadManyAsync" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>load<wbr/>Many<wbr/>Async</span></a>
+<a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html#makeCacheKey" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>make<wbr/>Cache<wbr/>Key</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Constructors</h2>
@@ -66,7 +67,7 @@
 <h5>entityConfiguration: <span class="tsd-signature-type">default</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html" class="tsd-signature-type" data-tsd-kind="Class">GenericRedisCacher</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">TFields</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/4b18010/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L48">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:48</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L67">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:67</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="cacheDBMissesAsync" class="tsd-anchor"></a>
@@ -82,7 +83,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of IEntityGenericCacher.cacheDBMissesAsync</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/4b18010/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L110">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:110</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L129">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:129</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="cacheManyAsync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>cache<wbr/>Many<wbr/>Async</span><a href="#cacheManyAsync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -96,7 +97,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of IEntityGenericCacher.cacheManyAsync</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/4b18010/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L91">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:91</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L110">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:110</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="invalidateManyAsync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>invalidate<wbr/>Many<wbr/>Async</span><a href="#invalidateManyAsync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -110,7 +111,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of IEntityGenericCacher.invalidateManyAsync</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/4b18010/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L127">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:127</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L146">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:146</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="loadManyAsync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>load<wbr/>Many<wbr/>Async</span><a href="#loadManyAsync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -124,7 +125,28 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">CacheLoadResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of IEntityGenericCacher.loadManyAsync</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/4b18010/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L53">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:53</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L72">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:72</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="makeCacheKey" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>make<wbr/>Cache<wbr/>Key</span><a href="#makeCacheKey" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="makeCacheKey.makeCacheKey-1">make<wbr/>Cache<wbr/>Key<span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">N</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>fieldName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">N</span>, fieldValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">TFields</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">N</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#makeCacheKey.makeCacheKey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-type-parameters">
+<h4 class="tsd-type-parameters-title">Type Parameters</h4>
+<ul class="tsd-type-parameters">
+<li>
+<h4>N<span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">symbol</span></h4></li></ul></div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>fieldName: <span class="tsd-signature-type" data-tsd-kind="Type parameter">N</span></h5></li>
+<li>
+<h5>fieldValue: <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">TFields</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">N</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<p>Implementation of IEntityGenericCacher.makeCacheKey</p>
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/6f8020f/packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts#L154">packages/entity-cache-adapter-redis/src/GenericRedisCacher.ts:154</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -157,7 +179,8 @@
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html#cacheDBMissesAsync" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>cacheDBMisses<wbr/>Async</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html#cacheManyAsync" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>cache<wbr/>Many<wbr/>Async</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html#invalidateManyAsync" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>invalidate<wbr/>Many<wbr/>Async</a></li>
-<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html#loadManyAsync" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>load<wbr/>Many<wbr/>Async</a></li></ul></li></ul></nav></div></div>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html#loadManyAsync" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>load<wbr/>Many<wbr/>Async</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="_expo_entity_cache_adapter_redis.GenericRedisCacher.html#makeCacheKey" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>make<wbr/>Cache<wbr/>Key</a></li></ul></li></ul></nav></div></div>
 <div class="container tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
 <div class="overlay"></div><script src="../assets/main.js"></script></body></html>
