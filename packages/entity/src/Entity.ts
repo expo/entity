@@ -337,6 +337,12 @@ export interface IEntityClass<
     databaseFields: Readonly<TFields>;
     selectedFields: Readonly<Pick<TFields, TSelectedFields>>;
   }): TEntity;
+
+  /**
+   * Returns a EntityCompanionDefinition for this entity.
+   *
+   * Memoized by the entity framework.
+   */
   defineCompanionDefinition(): EntityCompanionDefinition<
     TFields,
     TID,
