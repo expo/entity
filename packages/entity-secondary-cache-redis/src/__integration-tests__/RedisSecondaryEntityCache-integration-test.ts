@@ -62,7 +62,6 @@ describe(RedisSecondaryEntityCache, () => {
         throw new Error('should not be used by this test');
       },
       cacheKeyPrefix: 'test-',
-      cacheKeyVersion: 1,
       ttlSecondsPositive: 86400, // 1 day
       ttlSecondsNegative: 600, // 10 minutes
     };

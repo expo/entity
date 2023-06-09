@@ -39,12 +39,6 @@ export interface GenericRedisCacheContext {
   makeKeyFn: (...parts: string[]) => string;
 
   /**
-   * Global cache version for the entity framework. Bumping this version will
-   * invalidate the cache for all entities at once.
-   */
-  cacheKeyVersion: number;
-
-  /**
    * Prefix prepended to all entity cache keys. Useful for adding a short, human-readable
    * distintion for entity keys, e.g. `ent-`
    */

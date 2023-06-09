@@ -34,7 +34,6 @@ describe(GenericRedisCacher, () => {
         {
           redisClient: instance(mockRedisClient),
           makeKeyFn: (...parts) => parts.join(':'),
-          cacheKeyVersion: 1,
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -65,7 +64,6 @@ describe(GenericRedisCacher, () => {
         {
           redisClient: instance(mock<Redis>()),
           makeKeyFn: (...parts) => parts.join(':'),
-          cacheKeyVersion: 1,
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -98,7 +96,6 @@ describe(GenericRedisCacher, () => {
         {
           redisClient: instance(mockRedisClient),
           makeKeyFn: (...parts) => parts.join(':'),
-          cacheKeyVersion: 1,
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -138,7 +135,6 @@ describe(GenericRedisCacher, () => {
         {
           redisClient: instance(mockRedisClient),
           makeKeyFn: (...parts) => parts.join(':'),
-          cacheKeyVersion: 1,
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -167,7 +163,6 @@ describe(GenericRedisCacher, () => {
         {
           redisClient: instance(mockRedisClient),
           makeKeyFn: (...parts) => parts.join(':'),
-          cacheKeyVersion: 1,
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -186,7 +181,6 @@ describe(GenericRedisCacher, () => {
         {
           redisClient: instance(mock<Redis>()),
           makeKeyFn: (...parts) => parts.join(':'),
-          cacheKeyVersion: 1,
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
