@@ -1,8 +1,8 @@
 import { EntityPrivacyPolicy, AlwaysAllowPrivacyPolicyRule } from '@expo/entity';
 
-import { ExampleViewerContext } from '../viewerContexts';
 import AllowIfUserOwnerPrivacyRule from './AllowIfUserOwnerPrivacyRule';
 import NoteEntity, { NoteFields } from './NoteEntity';
+import { ExampleViewerContext } from '../viewerContexts';
 
 /**
  * For purposes of this demonstration, notes are considered public and can only be mutated by the owner.

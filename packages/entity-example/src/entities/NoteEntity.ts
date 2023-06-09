@@ -6,8 +6,8 @@ import {
   StringField,
 } from '@expo/entity';
 
-import { ExampleViewerContext } from '../viewerContexts';
 import NotePrivacyPolicy from './NotePrivacyPolicy';
+import { ExampleViewerContext } from '../viewerContexts';
 
 export interface NoteFields {
   id: string;

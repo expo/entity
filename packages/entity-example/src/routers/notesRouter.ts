@@ -1,4 +1,4 @@
-import KoaRouter from 'koa-router';
+import Router from '@koa/router';
 
 import { ExampleState, ExampleContext } from '../app';
 import NoteEntity from '../entities/NoteEntity';
@@ -11,11 +11,11 @@ import NoteEntity from '../entities/NoteEntity';
  * PUT /notes/:id - update a note
  * DELETE /notes/:id - delete a note
  */
-const router = new KoaRouter<ExampleState>({
+const router = new Router<ExampleState, ExampleContext>({
   prefix: '/notes',
 });
 
-router.get('/', async (ctx: ExampleContext) => {
+router.get('/', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
   let notes: readonly NoteEntity[] = [];
   if (viewerContext.isUserViewerContext()) {
@@ -28,11 +28,12 @@ router.get('/', async (ctx: ExampleContext) => {
   };
 });
 
-router.get('/:id', async (ctx: ExampleContext) => {
+router.get('/:id', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
   const noteResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params['id']!);
   if (!noteResult.ok) {
     ctx.throw(403, noteResult.reason);
+    return;
   }
 
   ctx.body = {
@@ -40,16 +41,17 @@ router.get('/:id', async (ctx: ExampleContext) => {
   };
 });
 
-router.post('/', async (ctx: ExampleContext) => {
+router.post('/', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
   if (!viewerContext.isUserViewerContext()) {
     // Only logged-in users can create notes. Technically this
     // would be handled by the privacy policy (it would fail)
     // but we throw here for better type safety.
     ctx.throw(403);
+    return;
   }
 
-  const { title, body } = ctx.request.body;
+  const { title, body } = ctx.request.body as any;
 
   const createResult = await NoteEntity.creator(viewerContext)
     .setField('userID', viewerContext.userID)
@@ -58,6 +60,7 @@ router.post('/', async (ctx: ExampleContext) => {
     .createAsync();
   if (!createResult.ok) {
     ctx.throw(403, createResult.reason);
+    return;
   }
 
   ctx.body = {
@@ -65,13 +68,14 @@ router.post('/', async (ctx: ExampleContext) => {
   };
 });
 
-router.put('/:id', async (ctx: ExampleContext) => {
+router.put('/:id', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
-  const { title, body } = ctx.request.body;
+  const { title, body } = ctx.request.body as any;
 
   const noteLoadResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params['id']!);
   if (!noteLoadResult.ok) {
     ctx.throw(403, noteLoadResult.reason);
+    return;
   }
 
   const noteUpdateResult = await NoteEntity.updater(noteLoadResult.value)
@@ -80,6 +84,7 @@ router.put('/:id', async (ctx: ExampleContext) => {
     .updateAsync();
   if (!noteUpdateResult.ok) {
     ctx.throw(403, noteUpdateResult.reason);
+    return;
   }
 
   ctx.body = {
@@ -87,17 +92,19 @@ router.put('/:id', async (ctx: ExampleContext) => {
   };
 });
 
-router.delete('/:id', async (ctx: ExampleContext) => {
+router.delete('/:id', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
 
   const noteLoadResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params['id']!);
   if (!noteLoadResult.ok) {
     ctx.throw(403, noteLoadResult.reason);
+    return;
   }
 
   const noteDeleteResult = await NoteEntity.deleteAsync(noteLoadResult.value);
   if (!noteDeleteResult.ok) {
     ctx.throw(403, noteDeleteResult.reason);
+    return;
   }
 
   ctx.body = {

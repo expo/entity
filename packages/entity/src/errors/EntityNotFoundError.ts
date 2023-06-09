@@ -1,8 +1,8 @@
+import EntityError, { EntityErrorCode, EntityErrorState } from './EntityError';
 import { IEntityClass } from '../Entity';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
-import EntityError, { EntityErrorCode, EntityErrorState } from './EntityError';
 
 export default class EntityNotFoundError<
   TFields extends object,

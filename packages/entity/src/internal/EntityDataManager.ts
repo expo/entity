@@ -1,5 +1,6 @@
 import DataLoader from 'dataloader';
 
+import ReadThroughEntityCache from './ReadThroughEntityCache';
 import EntityDatabaseAdapter, {
   FieldEqualityCondition,
   QuerySelectionModifiers,
@@ -17,7 +18,6 @@ import IEntityMetricsAdapter, {
   IncrementLoadCountEventType,
 } from '../metrics/IEntityMetricsAdapter';
 import { computeIfAbsent, zipToMap } from '../utils/collections/maps';
-import ReadThroughEntityCache from './ReadThroughEntityCache';
 
 /**
  * A data manager is responsible for orchestrating multiple sources of entity

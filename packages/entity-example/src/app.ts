@@ -1,15 +1,17 @@
+import { ApolloServer } from '@apollo/server';
+import { koaMiddleware } from '@as-integrations/koa';
 import { EntityCompanionProvider } from '@expo/entity';
-import { ApolloServer } from 'apollo-server-koa';
+import cors from '@koa/cors';
+import Router from '@koa/router';
 import Koa from 'koa';
-import koaBody from 'koa-body';
-import KoaRouter, { RouterContext } from 'koa-router';
+import bodyParser from 'koa-bodyparser';
 
 import { entityCompanionMiddleware, viewerContextMiddleware } from './middleware';
 import notesRouter from './routers/notesRouter';
 import { typeDefs, resolvers } from './schema';
 import { ExampleViewerContext } from './viewerContexts';
 
-export type ExampleContext = RouterContext<ExampleState>;
+export type ExampleContext = Koa.ParameterizedContext<ExampleState>;
 
 /**
  * Koa provides a per-request state container to place custom properties.
@@ -21,31 +23,40 @@ export type ExampleState = {
   entityCompanionProvider: EntityCompanionProvider; // entityCompanionMiddleware
 };
 
-const app = new Koa();
+export default async function createAppAsync(): Promise<Koa<ExampleState, ExampleContext>> {
+  const app = new Koa<ExampleState, ExampleContext>();
 
-// body parsing for POST/PUT requests
-app.use(koaBody());
+  // initialze the entity framework for each request
+  app.use(entityCompanionMiddleware);
 
-// initialze the entity framework for each request
-app.use(entityCompanionMiddleware);
+  // generate a viewer context for each request
+  app.use(viewerContextMiddleware);
 
-// generate a viewer context for each request
-app.use(viewerContextMiddleware);
+  app.use(cors());
 
-// serve routes that make use of the viewer context
-const router = new KoaRouter<ExampleState>();
-router.use(notesRouter.routes());
-app.use(router.routes()).use(router.allowedMethods());
+  // body parsing for POST/PUT requests
+  app.use(bodyParser());
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: ({ ctx }) => {
-    return {
-      viewerContext: ctx.state.viewerContext,
-    };
-  },
-});
-app.use(server.getMiddleware({ cors: false, disableHealthCheck: true, bodyParserConfig: false }));
+  // serve routes that make use of the viewer context
+  const router = new Router<ExampleState, ExampleContext>();
 
-export default app;
+  // normal API routes
+  router.use(notesRouter.routes());
+
+  // GraphQL routes
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+  });
+  await server.start();
+  router.post(
+    '/graphql',
+    koaMiddleware(server, {
+      context: async ({ ctx }) => ({ viewerContext: (ctx as ExampleContext).state.viewerContext }),
+    })
+  );
+
+  app.use(router.routes()).use(router.allowedMethods());
+
+  return app;
+}

@@ -19,7 +19,7 @@
     "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --exportDefault --delete"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=16"
   },
   "keywords": [
     "entity"
@@ -30,10 +30,10 @@
     "@expo/entity": "*"
   },
   "dependencies": {
-    "knex": "^2.4.1"
+    "knex": "^2.4.2"
   },
   "devDependencies": {
     "@expo/entity": "^0.31.1",
-    "pg": "^8.7.1"
+    "pg": "8.10.0"
   }
 }
