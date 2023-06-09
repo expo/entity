@@ -42,10 +42,10 @@ describe(RedisCacheAdapter, () => {
     const viewerContext = new TestViewerContext(
       createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
     );
-    const cacheAdapter = viewerContext.entityCompanionProvider.getCompanionForEntity(
-      RedisTestEntity,
-      RedisTestEntity.getCompanionDefinition()
-    )['tableDataCoordinator']['cacheAdapter'];
+    const cacheAdapter =
+      viewerContext.entityCompanionProvider.getCompanionForEntity(RedisTestEntity)[
+        'tableDataCoordinator'
+      ]['cacheAdapter'];
     const cacheKeyMaker = cacheAdapter['makeCacheKey'].bind(cacheAdapter);
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)

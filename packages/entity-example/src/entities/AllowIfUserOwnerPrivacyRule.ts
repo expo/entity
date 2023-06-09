@@ -23,7 +23,7 @@ import { ExampleViewerContext } from '../viewerContexts';
  * Otherwise, it defers to the next rule in the policy.
  */
 export default class AllowIfUserOwnerPrivacyRule<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TEntity extends ReadonlyEntity<TFields, TID, ExampleViewerContext>,
   TSelectedFields extends keyof TFields = keyof TFields

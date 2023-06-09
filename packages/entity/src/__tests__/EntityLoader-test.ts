@@ -75,6 +75,7 @@ describe(EntityLoader, () => {
       privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
+      /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
       metricsAdapter
@@ -177,6 +178,7 @@ describe(EntityLoader, () => {
       privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
+      /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
       metricsAdapter
@@ -275,6 +277,7 @@ describe(EntityLoader, () => {
       privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
+      /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
       metricsAdapter
@@ -353,6 +356,7 @@ describe(EntityLoader, () => {
       privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
+      /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
       metricsAdapter
@@ -385,6 +389,7 @@ describe(EntityLoader, () => {
       privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
+      /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManagerInstance,
       metricsAdapter
@@ -412,6 +417,7 @@ describe(EntityLoader, () => {
       privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
+      /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManagerInstance,
       metricsAdapter
@@ -442,6 +448,7 @@ describe(EntityLoader, () => {
       privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
+      /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManagerInstance,
       metricsAdapter
@@ -486,6 +493,7 @@ describe(EntityLoader, () => {
       privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
+      /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManagerInstance,
       metricsAdapter
@@ -519,6 +527,7 @@ describe(EntityLoader, () => {
       privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
+      /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManagerInstance,
       metricsAdapter

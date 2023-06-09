@@ -23,18 +23,23 @@ export default class PostgresValidatorTestEntity extends Entity<
   string,
   ViewerContext
 > {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     PostgresValidatorTestEntityFields,
     string,
     ViewerContext,
     PostgresValidatorTestEntity,
     PostgresValidatorTestEntityPrivacyPolicy
   > {
-    return postgresTestEntityCompanionDefinition;
+    return {
+      entityClass: PostgresValidatorTestEntity,
+      entityConfiguration: postgresTestEntityConfiguration,
+      privacyPolicyClass: PostgresValidatorTestEntityPrivacyPolicy,
+      mutationValidators: [new ThrowConditionallyTrigger('name', 'beforeCreateAndBeforeUpdate')],
+    };
   }
 
   public static async createOrTruncatePostgresTable(knex: Knex): Promise<void> {
-    const tableName = this.getCompanionDefinition().entityConfiguration.tableName;
+    const tableName = 'postgres_test_entities';
     const hasTable = await knex.schema.hasTable(tableName);
     if (!hasTable) {
       await knex.schema.createTable(tableName, (table) => {
@@ -46,7 +51,7 @@ export default class PostgresValidatorTestEntity extends Entity<
   }
 
   public static async dropPostgresTable(knex: Knex): Promise<void> {
-    const tableName = this.getCompanionDefinition().entityConfiguration.tableName;
+    const tableName = 'postgres_test_entities';
     const hasTable = await knex.schema.hasTable(tableName);
     if (hasTable) {
       await knex.schema.dropTable(tableName);
@@ -140,10 +145,3 @@ export const postgresTestEntityConfiguration =
     databaseAdapterFlavor: 'postgres',
     cacheAdapterFlavor: 'redis',
   });
-
-const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({
-  entityClass: PostgresValidatorTestEntity,
-  entityConfiguration: postgresTestEntityConfiguration,
-  privacyPolicyClass: PostgresValidatorTestEntityPrivacyPolicy,
-  mutationValidators: () => [new ThrowConditionallyTrigger('name', 'beforeCreateAndBeforeUpdate')],
-});

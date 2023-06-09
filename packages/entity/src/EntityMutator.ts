@@ -2,7 +2,7 @@ import { Result, asyncResult, result, enforceAsyncResult } from '@expo/results';
 import invariant from 'invariant';
 
 import Entity, { IEntityClass } from './Entity';
-import { EntityCompanionDefinition } from './EntityCompanionProvider';
+import EntityCompanionProvider from './EntityCompanionProvider';
 import EntityConfiguration from './EntityConfiguration';
 import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import { EntityEdgeDeletionBehavior } from './EntityFieldDefinition';
@@ -28,7 +28,7 @@ import IEntityMetricsAdapter, { EntityMetricsMutationType } from './metrics/IEnt
 import { mapMapAsync } from './utils/collections/maps';
 
 abstract class BaseMutator<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -42,6 +42,7 @@ abstract class BaseMutator<
   TSelectedFields extends keyof TFields
 > {
   constructor(
+    protected readonly companionProvider: EntityCompanionProvider,
     protected readonly viewerContext: TViewerContext,
     protected readonly queryContext: EntityQueryContext,
     protected readonly entityConfiguration: EntityConfiguration<TFields>,
@@ -155,7 +156,7 @@ abstract class BaseMutator<
  * Mutator for creating a new entity.
  */
 export class CreateMutator<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -211,7 +212,11 @@ export class CreateMutator<
   ): Promise<Result<TEntity>> {
     this.validateFields(this.fieldsForEntity);
 
-    const temporaryEntityForPrivacyCheck = new this.entityClass(this.viewerContext, {
+    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
+      cascadingDeleteCause: null,
+    });
+
+    const temporaryEntityForPrivacyCheck = entityLoader.constructEntity({
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
       ...this.fieldsForEntity,
     } as unknown as TFields);
@@ -250,14 +255,11 @@ export class CreateMutator<
 
     const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
-      cascadingDeleteCause: null,
-    });
     queryContext.appendPostCommitInvalidationCallback(
       entityLoader.invalidateFieldsAsync.bind(entityLoader, insertResult)
     );
 
-    const unauthorizedEntityAfterInsert = new this.entityClass(this.viewerContext, insertResult);
+    const unauthorizedEntityAfterInsert = entityLoader.constructEntity(insertResult);
     const newEntity = await entityLoader
       .enforcing()
       .loadByIDAsync(unauthorizedEntityAfterInsert.getID());
@@ -292,7 +294,7 @@ export class CreateMutator<
  * Mutator for updating an existing entity.
  */
 export class UpdateMutator<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -310,6 +312,7 @@ export class UpdateMutator<
   private readonly updatedFields: Partial<TFields> = {};
 
   constructor(
+    companionProvider: EntityCompanionProvider,
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     entityConfiguration: EntityConfiguration<TFields>,
@@ -349,6 +352,7 @@ export class UpdateMutator<
     originalEntity: TEntity
   ) {
     super(
+      companionProvider,
       viewerContext,
       queryContext,
       entityConfiguration,
@@ -419,7 +423,11 @@ export class UpdateMutator<
   ): Promise<Result<TEntity>> {
     this.validateFields(this.updatedFields);
 
-    const entityAboutToBeUpdated = new this.entityClass(this.viewerContext, this.fieldsForEntity);
+    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
+      cascadingDeleteCause,
+    });
+
+    const entityAboutToBeUpdated = entityLoader.constructEntity(this.fieldsForEntity);
     const authorizeUpdateResult = await asyncResult(
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
@@ -462,10 +470,6 @@ export class UpdateMutator<
           this.updatedFields
         );
 
-    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
-      cascadingDeleteCause,
-    });
-
     queryContext.appendPostCommitInvalidationCallback(
       entityLoader.invalidateFieldsAsync.bind(
         entityLoader,
@@ -481,7 +485,7 @@ export class UpdateMutator<
     const updatedEntity = updateResult
       ? await entityLoader
           .enforcing()
-          .loadByIDAsync(new this.entityClass(this.viewerContext, updateResult).getID())
+          .loadByIDAsync(entityLoader.constructEntity(updateResult).getID())
       : entityAboutToBeUpdated;
 
     await this.executeMutationTriggersAsync(
@@ -518,7 +522,7 @@ export class UpdateMutator<
  * Mutator for deleting an existing entity.
  */
 export class DeleteMutator<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -532,6 +536,7 @@ export class DeleteMutator<
   TSelectedFields extends keyof TFields
 > extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
   constructor(
+    companionProvider: EntityCompanionProvider,
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     entityConfiguration: EntityConfiguration<TFields>,
@@ -571,6 +576,7 @@ export class DeleteMutator<
     private readonly entity: TEntity
   ) {
     super(
+      companionProvider,
       viewerContext,
       queryContext,
       entityConfiguration,
@@ -723,31 +729,32 @@ export class DeleteMutator<
     }
     processedEntityIdentifiers.add(entity.getUniqueIdentifier());
 
-    const companionDefinition = (
-      entity.constructor as any
-    ).getCompanionDefinition() as EntityCompanionDefinition<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntity,
-      TPrivacyPolicy,
-      TSelectedFields
-    >;
+    const companionDefinition = this.companionProvider.getCompanionForEntity(
+      entity.constructor as IEntityClass<
+        TFields,
+        TID,
+        TViewerContext,
+        TEntity,
+        TPrivacyPolicy,
+        TSelectedFields
+      >
+    ).entityCompanionDefinition;
     const entityConfiguration = companionDefinition.entityConfiguration;
-    const inboundEdges = entityConfiguration.getInboundEdges();
+    const inboundEdges = entityConfiguration.inboundEdges;
     await Promise.all(
       inboundEdges.map(async (entityClass) => {
         return await mapMapAsync(
-          entityClass.getCompanionDefinition().entityConfiguration.schema,
+          this.companionProvider.getCompanionForEntity(entityClass).entityCompanionDefinition
+            .entityConfiguration.schema,
           async (fieldDefinition, fieldName) => {
             const association = fieldDefinition.association;
             if (!association) {
               return;
             }
 
-            const associatedConfiguration = association
-              .getAssociatedEntityClass()
-              .getCompanionDefinition().entityConfiguration;
+            const associatedConfiguration = this.companionProvider.getCompanionForEntity(
+              association.associatedEntityClass
+            ).entityCompanionDefinition.entityConfiguration;
             if (associatedConfiguration !== entityConfiguration) {
               return;
             }

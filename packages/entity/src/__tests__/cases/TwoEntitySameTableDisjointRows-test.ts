@@ -122,14 +122,19 @@ class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerCon
 }
 
 class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFields> {
-  constructor(viewerContext: ViewerContext, rawFields: Readonly<TestFields>) {
-    if (rawFields.entity_type !== EntityType.ONE) {
+  constructor(constructorParams: {
+    viewerContext: ViewerContext;
+    id: string;
+    databaseFields: Readonly<TestFields>;
+    selectedFields: Readonly<Pick<TestFields, OneTestFields>>;
+  }) {
+    if (constructorParams.selectedFields.entity_type !== EntityType.ONE) {
       throw new Error('OneTestEntity must be instantiated with one data');
     }
-    super(viewerContext, rawFields);
+    super(constructorParams);
   }
 
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
     ViewerContext,
@@ -137,19 +142,29 @@ class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFie
     TestEntityPrivacyPolicy,
     OneTestFields
   > {
-    return oneTestEntityCompanion;
+    return {
+      entityClass: OneTestEntity,
+      entityConfiguration: testEntityConfiguration,
+      privacyPolicyClass: TestEntityPrivacyPolicy,
+      entitySelectedFields: ['id', 'entity_type', 'common_other_field'],
+    };
   }
 }
 
 class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFields> {
-  constructor(viewerContext: ViewerContext, rawFields: Readonly<TestFields>) {
-    if (rawFields.entity_type !== EntityType.TWO) {
+  constructor(constructorParams: {
+    viewerContext: ViewerContext;
+    id: string;
+    databaseFields: Readonly<TestFields>;
+    selectedFields: Readonly<Pick<TestFields, TwoTestFields>>;
+  }) {
+    if (constructorParams.selectedFields.entity_type !== EntityType.TWO) {
       throw new Error('TwoTestEntity must be instantiated with two data');
     }
-    super(viewerContext, rawFields);
+    super(constructorParams);
   }
 
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
     ViewerContext,
@@ -157,20 +172,11 @@ class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFie
     TestEntityPrivacyPolicy,
     TwoTestFields
   > {
-    return twoTestEntityCompanion;
+    return {
+      entityClass: TwoTestEntity,
+      entityConfiguration: testEntityConfiguration,
+      privacyPolicyClass: TestEntityPrivacyPolicy,
+      entitySelectedFields: ['id', 'other_field', 'common_other_field', 'entity_type'],
+    };
   }
 }
-
-const oneTestEntityCompanion = new EntityCompanionDefinition({
-  entityClass: OneTestEntity,
-  entityConfiguration: testEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
-  entitySelectedFields: ['id', 'entity_type', 'common_other_field'],
-});
-
-const twoTestEntityCompanion = new EntityCompanionDefinition({
-  entityClass: TwoTestEntity,
-  entityConfiguration: testEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
-  entitySelectedFields: ['id', 'other_field', 'common_other_field', 'entity_type'],
-});

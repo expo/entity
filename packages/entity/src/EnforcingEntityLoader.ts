@@ -14,7 +14,7 @@ import { mapMap } from './utils/collections/maps';
  * if the loads are not successful.
  */
 export default class EnforcingEntityLoader<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

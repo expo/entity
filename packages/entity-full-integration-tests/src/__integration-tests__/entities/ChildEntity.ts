@@ -32,40 +32,36 @@ class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerCon
 }
 
 export default class ChildEntity extends Entity<ChildFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     ChildFields,
     string,
     ViewerContext,
     ChildEntity,
     TestEntityPrivacyPolicy
   > {
-    return childEntityCompanion;
+    return {
+      entityClass: ChildEntity,
+      entityConfiguration: new EntityConfiguration<ChildFields>({
+        idField: 'id',
+        tableName: 'children',
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+            cache: true,
+          }),
+          parent_id: new UUIDField({
+            columnName: 'parent_id',
+            cache: true,
+            association: {
+              associatedEntityClass: ParentEntity,
+              edgeDeletionBehavior: EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY,
+            },
+          }),
+        },
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
+      }),
+      privacyPolicyClass: TestEntityPrivacyPolicy,
+    };
   }
 }
-
-const childEntityConfiguration = new EntityConfiguration<ChildFields>({
-  idField: 'id',
-  tableName: 'children',
-  schema: {
-    id: new UUIDField({
-      columnName: 'id',
-      cache: true,
-    }),
-    parent_id: new UUIDField({
-      columnName: 'parent_id',
-      cache: true,
-      association: {
-        getAssociatedEntityClass: () => ParentEntity,
-        edgeDeletionBehavior: EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY,
-      },
-    }),
-  },
-  databaseAdapterFlavor: 'postgres',
-  cacheAdapterFlavor: 'redis',
-});
-
-const childEntityCompanion = new EntityCompanionDefinition({
-  entityClass: ChildEntity,
-  entityConfiguration: childEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
-});

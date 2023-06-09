@@ -7,7 +7,7 @@ import ViewerContext from './ViewerContext';
  * Interface to define trigger behavior for entities.
  */
 export default interface EntityMutationTriggerConfiguration<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -70,7 +70,7 @@ export default interface EntityMutationTriggerConfiguration<
  * the transaction if a transaction is supplied.
  */
 export abstract class EntityMutationTrigger<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -89,7 +89,7 @@ export abstract class EntityMutationTrigger<
  * since they explicitly occur outside of the transaction.
  */
 export abstract class EntityNonTransactionalMutationTrigger<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

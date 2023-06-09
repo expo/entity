@@ -75,7 +75,7 @@ export default class SimpleTestEntity extends Entity<
   ViewerContext,
   SimpleTestFieldSelection
 > {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     SimpleTestFields,
     string,
     ViewerContext,
@@ -83,12 +83,10 @@ export default class SimpleTestEntity extends Entity<
     SimpleTestEntityPrivacyPolicy,
     SimpleTestFieldSelection
   > {
-    return testEntityCompanion;
+    return {
+      entityClass: SimpleTestEntity,
+      entityConfiguration: simpleTestEntityConfiguration,
+      privacyPolicyClass: SimpleTestEntityPrivacyPolicy,
+    };
   }
 }
-
-export const testEntityCompanion = new EntityCompanionDefinition({
-  entityClass: SimpleTestEntity,
-  entityConfiguration: simpleTestEntityConfiguration,
-  privacyPolicyClass: SimpleTestEntityPrivacyPolicy,
-});

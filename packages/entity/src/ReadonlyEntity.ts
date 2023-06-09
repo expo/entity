@@ -2,12 +2,10 @@ import invariant from 'invariant';
 
 import { IEntityClass } from './Entity';
 import EntityAssociationLoader from './EntityAssociationLoader';
-import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ViewerContext from './ViewerContext';
-import { pick } from './entityUtils';
 
 /**
  * A readonly entity exposes only the read functionality of an Entity. Used as the base
@@ -18,45 +16,47 @@ import { pick } from './entityUtils';
  * - Entities representing immutable tables.
  */
 export default abstract class ReadonlyEntity<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TSelectedFields extends keyof TFields = keyof TFields
 > {
+  private readonly viewerContext: TViewerContext;
   private readonly id: TID;
-  private readonly rawFields: Readonly<Pick<TFields, TSelectedFields>>;
+  private readonly databaseFields: Readonly<TFields>;
+  private readonly selectedFields: Readonly<Pick<TFields, TSelectedFields>>;
 
   /**
    * Constructs an instance of an Entity.
-   * @param viewerContext - the ViewerContext reading this entity
-   * @param rawFields - all underlying fields for this entity's data
+   *
+   * @param constructorParam - data needed to construct an instance of an entity
+   * viewerContext - the ViewerContext reading this entity
+   * id - the ID of this entity
+   * databaseFields - all underlying fields for this entity's data
+   * selectedFields - selected fields for this entity from TSelectedFields type
+   *
+   * This should only be overridden in cases where additional data validation is needed.
+   * The params should not be modified when calling super during constructions.
    *
    * @internal
    */
-  constructor(
-    private readonly viewerContext: TViewerContext,
-    private readonly databaseFields: Readonly<TFields>
-  ) {
-    const companionDefinition = (
-      this.constructor as any
-    ).getCompanionDefinition() as EntityCompanionDefinition<
-      TFields,
-      TID,
-      TViewerContext,
-      this,
-      EntityPrivacyPolicy<TFields, TID, TViewerContext, this, TSelectedFields>,
-      TSelectedFields
-    >;
-    const idField = companionDefinition.entityConfiguration.idField as keyof Pick<
-      TFields,
-      TSelectedFields
-    >;
-    const id = databaseFields[idField];
-    invariant(id, 'must provide ID to create an entity');
-    this.id = id as any;
+  constructor({
+    viewerContext,
+    id,
+    databaseFields,
+    selectedFields,
+  }: {
+    viewerContext: TViewerContext;
+    id: TID;
+    databaseFields: Readonly<TFields>;
+    selectedFields: Readonly<Pick<TFields, TSelectedFields>>;
+  }) {
+    invariant(id !== null && id !== undefined, 'id must be non-null');
 
-    const entitySelectedFields = companionDefinition.entitySelectedFields as (keyof TFields)[];
-    this.rawFields = pick(databaseFields, entitySelectedFields);
+    this.viewerContext = viewerContext;
+    this.id = id;
+    this.databaseFields = databaseFields;
+    this.selectedFields = selectedFields;
   }
 
   toString(): string {
@@ -102,14 +102,14 @@ export default abstract class ReadonlyEntity<
   getField<K extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: K
   ): Pick<TFields, TSelectedFields>[K] {
-    return this.rawFields[fieldName];
+    return this.selectedFields[fieldName];
   }
 
   /**
    * @returns all underlying fields from this entity's data
    */
   getAllFields(): Readonly<Pick<TFields, TSelectedFields>> {
-    return { ...this.rawFields };
+    return { ...this.selectedFields };
   }
 
   /**
@@ -125,7 +125,7 @@ export default abstract class ReadonlyEntity<
    * @param queryContext - query context in which to perform the load
    */
   static loader<
-    TMFields,
+    TMFields extends object,
     TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,

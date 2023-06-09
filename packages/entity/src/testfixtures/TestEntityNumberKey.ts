@@ -43,19 +43,17 @@ export class NumberKeyPrivacyPolicy extends EntityPrivacyPolicy<
 }
 
 export default class NumberKeyEntity extends Entity<NumberKeyFields, number, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     NumberKeyFields,
     number,
     ViewerContext,
     NumberKeyEntity,
     NumberKeyPrivacyPolicy
   > {
-    return numberKeyEntityCompanion;
+    return {
+      entityClass: NumberKeyEntity,
+      entityConfiguration: numberKeyEntityConfiguration,
+      privacyPolicyClass: NumberKeyPrivacyPolicy,
+    };
   }
 }
-
-export const numberKeyEntityCompanion = new EntityCompanionDefinition({
-  entityClass: NumberKeyEntity,
-  entityConfiguration: numberKeyEntityConfiguration,
-  privacyPolicyClass: NumberKeyPrivacyPolicy,
-});

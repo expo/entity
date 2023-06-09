@@ -39,21 +39,25 @@ class CategoryPrivacyPolicy extends EntityPrivacyPolicy<
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const makeEntityClass = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
   class CategoryEntity extends Entity<CategoryFields, string, TestViewerContext> {
-    static getCompanionDefinition(): EntityCompanionDefinition<
+    static defineCompanionDefinition(): EntityCompanionDefinition<
       CategoryFields,
       string,
       TestViewerContext,
       CategoryEntity,
       CategoryPrivacyPolicy
     > {
-      return categoryEntityCompanion;
+      return {
+        entityClass: CategoryEntity,
+        entityConfiguration: categoryEntityConfiguration,
+        privacyPolicyClass: CategoryPrivacyPolicy,
+      };
     }
   }
 
   const categoryEntityConfiguration = new EntityConfiguration<CategoryFields>({
     idField: 'id',
     tableName: 'categories',
-    getInboundEdges: () => [CategoryEntity],
+    inboundEdges: [CategoryEntity],
     schema: {
       id: new UUIDField({
         columnName: 'id',
@@ -63,19 +67,13 @@ const makeEntityClass = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
         columnName: 'parent_category_id',
         cache: true,
         association: {
-          getAssociatedEntityClass: () => CategoryEntity,
+          associatedEntityClass: CategoryEntity,
           edgeDeletionBehavior,
         },
       }),
     },
     databaseAdapterFlavor: 'postgres',
     cacheAdapterFlavor: 'redis',
-  });
-
-  const categoryEntityCompanion = new EntityCompanionDefinition({
-    entityClass: CategoryEntity,
-    entityConfiguration: categoryEntityConfiguration,
-    privacyPolicyClass: CategoryPrivacyPolicy,
   });
 
   return {

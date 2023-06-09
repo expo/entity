@@ -23,26 +23,34 @@ const blahConfiguration = new EntityConfiguration<BlahFields>({
 });
 
 class Blah1Entity extends Entity<BlahFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
     string,
     ViewerContext,
     Blah1Entity,
     NoOpTest1PrivacyPolicy
   > {
-    return blah1CompanionDefinition;
+    return {
+      entityClass: Blah1Entity,
+      entityConfiguration: blahConfiguration,
+      privacyPolicyClass: NoOpTest1PrivacyPolicy,
+    };
   }
 }
 
 class Blah2Entity extends Entity<BlahFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
     string,
     ViewerContext,
     Blah2Entity,
     NoOpTest2PrivacyPolicy
   > {
-    return blah2CompanionDefinition;
+    return {
+      entityClass: Blah2Entity,
+      entityConfiguration: blahConfiguration,
+      privacyPolicyClass: NoOpTest2PrivacyPolicy,
+    };
   }
 }
 
@@ -59,31 +67,11 @@ class NoOpTest2PrivacyPolicy extends EntityPrivacyPolicy<
   Blah2Entity
 > {}
 
-const blah1CompanionDefinition = new EntityCompanionDefinition({
-  entityClass: Blah1Entity,
-  entityConfiguration: blahConfiguration,
-  privacyPolicyClass: NoOpTest1PrivacyPolicy,
-});
-
-const blah2CompanionDefinition = new EntityCompanionDefinition({
-  entityClass: Blah2Entity,
-  entityConfiguration: blahConfiguration,
-  privacyPolicyClass: NoOpTest2PrivacyPolicy,
-});
-
 describe(EntityCompanionProvider, () => {
   it('returns different instances for different entity types, but share table data coordinators', () => {
     const entityCompanionProvider = createUnitTestEntityCompanionProvider();
-    const companion1 = entityCompanionProvider.getCompanionForEntity(
-      Blah1Entity,
-      blah1CompanionDefinition
-    );
-
-    const companion2 = entityCompanionProvider.getCompanionForEntity(
-      Blah2Entity,
-      blah2CompanionDefinition
-    );
-
+    const companion1 = entityCompanionProvider.getCompanionForEntity(Blah1Entity);
+    const companion2 = entityCompanionProvider.getCompanionForEntity(Blah2Entity);
     expect(companion1).not.toEqual(companion2);
     expect(companion1['tableDataCoordinator']).toEqual(companion2['tableDataCoordinator']);
   });

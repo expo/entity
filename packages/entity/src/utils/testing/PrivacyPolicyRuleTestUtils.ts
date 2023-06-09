@@ -5,7 +5,7 @@ import ViewerContext from '../../ViewerContext';
 import PrivacyPolicyRule, { RuleEvaluationResult } from '../../rules/PrivacyPolicyRule';
 
 export interface Case<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -18,7 +18,7 @@ export interface Case<
 }
 
 export type CaseMap<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -29,7 +29,7 @@ export type CaseMap<
  * Useful for defining test cases that have async preconditions.
  */
 export const describePrivacyPolicyRuleWithAsyncTestCase = <
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -92,7 +92,7 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
  * For test simple privacy rules that don't have complex async preconditions.
  */
 export const describePrivacyPolicyRule = <
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

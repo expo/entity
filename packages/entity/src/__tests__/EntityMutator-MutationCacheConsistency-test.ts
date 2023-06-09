@@ -34,36 +34,34 @@ class BlahEntityPrivacyPolicy extends EntityPrivacyPolicy<
 }
 
 class BlahEntity extends Entity<BlahFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
     string,
     ViewerContext,
     BlahEntity,
     BlahEntityPrivacyPolicy
   > {
-    return blahCompanion;
+    return {
+      entityClass: BlahEntity,
+      entityConfiguration: new EntityConfiguration<BlahFields>({
+        idField: 'id',
+        tableName: 'blah_table',
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+            cache: true,
+          }),
+        },
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
+      }),
+      privacyPolicyClass: BlahEntityPrivacyPolicy,
+      mutationTriggers: {
+        afterCommit: [new TestNonTransactionalMutationTrigger()],
+      },
+    };
   }
 }
-
-const blahCompanion = new EntityCompanionDefinition({
-  entityClass: BlahEntity,
-  entityConfiguration: new EntityConfiguration<BlahFields>({
-    idField: 'id',
-    tableName: 'blah_table',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-        cache: true,
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'redis',
-  }),
-  privacyPolicyClass: BlahEntityPrivacyPolicy,
-  mutationTriggers: () => ({
-    afterCommit: [new TestNonTransactionalMutationTrigger()],
-  }),
-});
 
 class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutationTrigger<
   BlahFields,

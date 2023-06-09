@@ -20,18 +20,22 @@ export default class PostgresUniqueTestEntity extends Entity<
   string,
   ViewerContext
 > {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     PostgresUniqueTestEntityFields,
     string,
     ViewerContext,
     PostgresUniqueTestEntity,
     PostgresUniqueTestEntityPrivacyPolicy
   > {
-    return postgresTestEntityCompanionDefinition;
+    return {
+      entityClass: PostgresUniqueTestEntity,
+      entityConfiguration: postgresTestEntityConfiguration,
+      privacyPolicyClass: PostgresUniqueTestEntityPrivacyPolicy,
+    };
   }
 
   public static async createOrTruncatePostgresTable(knex: Knex): Promise<void> {
-    const tableName = this.getCompanionDefinition().entityConfiguration.tableName;
+    const tableName = 'postgres_test_entities';
     const hasTable = await knex.schema.hasTable(tableName);
     if (!hasTable) {
       await knex.schema.createTable(tableName, (table) => {
@@ -43,7 +47,7 @@ export default class PostgresUniqueTestEntity extends Entity<
   }
 
   public static async dropPostgresTable(knex: Knex): Promise<void> {
-    const tableName = this.getCompanionDefinition().entityConfiguration.tableName;
+    const tableName = 'postgres_test_entities';
     const hasTable = await knex.schema.hasTable(tableName);
     if (hasTable) {
       await knex.schema.dropTable(tableName);
@@ -107,9 +111,3 @@ export const postgresTestEntityConfiguration =
     databaseAdapterFlavor: 'postgres',
     cacheAdapterFlavor: 'redis',
   });
-
-const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({
-  entityClass: PostgresUniqueTestEntity,
-  entityConfiguration: postgresTestEntityConfiguration,
-  privacyPolicyClass: PostgresUniqueTestEntityPrivacyPolicy,
-});

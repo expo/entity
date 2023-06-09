@@ -15,14 +15,18 @@ export type RedisTestEntityFields = {
 };
 
 export default class RedisTestEntity extends Entity<RedisTestEntityFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     RedisTestEntityFields,
     string,
     ViewerContext,
     RedisTestEntity,
     RedisTestEntityPrivacyPolicy
   > {
-    return redisTestEntityCompanionDefinition;
+    return {
+      entityClass: RedisTestEntity,
+      entityConfiguration: redisTestEntityConfiguration,
+      privacyPolicyClass: RedisTestEntityPrivacyPolicy,
+    };
   }
 }
 
@@ -79,10 +83,4 @@ export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEnt
   },
   databaseAdapterFlavor: 'postgres',
   cacheAdapterFlavor: 'redis',
-});
-
-const redisTestEntityCompanionDefinition = new EntityCompanionDefinition({
-  entityClass: RedisTestEntity,
-  entityConfiguration: redisTestEntityConfiguration,
-  privacyPolicyClass: RedisTestEntityPrivacyPolicy,
 });

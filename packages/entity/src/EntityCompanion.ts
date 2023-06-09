@@ -1,7 +1,5 @@
-import { IEntityClass } from './Entity';
+import EntityCompanionProvider, { EntityCompanionDefinition } from './EntityCompanionProvider';
 import EntityLoaderFactory from './EntityLoaderFactory';
-import EntityMutationTriggerConfiguration from './EntityMutationTriggerConfiguration';
-import EntityMutationValidator from './EntityMutationValidator';
 import EntityMutatorFactory from './EntityMutatorFactory';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import EntityQueryContextProvider from './EntityQueryContextProvider';
@@ -18,7 +16,7 @@ export interface IPrivacyPolicyClass<TPrivacyPolicy> {
  * Composition root responsible for orchestrating setup of Entity mutators and loaders.
  */
 export default class EntityCompanion<
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -31,6 +29,8 @@ export default class EntityCompanion<
   >,
   TSelectedFields extends keyof TFields
 > {
+  public readonly privacyPolicy: TPrivacyPolicy;
+
   private readonly entityLoaderFactory: EntityLoaderFactory<
     TFields,
     TID,
@@ -49,7 +49,8 @@ export default class EntityCompanion<
   >;
 
   constructor(
-    entityClass: IEntityClass<
+    public readonly entityCompanionProvider: EntityCompanionProvider,
+    public readonly entityCompanionDefinition: EntityCompanionDefinition<
       TFields,
       TID,
       TViewerContext,
@@ -58,24 +59,9 @@ export default class EntityCompanion<
       TSelectedFields
     >,
     private readonly tableDataCoordinator: EntityTableDataCoordinator<TFields>,
-    PrivacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>,
-    mutationValidators: EntityMutationValidator<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntity,
-      TSelectedFields
-    >[],
-    mutationTriggers: EntityMutationTriggerConfiguration<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntity,
-      TSelectedFields
-    >,
     private readonly metricsAdapter: IEntityMetricsAdapter
   ) {
-    const privacyPolicy = new PrivacyPolicyClass();
+    this.privacyPolicy = new entityCompanionDefinition.privacyPolicyClass();
     this.entityLoaderFactory = new EntityLoaderFactory<
       TFields,
       TID,
@@ -83,19 +69,14 @@ export default class EntityCompanion<
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
-    >(
-      tableDataCoordinator.entityConfiguration,
-      entityClass,
-      privacyPolicy,
-      tableDataCoordinator.dataManager,
-      metricsAdapter
-    );
+    >(this, tableDataCoordinator.dataManager, metricsAdapter);
     this.entityMutatorFactory = new EntityMutatorFactory(
+      entityCompanionProvider,
       tableDataCoordinator.entityConfiguration,
-      entityClass,
-      privacyPolicy,
-      mutationValidators,
-      mutationTriggers,
+      entityCompanionDefinition.entityClass,
+      this.privacyPolicy,
+      entityCompanionDefinition.mutationValidators ?? [],
+      entityCompanionDefinition.mutationTriggers ?? {},
       this.entityLoaderFactory,
       tableDataCoordinator.databaseAdapter,
       metricsAdapter

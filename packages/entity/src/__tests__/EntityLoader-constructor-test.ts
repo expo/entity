@@ -87,17 +87,22 @@ export default class TestEntity extends Entity<
   ViewerContext,
   TestFieldSelection
 > {
-  constructor(viewerContext: ViewerContext, rawFields: Readonly<TestFields>) {
-    if (rawFields.id === ID_SENTINEL_THROW_LITERAL) {
+  constructor(constructorParams: {
+    viewerContext: ViewerContext;
+    id: string;
+    databaseFields: Readonly<TestFields>;
+    selectedFields: Readonly<TestFields>;
+  }) {
+    if (constructorParams.selectedFields.id === ID_SENTINEL_THROW_LITERAL) {
       // eslint-disable-next-line no-throw-literal,@typescript-eslint/no-throw-literal
       throw 'hello';
-    } else if (rawFields.id === ID_SENTINEL_THROW_ERROR) {
+    } else if (constructorParams.selectedFields.id === ID_SENTINEL_THROW_ERROR) {
       throw new Error('world');
     }
-    super(viewerContext, rawFields);
+    super(constructorParams);
   }
 
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
     ViewerContext,
@@ -105,15 +110,13 @@ export default class TestEntity extends Entity<
     TestEntityPrivacyPolicy,
     TestFieldSelection
   > {
-    return testEntityCompanion;
+    return {
+      entityClass: TestEntity,
+      entityConfiguration: testEntityConfiguration,
+      privacyPolicyClass: TestEntityPrivacyPolicy,
+    };
   }
 }
-
-export const testEntityCompanion = new EntityCompanionDefinition({
-  entityClass: TestEntity,
-  entityConfiguration: testEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
-});
 
 describe(EntityLoader, () => {
   it('handles thrown errors and literals from constructor', async () => {
@@ -158,6 +161,7 @@ describe(EntityLoader, () => {
       privacyPolicyEvaluationContext,
       testEntityConfiguration,
       TestEntity,
+      /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
       metricsAdapter

@@ -43,14 +43,18 @@ class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
 }
 
 class TestEntity extends Entity<TestFields, string, ViewerContext> {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
     ViewerContext,
     TestEntity,
     TestEntityPrivacyPolicy
   > {
-    return testEntityCompanion;
+    return {
+      entityClass: TestEntity,
+      entityConfiguration: testEntityConfiguration,
+      privacyPolicyClass: TestEntityPrivacyPolicy,
+    };
   }
 }
 
@@ -72,12 +76,6 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
   },
   databaseAdapterFlavor: 'postgres',
   cacheAdapterFlavor: 'redis',
-});
-
-const testEntityCompanion = new EntityCompanionDefinition({
-  entityClass: TestEntity,
-  entityConfiguration: testEntityConfiguration,
-  privacyPolicyClass: TestEntityPrivacyPolicy,
 });
 
 async function createOrTruncatePostgresTables(knex: Knex): Promise<void> {

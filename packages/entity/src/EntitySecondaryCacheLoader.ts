@@ -45,7 +45,7 @@ export interface ISecondaryEntityCache<TFields, TLoadParams> {
  */
 export default abstract class EntitySecondaryCacheLoader<
   TLoadParams,
-  TFields,
+  TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

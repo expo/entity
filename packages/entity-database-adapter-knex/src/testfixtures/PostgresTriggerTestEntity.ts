@@ -24,18 +24,33 @@ export default class PostgresTriggerTestEntity extends Entity<
   string,
   ViewerContext
 > {
-  static getCompanionDefinition(): EntityCompanionDefinition<
+  static defineCompanionDefinition(): EntityCompanionDefinition<
     PostgresTriggerTestEntityFields,
     string,
     ViewerContext,
     PostgresTriggerTestEntity,
     PostgresTriggerTestEntityPrivacyPolicy
   > {
-    return postgresTestEntityCompanionDefinition;
+    return {
+      entityClass: PostgresTriggerTestEntity,
+      entityConfiguration: postgresTestEntityConfiguration,
+      privacyPolicyClass: PostgresTriggerTestEntityPrivacyPolicy,
+      mutationTriggers: {
+        beforeCreate: [new ThrowConditionallyTrigger('name', 'beforeCreate')],
+        afterCreate: [new ThrowConditionallyTrigger('name', 'afterCreate')],
+        beforeUpdate: [new ThrowConditionallyTrigger('name', 'beforeUpdate')],
+        afterUpdate: [new ThrowConditionallyTrigger('name', 'afterUpdate')],
+        beforeDelete: [new ThrowConditionallyTrigger('name', 'beforeDelete')],
+        afterDelete: [new ThrowConditionallyTrigger('name', 'afterDelete')],
+        beforeAll: [new ThrowConditionallyTrigger('name', 'beforeAll')],
+        afterAll: [new ThrowConditionallyTrigger('name', 'afterAll')],
+        afterCommit: [new ThrowConditionallyNonTransactionalTrigger('name', 'afterCommit')],
+      },
+    };
   }
 
   public static async createOrTruncatePostgresTable(knex: Knex): Promise<void> {
-    const tableName = this.getCompanionDefinition().entityConfiguration.tableName;
+    const tableName = 'postgres_test_entities';
     const hasTable = await knex.schema.hasTable(tableName);
     if (!hasTable) {
       await knex.schema.createTable(tableName, (table) => {
@@ -47,7 +62,7 @@ export default class PostgresTriggerTestEntity extends Entity<
   }
 
   public static async dropPostgresTable(knex: Knex): Promise<void> {
-    const tableName = this.getCompanionDefinition().entityConfiguration.tableName;
+    const tableName = 'postgres_test_entities';
     const hasTable = await knex.schema.hasTable(tableName);
     if (hasTable) {
       await knex.schema.dropTable(tableName);
@@ -158,20 +173,3 @@ export const postgresTestEntityConfiguration =
     databaseAdapterFlavor: 'postgres',
     cacheAdapterFlavor: 'redis',
   });
-
-const postgresTestEntityCompanionDefinition = new EntityCompanionDefinition({
-  entityClass: PostgresTriggerTestEntity,
-  entityConfiguration: postgresTestEntityConfiguration,
-  privacyPolicyClass: PostgresTriggerTestEntityPrivacyPolicy,
-  mutationTriggers: () => ({
-    beforeCreate: [new ThrowConditionallyTrigger('name', 'beforeCreate')],
-    afterCreate: [new ThrowConditionallyTrigger('name', 'afterCreate')],
-    beforeUpdate: [new ThrowConditionallyTrigger('name', 'beforeUpdate')],
-    afterUpdate: [new ThrowConditionallyTrigger('name', 'afterUpdate')],
-    beforeDelete: [new ThrowConditionallyTrigger('name', 'beforeDelete')],
-    afterDelete: [new ThrowConditionallyTrigger('name', 'afterDelete')],
-    beforeAll: [new ThrowConditionallyTrigger('name', 'beforeAll')],
-    afterAll: [new ThrowConditionallyTrigger('name', 'afterAll')],
-    afterCommit: [new ThrowConditionallyNonTransactionalTrigger('name', 'afterCommit')],
-  }),
-});
