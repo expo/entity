@@ -1,3 +1,5 @@
+import EntityDataManager from './EntityDataManager';
+import ReadThroughEntityCache from './ReadThroughEntityCache';
 import EntityConfiguration from '../EntityConfiguration';
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
 import EntityQueryContextProvider from '../EntityQueryContextProvider';
@@ -5,8 +7,6 @@ import IEntityCacheAdapter from '../IEntityCacheAdapter';
 import IEntityCacheAdapterProvider from '../IEntityCacheAdapterProvider';
 import IEntityDatabaseAdapterProvider from '../IEntityDatabaseAdapterProvider';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
-import EntityDataManager from './EntityDataManager';
-import ReadThroughEntityCache from './ReadThroughEntityCache';
 
 /**
  * Responsible for orchestrating fetching and caching of entity data from a
