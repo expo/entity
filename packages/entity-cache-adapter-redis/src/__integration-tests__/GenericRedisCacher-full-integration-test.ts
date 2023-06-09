@@ -4,19 +4,18 @@ import Redis from 'ioredis';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import RedisCacheAdapter, { RedisCacheAdapterContext } from '../RedisCacheAdapter';
+import GenericRedisCacher, { GenericRedisCacheContext } from '../GenericRedisCacher';
 import RedisTestEntity from '../testfixtures/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtures/createRedisIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}
 
-describe(RedisCacheAdapter, () => {
-  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
-  let redisCacheAdapterContext: RedisCacheAdapterContext;
+describe(GenericRedisCacher, () => {
+  let genericRedisCacheContext: GenericRedisCacheContext;
 
   beforeAll(() => {
-    redisCacheAdapterContext = {
-      redisClient,
+    genericRedisCacheContext = {
+      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -32,21 +31,21 @@ describe(RedisCacheAdapter, () => {
   });
 
   beforeEach(async () => {
-    await redisClient.flushdb();
+    await (genericRedisCacheContext.redisClient as Redis).flushdb();
   });
   afterAll(async () => {
-    redisClient.disconnect();
+    (genericRedisCacheContext.redisClient as Redis).disconnect();
   });
 
   it('has correct caching behavior', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
-    const cacheAdapter =
+    const genericCacher =
       viewerContext.entityCompanionProvider.getCompanionForEntity(RedisTestEntity)[
         'tableDataCoordinator'
-      ]['cacheAdapter'];
-    const cacheKeyMaker = cacheAdapter['makeCacheKey'].bind(cacheAdapter);
+      ]['cacheAdapter']['genericCacher'];
+    const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')
@@ -57,7 +56,9 @@ describe(RedisCacheAdapter, () => {
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
 
-    const cachedJSON = await redisClient.get(cacheKeyMaker('id', entity1.getID()));
+    const cachedJSON = await (genericRedisCacheContext.redisClient as Redis).get(
+      cacheKeyMaker('id', entity1.getID())
+    );
     const cachedValue = JSON.parse(cachedJSON!);
     expect(cachedValue).toMatchObject({
       id: entity1.getID(),
@@ -72,7 +73,9 @@ describe(RedisCacheAdapter, () => {
     );
     expect(entityNonExistentResult.ok).toBe(false);
 
-    const nonExistentCachedValue = await redisClient.get(cacheKeyMaker('id', nonExistentId));
+    const nonExistentCachedValue = await (genericRedisCacheContext.redisClient as Redis).get(
+      cacheKeyMaker('id', nonExistentId)
+    );
     expect(nonExistentCachedValue).toEqual('');
 
     // load again through entities framework to ensure it reads negative result
@@ -83,13 +86,15 @@ describe(RedisCacheAdapter, () => {
 
     // invalidate from cache to ensure it invalidates correctly
     await RedisTestEntity.loader(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
-    const cachedValueNull = await redisClient.get(cacheKeyMaker('id', entity1.getID()));
+    const cachedValueNull = await (genericRedisCacheContext.redisClient as Redis).get(
+      cacheKeyMaker('id', entity1.getID())
+    );
     expect(cachedValueNull).toBe(null);
   });
 
   it('caches and restores date fields', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
     const date = new Date();
     const entity1 = await enforceAsyncResult(
@@ -104,7 +109,7 @@ describe(RedisCacheAdapter, () => {
 
     // simulate new request
     const vc2 = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
     const entity3 = await RedisTestEntity.loader(vc2).enforcing().loadByIDAsync(entity1.getID());
     expect(entity3.getField('dateField')).toEqual(date);
@@ -112,7 +117,7 @@ describe(RedisCacheAdapter, () => {
 
   it('caches and restores empty string field keys', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
     const entity1 = await enforceAsyncResult(
       RedisTestEntity.creator(viewerContext).setField('name', '').createAsync()
@@ -124,7 +129,7 @@ describe(RedisCacheAdapter, () => {
 
     // simulate new request
     const vc2 = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
     const entity3 = await RedisTestEntity.loader(vc2)
       .enforcing()

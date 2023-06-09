@@ -1,8 +1,8 @@
 import { verify, deepEqual, mock, instance, when, anything } from 'ts-mockito';
 
-import EntityCacheAdapter from '../../EntityCacheAdapter';
 import EntityConfiguration from '../../EntityConfiguration';
 import { UUIDField } from '../../EntityFields';
+import IEntityCacheAdapter from '../../IEntityCacheAdapter';
 import ReadThroughEntityCache, { CacheStatus } from '../ReadThroughEntityCache';
 
 type BlahFields = {
@@ -39,7 +39,7 @@ const createIdFetcher =
 describe(ReadThroughEntityCache, () => {
   describe('readManyThroughAsync', () => {
     it('fetches from DB upon cache miss and caches the result', async () => {
-      const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
+      const cacheAdapterMock = mock<IEntityCacheAdapter<BlahFields>>();
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher(['wat', 'who']);
@@ -75,7 +75,7 @@ describe(ReadThroughEntityCache, () => {
     });
 
     it('does not fetch from the DB or cache results when all cache fetches are hits', async () => {
-      const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
+      const cacheAdapterMock = mock<IEntityCacheAdapter<BlahFields>>();
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher(['wat', 'who']);
@@ -111,7 +111,7 @@ describe(ReadThroughEntityCache, () => {
     });
 
     it('negatively caches db misses', async () => {
-      const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
+      const cacheAdapterMock = mock<IEntityCacheAdapter<BlahFields>>();
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
 
@@ -131,7 +131,7 @@ describe(ReadThroughEntityCache, () => {
     });
 
     it('does not return or fetch negatively cached results from DB', async () => {
-      const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
+      const cacheAdapterMock = mock<IEntityCacheAdapter<BlahFields>>();
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher([]);
@@ -148,7 +148,7 @@ describe(ReadThroughEntityCache, () => {
     });
 
     it('does a mix and match of hit, miss, and negative', async () => {
-      const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
+      const cacheAdapterMock = mock<IEntityCacheAdapter<BlahFields>>();
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher(['wat', 'who', 'why']);
@@ -183,7 +183,7 @@ describe(ReadThroughEntityCache, () => {
     });
 
     it('does not call into cache for field that is not cacheable', async () => {
-      const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
+      const cacheAdapterMock = mock<IEntityCacheAdapter<BlahFields>>();
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(false), cacheAdapter);
       const fetcher = createIdFetcher(['wat']);
@@ -195,7 +195,7 @@ describe(ReadThroughEntityCache, () => {
 
   describe('invalidateManyAsync', () => {
     it('calls cache adapter invalidate', async () => {
-      const cacheAdapterMock = mock<EntityCacheAdapter<BlahFields>>();
+      const cacheAdapterMock = mock<IEntityCacheAdapter<BlahFields>>();
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       await entityCache.invalidateManyAsync('id', ['wat']);

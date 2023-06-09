@@ -1,7 +1,7 @@
-import EntityCacheAdapter from '../EntityCacheAdapter';
 import EntityConfiguration from '../EntityConfiguration';
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
 import EntityQueryContextProvider from '../EntityQueryContextProvider';
+import IEntityCacheAdapter from '../IEntityCacheAdapter';
 import IEntityCacheAdapterProvider from '../IEntityCacheAdapterProvider';
 import IEntityDatabaseAdapterProvider from '../IEntityDatabaseAdapterProvider';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
@@ -15,7 +15,7 @@ import ReadThroughEntityCache from './ReadThroughEntityCache';
  */
 export default class EntityTableDataCoordinator<TFields> {
   readonly databaseAdapter: EntityDatabaseAdapter<TFields>;
-  readonly cacheAdapter: EntityCacheAdapter<TFields>;
+  readonly cacheAdapter: IEntityCacheAdapter<TFields>;
   readonly dataManager: EntityDataManager<TFields>;
 
   constructor(

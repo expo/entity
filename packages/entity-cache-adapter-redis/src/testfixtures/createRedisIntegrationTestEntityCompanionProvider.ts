@@ -6,14 +6,14 @@ import {
   StubDatabaseAdapterProvider,
 } from '@expo/entity';
 
-import { RedisCacheAdapterContext } from '../RedisCacheAdapter';
+import { GenericRedisCacheContext } from '../GenericRedisCacher';
 import RedisCacheAdapterProvider from '../RedisCacheAdapterProvider';
 
 // share across all in calls in test to simulate postgres
 const adapterProvider = new StubDatabaseAdapterProvider();
 
 export const createRedisIntegrationTestEntityCompanionProvider = (
-  redisCacheAdapterContext: RedisCacheAdapterContext,
+  genericRedisCacheContext: GenericRedisCacheContext,
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
@@ -31,7 +31,7 @@ export const createRedisIntegrationTestEntityCompanionProvider = (
       [
         'redis',
         {
-          cacheAdapterProvider: new RedisCacheAdapterProvider(redisCacheAdapterContext),
+          cacheAdapterProvider: new RedisCacheAdapterProvider(genericRedisCacheContext),
         },
       ],
     ])

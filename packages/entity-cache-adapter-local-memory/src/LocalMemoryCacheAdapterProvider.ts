@@ -1,16 +1,16 @@
 import {
   computeIfAbsent,
-  EntityCacheAdapter,
+  IEntityCacheAdapter,
   EntityConfiguration,
+  GenericEntityCacheAdapter,
   IEntityCacheAdapterProvider,
 } from '@expo/entity';
 
 import GenericLocalMemoryCacher, { LocalMemoryCache } from './GenericLocalMemoryCacher';
-import LocalMemoryCacheAdapter from './LocalMemoryCacheAdapter';
 
 export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdapterProvider {
   // local memory cache adapters should be shared/reused across requests
-  static localMemoryCacheAdapterMap = new Map<string, LocalMemoryCacheAdapter<any>>();
+  private static localMemoryCacheAdapterMap = new Map<string, GenericEntityCacheAdapter<any>>();
 
   static getNoOpProvider(): IEntityCacheAdapterProvider {
     return new LocalMemoryCacheAdapterProvider(<TFields>() =>
@@ -32,13 +32,15 @@ export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdap
 
   public getCacheAdapter<TFields>(
     entityConfiguration: EntityConfiguration<TFields>
-  ): EntityCacheAdapter<TFields> {
+  ): IEntityCacheAdapter<TFields> {
     return computeIfAbsent(
       LocalMemoryCacheAdapterProvider.localMemoryCacheAdapterMap,
       entityConfiguration.tableName,
       () => {
         const localMemoryCache = this.localMemoryCacheCreator<TFields>();
-        return new LocalMemoryCacheAdapter(entityConfiguration, localMemoryCache);
+        return new GenericEntityCacheAdapter(
+          new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache)
+        );
       }
     );
   }

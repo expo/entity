@@ -1,7 +1,7 @@
 import invariant from 'invariant';
 
-import EntityCacheAdapter from '../EntityCacheAdapter';
 import EntityConfiguration from '../EntityConfiguration';
+import IEntityCacheAdapter from '../IEntityCacheAdapter';
 import { filterMap } from '../utils/collections/maps';
 
 export enum CacheStatus {
@@ -29,7 +29,7 @@ export type CacheLoadResult<TFields> =
 export default class ReadThroughEntityCache<TFields> {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
-    private readonly entityCacheAdapter: EntityCacheAdapter<TFields>
+    private readonly entityCacheAdapter: IEntityCacheAdapter<TFields>
   ) {}
 
   private isFieldCacheable<N extends keyof TFields>(fieldName: N): boolean {

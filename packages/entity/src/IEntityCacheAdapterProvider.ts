@@ -1,5 +1,5 @@
-import EntityCacheAdapter from './EntityCacheAdapter';
 import EntityConfiguration from './EntityConfiguration';
+import IEntityCacheAdapter from './IEntityCacheAdapter';
 
 /**
  * A cache adapter provider vends cache adapters for a particular cache adapter type.
@@ -11,5 +11,5 @@ export default interface IEntityCacheAdapterProvider {
    */
   getCacheAdapter<TFields>(
     entityConfiguration: EntityConfiguration<TFields>
-  ): EntityCacheAdapter<TFields>;
+  ): IEntityCacheAdapter<TFields>;
 }

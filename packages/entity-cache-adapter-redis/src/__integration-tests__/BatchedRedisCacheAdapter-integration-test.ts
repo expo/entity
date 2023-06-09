@@ -6,8 +6,11 @@ import nullthrows from 'nullthrows';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import { IRedis, IRedisTransaction } from '../GenericRedisCacher';
-import RedisCacheAdapter, { RedisCacheAdapterContext } from '../RedisCacheAdapter';
+import GenericRedisCacher, {
+  IRedis,
+  IRedisTransaction,
+  GenericRedisCacheContext,
+} from '../GenericRedisCacher';
 import RedisTestEntity from '../testfixtures/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtures/createRedisIntegrationTestEntityCompanionProvider';
 
@@ -54,14 +57,14 @@ class BatchedRedis implements IRedis {
   }
 }
 
-describe(RedisCacheAdapter, () => {
+describe(GenericRedisCacher, () => {
   const redis = new Redis(new URL(process.env['REDIS_URL']!).toString());
   const redisClient = new BatchedRedis(redis);
 
-  let redisCacheAdapterContext: RedisCacheAdapterContext;
+  let genericRedisCacheContext: GenericRedisCacheContext;
 
   beforeAll(() => {
-    redisCacheAdapterContext = {
+    genericRedisCacheContext = {
       redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
@@ -88,16 +91,16 @@ describe(RedisCacheAdapter, () => {
   it('has correct caching behavior', async () => {
     // simulate two requests
     const viewerContext = new ViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
 
     const mgetSpy = jest.spyOn(redis, 'mget');
 
-    const cacheAdapter =
+    const genericCacher =
       viewerContext.entityCompanionProvider.getCompanionForEntity(RedisTestEntity)[
         'tableDataCoordinator'
-      ]['cacheAdapter'];
-    const cacheKeyMaker = cacheAdapter['makeCacheKey'].bind(cacheAdapter);
+      ]['cacheAdapter']['genericCacher'];
+    const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')
@@ -106,13 +109,13 @@ describe(RedisCacheAdapter, () => {
     // loading an entity should put it in cache. load by multiple requests and multiple fields in same tick to ensure batch works
     mgetSpy.mockClear();
     const viewerContext1 = new ViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
     const viewerContext2 = new ViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
     const viewerContext3 = new ViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(redisCacheAdapterContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
     const [entity1, entity2, entity3] = await Promise.all([
       RedisTestEntity.loader(viewerContext1).enforcing().loadByIDAsync(entity1Created.getID()),
