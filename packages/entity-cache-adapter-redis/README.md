@@ -21,7 +21,6 @@ const genericRedisCacherContext = {
     return escapedParts.join(delimiter);
   },
   cacheKeyPrefix: 'ent-',
-  cacheKeyVersion: 1,
   ttlSecondsPositive: 86400, // 1 day
   ttlSecondsNegative: 600, // 10 minutes
 };
