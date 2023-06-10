@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.32.0](https://github.com/expo/entity/compare/v0.31.1...v0.32.0) (2023-06-10)
+
+
+### Bug Fixes
+
+* remove unused field from redis configuration ([#213](https://github.com/expo/entity/issues/213)) ([503a2fb](https://github.com/expo/entity/commit/503a2fb6a8d57f6a09f6da99daf5ab92fc3e7945))
+
+
+### Features
+
+* entity companion definition static thunk ([#210](https://github.com/expo/entity/issues/210)) ([4b18010](https://github.com/expo/entity/commit/4b18010d42be50ef329f428b08330e21bf676586))
+
+
+
+
+
 # [0.31.0](https://github.com/expo/entity/compare/v0.30.0...v0.31.0) (2023-01-19)
 
 **Note:** Version bump only for package @expo/entity-full-integration-tests
