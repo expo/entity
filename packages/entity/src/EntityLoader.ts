@@ -186,6 +186,23 @@ export default class EntityLoader<
   }
 
   /**
+   * Loads many entities for a list of IDs, returning null for any IDs that are non-existent.
+   * @param ids - IDs of the entities to load
+   * @returns map from ID to nullable corresponding entity result, where result error can be UnauthorizedError or EntityNotFoundError.
+   */
+  async loadManyByIDsNullableAsync(
+    ids: readonly TID[]
+  ): Promise<ReadonlyMap<TID, Result<TEntity> | null>> {
+    const entityResults = (await this.loadManyByFieldEqualingManyAsync(
+      this.entityConfiguration.idField as TSelectedFields,
+      ids
+    )) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
+    return mapMap(entityResults, (entityResultsForId) => {
+      return entityResultsForId[0] ?? null;
+    });
+  }
+
+  /**
    * Loads the first entity matching the selection constructed from the conjunction of specified
    * operands, or null if no matching entity exists. Entities loaded using this method are not
    * batched or cached.
