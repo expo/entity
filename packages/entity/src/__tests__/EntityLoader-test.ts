@@ -538,7 +538,11 @@ describe(EntityLoader, () => {
     await expect(entityLoader.loadByIDAsync(loadByValue)).rejects.toEqual(error);
     await expect(entityLoader.enforcing().loadByIDAsync(loadByValue)).rejects.toEqual(error);
     await expect(entityLoader.loadManyByIDsAsync([loadByValue])).rejects.toEqual(error);
-    await expect(entityLoader.loadManyByIDsAsync([loadByValue])).rejects.toEqual(error);
+    await expect(entityLoader.enforcing().loadManyByIDsAsync([loadByValue])).rejects.toEqual(error);
+    await expect(entityLoader.loadManyByIDsNullableAsync([loadByValue])).rejects.toEqual(error);
+    await expect(
+      entityLoader.enforcing().loadManyByIDsNullableAsync([loadByValue])
+    ).rejects.toEqual(error);
     await expect(
       entityLoader.loadManyByFieldEqualingAsync('customIdField', loadByValue)
     ).rejects.toEqual(error);

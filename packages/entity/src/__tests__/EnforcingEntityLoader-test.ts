@@ -222,6 +222,49 @@ describe(EnforcingEntityLoader, () => {
     });
   });
 
+  describe('loadManyByIDsNullableAsync', () => {
+    it('throws when result is unsuccessful even when there is a null result', async () => {
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
+      const rejection = new Error();
+      when(entityLoaderMock.loadManyByIDsNullableAsync(anything())).thenResolve(
+        new Map(
+          Object.entries({
+            hello: result(rejection),
+            world: null,
+          })
+        )
+      );
+      const entityLoader = instance(entityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
+      await expect(enforcingEntityLoader.loadManyByIDsNullableAsync(anything())).rejects.toThrow(
+        rejection
+      );
+    });
+
+    it('returns value when result is successful', async () => {
+      const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
+      const resolved = {};
+      when(entityLoaderMock.loadManyByIDsNullableAsync(anything())).thenResolve(
+        new Map(
+          Object.entries({
+            hello: result(resolved),
+            world: null,
+          })
+        )
+      );
+      const entityLoader = instance(entityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
+      await expect(enforcingEntityLoader.loadManyByIDsNullableAsync(anything())).resolves.toEqual(
+        new Map(
+          Object.entries({
+            hello: resolved,
+            world: null,
+          })
+        )
+      );
+    });
+  });
+
   describe('loadFirstByFieldEqualityConjunction', () => {
     it('throws when result is unsuccessful', async () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);

@@ -118,6 +118,15 @@ export default class EnforcingEntityLoader<
    * Enforcing version of entity loader method by the same name.
    * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
    */
+  async loadManyByIDsNullableAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, TEntity | null>> {
+    const entityResults = await this.entityLoader.loadManyByIDsNullableAsync(ids);
+    return mapMap(entityResults, (result) => result?.enforceValue() ?? null);
+  }
+
+  /**
+   * Enforcing version of entity loader method by the same name.
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
+   */
   async loadFirstByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: Omit<QuerySelectionModifiers<TFields>, 'limit'> &
