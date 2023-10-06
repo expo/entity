@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.33.0](https://github.com/expo/entity/compare/v0.32.0...v0.33.0) (2023-10-06)
+
+
+### Features
+
+* add loadManyByIDsNullableAsync loader method ([#214](https://github.com/expo/entity/issues/214)) ([aad94ac](https://github.com/expo/entity/commit/aad94aca479ac07cc7f76b5e1a122ff85a2d1542))
+
+
+
+
+
 # [0.32.0](https://github.com/expo/entity/compare/v0.31.1...v0.32.0) (2023-06-10)
 
 

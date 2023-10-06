@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-cache-adapter-local-memory",
-  "version": "0.32.0",
+  "version": "0.33.0",
   "description": "Cross-request local memory cache adapter for @expo/entity",
   "files": [
     "build",
@@ -33,6 +33,6 @@
     "lru-cache": "^6.0.0"
   },
   "devDependencies": {
-    "@expo/entity": "^0.32.0"
+    "@expo/entity": "^0.33.0"
   }
 }
