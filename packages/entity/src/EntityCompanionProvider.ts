@@ -61,7 +61,7 @@ export interface EntityCompanionDefinition<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields
 > {
   /**
    * The concrete Entity class for which this is the definition.
@@ -139,6 +139,7 @@ export default class EntityCompanionProvider {
    * @param metricsAdapter - An IEntityMetricsAdapter for collecting metrics on this instance
    * @param databaseAdapterFlavors - Database adapter configurations for this instance
    * @param cacheAdapterFlavors - Cache adapter configurations for this instance
+   * @param globalMutationTriggers - An optional list of EntityMutationTrigger for all entities.
    */
   constructor(
     public readonly metricsAdapter: IEntityMetricsAdapter,
@@ -147,6 +148,13 @@ export default class EntityCompanionProvider {
       DatabaseAdapterFlavorDefinition
     >,
     private cacheAdapterFlavors: ReadonlyMap<CacheAdapterFlavor, CacheAdapterFlavorDefinition>,
+    readonly globalMutationTriggers: EntityMutationTriggerConfiguration<
+      any,
+      any,
+      any,
+      any,
+      any
+    > = {}
   ) {}
 
   /**
@@ -167,7 +175,7 @@ export default class EntityCompanionProvider {
       TEntity,
       TSelectedFields
     >,
-    TSelectedFields extends keyof TFields,
+    TSelectedFields extends keyof TFields
   >(
     entityClass: IEntityClass<
       TFields,
@@ -176,34 +184,34 @@ export default class EntityCompanionProvider {
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
-    >,
+    >
   ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     const entityCompanionDefinition = computeIfAbsent(
       this.companionDefinitionMap,
       entityClass.name,
-      () => entityClass.defineCompanionDefinition(),
+      () => entityClass.defineCompanionDefinition()
     );
     const tableDataCoordinator = this.getTableDataCoordinatorForEntity(
       entityCompanionDefinition.entityConfiguration,
-      entityClass.name,
+      entityClass.name
     );
     return computeIfAbsent(this.companionMap, entityClass.name, () => {
       return new EntityCompanion(
         this,
         entityCompanionDefinition,
         tableDataCoordinator,
-        this.metricsAdapter,
+        this.metricsAdapter
       );
     });
   }
 
   getQueryContextProviderForDatabaseAdaptorFlavor(
-    databaseAdapterFlavor: DatabaseAdapterFlavor,
+    databaseAdapterFlavor: DatabaseAdapterFlavor
   ): EntityQueryContextProvider {
     const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors.get(databaseAdapterFlavor);
     invariant(
       entityDatabaseAdapterFlavor,
-      `No database adaptor configuration found for flavor: ${databaseAdapterFlavor}`,
+      `No database adaptor configuration found for flavor: ${databaseAdapterFlavor}`
     );
 
     return entityDatabaseAdapterFlavor.queryContextProvider;
@@ -211,23 +219,23 @@ export default class EntityCompanionProvider {
 
   private getTableDataCoordinatorForEntity<TFields extends Record<string, any>>(
     entityConfiguration: EntityConfiguration<TFields>,
-    entityClassName: string,
+    entityClassName: string
   ): EntityTableDataCoordinator<TFields> {
     return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration.tableName, () => {
       const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors.get(
-        entityConfiguration.databaseAdapterFlavor,
+        entityConfiguration.databaseAdapterFlavor
       );
       invariant(
         entityDatabaseAdapterFlavor,
-        `No database adaptor configuration found for flavor: ${entityConfiguration.databaseAdapterFlavor}`,
+        `No database adaptor configuration found for flavor: ${entityConfiguration.databaseAdapterFlavor}`
       );
 
       const entityCacheAdapterFlavor = this.cacheAdapterFlavors.get(
-        entityConfiguration.cacheAdapterFlavor,
+        entityConfiguration.cacheAdapterFlavor
       );
       invariant(
         entityCacheAdapterFlavor,
-        `No cache adaptor configuration found for flavor: ${entityConfiguration.cacheAdapterFlavor}`,
+        `No cache adaptor configuration found for flavor: ${entityConfiguration.cacheAdapterFlavor}`
       );
 
       return new EntityTableDataCoordinator(
@@ -236,7 +244,7 @@ export default class EntityCompanionProvider {
         entityCacheAdapterFlavor.cacheAdapterProvider,
         entityDatabaseAdapterFlavor.queryContextProvider,
         this.metricsAdapter,
-        entityClassName,
+        entityClassName
       );
     });
   }
