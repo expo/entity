@@ -463,6 +463,7 @@ describe(EntityMutatorFactory, () => {
         TestEntity,
         keyof TestFields
       > = {
+        afterCreate: [new TestMutationTrigger()],
         afterAll: [new TestMutationTrigger()],
       };
 
@@ -698,29 +699,44 @@ describe(EntityMutatorFactory, () => {
       );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
+      const globalMutationTriggers: EntityMutationTriggerConfiguration<
+        TestFields,
+        string,
+        ViewerContext,
+        TestEntity,
+        keyof TestFields
+      > = {
+        afterUpdate: [new TestMutationTrigger()],
+        afterAll: [new TestMutationTrigger()],
+      };
+
       const id1 = uuidv4();
       const id2 = uuidv4();
       const { mutationTriggers, entityMutatorFactory, entityLoaderFactory } =
-        createEntityMutatorFactory([
-          {
-            customIdField: id1,
-            stringField: 'huh',
-            testIndexedField: '3',
-            intField: 3,
-            dateField: new Date(),
-            nullableField: null,
-          },
-          {
-            customIdField: id2,
-            stringField: 'huh',
-            testIndexedField: '4',
-            intField: 3,
-            dateField: new Date(),
-            nullableField: null,
-          },
-        ]);
+        createEntityMutatorFactory(
+          [
+            {
+              customIdField: id1,
+              stringField: 'huh',
+              testIndexedField: '3',
+              intField: 3,
+              dateField: new Date(),
+              nullableField: null,
+            },
+            {
+              customIdField: id2,
+              stringField: 'huh',
+              testIndexedField: '4',
+              intField: 3,
+              dateField: new Date(),
+              nullableField: null,
+            },
+          ],
+          globalMutationTriggers
+        );
 
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
+      const globalTriggerSpies = setUpMutationTriggerSpies(globalMutationTriggers);
 
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
@@ -744,6 +760,17 @@ describe(EntityMutatorFactory, () => {
           beforeDelete: false,
           afterDelete: false,
         },
+        {
+          type: EntityMutationType.UPDATE,
+          previousValue: existingEntity,
+          cascadingDeleteCause: null,
+        }
+      );
+
+      verifyTriggerCounts(
+        viewerContext,
+        globalTriggerSpies,
+        {},
         {
           type: EntityMutationType.UPDATE,
           previousValue: existingEntity,
@@ -968,20 +995,35 @@ describe(EntityMutatorFactory, () => {
       );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
+      const globalMutationTriggers: EntityMutationTriggerConfiguration<
+        TestFields,
+        string,
+        ViewerContext,
+        TestEntity,
+        keyof TestFields
+      > = {
+        afterDelete: [new TestMutationTrigger()],
+        afterAll: [new TestMutationTrigger()],
+      };
+
       const id1 = uuidv4();
       const { mutationTriggers, entityMutatorFactory, entityLoaderFactory } =
-        createEntityMutatorFactory([
-          {
-            customIdField: id1,
-            stringField: 'huh',
-            testIndexedField: '3',
-            intField: 3,
-            dateField: new Date(),
-            nullableField: null,
-          },
-        ]);
+        createEntityMutatorFactory(
+          [
+            {
+              customIdField: id1,
+              stringField: 'huh',
+              testIndexedField: '3',
+              intField: 3,
+              dateField: new Date(),
+              nullableField: null,
+            },
+          ],
+          globalMutationTriggers
+        );
 
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
+      const globalTriggerSpies = setUpMutationTriggerSpies(globalMutationTriggers);
 
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
@@ -1002,6 +1044,13 @@ describe(EntityMutatorFactory, () => {
           beforeDelete: true,
           afterDelete: true,
         },
+        { type: EntityMutationType.DELETE, cascadingDeleteCause: null }
+      );
+
+      verifyTriggerCounts(
+        viewerContext,
+        globalTriggerSpies,
+        {},
         { type: EntityMutationType.DELETE, cascadingDeleteCause: null }
       );
     });
