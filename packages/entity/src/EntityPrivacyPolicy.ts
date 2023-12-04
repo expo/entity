@@ -98,34 +98,63 @@ export default abstract class EntityPrivacyPolicy<
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
 > {
-  protected readonly createRules: readonly PrivacyPolicyRule<
+  protected abstract getCreateRules?(): readonly PrivacyPolicyRule<
     TFields,
     TID,
     TViewerContext,
     TEntity,
     TSelectedFields
-  >[] = [];
-  protected readonly readRules: readonly PrivacyPolicyRule<
+  >[];
+  protected abstract getReadRules?(): readonly PrivacyPolicyRule<
     TFields,
     TID,
     TViewerContext,
     TEntity,
     TSelectedFields
-  >[] = [];
-  protected readonly updateRules: readonly PrivacyPolicyRule<
+  >[];
+  protected abstract getUpdateRules?(): readonly PrivacyPolicyRule<
     TFields,
     TID,
     TViewerContext,
     TEntity,
     TSelectedFields
-  >[] = [];
-  protected readonly deleteRules: readonly PrivacyPolicyRule<
+  >[];
+  protected abstract getDeleteRules?(): readonly PrivacyPolicyRule<
     TFields,
     TID,
     TViewerContext,
     TEntity,
     TSelectedFields
-  >[] = [];
+  >[];
+
+  private createRules: readonly PrivacyPolicyRule<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >[] = this.getCreateRules ? this.getCreateRules() : [];
+  private readRules: readonly PrivacyPolicyRule<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >[] = this.getReadRules ? this.getReadRules() : [];
+  private updateRules: readonly PrivacyPolicyRule<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >[] = this.getUpdateRules ? this.getUpdateRules() : [];
+  private deleteRules: readonly PrivacyPolicyRule<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >[] = this.getDeleteRules ? this.getDeleteRules() : [];
 
   /**
    * Get the privacy policy evaluation mode and deny handler for this policy.
