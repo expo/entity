@@ -51,9 +51,8 @@ export default interface EntityMutationTriggerConfiguration<
   afterAll?: EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[];
 
   /**
-   * Trigger set that runs after committing the transaction unless one is supplied
-   * after any mutation (create, update, delete). If the call to the mutation is wrapped in a transaction,
-   * this too will be within the transaction.
+   * Trigger set that runs after committing the mutation transaction. If the call to the mutation is wrapped in a transaction, these
+   * will be run after the wrapping transaction is completed.
    */
   afterCommit?: EntityNonTransactionalMutationTrigger<
     TFields,
@@ -65,9 +64,8 @@ export default interface EntityMutationTriggerConfiguration<
 }
 
 /**
- * A trigger is a way to specify entity mutation operation side-effects that run within the
- * same transaction as the mutation itself. The one exception is afterCommit, which will run within
- * the transaction if a transaction is supplied.
+ * A transactional trigger is a way to specify entity mutation operation side-effects that run within the
+ * same transaction as the mutation itself.
  */
 export abstract class EntityMutationTrigger<
   TFields extends object,
@@ -86,7 +84,7 @@ export abstract class EntityMutationTrigger<
 
 /**
  * A non-transactional trigger is like a EntityMutationTrigger but used for afterCommit triggers
- * since they explicitly occur outside of the transaction.
+ * since they run after the transaction is committed.
  */
 export abstract class EntityNonTransactionalMutationTrigger<
   TFields extends object,
