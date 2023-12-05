@@ -1,4 +1,9 @@
-import { CacheStatus, ViewerContext } from '@expo/entity';
+import {
+  CacheAdapterFlavor,
+  CacheAdapterFlavorDefinition,
+  CacheStatus,
+  ViewerContext,
+} from '@expo/entity';
 import { v4 as uuidv4 } from 'uuid';
 
 import GenericLocalMemoryCacher from '../GenericLocalMemoryCacher';
@@ -6,16 +11,13 @@ import LocalMemoryCacheAdapterProvider from '../LocalMemoryCacheAdapterProvider'
 import LocalMemoryTestEntity from '../testfixtures/LocalMemoryTestEntity';
 import {
   createLocalMemoryTestEntityCompanionProvider,
-  createNoopLocalMemoryIntegrationTestEntityCompanionProvider,
+  createNoOpLocalMemoryIntegrationTestEntityCompanionProvider,
 } from '../testfixtures/createLocalMemoryTestEntityCompanionProvider';
 
 describe(GenericLocalMemoryCacher, () => {
-  beforeEach(async () => {
-    LocalMemoryCacheAdapterProvider['localMemoryCacheAdapterMap'].clear();
-  });
-
   it('has correct caching behavior', async () => {
-    const viewerContext = new ViewerContext(createLocalMemoryTestEntityCompanionProvider());
+    const entityCompanionProvider = createLocalMemoryTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(entityCompanionProvider);
     const genericCacher =
       viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)[
         'tableDataCoordinator'
@@ -33,7 +35,13 @@ describe(GenericLocalMemoryCacher, () => {
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
 
-    const entitySpecificGenericCacher = LocalMemoryCacheAdapterProvider[
+    const localMemoryCacheAdapterProvider = (
+      entityCompanionProvider['cacheAdapterFlavors'] as ReadonlyMap<
+        CacheAdapterFlavor,
+        CacheAdapterFlavorDefinition
+      >
+    ).get('local-memory')!.cacheAdapterProvider as LocalMemoryCacheAdapterProvider;
+    const entitySpecificGenericCacher = localMemoryCacheAdapterProvider[
       'localMemoryCacheAdapterMap'
     ].get(
       viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)
@@ -82,50 +90,9 @@ describe(GenericLocalMemoryCacher, () => {
     expect(cachedValueMiss).toMatchObject({ status: CacheStatus.MISS });
   });
 
-  it('shares the cache between different requests', async () => {
-    const genericLocalMemoryCacherLoadManySpy = jest.spyOn(
-      GenericLocalMemoryCacher.prototype as unknown as any,
-      'loadManyAsync'
-    );
-    const viewerContext = new ViewerContext(createLocalMemoryTestEntityCompanionProvider());
-
-    const date = new Date();
-    const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
-      .setField('name', 'blah')
-      .setField('dateField', date)
-      .enforceCreateAsync();
-
-    // loading an entity should put it in cache
-    await LocalMemoryTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(entity1Created.getID());
-
-    // load entity with a different request
-    const viewerContext2 = new ViewerContext(createLocalMemoryTestEntityCompanionProvider());
-    const entity1WithVc2 = await LocalMemoryTestEntity.loader(viewerContext2)
-      .enforcing()
-      .loadByIDAsync(entity1Created.getID());
-
-    const genericCacher =
-      viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)[
-        'tableDataCoordinator'
-      ]['cacheAdapter']['genericCacher'];
-    const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
-    expect(entity1WithVc2.getAllFields()).toMatchObject({
-      id: entity1WithVc2.getID(),
-      name: 'blah',
-      dateField: date,
-    });
-    expect(genericLocalMemoryCacherLoadManySpy).toBeCalledWith([
-      cacheKeyMaker('id', entity1WithVc2.getID()),
-    ]);
-    expect(genericLocalMemoryCacherLoadManySpy).toBeCalledTimes(2);
-  });
-
   it('respects the parameters of a noop cache', async () => {
-    const viewerContext = new ViewerContext(
-      createNoopLocalMemoryIntegrationTestEntityCompanionProvider()
-    );
+    const entityCompanionProvider = createNoOpLocalMemoryIntegrationTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(entityCompanionProvider);
     const genericCacher =
       viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)[
         'tableDataCoordinator'
@@ -143,7 +110,13 @@ describe(GenericLocalMemoryCacher, () => {
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
 
-    const entitySpecificGenericCacher = LocalMemoryCacheAdapterProvider[
+    const localMemoryCacheAdapterProvider = (
+      entityCompanionProvider['cacheAdapterFlavors'] as ReadonlyMap<
+        CacheAdapterFlavor,
+        CacheAdapterFlavorDefinition
+      >
+    ).get('local-memory')!.cacheAdapterProvider as LocalMemoryCacheAdapterProvider;
+    const entitySpecificGenericCacher = localMemoryCacheAdapterProvider[
       'localMemoryCacheAdapterMap'
     ].get(
       viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)

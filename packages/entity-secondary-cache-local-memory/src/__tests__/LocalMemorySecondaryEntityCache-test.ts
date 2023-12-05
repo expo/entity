@@ -122,7 +122,7 @@ export const createTestEntityCompanionProvider = (
       [
         'local-memory',
         {
-          cacheAdapterProvider: LocalMemoryCacheAdapterProvider.getProvider(),
+          cacheAdapterProvider: LocalMemoryCacheAdapterProvider.createProviderWithOptions(),
         },
       ],
     ])
