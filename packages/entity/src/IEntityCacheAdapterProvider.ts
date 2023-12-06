@@ -7,7 +7,7 @@ import IEntityCacheAdapter from './IEntityCacheAdapter';
  */
 export default interface IEntityCacheAdapterProvider {
   /**
-   * Vend a cache adapter.
+   * Vend a cache adapter for an entity configuration.
    */
   getCacheAdapter<TFields>(
     entityConfiguration: EntityConfiguration<TFields>

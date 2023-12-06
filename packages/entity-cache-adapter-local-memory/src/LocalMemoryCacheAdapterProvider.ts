@@ -8,23 +8,32 @@ import {
 
 import GenericLocalMemoryCacher, { LocalMemoryCache } from './GenericLocalMemoryCacher';
 
+/**
+ * Vends local memory cache adapters. An instance of this class may be shared across requests to
+ * share the local memory cache.
+ */
 export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdapterProvider {
-  // local memory cache adapters should be shared/reused across requests
-  private static localMemoryCacheAdapterMap = new Map<string, GenericEntityCacheAdapter<any>>();
-
-  static getNoOpProvider(): IEntityCacheAdapterProvider {
+  /**
+   * @returns a no-op local memory cache adapter provider, or one that doesn't cache locally.
+   */
+  static createNoOpProvider(): IEntityCacheAdapterProvider {
     return new LocalMemoryCacheAdapterProvider(<TFields>() =>
       GenericLocalMemoryCacher.createNoOpCache<TFields>()
     );
   }
 
-  static getProvider(
+  /**
+   * @returns a local memory cache adapter provider configured with the supplied options.
+   */
+  static createProviderWithOptions(
     options: { maxSize?: number; ttlSeconds?: number } = {}
   ): IEntityCacheAdapterProvider {
     return new LocalMemoryCacheAdapterProvider(<TFields>() =>
       GenericLocalMemoryCacher.createLRUCache<TFields>(options)
     );
   }
+
+  private localMemoryCacheAdapterMap = new Map<string, GenericEntityCacheAdapter<any>>();
 
   private constructor(
     private readonly localMemoryCacheCreator: <TFields>() => LocalMemoryCache<TFields>
@@ -33,15 +42,11 @@ export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdap
   public getCacheAdapter<TFields>(
     entityConfiguration: EntityConfiguration<TFields>
   ): IEntityCacheAdapter<TFields> {
-    return computeIfAbsent(
-      LocalMemoryCacheAdapterProvider.localMemoryCacheAdapterMap,
-      entityConfiguration.tableName,
-      () => {
-        const localMemoryCache = this.localMemoryCacheCreator<TFields>();
-        return new GenericEntityCacheAdapter(
-          new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache)
-        );
-      }
-    );
+    return computeIfAbsent(this.localMemoryCacheAdapterMap, entityConfiguration.tableName, () => {
+      const localMemoryCache = this.localMemoryCacheCreator<TFields>();
+      return new GenericEntityCacheAdapter(
+        new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache)
+      );
+    });
   }
 }
