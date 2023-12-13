@@ -139,6 +139,7 @@ export default class EntityCompanionProvider {
    * @param metricsAdapter - An IEntityMetricsAdapter for collecting metrics on this instance
    * @param databaseAdapterFlavors - Database adapter configurations for this instance
    * @param cacheAdapterFlavors - Cache adapter configurations for this instance
+   * @param globalMutationTriggers - An optional list of EntityMutationTrigger for all entities.
    */
   constructor(
     public readonly metricsAdapter: IEntityMetricsAdapter,
@@ -146,7 +147,14 @@ export default class EntityCompanionProvider {
       DatabaseAdapterFlavor,
       DatabaseAdapterFlavorDefinition
     >,
-    private cacheAdapterFlavors: ReadonlyMap<CacheAdapterFlavor, CacheAdapterFlavorDefinition>
+    private cacheAdapterFlavors: ReadonlyMap<CacheAdapterFlavor, CacheAdapterFlavorDefinition>,
+    readonly globalMutationTriggers: EntityMutationTriggerConfiguration<
+      any,
+      any,
+      any,
+      any,
+      any
+    > = {}
   ) {}
 
   /**
