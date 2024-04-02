@@ -1,5 +1,4 @@
-import { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
-import ViewerContext from '../ViewerContext';
+import { EntityQueryContext, EntityTransactionalQueryContext, ViewerContext } from '@expo/entity';
 
 export default class TestViewerContext extends ViewerContext {
   public getQueryContext(): EntityQueryContext {

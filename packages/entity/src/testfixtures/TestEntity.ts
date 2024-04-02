@@ -1,11 +1,11 @@
 import { result, Result } from '@expo/results';
 
+import TestViewerContext from './TestViewerContext';
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField, StringField, DateField, IntField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
-import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type TestFields = {
@@ -48,28 +48,28 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields>({
 export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   TestFields,
   string,
-  ViewerContext,
+  TestViewerContext,
   TestEntity
 > {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, TestViewerContext, TestEntity>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, TestViewerContext, TestEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, TestViewerContext, TestEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, TestViewerContext, TestEntity>(),
   ];
 }
 
-export default class TestEntity extends Entity<TestFields, string, ViewerContext> {
+export default class TestEntity extends Entity<TestFields, string, TestViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
-    ViewerContext,
+    TestViewerContext,
     TestEntity,
     TestEntityPrivacyPolicy
   > {
@@ -84,7 +84,10 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
     return 'Hello World!';
   }
 
-  static async hello(viewerContext: ViewerContext, testValue: string): Promise<Result<TestEntity>> {
+  static async hello(
+    viewerContext: TestViewerContext,
+    testValue: string
+  ): Promise<Result<TestEntity>> {
     const fields = {
       customIdField: testValue,
       testIndexedField: 'hello',
@@ -103,15 +106,15 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
     );
   }
 
-  static async returnError(_viewerContext: ViewerContext): Promise<Result<TestEntity>> {
+  static async returnError(_viewerContext: TestViewerContext): Promise<Result<TestEntity>> {
     return result(new Error('return entity'));
   }
 
-  static async throwError(_viewerContext: ViewerContext): Promise<Result<TestEntity>> {
+  static async throwError(_viewerContext: TestViewerContext): Promise<Result<TestEntity>> {
     throw new Error('threw entity');
   }
 
-  static async nonResult(_viewerContext: ViewerContext, testValue: string): Promise<string> {
+  static async nonResult(_viewerContext: TestViewerContext, testValue: string): Promise<string> {
     return testValue;
   }
 }

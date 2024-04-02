@@ -25,13 +25,19 @@ describe(GenericLocalMemoryCacher, () => {
     const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
 
     const date = new Date();
-    const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
+    const entity1Created = await LocalMemoryTestEntity.creator(
+      viewerContext,
+      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
       .setField('name', 'blah')
       .setField('dateField', date)
       .enforceCreateAsync();
 
     // loading an entity should put it in cache
-    const entity1 = await LocalMemoryTestEntity.loader(viewerContext)
+    const entity1 = await LocalMemoryTestEntity.loader(
+      viewerContext,
+      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
 
@@ -63,9 +69,10 @@ describe(GenericLocalMemoryCacher, () => {
     // simulate non existent db fetch, should write negative result ('') to cache
     const nonExistentId = uuidv4();
 
-    const entityNonExistentResult = await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(
-      nonExistentId
-    );
+    const entityNonExistentResult = await LocalMemoryTestEntity.loader(
+      viewerContext,
+      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+    ).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedResult = await entitySpecificGenericCacher.loadManyAsync([
@@ -77,12 +84,16 @@ describe(GenericLocalMemoryCacher, () => {
 
     // load again through entities framework to ensure it reads negative result
     const entityNonExistentResult2 = await LocalMemoryTestEntity.loader(
-      viewerContext
+      viewerContext,
+      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
     ).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly
-    await LocalMemoryTestEntity.loader(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
+    await LocalMemoryTestEntity.loader(
+      viewerContext,
+      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+    ).invalidateFieldsAsync(entity1.getAllFields());
     const cachedResultMiss = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),
     ]);
@@ -100,13 +111,19 @@ describe(GenericLocalMemoryCacher, () => {
     const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
 
     const date = new Date();
-    const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
+    const entity1Created = await LocalMemoryTestEntity.creator(
+      viewerContext,
+      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
       .setField('name', 'blah')
       .setField('dateField', date)
       .enforceCreateAsync();
 
     // loading an entity will try to put it in cache but it's a noop cache, so it should be a miss
-    const entity1 = await LocalMemoryTestEntity.loader(viewerContext)
+    const entity1 = await LocalMemoryTestEntity.loader(
+      viewerContext,
+      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
 
@@ -133,9 +150,10 @@ describe(GenericLocalMemoryCacher, () => {
     // a non existent db fetch should try to write negative result ('') but it's a noop cache, so it should be a miss
     const nonExistentId = uuidv4();
 
-    const entityNonExistentResult = await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(
-      nonExistentId
-    );
+    const entityNonExistentResult = await LocalMemoryTestEntity.loader(
+      viewerContext,
+      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+    ).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedResult = await entitySpecificGenericCacher.loadManyAsync([

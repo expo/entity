@@ -469,36 +469,54 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
-      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
-      const child = await ChildEntity.creator(viewerContext)
+      const parent = await ParentEntity.creator(
+        viewerContext,
+        viewerContext.getQueryContext()
+      ).enforceCreateAsync();
+      const child = await ChildEntity.creator(viewerContext, viewerContext.getQueryContext())
         .setField('parent_id', parent.getID())
         .enforceCreateAsync();
-      const grandchild = await GrandChildEntity.creator(viewerContext)
+      const grandchild = await GrandChildEntity.creator(
+        viewerContext,
+        viewerContext.getQueryContext()
+      )
         .setField('parent_id', child.getID())
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(parent.getID())
       ).resolves.not.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(child.getID())
       ).resolves.not.toBeNull();
       await expect(
-        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
+        GrandChildEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(grandchild.getID())
       ).resolves.not.toBeNull();
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
-      await ParentEntity.enforceDeleteAsync(parent);
+      await ParentEntity.enforceDeleteAsync(parent, viewerContext.getQueryContext());
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(parent.getID())
       ).resolves.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(child.getID())
       ).resolves.toBeNull();
       await expect(
-        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
+        GrandChildEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(grandchild.getID())
       ).resolves.toBeNull();
 
       // two calls for each trigger, one beforeDelete, one afterDelete
@@ -587,38 +605,55 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
-      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
-      const child = await ChildEntity.creator(viewerContext)
+      const parent = await ParentEntity.creator(
+        viewerContext,
+        viewerContext.getQueryContext()
+      ).enforceCreateAsync();
+      const child = await ChildEntity.creator(viewerContext, viewerContext.getQueryContext())
         .setField('parent_id', parent.getID())
         .enforceCreateAsync();
-      const grandchild = await GrandChildEntity.creator(viewerContext)
+      const grandchild = await GrandChildEntity.creator(
+        viewerContext,
+        viewerContext.getQueryContext()
+      )
         .setField('parent_id', child.getID())
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(parent.getID())
       ).resolves.not.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(child.getID())
       ).resolves.not.toBeNull();
       await expect(
-        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
+        GrandChildEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(grandchild.getID())
       ).resolves.not.toBeNull();
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
-      await ParentEntity.enforceDeleteAsync(parent);
+      await ParentEntity.enforceDeleteAsync(parent, viewerContext.getQueryContext());
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(parent.getID())
       ).resolves.toBeNull();
 
-      const loadedChild = await ChildEntity.loader(viewerContext)
+      const loadedChild = await ChildEntity.loader(viewerContext, viewerContext.getQueryContext())
         .enforcing()
         .loadByIDAsync(child.getID());
       expect(loadedChild.getField('parent_id')).toBeNull();
 
-      const loadedGrandchild = await GrandChildEntity.loader(viewerContext)
+      const loadedGrandchild = await GrandChildEntity.loader(
+        viewerContext,
+        viewerContext.getQueryContext()
+      )
         .enforcing()
         .loadByIDAsync(grandchild.getID());
       expect(loadedGrandchild.getField('parent_id')).toEqual(loadedChild.getID());
@@ -698,24 +733,32 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
-      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
-      const child = await ChildEntity.creator(viewerContext)
+      const parent = await ParentEntity.creator(
+        viewerContext,
+        viewerContext.getQueryContext()
+      ).enforceCreateAsync();
+      const child = await ChildEntity.creator(viewerContext, viewerContext.getQueryContext())
         .setField('parent_id', parent.getID())
         .enforceCreateAsync();
-      const grandchild = await GrandChildEntity.creator(viewerContext)
+      const grandchild = await GrandChildEntity.creator(
+        viewerContext,
+        viewerContext.getQueryContext()
+      )
         .setField('parent_id', child.getID())
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(parent.getID())
       ).resolves.not.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext)
+        ChildEntity.loader(viewerContext, viewerContext.getQueryContext())
           .enforcing()
           .loadByFieldEqualingAsync('parent_id', parent.getID())
       ).resolves.not.toBeNull();
       await expect(
-        GrandChildEntity.loader(viewerContext)
+        GrandChildEntity.loader(viewerContext, viewerContext.getQueryContext())
           .enforcing()
           .loadByFieldEqualingAsync('parent_id', child.getID())
       ).resolves.not.toBeNull();
@@ -739,7 +782,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(grandChildCachedBefore.get(child.getID())?.status).toEqual(CacheStatus.HIT);
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
-      await ParentEntity.enforceDeleteAsync(parent);
+      await ParentEntity.enforceDeleteAsync(parent, viewerContext.getQueryContext());
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       const childCachedAfter = await childCacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
@@ -751,15 +794,20 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(grandChildCachedAfter.get(child.getID())?.status).toEqual(CacheStatus.HIT);
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(parent.getID())
       ).resolves.toBeNull();
 
-      const loadedChild = await ChildEntity.loader(viewerContext)
+      const loadedChild = await ChildEntity.loader(viewerContext, viewerContext.getQueryContext())
         .enforcing()
         .loadByIDAsync(child.getID());
       expect(loadedChild).not.toBeNull();
 
-      const loadedGrandchild = await GrandChildEntity.loader(viewerContext)
+      const loadedGrandchild = await GrandChildEntity.loader(
+        viewerContext,
+        viewerContext.getQueryContext()
+      )
         .enforcing()
         .loadByIDAsync(grandchild.getID());
       expect(loadedGrandchild.getField('parent_id')).toEqual(loadedChild.getID());
@@ -831,24 +879,32 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
-      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
-      const child = await ChildEntity.creator(viewerContext)
+      const parent = await ParentEntity.creator(
+        viewerContext,
+        viewerContext.getQueryContext()
+      ).enforceCreateAsync();
+      const child = await ChildEntity.creator(viewerContext, viewerContext.getQueryContext())
         .setField('parent_id', parent.getID())
         .enforceCreateAsync();
-      const grandchild = await GrandChildEntity.creator(viewerContext)
+      const grandchild = await GrandChildEntity.creator(
+        viewerContext,
+        viewerContext.getQueryContext()
+      )
         .setField('parent_id', child.getID())
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(parent.getID())
       ).resolves.not.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext)
+        ChildEntity.loader(viewerContext, viewerContext.getQueryContext())
           .enforcing()
           .loadByFieldEqualingAsync('parent_id', parent.getID())
       ).resolves.not.toBeNull();
       await expect(
-        GrandChildEntity.loader(viewerContext)
+        GrandChildEntity.loader(viewerContext, viewerContext.getQueryContext())
           .enforcing()
           .loadByFieldEqualingAsync('parent_id', child.getID())
       ).resolves.not.toBeNull();
@@ -872,7 +928,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(grandChildCachedBefore.get(child.getID())?.status).toEqual(CacheStatus.HIT);
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
-      await ParentEntity.enforceDeleteAsync(parent);
+      await ParentEntity.enforceDeleteAsync(parent, viewerContext.getQueryContext());
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       const childCachedAfter = await childCacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
@@ -884,13 +940,19 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(grandChildCachedAfter.get(child.getID())?.status).toEqual(CacheStatus.MISS);
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(parent.getID())
       ).resolves.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(child.getID())
       ).resolves.not.toBeNull();
       await expect(
-        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
+        GrandChildEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(grandchild.getID())
       ).resolves.not.toBeNull();
 
       // two calls for each trigger, one beforeDelete, one afterDelete

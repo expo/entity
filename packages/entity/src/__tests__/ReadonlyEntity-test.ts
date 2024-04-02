@@ -3,15 +3,15 @@ import { instance, mock } from 'ts-mockito';
 import EntityAssociationLoader from '../EntityAssociationLoader';
 import EntityLoader from '../EntityLoader';
 import ReadonlyEntity from '../ReadonlyEntity';
-import ViewerContext from '../ViewerContext';
 import SimpleTestEntity from '../testfixtures/SimpleTestEntity';
 import TestEntity from '../testfixtures/TestEntity';
+import TestViewerContext from '../testfixtures/TestViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 describe(ReadonlyEntity, () => {
   describe('getID', () => {
     it('returns correct value', () => {
-      const viewerContext = instance(mock(ViewerContext));
+      const viewerContext = instance(mock(TestViewerContext));
       const data = {
         id: 'what',
       };
@@ -27,7 +27,7 @@ describe(ReadonlyEntity, () => {
 
   describe('toString', () => {
     it('returns correct value', () => {
-      const viewerContext = instance(mock(ViewerContext));
+      const viewerContext = instance(mock(TestViewerContext));
       const data = {
         id: 'what',
       };
@@ -43,7 +43,7 @@ describe(ReadonlyEntity, () => {
 
   describe('getUniqueIdentifier', () => {
     it('returns a different value for two different entities of the same type', () => {
-      const viewerContext = instance(mock(ViewerContext));
+      const viewerContext = instance(mock(TestViewerContext));
       const testEntity = new SimpleTestEntity({
         viewerContext,
         id: '1',
@@ -68,8 +68,8 @@ describe(ReadonlyEntity, () => {
     });
 
     it('returns the same value even if different viewer context', () => {
-      const viewerContext = instance(mock(ViewerContext));
-      const viewerContext2 = instance(mock(ViewerContext));
+      const viewerContext = instance(mock(TestViewerContext));
+      const viewerContext2 = instance(mock(TestViewerContext));
       const data = { id: '1' };
       const testEntity = new SimpleTestEntity({
         viewerContext,
@@ -87,7 +87,7 @@ describe(ReadonlyEntity, () => {
     });
 
     it('returns a different value for different entities even if same ID', () => {
-      const viewerContext = instance(mock(ViewerContext));
+      const viewerContext = instance(mock(TestViewerContext));
       const data = { id: '1' };
       const testEntity = new SimpleTestEntity({
         viewerContext,
@@ -114,7 +114,7 @@ describe(ReadonlyEntity, () => {
   });
 
   it('cannot be created without an ID', () => {
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const dataWithoutID = {};
     expect(() => {
       // eslint-disable-next-line no-new
@@ -128,7 +128,7 @@ describe(ReadonlyEntity, () => {
   });
 
   it('returns correct viewerCo}ntext from instantiation', () => {
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const data = {
       id: 'what',
     };
@@ -142,7 +142,7 @@ describe(ReadonlyEntity, () => {
   });
 
   it('returns correct data for field getters', () => {
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const data = {
       id: 'what',
     };
@@ -159,7 +159,7 @@ describe(ReadonlyEntity, () => {
   describe('associationLoader', () => {
     it('returns a new association loader', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
+      const viewerContext = new TestViewerContext(companionProvider);
       const data = {
         id: 'what',
       };
@@ -176,8 +176,10 @@ describe(ReadonlyEntity, () => {
   describe('loader', () => {
     it('creates a new EntityLoader', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.loader(viewerContext)).toBeInstanceOf(EntityLoader);
+      const viewerContext = new TestViewerContext(companionProvider);
+      expect(
+        SimpleTestEntity.loader(viewerContext, viewerContext.getQueryContext())
+      ).toBeInstanceOf(EntityLoader);
     });
   });
 });

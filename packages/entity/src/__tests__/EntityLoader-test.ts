@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { OrderByOrdering } from '../EntityDatabaseAdapter';
 import EntityLoader from '../EntityLoader';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import EntityDataManager from '../internal/EntityDataManager';
 import ReadThroughEntityCache from '../internal/ReadThroughEntityCache';
@@ -15,6 +14,7 @@ import TestEntity, {
   TestEntityPrivacyPolicy,
   testEntityConfiguration,
 } from '../testfixtures/TestEntity';
+import TestViewerContext from '../testfixtures/TestViewerContext';
 import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapter';
 import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
 import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider';
@@ -22,7 +22,7 @@ import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider'
 describe(EntityLoader, () => {
   it('loads entities', async () => {
     const dateToInsert = new Date();
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
@@ -117,7 +117,7 @@ describe(EntityLoader, () => {
   it('loads entities with loadManyByFieldEqualityConjunction', async () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
@@ -216,7 +216,7 @@ describe(EntityLoader, () => {
   it('loads entities with loadFirstByFieldEqualityConjunction', async () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
@@ -313,7 +313,7 @@ describe(EntityLoader, () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
 
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
@@ -374,7 +374,7 @@ describe(EntityLoader, () => {
   });
 
   it('invalidates upon invalidate one', async () => {
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
@@ -402,7 +402,7 @@ describe(EntityLoader, () => {
   });
 
   it('invalidates upon invalidate by field', async () => {
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
@@ -429,7 +429,7 @@ describe(EntityLoader, () => {
   });
 
   it('invalidates upon invalidate by entity', async () => {
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
@@ -460,7 +460,7 @@ describe(EntityLoader, () => {
   });
 
   it('returns error result when not allowed', async () => {
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
@@ -506,7 +506,7 @@ describe(EntityLoader, () => {
   });
 
   it('throws upon database adapter error', async () => {
-    const viewerContext = instance(mock(ViewerContext));
+    const viewerContext = instance(mock(TestViewerContext));
     const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
