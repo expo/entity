@@ -55,7 +55,13 @@ describe(EntityFieldDefinition, () => {
 describeFieldTestCase(new StringField({ columnName: 'wat' }), ['hello', ''], [1, true, {}, [[]]]);
 describeFieldTestCase(
   new UUIDField({ columnName: 'wat' }),
-  [uuidv1(), uuidv3('wat', uuidv3.DNS), uuidv4(), uuidv5('wat', uuidv5.DNS)],
+  [
+    uuidv1(),
+    uuidv3('wat', uuidv3.DNS),
+    uuidv4(),
+    uuidv5('wat', uuidv5.DNS),
+    /* UUIDv7 */ '018ebfda-dc80-782d-a891-22a0aa057d52',
+  ],
   [uuidv4().replace('-', ''), '', 'hello']
 );
 describeFieldTestCase(new DateField({ columnName: 'wat' }), [new Date()], [Date.now()]);
