@@ -1,6 +1,8 @@
-import { validate as validateUUID } from 'uuid';
-
 import { EntityFieldDefinition } from './EntityFieldDefinition';
+
+// Use our own regex since the `uuid` package doesn't support validating UUIDv6/7/8 yet
+const UUID_REGEX =
+  /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/i;
 
 /**
  * EntityFieldDefinition for a column with a JS string type.
@@ -17,7 +19,7 @@ export class StringField extends EntityFieldDefinition<string> {
  */
 export class UUIDField extends StringField {
   protected override validateInputValueInternal(value: string): boolean {
-    return validateUUID(value);
+    return super.validateInputValueInternal(value) && UUID_REGEX.test(value);
   }
 }
 
