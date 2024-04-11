@@ -78,7 +78,7 @@ describe(EntityDataManager, () => {
       new NoOpEntityMetricsAdapter(),
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
@@ -126,7 +126,7 @@ describe(EntityDataManager, () => {
       new NoOpEntityMetricsAdapter(),
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
@@ -174,7 +174,7 @@ describe(EntityDataManager, () => {
       new NoOpEntityMetricsAdapter(),
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
     // use second data manager to ensure that cache is hit instead of data loader
     const entityDataManager2 = new EntityDataManager(
       databaseAdapter,
@@ -218,7 +218,7 @@ describe(EntityDataManager, () => {
       new NoOpEntityMetricsAdapter(),
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
@@ -254,7 +254,7 @@ describe(EntityDataManager, () => {
       new NoOpEntityMetricsAdapter(),
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
@@ -298,7 +298,7 @@ describe(EntityDataManager, () => {
       new NoOpEntityMetricsAdapter(),
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     const objectInQuestion = objects.get(testEntityConfiguration.tableName)![1]!;
 
@@ -337,7 +337,7 @@ describe(EntityDataManager, () => {
       new NoOpEntityMetricsAdapter(),
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     const objectInQuestion = objects.get(testEntityConfiguration.tableName)![1]!;
 
@@ -415,7 +415,7 @@ describe(EntityDataManager, () => {
       new NoOpEntityMetricsAdapter(),
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyByFieldEqualityConjunctionAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
@@ -461,7 +461,7 @@ describe(EntityDataManager, () => {
       new NoOpEntityMetricsAdapter(),
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     await expect(
       entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', ['2'])
@@ -488,7 +488,7 @@ describe(EntityDataManager, () => {
       metricsAdapter,
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', ['1']);
     verify(
@@ -591,7 +591,7 @@ describe(EntityDataManager, () => {
       new NoOpEntityMetricsAdapter(),
       TestEntity.name
     );
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     await expect(
       entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'nullableField', [null as any])

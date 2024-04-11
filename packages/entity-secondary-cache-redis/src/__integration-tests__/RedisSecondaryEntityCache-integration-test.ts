@@ -79,7 +79,10 @@ describe(RedisSecondaryEntityCache, () => {
       createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
 
-    const createdEntity = await RedisTestEntity.creator(viewerContext)
+    const createdEntity = await RedisTestEntity.creator(
+      viewerContext,
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
       .setField('name', 'wat')
       .enforceCreateAsync();
 
@@ -89,7 +92,10 @@ describe(RedisSecondaryEntityCache, () => {
         genericRedisCacheContext,
         (loadParams) => `test-key-${loadParams.id}`
       ),
-      RedisTestEntity.loader(viewerContext)
+      RedisTestEntity.loader(
+        viewerContext,
+        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
     );
 
     const loadParams = { id: createdEntity.getID() };
@@ -128,7 +134,10 @@ describe(RedisSecondaryEntityCache, () => {
         genericRedisCacheContext,
         (loadParams) => `test-key-${loadParams.id}`
       ),
-      RedisTestEntity.loader(viewerContext)
+      RedisTestEntity.loader(
+        viewerContext,
+        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
     );
 
     const loadParams = { id: FAKE_ID };

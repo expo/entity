@@ -10,14 +10,20 @@ describe(NoteEntity, () => {
     const userId = uuidv4();
     const viewerContext = new UserViewerContext(companionProvider, userId);
 
-    const createdEntityResult = await NoteEntity.creator(viewerContext)
+    const createdEntityResult = await NoteEntity.creator(
+      viewerContext,
+      viewerContext.getQueryContext()
+    )
       .setField('userID', userId)
       .setField('body', 'image')
       .setField('title', 'page')
       .createAsync();
     expect(createdEntityResult.ok).toBe(true);
 
-    const createdEntityResultImpersonate = await NoteEntity.creator(viewerContext)
+    const createdEntityResultImpersonate = await NoteEntity.creator(
+      viewerContext,
+      viewerContext.getQueryContext()
+    )
       .setField('userID', uuidv4()) // a different user
       .setField('body', 'image')
       .setField('title', 'page')

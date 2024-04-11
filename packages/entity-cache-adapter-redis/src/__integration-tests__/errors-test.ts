@@ -40,7 +40,12 @@ describe(GenericRedisCacher, () => {
     );
 
     await expect(
-      RedisTestEntity.creator(vc1).setField('name', 'blah').enforceCreateAsync()
+      RedisTestEntity.creator(
+        vc1,
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
+        .setField('name', 'blah')
+        .enforceCreateAsync()
     ).rejects.toThrow(EntityCacheAdapterTransientError);
   });
 });

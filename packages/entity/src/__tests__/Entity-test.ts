@@ -4,25 +4,27 @@ import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import { CreateMutator, UpdateMutator } from '../EntityMutator';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
-import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
 import SimpleTestEntity from '../testfixtures/SimpleTestEntity';
+import TestViewerContext from '../testfixtures/TestViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 describe(Entity, () => {
   describe('creator', () => {
     it('creates a new CreateMutator', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.creator(viewerContext)).toBeInstanceOf(CreateMutator);
+      const viewerContext = new TestViewerContext(companionProvider);
+      expect(
+        SimpleTestEntity.creator(viewerContext, viewerContext.getQueryContext())
+      ).toBeInstanceOf(CreateMutator);
     });
   });
 
   describe('updater', () => {
     it('creates a new UpdateMutator', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
+      const viewerContext = new TestViewerContext(companionProvider);
       const data = {
         id: 'what',
       };
@@ -32,14 +34,16 @@ describe(Entity, () => {
         databaseFields: data,
         selectedFields: data,
       });
-      expect(SimpleTestEntity.updater(testEntity)).toBeInstanceOf(UpdateMutator);
+      expect(SimpleTestEntity.updater(testEntity, viewerContext.getQueryContext())).toBeInstanceOf(
+        UpdateMutator
+      );
     });
   });
 
   describe('canViewerUpdateAsync', () => {
     it('appropriately executes update privacy policy', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
+      const viewerContext = new TestViewerContext(companionProvider);
       const data = {
         id: 'what',
       };
@@ -49,13 +53,16 @@ describe(Entity, () => {
         databaseFields: data,
         selectedFields: data,
       });
-      const canViewerUpdate = await SimpleTestDenyDeleteEntity.canViewerUpdateAsync(testEntity);
+      const canViewerUpdate = await SimpleTestDenyDeleteEntity.canViewerUpdateAsync(
+        testEntity,
+        viewerContext.getQueryContext()
+      );
       expect(canViewerUpdate).toBe(true);
     });
 
     it('denies when policy denies', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
+      const viewerContext = new TestViewerContext(companionProvider);
       const data = {
         id: 'what',
       };
@@ -65,7 +72,10 @@ describe(Entity, () => {
         databaseFields: data,
         selectedFields: data,
       });
-      const canViewerUpdate = await SimpleTestDenyUpdateEntity.canViewerUpdateAsync(testEntity);
+      const canViewerUpdate = await SimpleTestDenyUpdateEntity.canViewerUpdateAsync(
+        testEntity,
+        viewerContext.getQueryContext()
+      );
       expect(canViewerUpdate).toBe(false);
     });
   });
@@ -73,7 +83,7 @@ describe(Entity, () => {
   describe('canViewerDeleteAsync', () => {
     it('appropriately executes update privacy policy', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
+      const viewerContext = new TestViewerContext(companionProvider);
       const data = {
         id: 'what',
       };
@@ -83,13 +93,16 @@ describe(Entity, () => {
         databaseFields: data,
         selectedFields: data,
       });
-      const canViewerDelete = await SimpleTestDenyUpdateEntity.canViewerDeleteAsync(testEntity);
+      const canViewerDelete = await SimpleTestDenyUpdateEntity.canViewerDeleteAsync(
+        testEntity,
+        viewerContext.getQueryContext()
+      );
       expect(canViewerDelete).toBe(true);
     });
 
     it('denies when policy denies', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
+      const viewerContext = new TestViewerContext(companionProvider);
       const data = {
         id: 'what',
       };
@@ -99,7 +112,10 @@ describe(Entity, () => {
         databaseFields: data,
         selectedFields: data,
       });
-      const canViewerDelete = await SimpleTestDenyDeleteEntity.canViewerDeleteAsync(testEntity);
+      const canViewerDelete = await SimpleTestDenyDeleteEntity.canViewerDeleteAsync(
+        testEntity,
+        viewerContext.getQueryContext()
+      );
       expect(canViewerDelete).toBe(false);
     });
   });
@@ -124,14 +140,14 @@ const testEntityConfiguration = new EntityConfiguration<TestEntityFields>({
 class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
   TestEntityFields,
   string,
-  ViewerContext,
+  TestViewerContext,
   SimpleTestDenyUpdateEntity
 > {
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
-      ViewerContext,
+      TestViewerContext,
       SimpleTestDenyUpdateEntity
     >(),
   ];
@@ -139,7 +155,7 @@ class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
-      ViewerContext,
+      TestViewerContext,
       SimpleTestDenyUpdateEntity
     >(),
   ];
@@ -147,7 +163,7 @@ class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysDenyPrivacyPolicyRule<
       TestEntityFields,
       string,
-      ViewerContext,
+      TestViewerContext,
       SimpleTestDenyUpdateEntity
     >(),
   ];
@@ -155,7 +171,7 @@ class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
-      ViewerContext,
+      TestViewerContext,
       SimpleTestDenyUpdateEntity
     >(),
   ];
@@ -164,14 +180,14 @@ class SimpleTestDenyUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
 class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
   TestEntityFields,
   string,
-  ViewerContext,
+  TestViewerContext,
   SimpleTestDenyDeleteEntity
 > {
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
-      ViewerContext,
+      TestViewerContext,
       SimpleTestDenyDeleteEntity
     >(),
   ];
@@ -179,7 +195,7 @@ class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
-      ViewerContext,
+      TestViewerContext,
       SimpleTestDenyDeleteEntity
     >(),
   ];
@@ -187,7 +203,7 @@ class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysAllowPrivacyPolicyRule<
       TestEntityFields,
       string,
-      ViewerContext,
+      TestViewerContext,
       SimpleTestDenyDeleteEntity
     >(),
   ];
@@ -195,17 +211,17 @@ class SimpleTestDenyDeleteEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysDenyPrivacyPolicyRule<
       TestEntityFields,
       string,
-      ViewerContext,
+      TestViewerContext,
       SimpleTestDenyDeleteEntity
     >(),
   ];
 }
 
-class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, string, ViewerContext> {
+class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, string, TestViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestEntityFields,
     string,
-    ViewerContext,
+    TestViewerContext,
     SimpleTestDenyUpdateEntity,
     SimpleTestDenyUpdateEntityPrivacyPolicy
   > {
@@ -217,11 +233,11 @@ class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, string, Viewer
   }
 }
 
-class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, string, ViewerContext> {
+class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, string, TestViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestEntityFields,
     string,
-    ViewerContext,
+    TestViewerContext,
     SimpleTestDenyDeleteEntity,
     SimpleTestDenyDeleteEntityPrivacyPolicy
   > {

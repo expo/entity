@@ -148,10 +148,7 @@ export default abstract class ReadonlyEntity<
       TMSelectedFields
     >,
     viewerContext: TMViewerContext2,
-    queryContext: EntityQueryContext = viewerContext
-      .getViewerScopedEntityCompanionForClass(this)
-      .getQueryContextProvider()
-      .getQueryContext()
+    queryContext: EntityQueryContext
   ): EntityLoader<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)

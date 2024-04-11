@@ -55,11 +55,7 @@ export default class EntityAssociationLoader<
       TAssociatedPrivacyPolicy,
       TAssociatedSelectedFields
     >,
-    queryContext: EntityQueryContext = this.entity
-      .getViewerContext()
-      .getViewerScopedEntityCompanionForClass(associatedEntityClass)
-      .getQueryContextProvider()
-      .getQueryContext()
+    queryContext: EntityQueryContext
   ): Promise<
     Result<null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity>
   > {
@@ -117,11 +113,7 @@ export default class EntityAssociationLoader<
       TAssociatedSelectedFields
     >,
     associatedEntityFieldContainingThisID: keyof Pick<TAssociatedFields, TAssociatedSelectedFields>,
-    queryContext: EntityQueryContext = this.entity
-      .getViewerContext()
-      .getViewerScopedEntityCompanionForClass(associatedEntityClass)
-      .getQueryContextProvider()
-      .getQueryContext()
+    queryContext: EntityQueryContext
   ): Promise<readonly Result<TAssociatedEntity>[]> {
     const thisID = this.entity.getID();
     const loader = this.entity
@@ -171,11 +163,7 @@ export default class EntityAssociationLoader<
       TAssociatedSelectedFields
     >,
     associatedEntityLookupByField: keyof Pick<TAssociatedFields, TAssociatedSelectedFields>,
-    queryContext: EntityQueryContext = this.entity
-      .getViewerContext()
-      .getViewerScopedEntityCompanionForClass(associatedEntityClass)
-      .getQueryContextProvider()
-      .getQueryContext()
+    queryContext: EntityQueryContext
   ): Promise<Result<TAssociatedEntity> | null> {
     const associatedFieldValue = this.entity.getField(fieldIdentifyingAssociatedEntity);
     if (!associatedFieldValue) {
@@ -228,11 +216,7 @@ export default class EntityAssociationLoader<
       TAssociatedSelectedFields
     >,
     associatedEntityLookupByField: keyof Pick<TAssociatedFields, TAssociatedSelectedFields>,
-    queryContext: EntityQueryContext = this.entity
-      .getViewerContext()
-      .getViewerScopedEntityCompanionForClass(associatedEntityClass)
-      .getQueryContextProvider()
-      .getQueryContext()
+    queryContext: EntityQueryContext
   ): Promise<readonly Result<TAssociatedEntity>[]> {
     const associatedFieldValue = this.entity.getField(fieldIdentifyingAssociatedEntity);
     if (!associatedFieldValue) {
@@ -281,7 +265,7 @@ export default class EntityAssociationLoader<
         TSelectedFields2
       >
     ],
-    queryContext?: EntityQueryContext
+    queryContext: EntityQueryContext
   ): Promise<Result<TEntity2> | null>;
 
   /**
@@ -336,7 +320,7 @@ export default class EntityAssociationLoader<
         TSelectedFields3
       >
     ],
-    queryContext?: EntityQueryContext
+    queryContext: EntityQueryContext
   ): Promise<Result<TEntity3> | null>;
 
   /**
@@ -412,7 +396,7 @@ export default class EntityAssociationLoader<
         TSelectedFields4
       >
     ],
-    queryContext?: EntityQueryContext
+    queryContext: EntityQueryContext
   ): Promise<Result<TEntity4> | null>;
 
   /**
@@ -423,12 +407,12 @@ export default class EntityAssociationLoader<
    */
   async loadAssociatedEntityThroughAsync(
     loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any, any>[],
-    queryContext?: EntityQueryContext
+    queryContext: EntityQueryContext
   ): Promise<Result<ReadonlyEntity<any, any, any, any>> | null>;
 
   async loadAssociatedEntityThroughAsync(
     loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any, any>[],
-    queryContext?: EntityQueryContext
+    queryContext: EntityQueryContext
   ): Promise<Result<ReadonlyEntity<any, any, any, any>> | null> {
     let currentEntity: ReadonlyEntity<any, any, any, any> = this.entity;
     for (const loadDirective of loadDirectives) {

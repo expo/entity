@@ -19,7 +19,7 @@ router.get('/', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
   let notes: readonly NoteEntity[] = [];
   if (viewerContext.isUserViewerContext()) {
-    notes = await NoteEntity.loader(viewerContext)
+    notes = await NoteEntity.loader(viewerContext, viewerContext.getQueryContext())
       .enforcing()
       .loadManyByFieldEqualingAsync('userID', viewerContext.userID);
   }
@@ -30,7 +30,10 @@ router.get('/', async (ctx) => {
 
 router.get('/:id', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
-  const noteResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params['id']!);
+  const noteResult = await NoteEntity.loader(
+    viewerContext,
+    viewerContext.getQueryContext()
+  ).loadByIDAsync(ctx.params['id']!);
   if (!noteResult.ok) {
     ctx.throw(403, noteResult.reason);
     return;
@@ -53,7 +56,7 @@ router.post('/', async (ctx) => {
 
   const { title, body } = ctx.request.body as any;
 
-  const createResult = await NoteEntity.creator(viewerContext)
+  const createResult = await NoteEntity.creator(viewerContext, viewerContext.getQueryContext())
     .setField('userID', viewerContext.userID)
     .setField('title', title)
     .setField('body', body)
@@ -72,44 +75,41 @@ router.put('/:id', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
   const { title, body } = ctx.request.body as any;
 
-  const noteLoadResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params['id']!);
-  if (!noteLoadResult.ok) {
-    ctx.throw(403, noteLoadResult.reason);
-    return;
-  }
+  try {
+    const updatedNote = await viewerContext.runInTransactionAsync(async (queryContext) => {
+      const note = await NoteEntity.loader(viewerContext, queryContext)
+        .enforcing()
+        .loadByIDAsync(ctx.params['id']!);
 
-  const noteUpdateResult = await NoteEntity.updater(noteLoadResult.value)
-    .setField('title', title)
-    .setField('body', body)
-    .updateAsync();
-  if (!noteUpdateResult.ok) {
-    ctx.throw(403, noteUpdateResult.reason);
-    return;
+      return await NoteEntity.updater(note, queryContext)
+        .setField('title', title)
+        .setField('body', body)
+        .enforceUpdateAsync();
+    });
+    ctx.body = {
+      note: updatedNote.getAllFields(),
+    };
+  } catch (e: any) {
+    ctx.throw(403, e.message);
   }
-
-  ctx.body = {
-    note: noteUpdateResult.value.getAllFields(),
-  };
 });
 
 router.delete('/:id', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
 
-  const noteLoadResult = await NoteEntity.loader(viewerContext).loadByIDAsync(ctx.params['id']!);
-  if (!noteLoadResult.ok) {
-    ctx.throw(403, noteLoadResult.reason);
-    return;
+  try {
+    await viewerContext.runInTransactionAsync(async (queryContext) => {
+      const note = await NoteEntity.loader(viewerContext, queryContext)
+        .enforcing()
+        .loadByIDAsync(ctx.params['id']!);
+      await NoteEntity.enforceDeleteAsync(note, queryContext);
+    });
+    ctx.body = {
+      status: 'ok',
+    };
+  } catch (e: any) {
+    ctx.throw(403, e.message);
   }
-
-  const noteDeleteResult = await NoteEntity.deleteAsync(noteLoadResult.value);
-  if (!noteDeleteResult.ok) {
-    ctx.throw(403, noteDeleteResult.reason);
-    return;
-  }
-
-  ctx.body = {
-    status: 'ok',
-  };
 });
 
 export default router;

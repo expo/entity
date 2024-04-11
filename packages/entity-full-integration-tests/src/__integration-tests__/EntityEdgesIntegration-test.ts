@@ -1,4 +1,3 @@
-import { ViewerContext } from '@expo/entity';
 import { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
 import { knex, Knex } from 'knex';
@@ -7,6 +6,7 @@ import { URL } from 'url';
 
 import ChildEntity from './entities/ChildEntity';
 import ParentEntity from './entities/ParentEntity';
+import TestViewerContext from './entities/TestViewerContext';
 import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
 
 async function createOrTruncatePostgresTables(knex: Knex): Promise<void> {
@@ -75,32 +75,41 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
   describe('EntityEdgeDeletionBehavior.INVALIDATE_CACHE', () => {
     it('invalidates the cache', async () => {
-      const viewerContext = new ViewerContext(
+      const viewerContext = new TestViewerContext(
         createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
       );
 
-      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
-      const child = await ChildEntity.creator(viewerContext)
+      const parent = await ParentEntity.creator(
+        viewerContext,
+        viewerContext.getQueryContext()
+      ).enforceCreateAsync();
+      const child = await ChildEntity.creator(viewerContext, viewerContext.getQueryContext())
         .setField('parent_id', parent.getID())
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(parent.getID())
       ).resolves.not.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext)
+        ChildEntity.loader(viewerContext, viewerContext.getQueryContext())
           .enforcing()
           .loadByFieldEqualingAsync('parent_id', parent.getID())
       ).resolves.not.toBeNull();
 
-      await ParentEntity.enforceDeleteAsync(parent);
+      await ParentEntity.enforceDeleteAsync(parent, viewerContext.getQueryContext());
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(parent.getID())
       ).resolves.toBeNull();
 
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext, viewerContext.getQueryContext())
+          .enforcing()
+          .loadByIDNullableAsync(child.getID())
       ).resolves.toBeNull();
     });
   });

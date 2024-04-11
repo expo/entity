@@ -46,7 +46,10 @@ describe(GenericRedisCacher, () => {
       redisTestEntityConfiguration
     );
     const date = new Date();
-    const entity1Created = await RedisTestEntity.creator(viewerContext)
+    const entity1Created = await RedisTestEntity.creator(
+      viewerContext,
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
       .setField('name', 'blah')
       .setField('dateField', date)
       .enforceCreateAsync();
@@ -92,7 +95,10 @@ describe(GenericRedisCacher, () => {
       redisTestEntityConfiguration
     );
     const date = new Date();
-    const entity1Created = await RedisTestEntity.creator(viewerContext)
+    const entity1Created = await RedisTestEntity.creator(
+      viewerContext,
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
       .setField('name', 'blah')
       .setField('dateField', date)
       .enforceCreateAsync();

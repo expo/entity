@@ -34,10 +34,20 @@ describe(PostgresEntityQueryContextProvider, () => {
   it('supports nested transactions', async () => {
     const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
-    await PostgresUniqueTestEntity.creator(vc1).setField('name', 'unique').enforceCreateAsync();
+    await PostgresUniqueTestEntity.creator(
+      vc1,
+      vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
+      .setField('name', 'unique')
+      .enforceCreateAsync();
 
     const id = (
-      await PostgresUniqueTestEntity.creator(vc1).setField('name', 'wat').enforceCreateAsync()
+      await PostgresUniqueTestEntity.creator(
+        vc1,
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
+        .setField('name', 'wat')
+        .enforceCreateAsync()
     ).getID();
 
     await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
@@ -69,7 +79,12 @@ describe(PostgresEntityQueryContextProvider, () => {
         .enforceUpdateAsync();
     });
 
-    const entityLoaded = await PostgresUniqueTestEntity.loader(vc1).enforcing().loadByIDAsync(id);
+    const entityLoaded = await PostgresUniqueTestEntity.loader(
+      vc1,
+      vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
+      .enforcing()
+      .loadByIDAsync(id);
     expect(entityLoaded.getField('name')).toEqual('wat3');
   });
 
@@ -77,7 +92,12 @@ describe(PostgresEntityQueryContextProvider, () => {
     const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
     const id = (
-      await PostgresUniqueTestEntity.creator(vc1).setField('name', 'wat').enforceCreateAsync()
+      await PostgresUniqueTestEntity.creator(
+        vc1,
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
+        .setField('name', 'wat')
+        .enforceCreateAsync()
     ).getID();
 
     await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
@@ -95,7 +115,12 @@ describe(PostgresEntityQueryContextProvider, () => {
       });
     });
 
-    const entityLoaded = await PostgresUniqueTestEntity.loader(vc1).enforcing().loadByIDAsync(id);
+    const entityLoaded = await PostgresUniqueTestEntity.loader(
+      vc1,
+      vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
+      .enforcing()
+      .loadByIDAsync(id);
     expect(entityLoaded.getField('name')).toEqual('wat3');
   });
 });
