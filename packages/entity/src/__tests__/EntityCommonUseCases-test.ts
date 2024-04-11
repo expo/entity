@@ -7,15 +7,15 @@ import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
+import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
 import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
-import TestViewerContext from '../testfixtures/TestViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
-class TestUserViewerContext extends TestViewerContext {
+class TestUserViewerContext extends ViewerContext {
   constructor(entityCompanionProvider: EntityCompanionProvider, private readonly userID: string) {
     super(entityCompanionProvider);
   }
@@ -82,23 +82,23 @@ class DenyIfNotOwnerPrivacyPolicyRule extends PrivacyPolicyRule<
 class BlahEntityPrivacyPolicy extends EntityPrivacyPolicy<
   BlahFields,
   string,
-  TestUserViewerContext,
+  ViewerContext,
   BlahEntity
 > {
   protected override readonly createRules = [
     new DenyIfNotOwnerPrivacyPolicyRule(),
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, TestUserViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
   protected override readonly readRules = [
     new DenyIfNotOwnerPrivacyPolicyRule(),
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, TestUserViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
   protected override readonly updateRules = [
     new DenyIfNotOwnerPrivacyPolicyRule(),
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, TestUserViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysDenyPrivacyPolicyRule<BlahFields, string, TestUserViewerContext, BlahEntity>(),
+    new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
 }
 
@@ -110,21 +110,15 @@ it('runs through a common workflow', async () => {
   const vc2 = new TestUserViewerContext(entityCompanionProvider, uuidv4());
 
   const blahOwner1 = await enforceAsyncResult(
-    BlahEntity.creator(vc1, vc1.getQueryContext())
-      .setField('ownerID', vc1.getUserID()!)
-      .createAsync()
+    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()!).createAsync()
   );
 
   await enforceAsyncResult(
-    BlahEntity.creator(vc1, vc1.getQueryContext())
-      .setField('ownerID', vc1.getUserID()!)
-      .createAsync()
+    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()!).createAsync()
   );
 
   const blahOwner2 = await enforceAsyncResult(
-    BlahEntity.creator(vc2, vc2.getQueryContext())
-      .setField('ownerID', vc2.getUserID()!)
-      .createAsync()
+    BlahEntity.creator(vc2).setField('ownerID', vc2.getUserID()!).createAsync()
   );
 
   // sanity check created objects
@@ -133,45 +127,33 @@ it('runs through a common workflow', async () => {
 
   // check that two people can't read each others data
   await expect(
-    enforceAsyncResult(
-      BlahEntity.loader(vc1, vc1.getQueryContext()).loadByIDAsync(blahOwner2.getID())
-    )
+    enforceAsyncResult(BlahEntity.loader(vc1).loadByIDAsync(blahOwner2.getID()))
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
   await expect(
-    enforceAsyncResult(
-      BlahEntity.loader(vc2, vc2.getQueryContext()).loadByIDAsync(blahOwner1.getID())
-    )
+    enforceAsyncResult(BlahEntity.loader(vc2).loadByIDAsync(blahOwner1.getID()))
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 
   // check that all of owner 1's objects can be loaded
   const results = await enforceResultsAsync(
-    BlahEntity.loader(vc1, vc1.getQueryContext()).loadManyByFieldEqualingAsync(
-      'ownerID',
-      vc1.getUserID()!
-    )
+    BlahEntity.loader(vc1).loadManyByFieldEqualingAsync('ownerID', vc1.getUserID()!)
   );
   expect(results).toHaveLength(2);
 
   // check that two people can't create objects owned by others
   await expect(
     enforceAsyncResult(
-      BlahEntity.creator(vc2, vc2.getQueryContext())
-        .setField('ownerID', blahOwner1.getID())
-        .createAsync()
+      BlahEntity.creator(vc2).setField('ownerID', blahOwner1.getID()).createAsync()
     )
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 
   // check that empty load many returns nothing
-  const results2 = await BlahEntity.loader(
-    vc1,
-    vc1.getQueryContext()
-  ).loadManyByFieldEqualingManyAsync('ownerID', []);
+  const results2 = await BlahEntity.loader(vc1).loadManyByFieldEqualingManyAsync('ownerID', []);
   for (const value in results2.values) {
     expect(value).toHaveLength(0);
   }
 
   // check that the user can't delete their own data (as specified by privacy rules)
-  await expect(
-    enforceAsyncResult(BlahEntity.deleteAsync(blahOwner2, vc1.getQueryContext()))
-  ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
+  await expect(enforceAsyncResult(BlahEntity.deleteAsync(blahOwner2))).rejects.toBeInstanceOf(
+    EntityNotAuthorizedError
+  );
 });

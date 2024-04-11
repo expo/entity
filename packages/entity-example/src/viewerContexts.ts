@@ -1,9 +1,4 @@
-import {
-  ViewerContext,
-  EntityCompanionProvider,
-  EntityQueryContext,
-  EntityTransactionalQueryContext,
-} from '@expo/entity';
+import { ViewerContext, EntityCompanionProvider } from '@expo/entity';
 
 /**
  * A base class for better typing Entities and Privacy Policies specific to this application.
@@ -15,16 +10,6 @@ export abstract class ExampleViewerContext extends ViewerContext {
 
   isAnonymousViewerContext(): this is AnonymousViewerContext {
     return this instanceof AnonymousViewerContext;
-  }
-
-  public getQueryContext(): EntityQueryContext {
-    return super.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres');
-  }
-
-  public async runInTransactionAsync<TResult>(
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<TResult>
-  ): Promise<TResult> {
-    return await super.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', transactionScope);
   }
 }
 

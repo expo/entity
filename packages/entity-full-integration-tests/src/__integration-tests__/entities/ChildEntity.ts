@@ -6,42 +6,36 @@ import {
   EntityEdgeDeletionBehavior,
   EntityPrivacyPolicy,
   UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 
 import ParentEntity from './ParentEntity';
-import TestViewerContext from './TestViewerContext';
 
 interface ChildFields {
   id: string;
   parent_id: string;
 }
 
-class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
-  any,
-  string,
-  TestViewerContext,
-  any,
-  any
-> {
+class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
 }
 
-export default class ChildEntity extends Entity<ChildFields, string, TestViewerContext> {
+export default class ChildEntity extends Entity<ChildFields, string, ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     ChildFields,
     string,
-    TestViewerContext,
+    ViewerContext,
     ChildEntity,
     TestEntityPrivacyPolicy
   > {

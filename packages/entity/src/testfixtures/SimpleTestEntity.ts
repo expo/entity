@@ -1,9 +1,9 @@
-import TestViewerContext from './TestViewerContext';
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
+import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type SimpleTestFields = {
@@ -27,7 +27,7 @@ export const simpleTestEntityConfiguration = new EntityConfiguration<SimpleTestF
 export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   SimpleTestFields,
   string,
-  TestViewerContext,
+  ViewerContext,
   SimpleTestEntity,
   SimpleTestFieldSelection
 > {
@@ -35,7 +35,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
       string,
-      TestViewerContext,
+      ViewerContext,
       SimpleTestEntity,
       SimpleTestFieldSelection
     >(),
@@ -44,7 +44,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
       string,
-      TestViewerContext,
+      ViewerContext,
       SimpleTestEntity,
       SimpleTestFieldSelection
     >(),
@@ -53,7 +53,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
       string,
-      TestViewerContext,
+      ViewerContext,
       SimpleTestEntity,
       SimpleTestFieldSelection
     >(),
@@ -62,7 +62,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
       string,
-      TestViewerContext,
+      ViewerContext,
       SimpleTestEntity,
       SimpleTestFieldSelection
     >(),
@@ -72,13 +72,13 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
 export default class SimpleTestEntity extends Entity<
   SimpleTestFields,
   string,
-  TestViewerContext,
+  ViewerContext,
   SimpleTestFieldSelection
 > {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     SimpleTestFields,
     string,
-    TestViewerContext,
+    ViewerContext,
     SimpleTestEntity,
     SimpleTestEntityPrivacyPolicy,
     SimpleTestFieldSelection

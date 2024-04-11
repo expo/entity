@@ -46,16 +46,14 @@ export const resolvers: IResolvers<any, GraphqlContext> = {
       return viewerContext.userID;
     },
     async noteByID(_root, args, { viewerContext }) {
-      return await NoteEntity.loader(viewerContext, viewerContext.getQueryContext())
-        .enforcing()
-        .loadByIDAsync(args.id);
+      return await NoteEntity.loader(viewerContext).enforcing().loadByIDAsync(args.id);
     },
   } as IObjectTypeResolver<any, GraphqlContext>,
 
   User: {
     id: (root) => root,
     async notes(root, _args, { viewerContext }) {
-      return await NoteEntity.loader(viewerContext, viewerContext.getQueryContext())
+      return await NoteEntity.loader(viewerContext)
         .enforcing()
         .loadManyByFieldEqualingAsync('userID', root);
     },
@@ -74,31 +72,27 @@ export const resolvers: IResolvers<any, GraphqlContext> = {
         throw new Error('not logged in');
       }
 
-      return await NoteEntity.creator(viewerContext, viewerContext.getQueryContext())
+      return await NoteEntity.creator(viewerContext)
         .setField('userID', viewerContext.userID)
         .setField('title', args.note.title)
         .setField('body', args.note.body)
         .enforceCreateAsync();
     },
     async updateNote(_root, args, { viewerContext }) {
-      return await viewerContext.runInTransactionAsync(async (queryContext) => {
-        const existingNote = await NoteEntity.loader(viewerContext, queryContext)
-          .enforcing()
-          .loadByIDAsync(args.id);
-        return await NoteEntity.updater(existingNote, queryContext)
-          .setField('title', args.note.title)
-          .setField('body', args.note.body)
-          .enforceUpdateAsync();
-      });
+      const existingNote = await NoteEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDAsync(args.id);
+      return await NoteEntity.updater(existingNote)
+        .setField('title', args.note.title)
+        .setField('body', args.note.body)
+        .enforceUpdateAsync();
     },
     async deleteNote(_root, args, { viewerContext }) {
-      return await viewerContext.runInTransactionAsync(async (queryContext) => {
-        const existingNote = await NoteEntity.loader(viewerContext, queryContext)
-          .enforcing()
-          .loadByIDAsync(args.id);
-        await NoteEntity.enforceDeleteAsync(existingNote, queryContext);
-        return existingNote;
-      });
+      const existingNote = await NoteEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDAsync(args.id);
+      await NoteEntity.enforceDeleteAsync(existingNote);
+      return existingNote;
     },
   } as IObjectTypeResolver<any, GraphqlContext>,
 };

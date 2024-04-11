@@ -172,10 +172,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
   it('Loads through secondary loader, caches, and invalidates', async () => {
     const viewerContext = new TestViewerContext(createTestEntityCompanionProvider());
 
-    const createdEntity = await LocalMemoryTestEntity.creator(
-      viewerContext,
-      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-    )
+    const createdEntity = await LocalMemoryTestEntity.creator(viewerContext)
       .setField('name', 'wat')
       .enforceCreateAsync();
 
@@ -184,10 +181,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
         localMemoryTestEntityConfiguration,
         GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({})
       ),
-      LocalMemoryTestEntity.loader(
-        viewerContext,
-        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-      )
+      LocalMemoryTestEntity.loader(viewerContext)
     );
 
     const loadParams = { id: createdEntity.getID() };
@@ -223,10 +217,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
         localMemoryTestEntityConfiguration,
         GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({})
       ),
-      LocalMemoryTestEntity.loader(
-        viewerContext,
-        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-      )
+      LocalMemoryTestEntity.loader(viewerContext)
     );
 
     const loadParams = { id: FAKE_ID };

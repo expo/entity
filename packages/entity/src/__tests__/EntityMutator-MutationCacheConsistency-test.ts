@@ -5,8 +5,8 @@ import { UUIDField } from '../EntityFields';
 import { EntityMutationType, EntityTriggerMutationInfo } from '../EntityMutationInfo';
 import { EntityNonTransactionalMutationTrigger } from '../EntityMutationTriggerConfiguration';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
+import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
-import TestViewerContext from '../testfixtures/TestViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 type BlahFields = {
@@ -16,28 +16,28 @@ type BlahFields = {
 class BlahEntityPrivacyPolicy extends EntityPrivacyPolicy<
   BlahFields,
   string,
-  TestViewerContext,
+  ViewerContext,
   BlahEntity
 > {
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, TestViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, TestViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, TestViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, TestViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
   ];
 }
 
-class BlahEntity extends Entity<BlahFields, string, TestViewerContext> {
+class BlahEntity extends Entity<BlahFields, string, ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
     string,
-    TestViewerContext,
+    ViewerContext,
     BlahEntity,
     BlahEntityPrivacyPolicy
   > {
@@ -66,16 +66,16 @@ class BlahEntity extends Entity<BlahFields, string, TestViewerContext> {
 class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutationTrigger<
   BlahFields,
   string,
-  TestViewerContext,
+  ViewerContext,
   BlahEntity
 > {
   async executeAsync(
-    viewerContext: TestViewerContext,
+    viewerContext: ViewerContext,
     entity: BlahEntity,
-    mutationInfo: EntityTriggerMutationInfo<BlahFields, string, TestViewerContext, BlahEntity>
+    mutationInfo: EntityTriggerMutationInfo<BlahFields, string, ViewerContext, BlahEntity>
   ): Promise<void> {
     if (mutationInfo.type === EntityMutationType.DELETE) {
-      const entityLoaded = await BlahEntity.loader(viewerContext, viewerContext.getQueryContext())
+      const entityLoaded = await BlahEntity.loader(viewerContext)
         .enforcing()
         .loadByIDNullableAsync(entity.getID());
       if (entityLoaded) {
@@ -90,17 +90,14 @@ class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutation
 describe('EntityMutator', () => {
   test('cache consistency with post-commit callbacks', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
-    const viewerContext = new TestViewerContext(companionProvider);
+    const viewerContext = new ViewerContext(companionProvider);
 
     // put it in cache
-    const entity = await BlahEntity.creator(
-      viewerContext,
-      viewerContext.getQueryContext()
-    ).enforceCreateAsync();
-    const entityLoaded = await BlahEntity.loader(viewerContext, viewerContext.getQueryContext())
+    const entity = await BlahEntity.creator(viewerContext).enforceCreateAsync();
+    const entityLoaded = await BlahEntity.loader(viewerContext)
       .enforcing()
       .loadByIDAsync(entity.getID());
 
-    await BlahEntity.enforceDeleteAsync(entityLoaded, viewerContext.getQueryContext());
+    await BlahEntity.enforceDeleteAsync(entityLoaded);
   });
 });

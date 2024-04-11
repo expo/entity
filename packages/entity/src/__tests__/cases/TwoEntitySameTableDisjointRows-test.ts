@@ -3,22 +3,22 @@ import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import EntityConfiguration from '../../EntityConfiguration';
 import { UUIDField, EnumField, StringField } from '../../EntityFields';
 import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
+import ViewerContext from '../../ViewerContext';
 import { successfulResults, failedResults } from '../../entityUtils';
 import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
-import TestViewerContext from '../../testfixtures/TestViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../../utils/testing/createUnitTestEntityCompanionProvider';
 
 describe('Two entities backed by the same table', () => {
   test('load by different types', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
-    const viewerContext = new TestViewerContext(companionProvider);
+    const viewerContext = new ViewerContext(companionProvider);
 
-    const one = await OneTestEntity.creator(viewerContext, viewerContext.getQueryContext())
+    const one = await OneTestEntity.creator(viewerContext)
       .setField('entity_type', EntityType.ONE)
       .setField('common_other_field', 'wat')
       .enforceCreateAsync();
 
-    const two = await TwoTestEntity.creator(viewerContext, viewerContext.getQueryContext())
+    const two = await TwoTestEntity.creator(viewerContext)
       .setField('entity_type', EntityType.TWO)
       .setField('other_field', 'blah')
       .setField('common_other_field', 'wat')
@@ -28,21 +28,17 @@ describe('Two entities backed by the same table', () => {
     expect(two).toBeInstanceOf(TwoTestEntity);
 
     await expect(
-      TwoTestEntity.loader(viewerContext, viewerContext.getQueryContext())
-        .enforcing()
-        .loadByIDAsync(one.getID())
+      TwoTestEntity.loader(viewerContext).enforcing().loadByIDAsync(one.getID())
     ).rejects.toThrowError('TwoTestEntity must be instantiated with two data');
 
     await expect(
-      OneTestEntity.loader(viewerContext, viewerContext.getQueryContext())
-        .enforcing()
-        .loadByIDAsync(two.getID())
+      OneTestEntity.loader(viewerContext).enforcing().loadByIDAsync(two.getID())
     ).rejects.toThrowError('OneTestEntity must be instantiated with one data');
 
-    const manyResults = await OneTestEntity.loader(
-      viewerContext,
-      viewerContext.getQueryContext()
-    ).loadManyByFieldEqualingAsync('common_other_field', 'wat');
+    const manyResults = await OneTestEntity.loader(viewerContext).loadManyByFieldEqualingAsync(
+      'common_other_field',
+      'wat'
+    );
     const successfulManyResults = successfulResults(manyResults);
     const failedManyResults = failedResults(manyResults);
 
@@ -55,8 +51,7 @@ describe('Two entities backed by the same table', () => {
     );
 
     const fieldEqualityConjunctionResults = await OneTestEntity.loader(
-      viewerContext,
-      viewerContext.getQueryContext()
+      viewerContext
     ).loadManyByFieldEqualityConjunctionAsync([
       {
         fieldName: 'common_other_field',
@@ -111,30 +106,24 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
   cacheAdapterFlavor: 'redis',
 });
 
-class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
-  any,
-  string,
-  TestViewerContext,
-  any,
-  any
-> {
+class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
 }
 
-class OneTestEntity extends Entity<TestFields, string, TestViewerContext, OneTestFields> {
+class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFields> {
   constructor(constructorParams: {
-    viewerContext: TestViewerContext;
+    viewerContext: ViewerContext;
     id: string;
     databaseFields: Readonly<TestFields>;
     selectedFields: Readonly<Pick<TestFields, OneTestFields>>;
@@ -148,7 +137,7 @@ class OneTestEntity extends Entity<TestFields, string, TestViewerContext, OneTes
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
-    TestViewerContext,
+    ViewerContext,
     OneTestEntity,
     TestEntityPrivacyPolicy,
     OneTestFields
@@ -162,9 +151,9 @@ class OneTestEntity extends Entity<TestFields, string, TestViewerContext, OneTes
   }
 }
 
-class TwoTestEntity extends Entity<TestFields, string, TestViewerContext, TwoTestFields> {
+class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFields> {
   constructor(constructorParams: {
-    viewerContext: TestViewerContext;
+    viewerContext: ViewerContext;
     id: string;
     databaseFields: Readonly<TestFields>;
     selectedFields: Readonly<Pick<TestFields, TwoTestFields>>;
@@ -178,7 +167,7 @@ class TwoTestEntity extends Entity<TestFields, string, TestViewerContext, TwoTes
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
-    TestViewerContext,
+    ViewerContext,
     TwoTestEntity,
     TestEntityPrivacyPolicy,
     TwoTestFields

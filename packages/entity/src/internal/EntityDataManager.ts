@@ -76,7 +76,7 @@ export default class EntityDataManager<TFields> {
           entityClassName: this.entityClassName,
         });
         return await this.databaseAdapter.fetchManyWhereAsync(
-          this.queryContextProvider.getNonTransactionalQueryContext(),
+          this.queryContextProvider.getQueryContext(),
           fieldName,
           fetcherValues
         );

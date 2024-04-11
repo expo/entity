@@ -1,9 +1,9 @@
-import TestViewerContext from './TestViewerContext';
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
+import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type Test2Fields = {
@@ -29,28 +29,28 @@ export const testEntity2Configuration = new EntityConfiguration<Test2Fields>({
 export class TestEntity2PrivacyPolicy extends EntityPrivacyPolicy<
   Test2Fields,
   string,
-  TestViewerContext,
+  ViewerContext,
   TestEntity2
 > {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, TestViewerContext, TestEntity2>(),
+    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, TestViewerContext, TestEntity2>(),
+    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, TestViewerContext, TestEntity2>(),
+    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, TestViewerContext, TestEntity2>(),
+    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
   ];
 }
 
-export default class TestEntity2 extends Entity<Test2Fields, string, TestViewerContext> {
+export default class TestEntity2 extends Entity<Test2Fields, string, ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     Test2Fields,
     string,
-    TestViewerContext,
+    ViewerContext,
     TestEntity2,
     TestEntity2PrivacyPolicy
   > {

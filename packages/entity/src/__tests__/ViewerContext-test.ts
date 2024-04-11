@@ -3,12 +3,11 @@ import ViewerContext from '../ViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 describe(ViewerContext, () => {
-  describe('getNonTransactionalQueryContextForDatabaseAdaptorFlavor', () => {
+  describe('getQueryContextForDatabaseAdaptorFlavor', () => {
     it('creates a new regular query context', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      const queryContext =
-        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres');
+      const queryContext = viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres');
       expect(queryContext).toBeInstanceOf(EntityQueryContext);
       expect(queryContext.isInTransaction()).toBe(false);
     });

@@ -1,5 +1,6 @@
 import {
   EntityPrivacyPolicy,
+  ViewerContext,
   AlwaysAllowPrivacyPolicyRule,
   Entity,
   EntityCompanionDefinition,
@@ -13,7 +14,6 @@ import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 import { URL } from 'url';
 
-import TestViewerContext from './entities/TestViewerContext';
 import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
 
 interface TestFields {
@@ -25,28 +25,28 @@ interface TestFields {
 class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   TestFields,
   string,
-  TestViewerContext,
+  ViewerContext,
   TestEntity
 > {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, TestViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, TestViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, TestViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, TestViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
   ];
 }
 
-class TestEntity extends Entity<TestFields, string, TestViewerContext> {
+class TestEntity extends Entity<TestFields, string, ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
-    TestViewerContext,
+    ViewerContext,
     TestEntity,
     TestEntityPrivacyPolicy
   > {
@@ -136,20 +136,18 @@ describe('Entity cache inconsistency', () => {
   });
 
   test('lots of updates in long-ish running transactions', async () => {
-    const viewerContext = new TestViewerContext(
+    const viewerContext = new ViewerContext(
       createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
     );
 
-    const entity1 = await TestEntity.creator(viewerContext, viewerContext.getQueryContext())
+    const entity1 = await TestEntity.creator(viewerContext)
       .setField('other_string', 'hello')
       .setField('third_string', 'initial')
       .enforceCreateAsync();
 
     // put entities in cache and dataloader
-    await TestEntity.loader(viewerContext, viewerContext.getQueryContext())
-      .enforcing()
-      .loadByIDAsync(entity1.getID());
-    await TestEntity.loader(viewerContext, viewerContext.getQueryContext())
+    await TestEntity.loader(viewerContext).enforcing().loadByIDAsync(entity1.getID());
+    await TestEntity.loader(viewerContext)
       .enforcing()
       .loadByFieldEqualingAsync('other_string', 'hello');
 
@@ -166,17 +164,15 @@ describe('Entity cache inconsistency', () => {
     await Promise.all([
       // do a load after the transaction below updates the entity but before transaction commits to ensure
       // that the cache is cleared after the transaction commits rather than in the middle where the changes
-      // may not be visible by other requests (TestViewerContexts) which would cache the incorrect
+      // may not be visible by other requests (ViewerContexts) which would cache the incorrect
       // value during the read-through cache.
       (async () => {
         await barrier1;
 
-        const viewerContextInternal = new TestViewerContext(
+        const viewerContextInternal = new ViewerContext(
           createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
         );
-        await TestEntity.loader(viewerContextInternal, viewerContextInternal.getQueryContext())
-          .enforcing()
-          .loadByIDAsync(entity1.getID());
+        await TestEntity.loader(viewerContextInternal).enforcing().loadByIDAsync(entity1.getID());
 
         openBarrier2!();
       })(),
@@ -196,20 +192,14 @@ describe('Entity cache inconsistency', () => {
     ]);
 
     // ensure cache consistency
-    const viewerContextLast = new TestViewerContext(
+    const viewerContextLast = new ViewerContext(
       createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
     );
 
-    const loadedById = await TestEntity.loader(
-      viewerContextLast,
-      viewerContextLast.getQueryContext()
-    )
+    const loadedById = await TestEntity.loader(viewerContextLast)
       .enforcing()
       .loadByIDAsync(entity1.getID());
-    const loadedByField = await TestEntity.loader(
-      viewerContextLast,
-      viewerContextLast.getQueryContext()
-    )
+    const loadedByField = await TestEntity.loader(viewerContextLast)
       .enforcing()
       .loadByFieldEqualingAsync('other_string', 'hello');
 

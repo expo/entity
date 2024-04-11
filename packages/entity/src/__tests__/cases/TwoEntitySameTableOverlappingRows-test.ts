@@ -3,26 +3,26 @@ import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import EntityConfiguration from '../../EntityConfiguration';
 import { UUIDField, StringField } from '../../EntityFields';
 import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
+import ViewerContext from '../../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
-import TestViewerContext from '../../testfixtures/TestViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../../utils/testing/createUnitTestEntityCompanionProvider';
 
 describe('Two entities backed by the same table', () => {
   test('mutate through different types and keep consistent cache and dataloader', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
-    const viewerContext = new TestViewerContext(companionProvider);
+    const viewerContext = new ViewerContext(companionProvider);
 
-    const entity1 = await OneTestEntity.creator(viewerContext, viewerContext.getQueryContext())
+    const entity1 = await OneTestEntity.creator(viewerContext)
       .setField('fake_field', 'hello')
       .enforceCreateAsync();
     expect(entity1).toBeInstanceOf(OneTestEntity);
 
-    const entity2 = await TwoTestEntity.loader(viewerContext, viewerContext.getQueryContext())
+    const entity2 = await TwoTestEntity.loader(viewerContext)
       .enforcing()
       .loadByIDAsync(entity1.getID());
     expect(entity2).toBeInstanceOf(TwoTestEntity);
 
-    const updated2 = await TwoTestEntity.updater(entity2, viewerContext.getQueryContext())
+    const updated2 = await TwoTestEntity.updater(entity2)
       .setField('fake_field', 'world')
       .setField('other_field', 'wat')
       .enforceUpdateAsync();
@@ -32,7 +32,7 @@ describe('Two entities backed by the same table', () => {
       fake_field: 'world',
     });
 
-    const loaded1 = await OneTestEntity.loader(viewerContext, viewerContext.getQueryContext())
+    const loaded1 = await OneTestEntity.loader(viewerContext)
       .enforcing()
       .loadByIDAsync(entity1.getID());
     expect(loaded1.getAllFields()).toMatchObject({
@@ -43,14 +43,14 @@ describe('Two entities backed by the same table', () => {
 
   test('cached field that differs between the two to test invalidation', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
-    const viewerContext = new TestViewerContext(companionProvider);
+    const viewerContext = new ViewerContext(companionProvider);
 
-    const entity = await TwoTestEntity.creator(viewerContext, viewerContext.getQueryContext())
+    const entity = await TwoTestEntity.creator(viewerContext)
       .setField('fake_field', 'hello')
       .setField('other_field', 'huh')
       .enforceCreateAsync();
 
-    const loadedEntity = await TwoTestEntity.loader(viewerContext, viewerContext.getQueryContext())
+    const loadedEntity = await TwoTestEntity.loader(viewerContext)
       .enforcing()
       .loadByFieldEqualingAsync('other_field', 'huh');
     expect(loadedEntity?.getAllFields()).toMatchObject({
@@ -59,14 +59,12 @@ describe('Two entities backed by the same table', () => {
       other_field: 'huh',
     });
 
-    const loaded1 = await OneTestEntity.loader(viewerContext, viewerContext.getQueryContext())
+    const loaded1 = await OneTestEntity.loader(viewerContext)
       .enforcing()
       .loadByIDAsync(entity.getID());
-    await OneTestEntity.updater(loaded1, viewerContext.getQueryContext())
-      .setField('fake_field', 'world')
-      .enforceUpdateAsync();
+    await OneTestEntity.updater(loaded1).setField('fake_field', 'world').enforceUpdateAsync();
 
-    const loaded2 = await TwoTestEntity.loader(viewerContext, viewerContext.getQueryContext())
+    const loaded2 = await TwoTestEntity.loader(viewerContext)
       .enforcing()
       .loadByFieldEqualingAsync('other_field', 'huh');
     expect(loaded2?.getAllFields()).toMatchObject({
@@ -75,7 +73,7 @@ describe('Two entities backed by the same table', () => {
       other_field: 'huh',
     });
 
-    const loaded22 = await TwoTestEntity.loader(viewerContext, viewerContext.getQueryContext())
+    const loaded22 = await TwoTestEntity.loader(viewerContext)
       .enforcing()
       .loadByFieldEqualingAsync('fake_field', 'world');
     expect(loaded22?.getAllFields()).toMatchObject({
@@ -116,32 +114,26 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
   cacheAdapterFlavor: 'redis',
 });
 
-class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
-  any,
-  string,
-  TestViewerContext,
-  any,
-  any
-> {
+class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
   ];
 }
 
-class OneTestEntity extends Entity<TestFields, string, TestViewerContext, OneTestFields> {
+class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFields> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
-    TestViewerContext,
+    ViewerContext,
     OneTestEntity,
     TestEntityPrivacyPolicy,
     OneTestFields
@@ -155,11 +147,11 @@ class OneTestEntity extends Entity<TestFields, string, TestViewerContext, OneTes
   }
 }
 
-class TwoTestEntity extends Entity<TestFields, string, TestViewerContext, TwoTestFields> {
+class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFields> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     string,
-    TestViewerContext,
+    ViewerContext,
     TwoTestEntity,
     TestEntityPrivacyPolicy,
     TwoTestFields

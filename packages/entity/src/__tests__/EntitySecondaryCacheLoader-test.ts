@@ -2,11 +2,11 @@ import { anyOfClass, anything, deepEqual, instance, mock, spy, verify, when } fr
 
 import { EntityNonTransactionalQueryContext } from '../EntityQueryContext';
 import EntitySecondaryCacheLoader, { ISecondaryEntityCache } from '../EntitySecondaryCacheLoader';
+import ViewerContext from '../ViewerContext';
 import SimpleTestEntity, {
   SimpleTestEntityPrivacyPolicy,
   SimpleTestFields,
 } from '../testfixtures/SimpleTestEntity';
-import TestViewerContext from '../testfixtures/TestViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 type TestLoadParams = { id: string };
@@ -15,7 +15,7 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
   TestLoadParams,
   SimpleTestFields,
   string,
-  TestViewerContext,
+  ViewerContext,
   SimpleTestEntity,
   SimpleTestEntityPrivacyPolicy
 > {
@@ -30,12 +30,9 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
 describe(EntitySecondaryCacheLoader, () => {
   describe('loadManyAsync', () => {
     it('calls into secondary cache with correct params', async () => {
-      const vc1 = new TestViewerContext(createUnitTestEntityCompanionProvider());
+      const vc1 = new ViewerContext(createUnitTestEntityCompanionProvider());
 
-      const createdEntity = await SimpleTestEntity.creator(
-        vc1,
-        vc1.getQueryContext()
-      ).enforceCreateAsync();
+      const createdEntity = await SimpleTestEntity.creator(vc1).enforceCreateAsync();
       const loadParams = { id: createdEntity.getID() };
 
       const secondaryEntityCacheMock =
@@ -47,7 +44,7 @@ describe(EntitySecondaryCacheLoader, () => {
 
       const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
         secondaryEntityCache,
-        SimpleTestEntity.loader(vc1, vc1.getQueryContext())
+        SimpleTestEntity.loader(vc1)
       );
 
       await secondaryCacheLoader.loadManyAsync([loadParams]);
@@ -58,12 +55,9 @@ describe(EntitySecondaryCacheLoader, () => {
     });
 
     it('constructs and authorizes entities', async () => {
-      const vc1 = new TestViewerContext(createUnitTestEntityCompanionProvider());
+      const vc1 = new ViewerContext(createUnitTestEntityCompanionProvider());
 
-      const createdEntity = await SimpleTestEntity.creator(
-        vc1,
-        vc1.getQueryContext()
-      ).enforceCreateAsync();
+      const createdEntity = await SimpleTestEntity.creator(vc1).enforceCreateAsync();
       const loadParams = { id: createdEntity.getID() };
 
       const secondaryEntityCacheMock =
@@ -73,7 +67,7 @@ describe(EntitySecondaryCacheLoader, () => {
       ).thenResolve(new Map([[loadParams, createdEntity.getAllFields()]]));
       const secondaryEntityCache = instance(secondaryEntityCacheMock);
 
-      const loader = SimpleTestEntity.loader(vc1, vc1.getQueryContext());
+      const loader = SimpleTestEntity.loader(vc1);
       const spiedPrivacyPolicy = spy(loader['privacyPolicy']);
       const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(secondaryEntityCache, loader);
 
@@ -94,18 +88,15 @@ describe(EntitySecondaryCacheLoader, () => {
 
   describe('invalidateManyAsync', () => {
     it('calls invalidate on the secondary cache', async () => {
-      const vc1 = new TestViewerContext(createUnitTestEntityCompanionProvider());
+      const vc1 = new ViewerContext(createUnitTestEntityCompanionProvider());
 
-      const createdEntity = await SimpleTestEntity.creator(
-        vc1,
-        vc1.getQueryContext()
-      ).enforceCreateAsync();
+      const createdEntity = await SimpleTestEntity.creator(vc1).enforceCreateAsync();
       const loadParams = { id: createdEntity.getID() };
 
       const secondaryEntityCacheMock =
         mock<ISecondaryEntityCache<SimpleTestFields, TestLoadParams>>();
       const secondaryEntityCache = instance(secondaryEntityCacheMock);
-      const loader = SimpleTestEntity.loader(vc1, vc1.getQueryContext());
+      const loader = SimpleTestEntity.loader(vc1);
       const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(secondaryEntityCache, loader);
       await secondaryCacheLoader.invalidateManyAsync([loadParams]);
 

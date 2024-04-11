@@ -15,7 +15,6 @@ import nullthrows from 'nullthrows';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import TestViewerContext from './entities/TestViewerContext';
 import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
 
 interface CategoryFields {
@@ -218,53 +217,42 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       edgeDeletionBehavior
     );
 
-    const viewerContext = new TestViewerContext(
+    const viewerContext = new ViewerContext(
       createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
     );
 
-    const category1 = await CategoryEntity.creator(
-      viewerContext,
-      viewerContext.getQueryContext()
-    ).enforceCreateAsync();
-    const other1 = await OtherEntity.creator(viewerContext, viewerContext.getQueryContext())
+    const category1 = await CategoryEntity.creator(viewerContext).enforceCreateAsync();
+    const other1 = await OtherEntity.creator(viewerContext)
       .setField('parent_category_id', category1.getID())
       .enforceCreateAsync();
-    await CategoryEntity.updater(category1, viewerContext.getQueryContext())
+    await CategoryEntity.updater(category1)
       .setField('parent_other_id', other1.getID())
       .enforceUpdateAsync();
 
-    await CategoryEntity.enforceDeleteAsync(category1, viewerContext.getQueryContext());
+    await CategoryEntity.enforceDeleteAsync(category1);
 
     if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.SET_NULL) {
       await expect(
-        CategoryEntity.loader(viewerContext, viewerContext.getQueryContext())
-          .enforcing()
-          .loadByIDNullableAsync(category1.getID())
+        CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID())
       ).resolves.toBeNull();
-      const otherLoaded = await OtherEntity.loader(viewerContext, viewerContext.getQueryContext())
+      const otherLoaded = await OtherEntity.loader(viewerContext)
         .enforcing()
         .loadByIDNullableAsync(other1.getID());
       expect(otherLoaded?.getField('parent_category_id')).toBeNull();
     } else if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY) {
       await expect(
-        CategoryEntity.loader(viewerContext, viewerContext.getQueryContext())
-          .enforcing()
-          .loadByIDNullableAsync(category1.getID())
+        CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID())
       ).resolves.toBeNull();
-      const otherLoaded = await OtherEntity.loader(viewerContext, viewerContext.getQueryContext())
+      const otherLoaded = await OtherEntity.loader(viewerContext)
         .enforcing()
         .loadByIDNullableAsync(other1.getID());
       expect(otherLoaded?.getField('parent_category_id')).toBeNull();
     } else {
       await expect(
-        CategoryEntity.loader(viewerContext, viewerContext.getQueryContext())
-          .enforcing()
-          .loadByIDNullableAsync(category1.getID())
+        CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID())
       ).resolves.toBeNull();
       await expect(
-        OtherEntity.loader(viewerContext, viewerContext.getQueryContext())
-          .enforcing()
-          .loadByIDNullableAsync(other1.getID())
+        OtherEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(other1.getID())
       ).resolves.toBeNull();
     }
   });

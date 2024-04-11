@@ -2,7 +2,7 @@ import { IEntityClass } from './Entity';
 import EntityCompanionProvider, { DatabaseAdapterFlavor } from './EntityCompanionProvider';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import {
-  EntityNonTransactionalQueryContext,
+  EntityQueryContext,
   EntityTransactionalQueryContext,
   TransactionConfig,
 } from './EntityQueryContext';
@@ -67,12 +67,12 @@ export default class ViewerContext {
    * Get the regular (non-transactional) query context for a database adaptor flavor.
    * @param databaseAdaptorFlavor - database adaptor flavor
    */
-  getNonTransactionalQueryContextForDatabaseAdaptorFlavor(
+  getQueryContextForDatabaseAdaptorFlavor(
     databaseAdaptorFlavor: DatabaseAdapterFlavor
-  ): EntityNonTransactionalQueryContext {
+  ): EntityQueryContext {
     return this.entityCompanionProvider
       .getQueryContextProviderForDatabaseAdaptorFlavor(databaseAdaptorFlavor)
-      .getNonTransactionalQueryContext();
+      .getQueryContext();
   }
 
   /**
@@ -88,7 +88,7 @@ export default class ViewerContext {
   ): Promise<TResult> {
     return await this.entityCompanionProvider
       .getQueryContextProviderForDatabaseAdaptorFlavor(databaseAdaptorFlavor)
-      .getNonTransactionalQueryContext()
+      .getQueryContext()
       .runInTransactionIfNotInTransactionAsync(transactionScope, transactionConfig);
   }
 }

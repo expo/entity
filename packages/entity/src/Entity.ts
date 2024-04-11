@@ -61,7 +61,10 @@ export default abstract class Entity<
       TMSelectedFields
     >,
     viewerContext: TMViewerContext2,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext = viewerContext
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext()
   ): CreateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
@@ -98,7 +101,11 @@ export default abstract class Entity<
       TMSelectedFields
     >,
     existingEntity: TMEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext()
   ): UpdateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return existingEntity
       .getViewerContext()
@@ -135,7 +142,11 @@ export default abstract class Entity<
       TMSelectedFields
     >,
     existingEntity: TMEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext()
   ): Promise<Result<void>> {
     return existingEntity
       .getViewerContext()
@@ -173,7 +184,11 @@ export default abstract class Entity<
       TMSelectedFields
     >,
     existingEntity: TMEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext()
   ): Promise<void> {
     return existingEntity
       .getViewerContext()
@@ -222,7 +237,11 @@ export default abstract class Entity<
       TMSelectedFields
     >,
     existingEntity: TMEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext()
   ): Promise<boolean> {
     const companion = existingEntity
       .getViewerContext()
@@ -272,7 +291,11 @@ export default abstract class Entity<
       TMSelectedFields
     >,
     existingEntity: TMEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext()
   ): Promise<boolean> {
     const companion = existingEntity
       .getViewerContext()

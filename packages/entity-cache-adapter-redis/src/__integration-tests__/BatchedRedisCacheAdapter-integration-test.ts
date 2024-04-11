@@ -101,10 +101,7 @@ describe(GenericRedisCacher, () => {
       ]['cacheAdapter']['genericCacher'];
     const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
 
-    const entity1Created = await RedisTestEntity.creator(
-      viewerContext,
-      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-    )
+    const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')
       .enforceCreateAsync();
 
@@ -120,22 +117,9 @@ describe(GenericRedisCacher, () => {
       createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
     );
     const [entity1, entity2, entity3] = await Promise.all([
-      RedisTestEntity.loader(
-        viewerContext1,
-        viewerContext1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-      )
-        .enforcing()
-        .loadByIDAsync(entity1Created.getID()),
-      RedisTestEntity.loader(
-        viewerContext2,
-        viewerContext2.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-      )
-        .enforcing()
-        .loadByIDAsync(entity1Created.getID()),
-      RedisTestEntity.loader(
-        viewerContext3,
-        viewerContext3.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-      )
+      RedisTestEntity.loader(viewerContext1).enforcing().loadByIDAsync(entity1Created.getID()),
+      RedisTestEntity.loader(viewerContext2).enforcing().loadByIDAsync(entity1Created.getID()),
+      RedisTestEntity.loader(viewerContext3)
         .enforcing()
         .loadByFieldEqualingAsync('name', entity1Created.getField('name')),
     ]);
@@ -154,36 +138,28 @@ describe(GenericRedisCacher, () => {
     });
 
     const cacheKeyEntity1NameField = cacheKeyMaker('name', entity1Created.getField('name'));
-    await RedisTestEntity.loader(
-      viewerContext,
-      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-    )
+    await RedisTestEntity.loader(viewerContext)
       .enforcing()
       .loadByFieldEqualingAsync('name', entity1Created.getField('name'));
     await expect(redis.get(cacheKeyEntity1NameField)).resolves.toEqual(cachedJSON);
 
     // simulate non existent db fetch, should write negative result ('') to cache
     const nonExistentId = uuidv4();
-    const entityNonExistentResult = await RedisTestEntity.loader(
-      viewerContext,
-      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-    ).loadByIDAsync(nonExistentId);
+    const entityNonExistentResult = await RedisTestEntity.loader(viewerContext).loadByIDAsync(
+      nonExistentId
+    );
     expect(entityNonExistentResult.ok).toBe(false);
     const cacheKeyNonExistent = cacheKeyMaker('id', nonExistentId);
     const nonExistentCachedValue = await redis.get(cacheKeyNonExistent);
     expect(nonExistentCachedValue).toEqual('');
     // load again through entities framework to ensure it reads negative result
-    const entityNonExistentResult2 = await RedisTestEntity.loader(
-      viewerContext,
-      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-    ).loadByIDAsync(nonExistentId);
+    const entityNonExistentResult2 = await RedisTestEntity.loader(viewerContext).loadByIDAsync(
+      nonExistentId
+    );
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly in both caches
-    await RedisTestEntity.loader(
-      viewerContext,
-      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
-    ).invalidateFieldsAsync(entity1.getAllFields());
+    await RedisTestEntity.loader(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
     await expect(redis.get(cacheKeyEntity1)).resolves.toBeNull();
     await expect(redis.get(cacheKeyEntity1NameField)).resolves.toBeNull();
   });
