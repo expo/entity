@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.34.0](https://github.com/expo/entity/compare/v0.33.0...v0.34.0) (2024-04-11)
+
+
+### Features
+
+* Allow UUIDv6/7/8 in UUIDField validation ([#221](https://github.com/expo/entity/issues/221)) ([cc6f3dc](https://github.com/expo/entity/commit/cc6f3dc1e677382eec220723c37b5b883d980372))
+* require explicit query context specification ([#219](https://github.com/expo/entity/issues/219)) ([8b0b31f](https://github.com/expo/entity/commit/8b0b31fdde5bd565aa527719003ef283a45f55cc))
+
+
+
+
+
 # [0.33.0](https://github.com/expo/entity/compare/v0.32.0...v0.33.0) (2023-10-06)
 
 
