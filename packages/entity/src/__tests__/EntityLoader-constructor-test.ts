@@ -123,7 +123,7 @@ describe(EntityLoader, () => {
     const viewerContext = instance(mock(ViewerContext));
     const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = StubQueryContextProvider.getNonTransactionalQueryContext();
 
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(
       testEntityConfiguration,

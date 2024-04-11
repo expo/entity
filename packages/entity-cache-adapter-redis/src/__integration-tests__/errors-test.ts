@@ -40,7 +40,10 @@ describe(GenericRedisCacher, () => {
     );
 
     await expect(
-      RedisTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      RedisTestEntity.creator(
+        vc1,
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('name', 'blah')
         .enforceCreateAsync()
     ).rejects.toThrow(EntityCacheAdapterTransientError);

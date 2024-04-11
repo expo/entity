@@ -48,7 +48,7 @@ describe(GenericRedisCacher, () => {
 
     const entity1Created = await RedisTestEntity.creator(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .setField('name', 'blah')
       .enforceCreateAsync();
@@ -56,7 +56,7 @@ describe(GenericRedisCacher, () => {
     // loading an entity should put it in cache
     const entity1 = await RedisTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
@@ -75,7 +75,7 @@ describe(GenericRedisCacher, () => {
 
     const entityNonExistentResult = await RedisTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     ).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 
@@ -87,14 +87,14 @@ describe(GenericRedisCacher, () => {
     // load again through entities framework to ensure it reads negative result
     const entityNonExistentResult2 = await RedisTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     ).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly
     await RedisTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     ).invalidateFieldsAsync(entity1.getAllFields());
     const cachedValueNull = await (genericRedisCacheContext.redisClient as Redis).get(
       cacheKeyMaker('id', entity1.getID())
@@ -110,7 +110,7 @@ describe(GenericRedisCacher, () => {
     const entity1 = await enforceAsyncResult(
       RedisTestEntity.creator(
         viewerContext,
-        viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .setField('dateField', date)
         .createAsync()
@@ -119,7 +119,7 @@ describe(GenericRedisCacher, () => {
 
     const entity2 = await RedisTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .enforcing()
       .loadByIDAsync(entity1.getID());
@@ -131,7 +131,7 @@ describe(GenericRedisCacher, () => {
     );
     const entity3 = await RedisTestEntity.loader(
       vc2,
-      vc2.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      vc2.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .enforcing()
       .loadByIDAsync(entity1.getID());
@@ -145,14 +145,14 @@ describe(GenericRedisCacher, () => {
     const entity1 = await enforceAsyncResult(
       RedisTestEntity.creator(
         viewerContext,
-        viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .setField('name', '')
         .createAsync()
     );
     const entity2 = await RedisTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .enforcing()
       .loadByFieldEqualingAsync('name', '');
@@ -164,7 +164,7 @@ describe(GenericRedisCacher, () => {
     );
     const entity3 = await RedisTestEntity.loader(
       vc2,
-      vc2.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      vc2.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .enforcing()
       .loadByFieldEqualingAsync('name', '');

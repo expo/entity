@@ -42,24 +42,33 @@ describe('postgres entity integration', () => {
   it('supports parallel partial updates', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     const entity = await enforceAsyncResult(
-      PostgresTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      PostgresTestEntity.creator(
+        vc,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('name', 'hello')
         .createAsync()
     );
 
     // update two different fields at the same time (from the same entity)
     await Promise.all([
-      PostgresTestEntity.updater(entity, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      PostgresTestEntity.updater(
+        entity,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('hasACat', true)
         .updateAsync(),
-      PostgresTestEntity.updater(entity, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      PostgresTestEntity.updater(
+        entity,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('hasADog', false)
         .updateAsync(),
     ]);
 
     const loadedEntity = await PostgresTestEntity.loader(
       vc,
-      vc.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .enforcing()
       .loadByIDAsync(entity.getID());
@@ -74,7 +83,7 @@ describe('postgres entity integration', () => {
       const entity = await enforceAsyncResult(
         PostgresTestEntity.creator(
           vc,
-          vc.getQueryContextForDatabaseAdaptorFlavor('postgres')
+          vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
         ).createAsync()
       );
       expect(entity.getID()).toBeTruthy();
@@ -83,14 +92,17 @@ describe('postgres entity integration', () => {
     it('throws knex error upon empty update', async () => {
       const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       const entity = await enforceAsyncResult(
-        PostgresTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc,
+          vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'hello')
           .createAsync()
       );
       await expect(
         PostgresTestEntity.updater(
           entity,
-          vc.getQueryContextForDatabaseAdaptorFlavor('postgres')
+          vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
         ).updateAsync()
       ).rejects.toThrow();
     });
@@ -98,14 +110,17 @@ describe('postgres entity integration', () => {
     it('throws error upon empty update for stub database adapter to match behavior', async () => {
       const vc = new ViewerContext(createUnitTestEntityCompanionProvider());
       const entity = await enforceAsyncResult(
-        PostgresTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc,
+          vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'hello')
           .createAsync()
       );
       await expect(
         PostgresTestEntity.updater(
           entity,
-          vc.getQueryContextForDatabaseAdaptorFlavor('postgres')
+          vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
         ).updateAsync()
       ).rejects.toThrow();
     });
@@ -116,7 +131,10 @@ describe('postgres entity integration', () => {
 
     // put one in the DB
     const firstEntity = await enforceAsyncResult(
-      PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      PostgresTestEntity.creator(
+        vc1,
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('name', 'hello')
         .createAsync()
     );
@@ -124,7 +142,7 @@ describe('postgres entity integration', () => {
     await enforceAsyncResult(
       PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       ).loadByIDAsync(firstEntity.getID())
     );
 
@@ -144,7 +162,7 @@ describe('postgres entity integration', () => {
     const entities = await enforceResultsAsync(
       PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       ).loadManyByFieldEqualingAsync('name', 'hello')
     );
     expect(entities).toHaveLength(1);
@@ -154,7 +172,10 @@ describe('postgres entity integration', () => {
     const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
     const firstEntity = await enforceAsyncResult(
-      PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      PostgresTestEntity.creator(
+        vc1,
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('name', 'hello')
         .createAsync()
     );
@@ -195,7 +216,10 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       const entity = await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('stringArray', ['hello', 'world'])
           .setField('jsonArrayField', ['hello', 'world'])
           .createAsync()
@@ -209,7 +233,10 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       const entity = await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('jsonObjectField', { hello: 'world' })
           .createAsync()
       );
@@ -221,12 +248,18 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       const entity1 = await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('maybeJsonArrayField', ['hello', 'world'])
           .createAsync()
       );
       const entity2 = await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('maybeJsonArrayField', { hello: 'world' })
           .createAsync()
       );
@@ -241,21 +274,30 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       let entity = await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('bigintField', '72057594037928038')
           .createAsync()
       );
       expect(entity.getField('bigintField')).toEqual('72057594037928038');
 
       entity = await enforceAsyncResult(
-        PostgresTestEntity.updater(entity, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.updater(
+          entity,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('bigintField', '10')
           .updateAsync()
       );
       expect(entity.getField('bigintField')).toEqual('10');
 
       entity = await enforceAsyncResult(
-        PostgresTestEntity.updater(entity, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.updater(
+          entity,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('bigintField', '-10')
           .updateAsync()
       );
@@ -268,7 +310,10 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'hello')
           .setField('hasACat', false)
           .setField('hasADog', true)
@@ -276,7 +321,10 @@ describe('postgres entity integration', () => {
       );
 
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'world')
           .setField('hasACat', false)
           .setField('hasADog', true)
@@ -284,7 +332,10 @@ describe('postgres entity integration', () => {
       );
 
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'wat')
           .setField('hasACat', false)
           .setField('hasADog', false)
@@ -293,7 +344,7 @@ describe('postgres entity integration', () => {
 
       const results = await PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .enforcing()
         .loadManyByFieldEqualityConjunctionAsync([
@@ -311,7 +362,7 @@ describe('postgres entity integration', () => {
 
       const results2 = await PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .enforcing()
         .loadManyByFieldEqualityConjunctionAsync([
@@ -324,26 +375,35 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'a')
           .createAsync()
       );
 
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'b')
           .createAsync()
       );
 
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'c')
           .createAsync()
       );
 
       const results = await PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .enforcing()
         .loadManyByFieldEqualityConjunctionAsync([], {
@@ -363,25 +423,37 @@ describe('postgres entity integration', () => {
     it('supports null field values', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'a')
           .setField('hasADog', true)
           .createAsync()
       );
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'b')
           .setField('hasADog', true)
           .createAsync()
       );
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', null)
           .setField('hasADog', true)
           .createAsync()
       );
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', null)
           .setField('hasADog', false)
           .createAsync()
@@ -389,7 +461,7 @@ describe('postgres entity integration', () => {
 
       const results = await PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .enforcing()
         .loadManyByFieldEqualityConjunctionAsync([{ fieldName: 'name', fieldValue: null }]);
@@ -398,7 +470,7 @@ describe('postgres entity integration', () => {
 
       const results2 = await PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .enforcing()
         .loadManyByFieldEqualityConjunctionAsync(
@@ -424,7 +496,10 @@ describe('postgres entity integration', () => {
     it('loads by raw where clause', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'hello')
           .setField('hasACat', false)
           .setField('hasADog', true)
@@ -433,7 +508,7 @@ describe('postgres entity integration', () => {
 
       const results = await PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .enforcing()
         .loadManyByRawWhereClauseAsync('name = ?', ['hello']);
@@ -444,7 +519,10 @@ describe('postgres entity integration', () => {
     it('throws with invalid where clause', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'hello')
           .setField('hasACat', false)
           .setField('hasADog', true)
@@ -452,7 +530,10 @@ describe('postgres entity integration', () => {
       );
 
       await expect(
-        PostgresTestEntity.loader(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.loader(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .enforcing()
           .loadManyByRawWhereClauseAsync('invalid_column = ?', ['hello'])
       ).rejects.toThrow();
@@ -462,21 +543,30 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'a')
           .setField('hasADog', true)
           .createAsync()
       );
 
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'b')
           .setField('hasADog', true)
           .createAsync()
       );
 
       await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1, vc1.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+        PostgresTestEntity.creator(
+          vc1,
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+        )
           .setField('name', 'c')
           .setField('hasADog', true)
           .createAsync()
@@ -484,7 +574,7 @@ describe('postgres entity integration', () => {
 
       const results = await PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .enforcing()
         .loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
@@ -503,7 +593,7 @@ describe('postgres entity integration', () => {
 
       const resultsMultipleOrderBy = await PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .enforcing()
         .loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
@@ -524,7 +614,7 @@ describe('postgres entity integration', () => {
 
       const resultsOrderByRaw = await PostgresTestEntity.loader(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .enforcing()
         .loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
@@ -546,7 +636,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.creator(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'beforeCreate')
             .enforceCreateAsync()
@@ -554,7 +644,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'beforeCreate')
@@ -563,7 +653,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.creator(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'afterCreate')
             .enforceCreateAsync()
@@ -571,7 +661,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'afterCreate')
@@ -580,7 +670,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.creator(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'beforeAll')
             .enforceCreateAsync()
@@ -588,7 +678,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'beforeAll')
@@ -597,7 +687,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.creator(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'afterAll')
             .enforceCreateAsync()
@@ -605,7 +695,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'afterAll')
@@ -614,7 +704,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.creator(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'afterCommit')
             .enforceCreateAsync()
@@ -622,7 +712,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'afterCommit')
@@ -638,7 +728,7 @@ describe('postgres entity integration', () => {
 
         const entity = await PostgresTriggerTestEntity.creator(
           vc1,
-          vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
         )
           .setField('name', 'blah')
           .enforceCreateAsync();
@@ -646,7 +736,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.updater(
             entity,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'beforeUpdate')
             .enforceUpdateAsync()
@@ -654,7 +744,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'beforeUpdate')
@@ -663,7 +753,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.updater(
             entity,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'afterUpdate')
             .enforceUpdateAsync()
@@ -671,7 +761,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'afterUpdate')
@@ -680,7 +770,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.updater(
             entity,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'beforeAll')
             .enforceUpdateAsync()
@@ -688,7 +778,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'beforeAll')
@@ -697,7 +787,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.updater(
             entity,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'afterAll')
             .enforceUpdateAsync()
@@ -705,7 +795,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'afterAll')
@@ -714,7 +804,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.updater(
             entity,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'afterCommit')
             .enforceUpdateAsync()
@@ -722,7 +812,7 @@ describe('postgres entity integration', () => {
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'afterCommit')
@@ -738,20 +828,20 @@ describe('postgres entity integration', () => {
 
         const entityBeforeDelete = await PostgresTriggerTestEntity.creator(
           vc1,
-          vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
         )
           .setField('name', 'beforeDelete')
           .enforceCreateAsync();
         await expect(
           PostgresTriggerTestEntity.enforceDeleteAsync(
             entityBeforeDelete,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
         ).rejects.toThrowError('name cannot have value beforeDelete');
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'beforeDelete')
@@ -759,20 +849,20 @@ describe('postgres entity integration', () => {
 
         const entityAfterDelete = await PostgresTriggerTestEntity.creator(
           vc1,
-          vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+          vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
         )
           .setField('name', 'afterDelete')
           .enforceCreateAsync();
         await expect(
           PostgresTriggerTestEntity.enforceDeleteAsync(
             entityAfterDelete,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
         ).rejects.toThrowError('name cannot have value afterDelete');
         await expect(
           PostgresTriggerTestEntity.loader(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .enforcing()
             .loadByFieldEqualingAsync('name', 'afterDelete')
@@ -789,7 +879,7 @@ describe('postgres entity integration', () => {
           await expect(
             PostgresValidatorTestEntity.creator(
               vc1,
-              vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+              vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
             )
               .setField('name', 'beforeCreateAndBeforeUpdate')
               .enforceCreateAsync()
@@ -797,7 +887,7 @@ describe('postgres entity integration', () => {
           await expect(
             PostgresValidatorTestEntity.loader(
               vc1,
-              vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+              vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
             )
               .enforcing()
               .loadByFieldEqualingAsync('name', 'beforeCreateAndBeforeUpdate')
@@ -812,7 +902,7 @@ describe('postgres entity integration', () => {
 
           const entity = await PostgresValidatorTestEntity.creator(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'blah')
             .enforceCreateAsync();
@@ -820,7 +910,7 @@ describe('postgres entity integration', () => {
           await expect(
             PostgresValidatorTestEntity.updater(
               entity,
-              vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+              vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
             )
               .setField('name', 'beforeCreateAndBeforeUpdate')
               .enforceUpdateAsync()
@@ -828,7 +918,7 @@ describe('postgres entity integration', () => {
           await expect(
             PostgresValidatorTestEntity.loader(
               vc1,
-              vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+              vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
             )
               .enforcing()
               .loadByFieldEqualingAsync('name', 'beforeCreateAndBeforeUpdate')
@@ -843,18 +933,18 @@ describe('postgres entity integration', () => {
 
           const entityToDelete = await PostgresValidatorTestEntity.creator(
             vc1,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           )
             .setField('name', 'shouldBeDeleted')
             .enforceCreateAsync();
           await PostgresValidatorTestEntity.enforceDeleteAsync(
             entityToDelete,
-            vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+            vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
           );
           await expect(
             PostgresValidatorTestEntity.loader(
               vc1,
-              vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+              vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
             )
               .enforcing()
               .loadByFieldEqualingAsync('name', 'shouldBeDeleted')

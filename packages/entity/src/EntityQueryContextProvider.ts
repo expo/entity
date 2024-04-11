@@ -12,7 +12,7 @@ export default abstract class EntityQueryContextProvider {
   /**
    * Vend a regular (non-transactional) entity query context.
    */
-  public getQueryContext(): EntityNonTransactionalQueryContext {
+  public getNonTransactionalQueryContext(): EntityNonTransactionalQueryContext {
     return new EntityNonTransactionalQueryContext(this.getQueryInterface(), this);
   }
 

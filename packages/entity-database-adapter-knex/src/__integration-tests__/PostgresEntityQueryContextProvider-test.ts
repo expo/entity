@@ -36,7 +36,7 @@ describe(PostgresEntityQueryContextProvider, () => {
 
     await PostgresUniqueTestEntity.creator(
       vc1,
-      vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .setField('name', 'unique')
       .enforceCreateAsync();
@@ -44,7 +44,7 @@ describe(PostgresEntityQueryContextProvider, () => {
     const id = (
       await PostgresUniqueTestEntity.creator(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .setField('name', 'wat')
         .enforceCreateAsync()
@@ -81,7 +81,7 @@ describe(PostgresEntityQueryContextProvider, () => {
 
     const entityLoaded = await PostgresUniqueTestEntity.loader(
       vc1,
-      vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .enforcing()
       .loadByIDAsync(id);
@@ -94,7 +94,7 @@ describe(PostgresEntityQueryContextProvider, () => {
     const id = (
       await PostgresUniqueTestEntity.creator(
         vc1,
-        vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
         .setField('name', 'wat')
         .enforceCreateAsync()
@@ -117,7 +117,7 @@ describe(PostgresEntityQueryContextProvider, () => {
 
     const entityLoaded = await PostgresUniqueTestEntity.loader(
       vc1,
-      vc1.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      vc1.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .enforcing()
       .loadByIDAsync(id);

@@ -3,7 +3,7 @@ import ViewerContext from '../ViewerContext';
 
 export default class TestViewerContext extends ViewerContext {
   public getQueryContext(): EntityQueryContext {
-    return super.getQueryContextForDatabaseAdaptorFlavor('postgres');
+    return super.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres');
   }
 
   public async runInTransactionAsync<TResult>(

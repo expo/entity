@@ -41,7 +41,10 @@ describe('postgres errors', () => {
 
   it('throws EntityDatabaseAdapterTransientError on Knex timeout', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-    await ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+    await ErrorsTestEntity.creator(
+      vc,
+      vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
       .setField('id', 1)
       .setField('fieldNonNull', 'hello')
       .enforceCreateAsync();
@@ -61,7 +64,10 @@ describe('postgres errors', () => {
       createKnexIntegrationTestEntityCompanionProvider(shortTimeoutKnexInstance)
     );
     await expect(
-      ErrorsTestEntity.loader(vc2, vc2.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      ErrorsTestEntity.loader(
+        vc2,
+        vc2.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .enforcing()
         .loadByIDAsync(1)
     ).rejects.toThrow(EntityDatabaseAdapterTransientError);
@@ -71,7 +77,10 @@ describe('postgres errors', () => {
   it('throws EntityDatabaseAdapterNotNullConstraintError when not null is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
-      ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      ErrorsTestEntity.creator(
+        vc,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('id', 1)
         .setField('fieldNonNull', null as any)
         .enforceCreateAsync()
@@ -81,7 +90,10 @@ describe('postgres errors', () => {
   it('throws EntityDatabaseAdapterForeignKeyConstraintError when foreign key is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
-      ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      ErrorsTestEntity.creator(
+        vc,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('fieldForeignKey', 2)
@@ -92,13 +104,19 @@ describe('postgres errors', () => {
   it('throws EntityDatabaseAdapterUniqueConstraintError when primary key unique constraint is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
-    await ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+    await ErrorsTestEntity.creator(
+      vc,
+      vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
       .setField('id', 1)
       .setField('fieldNonNull', 'hello')
       .enforceCreateAsync();
 
     await expect(
-      ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      ErrorsTestEntity.creator(
+        vc,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .enforceCreateAsync()
@@ -107,14 +125,20 @@ describe('postgres errors', () => {
 
   it('throws EntityDatabaseAdapterUniqueConstraintError when unique constraint is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-    await ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+    await ErrorsTestEntity.creator(
+      vc,
+      vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+    )
       .setField('id', 2)
       .setField('fieldNonNull', 'hello')
       .setField('fieldUnique', 'hello')
       .enforceCreateAsync();
 
     await expect(
-      ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      ErrorsTestEntity.creator(
+        vc,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('fieldUnique', 'hello')
@@ -125,7 +149,10 @@ describe('postgres errors', () => {
   it('throws EntityDatabaseAdapterCheckConstraintError when check constraint is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
-      ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      ErrorsTestEntity.creator(
+        vc,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('checkLessThan5', 2)
@@ -133,7 +160,10 @@ describe('postgres errors', () => {
     ).resolves.toBeTruthy();
 
     await expect(
-      ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      ErrorsTestEntity.creator(
+        vc,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('id', 2)
         .setField('fieldNonNull', 'hello')
         .setField('checkLessThan5', 10)
@@ -144,7 +174,10 @@ describe('postgres errors', () => {
   it('throws EntityDatabaseAdapterExclusionConstraintError when exclusion constraint is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
-      ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      ErrorsTestEntity.creator(
+        vc,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('fieldExclusion', 'what')
@@ -152,7 +185,10 @@ describe('postgres errors', () => {
     ).resolves.toBeTruthy();
 
     await expect(
-      ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      ErrorsTestEntity.creator(
+        vc,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('id', 2)
         .setField('fieldNonNull', 'hello')
         .setField('fieldExclusion', 'what')
@@ -163,7 +199,10 @@ describe('postgres errors', () => {
   it('throws EntityDatabaseAdapterUnknownError otherwise', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
-      ErrorsTestEntity.creator(vc, vc.getQueryContextForDatabaseAdaptorFlavor('postgres'))
+      ErrorsTestEntity.creator(
+        vc,
+        vc.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
+      )
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('nonExistentColumn', 'what')

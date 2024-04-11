@@ -174,7 +174,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
 
     const createdEntity = await LocalMemoryTestEntity.creator(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .setField('name', 'wat')
       .enforceCreateAsync();
@@ -186,7 +186,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
       ),
       LocalMemoryTestEntity.loader(
         viewerContext,
-        viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
     );
 
@@ -225,7 +225,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
       ),
       LocalMemoryTestEntity.loader(
         viewerContext,
-        viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
     );
 

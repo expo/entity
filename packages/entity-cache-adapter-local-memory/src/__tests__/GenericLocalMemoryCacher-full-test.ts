@@ -27,7 +27,7 @@ describe(GenericLocalMemoryCacher, () => {
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .setField('name', 'blah')
       .setField('dateField', date)
@@ -36,7 +36,7 @@ describe(GenericLocalMemoryCacher, () => {
     // loading an entity should put it in cache
     const entity1 = await LocalMemoryTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
@@ -71,7 +71,7 @@ describe(GenericLocalMemoryCacher, () => {
 
     const entityNonExistentResult = await LocalMemoryTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     ).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 
@@ -85,14 +85,14 @@ describe(GenericLocalMemoryCacher, () => {
     // load again through entities framework to ensure it reads negative result
     const entityNonExistentResult2 = await LocalMemoryTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     ).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly
     await LocalMemoryTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     ).invalidateFieldsAsync(entity1.getAllFields());
     const cachedResultMiss = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),
@@ -113,7 +113,7 @@ describe(GenericLocalMemoryCacher, () => {
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .setField('name', 'blah')
       .setField('dateField', date)
@@ -122,7 +122,7 @@ describe(GenericLocalMemoryCacher, () => {
     // loading an entity will try to put it in cache but it's a noop cache, so it should be a miss
     const entity1 = await LocalMemoryTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .enforcing()
       .loadByIDAsync(entity1Created.getID());
@@ -152,7 +152,7 @@ describe(GenericLocalMemoryCacher, () => {
 
     const entityNonExistentResult = await LocalMemoryTestEntity.loader(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     ).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 

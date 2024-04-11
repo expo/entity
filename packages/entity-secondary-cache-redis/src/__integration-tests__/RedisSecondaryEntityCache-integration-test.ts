@@ -81,7 +81,7 @@ describe(RedisSecondaryEntityCache, () => {
 
     const createdEntity = await RedisTestEntity.creator(
       viewerContext,
-      viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+      viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
     )
       .setField('name', 'wat')
       .enforceCreateAsync();
@@ -94,7 +94,7 @@ describe(RedisSecondaryEntityCache, () => {
       ),
       RedisTestEntity.loader(
         viewerContext,
-        viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
     );
 
@@ -136,7 +136,7 @@ describe(RedisSecondaryEntityCache, () => {
       ),
       RedisTestEntity.loader(
         viewerContext,
-        viewerContext.getQueryContextForDatabaseAdaptorFlavor('postgres')
+        viewerContext.getNonTransactionalQueryContextForDatabaseAdaptorFlavor('postgres')
       )
     );
 
