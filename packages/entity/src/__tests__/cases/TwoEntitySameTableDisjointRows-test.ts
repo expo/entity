@@ -1,7 +1,7 @@
 import Entity from '../../Entity';
 import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import EntityConfiguration from '../../EntityConfiguration';
-import { UUIDField, EnumField, StringField } from '../../EntityFields';
+import { UUIDField, StringField, StrictEnumField } from '../../EntityFields';
 import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
 import ViewerContext from '../../ViewerContext';
 import { successfulResults, failedResults } from '../../entityUtils';
@@ -98,8 +98,9 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
     common_other_field: new StringField({
       columnName: 'common_other_field',
     }),
-    entity_type: new EnumField({
+    entity_type: new StrictEnumField({
       columnName: 'entity_type',
+      enum: EntityType,
     }),
   },
   databaseAdapterFlavor: 'postgres',
