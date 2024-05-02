@@ -88,3 +88,18 @@ export class EnumField extends EntityFieldDefinition<string | number> {
     return typeof value === 'number' || typeof value === 'string';
   }
 }
+
+/**
+ * EntityFieldDefinition for a enum column with a strict typescript enum type.
+ */
+export class StrictEnumField<T extends object> extends EnumField {
+  private readonly enum: T;
+  constructor(options: ConstructorParameters<typeof EnumField>[0] & { enum: T }) {
+    super(options);
+    this.enum = options.enum;
+  }
+
+  protected override validateInputValueInternal(value: string | number): boolean {
+    return super.validateInputValueInternal(value) && Object.values(this.enum).includes(value);
+  }
+}

@@ -11,6 +11,7 @@ import {
   StringArrayField,
   JSONObjectField,
   EnumField,
+  StrictEnumField,
 } from '../EntityFields';
 import describeFieldTestCase from '../utils/testing/describeFieldTestCase';
 
@@ -75,3 +76,14 @@ describeFieldTestCase(
 );
 describeFieldTestCase(new JSONObjectField({ columnName: 'wat' }), [{}], [true, 'hello']);
 describeFieldTestCase(new EnumField({ columnName: 'wat' }), ['hello', 1], [true]);
+
+enum TestEnum {
+  HELLO = 'world',
+  WHO = 'wat',
+}
+
+describeFieldTestCase(
+  new StrictEnumField({ columnName: 'wat', enum: TestEnum }),
+  [TestEnum.HELLO, TestEnum.WHO, 'world'],
+  ['what', 1, true]
+);
