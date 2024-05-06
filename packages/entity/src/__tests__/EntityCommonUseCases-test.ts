@@ -12,7 +12,8 @@ import { enforceResultsAsync } from '../entityUtils';
 import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
-import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
+import { RuleComplexity, RuleEvaluationResult } from '../rules/PrivacyPolicyRuleEnums';
+import { DenyOrSkipPrivacyPolicyRule } from '../rules/PrivacyPolicyRuleTypes';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 class TestUserViewerContext extends ViewerContext {
@@ -60,18 +61,20 @@ class BlahEntity extends Entity<BlahFields, string, TestUserViewerContext> {
   }
 }
 
-class DenyIfNotOwnerPrivacyPolicyRule extends PrivacyPolicyRule<
+class DenyIfNotOwnerPrivacyPolicyRule extends DenyOrSkipPrivacyPolicyRule<
   BlahFields,
   string,
   TestUserViewerContext,
   BlahEntity
 > {
+  override complexity = RuleComplexity.CONSTANT_TIME;
+
   async evaluateAsync(
     viewerContext: TestUserViewerContext,
     _queryContext: EntityQueryContext,
     _evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: BlahEntity
-  ): Promise<RuleEvaluationResult> {
+  ): Promise<RuleEvaluationResult.DENY | RuleEvaluationResult.SKIP> {
     if (viewerContext.getUserID() === entity.getField('ownerID')) {
       return RuleEvaluationResult.SKIP;
     }

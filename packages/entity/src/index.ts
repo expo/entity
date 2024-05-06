@@ -66,8 +66,8 @@ export { default as NoOpEntityMetricsAdapter } from './metrics/NoOpEntityMetrics
 export { default as AlwaysAllowPrivacyPolicyRule } from './rules/AlwaysAllowPrivacyPolicyRule';
 export { default as AlwaysDenyPrivacyPolicyRule } from './rules/AlwaysDenyPrivacyPolicyRule';
 export { default as AlwaysSkipPrivacyPolicyRule } from './rules/AlwaysSkipPrivacyPolicyRule';
-export { default as PrivacyPolicyRule } from './rules/PrivacyPolicyRule';
-export * from './rules/PrivacyPolicyRule';
+export * from './rules/PrivacyPolicyRuleEnums';
+export * from './rules/PrivacyPolicyRuleTypes';
 export * from './utils/testing/PrivacyPolicyRuleTestUtils';
 export * from './utils/testing/StubCacheAdapter';
 export { default as describeFieldTestCase } from './utils/testing/describeFieldTestCase';

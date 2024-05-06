@@ -1,9 +1,10 @@
 import {
-  PrivacyPolicyRule,
   ReadonlyEntity,
   EntityQueryContext,
   RuleEvaluationResult,
   EntityPrivacyPolicyEvaluationContext,
+  RuleComplexity,
+  AllowOrSkipPrivacyPolicyRule,
 } from '@expo/entity';
 
 import { ExampleViewerContext } from '../viewerContexts';
@@ -27,17 +28,19 @@ export default class AllowIfUserOwnerPrivacyRule<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TEntity extends ReadonlyEntity<TFields, TID, ExampleViewerContext>,
   TSelectedFields extends keyof TFields = keyof TFields
-> extends PrivacyPolicyRule<TFields, TID, ExampleViewerContext, TEntity> {
+> extends AllowOrSkipPrivacyPolicyRule<TFields, TID, ExampleViewerContext, TEntity> {
   constructor(private readonly entityOwnerField: keyof TFields) {
     super();
   }
+
+  override complexity = RuleComplexity.CONSTANT_TIME;
 
   async evaluateAsync(
     viewerContext: ExampleViewerContext,
     _queryContext: EntityQueryContext,
     _evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: TEntity
-  ): Promise<RuleEvaluationResult> {
+  ): Promise<RuleEvaluationResult.ALLOW | RuleEvaluationResult.SKIP> {
     if (viewerContext.isUserViewerContext()) {
       if (String(entity.getField(this.entityOwnerField)) === viewerContext.userID) {
         return RuleEvaluationResult.ALLOW;

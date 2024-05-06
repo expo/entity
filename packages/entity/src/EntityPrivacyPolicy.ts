@@ -6,7 +6,9 @@ import EntityNotAuthorizedError from './errors/EntityNotAuthorizedError';
 import IEntityMetricsAdapter, {
   EntityMetricsAuthorizationResult,
 } from './metrics/IEntityMetricsAdapter';
-import PrivacyPolicyRule, { RuleEvaluationResult } from './rules/PrivacyPolicyRule';
+import { RuleEvaluationResult } from './rules/PrivacyPolicyRuleEnums';
+import { PrivacyPolicyRule } from './rules/PrivacyPolicyRuleTypes';
+import { reorderRulesByRuleComplexityGroups } from './rules/internal/PrivacyPolicyRuleOrdering';
 
 /**
  * Information about the reason this privacy policy is being evaluated.
@@ -143,6 +145,8 @@ export default abstract class EntityPrivacyPolicy<
     };
   }
 
+  protected readonly shouldAutoReorderRulesAccordingToComplexity: boolean = false;
+
   /**
    * Authorize an entity against creation policy.
    * @param viewerContext - viewer context of user creating the entity
@@ -248,7 +252,13 @@ export default abstract class EntityPrivacyPolicy<
   }
 
   private async authorizeForRulesetAsync(
-    ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
+    rulesetOriginalOrder: readonly PrivacyPolicyRule<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >[],
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     evaluationContext: EntityPrivacyPolicyEvaluationContext,
@@ -257,6 +267,9 @@ export default abstract class EntityPrivacyPolicy<
     metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
     const privacyPolicyEvaluator = this.getPrivacyPolicyEvaluator(viewerContext);
+    const ruleset = this.shouldAutoReorderRulesAccordingToComplexity
+      ? reorderRulesByRuleComplexityGroups(rulesetOriginalOrder)
+      : rulesetOriginalOrder;
     switch (privacyPolicyEvaluator.mode) {
       case EntityPrivacyPolicyEvaluationMode.ENFORCE:
         try {

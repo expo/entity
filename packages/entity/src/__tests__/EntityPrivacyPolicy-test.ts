@@ -19,7 +19,8 @@ import IEntityMetricsAdapter, {
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
 import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
 import AlwaysSkipPrivacyPolicyRule from '../rules/AlwaysSkipPrivacyPolicyRule';
-import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
+import { RuleComplexity, RuleEvaluationResult } from '../rules/PrivacyPolicyRuleEnums';
+import { AllowOrSkipPrivacyPolicyRule } from '../rules/PrivacyPolicyRuleTypes';
 
 type BlahFields = {
   id: string;
@@ -172,18 +173,20 @@ class SkipAllPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContex
   ];
 }
 
-class AlwaysThrowPrivacyPolicyRule extends PrivacyPolicyRule<
+class AlwaysThrowPrivacyPolicyRule extends AllowOrSkipPrivacyPolicyRule<
   BlahFields,
   string,
   ViewerContext,
   BlahEntity
 > {
+  override complexity = RuleComplexity.CONSTANT_TIME;
+
   evaluateAsync(
     _viewerContext: ViewerContext,
     _queryContext: EntityQueryContext,
     _evaluationContext: EntityPrivacyPolicyEvaluationContext,
     _entity: BlahEntity
-  ): Promise<RuleEvaluationResult> {
+  ): Promise<RuleEvaluationResult.ALLOW> {
     throw new Error('WooHoo!');
   }
 }

@@ -13,7 +13,8 @@ import EntityPrivacyPolicy, {
 } from '../EntityPrivacyPolicy';
 import { EntityTransactionalQueryContext, EntityQueryContext } from '../EntityQueryContext';
 import { CacheStatus } from '../internal/ReadThroughEntityCache';
-import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
+import { RuleComplexity, RuleEvaluationResult } from '../rules/PrivacyPolicyRuleEnums';
+import { AllowOrSkipPrivacyPolicyRule } from '../rules/PrivacyPolicyRuleTypes';
 import TestViewerContext from '../testfixtures/TestViewerContext';
 import { InMemoryFullCacheStubCacheAdapter } from '../utils/testing/StubCacheAdapter';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
@@ -66,13 +67,15 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     },
   };
 
-  class AlwaysAllowPrivacyPolicyRuleThatRecords extends PrivacyPolicyRule<
+  class AlwaysAllowPrivacyPolicyRuleThatRecords extends AllowOrSkipPrivacyPolicyRule<
     any,
     string,
     TestViewerContext,
     any,
     any
   > {
+    override complexity = RuleComplexity.CONSTANT_TIME;
+
     constructor(private readonly action: EntityAuthorizationAction) {
       super();
     }
@@ -82,7 +85,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _queryContext: EntityQueryContext,
       evaluationContext: EntityPrivacyPolicyEvaluationContext,
       entity: any
-    ): Promise<RuleEvaluationResult> {
+    ): Promise<RuleEvaluationResult.ALLOW> {
       if (privacyPolicyEvaluationRecords.shouldRecord) {
         (privacyPolicyEvaluationRecords as any)[entity.constructor.name][this.action].push(
           evaluationContext

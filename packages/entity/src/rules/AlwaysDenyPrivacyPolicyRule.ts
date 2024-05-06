@@ -1,4 +1,5 @@
-import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
+import { RuleComplexity, RuleEvaluationResult } from './PrivacyPolicyRuleEnums';
+import { DenyOrSkipPrivacyPolicyRule } from './PrivacyPolicyRuleTypes';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ReadonlyEntity from '../ReadonlyEntity';
@@ -13,13 +14,15 @@ export default class AlwaysDenyPrivacyPolicyRule<
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
-> extends PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+> extends DenyOrSkipPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+  override complexity = RuleComplexity.CONSTANT_TIME;
+
   async evaluateAsync(
     _viewerContext: TViewerContext,
     _queryContext: EntityQueryContext,
     _evaluationContext: EntityPrivacyPolicyEvaluationContext,
     _entity: TEntity
-  ): Promise<RuleEvaluationResult> {
+  ): Promise<RuleEvaluationResult.DENY | RuleEvaluationResult.SKIP> {
     return RuleEvaluationResult.DENY;
   }
 }

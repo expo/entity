@@ -1,24 +1,12 @@
-import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../EntityQueryContext';
-import ReadonlyEntity from '../ReadonlyEntity';
-import ViewerContext from '../ViewerContext';
-
-export enum RuleEvaluationResult {
-  /**
-   * Deny viewer access to the entity.
-   */
-  DENY = -1,
-
-  /**
-   * Defer entity viewer access to subsequent rule in the privacy policy.
-   */
-  SKIP = 0,
-
-  /**
-   * Allow viewer access to the entity.
-   */
-  ALLOW = 1,
-}
+import { EntityPrivacyPolicyEvaluationContext } from '../../EntityPrivacyPolicy';
+import { EntityQueryContext } from '../../EntityQueryContext';
+import ReadonlyEntity from '../../ReadonlyEntity';
+import ViewerContext from '../../ViewerContext';
+import {
+  RuleComplexity,
+  RuleEvaluationResult,
+  RuleEvaluationResultType,
+} from '../PrivacyPolicyRuleEnums';
 
 /**
  * A single unit of which declarative privacy policies are composed, allowing for simple
@@ -36,17 +24,24 @@ export enum RuleEvaluationResult {
  * - Blocking. For example, a user blocks another user from seeing their posts, and the rule
  *   would be named something like `DenyIfViewerHasBeenBlockedPrivacyPolicyRule`.
  */
-export default abstract class PrivacyPolicyRule<
+export abstract class PrivacyPolicyRuleInternal<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
 > {
+  /**
+   * Estimated complexity of a privacy policy rule. Used for automatic (safe) rule reordering.
+   */
+  abstract readonly complexity: RuleComplexity;
+
   abstract evaluateAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     evaluationContext: EntityPrivacyPolicyEvaluationContext,
     entity: TEntity
   ): Promise<RuleEvaluationResult>;
+
+  abstract readonly resultType: RuleEvaluationResultType;
 }
