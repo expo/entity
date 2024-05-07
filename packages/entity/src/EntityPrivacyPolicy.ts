@@ -145,7 +145,14 @@ export default abstract class EntityPrivacyPolicy<
     };
   }
 
-  protected readonly shouldAutoReorderRulesAccordingToComplexity: boolean = false;
+  protected async shouldAutoReorderRulesAccordingToComplexityAsync(
+    _viewerContext: TViewerContext,
+    _queryContext: EntityQueryContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    _action: EntityAuthorizationAction
+  ): Promise<boolean> {
+    return false;
+  }
 
   /**
    * Authorize an entity against creation policy.
@@ -267,7 +274,13 @@ export default abstract class EntityPrivacyPolicy<
     metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
     const privacyPolicyEvaluator = this.getPrivacyPolicyEvaluator(viewerContext);
-    const ruleset = this.shouldAutoReorderRulesAccordingToComplexity
+    const shouldAutoReorder = await this.shouldAutoReorderRulesAccordingToComplexityAsync(
+      viewerContext,
+      queryContext,
+      evaluationContext,
+      action
+    );
+    const ruleset = shouldAutoReorder
       ? reorderRulesByRuleComplexityGroups(rulesetOriginalOrder)
       : rulesetOriginalOrder;
     switch (privacyPolicyEvaluator.mode) {

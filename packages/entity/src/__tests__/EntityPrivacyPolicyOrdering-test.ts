@@ -4,7 +4,10 @@ import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
-import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import EntityPrivacyPolicy, {
+  EntityAuthorizationAction,
+  EntityPrivacyPolicyEvaluationContext,
+} from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
@@ -118,7 +121,14 @@ class ConstantTimeComplexityDenyRule extends DenyOrSkipPrivacyPolicyRule<
 }
 
 class ReorderablePolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
-  protected override shouldAutoReorderRulesAccordingToComplexity = true;
+  protected override async shouldAutoReorderRulesAccordingToComplexityAsync(
+    _viewerContext: ViewerContext,
+    _queryContext: EntityQueryContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    _action: EntityAuthorizationAction
+  ): Promise<boolean> {
+    return true;
+  }
 
   protected override readonly createRules = [
     new LargeAsyncComplexityDenyRule(),
