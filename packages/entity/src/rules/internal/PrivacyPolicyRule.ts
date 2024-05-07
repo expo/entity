@@ -33,6 +33,7 @@ export abstract class PrivacyPolicyRuleInternal<
 > {
   /**
    * Estimated complexity of a privacy policy rule. Used for automatic (safe) rule reordering.
+   * Typed as a number so that applications can define their own complexity scale.
    */
   abstract readonly complexity: RuleComplexity;
 

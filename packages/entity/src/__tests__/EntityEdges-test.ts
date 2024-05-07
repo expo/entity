@@ -74,7 +74,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     any,
     any
   > {
-    override complexity = RuleComplexity.CONSTANT_TIME;
+    override complexity = RuleComplexity.LOW;
 
     constructor(private readonly action: EntityAuthorizationAction) {
       super();

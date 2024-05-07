@@ -19,23 +19,25 @@ export enum RuleEvaluationResult {
 }
 
 /**
- * Estimated complexity of a privacy policy rule.
+ * Estimated complexity of a privacy policy rule. Definition of what rules fall into what complexity category
+ * is application-specific, but the AlwaysAllow/AlwaysDeny/AlwaysSkip rules provided are all defined as LOW
+ * complexity.
  */
 export enum RuleComplexity {
   /**
-   * Rule doesn't make any async calls.
+   * Rule complexity is low. Definition dependent on application.
    */
-  CONSTANT_TIME = 0,
+  LOW = 0,
 
   /**
-   * Rule makes an small amount of async calls. Definition of small dependent on application.
+   * Rule complexity is medium. Definition dependent on application.
    */
-  SMALL_ASYNC = 1,
+  MEDIUM = 1,
 
   /**
-   * Rule makes a large amount of async calls. Definition of large dependent on application.
+   * Rule complexity is high. Definition dependent on application.
    */
-  LARGE_ASYNC = 2,
+  HIGH = 2,
 }
 
 /**

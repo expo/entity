@@ -67,7 +67,7 @@ class DenyIfNotOwnerPrivacyPolicyRule extends DenyOrSkipPrivacyPolicyRule<
   TestUserViewerContext,
   BlahEntity
 > {
-  override complexity = RuleComplexity.CONSTANT_TIME;
+  override complexity = RuleComplexity.LOW;
 
   async evaluateAsync(
     viewerContext: TestUserViewerContext,

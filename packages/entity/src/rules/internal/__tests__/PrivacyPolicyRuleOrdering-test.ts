@@ -75,13 +75,13 @@ describe(groupRulesByResultType, () => {
   );
 });
 
-type TestRuleJustComplexity = { id: number; complexity: RuleComplexity };
+type TestRuleJustComplexity = { id: number; complexity: number };
 
 describe(sortGroupByComplexity, () => {
-  const rule1 = { id: 1, complexity: RuleComplexity.CONSTANT_TIME };
-  const rule2 = { id: 2, complexity: RuleComplexity.CONSTANT_TIME };
-  const rule3 = { id: 3, complexity: RuleComplexity.SMALL_ASYNC };
-  const rule5 = { id: 3, complexity: RuleComplexity.LARGE_ASYNC };
+  const rule1 = { id: 1, complexity: RuleComplexity.LOW };
+  const rule2 = { id: 2, complexity: RuleComplexity.LOW };
+  const rule3 = { id: 3, complexity: RuleComplexity.MEDIUM };
+  const rule5 = { id: 3, complexity: RuleComplexity.HIGH };
 
   test.each([
     { ruleGroup: [rule1, rule2], expectedRuleGroup: [rule1, rule2] },
@@ -103,38 +103,38 @@ describe(sortGroupByComplexity, () => {
   );
 });
 
-type TestRule = { id: number; resultType: RuleEvaluationResultType; complexity: RuleComplexity };
+type TestRule = { id: number; resultType: RuleEvaluationResultType; complexity: number };
 
 describe(reorderRulesByRuleComplexityGroups, () => {
   const rule1 = {
     id: 1,
     resultType: RuleEvaluationResultType.ALLOW_OR_SKIP,
-    complexity: RuleComplexity.LARGE_ASYNC,
+    complexity: RuleComplexity.HIGH,
   };
   const rule2 = {
     id: 2,
     resultType: RuleEvaluationResultType.ALLOW_OR_SKIP,
-    complexity: RuleComplexity.CONSTANT_TIME,
+    complexity: RuleComplexity.LOW,
   };
   const rule3 = {
     id: 3,
     resultType: RuleEvaluationResultType.SKIP,
-    complexity: RuleComplexity.CONSTANT_TIME,
+    complexity: RuleComplexity.LOW,
   };
   const rule4 = {
     id: 4,
     resultType: RuleEvaluationResultType.SKIP,
-    complexity: RuleComplexity.LARGE_ASYNC,
+    complexity: RuleComplexity.HIGH,
   };
   const rule5 = {
     id: 5,
     resultType: RuleEvaluationResultType.DENY_OR_SKIP,
-    complexity: RuleComplexity.SMALL_ASYNC,
+    complexity: RuleComplexity.MEDIUM,
   };
   const rule6 = {
     id: 6,
     resultType: RuleEvaluationResultType.DENY_OR_SKIP,
-    complexity: RuleComplexity.CONSTANT_TIME,
+    complexity: RuleComplexity.LOW,
   };
 
   test.each([

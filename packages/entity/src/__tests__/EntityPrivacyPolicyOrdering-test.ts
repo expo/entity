@@ -54,7 +54,7 @@ class LargeAsyncComplexityAllowRule extends AllowOrSkipPrivacyPolicyRule<
   override async evaluateAsync(): Promise<RuleEvaluationResult.SKIP | RuleEvaluationResult.ALLOW> {
     return RuleEvaluationResult.SKIP;
   }
-  override complexity = RuleComplexity.LARGE_ASYNC;
+  override complexity = RuleComplexity.HIGH;
 }
 
 class ConstantTimeComplexityAllowRule extends AllowOrSkipPrivacyPolicyRule<
@@ -66,7 +66,7 @@ class ConstantTimeComplexityAllowRule extends AllowOrSkipPrivacyPolicyRule<
   override async evaluateAsync(): Promise<RuleEvaluationResult.SKIP | RuleEvaluationResult.ALLOW> {
     return RuleEvaluationResult.SKIP;
   }
-  override complexity = RuleComplexity.CONSTANT_TIME;
+  override complexity = RuleComplexity.LOW;
 }
 
 class LargeAsyncComplexitySkipRule extends SkipPrivacyPolicyRule<
@@ -78,7 +78,7 @@ class LargeAsyncComplexitySkipRule extends SkipPrivacyPolicyRule<
   override async evaluateAsync(): Promise<RuleEvaluationResult.SKIP> {
     return RuleEvaluationResult.SKIP;
   }
-  override complexity = RuleComplexity.LARGE_ASYNC;
+  override complexity = RuleComplexity.HIGH;
 }
 
 class ConstantTimeComplexitySkipRule extends SkipPrivacyPolicyRule<
@@ -90,7 +90,7 @@ class ConstantTimeComplexitySkipRule extends SkipPrivacyPolicyRule<
   override async evaluateAsync(): Promise<RuleEvaluationResult.SKIP> {
     return RuleEvaluationResult.SKIP;
   }
-  override complexity = RuleComplexity.CONSTANT_TIME;
+  override complexity = RuleComplexity.LOW;
 }
 
 class LargeAsyncComplexityDenyRule extends DenyOrSkipPrivacyPolicyRule<
@@ -102,7 +102,7 @@ class LargeAsyncComplexityDenyRule extends DenyOrSkipPrivacyPolicyRule<
   override async evaluateAsync(): Promise<RuleEvaluationResult.SKIP | RuleEvaluationResult.DENY> {
     return RuleEvaluationResult.SKIP;
   }
-  override complexity = RuleComplexity.LARGE_ASYNC;
+  override complexity = RuleComplexity.HIGH;
 }
 
 class ConstantTimeComplexityDenyRule extends DenyOrSkipPrivacyPolicyRule<
@@ -114,7 +114,7 @@ class ConstantTimeComplexityDenyRule extends DenyOrSkipPrivacyPolicyRule<
   override async evaluateAsync(): Promise<RuleEvaluationResult.SKIP | RuleEvaluationResult.DENY> {
     return RuleEvaluationResult.SKIP;
   }
-  override complexity = RuleComplexity.CONSTANT_TIME;
+  override complexity = RuleComplexity.LOW;
 }
 
 class ReorderablePolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {

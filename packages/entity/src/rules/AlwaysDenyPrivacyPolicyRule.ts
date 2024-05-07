@@ -15,7 +15,7 @@ export default class AlwaysDenyPrivacyPolicyRule<
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields
 > extends DenyOrSkipPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
-  override complexity = RuleComplexity.CONSTANT_TIME;
+  override complexity = RuleComplexity.LOW;
 
   async evaluateAsync(
     _viewerContext: TViewerContext,

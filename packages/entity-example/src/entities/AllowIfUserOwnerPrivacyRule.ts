@@ -33,7 +33,7 @@ export default class AllowIfUserOwnerPrivacyRule<
     super();
   }
 
-  override complexity = RuleComplexity.CONSTANT_TIME;
+  override complexity = RuleComplexity.LOW;
 
   async evaluateAsync(
     viewerContext: ExampleViewerContext,

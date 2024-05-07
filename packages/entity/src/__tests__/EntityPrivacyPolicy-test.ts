@@ -179,7 +179,7 @@ class AlwaysThrowPrivacyPolicyRule extends AllowOrSkipPrivacyPolicyRule<
   ViewerContext,
   BlahEntity
 > {
-  override complexity = RuleComplexity.CONSTANT_TIME;
+  override complexity = RuleComplexity.LOW;
 
   evaluateAsync(
     _viewerContext: ViewerContext,

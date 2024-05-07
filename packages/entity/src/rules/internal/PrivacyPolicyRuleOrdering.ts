@@ -1,6 +1,6 @@
 import invariant from 'invariant';
 
-import { RuleComplexity, RuleEvaluationResultType } from '../PrivacyPolicyRuleEnums';
+import { RuleEvaluationResultType } from '../PrivacyPolicyRuleEnums';
 
 /**
  * Privacy policy list of PrivacyPolicyRule can be reordered safely according to
@@ -13,7 +13,7 @@ import { RuleComplexity, RuleEvaluationResultType } from '../PrivacyPolicyRuleEn
  * @returns reordered ruleset depending on constraints above
  */
 export function reorderRulesByRuleComplexityGroups<
-  TRule extends { resultType: RuleEvaluationResultType; complexity: RuleComplexity }
+  TRule extends { resultType: RuleEvaluationResultType; complexity: number }
 >(rulesetOriginalOrder: readonly TRule[]): readonly TRule[] {
   // first, group the rules according to constraints
   const groups = groupRulesByResultType(rulesetOriginalOrder);
@@ -25,7 +25,7 @@ export function reorderRulesByRuleComplexityGroups<
   return internallySortedGroups.flat();
 }
 
-export function sortGroupByComplexity<TRule extends { complexity: RuleComplexity }>(
+export function sortGroupByComplexity<TRule extends { complexity: number }>(
   ruleGroup: readonly TRule[]
 ): readonly TRule[] {
   return [...ruleGroup].sort((a, b) => a.complexity - b.complexity);
