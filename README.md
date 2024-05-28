@@ -4,7 +4,7 @@ Entity is a privacy-aware data layer for defining, caching, and authorizing acce
 
 [![tests](https://github.com/expo/entity/workflows/tests/badge.svg)](https://github.com/expo/entity/actions?query=workflow%3Atests)
 [![docs](https://github.com/expo/entity/workflows/docs/badge.svg)](https://expo.github.io/entity/)
-[![codecov](https://codecov.io/gh/expo/entity/branch/main/graph/badge.svg)](https://codecov.io/gh/expo/entity)
+[![codecov](https://codecov.io/gh/expo/entity/branch/main/graph/badge.svg)](https://codecov.io/gh/expo/entity/branch/main)
 [![npm](https://img.shields.io/npm/v/@expo/entity)](https://www.npmjs.com/package/@expo/entity)
 [![NPM](https://img.shields.io/npm/l/@expo/entity)](https://www.npmjs.com/package/@expo/entity)
 
