@@ -18,12 +18,17 @@ import TestViewerContext from '../testfixtures/TestViewerContext';
 import { InMemoryFullCacheStubCacheAdapter } from '../utils/testing/StubCacheAdapter';
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
+interface OtherFields {
+  id: string;
+}
+
 interface ParentFields {
   id: string;
 }
 
 interface ChildFields {
   id: string;
+  unused_other_edge_id: string | null;
   parent_id: string;
 }
 
@@ -321,6 +326,22 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     }
   }
 
+  class OtherEntity extends Entity<OtherFields, string, TestViewerContext> {
+    static defineCompanionDefinition(): EntityCompanionDefinition<
+      OtherFields,
+      string,
+      TestViewerContext,
+      OtherEntity,
+      TestEntityPrivacyPolicy
+    > {
+      return {
+        entityClass: ParentEntity,
+        entityConfiguration: otherEntityConfiguration,
+        privacyPolicyClass: TestEntityPrivacyPolicy,
+      };
+    }
+  }
+
   class ParentEntity extends Entity<ParentFields, string, TestViewerContext> {
     static defineCompanionDefinition(): EntityCompanionDefinition<
       ParentFields,
@@ -390,6 +411,19 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     }
   }
 
+  const otherEntityConfiguration = new EntityConfiguration<OtherFields>({
+    idField: 'id',
+    tableName: 'others',
+    schema: {
+      id: new UUIDField({
+        columnName: 'id',
+        cache: true,
+      }),
+    },
+    databaseAdapterFlavor: 'postgres',
+    cacheAdapterFlavor: 'redis',
+  });
+
   const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
     idField: 'id',
     tableName: 'parents',
@@ -413,11 +447,19 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         columnName: 'id',
         cache: true,
       }),
+      unused_other_edge_id: new UUIDField({
+        columnName: 'unused_other_edge_id',
+        association: {
+          associatedEntityClass: OtherEntity,
+          edgeDeletionBehavior,
+        },
+      }),
       parent_id: new UUIDField({
         columnName: 'parent_id',
         cache: true,
         association: {
           associatedEntityClass: ParentEntity,
+          associatedEntityLookupByField: 'id', // sanity check that this functionality works by using it for one edge
           edgeDeletionBehavior,
         },
       }),

@@ -76,3 +76,4 @@ export { default as StubDatabaseAdapterProvider } from './utils/testing/StubData
 export { default as StubQueryContextProvider } from './utils/testing/StubQueryContextProvider';
 export * from './utils/testing/createUnitTestEntityCompanionProvider';
 export * from './utils/collections/maps';
+export * from './utils/EntityPrivacyUtils';
