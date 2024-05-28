@@ -1,2 +1,4 @@
+codecov:
+  branch: main
 ignore:
   - "packages/entity-example"
