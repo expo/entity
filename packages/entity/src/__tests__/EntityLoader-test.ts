@@ -7,6 +7,7 @@ import EntityLoader from '../EntityLoader';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
+import EntityNotFoundError from '../errors/EntityNotFoundError';
 import EntityDataManager from '../internal/EntityDataManager';
 import ReadThroughEntityCache from '../internal/ReadThroughEntityCache';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
@@ -109,6 +110,15 @@ describe(EntityLoader, () => {
     await expect(entityLoader.loadByIDNullableAsync(uuidv4())).resolves.toBeNull();
     await expect(entityLoader.loadByIDNullableAsync(id1)).resolves.not.toBeNull();
 
+    const nonExistentId = uuidv4();
+    const manyIdResults = await entityLoader.loadManyByIDsNullableAsync([nonExistentId, id1]);
+    expect(manyIdResults.get(nonExistentId)).toBeNull();
+    expect(manyIdResults.get(id1)).not.toBeNull();
+
+    await expect(enforceAsyncResult(entityLoader.loadByIDAsync(nonExistentId))).rejects.toThrow(
+      EntityNotFoundError
+    );
+
     await expect(entityLoader.loadByIDAsync('not-a-uuid')).rejects.toThrowError(
       'Entity field not valid: TestEntity (customIdField = not-a-uuid)'
     );
@@ -191,7 +201,7 @@ describe(EntityLoader, () => {
         },
         {
           fieldName: 'intField',
-          fieldValue: 4,
+          fieldValues: [4],
         },
       ])
     );
@@ -298,6 +308,62 @@ describe(EntityLoader, () => {
     expect(result).not.toBeNull();
     expect(result!.ok).toBe(true);
     expect(result!.enforceValue().getField('testIndexedField')).toEqual('5');
+    verify(
+      spiedPrivacyPolicy.authorizeReadAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        anyOfClass(TestEntity),
+        anything()
+      )
+    ).once();
+  });
+
+  it('loads entities with loadManyByRawWhereClauseAsync', async () => {
+    const privacyPolicy = new TestEntityPrivacyPolicy();
+    const spiedPrivacyPolicy = spy(privacyPolicy);
+    const viewerContext = instance(mock(ViewerContext));
+    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+    const queryContext = StubQueryContextProvider.getQueryContext();
+
+    const dataManagerMock = mock<EntityDataManager<TestFields>>(EntityDataManager);
+    when(
+      dataManagerMock.loadManyByRawWhereClauseAsync(
+        queryContext,
+        anything(),
+        anything(),
+        anything()
+      )
+    ).thenResolve([
+      {
+        customIdField: 'id',
+        stringField: 'huh',
+        intField: 4,
+        testIndexedField: '4',
+        dateField: new Date(),
+        nullableField: null,
+      },
+    ]);
+    const dataManager = instance(dataManagerMock);
+    const entityLoader = new EntityLoader(
+      viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+      testEntityConfiguration,
+      TestEntity,
+      /* entitySelectedFields */ undefined,
+      privacyPolicy,
+      dataManager,
+      metricsAdapter
+    );
+    const result = await entityLoader.loadManyByRawWhereClauseAsync('id = ?', [1], {
+      orderBy: [{ fieldName: 'testIndexedField', order: OrderByOrdering.DESCENDING }],
+    });
+    expect(result).toHaveLength(1);
+    expect(result[0]).not.toBeNull();
+    expect(result[0]!.ok).toBe(true);
+    expect(result[0]!.enforceValue().getField('testIndexedField')).toEqual('4');
     verify(
       spiedPrivacyPolicy.authorizeReadAsync(
         viewerContext,
