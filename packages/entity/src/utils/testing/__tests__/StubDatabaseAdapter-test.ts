@@ -334,6 +334,34 @@ describe(StubDatabaseAdapter, () => {
         testIndexedField: 'h1',
       });
     });
+
+    it('throws error when empty update to match common DBMS behavior', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+        testEntityConfiguration,
+        StubDatabaseAdapter.convertFieldObjectsToDataStore(
+          testEntityConfiguration,
+          new Map([
+            [
+              testEntityConfiguration.tableName,
+              [
+                {
+                  customIdField: 'hello',
+                  testIndexedField: 'h1',
+                  intField: 3,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+              ],
+            ],
+          ])
+        )
+      );
+      await expect(
+        databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {})
+      ).rejects.toThrowError(`Empty update (custom_id = hello)`);
+    });
   });
 
   describe('deleteAsync', () => {
@@ -435,6 +463,20 @@ describe(StubDatabaseAdapter, () => {
             }
           )
         ).toEqual(expectedResult);
+      });
+
+      it('works for empty', () => {
+        expect(
+          StubDatabaseAdapter['compareByOrderBys'](
+            [],
+            {
+              hello: 'test',
+            },
+            {
+              hello: 'blah',
+            }
+          )
+        ).toEqual(0);
       });
     });
 
