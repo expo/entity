@@ -172,7 +172,8 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
  * to EntityMutator and EntityLoader methods, those methods and their
  * dependent triggers and validators will run within the nested transaction.
  *
- * This exists to forward post-commit callbacks to the parent query context.
+ * This exists to forward post-commit callbacks to the parent query context but only after
+ * successful commit of the nested transaction.
  */
 export class EntityNestedTransactionalQueryContext extends EntityTransactionalQueryContext {
   private readonly postCommitInvalidationCallbacksToTransfer: PostCommitCallback[] = [];

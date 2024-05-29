@@ -380,7 +380,9 @@ export default abstract class EntityPrivacyPolicy<
         case RuleEvaluationResult.ALLOW:
           return entity;
         default:
-          throw new Error('should not be a fourth type of rule evaluation result');
+          throw new Error(
+            `Invalid RuleEvaluationResult returned from rule: ${entity} (viewer = ${viewerContext}, action = ${EntityAuthorizationAction[action]}, ruleIndex = ${i})`
+          );
       }
     }
 

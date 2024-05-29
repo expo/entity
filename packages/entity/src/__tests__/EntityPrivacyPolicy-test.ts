@@ -172,6 +172,30 @@ class SkipAllPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContex
   ];
 }
 
+class InvalidCreateRuleResultPolicy extends EntityPrivacyPolicy<
+  BlahFields,
+  string,
+  ViewerContext,
+  BlahEntity
+> {
+  protected override readonly createRules = [
+    {
+      async evaluateAsync(): Promise<RuleEvaluationResult> {
+        return 2 as any;
+      },
+    },
+  ];
+  protected override readonly readRules = [
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+  ];
+  protected override readonly updateRules = [
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+  ];
+  protected override readonly deleteRules = [
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+  ];
+}
+
 class AlwaysThrowPrivacyPolicyRule extends PrivacyPolicyRule<
   BlahFields,
   string,
@@ -341,6 +365,30 @@ describe(EntityPrivacyPolicy, () => {
           })
         )
       ).once();
+    });
+
+    it('throws when an invalid result is returned', async () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const queryContext = instance(mock(EntityQueryContext));
+      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+      const metricsAdapter = instance(metricsAdapterMock);
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
+      const policy = new InvalidCreateRuleResultPolicy();
+      await expect(
+        policy.authorizeCreateAsync(
+          viewerContext,
+          queryContext,
+          privacyPolicyEvaluationContext,
+          entity,
+          metricsAdapter
+        )
+      ).rejects.toThrow('Invalid RuleEvaluationResult returned from rule');
     });
 
     it('throws EntityNotAuthorizedError when empty policy', async () => {

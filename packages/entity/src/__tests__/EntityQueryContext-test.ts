@@ -128,6 +128,24 @@ describe(EntityQueryContext, () => {
       expect(postCommitCallback).toHaveBeenCalledTimes(2);
       expect(postCommitInvalidationCallback).toHaveBeenCalledTimes(2);
     });
+
+    it('does not support calling runPostCommitCallbacksAsync on nested transaction', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+
+      await expect(
+        viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+          'postgres',
+          async (queryContext) => {
+            await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
+              await innerQueryContext.runPostCommitCallbacksAsync();
+            });
+          }
+        )
+      ).rejects.toThrowError(
+        'Must not call runPostCommitCallbacksAsync on EntityNestedTransactionalQueryContext'
+      );
+    });
   });
 
   describe('transaction config', () => {
