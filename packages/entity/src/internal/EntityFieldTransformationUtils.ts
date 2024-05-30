@@ -1,4 +1,5 @@
 import invariant from 'invariant';
+import nullthrows from 'nullthrows';
 
 import EntityConfiguration from '../EntityConfiguration';
 
@@ -111,11 +112,9 @@ const maybeTransformDatabaseValueToFieldValue = <TFields, N extends keyof TField
   fieldName: N,
   value: any
 ): TFields[N] => {
-  const fieldDefinition = entityConfiguration.schema.get(fieldName);
-  if (!fieldDefinition) {
-    return value;
-  }
-
+  // this will always be non-null due to the way the dbToEntityFieldsKeyMapping is computed and this
+  // function is called conditionally
+  const fieldDefinition = nullthrows(entityConfiguration.schema.get(fieldName));
   const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
   const readTransformer = transformer?.read;
   return readTransformer ? readTransformer(value) : value;
@@ -127,11 +126,7 @@ const maybeTransformFieldValueToDatabaseValue = <TFields, N extends keyof TField
   fieldName: N,
   value: TFields[N]
 ): any => {
-  const fieldDefinition = entityConfiguration.schema.get(fieldName);
-  if (!fieldDefinition) {
-    return value;
-  }
-
+  const fieldDefinition = nullthrows(entityConfiguration.schema.get(fieldName));
   const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
   const writeTransformer = transformer?.write;
   return writeTransformer ? writeTransformer(value) : value;
