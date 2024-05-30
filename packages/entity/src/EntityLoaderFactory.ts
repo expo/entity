@@ -45,7 +45,13 @@ export default class EntityLoaderFactory<
   forLoad(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >
   ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new EntityLoader(
       viewerContext,

@@ -11,7 +11,19 @@ import PrivacyPolicyRule, { RuleEvaluationResult } from './rules/PrivacyPolicyRu
 /**
  * Information about the reason this privacy policy is being evaluated.
  */
-export type EntityPrivacyPolicyEvaluationContext = {
+export type EntityPrivacyPolicyEvaluationContext<
+  TFields extends object,
+  TID extends NonNullable<TFields[TSelectedFields]>,
+  TViewerContext extends ViewerContext,
+  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields = keyof TFields
+> = {
+  /**
+   * When this privacy policy is being evaluated as a result of an update, this will be populated with the value
+   * of the entity before the update. Note that this doesn't only apply to UPDATE authorization actions though:
+   * when an entity is updated it is re-LOADed after the update completes.
+   */
+  previousValue: TEntity | null;
   /**
    * When this privacy policy is being evaluated as a result of a cascading deletion, this will be populated
    * with information on the cascading delete.
@@ -154,7 +166,13 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeCreateAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     entity: TEntity,
     metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
@@ -180,7 +198,13 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeReadAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     entity: TEntity,
     metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
@@ -206,7 +230,13 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeUpdateAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     entity: TEntity,
     metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
@@ -232,7 +262,13 @@ export default abstract class EntityPrivacyPolicy<
   async authorizeDeleteAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     entity: TEntity,
     metricsAdapter: IEntityMetricsAdapter
   ): Promise<TEntity> {
@@ -251,7 +287,13 @@ export default abstract class EntityPrivacyPolicy<
     ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     entity: TEntity,
     action: EntityAuthorizationAction,
     metricsAdapter: IEntityMetricsAdapter
@@ -354,7 +396,13 @@ export default abstract class EntityPrivacyPolicy<
     ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     entity: TEntity,
     action: EntityAuthorizationAction
   ): Promise<TEntity> {

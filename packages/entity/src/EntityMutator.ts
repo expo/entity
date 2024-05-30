@@ -212,6 +212,7 @@ export class CreateMutator<
     this.validateFields(this.fieldsForEntity);
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
+      previousValue: null,
       cascadingDeleteCause: null,
     });
 
@@ -224,7 +225,7 @@ export class CreateMutator<
       this.privacyPolicy.authorizeCreateAsync(
         this.viewerContext,
         queryContext,
-        { cascadingDeleteCause: null },
+        { previousValue: null, cascadingDeleteCause: null },
         temporaryEntityForPrivacyCheck,
         this.metricsAdapter
       )
@@ -423,6 +424,7 @@ export class UpdateMutator<
     this.validateFields(this.updatedFields);
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
+      previousValue: this.originalEntity,
       cascadingDeleteCause,
     });
 
@@ -431,7 +433,7 @@ export class UpdateMutator<
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
         queryContext,
-        { cascadingDeleteCause },
+        { previousValue: this.originalEntity, cascadingDeleteCause },
         entityAboutToBeUpdated,
         this.metricsAdapter
       )
@@ -633,7 +635,7 @@ export class DeleteMutator<
       this.privacyPolicy.authorizeDeleteAsync(
         this.viewerContext,
         queryContext,
-        { cascadingDeleteCause },
+        { previousValue: null, cascadingDeleteCause },
         this.entity,
         this.metricsAdapter
       )
@@ -671,6 +673,7 @@ export class DeleteMutator<
     }
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
+      previousValue: null,
       cascadingDeleteCause,
     });
     queryContext.appendPostCommitInvalidationCallback(
@@ -774,7 +777,10 @@ export class DeleteMutator<
             }
 
             const inboundReferenceEntities = await loaderFactory
-              .forLoad(queryContext, { cascadingDeleteCause: newCascadingDeleteCause })
+              .forLoad(queryContext, {
+                previousValue: null,
+                cascadingDeleteCause: newCascadingDeleteCause,
+              })
               .enforcing()
               .loadManyByFieldEqualingAsync(
                 fieldName,

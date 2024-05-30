@@ -295,7 +295,6 @@ const createEntityMutatorFactory = (
     afterAll: [new TestMutationTrigger()],
     afterCommit: [new TestNonTransactionalMutationTrigger()],
   };
-  const privacyPolicy = new TestEntityPrivacyPolicy();
   const databaseAdapter = new StubDatabaseAdapter<TestFields>(
     testEntityConfiguration,
     StubDatabaseAdapter.convertFieldObjectsToDataStore(
@@ -352,7 +351,7 @@ const createEntityMutatorFactory = (
     companionProvider,
     testEntityConfiguration,
     TestEntity,
-    privacyPolicy,
+    companionProvider.getCompanionForEntity(TestEntity).privacyPolicy,
     mutationValidators,
     mutationTriggers,
     entityLoaderFactory,
@@ -360,7 +359,7 @@ const createEntityMutatorFactory = (
     metricsAdapter
   );
   return {
-    privacyPolicy,
+    privacyPolicy: companionProvider.getCompanionForEntity(TestEntity).privacyPolicy,
     entityLoaderFactory,
     entityMutatorFactory,
     metricsAdapter,
@@ -438,7 +437,7 @@ describe(EntityMutatorFactory, () => {
         spiedPrivacyPolicy.authorizeCreateAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
-          deepEqual({ cascadingDeleteCause: null }),
+          deepEqual({ previousValue: null, cascadingDeleteCause: null }),
           anyOfClass(TestEntity),
           anything()
         )
@@ -531,7 +530,17 @@ describe(EntityMutatorFactory, () => {
   describe('forUpdate', () => {
     it('updates entities', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            string,
+            ViewerContext,
+            TestEntity,
+            keyof TestFields
+          >
+        >()
+      );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -580,7 +589,6 @@ describe(EntityMutatorFactory, () => {
 
     it('checks privacy', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -609,7 +617,7 @@ describe(EntityMutatorFactory, () => {
 
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
-          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .forLoad(viewerContext, queryContext, { previousValue: null, cascadingDeleteCause: null })
           .loadByIDAsync(id2)
       );
 
@@ -622,7 +630,17 @@ describe(EntityMutatorFactory, () => {
         spiedPrivacyPolicy.authorizeUpdateAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
-          deepEqual({ cascadingDeleteCause: null }),
+          deepEqual({ previousValue: existingEntity, cascadingDeleteCause: null }),
+          anyOfClass(TestEntity),
+          anything()
+        )
+      ).once();
+
+      verify(
+        spiedPrivacyPolicy.authorizeReadAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          deepEqual({ previousValue: existingEntity, cascadingDeleteCause: null }),
           anyOfClass(TestEntity),
           anything()
         )
@@ -631,7 +649,17 @@ describe(EntityMutatorFactory, () => {
 
     it('executes triggers', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            string,
+            ViewerContext,
+            TestEntity,
+            keyof TestFields
+          >
+        >()
+      );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -689,7 +717,17 @@ describe(EntityMutatorFactory, () => {
     });
     it('executes validators', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            string,
+            ViewerContext,
+            TestEntity,
+            keyof TestFields
+          >
+        >()
+      );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -738,7 +776,17 @@ describe(EntityMutatorFactory, () => {
   describe('forDelete', () => {
     it('deletes entities', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            string,
+            ViewerContext,
+            TestEntity,
+            keyof TestFields
+          >
+        >()
+      );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -773,7 +821,17 @@ describe(EntityMutatorFactory, () => {
 
     it('checks privacy', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            string,
+            ViewerContext,
+            TestEntity,
+            keyof TestFields
+          >
+        >()
+      );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -812,7 +870,17 @@ describe(EntityMutatorFactory, () => {
 
     it('executes triggers', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            string,
+            ViewerContext,
+            TestEntity,
+            keyof TestFields
+          >
+        >()
+      );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -855,7 +923,17 @@ describe(EntityMutatorFactory, () => {
 
     it('does not execute validators', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            string,
+            ViewerContext,
+            TestEntity,
+            keyof TestFields
+          >
+        >()
+      );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -889,7 +967,17 @@ describe(EntityMutatorFactory, () => {
 
   it('invalidates cache for fields upon create', async () => {
     const viewerContext = mock<ViewerContext>();
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<
+        EntityPrivacyPolicyEvaluationContext<
+          TestFields,
+          string,
+          ViewerContext,
+          TestEntity,
+          keyof TestFields
+        >
+      >()
+    );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
     const id1 = uuidv4();

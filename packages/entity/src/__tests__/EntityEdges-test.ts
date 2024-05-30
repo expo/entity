@@ -85,7 +85,13 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     async evaluateAsync(
       _viewerContext: TestViewerContext,
       _queryContext: EntityQueryContext,
-      evaluationContext: EntityPrivacyPolicyEvaluationContext,
+      evaluationContext: EntityPrivacyPolicyEvaluationContext<
+        any,
+        string,
+        TestViewerContext,
+        any,
+        any
+      >,
       entity: any
     ): Promise<RuleEvaluationResult> {
       if (privacyPolicyEvaluationRecords.shouldRecord) {

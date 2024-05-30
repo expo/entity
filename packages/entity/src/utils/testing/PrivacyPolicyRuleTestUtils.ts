@@ -13,7 +13,13 @@ export interface Case<
 > {
   viewerContext: TViewerContext;
   queryContext: EntityQueryContext;
-  evaluationContext: EntityPrivacyPolicyEvaluationContext;
+  evaluationContext: EntityPrivacyPolicyEvaluationContext<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >;
   entity: TEntity;
 }
 

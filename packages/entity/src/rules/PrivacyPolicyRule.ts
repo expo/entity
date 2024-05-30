@@ -46,7 +46,13 @@ export default abstract class PrivacyPolicyRule<
   abstract evaluateAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     entity: TEntity
   ): Promise<RuleEvaluationResult>;
 }

@@ -36,7 +36,13 @@ export default class ViewerScopedEntityLoaderFactory<
 
   forLoad(
     queryContext: EntityQueryContext,
-    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >
   ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return this.entityLoaderFactory.forLoad(
       this.viewerContext,

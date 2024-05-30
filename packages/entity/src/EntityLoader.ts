@@ -43,7 +43,13 @@ export default class EntityLoader<
   constructor(
     private readonly viewerContext: TViewerContext,
     private readonly queryContext: EntityQueryContext,
-    private readonly privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext,
+    private readonly privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     private readonly entityConfiguration: EntityConfiguration<TFields>,
     private readonly entityClass: IEntityClass<
       TFields,
