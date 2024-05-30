@@ -8,6 +8,7 @@ import {
 import { enforceAsyncResult } from '@expo/results';
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
+import { setTimeout } from 'timers/promises';
 
 import PostgresTestEntity from '../testfixtures/PostgresTestEntity';
 import PostgresTriggerTestEntity from '../testfixtures/PostgresTriggerTestEntity';
@@ -96,14 +97,18 @@ describe('postgres entity integration', () => {
     const errorToThrow = new Error('Intentional error');
 
     await expect(
-      vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
-        // put another in the DB that will be rolled back due to error thrown
-        await enforceAsyncResult(
-          PostgresTestEntity.creator(vc1, queryContext).setField('name', 'hello').createAsync()
-        );
+      vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          // put another in the DB that will be rolled back due to error thrown
+          await enforceAsyncResult(
+            PostgresTestEntity.creator(vc1, queryContext).setField('name', 'hello').createAsync()
+          );
 
-        throw errorToThrow;
-      })
+          throw errorToThrow;
+        },
+        {} // test empty transaction config
+      )
     ).rejects.toEqual(errorToThrow);
 
     const entities = await enforceResultsAsync(
@@ -112,42 +117,61 @@ describe('postgres entity integration', () => {
     expect(entities).toHaveLength(1);
   });
 
-  it('passes transaction config into transactions', async () => {
-    const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-
-    const firstEntity = await enforceAsyncResult(
-      PostgresTestEntity.creator(vc1).setField('name', 'hello').createAsync()
-    );
-
-    const loadAndUpdateAsync = async (newName: string): Promise<{ error?: Error }> => {
-      try {
-        await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
-          'postgres',
-          async (queryContext) => {
-            const entity = await PostgresTestEntity.loader(vc1, queryContext)
-              .enforcing()
-              .loadByIDAsync(firstEntity.getID());
-            await PostgresTestEntity.updater(entity, queryContext)
-              .setField('name', newName)
-              .enforceUpdateAsync();
-          },
-          { isolationLevel: TransactionIsolationLevel.SERIALIZABLE }
+  describe('isolation levels', () => {
+    test.each(Object.values(TransactionIsolationLevel))(
+      'isolation level: %p',
+      async (isolationLevel: TransactionIsolationLevel) => {
+        const vc1 = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance)
         );
-        return {};
-      } catch (e) {
-        return { error: e as Error };
+
+        const firstEntity = await enforceAsyncResult(
+          PostgresTestEntity.creator(vc1).setField('name', 'hello').createAsync()
+        );
+
+        const loadAndUpdateAsync = async (
+          newName: string,
+          delay: number
+        ): Promise<{ error?: Error }> => {
+          try {
+            await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
+              'postgres',
+              async (queryContext) => {
+                const entity = await PostgresTestEntity.loader(vc1, queryContext)
+                  .enforcing()
+                  .loadByIDAsync(firstEntity.getID());
+                await setTimeout(delay);
+                await PostgresTestEntity.updater(entity, queryContext)
+                  .setField('name', entity.getField('name') + ',' + newName)
+                  .enforceUpdateAsync();
+              },
+              { isolationLevel }
+            );
+            return {};
+          } catch (e) {
+            return { error: e as Error };
+          }
+        };
+
+        // do some parallel updates to trigger serializable error in at least some of them
+        const results = await Promise.all([
+          loadAndUpdateAsync('hello2', 0),
+          loadAndUpdateAsync('hello3', 100),
+          loadAndUpdateAsync('hello4', 200),
+          loadAndUpdateAsync('hello5', 300),
+        ]);
+
+        if (isolationLevel === TransactionIsolationLevel.READ_COMMITTED) {
+          // read committed seems executes the transactions and doesn't produce a consistent result, but doesn't throw
+          expect(results.filter((r) => !!r.error).length > 0).toBe(false);
+        } else {
+          // all other isolation levels throw since they're doing nonrepeatable reads
+          expect(results.filter((r) => (r.error as any)?.cause?.code === '40001').length > 0).toBe(
+            true
+          );
+        }
       }
-    };
-
-    // do some parallel updates to trigger serializable error in at least some of them
-    const results = await Promise.all([
-      loadAndUpdateAsync('hello2'),
-      loadAndUpdateAsync('hello3'),
-      loadAndUpdateAsync('hello4'),
-      loadAndUpdateAsync('hello5'),
-    ]);
-
-    expect(results.filter((r) => (r.error as any)?.cause?.code === '40001').length > 0).toBe(true);
+    );
   });
 
   describe('JSON fields', () => {
