@@ -36,6 +36,22 @@ const createIdFetcher =
     return results;
   };
 
+const createFetcherNonUnique =
+  (ids: string[]) =>
+  async <N extends keyof BlahFields>(
+    fetcherFieldValues: readonly NonNullable<BlahFields[N]>[]
+  ): Promise<ReadonlyMap<NonNullable<BlahFields[N]>, readonly Readonly<BlahFields>[]>> => {
+    const results = new Map();
+    fetcherFieldValues.forEach((v) => {
+      if (ids.includes(v)) {
+        results.set(v, [{ id: v }, { id: v + '2' }]);
+      } else {
+        results.set(v, []);
+      }
+    });
+    return results;
+  };
+
 describe(ReadThroughEntityCache, () => {
   describe('readManyThroughAsync', () => {
     it('fetches from DB upon cache miss and caches the result', async () => {
@@ -190,6 +206,46 @@ describe(ReadThroughEntityCache, () => {
       const result = await entityCache.readManyThroughAsync('id', ['wat'], fetcher);
       verify(cacheAdapterMock.loadManyAsync('id', anything())).never();
       expect(result).toEqual(new Map([['wat', [{ id: 'wat' }]]]));
+    });
+
+    it('does not cache when DB returns multiple objects for what is supposed to be unique and returns empty', async () => {
+      const consoleSpy = jest.spyOn(console, 'warn');
+
+      const cacheAdapterMock = mock<IEntityCacheAdapter<BlahFields>>();
+      const cacheAdapter = instance(cacheAdapterMock);
+      const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
+      const fetcher = createFetcherNonUnique(['wat', 'who']);
+
+      when(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who']))).thenResolve(
+        new Map([
+          ['wat', { status: CacheStatus.MISS }],
+          ['who', { status: CacheStatus.MISS }],
+        ])
+      );
+
+      const result = await entityCache.readManyThroughAsync('id', ['wat', 'who'], fetcher);
+
+      verify(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who']))).once();
+      verify(
+        cacheAdapterMock.cacheManyAsync(
+          'id',
+          deepEqual(
+            new Map([
+              ['wat', { id: 'wat' }],
+              ['who', { id: 'who' }],
+            ])
+          )
+        )
+      ).never();
+      verify(cacheAdapterMock.cacheDBMissesAsync('id', deepEqual([]))).once();
+      expect(result).toEqual(new Map());
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'unique key id in blah returned multiple rows for wat'
+      );
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'unique key id in blah returned multiple rows for who'
+      );
     });
   });
 

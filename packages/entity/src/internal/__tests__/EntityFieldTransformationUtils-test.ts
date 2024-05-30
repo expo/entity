@@ -122,7 +122,7 @@ describe(transformFieldsToDatabaseObject, () => {
 });
 
 describe(transformCacheObjectToFields, () => {
-  it('does field read transformation', () => {
+  it('does field read transformation, keeping unknown fields for cache version inconsistencies', () => {
     const fieldTransformMap = new Map([
       [
         StringField.name,
@@ -136,16 +136,18 @@ describe(transformCacheObjectToFields, () => {
       transformCacheObjectToFields(blahEntityConfiguration, fieldTransformMap, {
         id: 'hello',
         transformRead: 'wat',
+        unknownField: 'who',
       })
     ).toEqual({
       id: 'hello',
       transformRead: 'wat-read-transformed-cache',
+      unknownField: 'who',
     });
   });
 });
 
 describe(transformFieldsToCacheObject, () => {
-  it('does field write transformation', () => {
+  it('does field write transformation, keeping unknown fields at runtime for cache version inconsistencies', () => {
     const fieldTransformMap = new Map([
       [
         StringField.name,
@@ -159,10 +161,12 @@ describe(transformFieldsToCacheObject, () => {
       transformFieldsToCacheObject(blahEntityConfiguration, fieldTransformMap, {
         id: 'hello',
         transformWrite: 'wat',
-      })
+        unknownField: 'who',
+      } as any)
     ).toEqual({
       id: 'hello',
       transformWrite: 'wat-write-transformed-cache',
+      unknownField: 'who',
     });
   });
 });
