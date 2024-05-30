@@ -144,13 +144,8 @@ export default class EntityLoader<
    */
   async loadByIDAsync(id: TID): Promise<Result<TEntity>> {
     const entityResults = await this.loadManyByIDsAsync([id]);
-    const entityResult = entityResults.get(id);
-    if (entityResult === undefined) {
-      return result(
-        new EntityNotFoundError(this.entityClass, this.entityConfiguration.idField, id)
-      );
-    }
-    return entityResult;
+    // loadManyByIDsAsync is always populated for each id supplied
+    return nullthrows(entityResults.get(id));
   }
 
   /**
@@ -258,23 +253,7 @@ export default class EntityLoader<
       fieldEqualityOperands,
       querySelectionModifiers
     );
-    const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
-    return await Promise.all(
-      uncheckedEntityResults.map(async (uncheckedEntityResult) => {
-        if (!uncheckedEntityResult.ok) {
-          return uncheckedEntityResult;
-        }
-        return await asyncResult(
-          this.privacyPolicy.authorizeReadAsync(
-            this.viewerContext,
-            this.queryContext,
-            this.privacyPolicyEvaluationContext,
-            uncheckedEntityResult.value,
-            this.metricsAdapter
-          )
-        );
-      })
-    );
+    return await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
 
   /**
@@ -299,8 +278,6 @@ export default class EntityLoader<
    * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    * @throws Error when rawWhereClause or bindings are invalid
-   *
-   * @deprecated prefer caching loaders
    */
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
@@ -313,23 +290,7 @@ export default class EntityLoader<
       bindings,
       querySelectionModifiers
     );
-    const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
-    return await Promise.all(
-      uncheckedEntityResults.map(async (uncheckedEntityResult) => {
-        if (!uncheckedEntityResult.ok) {
-          return uncheckedEntityResult;
-        }
-        return await asyncResult(
-          this.privacyPolicy.authorizeReadAsync(
-            this.viewerContext,
-            this.queryContext,
-            this.privacyPolicyEvaluationContext,
-            uncheckedEntityResult.value,
-            this.metricsAdapter
-          )
-        );
-      })
-    );
+    return await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
 
   /**
@@ -385,27 +346,31 @@ export default class EntityLoader<
   public async constructAndAuthorizeEntitiesAsync<K>(
     map: ReadonlyMap<K, readonly Readonly<TFields>[]>
   ): Promise<ReadonlyMap<K, readonly Result<TEntity>[]>> {
-    const uncheckedEntityResultsMap = mapMap(map, (fieldObjects) =>
-      this.tryConstructEntities(fieldObjects)
-    );
-    return await mapMapAsync(uncheckedEntityResultsMap, async (uncheckedEntityResults) => {
-      return await Promise.all(
-        uncheckedEntityResults.map(async (uncheckedEntityResult) => {
-          if (!uncheckedEntityResult.ok) {
-            return uncheckedEntityResult;
-          }
-          return await asyncResult(
-            this.privacyPolicy.authorizeReadAsync(
-              this.viewerContext,
-              this.queryContext,
-              this.privacyPolicyEvaluationContext,
-              uncheckedEntityResult.value,
-              this.metricsAdapter
-            )
-          );
-        })
-      );
+    return await mapMapAsync(map, async (fieldObjects) => {
+      return await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
     });
+  }
+
+  private async constructAndAuthorizeEntitiesArrayAsync(
+    fieldObjects: readonly Readonly<TFields>[]
+  ): Promise<readonly Result<TEntity>[]> {
+    const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
+    return await Promise.all(
+      uncheckedEntityResults.map(async (uncheckedEntityResult) => {
+        if (!uncheckedEntityResult.ok) {
+          return uncheckedEntityResult;
+        }
+        return await asyncResult(
+          this.privacyPolicy.authorizeReadAsync(
+            this.viewerContext,
+            this.queryContext,
+            this.privacyPolicyEvaluationContext,
+            uncheckedEntityResult.value,
+            this.metricsAdapter
+          )
+        );
+      })
+    );
   }
 
   private validateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
