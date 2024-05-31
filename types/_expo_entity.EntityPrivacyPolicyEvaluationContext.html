@@ -15,10 +15,23 @@
 <li><a href="../index.html">Entity</a></li>
 <li><a href="../modules/_expo_entity.html">@expo/entity</a></li>
 <li><a href="_expo_entity.EntityPrivacyPolicyEvaluationContext.html">EntityPrivacyPolicyEvaluationContext</a></li></ul>
-<h1>Type alias EntityPrivacyPolicyEvaluationContext</h1></div>
-<div class="tsd-signature"><span class="tsd-kind-type-alias">Entity<wbr/>Privacy<wbr/>Policy<wbr/>Evaluation<wbr/>Context</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">cascadingDeleteCause</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityCascadingDeletionInfo.html" class="tsd-signature-type tsd-kind-type-alias">EntityCascadingDeletionInfo</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></div>
+<h1>Type alias EntityPrivacyPolicyEvaluationContext&lt;TFields, TID, TViewerContext, TEntity, TSelectedFields&gt;</h1></div>
+<div class="tsd-signature"><span class="tsd-kind-type-alias">Entity<wbr/>Privacy<wbr/>Policy<wbr/>Evaluation<wbr/>Context</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">cascadingDeleteCause</span><span class="tsd-signature-symbol">: </span><a href="_expo_entity.EntityCascadingDeletionInfo.html" class="tsd-signature-type tsd-kind-type-alias">EntityCascadingDeletionInfo</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">previousValue</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></div>
 <div class="tsd-comment tsd-typography"><p>Information about the reason this privacy policy is being evaluated.</p>
 </div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li>
+<h4><span class="tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">object</span></h4></li>
+<li>
+<h4><span class="tsd-kind-type-parameter">TID</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type ">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type tsd-kind-type-parameter">TSelectedFields</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h4></li>
+<li>
+<h4><span class="tsd-kind-type-parameter">TViewerContext</span><span class="tsd-signature-symbol"> extends </span><a href="../classes/_expo_entity.ViewerContext.html" class="tsd-signature-type tsd-kind-class">ViewerContext</a></h4></li>
+<li>
+<h4><span class="tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol"> extends </span><a href="../classes/_expo_entity.ReadonlyEntity.html" class="tsd-signature-type tsd-kind-class">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4></li>
+<li>
+<h4><span class="tsd-kind-type-parameter">TSelectedFields</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span> = <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span></h4></li></ul></section>
 <div class="tsd-type-declaration">
 <h4>Type declaration</h4>
 <ul class="tsd-parameters">
@@ -27,10 +40,17 @@
 <div class="tsd-comment tsd-typography"><p>When this privacy policy is being evaluated as a result of a cascading deletion, this will be populated
 with information on the cascading delete.</p>
 </div>
+<div class="tsd-comment tsd-typography"></div></li>
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">previous<wbr/>Value</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+<div class="tsd-comment tsd-typography"><p>When this privacy policy is being evaluated as a result of an update, this will be populated with the value
+of the entity before the update. Note that this doesn&#39;t only apply to UPDATE authorization actions though:
+when an entity is updated it is re-LOADed after the update completes.</p>
+</div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/60fc9a4/packages/entity/src/EntityPrivacyPolicy.ts#L14">packages/entity/src/EntityPrivacyPolicy.ts:14</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/expo/entity/blob/af495a9/packages/entity/src/EntityPrivacyPolicy.ts#L14">packages/entity/src/EntityPrivacyPolicy.ts:14</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
