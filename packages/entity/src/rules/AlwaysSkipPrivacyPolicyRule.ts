@@ -17,7 +17,13 @@ export default class AlwaysSkipPrivacyPolicyRule<
   async evaluateAsync(
     _viewerContext: TViewerContext,
     _queryContext: EntityQueryContext,
-    _evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     _entity: TEntity
   ): Promise<RuleEvaluationResult> {
     return RuleEvaluationResult.SKIP;

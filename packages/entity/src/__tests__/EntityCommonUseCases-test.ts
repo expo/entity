@@ -69,7 +69,12 @@ class DenyIfNotOwnerPrivacyPolicyRule extends PrivacyPolicyRule<
   async evaluateAsync(
     viewerContext: TestUserViewerContext,
     _queryContext: EntityQueryContext,
-    _evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      BlahFields,
+      string,
+      TestUserViewerContext,
+      BlahEntity
+    >,
     entity: BlahEntity
   ): Promise<RuleEvaluationResult> {
     if (viewerContext.getUserID() === entity.getField('ownerID')) {

@@ -239,7 +239,13 @@ class ThrowOtherErrorEntityPrivacyPolicy<
       async evaluateAsync(
         _viewerContext: TViewerContext,
         _queryContext: EntityQueryContext,
-        evaluationContext: EntityPrivacyPolicyEvaluationContext,
+        evaluationContext: EntityPrivacyPolicyEvaluationContext<
+          TFields,
+          TID,
+          TViewerContext,
+          TEntity,
+          TSelectedFields
+        >,
         _entity: TEntity
       ): Promise<RuleEvaluationResult> {
         if (evaluationContext.cascadingDeleteCause) {
@@ -281,7 +287,13 @@ class DenyReadEntityPrivacyPolicy<
       async evaluateAsync(
         _viewerContext: TViewerContext,
         queryContext: EntityQueryContext,
-        evaluationContext: EntityPrivacyPolicyEvaluationContext,
+        evaluationContext: EntityPrivacyPolicyEvaluationContext<
+          TFields,
+          TID,
+          TViewerContext,
+          TEntity,
+          TSelectedFields
+        >,
         _entity: TEntity
       ): Promise<RuleEvaluationResult> {
         if (queryContext.isInTransaction()) {

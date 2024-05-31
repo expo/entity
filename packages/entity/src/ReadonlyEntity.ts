@@ -156,6 +156,6 @@ export default abstract class ReadonlyEntity<
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getLoaderFactory()
-      .forLoad(queryContext, { cascadingDeleteCause: null });
+      .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
   }
 }

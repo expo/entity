@@ -205,7 +205,12 @@ class AlwaysThrowPrivacyPolicyRule extends PrivacyPolicyRule<
   evaluateAsync(
     _viewerContext: ViewerContext,
     _queryContext: EntityQueryContext,
-    _evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      BlahFields,
+      string,
+      ViewerContext,
+      BlahEntity
+    >,
     _entity: BlahEntity
   ): Promise<RuleEvaluationResult> {
     throw new Error('WooHoo!');
@@ -269,7 +274,9 @@ describe(EntityPrivacyPolicy, () => {
     it('throws EntityNotAuthorizedError when deny', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -303,7 +310,9 @@ describe(EntityPrivacyPolicy, () => {
     it('returns entity when allowed', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -336,7 +345,9 @@ describe(EntityPrivacyPolicy, () => {
     it('throws EntityNotAuthorizedError when all skipped', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -370,7 +381,9 @@ describe(EntityPrivacyPolicy, () => {
     it('throws when an invalid result is returned', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -394,7 +407,9 @@ describe(EntityPrivacyPolicy, () => {
     it('throws EntityNotAuthorizedError when empty policy', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -428,7 +443,9 @@ describe(EntityPrivacyPolicy, () => {
     it('throws when rule throws', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -455,7 +472,9 @@ describe(EntityPrivacyPolicy, () => {
     it('returns entity when denied but calls denialHandler', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -494,7 +513,9 @@ describe(EntityPrivacyPolicy, () => {
     it('does not log when not denied', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -533,7 +554,9 @@ describe(EntityPrivacyPolicy, () => {
     it('passes through other errors', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -566,7 +589,9 @@ describe(EntityPrivacyPolicy, () => {
     it('denies when denied but calls denialHandler', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -606,7 +631,9 @@ describe(EntityPrivacyPolicy, () => {
     it('does not log when not denied', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({
@@ -645,7 +672,9 @@ describe(EntityPrivacyPolicy, () => {
     it('passes through other errors', async () => {
       const viewerContext = instance(mock(ViewerContext));
       const queryContext = instance(mock(EntityQueryContext));
-      const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+      const privacyPolicyEvaluationContext = instance(
+        mock<EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>>()
+      );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
       const entity = new BlahEntity({

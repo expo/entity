@@ -121,7 +121,17 @@ export default class TestEntity extends Entity<
 describe(EntityLoader, () => {
   it('handles thrown errors and literals from constructor', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<
+        EntityPrivacyPolicyEvaluationContext<
+          TestFields,
+          string,
+          ViewerContext,
+          TestEntity,
+          TestFieldSelection
+        >
+      >()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 

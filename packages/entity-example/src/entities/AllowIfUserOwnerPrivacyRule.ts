@@ -35,7 +35,13 @@ export default class AllowIfUserOwnerPrivacyRule<
   async evaluateAsync(
     viewerContext: ExampleViewerContext,
     _queryContext: EntityQueryContext,
-    _evaluationContext: EntityPrivacyPolicyEvaluationContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TID,
+      ExampleViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     entity: TEntity
   ): Promise<RuleEvaluationResult> {
     if (viewerContext.isUserViewerContext()) {

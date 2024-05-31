@@ -24,7 +24,9 @@ describe(EntityLoader, () => {
   it('loads entities', async () => {
     const dateToInsert = new Date();
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -128,7 +130,9 @@ describe(EntityLoader, () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -227,7 +231,9 @@ describe(EntityLoader, () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -323,7 +329,9 @@ describe(EntityLoader, () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -380,7 +388,9 @@ describe(EntityLoader, () => {
     const spiedPrivacyPolicy = spy(privacyPolicy);
 
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -441,7 +451,9 @@ describe(EntityLoader, () => {
 
   it('invalidates upon invalidate one', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
@@ -469,7 +481,9 @@ describe(EntityLoader, () => {
 
   it('invalidates upon invalidate by field', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
@@ -496,7 +510,9 @@ describe(EntityLoader, () => {
 
   it('invalidates upon invalidate by entity', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
@@ -527,7 +543,9 @@ describe(EntityLoader, () => {
 
   it('returns error result when not allowed', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicyMock = mock(TestEntityPrivacyPolicy);
@@ -573,7 +591,9 @@ describe(EntityLoader, () => {
 
   it('throws upon database adapter error', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(mock<EntityPrivacyPolicyEvaluationContext>());
+    const privacyPolicyEvaluationContext = instance(
+      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
+    );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));

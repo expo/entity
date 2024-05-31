@@ -97,7 +97,7 @@ async function canViewerUpdateInternalAsync<
     privacyPolicy.authorizeUpdateAsync(
       sourceEntity.getViewerContext(),
       queryContext,
-      { cascadingDeleteCause },
+      { previousValue: null, cascadingDeleteCause },
       sourceEntity,
       companion.getMetricsAdapter()
     )
@@ -191,12 +191,13 @@ async function canViewerDeleteInternalAsync<
   const viewerScopedCompanion = sourceEntity
     .getViewerContext()
     .getViewerScopedEntityCompanionForClass(entityClass);
+
   const privacyPolicy = viewerScopedCompanion.entityCompanion.privacyPolicy;
   const evaluationResult = await asyncResult(
     privacyPolicy.authorizeDeleteAsync(
       sourceEntity.getViewerContext(),
       queryContext,
-      { cascadingDeleteCause },
+      { previousValue: null, cascadingDeleteCause },
       sourceEntity,
       viewerScopedCompanion.getMetricsAdapter()
     )
@@ -235,7 +236,10 @@ async function canViewerDeleteInternalAsync<
     const loader = viewerContext
       .getViewerScopedEntityCompanionForClass(inboundEdge)
       .getLoaderFactory()
-      .forLoad(queryContext, { cascadingDeleteCause: newCascadingDeleteCause });
+      .forLoad(queryContext, {
+        previousValue: null,
+        cascadingDeleteCause: newCascadingDeleteCause,
+      });
 
     for (const [fieldName, fieldDefinition] of configurationForInboundEdge.schema) {
       const association = fieldDefinition.association;
