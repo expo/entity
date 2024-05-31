@@ -215,8 +215,8 @@ async function canViewerDeleteInternalAsync<
   };
 
   // Take entity X which is proposed to be deleted, look at inbound edges (entities that reference X).
-  // These inbound edges are the entities that will either get deleted
-  // or updated with null values based on the EntityEdgeDeletionBehavior when entity X is deleted.
+  // These inbound edges are the entities that will either get deleted or have their references
+  // to X nullified based on the EntityEdgeDeletionBehavior when entity X is deleted.
   // For each of these inboundEdge entities Y, look at the field(s) on Y that reference X.
   // For each of the field(s) on Y that reference X,
   // - if EntityEdgeDeletionBehavior is cascade set null, check if user can update Y
