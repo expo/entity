@@ -6,7 +6,7 @@ import { EntityCascadingDeletionInfo } from '../EntityMutationInfo';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
-import { successfulResults } from '../entityUtils';
+import { failedResults } from '../entityUtils';
 import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
 
 /**
@@ -102,6 +102,13 @@ async function canViewerUpdateInternalAsync<
       companion.getMetricsAdapter()
     )
   );
+  if (!evaluationResult.ok) {
+    if (evaluationResult.reason instanceof EntityNotAuthorizedError) {
+      return false;
+    } else {
+      throw evaluationResult.reason;
+    }
+  }
   return evaluationResult.ok;
 }
 
@@ -181,27 +188,24 @@ async function canViewerDeleteInternalAsync<
 ): Promise<boolean> {
   const viewerContext = sourceEntity.getViewerContext();
   const entityCompanionProvider = viewerContext.entityCompanionProvider;
-
   const viewerScopedCompanion = sourceEntity
     .getViewerContext()
     .getViewerScopedEntityCompanionForClass(entityClass);
-  {
-    const privacyPolicy = viewerScopedCompanion.entityCompanion.privacyPolicy;
-    const evaluationResult = await asyncResult(
-      privacyPolicy.authorizeDeleteAsync(
-        sourceEntity.getViewerContext(),
-        queryContext,
-        { cascadingDeleteCause },
-        sourceEntity,
-        viewerScopedCompanion.getMetricsAdapter()
-      )
-    );
-    if (!evaluationResult.ok) {
-      if (evaluationResult.reason instanceof EntityNotAuthorizedError) {
-        return false;
-      } else {
-        throw evaluationResult.reason;
-      }
+  const privacyPolicy = viewerScopedCompanion.entityCompanion.privacyPolicy;
+  const evaluationResult = await asyncResult(
+    privacyPolicy.authorizeDeleteAsync(
+      sourceEntity.getViewerContext(),
+      queryContext,
+      { cascadingDeleteCause },
+      sourceEntity,
+      viewerScopedCompanion.getMetricsAdapter()
+    )
+  );
+  if (!evaluationResult.ok) {
+    if (evaluationResult.reason instanceof EntityNotAuthorizedError) {
+      return false;
+    } else {
+      throw evaluationResult.reason;
     }
   }
 
@@ -212,11 +216,11 @@ async function canViewerDeleteInternalAsync<
 
   // Take entity X which is proposed to be deleted, look at inbound edges (entities that reference X).
   // These inbound edges are the entities that will either get deleted
-  // or updated with null based on the edge definiton when entity X is deleted.
+  // or updated with null values based on the EntityEdgeDeletionBehavior when entity X is deleted.
   // For each of these inboundEdge entities Y, look at the field(s) on Y that reference X.
   // For each of the field(s) on Y that reference X,
-  // - if cascade set null, check if user can update Y
-  // - if cascade delete, run canViewerDeleteAsync on Y
+  // - if EntityEdgeDeletionBehavior is cascade set null, check if user can update Y
+  // - if EntityEdgeDeletionBehavior is cascade delete, recursively run canViewerDeleteAsync on Y
   // Return the conjunction (returning eagerly when false) of all checks recursively.
 
   const entityConfiguration =
@@ -253,13 +257,17 @@ async function canViewerDeleteInternalAsync<
           : sourceEntity.getID()
       );
 
-      const entitiesForInboundEdge = successfulResults(entityResultsForInboundEdge).map(
-        (r) => r.value
-      );
-      if (entitiesForInboundEdge.length !== entityResultsForInboundEdge.length) {
-        // can't read some of the edges, therefore can't delete
-        return false;
+      const failedEntityLoadResults = failedResults(entityResultsForInboundEdge);
+      for (const failedResult of failedEntityLoadResults) {
+        if (failedResult.reason instanceof EntityNotAuthorizedError) {
+          return false;
+        } else {
+          throw failedResult.reason;
+        }
       }
+
+      // all results should be success at this point due to check above
+      const entitiesForInboundEdge = entityResultsForInboundEdge.map((r) => r.enforceValue());
 
       switch (association.edgeDeletionBehavior) {
         case EntityEdgeDeletionBehavior.CASCADE_DELETE:
