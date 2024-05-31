@@ -20,7 +20,6 @@ import EntityMutationTriggerConfiguration, {
 import EntityMutationValidator from './EntityMutationValidator';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError';
 import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
@@ -741,8 +740,23 @@ export class DeleteMutator<
     ).entityCompanionDefinition;
     const entityConfiguration = companionDefinition.entityConfiguration;
     const inboundEdges = entityConfiguration.inboundEdges;
+
+    const newCascadingDeleteCause = {
+      entity,
+      cascadingDeleteCause,
+    };
+
     await Promise.all(
       inboundEdges.map(async (entityClass) => {
+        const loaderFactory = entity
+          .getViewerContext()
+          .getViewerScopedEntityCompanionForClass(entityClass)
+          .getLoaderFactory();
+        const mutatorFactory = entity
+          .getViewerContext()
+          .getViewerScopedEntityCompanionForClass(entityClass)
+          .getMutatorFactory();
+
         return await mapMapAsync(
           this.companionProvider.getCompanionForEntity(entityClass).entityCompanionDefinition
             .entityConfiguration.schema,
@@ -759,37 +773,15 @@ export class DeleteMutator<
               return;
             }
 
-            const associatedEntityLookupByField = association.associatedEntityLookupByField;
-
-            const loaderFactory = entity
-              .getViewerContext()
-              .getViewerScopedEntityCompanionForClass(entityClass)
-              .getLoaderFactory();
-            const mutatorFactory = entity
-              .getViewerContext()
-              .getViewerScopedEntityCompanionForClass(entityClass)
-              .getMutatorFactory();
-
-            const newCascadingDeleteCause = {
-              entity,
-              cascadingDeleteCause,
-            };
-
-            let inboundReferenceEntities: readonly ReadonlyEntity<any, any, any, any>[];
-            if (associatedEntityLookupByField) {
-              inboundReferenceEntities = await loaderFactory
-                .forLoad(queryContext, { cascadingDeleteCause: newCascadingDeleteCause })
-                .enforcing()
-                .loadManyByFieldEqualingAsync(
-                  fieldName,
-                  entity.getField(associatedEntityLookupByField as any)
-                );
-            } else {
-              inboundReferenceEntities = await loaderFactory
-                .forLoad(queryContext, { cascadingDeleteCause: newCascadingDeleteCause })
-                .enforcing()
-                .loadManyByFieldEqualingAsync(fieldName, entity.getID());
-            }
+            const inboundReferenceEntities = await loaderFactory
+              .forLoad(queryContext, { cascadingDeleteCause: newCascadingDeleteCause })
+              .enforcing()
+              .loadManyByFieldEqualingAsync(
+                fieldName,
+                association.associatedEntityLookupByField
+                  ? entity.getField(association.associatedEntityLookupByField as any)
+                  : entity.getID()
+              );
 
             switch (association.edgeDeletionBehavior) {
               case EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY: {
