@@ -31,6 +31,17 @@ describe(canViewerUpdateAsync, () => {
     const canViewerUpdate = await canViewerUpdateAsync(SimpleTestDenyUpdateEntity, testEntity);
     expect(canViewerUpdate).toBe(false);
   });
+
+  it('rethrows non-authorization errors', async () => {
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(companionProvider);
+    const testEntity = await SimpleTestThrowOtherErrorEntity.creator(
+      viewerContext
+    ).enforceCreateAsync();
+    await expect(canViewerUpdateAsync(SimpleTestThrowOtherErrorEntity, testEntity)).rejects.toThrow(
+      'update error'
+    );
+  });
 });
 
 describe(canViewerDeleteAsync, () => {
@@ -99,7 +110,7 @@ describe(canViewerDeleteAsync, () => {
     ).enforceCreateAsync();
     await expect(
       canViewerDeleteAsync(SimpleTestThrowOtherErrorEntity, testEntity)
-    ).rejects.toThrowError('other error');
+    ).rejects.toThrowError('delete error');
   });
 
   it('returns false when edge cannot be read', async () => {
@@ -111,6 +122,18 @@ describe(canViewerDeleteAsync, () => {
       .enforceCreateAsync();
     const canViewerDelete = await canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity);
     expect(canViewerDelete).toBe(false);
+  });
+
+  it('rethrows non-authorization edge read errors', async () => {
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(companionProvider);
+    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).enforceCreateAsync();
+    await SimpleTestThrowOtherErrorEntity.creator(viewerContext)
+      .setField('simple_test_id', testEntity.getID())
+      .enforceCreateAsync();
+    await expect(canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity)).rejects.toThrowError(
+      'read in cascading delete error'
+    );
   });
 
   it('supports running within a transaction', async () => {
@@ -157,6 +180,11 @@ type TestLeafDenyReadFields = {
   simple_test_id: string | null;
 };
 
+type TestEntityThrowOtherErrorFields = {
+  id: string;
+  simple_test_id: string | null;
+};
+
 class DenyUpdateEntityPrivacyPolicy<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
@@ -199,7 +227,7 @@ class DenyDeleteEntityPrivacyPolicy<
   ];
 }
 
-class ThrowOtherErrorDeleteEntityPrivacyPolicy<
+class ThrowOtherErrorEntityPrivacyPolicy<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
@@ -207,18 +235,35 @@ class ThrowOtherErrorDeleteEntityPrivacyPolicy<
   TSelectedFields extends keyof TFields = keyof TFields
 > extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
   protected override readonly readRules = [
+    {
+      async evaluateAsync(
+        _viewerContext: TViewerContext,
+        _queryContext: EntityQueryContext,
+        evaluationContext: EntityPrivacyPolicyEvaluationContext,
+        _entity: TEntity
+      ): Promise<RuleEvaluationResult> {
+        if (evaluationContext.cascadingDeleteCause) {
+          throw new Error('read in cascading delete error');
+        }
+        return RuleEvaluationResult.SKIP;
+      },
+    },
     new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    {
+      async evaluateAsync(): Promise<RuleEvaluationResult> {
+        throw new Error('update error');
+      },
+    },
   ];
   protected override readonly deleteRules = [
     {
       async evaluateAsync(): Promise<RuleEvaluationResult> {
-        throw new Error('other error');
+        throw new Error('delete error');
       },
     },
   ];
@@ -414,7 +459,12 @@ class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, string, Viewer
       entityConfiguration: new EntityConfiguration<TestEntityFields>({
         idField: 'id',
         tableName: 'blah',
-        inboundEdges: [LeafDenyUpdateEntity, LeafDenyDeleteEntity, LeafDenyReadEntity],
+        inboundEdges: [
+          LeafDenyUpdateEntity,
+          LeafDenyDeleteEntity,
+          LeafDenyReadEntity,
+          SimpleTestThrowOtherErrorEntity,
+        ],
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
@@ -446,7 +496,12 @@ class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, string, Viewer
       entityConfiguration: new EntityConfiguration<TestEntityFields>({
         idField: 'id',
         tableName: 'blah_2',
-        inboundEdges: [LeafDenyUpdateEntity, LeafDenyDeleteEntity, LeafDenyReadEntity],
+        inboundEdges: [
+          LeafDenyUpdateEntity,
+          LeafDenyDeleteEntity,
+          LeafDenyReadEntity,
+          SimpleTestThrowOtherErrorEntity,
+        ],
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
@@ -460,14 +515,18 @@ class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, string, Viewer
   }
 }
 
-class SimpleTestThrowOtherErrorEntity extends Entity<TestEntityFields, string, ViewerContext> {
+class SimpleTestThrowOtherErrorEntity extends Entity<
+  TestEntityThrowOtherErrorFields,
+  string,
+  ViewerContext
+> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
-    TestEntityFields,
+    TestEntityThrowOtherErrorFields,
     string,
     ViewerContext,
     SimpleTestThrowOtherErrorEntity,
-    ThrowOtherErrorDeleteEntityPrivacyPolicy<
-      TestEntityFields,
+    ThrowOtherErrorEntityPrivacyPolicy<
+      TestEntityThrowOtherErrorFields,
       string,
       ViewerContext,
       SimpleTestThrowOtherErrorEntity
@@ -475,7 +534,7 @@ class SimpleTestThrowOtherErrorEntity extends Entity<TestEntityFields, string, V
   > {
     return {
       entityClass: SimpleTestThrowOtherErrorEntity,
-      entityConfiguration: new EntityConfiguration<TestEntityFields>({
+      entityConfiguration: new EntityConfiguration<TestEntityThrowOtherErrorFields>({
         idField: 'id',
         tableName: 'blah_3',
         inboundEdges: [],
@@ -483,11 +542,19 @@ class SimpleTestThrowOtherErrorEntity extends Entity<TestEntityFields, string, V
           id: new UUIDField({
             columnName: 'custom_id',
           }),
+          simple_test_id: new UUIDField({
+            columnName: 'simple_test_id',
+            association: {
+              associatedEntityClass: SimpleTestDenyUpdateEntity,
+              associatedEntityLookupByField: 'id',
+              edgeDeletionBehavior: EntityEdgeDeletionBehavior.SET_NULL,
+            },
+          }),
         },
         databaseAdapterFlavor: 'postgres',
         cacheAdapterFlavor: 'redis',
       }),
-      privacyPolicyClass: ThrowOtherErrorDeleteEntityPrivacyPolicy,
+      privacyPolicyClass: ThrowOtherErrorEntityPrivacyPolicy,
     };
   }
 }
