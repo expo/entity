@@ -1,5 +1,5 @@
 import invariant from 'invariant';
-import { v4 as uuidv4 } from 'uuid';
+import { uuidv7 } from 'uuidv7';
 
 import EntityConfiguration from '../../EntityConfiguration';
 import EntityDatabaseAdapter, {
@@ -163,7 +163,7 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
       `No schema field found for ${String(this.entityConfiguration2.idField)}`
     );
     if (idSchemaField instanceof StringField) {
-      return uuidv4();
+      return uuidv7();
     } else if (idSchemaField instanceof IntField) {
       return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
     } else {
