@@ -422,6 +422,7 @@ export class UpdateMutator<
     cascadingDeleteCause: EntityCascadingDeletionInfo | null
   ): Promise<Result<TEntity>> {
     this.validateFields(this.updatedFields);
+    this.ensureStableIDField(this.updatedFields);
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
       previousValue: this.originalEntity,
@@ -462,14 +463,14 @@ export class UpdateMutator<
     );
 
     // skip the database update when specified
-    const updateResult = skipDatabaseUpdate
-      ? null
-      : await this.databaseAdapter.updateAsync(
-          queryContext,
-          this.entityConfiguration.idField,
-          entityAboutToBeUpdated.getID(),
-          this.updatedFields
-        );
+    if (!skipDatabaseUpdate) {
+      await this.databaseAdapter.updateAsync(
+        queryContext,
+        this.entityConfiguration.idField,
+        entityAboutToBeUpdated.getID(),
+        this.updatedFields
+      );
+    }
 
     queryContext.appendPostCommitInvalidationCallback(
       entityLoader.invalidateFieldsAsync.bind(
@@ -481,13 +482,9 @@ export class UpdateMutator<
       entityLoader.invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity)
     );
 
-    // when the database update was skipped, assume it succeeded and use the optimistic
-    // entity to execute triggers
-    const updatedEntity = updateResult
-      ? await entityLoader
-          .enforcing()
-          .loadByIDAsync(entityLoader.constructEntity(updateResult).getID())
-      : entityAboutToBeUpdated;
+    const updatedEntity = await entityLoader
+      .enforcing()
+      .loadByIDAsync(entityAboutToBeUpdated.getID()); // ID is guaranteed to be stable by ensureStableIDField
 
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterUpdate,
@@ -516,6 +513,14 @@ export class UpdateMutator<
     );
 
     return result(updatedEntity);
+  }
+
+  private ensureStableIDField(updatedFields: Partial<TFields>): void {
+    const originalId = this.originalEntity.getID();
+    const idField = this.entityConfiguration.idField;
+    if (idField in updatedFields && originalId !== updatedFields[idField]) {
+      throw new Error(`id field updates not supported: (entityClass = ${this.entityClass.name})`);
+    }
   }
 }
 
