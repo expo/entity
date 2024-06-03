@@ -300,6 +300,26 @@ describe(StubDatabaseAdapter, () => {
         databaseAdapter.getObjectCollectionForTable(testEntityConfiguration.tableName)
       ).toHaveLength(1);
     });
+
+    it('inserts a record with valid v7 id', async () => {
+      const expectedTime = new Date('2024-06-03T20:16:33.761Z');
+
+      jest.useFakeTimers({
+        now: expectedTime,
+      });
+
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+        testEntityConfiguration,
+        new Map()
+      );
+      const result = await databaseAdapter.insertAsync(queryContext, {
+        stringField: 'hello',
+      });
+
+      const ts = getTimeFromUUIDv7(result.customIdField);
+      expect(ts).toEqual(expectedTime);
+    });
   });
 
   describe('updateAsync', () => {
@@ -506,3 +526,23 @@ describe(StubDatabaseAdapter, () => {
     });
   });
 });
+
+const UUIDV7_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/**
+ * Returns the Date object encoded in the first 48 bits of the given UUIDv7.
+ * @throws TypeError if the UUID is not version 7
+ */
+function getTimeFromUUIDv7(uuid: string): Date {
+  if (!UUIDV7_REGEX.test(uuid)) {
+    throw new TypeError(`UUID must be version 7 to get its timestamp`);
+  }
+
+  // The first 48 bits = 12 hex characters of the UUID encode the timestamp in big endian
+  const hexCharacters = uuid.replaceAll('-', '').split('', 12);
+  const milliseconds = hexCharacters.reduce(
+    (milliseconds, character) => milliseconds * 16 + parseInt(character, 16),
+    0
+  );
+  return new Date(milliseconds);
+}
