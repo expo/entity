@@ -835,9 +835,15 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         ChildEntity: {
           [EntityAuthorizationAction.CREATE]: [],
 
-          // one READ auth action for child in order to update via cascade
+          // two READs auth action for child in order to update via cascade
           // no other entities are read since it is not cascaded past first entity
           [EntityAuthorizationAction.READ]: [
+            {
+              cascadingDeleteCause: {
+                entity: expect.any(ParentEntity),
+                cascadingDeleteCause: null,
+              },
+            },
             {
               cascadingDeleteCause: {
                 entity: expect.any(ParentEntity),

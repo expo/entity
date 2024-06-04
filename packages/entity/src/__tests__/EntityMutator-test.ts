@@ -715,6 +715,7 @@ describe(EntityMutatorFactory, () => {
         }
       );
     });
+
     it('executes validators', async () => {
       const viewerContext = mock<ViewerContext>();
       const privacyPolicyEvaluationContext = instance(
@@ -770,6 +771,54 @@ describe(EntityMutatorFactory, () => {
         previousValue: existingEntity,
         cascadingDeleteCause: null,
       });
+    });
+
+    it('throws when id field is updated', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const privacyPolicyEvaluationContext = instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            string,
+            ViewerContext,
+            TestEntity,
+            keyof TestFields
+          >
+        >()
+      );
+      const queryContext = StubQueryContextProvider.getQueryContext();
+
+      const id1 = uuidv4();
+      const { entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory([
+        {
+          customIdField: id1,
+          stringField: 'huh',
+          testIndexedField: '4',
+          intField: 3,
+          dateField: new Date(),
+          nullableField: null,
+        },
+      ]);
+
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory
+          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .loadByIDAsync(id1)
+      );
+
+      await expect(
+        entityMutatorFactory
+          .forUpdate(existingEntity, queryContext)
+          .setField('customIdField', uuidv4())
+          .enforceUpdateAsync()
+      ).rejects.toThrow('id field updates not supported: (entityClass = TestEntity)');
+
+      const reloadedEntity = await enforceAsyncResult(
+        entityLoaderFactory
+          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .loadByIDAsync(id1)
+      );
+      expect(reloadedEntity.getAllFields()).toMatchObject(existingEntity.getAllFields());
     });
   });
 
