@@ -518,7 +518,7 @@ export class UpdateMutator<
   private ensureStableIDField(updatedFields: Partial<TFields>): void {
     const originalId = this.originalEntity.getID();
     const idField = this.entityConfiguration.idField;
-    if (idField in updatedFields && originalId !== updatedFields[idField]) {
+    if (updatedFields.hasOwnProperty(idField) && originalId !== updatedFields[idField]) {
       throw new Error(`id field updates not supported: (entityClass = ${this.entityClass.name})`);
     }
   }
