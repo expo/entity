@@ -50,5 +50,8 @@
     "@expo/entity-ip-address-field": "file:packages/entity-ip-address-field",
     "@expo/entity-secondary-cache-local-memory": "file:packages/entity-secondary-cache-local-memory",
     "@expo/entity-secondary-cache-redis": "file:packages/entity-secondary-cache-redis"
+  },
+  "volta": {
+    "node": "20.14.0"
   }
 }
