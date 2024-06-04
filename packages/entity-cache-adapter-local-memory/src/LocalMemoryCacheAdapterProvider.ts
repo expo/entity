@@ -39,7 +39,7 @@ export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdap
     private readonly localMemoryCacheCreator: <TFields>() => LocalMemoryCache<TFields>
   ) {}
 
-  public getCacheAdapter<TFields>(
+  public getCacheAdapter<TFields extends Record<string, any>>(
     entityConfiguration: EntityConfiguration<TFields>
   ): IEntityCacheAdapter<TFields> {
     return computeIfAbsent(this.localMemoryCacheAdapterMap, entityConfiguration.tableName, () => {

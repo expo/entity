@@ -303,7 +303,7 @@ const createEntityMutatorFactory = (
     )
   );
   const customStubDatabaseAdapterProvider: IEntityDatabaseAdapterProvider = {
-    getDatabaseAdapter<TFields>(
+    getDatabaseAdapter<TFields extends Record<string, any>>(
       _entityConfiguration: EntityConfiguration<TFields>
     ): EntityDatabaseAdapter<TFields> {
       return databaseAdapter as any as EntityDatabaseAdapter<TFields>;

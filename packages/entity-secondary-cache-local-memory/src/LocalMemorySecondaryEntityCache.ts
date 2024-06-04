@@ -12,7 +12,7 @@ import {
  * TLoadParams must be JSON stringifyable.
  */
 export default class LocalMemorySecondaryEntityCache<
-  TFields,
+  TFields extends Record<string, any>,
   TLoadParams
 > extends GenericSecondaryEntityCache<TFields, TLoadParams> {
   constructor(

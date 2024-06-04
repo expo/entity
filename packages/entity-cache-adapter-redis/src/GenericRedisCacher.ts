@@ -57,7 +57,9 @@ export interface GenericRedisCacheContext {
   ttlSecondsNegative: number;
 }
 
-export default class GenericRedisCacher<TFields> implements IEntityGenericCacher<TFields> {
+export default class GenericRedisCacher<TFields extends Record<string, any>>
+  implements IEntityGenericCacher<TFields>
+{
   constructor(
     private readonly context: GenericRedisCacheContext,
     private readonly entityConfiguration: EntityConfiguration<TFields>

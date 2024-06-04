@@ -26,7 +26,7 @@ export type CacheLoadResult<TFields> =
  * A read-through entity cache is responsible for coordinating EntityDatabaseAdapter and
  * EntityCacheAdapter within the EntityDataManager.
  */
-export default class ReadThroughEntityCache<TFields> {
+export default class ReadThroughEntityCache<TFields extends Record<string, any>> {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
     private readonly entityCacheAdapter: IEntityCacheAdapter<TFields>

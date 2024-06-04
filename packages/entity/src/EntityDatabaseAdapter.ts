@@ -113,7 +113,7 @@ export interface TableQuerySelectionModifiersWithOrderByRaw extends TableQuerySe
  * handles all entity field transformation. Subclasses are responsible for
  * implementing database-specific logic for a type of database.
  */
-export default abstract class EntityDatabaseAdapter<TFields> {
+export default abstract class EntityDatabaseAdapter<TFields extends Record<string, any>> {
   private readonly fieldTransformerMap: FieldTransformerMap;
 
   constructor(private readonly entityConfiguration: EntityConfiguration<TFields>) {

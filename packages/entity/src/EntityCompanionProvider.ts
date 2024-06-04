@@ -209,7 +209,7 @@ export default class EntityCompanionProvider {
     return entityDatabaseAdapterFlavor.queryContextProvider;
   }
 
-  private getTableDataCoordinatorForEntity<TFields>(
+  private getTableDataCoordinatorForEntity<TFields extends Record<string, any>>(
     entityConfiguration: EntityConfiguration<TFields>,
     entityClassName: string
   ): EntityTableDataCoordinator<TFields> {

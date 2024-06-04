@@ -25,7 +25,7 @@ import { computeIfAbsent, zipToMap } from '../utils/collections/maps';
  *
  * It is also responsible for invalidating all sources of data when mutated using EntityMutator.
  */
-export default class EntityDataManager<TFields> {
+export default class EntityDataManager<TFields extends Record<string, any>> {
   private readonly fieldDataLoaders: Map<
     keyof TFields,
     DataLoader<NonNullable<TFields[keyof TFields]>, readonly Readonly<TFields>[]>

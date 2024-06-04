@@ -6,7 +6,7 @@ import IEntityCacheAdapterProvider from '../../IEntityCacheAdapterProvider';
 import { CacheStatus, CacheLoadResult } from '../../internal/ReadThroughEntityCache';
 
 export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
-  getCacheAdapter<TFields>(
+  getCacheAdapter<TFields extends Record<string, any>>(
     _entityConfiguration: EntityConfiguration<TFields>
   ): IEntityCacheAdapter<TFields> {
     return new NoCacheStubCacheAdapter();
@@ -45,7 +45,7 @@ export class NoCacheStubCacheAdapter<TFields> implements IEntityCacheAdapter<TFi
 export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
   cache: Map<string, Readonly<object>> = new Map();
 
-  getCacheAdapter<TFields>(
+  getCacheAdapter<TFields extends Record<string, any>>(
     entityConfiguration: EntityConfiguration<TFields>
   ): IEntityCacheAdapter<TFields> {
     return new InMemoryFullCacheStubCacheAdapter(
@@ -55,7 +55,9 @@ export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAd
   }
 }
 
-export class InMemoryFullCacheStubCacheAdapter<TFields> implements IEntityCacheAdapter<TFields> {
+export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, any>>
+  implements IEntityCacheAdapter<TFields>
+{
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
     readonly cache: Map<string, Readonly<TFields>>
