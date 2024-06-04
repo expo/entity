@@ -13,13 +13,13 @@ describe(EnforcingEntityLoader, () => {
         new Map(
           Object.entries({
             hello: [result(rejection)],
-          })
-        )
+          }),
+        ),
       );
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadManyByFieldEqualingManyAsync(anything(), anything())
+        enforcingEntityLoader.loadManyByFieldEqualingManyAsync(anything(), anything()),
       ).rejects.toThrow(rejection);
     });
 
@@ -30,19 +30,19 @@ describe(EnforcingEntityLoader, () => {
         new Map(
           Object.entries({
             hello: [result(resolved)],
-          })
-        )
+          }),
+        ),
       );
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadManyByFieldEqualingManyAsync(anything(), anything())
+        enforcingEntityLoader.loadManyByFieldEqualingManyAsync(anything(), anything()),
       ).resolves.toEqual(
         new Map(
           Object.entries({
             hello: [resolved],
-          })
-        )
+          }),
+        ),
       );
     });
   });
@@ -57,7 +57,7 @@ describe(EnforcingEntityLoader, () => {
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadManyByFieldEqualingAsync(anything(), anything())
+        enforcingEntityLoader.loadManyByFieldEqualingAsync(anything(), anything()),
       ).rejects.toThrow(rejection);
     });
 
@@ -70,7 +70,7 @@ describe(EnforcingEntityLoader, () => {
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadManyByFieldEqualingAsync(anything(), anything())
+        enforcingEntityLoader.loadManyByFieldEqualingAsync(anything(), anything()),
       ).resolves.toEqual([resolved]);
     });
   });
@@ -80,12 +80,12 @@ describe(EnforcingEntityLoader, () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(entityLoaderMock.loadByFieldEqualingAsync(anything(), anything())).thenResolve(
-        result(rejection)
+        result(rejection),
       );
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadByFieldEqualingAsync(anything(), anything())
+        enforcingEntityLoader.loadByFieldEqualingAsync(anything(), anything()),
       ).rejects.toThrow(rejection);
     });
 
@@ -93,12 +93,12 @@ describe(EnforcingEntityLoader, () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(entityLoaderMock.loadByFieldEqualingAsync(anything(), anything())).thenResolve(
-        result(resolved)
+        result(resolved),
       );
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadByFieldEqualingAsync(anything(), anything())
+        enforcingEntityLoader.loadByFieldEqualingAsync(anything(), anything()),
       ).resolves.toEqual(resolved);
     });
 
@@ -106,12 +106,12 @@ describe(EnforcingEntityLoader, () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = null;
       when(entityLoaderMock.loadByFieldEqualingAsync(anything(), anything())).thenResolve(
-        result(resolved)
+        result(resolved),
       );
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadByFieldEqualingAsync(anything(), anything())
+        enforcingEntityLoader.loadByFieldEqualingAsync(anything(), anything()),
       ).resolves.toEqual(resolved);
     });
 
@@ -119,12 +119,12 @@ describe(EnforcingEntityLoader, () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const multipleEntitiesError = new Error();
       when(entityLoaderMock.loadByFieldEqualingAsync(anything(), anything())).thenReject(
-        multipleEntitiesError
+        multipleEntitiesError,
       );
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadByFieldEqualingAsync(anything(), anything())
+        enforcingEntityLoader.loadByFieldEqualingAsync(anything(), anything()),
       ).rejects.toEqual(multipleEntitiesError);
     });
   });
@@ -157,7 +157,7 @@ describe(EnforcingEntityLoader, () => {
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(enforcingEntityLoader.loadByIDNullableAsync(anything())).rejects.toThrow(
-        rejection
+        rejection,
       );
     });
 
@@ -168,7 +168,7 @@ describe(EnforcingEntityLoader, () => {
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(enforcingEntityLoader.loadByIDNullableAsync(anything())).resolves.toEqual(
-        resolved
+        resolved,
       );
     });
 
@@ -179,7 +179,7 @@ describe(EnforcingEntityLoader, () => {
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(enforcingEntityLoader.loadByIDNullableAsync(anything())).resolves.toEqual(
-        resolved
+        resolved,
       );
     });
   });
@@ -192,8 +192,8 @@ describe(EnforcingEntityLoader, () => {
         new Map(
           Object.entries({
             hello: result(rejection),
-          })
-        )
+          }),
+        ),
       );
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
@@ -207,8 +207,8 @@ describe(EnforcingEntityLoader, () => {
         new Map(
           Object.entries({
             hello: result(resolved),
-          })
-        )
+          }),
+        ),
       );
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
@@ -216,8 +216,8 @@ describe(EnforcingEntityLoader, () => {
         new Map(
           Object.entries({
             hello: resolved,
-          })
-        )
+          }),
+        ),
       );
     });
   });
@@ -231,13 +231,13 @@ describe(EnforcingEntityLoader, () => {
           Object.entries({
             hello: result(rejection),
             world: null,
-          })
-        )
+          }),
+        ),
       );
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(enforcingEntityLoader.loadManyByIDsNullableAsync(anything())).rejects.toThrow(
-        rejection
+        rejection,
       );
     });
 
@@ -249,8 +249,8 @@ describe(EnforcingEntityLoader, () => {
           Object.entries({
             hello: result(resolved),
             world: null,
-          })
-        )
+          }),
+        ),
       );
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
@@ -259,8 +259,8 @@ describe(EnforcingEntityLoader, () => {
           Object.entries({
             hello: resolved,
             world: null,
-          })
-        )
+          }),
+        ),
       );
     });
   });
@@ -270,12 +270,12 @@ describe(EnforcingEntityLoader, () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(
-        entityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+        entityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(anything(), anything()),
       ).thenResolve(result(rejection));
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+        enforcingEntityLoader.loadFirstByFieldEqualityConjunctionAsync(anything(), anything()),
       ).rejects.toThrow(rejection);
     });
 
@@ -283,24 +283,24 @@ describe(EnforcingEntityLoader, () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(
-        entityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+        entityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(anything(), anything()),
       ).thenResolve(result(resolved));
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+        enforcingEntityLoader.loadFirstByFieldEqualityConjunctionAsync(anything(), anything()),
       ).resolves.toEqual(resolved);
     });
 
     it('returns null when the query is successful but no rows match', async () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       when(
-        entityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+        entityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(anything(), anything()),
       ).thenResolve(null);
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadFirstByFieldEqualityConjunctionAsync(anything(), anything())
+        enforcingEntityLoader.loadFirstByFieldEqualityConjunctionAsync(anything(), anything()),
       ).resolves.toBeNull();
     });
   });
@@ -310,12 +310,12 @@ describe(EnforcingEntityLoader, () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(
-        entityLoaderMock.loadManyByFieldEqualityConjunctionAsync(anything(), anything())
+        entityLoaderMock.loadManyByFieldEqualityConjunctionAsync(anything(), anything()),
       ).thenResolve([result(rejection)]);
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadManyByFieldEqualityConjunctionAsync(anything(), anything())
+        enforcingEntityLoader.loadManyByFieldEqualityConjunctionAsync(anything(), anything()),
       ).rejects.toThrow(rejection);
     });
 
@@ -323,12 +323,12 @@ describe(EnforcingEntityLoader, () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(
-        entityLoaderMock.loadManyByFieldEqualityConjunctionAsync(anything(), anything())
+        entityLoaderMock.loadManyByFieldEqualityConjunctionAsync(anything(), anything()),
       ).thenResolve([result(resolved)]);
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadManyByFieldEqualityConjunctionAsync(anything(), anything())
+        enforcingEntityLoader.loadManyByFieldEqualityConjunctionAsync(anything(), anything()),
       ).resolves.toEqual([resolved]);
     });
   });
@@ -338,12 +338,12 @@ describe(EnforcingEntityLoader, () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const rejection = new Error();
       when(
-        entityLoaderMock.loadManyByRawWhereClauseAsync(anything(), anything(), anything())
+        entityLoaderMock.loadManyByRawWhereClauseAsync(anything(), anything(), anything()),
       ).thenResolve([result(rejection)]);
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadManyByRawWhereClauseAsync(anything(), anything(), anything())
+        enforcingEntityLoader.loadManyByRawWhereClauseAsync(anything(), anything(), anything()),
       ).rejects.toThrow(rejection);
     });
 
@@ -351,12 +351,12 @@ describe(EnforcingEntityLoader, () => {
       const entityLoaderMock = mock<EntityLoader<any, any, any, any, any, any>>(EntityLoader);
       const resolved = {};
       when(
-        entityLoaderMock.loadManyByRawWhereClauseAsync(anything(), anything(), anything())
+        entityLoaderMock.loadManyByRawWhereClauseAsync(anything(), anything(), anything()),
       ).thenResolve([result(resolved)]);
       const entityLoader = instance(entityLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityLoader(entityLoader);
       await expect(
-        enforcingEntityLoader.loadManyByRawWhereClauseAsync(anything(), anything(), anything())
+        enforcingEntityLoader.loadManyByRawWhereClauseAsync(anything(), anything(), anything()),
       ).resolves.toEqual([resolved]);
     });
   });
@@ -379,7 +379,7 @@ describe(EnforcingEntityLoader, () => {
     expect(loaderProperties).toEqual(expect.arrayContaining(knownLoaderOnlyDifferences));
 
     const loaderPropertiesWithoutKnownDifferences = loaderProperties.filter(
-      (p) => !knownLoaderOnlyDifferences.includes(p)
+      (p) => !knownLoaderOnlyDifferences.includes(p),
     );
 
     expect(enforcingLoaderProperties).toEqual(loaderPropertiesWithoutKnownDifferences);

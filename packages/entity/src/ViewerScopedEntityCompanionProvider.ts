@@ -11,7 +11,7 @@ import ViewerScopedEntityCompanion from './ViewerScopedEntityCompanion';
 export default class ViewerScopedEntityCompanionProvider {
   constructor(
     private readonly entityCompanionProvider: EntityCompanionProvider,
-    private readonly viewerContext: ViewerContext
+    private readonly viewerContext: ViewerContext,
   ) {}
 
   /**
@@ -19,7 +19,6 @@ export default class ViewerScopedEntityCompanionProvider {
    * companion is constructed using the configuration provided by the factory.
    *
    * @param entityClass - entity class to load
-   * @param entityCompanionDefinitionFn - function defining entity companion definition
    */
   getViewerScopedCompanionForEntity<
     TFields extends object,
@@ -33,7 +32,7 @@ export default class ViewerScopedEntityCompanionProvider {
       TEntity,
       TSelectedFields
     >,
-    TSelectedFields extends keyof TFields
+    TSelectedFields extends keyof TFields,
   >(
     entityClass: IEntityClass<
       TFields,
@@ -42,7 +41,7 @@ export default class ViewerScopedEntityCompanionProvider {
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
-    >
+    >,
   ): ViewerScopedEntityCompanion<
     TFields,
     TID,
@@ -53,7 +52,7 @@ export default class ViewerScopedEntityCompanionProvider {
   > {
     return new ViewerScopedEntityCompanion(
       this.entityCompanionProvider.getCompanionForEntity(entityClass),
-      this.viewerContext as TViewerContext
+      this.viewerContext as TViewerContext,
     );
   }
 }

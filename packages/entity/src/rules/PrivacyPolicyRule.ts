@@ -41,7 +41,7 @@ export default abstract class PrivacyPolicyRule<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   abstract evaluateAsync(
     viewerContext: TViewerContext,
@@ -53,6 +53,6 @@ export default abstract class PrivacyPolicyRule<
       TEntity,
       TSelectedFields
     >,
-    entity: TEntity
+    entity: TEntity,
   ): Promise<RuleEvaluationResult>;
 }

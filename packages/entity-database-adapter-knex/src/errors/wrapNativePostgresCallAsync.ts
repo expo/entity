@@ -11,7 +11,7 @@ import {
 import { knex } from 'knex';
 
 function wrapNativePostgresError(
-  error: Error & { code?: string }
+  error: Error & { code?: string },
 ): EntityDatabaseAdapterError & Error {
   const ret = translatePostgresError(error);
   if (error.stack) {
@@ -21,7 +21,7 @@ function wrapNativePostgresError(
 }
 
 function translatePostgresError(
-  error: Error & { code?: string }
+  error: Error & { code?: string },
 ): EntityDatabaseAdapterError & Error {
   if (error instanceof knex.KnexTimeoutError) {
     return new EntityDatabaseAdapterTransientError(error.message, error);

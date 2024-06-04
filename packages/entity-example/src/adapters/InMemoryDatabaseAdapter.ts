@@ -16,7 +16,7 @@ const dbObjects: Readonly<{ [key: string]: any }>[] = [];
 
 export class InMemoryDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
   getDatabaseAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>
+    entityConfiguration: EntityConfiguration<TFields>,
   ): EntityDatabaseAdapter<TFields> {
     return new InMemoryDatabaseAdapter(entityConfiguration);
   }
@@ -35,13 +35,13 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
     _queryInterface: any,
     _tableName: string,
     tableField: string,
-    tableValues: readonly any[]
+    tableValues: readonly any[],
   ): Promise<object[]> {
     return tableValues.reduce((acc, fieldValue) => {
       return acc.concat(
         dbObjects.filter((obj) => {
           return obj[tableField] === fieldValue;
-        })
+        }),
       );
     }, []);
   }
@@ -52,7 +52,7 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
       order: OrderByOrdering;
     }[],
     objectA: { [key: string]: any },
-    objectB: { [key: string]: any }
+    objectB: { [key: string]: any },
   ): 0 | 1 | -1 {
     if (orderBys.length === 0) {
       return 0;
@@ -66,14 +66,14 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
         return aField > bField
           ? -1
           : aField < bField
-          ? 1
-          : this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
+            ? 1
+            : this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
       case OrderByOrdering.ASCENDING:
         return bField > aField
           ? -1
           : bField < aField
-          ? 1
-          : this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
+            ? 1
+            : this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
     }
   }
 
@@ -82,7 +82,7 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
     _tableName: string,
     tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
     tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
-    querySelectionModifiers: TableQuerySelectionModifiers
+    querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]> {
     let filteredObjects = dbObjects;
     for (const { tableField, tableValue } of tableFieldSingleValueEqualityOperands) {
@@ -96,7 +96,7 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
     const orderBy = querySelectionModifiers.orderBy;
     if (orderBy !== undefined) {
       filteredObjects = filteredObjects.sort((a, b) =>
-        InMemoryDatabaseAdapter.compareByOrderBys(orderBy, a, b)
+        InMemoryDatabaseAdapter.compareByOrderBys(orderBy, a, b),
       );
     }
 
@@ -118,7 +118,7 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
     _tableName: string,
     _rawWhereClause: string,
     _bindings: object | any[],
-    _querySelectionModifiers: TableQuerySelectionModifiers
+    _querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]> {
     throw new Error('Raw WHERE clauses not supported for InMemoryDatabaseAdapter');
   }
@@ -126,12 +126,12 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
   protected async insertInternalAsync(
     _queryInterface: any,
     _tableName: string,
-    object: object
+    object: object,
   ): Promise<object[]> {
     const configurationPrivate = this['entityConfiguration'] as EntityConfiguration<T>;
     const idField = getDatabaseFieldForEntityField(
       configurationPrivate,
-      configurationPrivate.idField
+      configurationPrivate.idField,
     );
     const objectToInsert = {
       [idField]: uuidv4(),
@@ -146,7 +146,7 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
     _tableName: string,
     tableIdField: string,
     id: any,
-    object: object
+    object: object,
   ): Promise<object[]> {
     // SQL does not support empty updates, mirror behavior here for better test simulation
     if (Object.keys(object).length === 0) {
@@ -168,7 +168,7 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
     _queryInterface: any,
     _tableName: string,
     tableIdField: string,
-    id: any
+    id: any,
   ): Promise<number> {
     const objectIndex = dbObjects.findIndex((obj) => {
       return obj[tableIdField] === id;

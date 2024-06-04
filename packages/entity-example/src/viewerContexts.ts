@@ -17,7 +17,10 @@ export abstract class ExampleViewerContext extends ViewerContext {
  * Represents a logged-in user.
  */
 export class UserViewerContext extends ExampleViewerContext {
-  constructor(entityCompanionProvider: EntityCompanionProvider, public userID: string) {
+  constructor(
+    entityCompanionProvider: EntityCompanionProvider,
+    public userID: string,
+  ) {
     super(entityCompanionProvider);
   }
 }

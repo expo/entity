@@ -72,7 +72,7 @@ class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutation
   async executeAsync(
     viewerContext: ViewerContext,
     entity: BlahEntity,
-    mutationInfo: EntityTriggerMutationInfo<BlahFields, string, ViewerContext, BlahEntity>
+    mutationInfo: EntityTriggerMutationInfo<BlahFields, string, ViewerContext, BlahEntity>,
   ): Promise<void> {
     if (mutationInfo.type === EntityMutationType.DELETE) {
       const entityLoaded = await BlahEntity.loader(viewerContext)
@@ -80,7 +80,7 @@ class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutation
         .loadByIDNullableAsync(entity.getID());
       if (entityLoaded) {
         throw new Error(
-          'should not have been able to re-load the entity after delete. this means the cache has not been cleared'
+          'should not have been able to re-load the entity after delete. this means the cache has not been cleared',
         );
       }
     }

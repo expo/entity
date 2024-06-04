@@ -44,10 +44,10 @@ const blahEntityConfiguration = new EntityConfiguration<BlahT>({
 describe(getDatabaseFieldForEntityField, () => {
   it('returns correct mapping', () => {
     expect(getDatabaseFieldForEntityField(blahEntityConfiguration, 'cacheable')).toEqual(
-      'cacheable'
+      'cacheable',
     );
     expect(
-      getDatabaseFieldForEntityField(blahEntityConfiguration, 'uniqueButNotCacheable')
+      getDatabaseFieldForEntityField(blahEntityConfiguration, 'uniqueButNotCacheable'),
     ).toEqual('unique_but_not_cacheable');
   });
 });
@@ -59,7 +59,7 @@ describe(transformDatabaseObjectToFields, () => {
         id: 'blah',
         unique_but_not_cacheable: 'wat',
         who: 'why',
-      })
+      }),
     ).toEqual({
       id: 'blah',
       uniqueButNotCacheable: 'wat',
@@ -79,7 +79,7 @@ describe(transformDatabaseObjectToFields, () => {
     expect(
       transformDatabaseObjectToFields(blahEntityConfiguration, fieldTransformMap, {
         transform_read: 'wat',
-      })
+      }),
     ).toEqual({
       transformRead: 'wat-read-transformed',
     });
@@ -93,7 +93,7 @@ describe(transformFieldsToDatabaseObject, () => {
         id: 'blah',
         cacheable: 'wat',
         uniqueButNotCacheable: 'wat',
-      })
+      }),
     ).toEqual({
       id: 'blah',
       cacheable: 'wat',
@@ -114,7 +114,7 @@ describe(transformFieldsToDatabaseObject, () => {
     expect(
       transformFieldsToDatabaseObject(blahEntityConfiguration, fieldTransformMap, {
         transformWrite: 'wat',
-      })
+      }),
     ).toEqual({
       transform_write: 'wat-write-transformed',
     });
@@ -137,7 +137,7 @@ describe(transformCacheObjectToFields, () => {
         id: 'hello',
         transformRead: 'wat',
         unknownField: 'who',
-      })
+      }),
     ).toEqual({
       id: 'hello',
       transformRead: 'wat-read-transformed-cache',
@@ -162,7 +162,7 @@ describe(transformFieldsToCacheObject, () => {
         id: 'hello',
         transformWrite: 'wat',
         unknownField: 'who',
-      } as any)
+      } as any),
     ).toEqual({
       id: 'hello',
       transformWrite: 'wat-write-transformed-cache',

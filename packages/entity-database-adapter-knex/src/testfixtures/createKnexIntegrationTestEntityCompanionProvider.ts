@@ -11,7 +11,7 @@ import PostgresEntityQueryContextProvider from '../PostgresEntityQueryContextPro
 
 export const createKnexIntegrationTestEntityCompanionProvider = (
   knex: Knex,
-  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
+  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
     metricsAdapter,
@@ -31,6 +31,6 @@ export const createKnexIntegrationTestEntityCompanionProvider = (
           cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
         },
       ],
-    ])
+    ]),
   );
 };

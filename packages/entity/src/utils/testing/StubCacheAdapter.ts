@@ -7,7 +7,7 @@ import { CacheStatus, CacheLoadResult } from '../../internal/ReadThroughEntityCa
 
 export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
   getCacheAdapter<TFields extends Record<string, any>>(
-    _entityConfiguration: EntityConfiguration<TFields>
+    _entityConfiguration: EntityConfiguration<TFields>,
   ): IEntityCacheAdapter<TFields> {
     return new NoCacheStubCacheAdapter();
   }
@@ -16,7 +16,7 @@ export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvi
 export class NoCacheStubCacheAdapter<TFields> implements IEntityCacheAdapter<TFields> {
   public async loadManyAsync<N extends keyof TFields>(
     _fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
     return fieldValues.reduce((acc: Map<NonNullable<TFields[N]>, CacheLoadResult<TFields>>, v) => {
       acc.set(v, {
@@ -28,17 +28,17 @@ export class NoCacheStubCacheAdapter<TFields> implements IEntityCacheAdapter<TFi
 
   public async cacheManyAsync<N extends keyof TFields>(
     _fieldName: N,
-    _objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>
+    _objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>,
   ): Promise<void> {}
 
   public async cacheDBMissesAsync<N extends keyof TFields>(
     _fieldName: N,
-    _fieldValues: readonly NonNullable<TFields[N]>[]
+    _fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {}
 
   async invalidateManyAsync<N extends keyof TFields>(
     _fieldName: N,
-    _fieldValues: readonly TFields[N][]
+    _fieldValues: readonly TFields[N][],
   ): Promise<void> {}
 }
 
@@ -46,11 +46,11 @@ export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAd
   cache: Map<string, Readonly<object>> = new Map();
 
   getCacheAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>
+    entityConfiguration: EntityConfiguration<TFields>,
   ): IEntityCacheAdapter<TFields> {
     return new InMemoryFullCacheStubCacheAdapter(
       entityConfiguration,
-      this.cache as Map<string, Readonly<TFields>>
+      this.cache as Map<string, Readonly<TFields>>,
     );
   }
 }
@@ -60,12 +60,12 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
 {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
-    readonly cache: Map<string, Readonly<TFields>>
+    readonly cache: Map<string, Readonly<TFields>>,
   ) {}
 
   public async loadManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
     const results = new Map<NonNullable<TFields[N]>, CacheLoadResult<TFields>>();
     fieldValues.forEach((fieldValue) => {
@@ -88,7 +88,7 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
 
   public async cacheManyAsync<N extends keyof TFields>(
     fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>
+    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>,
   ): Promise<void> {
     objectMap.forEach((obj, fieldValue) => {
       const cacheKey = this.createCacheKey(fieldName, fieldValue);
@@ -98,12 +98,12 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
 
   public async cacheDBMissesAsync<N extends keyof TFields>(
     _fieldName: N,
-    _fieldValues: readonly NonNullable<TFields[N]>[]
+    _fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {}
 
   public async invalidateManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {
     fieldValues.forEach((fieldValue) => {
       const cacheKey = this.createCacheKey(fieldName, fieldValue);

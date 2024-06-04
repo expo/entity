@@ -16,7 +16,10 @@ import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyR
 import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
 
 class TestUserViewerContext extends ViewerContext {
-  constructor(entityCompanionProvider: EntityCompanionProvider, private readonly userID: string) {
+  constructor(
+    entityCompanionProvider: EntityCompanionProvider,
+    private readonly userID: string,
+  ) {
     super(entityCompanionProvider);
   }
 
@@ -75,7 +78,7 @@ class DenyIfNotOwnerPrivacyPolicyRule extends PrivacyPolicyRule<
       TestUserViewerContext,
       BlahEntity
     >,
-    entity: BlahEntity
+    entity: BlahEntity,
   ): Promise<RuleEvaluationResult> {
     if (viewerContext.getUserID() === entity.getField('ownerID')) {
       return RuleEvaluationResult.SKIP;
@@ -115,15 +118,15 @@ it('runs through a common workflow', async () => {
   const vc2 = new TestUserViewerContext(entityCompanionProvider, uuidv4());
 
   const blahOwner1 = await enforceAsyncResult(
-    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()!).createAsync()
+    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()!).createAsync(),
   );
 
   await enforceAsyncResult(
-    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()!).createAsync()
+    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()!).createAsync(),
   );
 
   const blahOwner2 = await enforceAsyncResult(
-    BlahEntity.creator(vc2).setField('ownerID', vc2.getUserID()!).createAsync()
+    BlahEntity.creator(vc2).setField('ownerID', vc2.getUserID()!).createAsync(),
   );
 
   // sanity check created objects
@@ -132,23 +135,23 @@ it('runs through a common workflow', async () => {
 
   // check that two people can't read each others data
   await expect(
-    enforceAsyncResult(BlahEntity.loader(vc1).loadByIDAsync(blahOwner2.getID()))
+    enforceAsyncResult(BlahEntity.loader(vc1).loadByIDAsync(blahOwner2.getID())),
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
   await expect(
-    enforceAsyncResult(BlahEntity.loader(vc2).loadByIDAsync(blahOwner1.getID()))
+    enforceAsyncResult(BlahEntity.loader(vc2).loadByIDAsync(blahOwner1.getID())),
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 
   // check that all of owner 1's objects can be loaded
   const results = await enforceResultsAsync(
-    BlahEntity.loader(vc1).loadManyByFieldEqualingAsync('ownerID', vc1.getUserID()!)
+    BlahEntity.loader(vc1).loadManyByFieldEqualingAsync('ownerID', vc1.getUserID()!),
   );
   expect(results).toHaveLength(2);
 
   // check that two people can't create objects owned by others
   await expect(
     enforceAsyncResult(
-      BlahEntity.creator(vc2).setField('ownerID', blahOwner1.getID()).createAsync()
-    )
+      BlahEntity.creator(vc2).setField('ownerID', blahOwner1.getID()).createAsync(),
+    ),
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 
   // check that empty load many returns nothing
@@ -159,6 +162,6 @@ it('runs through a common workflow', async () => {
 
   // check that the user can't delete their own data (as specified by privacy rules)
   await expect(enforceAsyncResult(BlahEntity.deleteAsync(blahOwner2))).rejects.toBeInstanceOf(
-    EntityNotAuthorizedError
+    EntityNotAuthorizedError,
   );
 });

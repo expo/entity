@@ -35,11 +35,10 @@ describe(canViewerUpdateAsync, () => {
   it('rethrows non-authorization errors', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestThrowOtherErrorEntity.creator(
-      viewerContext
-    ).enforceCreateAsync();
+    const testEntity =
+      await SimpleTestThrowOtherErrorEntity.creator(viewerContext).enforceCreateAsync();
     await expect(canViewerUpdateAsync(SimpleTestThrowOtherErrorEntity, testEntity)).rejects.toThrow(
-      'update error'
+      'update error',
     );
   });
 });
@@ -105,11 +104,10 @@ describe(canViewerDeleteAsync, () => {
   it('rethrows non-authorization errors', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestThrowOtherErrorEntity.creator(
-      viewerContext
-    ).enforceCreateAsync();
+    const testEntity =
+      await SimpleTestThrowOtherErrorEntity.creator(viewerContext).enforceCreateAsync();
     await expect(
-      canViewerDeleteAsync(SimpleTestThrowOtherErrorEntity, testEntity)
+      canViewerDeleteAsync(SimpleTestThrowOtherErrorEntity, testEntity),
     ).rejects.toThrowError('delete error');
   });
 
@@ -132,7 +130,7 @@ describe(canViewerDeleteAsync, () => {
       .setField('simple_test_id', testEntity.getID())
       .enforceCreateAsync();
     await expect(canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity)).rejects.toThrowError(
-      'read in cascading delete error'
+      'read in cascading delete error',
     );
   });
 
@@ -144,14 +142,14 @@ describe(canViewerDeleteAsync, () => {
       async (queryContext) => {
         const testEntity = await SimpleTestDenyUpdateEntity.creator(
           viewerContext,
-          queryContext
+          queryContext,
         ).enforceCreateAsync();
         await LeafDenyReadEntity.creator(viewerContext, queryContext)
           .setField('simple_test_id', testEntity.getID())
           .enforceCreateAsync();
         // this would fail if transactions weren't supported or correctly passed through
         return await canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity, queryContext);
-      }
+      },
     );
 
     expect(canViewerDelete).toBe(true);
@@ -190,7 +188,7 @@ class DenyUpdateEntityPrivacyPolicy<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
@@ -211,7 +209,7 @@ class DenyDeleteEntityPrivacyPolicy<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
@@ -232,7 +230,7 @@ class ThrowOtherErrorEntityPrivacyPolicy<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
   protected override readonly readRules = [
     {
@@ -246,7 +244,7 @@ class ThrowOtherErrorEntityPrivacyPolicy<
           TEntity,
           TSelectedFields
         >,
-        _entity: TEntity
+        _entity: TEntity,
       ): Promise<RuleEvaluationResult> {
         if (evaluationContext.cascadingDeleteCause) {
           throw new Error('read in cascading delete error');
@@ -280,7 +278,7 @@ class DenyReadEntityPrivacyPolicy<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
   protected override readonly readRules = [
     {
@@ -294,7 +292,7 @@ class DenyReadEntityPrivacyPolicy<
           TEntity,
           TSelectedFields
         >,
-        _entity: TEntity
+        _entity: TEntity,
       ): Promise<RuleEvaluationResult> {
         if (queryContext.isInTransaction()) {
           return RuleEvaluationResult.ALLOW;

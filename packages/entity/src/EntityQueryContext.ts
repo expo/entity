@@ -36,7 +36,7 @@ export abstract class EntityQueryContext {
 
   abstract runInTransactionIfNotInTransactionAsync<T>(
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
-    transactionConfig?: TransactionConfig
+    transactionConfig?: TransactionConfig,
   ): Promise<T>;
 }
 
@@ -49,7 +49,7 @@ export abstract class EntityQueryContext {
 export class EntityNonTransactionalQueryContext extends EntityQueryContext {
   constructor(
     queryInterface: any,
-    private readonly entityQueryContextProvider: EntityQueryContextProvider
+    private readonly entityQueryContextProvider: EntityQueryContextProvider,
   ) {
     super(queryInterface);
   }
@@ -60,11 +60,11 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
 
   async runInTransactionIfNotInTransactionAsync<T>(
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
-    transactionConfig?: TransactionConfig
+    transactionConfig?: TransactionConfig,
   ): Promise<T> {
     return await this.entityQueryContextProvider.runInTransactionAsync(
       transactionScope,
-      transactionConfig
+      transactionConfig,
     );
   }
 }
@@ -82,7 +82,7 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
 
   constructor(
     queryInterface: any,
-    private readonly entityQueryContextProvider: EntityQueryContextProvider
+    private readonly entityQueryContextProvider: EntityQueryContextProvider,
   ) {
     super(queryInterface);
   }
@@ -98,7 +98,7 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
   public appendPreCommitCallback(callback: PreCommitCallback, order: number): void {
     assert(
       order >= Number.MIN_SAFE_INTEGER && order <= Number.MAX_SAFE_INTEGER,
-      `Invalid order specified: ${order}`
+      `Invalid order specified: ${order}`,
     );
     this.preCommitCallbacks.push({ callback, order });
   }
@@ -148,21 +148,21 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
 
   async runInTransactionIfNotInTransactionAsync<T>(
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
-    transactionConfig?: TransactionConfig
+    transactionConfig?: TransactionConfig,
   ): Promise<T> {
     assert(
       transactionConfig === undefined,
-      'Should not pass transactionConfig to a nested transaction'
+      'Should not pass transactionConfig to a nested transaction',
     );
     return await transactionScope(this);
   }
 
   async runInNestedTransactionAsync<T>(
-    transactionScope: (innerQueryContext: EntityTransactionalQueryContext) => Promise<T>
+    transactionScope: (innerQueryContext: EntityTransactionalQueryContext) => Promise<T>,
   ): Promise<T> {
     return await this.entityQueryContextProvider.runInNestedTransactionAsync(
       this,
-      transactionScope
+      transactionScope,
     );
   }
 }
@@ -182,7 +182,7 @@ export class EntityNestedTransactionalQueryContext extends EntityTransactionalQu
   constructor(
     queryInterface: any,
     private readonly parentQueryContext: EntityTransactionalQueryContext,
-    entityQueryContextProvider: EntityQueryContextProvider
+    entityQueryContextProvider: EntityQueryContextProvider,
   ) {
     super(queryInterface, entityQueryContextProvider);
   }
@@ -197,7 +197,7 @@ export class EntityNestedTransactionalQueryContext extends EntityTransactionalQu
 
   public override runPostCommitCallbacksAsync(): Promise<void> {
     throw new Error(
-      'Must not call runPostCommitCallbacksAsync on EntityNestedTransactionalQueryContext'
+      'Must not call runPostCommitCallbacksAsync on EntityNestedTransactionalQueryContext',
     );
   }
 

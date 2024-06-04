@@ -92,11 +92,11 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         any,
         any
       >,
-      entity: any
+      entity: any,
     ): Promise<RuleEvaluationResult> {
       if (privacyPolicyEvaluationRecords.shouldRecord) {
         (privacyPolicyEvaluationRecords as any)[entity.constructor.name][this.action].push(
-          evaluationContext
+          evaluationContext,
         );
       }
       return RuleEvaluationResult.ALLOW;
@@ -134,7 +134,12 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _viewerContext: TestViewerContext,
       _queryContext: EntityTransactionalQueryContext,
       _entity: ParentEntity,
-      mutationInfo: EntityTriggerMutationInfo<ParentFields, string, TestViewerContext, ParentEntity>
+      mutationInfo: EntityTriggerMutationInfo<
+        ParentFields,
+        string,
+        TestViewerContext,
+        ParentEntity
+      >,
     ): Promise<void> {
       invariant(mutationInfo.type === EntityMutationType.DELETE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause !== null) {
@@ -155,7 +160,12 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _viewerContext: TestViewerContext,
       _queryContext: EntityTransactionalQueryContext,
       _entity: ParentEntity,
-      mutationInfo: EntityTriggerMutationInfo<ParentFields, string, TestViewerContext, ParentEntity>
+      mutationInfo: EntityTriggerMutationInfo<
+        ParentFields,
+        string,
+        TestViewerContext,
+        ParentEntity
+      >,
     ): Promise<void> {
       invariant(mutationInfo.type === EntityMutationType.UPDATE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause !== null) {
@@ -176,7 +186,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _viewerContext: TestViewerContext,
       _queryContext: EntityTransactionalQueryContext,
       _entity: ChildEntity,
-      mutationInfo: EntityTriggerMutationInfo<ChildFields, string, TestViewerContext, ChildEntity>
+      mutationInfo: EntityTriggerMutationInfo<ChildFields, string, TestViewerContext, ChildEntity>,
     ): Promise<void> {
       invariant(mutationInfo.type === EntityMutationType.DELETE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause === null) {
@@ -208,7 +218,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _viewerContext: TestViewerContext,
       _queryContext: EntityTransactionalQueryContext,
       _entity: ChildEntity,
-      mutationInfo: EntityTriggerMutationInfo<ChildFields, string, TestViewerContext, ChildEntity>
+      mutationInfo: EntityTriggerMutationInfo<ChildFields, string, TestViewerContext, ChildEntity>,
     ): Promise<void> {
       invariant(mutationInfo.type === EntityMutationType.UPDATE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause === null) {
@@ -245,7 +255,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         string,
         TestViewerContext,
         GrandChildEntity
-      >
+      >,
     ): Promise<void> {
       invariant(mutationInfo.type === EntityMutationType.DELETE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause === null) {
@@ -255,7 +265,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       const cascadingDeleteCauseEntity = mutationInfo.cascadingDeleteCause.entity;
       if (!(cascadingDeleteCauseEntity instanceof ChildEntity)) {
         throw new Error(
-          'GrandChild entity should have cascade delete cause entity of type ChildEntity'
+          'GrandChild entity should have cascade delete cause entity of type ChildEntity',
         );
       }
 
@@ -268,7 +278,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       const secondLevelCascadingDeleteCauseEntity = secondLevelCascadingDeleteCause.entity;
       if (!(secondLevelCascadingDeleteCauseEntity instanceof ParentEntity)) {
         throw new Error(
-          'GrandChild entity should have second level casade delete cause entity of type ParentEntity'
+          'GrandChild entity should have second level casade delete cause entity of type ParentEntity',
         );
       }
 
@@ -296,7 +306,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
         string,
         TestViewerContext,
         GrandChildEntity
-      >
+      >,
     ): Promise<void> {
       invariant(mutationInfo.type === EntityMutationType.UPDATE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause === null) {
@@ -306,7 +316,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       const cascadingDeleteCauseEntity = mutationInfo.cascadingDeleteCause.entity;
       if (!(cascadingDeleteCauseEntity instanceof ChildEntity)) {
         throw new Error(
-          'GrandChild entity should have cascade delete cause entity of type ChildEntity'
+          'GrandChild entity should have cascade delete cause entity of type ChildEntity',
         );
       }
 
@@ -319,7 +329,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       const secondLevelCascadingDeleteCauseEntity = secondLevelCascadingDeleteCause.entity;
       if (!(secondLevelCascadingDeleteCauseEntity instanceof ParentEntity)) {
         throw new Error(
-          'GrandChild entity should have second level casade delete cause entity of type ParentEntity'
+          'GrandChild entity should have second level casade delete cause entity of type ParentEntity',
         );
       }
 
@@ -526,13 +536,15 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
       ).resolves.not.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID()),
       ).resolves.not.toBeNull();
       await expect(
-        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
+        GrandChildEntity.loader(viewerContext)
+          .enforcing()
+          .loadByIDNullableAsync(grandchild.getID()),
       ).resolves.not.toBeNull();
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
@@ -540,13 +552,15 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
       ).resolves.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID()),
       ).resolves.toBeNull();
       await expect(
-        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
+        GrandChildEntity.loader(viewerContext)
+          .enforcing()
+          .loadByIDNullableAsync(grandchild.getID()),
       ).resolves.toBeNull();
 
       // two calls for each trigger, one beforeDelete, one afterDelete
@@ -644,13 +658,15 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
       ).resolves.not.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID()),
       ).resolves.not.toBeNull();
       await expect(
-        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
+        GrandChildEntity.loader(viewerContext)
+          .enforcing()
+          .loadByIDNullableAsync(grandchild.getID()),
       ).resolves.not.toBeNull();
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
@@ -658,7 +674,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
       ).resolves.toBeNull();
 
       const loadedChild = await ChildEntity.loader(viewerContext)
@@ -755,17 +771,17 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
       ).resolves.not.toBeNull();
       await expect(
         ChildEntity.loader(viewerContext)
           .enforcing()
-          .loadByFieldEqualingAsync('parent_id', parent.getID())
+          .loadByFieldEqualingAsync('parent_id', parent.getID()),
       ).resolves.not.toBeNull();
       await expect(
         GrandChildEntity.loader(viewerContext)
           .enforcing()
-          .loadByFieldEqualingAsync('parent_id', child.getID())
+          .loadByFieldEqualingAsync('parent_id', child.getID()),
       ).resolves.not.toBeNull();
 
       const childCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(ChildEntity)[
@@ -777,7 +793,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(childCachedBefore.get(parent.getID())?.status).toEqual(CacheStatus.HIT);
 
       const grandChildCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(
-        GrandChildEntity
+        GrandChildEntity,
       )['entityCompanion']['tableDataCoordinator'][
         'cacheAdapter'
       ] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
@@ -799,7 +815,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(grandChildCachedAfter.get(child.getID())?.status).toEqual(CacheStatus.HIT);
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
       ).resolves.toBeNull();
 
       const loadedChild = await ChildEntity.loader(viewerContext)
@@ -894,17 +910,17 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
       ).resolves.not.toBeNull();
       await expect(
         ChildEntity.loader(viewerContext)
           .enforcing()
-          .loadByFieldEqualingAsync('parent_id', parent.getID())
+          .loadByFieldEqualingAsync('parent_id', parent.getID()),
       ).resolves.not.toBeNull();
       await expect(
         GrandChildEntity.loader(viewerContext)
           .enforcing()
-          .loadByFieldEqualingAsync('parent_id', child.getID())
+          .loadByFieldEqualingAsync('parent_id', child.getID()),
       ).resolves.not.toBeNull();
 
       const childCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(ChildEntity)[
@@ -916,7 +932,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(childCachedBefore.get(parent.getID())?.status).toEqual(CacheStatus.HIT);
 
       const grandChildCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(
-        GrandChildEntity
+        GrandChildEntity,
       )['entityCompanion']['tableDataCoordinator'][
         'cacheAdapter'
       ] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
@@ -938,13 +954,15 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(grandChildCachedAfter.get(child.getID())?.status).toEqual(CacheStatus.MISS);
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
       ).resolves.toBeNull();
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID()),
       ).resolves.not.toBeNull();
       await expect(
-        GrandChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(grandchild.getID())
+        GrandChildEntity.loader(viewerContext)
+          .enforcing()
+          .loadByIDNullableAsync(grandchild.getID()),
       ).resolves.not.toBeNull();
 
       // two calls for each trigger, one beforeDelete, one afterDelete

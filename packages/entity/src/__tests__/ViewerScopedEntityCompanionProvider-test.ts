@@ -12,10 +12,10 @@ describe(ViewerScopedEntityCompanionProvider, () => {
     const entityCompanionProvider = instance(mock(EntityCompanionProvider));
     const viewerScopedEntityCompanionProvider = new ViewerScopedEntityCompanionProvider(
       entityCompanionProvider,
-      vc
+      vc,
     );
     expect(
-      viewerScopedEntityCompanionProvider.getViewerScopedCompanionForEntity(TestEntity)
+      viewerScopedEntityCompanionProvider.getViewerScopedCompanionForEntity(TestEntity),
     ).toBeInstanceOf(ViewerScopedEntityCompanion);
   });
 });

@@ -7,7 +7,7 @@ export default class StubDatabaseAdapterProvider implements IEntityDatabaseAdapt
   private readonly objectCollection = new Map();
 
   getDatabaseAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>
+    entityConfiguration: EntityConfiguration<TFields>,
   ): EntityDatabaseAdapter<TFields> {
     return new StubDatabaseAdapter(entityConfiguration, this.objectCollection);
   }

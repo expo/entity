@@ -20,7 +20,7 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
   SimpleTestEntityPrivacyPolicy
 > {
   protected async fetchObjectsFromDatabaseAsync(
-    _loadParamsArray: readonly Readonly<TestLoadParams>[]
+    _loadParamsArray: readonly Readonly<TestLoadParams>[],
   ): Promise<ReadonlyMap<Readonly<TestLoadParams>, Readonly<SimpleTestFields>>> {
     // unused
     return new Map();
@@ -38,19 +38,19 @@ describe(EntitySecondaryCacheLoader, () => {
       const secondaryEntityCacheMock =
         mock<ISecondaryEntityCache<SimpleTestFields, TestLoadParams>>();
       when(
-        secondaryEntityCacheMock.loadManyThroughAsync(deepEqual([loadParams]), anything())
+        secondaryEntityCacheMock.loadManyThroughAsync(deepEqual([loadParams]), anything()),
       ).thenResolve(new Map());
       const secondaryEntityCache = instance(secondaryEntityCacheMock);
 
       const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
         secondaryEntityCache,
-        SimpleTestEntity.loader(vc1)
+        SimpleTestEntity.loader(vc1),
       );
 
       await secondaryCacheLoader.loadManyAsync([loadParams]);
 
       verify(
-        secondaryEntityCacheMock.loadManyThroughAsync(deepEqual([loadParams]), anything())
+        secondaryEntityCacheMock.loadManyThroughAsync(deepEqual([loadParams]), anything()),
       ).once();
     });
 
@@ -63,7 +63,7 @@ describe(EntitySecondaryCacheLoader, () => {
       const secondaryEntityCacheMock =
         mock<ISecondaryEntityCache<SimpleTestFields, TestLoadParams>>();
       when(
-        secondaryEntityCacheMock.loadManyThroughAsync(deepEqual([loadParams]), anything())
+        secondaryEntityCacheMock.loadManyThroughAsync(deepEqual([loadParams]), anything()),
       ).thenResolve(new Map([[loadParams, createdEntity.getAllFields()]]));
       const secondaryEntityCache = instance(secondaryEntityCacheMock);
 
@@ -80,8 +80,8 @@ describe(EntitySecondaryCacheLoader, () => {
           anyOfClass(EntityNonTransactionalQueryContext),
           anything(),
           anything(),
-          anything()
-        )
+          anything(),
+        ),
       ).once();
     });
   });

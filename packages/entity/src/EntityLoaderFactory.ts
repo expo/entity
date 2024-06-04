@@ -22,7 +22,7 @@ export default class EntityLoaderFactory<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields,
 > {
   constructor(
     private readonly entityCompanion: EntityCompanion<
@@ -34,7 +34,7 @@ export default class EntityLoaderFactory<
       TSelectedFields
     >,
     private readonly dataManager: EntityDataManager<TFields>,
-    protected readonly metricsAdapter: IEntityMetricsAdapter
+    protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
   /**
@@ -51,7 +51,7 @@ export default class EntityLoaderFactory<
       TViewerContext,
       TEntity,
       TSelectedFields
-    >
+    >,
   ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new EntityLoader(
       viewerContext,
@@ -62,7 +62,7 @@ export default class EntityLoaderFactory<
       this.entityCompanion.entityCompanionDefinition.entitySelectedFields,
       this.entityCompanion.privacyPolicy,
       this.dataManager,
-      this.metricsAdapter
+      this.metricsAdapter,
     );
   }
 }

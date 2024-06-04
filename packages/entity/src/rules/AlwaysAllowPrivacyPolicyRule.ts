@@ -12,7 +12,7 @@ export default class AlwaysAllowPrivacyPolicyRule<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
   async evaluateAsync(
     _viewerContext: TViewerContext,
@@ -24,7 +24,7 @@ export default class AlwaysAllowPrivacyPolicyRule<
       TEntity,
       TSelectedFields
     >,
-    _entity: TEntity
+    _entity: TEntity,
   ): Promise<RuleEvaluationResult> {
     return RuleEvaluationResult.ALLOW;
   }

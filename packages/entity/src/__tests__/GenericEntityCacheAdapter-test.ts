@@ -20,7 +20,7 @@ describe(GenericEntityCacheAdapter, () => {
           ['id.wat', { status: CacheStatus.HIT, item: { id: 'wat' } }],
           ['id.who', { status: CacheStatus.NEGATIVE }],
           ['id.why', { status: CacheStatus.MISS }],
-        ])
+        ]),
       );
 
       const cacheAdapter = new GenericEntityCacheAdapter(instance(mockGenericCacher));
@@ -55,7 +55,7 @@ describe(GenericEntityCacheAdapter, () => {
       await cacheAdapter.cacheManyAsync('id', new Map([['wat', { id: 'wat' }]]));
 
       verify(
-        mockGenericCacher.cacheManyAsync(deepEqual(new Map([['id.wat', { id: 'wat' }]])))
+        mockGenericCacher.cacheManyAsync(deepEqual(new Map([['id.wat', { id: 'wat' }]]))),
       ).once();
     });
   });

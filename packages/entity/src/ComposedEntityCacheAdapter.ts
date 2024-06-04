@@ -17,12 +17,12 @@ export default class ComposedEntityCacheAdapter<TFields> implements IEntityCache
 
   public async loadManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
     const retMap = new Map<NonNullable<TFields[N]>, CacheLoadResult<TFields>>();
     const fulfilledFieldValuesByCacheIndex: NonNullable<TFields[N]>[][] = Array.from(
       { length: this.cacheAdapters.length },
-      () => []
+      () => [],
     );
 
     let unfulfilledFieldValues = fieldValues;
@@ -30,7 +30,7 @@ export default class ComposedEntityCacheAdapter<TFields> implements IEntityCache
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
       const cacheResultsFromAdapter = await cacheAdapter.loadManyAsync(
         fieldName,
-        unfulfilledFieldValues
+        unfulfilledFieldValues,
       );
 
       const newUnfulfilledFieldValues = [];
@@ -87,7 +87,7 @@ export default class ComposedEntityCacheAdapter<TFields> implements IEntityCache
 
   public async cacheManyAsync<N extends keyof TFields>(
     fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>
+    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>,
   ): Promise<void> {
     // write to lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
@@ -98,7 +98,7 @@ export default class ComposedEntityCacheAdapter<TFields> implements IEntityCache
 
   public async cacheDBMissesAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {
     // write to lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
@@ -109,7 +109,7 @@ export default class ComposedEntityCacheAdapter<TFields> implements IEntityCache
 
   public async invalidateManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {
     // delete from lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {

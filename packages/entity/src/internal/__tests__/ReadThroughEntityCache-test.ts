@@ -23,7 +23,7 @@ const makeEntityConfiguration = (cacheIdField: boolean): EntityConfiguration<Bla
 const createIdFetcher =
   (ids: string[]) =>
   async <N extends keyof BlahFields>(
-    fetcherFieldValues: readonly NonNullable<BlahFields[N]>[]
+    fetcherFieldValues: readonly NonNullable<BlahFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<BlahFields[N]>, readonly Readonly<BlahFields>[]>> => {
     const results = new Map();
     fetcherFieldValues.forEach((v) => {
@@ -39,7 +39,7 @@ const createIdFetcher =
 const createFetcherNonUnique =
   (ids: string[]) =>
   async <N extends keyof BlahFields>(
-    fetcherFieldValues: readonly NonNullable<BlahFields[N]>[]
+    fetcherFieldValues: readonly NonNullable<BlahFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<BlahFields[N]>, readonly Readonly<BlahFields>[]>> => {
     const results = new Map();
     fetcherFieldValues.forEach((v) => {
@@ -64,7 +64,7 @@ describe(ReadThroughEntityCache, () => {
         new Map([
           ['wat', { status: CacheStatus.MISS }],
           ['who', { status: CacheStatus.MISS }],
-        ])
+        ]),
       );
 
       const result = await entityCache.readManyThroughAsync('id', ['wat', 'who'], fetcher);
@@ -77,16 +77,16 @@ describe(ReadThroughEntityCache, () => {
             new Map([
               ['wat', { id: 'wat' }],
               ['who', { id: 'who' }],
-            ])
-          )
-        )
+            ]),
+          ),
+        ),
       ).once();
       verify(cacheAdapterMock.cacheDBMissesAsync('id', deepEqual([]))).once();
       expect(result).toEqual(
         new Map([
           ['wat', [{ id: 'wat' }]],
           ['who', [{ id: 'who' }]],
-        ])
+        ]),
       );
     });
 
@@ -100,7 +100,7 @@ describe(ReadThroughEntityCache, () => {
         new Map([
           ['wat', { status: CacheStatus.HIT, item: { id: 'wat' } }],
           ['who', { status: CacheStatus.HIT, item: { id: 'who' } }],
-        ])
+        ]),
       );
 
       const result = await entityCache.readManyThroughAsync('id', ['wat', 'who'], fetcher);
@@ -113,16 +113,16 @@ describe(ReadThroughEntityCache, () => {
             new Map([
               ['wat', { id: 'wat' }],
               ['who', { id: 'who' }],
-            ])
-          )
-        )
+            ]),
+          ),
+        ),
       ).never();
       verify(cacheAdapterMock.cacheDBMissesAsync('id', deepEqual([]))).never();
       expect(result).toEqual(
         new Map([
           ['wat', [{ id: 'wat' }]],
           ['who', [{ id: 'who' }]],
-        ])
+        ]),
       );
     });
 
@@ -135,7 +135,7 @@ describe(ReadThroughEntityCache, () => {
       const fetcher = createIdFetcher(['wat', 'who']);
 
       when(cacheAdapterMock.loadManyAsync('id', deepEqual(['why']))).thenResolve(
-        new Map([['why', { status: CacheStatus.MISS }]])
+        new Map([['why', { status: CacheStatus.MISS }]]),
       );
 
       const result = await entityCache.readManyThroughAsync('id', ['why'], fetcher);
@@ -153,7 +153,7 @@ describe(ReadThroughEntityCache, () => {
       const fetcher = createIdFetcher([]);
 
       when(cacheAdapterMock.loadManyAsync('id', deepEqual(['why']))).thenResolve(
-        new Map([['why', { status: CacheStatus.NEGATIVE }]])
+        new Map([['why', { status: CacheStatus.NEGATIVE }]]),
       );
 
       const result = await entityCache.readManyThroughAsync('id', ['why'], fetcher);
@@ -170,31 +170,31 @@ describe(ReadThroughEntityCache, () => {
       const fetcher = createIdFetcher(['wat', 'who', 'why']);
 
       when(
-        cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who', 'why', 'how']))
+        cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who', 'why', 'how'])),
       ).thenResolve(
         new Map([
           ['wat', { status: CacheStatus.MISS }],
           ['who', { status: CacheStatus.NEGATIVE }],
           ['why', { status: CacheStatus.HIT, item: { id: 'why' } }],
           ['how', { status: CacheStatus.MISS }],
-        ])
+        ]),
       );
 
       const result = await entityCache.readManyThroughAsync(
         'id',
         ['wat', 'who', 'why', 'how'],
-        fetcher
+        fetcher,
       );
       verify(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who', 'why', 'how']))).once();
       verify(
-        cacheAdapterMock.cacheManyAsync('id', deepEqual(new Map([['wat', { id: 'wat' }]])))
+        cacheAdapterMock.cacheManyAsync('id', deepEqual(new Map([['wat', { id: 'wat' }]]))),
       ).once();
       verify(cacheAdapterMock.cacheDBMissesAsync('id', deepEqual(['how']))).once();
       expect(result).toEqual(
         new Map([
           ['wat', [{ id: 'wat' }]],
           ['why', [{ id: 'why' }]],
-        ])
+        ]),
       );
     });
 
@@ -220,7 +220,7 @@ describe(ReadThroughEntityCache, () => {
         new Map([
           ['wat', { status: CacheStatus.MISS }],
           ['who', { status: CacheStatus.MISS }],
-        ])
+        ]),
       );
 
       const result = await entityCache.readManyThroughAsync('id', ['wat', 'who'], fetcher);
@@ -233,18 +233,18 @@ describe(ReadThroughEntityCache, () => {
             new Map([
               ['wat', { id: 'wat' }],
               ['who', { id: 'who' }],
-            ])
-          )
-        )
+            ]),
+          ),
+        ),
       ).never();
       verify(cacheAdapterMock.cacheDBMissesAsync('id', deepEqual([]))).once();
       expect(result).toEqual(new Map());
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        'unique key id in blah returned multiple rows for wat'
+        'unique key id in blah returned multiple rows for wat',
       );
       expect(consoleSpy).toHaveBeenCalledWith(
-        'unique key id in blah returned multiple rows for who'
+        'unique key id in blah returned multiple rows for who',
       );
     });
   });

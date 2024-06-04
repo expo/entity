@@ -25,7 +25,7 @@ export default class EnforcingEntityLoader<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields,
 > {
   constructor(
     private readonly entityLoader: EntityLoader<
@@ -35,7 +35,7 @@ export default class EnforcingEntityLoader<
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
-    >
+    >,
   ) {}
 
   /**
@@ -44,14 +44,14 @@ export default class EnforcingEntityLoader<
    */
   async loadManyByFieldEqualingManyAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly TEntity[]>> {
     const fieldValuesToResults = await this.entityLoader.loadManyByFieldEqualingManyAsync(
       fieldName,
-      fieldValues
+      fieldValues,
     );
     return mapMap(fieldValuesToResults, (results) =>
-      results.map((result) => result.enforceValue())
+      results.map((result) => result.enforceValue()),
     );
   }
 
@@ -61,11 +61,11 @@ export default class EnforcingEntityLoader<
    */
   async loadManyByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TFields[N]>,
   ): Promise<readonly TEntity[]> {
     const entityResults = await this.entityLoader.loadManyByFieldEqualingAsync(
       fieldName,
-      fieldValue
+      fieldValue,
     );
     return entityResults.map((result) => result.enforceValue());
   }
@@ -77,11 +77,11 @@ export default class EnforcingEntityLoader<
    */
   async loadByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     uniqueFieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TFields[N]>,
   ): Promise<TEntity | null> {
     const entityResult = await this.entityLoader.loadByFieldEqualingAsync(
       uniqueFieldName,
-      fieldValue
+      fieldValue,
     );
     return entityResult ? entityResult.enforceValue() : null;
   }
@@ -130,11 +130,11 @@ export default class EnforcingEntityLoader<
   async loadFirstByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: Omit<QuerySelectionModifiers<TFields>, 'limit'> &
-      Required<Pick<QuerySelectionModifiers<TFields>, 'orderBy'>>
+      Required<Pick<QuerySelectionModifiers<TFields>, 'orderBy'>>,
   ): Promise<TEntity | null> {
     const entityResult = await this.entityLoader.loadFirstByFieldEqualityConjunctionAsync(
       fieldEqualityOperands,
-      querySelectionModifiers
+      querySelectionModifiers,
     );
     return entityResult ? entityResult.enforceValue() : null;
   }
@@ -145,11 +145,11 @@ export default class EnforcingEntityLoader<
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
+    querySelectionModifiers: QuerySelectionModifiers<TFields> = {},
   ): Promise<readonly TEntity[]> {
     const entityResults = await this.entityLoader.loadManyByFieldEqualityConjunctionAsync(
       fieldEqualityOperands,
-      querySelectionModifiers
+      querySelectionModifiers,
     );
     return entityResults.map((result) => result.enforceValue());
   }
@@ -161,12 +161,12 @@ export default class EnforcingEntityLoader<
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields> = {}
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields> = {},
   ): Promise<readonly TEntity[]> {
     const entityResults = await this.entityLoader.loadManyByRawWhereClauseAsync(
       rawWhereClause,
       bindings,
-      querySelectionModifiers
+      querySelectionModifiers,
     );
     return entityResults.map((result) => result.enforceValue());
   }

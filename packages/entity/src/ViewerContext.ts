@@ -22,7 +22,7 @@ export default class ViewerContext {
   constructor(public readonly entityCompanionProvider: EntityCompanionProvider) {
     this.viewerScopedEntityCompanionProvider = new ViewerScopedEntityCompanionProvider(
       entityCompanionProvider,
-      this
+      this,
     );
   }
 
@@ -42,7 +42,7 @@ export default class ViewerContext {
       TMEntity,
       TMSelectedFields
     >,
-    TMSelectedFields extends keyof TMFields
+    TMSelectedFields extends keyof TMFields,
   >(
     entityClass: IEntityClass<
       TMFields,
@@ -51,7 +51,7 @@ export default class ViewerContext {
       TMEntity,
       TMPrivacyPolicy,
       TMSelectedFields
-    >
+    >,
   ): ViewerScopedEntityCompanion<
     TMFields,
     TMID,
@@ -68,7 +68,7 @@ export default class ViewerContext {
    * @param databaseAdaptorFlavor - database adaptor flavor
    */
   getQueryContextForDatabaseAdaptorFlavor(
-    databaseAdaptorFlavor: DatabaseAdapterFlavor
+    databaseAdaptorFlavor: DatabaseAdapterFlavor,
   ): EntityQueryContext {
     return this.entityCompanionProvider
       .getQueryContextProviderForDatabaseAdaptorFlavor(databaseAdaptorFlavor)
@@ -84,7 +84,7 @@ export default class ViewerContext {
   async runInTransactionForDatabaseAdaptorFlavorAsync<TResult>(
     databaseAdaptorFlavor: DatabaseAdapterFlavor,
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<TResult>,
-    transactionConfig?: TransactionConfig
+    transactionConfig?: TransactionConfig,
   ): Promise<TResult> {
     return await this.entityCompanionProvider
       .getQueryContextProviderForDatabaseAdaptorFlavor(databaseAdaptorFlavor)

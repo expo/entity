@@ -20,7 +20,7 @@ export default class ViewerScopedEntityMutatorFactory<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields,
 > {
   constructor(
     private readonly entityMutatorFactory: EntityMutatorFactory<
@@ -31,25 +31,25 @@ export default class ViewerScopedEntityMutatorFactory<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly viewerContext: TViewerContext
+    private readonly viewerContext: TViewerContext,
   ) {}
 
   forCreate(
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
   ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return this.entityMutatorFactory.forCreate(this.viewerContext, queryContext);
   }
 
   forUpdate(
     existingEntity: TEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
   ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return this.entityMutatorFactory.forUpdate(existingEntity, queryContext);
   }
 
   forDelete(
     existingEntity: TEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
   ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return this.entityMutatorFactory.forDelete(existingEntity, queryContext);
   }

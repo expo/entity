@@ -3,7 +3,7 @@ import { EntityFieldDefinition } from '../../EntityFieldDefinition';
 export default function describeFieldTestCase<T>(
   fieldDefinition: EntityFieldDefinition<T>,
   validValues: T[],
-  invalidValues: any[]
+  invalidValues: any[],
 ): void {
   describe(fieldDefinition.constructor.name, () => {
     if (validValues.length > 0) {

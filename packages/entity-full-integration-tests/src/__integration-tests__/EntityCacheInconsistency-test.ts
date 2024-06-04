@@ -114,7 +114,7 @@ describe('Entity cache inconsistency', () => {
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
-          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
+          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
         );
         return escapedParts.join(delimiter);
       },
@@ -137,7 +137,7 @@ describe('Entity cache inconsistency', () => {
 
   test('lots of updates in long-ish running transactions', async () => {
     const viewerContext = new ViewerContext(
-      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
+      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
     );
 
     const entity1 = await TestEntity.creator(viewerContext)
@@ -170,7 +170,7 @@ describe('Entity cache inconsistency', () => {
         await barrier1;
 
         const viewerContextInternal = new ViewerContext(
-          createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
+          createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
         );
         await TestEntity.loader(viewerContextInternal).enforcing().loadByIDAsync(entity1.getID());
 
@@ -187,13 +187,13 @@ describe('Entity cache inconsistency', () => {
 
           // wait for to ensure the transaction isn't committed until after load above occurs
           await barrier2;
-        }
+        },
       ),
     ]);
 
     // ensure cache consistency
     const viewerContextLast = new ViewerContext(
-      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
+      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
     );
 
     const loadedById = await TestEntity.loader(viewerContextLast)

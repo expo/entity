@@ -121,17 +121,18 @@ export default class TestEntity extends Entity<
 describe(EntityLoader, () => {
   it('handles thrown errors and literals from constructor', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<
-        EntityPrivacyPolicyEvaluationContext<
-          TestFields,
-          string,
-          ViewerContext,
-          TestEntity,
-          TestFieldSelection
-        >
-      >()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            string,
+            ViewerContext,
+            TestEntity,
+            TestFieldSelection
+          >
+        >(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -151,8 +152,8 @@ describe(EntityLoader, () => {
               },
             ],
           ],
-        ])
-      )
+        ]),
+      ),
     );
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
@@ -163,7 +164,7 @@ describe(EntityLoader, () => {
       entityCache,
       StubQueryContextProvider,
       metricsAdapter,
-      TestEntity.name
+      TestEntity.name,
     );
     const entityLoader = new EntityLoader(
       viewerContext,
@@ -174,7 +175,7 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
-      metricsAdapter
+      metricsAdapter,
     );
 
     let capturedThrownThing1: any;

@@ -15,25 +15,25 @@ describe(EntityQueryContext, () => {
       const postCommitInvalidationCallback = jest.fn(async (): Promise<void> => {
         invariant(
           preCommitFirstCallback.mock.calls.length === 1,
-          'preCommit should be called before postCommitInvalidation'
+          'preCommit should be called before postCommitInvalidation',
         );
         invariant(
           preCommitSecondCallback.mock.calls.length === 1,
-          'preCommit should be called before postCommitInvalidation'
+          'preCommit should be called before postCommitInvalidation',
         );
       });
       const postCommitCallback = jest.fn(async (): Promise<void> => {
         invariant(
           preCommitFirstCallback.mock.calls.length === 1,
-          'preCommit should be called before postCommit'
+          'preCommit should be called before postCommit',
         );
         invariant(
           preCommitSecondCallback.mock.calls.length === 1,
-          'preCommit should be called before postCommit'
+          'preCommit should be called before postCommit',
         );
         invariant(
           postCommitInvalidationCallback.mock.calls.length === 1,
-          'postCommitInvalidation should be called before postCommit'
+          'postCommitInvalidation should be called before postCommit',
         );
       });
 
@@ -44,7 +44,7 @@ describe(EntityQueryContext, () => {
           queryContext.appendPostCommitInvalidationCallback(postCommitInvalidationCallback);
           queryContext.appendPreCommitCallback(preCommitSecondCallback, 2);
           queryContext.appendPreCommitCallback(preCommitFirstCallback, 1);
-        }
+        },
       );
 
       expect(preCommitFirstCallback).toHaveBeenCalledTimes(1);
@@ -70,8 +70,8 @@ describe(EntityQueryContext, () => {
             queryContext.appendPostCommitCallback(postCommitCallback);
             queryContext.appendPostCommitInvalidationCallback(postCommitInvalidationCallback);
             queryContext.appendPreCommitCallback(preCommitCallback, 0);
-          }
-        )
+          },
+        ),
       ).rejects.toThrowError('wat');
 
       expect(preCommitCallback).toHaveBeenCalledTimes(1);
@@ -102,7 +102,7 @@ describe(EntityQueryContext, () => {
             queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
               innerQueryContext.appendPostCommitCallback(postCommitCallback);
               innerQueryContext.appendPostCommitInvalidationCallback(
-                postCommitInvalidationCallback
+                postCommitInvalidationCallback,
               );
               innerQueryContext.appendPreCommitCallback(preCommitNestedCallback, 0);
             }),
@@ -112,14 +112,14 @@ describe(EntityQueryContext, () => {
                   // these two shouldn't be called
                   innerQueryContext.appendPostCommitCallback(postCommitCallback);
                   innerQueryContext.appendPostCommitInvalidationCallback(
-                    postCommitInvalidationCallback
+                    postCommitInvalidationCallback,
                   );
                   innerQueryContext.appendPreCommitCallback(preCommitNestedCallbackThrow, 0);
                 });
               } catch {}
             })(),
           ]);
-        }
+        },
       );
 
       expect(preCommitCallback).toHaveBeenCalledTimes(1);
@@ -140,10 +140,10 @@ describe(EntityQueryContext, () => {
             await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
               await innerQueryContext.runPostCommitCallbacksAsync();
             });
-          }
-        )
+          },
+        ),
       ).rejects.toThrowError(
-        'Must not call runPostCommitCallbacksAsync on EntityNestedTransactionalQueryContext'
+        'Must not call runPostCommitCallbacksAsync on EntityNestedTransactionalQueryContext',
       );
     });
   });
@@ -163,7 +163,7 @@ describe(EntityQueryContext, () => {
       await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
         'postgres',
         transactionScopeFn,
-        transactionConfig
+        transactionConfig,
       );
 
       expect(queryContextProviderSpy).toHaveBeenCalledWith(transactionScopeFn, transactionConfig);

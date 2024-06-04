@@ -12,7 +12,7 @@ export type EntityValidatorMutationInfo<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > =
   | {
       type: EntityMutationType.CREATE;
@@ -43,7 +43,7 @@ export type EntityTriggerMutationInfo<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > =
   | {
       type: EntityMutationType.CREATE;

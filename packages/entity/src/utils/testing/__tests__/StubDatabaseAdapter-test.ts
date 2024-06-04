@@ -47,8 +47,8 @@ describe(StubDatabaseAdapter, () => {
                 },
               ],
             ],
-          ])
-        )
+          ]),
+        ),
       );
 
       const results = await databaseAdapter.fetchManyWhereAsync(queryContext, 'stringField', [
@@ -95,8 +95,8 @@ describe(StubDatabaseAdapter, () => {
                 },
               ],
             ],
-          ])
-        )
+          ]),
+        ),
       );
 
       const results = await databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
@@ -120,7 +120,7 @@ describe(StubDatabaseAdapter, () => {
               order: OrderByOrdering.DESCENDING,
             },
           ],
-        }
+        },
       );
 
       expect(results).toHaveLength(2);
@@ -163,8 +163,8 @@ describe(StubDatabaseAdapter, () => {
                 },
               ],
             ],
-          ])
-        )
+          ]),
+        ),
       );
 
       const results = await databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
@@ -186,7 +186,7 @@ describe(StubDatabaseAdapter, () => {
               order: OrderByOrdering.DESCENDING,
             },
           ],
-        }
+        },
       );
 
       expect(results).toHaveLength(3);
@@ -237,14 +237,14 @@ describe(StubDatabaseAdapter, () => {
                 },
               ],
             ],
-          ])
-        )
+          ]),
+        ),
       );
 
       const results = await databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
         queryContext,
         [{ fieldName: 'nullableField', fieldValue: null }],
-        {}
+        {},
       );
       expect(results).toHaveLength(2);
       expect(results[0]!.nullableField).toBeNull();
@@ -262,7 +262,7 @@ describe(StubDatabaseAdapter, () => {
               order: OrderByOrdering.DESCENDING,
             },
           ],
-        }
+        },
       );
       expect(results2).toHaveLength(2);
       expect(results2.map((e) => e.nullableField)).toEqual([null, 'a']);
@@ -274,10 +274,10 @@ describe(StubDatabaseAdapter, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
-        new Map()
+        new Map(),
       );
       await expect(
-        databaseAdapter.fetchManyByRawWhereClauseAsync(queryContext, '', [], {})
+        databaseAdapter.fetchManyByRawWhereClauseAsync(queryContext, '', [], {}),
       ).rejects.toThrow();
     });
   });
@@ -287,7 +287,7 @@ describe(StubDatabaseAdapter, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
-        new Map()
+        new Map(),
       );
       const result = await databaseAdapter.insertAsync(queryContext, {
         stringField: 'hello',
@@ -297,7 +297,7 @@ describe(StubDatabaseAdapter, () => {
       });
 
       expect(
-        databaseAdapter.getObjectCollectionForTable(testEntityConfiguration.tableName)
+        databaseAdapter.getObjectCollectionForTable(testEntityConfiguration.tableName),
       ).toHaveLength(1);
     });
 
@@ -311,7 +311,7 @@ describe(StubDatabaseAdapter, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
-        new Map()
+        new Map(),
       );
       const result = await databaseAdapter.insertAsync(queryContext, {
         stringField: 'hello',
@@ -343,8 +343,8 @@ describe(StubDatabaseAdapter, () => {
                 },
               ],
             ],
-          ])
-        )
+          ]),
+        ),
       );
       const result = await databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {
         stringField: 'b',
@@ -375,11 +375,11 @@ describe(StubDatabaseAdapter, () => {
                 },
               ],
             ],
-          ])
-        )
+          ]),
+        ),
       );
       await expect(
-        databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {})
+        databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {}),
       ).rejects.toThrowError(`Empty update (custom_id = hello)`);
     });
   });
@@ -405,14 +405,14 @@ describe(StubDatabaseAdapter, () => {
                 },
               ],
             ],
-          ])
-        )
+          ]),
+        ),
       );
 
       await databaseAdapter.deleteAsync(queryContext, 'customIdField', 'hello');
 
       expect(
-        databaseAdapter.getObjectCollectionForTable(testEntityConfiguration.tableName)
+        databaseAdapter.getObjectCollectionForTable(testEntityConfiguration.tableName),
       ).toHaveLength(0);
     });
   });
@@ -421,24 +421,24 @@ describe(StubDatabaseAdapter, () => {
     const queryContext = instance(mock(EntityQueryContext));
     const databaseAdapter1 = new StubDatabaseAdapter<SimpleTestFields>(
       simpleTestEntityConfiguration,
-      new Map()
+      new Map(),
     );
     const insertedObject1 = await databaseAdapter1.insertAsync(queryContext, {});
     expect(typeof insertedObject1.id).toBe('string');
 
     const databaseAdapter2 = new StubDatabaseAdapter<NumberKeyFields>(
       numberKeyEntityConfiguration,
-      new Map()
+      new Map(),
     );
     const insertedObject2 = await databaseAdapter2.insertAsync(queryContext, {});
     expect(typeof insertedObject2.id).toBe('number');
 
     const databaseAdapter3 = new StubDatabaseAdapter<DateIDTestFields>(
       dateIDTestEntityConfiguration,
-      new Map()
+      new Map(),
     );
     await expect(databaseAdapter3.insertAsync(queryContext, {})).rejects.toThrowError(
-      'Unsupported ID type for StubDatabaseAdapter: DateField'
+      'Unsupported ID type for StubDatabaseAdapter: DateField',
     );
   });
 
@@ -480,8 +480,8 @@ describe(StubDatabaseAdapter, () => {
             },
             {
               hello: v2,
-            }
-          )
+            },
+          ),
         ).toEqual(expectedResult);
       });
 
@@ -494,8 +494,8 @@ describe(StubDatabaseAdapter, () => {
             },
             {
               hello: 'blah',
-            }
-          )
+            },
+          ),
         ).toEqual(0);
       });
     });
@@ -520,8 +520,8 @@ describe(StubDatabaseAdapter, () => {
           {
             hello: 'a',
             world: 2,
-          }
-        )
+          },
+        ),
       ).toEqual(-1);
     });
   });
@@ -542,7 +542,7 @@ function getTimeFromUUIDv7(uuid: string): Date {
   const hexCharacters = uuid.replaceAll('-', '').split('', 12);
   const milliseconds = hexCharacters.reduce(
     (milliseconds, character) => milliseconds * 16 + parseInt(character, 16),
-    0
+    0,
   );
   return new Date(milliseconds);
 }

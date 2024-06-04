@@ -14,7 +14,7 @@ const adapterProvider = new StubDatabaseAdapterProvider();
 
 export const createRedisIntegrationTestEntityCompanionProvider = (
   genericRedisCacheContext: GenericRedisCacheContext,
-  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
+  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
     metricsAdapter,
@@ -34,6 +34,6 @@ export const createRedisIntegrationTestEntityCompanionProvider = (
           cacheAdapterProvider: new RedisCacheAdapterProvider(genericRedisCacheContext),
         },
       ],
-    ])
+    ]),
   );
 };

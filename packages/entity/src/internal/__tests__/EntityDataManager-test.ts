@@ -65,7 +65,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
@@ -76,7 +76,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -86,7 +86,7 @@ describe(EntityDataManager, () => {
     const entityDatas = await entityDataManager.loadManyByFieldEqualingAsync(
       queryContext,
       'customIdField',
-      ['2']
+      ['2'],
     );
     expect(entityDatas.get('2')).toHaveLength(1);
 
@@ -98,7 +98,7 @@ describe(EntityDataManager, () => {
     const entityDatas2 = await entityDataManager.loadManyByFieldEqualingAsync(
       queryContext,
       'testIndexedField',
-      ['unique2', 'unique3']
+      ['unique2', 'unique3'],
     );
     expect(entityDatas2.get('unique2')).toHaveLength(1);
     expect(entityDatas2.get('unique3')).toHaveLength(1);
@@ -113,7 +113,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
@@ -124,7 +124,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -134,7 +134,7 @@ describe(EntityDataManager, () => {
     const entityDatas = await entityDataManager.loadManyByFieldEqualingAsync(
       queryContext,
       'customIdField',
-      ['1']
+      ['1'],
     );
     expect(entityDatas.get('1')).toHaveLength(1);
 
@@ -146,7 +146,7 @@ describe(EntityDataManager, () => {
     const entityDatas2 = await entityDataManager.loadManyByFieldEqualingAsync(
       queryContext,
       'testIndexedField',
-      ['unique2', 'unique3']
+      ['unique2', 'unique3'],
     );
     expect(entityDatas2.get('unique2')).toHaveLength(1);
     expect(entityDatas2.get('unique3')).toHaveLength(1);
@@ -161,7 +161,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
@@ -172,7 +172,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
     // use second data manager to ensure that cache is hit instead of data loader
@@ -181,7 +181,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
@@ -205,7 +205,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
@@ -216,7 +216,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -241,7 +241,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
@@ -252,7 +252,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -262,12 +262,12 @@ describe(EntityDataManager, () => {
     const entityData = await entityDataManager.loadManyByFieldEqualingAsync(
       queryContext,
       'stringField',
-      ['hello', 'world']
+      ['hello', 'world'],
     );
     const entityData2 = await entityDataManager.loadManyByFieldEqualingAsync(
       queryContext,
       'stringField',
-      ['hello', 'world']
+      ['hello', 'world'],
     );
 
     expect(dbSpy).toHaveBeenCalledTimes(1);
@@ -285,7 +285,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
@@ -296,7 +296,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -324,7 +324,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
@@ -335,7 +335,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -363,7 +363,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
@@ -374,7 +374,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
 
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
@@ -386,7 +386,7 @@ describe(EntityDataManager, () => {
           '1',
         ]);
       },
-      {}
+      {},
     );
 
     expect(entityDatas.get('1')).toHaveLength(1);
@@ -402,7 +402,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
@@ -413,7 +413,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -432,7 +432,7 @@ describe(EntityDataManager, () => {
           fieldValue: 1,
         },
       ],
-      {}
+      {},
     );
 
     expect(entityDatas).toHaveLength(2);
@@ -447,7 +447,7 @@ describe(EntityDataManager, () => {
   it('handles DB errors as expected', async () => {
     const databaseAdapterMock = mock<EntityDatabaseAdapter<TestFields>>();
     when(databaseAdapterMock.fetchManyWhereAsync(anything(), anything(), anything())).thenReject(
-      new Error('DB query failed')
+      new Error('DB query failed'),
     );
 
     const databaseAdapter = instance(databaseAdapterMock);
@@ -459,12 +459,12 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
     await expect(
-      entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', ['2'])
+      entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', ['2']),
     ).rejects.toThrow();
   });
 
@@ -475,7 +475,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
@@ -486,7 +486,7 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       metricsAdapter,
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -497,8 +497,8 @@ describe(EntityDataManager, () => {
           type: EntityMetricsLoadType.LOAD_MANY,
           entityClassName: TestEntity.name,
           count: 1,
-        })
-      )
+        }),
+      ),
     ).once();
 
     await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
@@ -509,7 +509,7 @@ describe(EntityDataManager, () => {
           fieldValue: '1',
         },
       ],
-      {}
+      {},
     );
     verify(
       metricsAdapterMock.logDataManagerLoadEvent(
@@ -517,8 +517,8 @@ describe(EntityDataManager, () => {
           type: EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
           entityClassName: TestEntity.name,
           count: 1,
-        })
-      )
+        }),
+      ),
     ).once();
 
     verify(
@@ -527,8 +527,8 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.DATALOADER,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
-        })
-      )
+        }),
+      ),
     ).once();
     verify(
       metricsAdapterMock.incrementDataManagerLoadCount(
@@ -536,8 +536,8 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.CACHE,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
-        })
-      )
+        }),
+      ),
     ).once();
     verify(
       metricsAdapterMock.incrementDataManagerLoadCount(
@@ -545,8 +545,8 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.DATABASE,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
-        })
-      )
+        }),
+      ),
     ).once();
 
     resetCalls(metricsAdapterMock);
@@ -557,8 +557,8 @@ describe(EntityDataManager, () => {
         anything(),
         anyString(),
         anything(),
-        anything()
-      )
+        anything(),
+      ),
     ).thenResolve([]);
     await entityDataManager.loadManyByRawWhereClauseAsync(queryContext, '', [], {});
     verify(
@@ -567,8 +567,8 @@ describe(EntityDataManager, () => {
           type: EntityMetricsLoadType.LOAD_MANY_RAW,
           entityClassName: TestEntity.name,
           count: 0,
-        })
-      )
+        }),
+      ),
     ).once();
 
     verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).never();
@@ -578,7 +578,7 @@ describe(EntityDataManager, () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      objects
+      objects,
     );
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
@@ -589,18 +589,18 @@ describe(EntityDataManager, () => {
       entityCache,
       StubQueryContextProvider,
       new NoOpEntityMetricsAdapter(),
-      TestEntity.name
+      TestEntity.name,
     );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
     await expect(
-      entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'nullableField', [null as any])
+      entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'nullableField', [null as any]),
     ).rejects.toThrowError('Invalid load: TestEntity (nullableField = null)');
 
     await expect(
       entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'nullableField', [
         undefined as any,
-      ])
+      ]),
     ).rejects.toThrowError('Invalid load: TestEntity (nullableField = undefined)');
   });
 });

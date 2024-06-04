@@ -38,7 +38,7 @@ export default class EntityLoader<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields,
 > {
   constructor(
     private readonly viewerContext: TViewerContext,
@@ -62,7 +62,7 @@ export default class EntityLoader<
     private readonly entitySelectedFields: TSelectedFields[] | undefined,
     private readonly privacyPolicy: TPrivacyPolicy,
     private readonly dataManager: EntityDataManager<TFields>,
-    protected readonly metricsAdapter: IEntityMetricsAdapter
+    protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
   /**
@@ -90,14 +90,14 @@ export default class EntityLoader<
    */
   async loadManyByFieldEqualingManyAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
     this.validateFieldValues(fieldName, fieldValues);
 
     const fieldValuesToFieldObjects = await this.dataManager.loadManyByFieldEqualingAsync(
       this.queryContext,
       fieldName,
-      fieldValues
+      fieldValues,
     );
 
     return await this.constructAndAuthorizeEntitiesAsync(fieldValuesToFieldObjects);
@@ -111,13 +111,13 @@ export default class EntityLoader<
    */
   async loadManyByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TFields[N]>,
   ): Promise<readonly Result<TEntity>[]> {
     const entityResults = await this.loadManyByFieldEqualingManyAsync(fieldName, [fieldValue]);
     const entityResultsForFieldValue = entityResults.get(fieldValue);
     invariant(
       entityResultsForFieldValue !== undefined,
-      `${fieldValue} should be guaranteed to be present in returned map of entities`
+      `${fieldValue} should be guaranteed to be present in returned map of entities`,
     );
     return entityResultsForFieldValue!;
   }
@@ -131,14 +131,14 @@ export default class EntityLoader<
    */
   async loadByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     uniqueFieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TFields[N]>,
   ): Promise<Result<TEntity> | null> {
     const entityResults = await this.loadManyByFieldEqualingAsync(uniqueFieldName, fieldValue);
     invariant(
       entityResults.length <= 1,
       `loadByFieldEqualing: Multiple entities of type ${this.entityClass.name} found for ${String(
-        uniqueFieldName
-      )}=${fieldValue}`
+        uniqueFieldName,
+      )}=${fieldValue}`,
     );
     return entityResults[0] ?? null;
   }
@@ -162,20 +162,19 @@ export default class EntityLoader<
   async loadByIDNullableAsync(id: TID): Promise<Result<TEntity> | null> {
     return await this.loadByFieldEqualingAsync(
       this.entityConfiguration.idField as TSelectedFields,
-      id
+      id,
     );
   }
 
   /**
    * Loads many entities for a list of IDs.
-   * @param viewerContext - viewer context of loading user
    * @param ids - IDs of the entities to load
    * @returns map from ID to corresponding entity result, where result error can be UnauthorizedError or EntityNotFoundError.
    */
   async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, Result<TEntity>>> {
     const entityResults = (await this.loadManyByFieldEqualingManyAsync(
       this.entityConfiguration.idField as TSelectedFields,
-      ids
+      ids,
     )) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
     return mapMap(entityResults, (entityResultsForId, id) => {
       const entityResult = entityResultsForId[0];
@@ -192,11 +191,11 @@ export default class EntityLoader<
    * @returns map from ID to nullable corresponding entity result, where result error can be UnauthorizedError or EntityNotFoundError.
    */
   async loadManyByIDsNullableAsync(
-    ids: readonly TID[]
+    ids: readonly TID[],
   ): Promise<ReadonlyMap<TID, Result<TEntity> | null>> {
     const entityResults = (await this.loadManyByFieldEqualingManyAsync(
       this.entityConfiguration.idField as TSelectedFields,
-      ids
+      ids,
     )) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
     return mapMap(entityResults, (entityResultsForId) => {
       return entityResultsForId[0] ?? null;
@@ -220,7 +219,7 @@ export default class EntityLoader<
   async loadFirstByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: Omit<QuerySelectionModifiers<TFields>, 'limit'> &
-      Required<Pick<QuerySelectionModifiers<TFields>, 'orderBy'>>
+      Required<Pick<QuerySelectionModifiers<TFields>, 'orderBy'>>,
   ): Promise<Result<TEntity> | null> {
     const results = await this.loadManyByFieldEqualityConjunctionAsync(fieldEqualityOperands, {
       ...querySelectionModifiers,
@@ -245,7 +244,7 @@ export default class EntityLoader<
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields> = {}
+    querySelectionModifiers: QuerySelectionModifiers<TFields> = {},
   ): Promise<readonly Result<TEntity>[]> {
     for (const fieldEqualityOperand of fieldEqualityOperands) {
       const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
@@ -257,7 +256,7 @@ export default class EntityLoader<
     const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
       this.queryContext,
       fieldEqualityOperands,
-      querySelectionModifiers
+      querySelectionModifiers,
     );
     return await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
@@ -288,13 +287,13 @@ export default class EntityLoader<
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields> = {}
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields> = {},
   ): Promise<readonly Result<TEntity>[]> {
     const fieldObjects = await this.dataManager.loadManyByRawWhereClauseAsync(
       this.queryContext,
       rawWhereClause,
       bindings,
-      querySelectionModifiers
+      querySelectionModifiers,
     );
     return await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
@@ -350,7 +349,7 @@ export default class EntityLoader<
    * @param map - map from an arbitrary key type to an array of entity field objects
    */
   public async constructAndAuthorizeEntitiesAsync<K>(
-    map: ReadonlyMap<K, readonly Readonly<TFields>[]>
+    map: ReadonlyMap<K, readonly Readonly<TFields>[]>,
   ): Promise<ReadonlyMap<K, readonly Result<TEntity>[]>> {
     return await mapMapAsync(map, async (fieldObjects) => {
       return await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
@@ -358,7 +357,7 @@ export default class EntityLoader<
   }
 
   private async constructAndAuthorizeEntitiesArrayAsync(
-    fieldObjects: readonly Readonly<TFields>[]
+    fieldObjects: readonly Readonly<TFields>[],
   ): Promise<readonly Result<TEntity>[]> {
     const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
     return await Promise.all(
@@ -372,16 +371,16 @@ export default class EntityLoader<
             this.queryContext,
             this.privacyPolicyEvaluationContext,
             uncheckedEntityResult.value,
-            this.metricsAdapter
-          )
+            this.metricsAdapter,
+          ),
         );
-      })
+      }),
     );
   }
 
   private validateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
-    fieldValues: readonly TFields[N][]
+    fieldValues: readonly TFields[N][],
   ): void {
     const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
     invariant(fieldDefinition, `must have field definition for field = ${String(fieldName)}`);

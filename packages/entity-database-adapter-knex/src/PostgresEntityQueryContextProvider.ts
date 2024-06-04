@@ -18,28 +18,28 @@ export default class PostgresEntityQueryContextProvider extends EntityQueryConte
   }
 
   protected createTransactionRunner<T>(
-    transactionConfig?: TransactionConfig
+    transactionConfig?: TransactionConfig,
   ): (transactionScope: (trx: any) => Promise<T>) => Promise<T> {
     return (transactionScope) =>
       this.knexInstance.transaction(
         transactionScope,
         transactionConfig
           ? PostgresEntityQueryContextProvider.convertTransactionConfig(transactionConfig)
-          : undefined
+          : undefined,
       );
   }
 
   protected createNestedTransactionRunner<T>(
-    outerQueryInterface: any
+    outerQueryInterface: any,
   ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
     return (transactionScope) => (outerQueryInterface as Knex).transaction(transactionScope);
   }
 
   private static convertTransactionConfig(
-    transactionConfig: TransactionConfig
+    transactionConfig: TransactionConfig,
   ): Knex.TransactionConfig {
     const convertIsolationLevel = (
-      isolationLevel: TransactionIsolationLevel
+      isolationLevel: TransactionIsolationLevel,
     ): Knex.IsolationLevels => {
       switch (isolationLevel) {
         case TransactionIsolationLevel.READ_COMMITTED:

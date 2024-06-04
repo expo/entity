@@ -11,7 +11,7 @@ export default interface EntityMutationTriggerConfiguration<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   /**
    * Trigger set that runs within the transaction but before the entity is created in the database.
@@ -72,13 +72,13 @@ export abstract class EntityMutationTrigger<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   abstract executeAsync(
     viewerContext: TViewerContext,
     queryContext: EntityTransactionalQueryContext,
     entity: TEntity,
-    mutationInfo: EntityTriggerMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+    mutationInfo: EntityTriggerMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
   ): Promise<void>;
 }
 
@@ -91,11 +91,11 @@ export abstract class EntityNonTransactionalMutationTrigger<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   abstract executeAsync(
     viewerContext: TViewerContext,
     entity: TEntity,
-    mutationInfo: EntityTriggerMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+    mutationInfo: EntityTriggerMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
   ): Promise<void>;
 }

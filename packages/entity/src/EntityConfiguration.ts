@@ -80,7 +80,7 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
 
     this.cacheableKeys = EntityConfiguration.computeCacheableKeys(this.schema);
     this.entityToDBFieldsKeyMapping = EntityConfiguration.computeEntityToDBFieldsKeyMapping(
-      this.schema
+      this.schema,
     );
     this.dbToEntityFieldsKeyMapping = invertMap(this.entityToDBFieldsKeyMapping);
   }
@@ -90,14 +90,14 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
     for (const disallowedFieldsKey of disallowedFieldsKeys) {
       if (Object.hasOwn(schema, disallowedFieldsKey)) {
         throw new Error(
-          `Entity field name not allowed to prevent conflicts with standard Object prototype fields: ${disallowedFieldsKey}`
+          `Entity field name not allowed to prevent conflicts with standard Object prototype fields: ${disallowedFieldsKey}`,
         );
       }
     }
   }
 
   private static computeCacheableKeys<TFields>(
-    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>
+    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>,
   ): ReadonlySet<keyof TFields> {
     return reduceMap(
       schema,
@@ -107,12 +107,12 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
         }
         return acc;
       },
-      new Set<keyof TFields>()
+      new Set<keyof TFields>(),
     );
   }
 
   private static computeEntityToDBFieldsKeyMapping<TFields>(
-    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>
+    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>,
   ): ReadonlyMap<keyof TFields, string> {
     return mapMap(schema, (v) => v.columnName);
   }

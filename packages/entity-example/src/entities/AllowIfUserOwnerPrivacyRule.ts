@@ -26,7 +26,7 @@ export default class AllowIfUserOwnerPrivacyRule<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TEntity extends ReadonlyEntity<TFields, TID, ExampleViewerContext>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends PrivacyPolicyRule<TFields, TID, ExampleViewerContext, TEntity> {
   constructor(private readonly entityOwnerField: keyof TFields) {
     super();
@@ -42,7 +42,7 @@ export default class AllowIfUserOwnerPrivacyRule<
       TEntity,
       TSelectedFields
     >,
-    entity: TEntity
+    entity: TEntity,
   ): Promise<RuleEvaluationResult> {
     if (viewerContext.isUserViewerContext()) {
       if (String(entity.getField(this.entityOwnerField)) === viewerContext.userID) {

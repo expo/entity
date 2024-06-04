@@ -52,7 +52,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
-          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
+          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
         );
         return escapedParts.join(delimiter);
       },
@@ -76,7 +76,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   describe('EntityEdgeDeletionBehavior.INVALIDATE_CACHE', () => {
     it('invalidates the cache', async () => {
       const viewerContext = new ViewerContext(
-        createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
+        createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
       );
 
       const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
@@ -85,22 +85,22 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         .enforceCreateAsync();
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
       ).resolves.not.toBeNull();
       await expect(
         ChildEntity.loader(viewerContext)
           .enforcing()
-          .loadByFieldEqualingAsync('parent_id', parent.getID())
+          .loadByFieldEqualingAsync('parent_id', parent.getID()),
       ).resolves.not.toBeNull();
 
       await ParentEntity.enforceDeleteAsync(parent);
 
       await expect(
-        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID())
+        ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
       ).resolves.toBeNull();
 
       await expect(
-        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID())
+        ChildEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(child.getID()),
       ).resolves.toBeNull();
     });
   });

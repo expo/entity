@@ -99,7 +99,7 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
         id: testValue,
         databaseFields: fields,
         selectedFields: fields,
-      })
+      }),
     );
   }
 

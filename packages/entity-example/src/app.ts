@@ -53,7 +53,7 @@ export default async function createAppAsync(): Promise<Koa<ExampleState, Exampl
     '/graphql',
     koaMiddleware(server, {
       context: async ({ ctx }) => ({ viewerContext: (ctx as ExampleContext).state.viewerContext }),
-    })
+    }),
   );
 
   app.use(router.routes()).use(router.allowedMethods());

@@ -14,20 +14,20 @@ describe(EntityAssociationLoader, () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
       const testOtherEntity = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).createAsync()
+        TestEntity.creator(viewerContext).createAsync(),
       );
       const testEntity = await enforceAsyncResult(
         TestEntity.creator(viewerContext)
           .setField('stringField', testOtherEntity.getID())
-          .createAsync()
+          .createAsync(),
       );
       const loadedOther = await enforceAsyncResult(
-        testEntity.associationLoader().loadAssociatedEntityAsync('stringField', TestEntity)
+        testEntity.associationLoader().loadAssociatedEntityAsync('stringField', TestEntity),
       );
       expect(loadedOther.getID()).toEqual(testOtherEntity.getID());
 
       const loadedOther2 = await enforceAsyncResult(
-        testEntity.associationLoader().loadAssociatedEntityAsync('nullableField', TestEntity)
+        testEntity.associationLoader().loadAssociatedEntityAsync('nullableField', TestEntity),
       );
       expect(loadedOther2).toBeNull();
     });
@@ -39,13 +39,13 @@ describe(EntityAssociationLoader, () => {
       const viewerContext = new TestViewerContext(companionProvider);
       const testEntity = await enforceAsyncResult(TestEntity.creator(viewerContext).createAsync());
       const testOtherEntity1 = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync()
+        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync(),
       );
       const testOtherEntity2 = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync()
+        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync(),
       );
       const loaded = await enforceResultsAsync(
-        testEntity.associationLoader().loadManyAssociatedEntitiesAsync(TestEntity, 'stringField')
+        testEntity.associationLoader().loadManyAssociatedEntitiesAsync(TestEntity, 'stringField'),
       );
       expect(loaded).toHaveLength(2);
       expect(loaded.find((e) => e.getID() === testOtherEntity1.getID())).not.toBeUndefined();
@@ -58,12 +58,12 @@ describe(EntityAssociationLoader, () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
       const testOtherEntity = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).createAsync()
+        TestEntity.creator(viewerContext).createAsync(),
       );
       const testEntity = await enforceAsyncResult(
         TestEntity.creator(viewerContext)
           .setField('stringField', testOtherEntity.getID())
-          .createAsync()
+          .createAsync(),
       );
       const loadedOtherResult = await testEntity
         .associationLoader()
@@ -75,7 +75,7 @@ describe(EntityAssociationLoader, () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
       const testEntity = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).setField('stringField', uuidv4()).createAsync()
+        TestEntity.creator(viewerContext).setField('stringField', uuidv4()).createAsync(),
       );
       const loadedOtherResult = await testEntity
         .associationLoader()
@@ -87,7 +87,7 @@ describe(EntityAssociationLoader, () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
       const testEntity = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).setField('stringField', 'blah').createAsync()
+        TestEntity.creator(viewerContext).setField('stringField', 'blah').createAsync(),
       );
       const loadedOtherResult = await testEntity
         .associationLoader()
@@ -102,10 +102,10 @@ describe(EntityAssociationLoader, () => {
       const viewerContext = new TestViewerContext(companionProvider);
       const testEntity = await enforceAsyncResult(TestEntity.creator(viewerContext).createAsync());
       const testOtherEntity1 = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync()
+        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync(),
       );
       const testOtherEntity2 = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync()
+        TestEntity.creator(viewerContext).setField('stringField', testEntity.getID()).createAsync(),
       );
       const loaded = await enforceResultsAsync(
         testEntity
@@ -113,8 +113,8 @@ describe(EntityAssociationLoader, () => {
           .loadManyAssociatedEntitiesByFieldEqualingAsync(
             'customIdField',
             TestEntity,
-            'stringField'
-          )
+            'stringField',
+          ),
       );
       expect(loaded).toHaveLength(2);
       expect(loaded.find((e) => e.getID() === testOtherEntity1.getID())).not.toBeUndefined();
@@ -131,8 +131,8 @@ describe(EntityAssociationLoader, () => {
           .loadManyAssociatedEntitiesByFieldEqualingAsync(
             'nullableField',
             TestEntity,
-            'stringField'
-          )
+            'stringField',
+          ),
       );
       expect(loaded).toHaveLength(0);
     });
@@ -144,15 +144,19 @@ describe(EntityAssociationLoader, () => {
       const viewerContext = new TestViewerContext(companionProvider);
       const testEntity4 = await enforceAsyncResult(TestEntity.creator(viewerContext).createAsync());
       const testEntity3 = await enforceAsyncResult(
-        TestEntity2.creator(viewerContext).setField('foreignKey', testEntity4.getID()).createAsync()
+        TestEntity2.creator(viewerContext)
+          .setField('foreignKey', testEntity4.getID())
+          .createAsync(),
       );
       const testEntity2 = await enforceAsyncResult(
         TestEntity.creator(viewerContext)
           .setField('testIndexedField', testEntity3.getID())
-          .createAsync()
+          .createAsync(),
       );
       const testEntity = await enforceAsyncResult(
-        TestEntity2.creator(viewerContext).setField('foreignKey', testEntity2.getID()).createAsync()
+        TestEntity2.creator(viewerContext)
+          .setField('foreignKey', testEntity2.getID())
+          .createAsync(),
       );
 
       const loaded2Result = await testEntity.associationLoader().loadAssociatedEntityThroughAsync([
@@ -197,7 +201,7 @@ describe(EntityAssociationLoader, () => {
       const viewerContext = new TestViewerContext(companionProvider);
 
       const testEntity = await enforceAsyncResult(
-        TestEntity2.creator(viewerContext).setField('foreignKey', uuidv4()).createAsync()
+        TestEntity2.creator(viewerContext).setField('foreignKey', uuidv4()).createAsync(),
       );
 
       const loadResult = await testEntity.associationLoader().loadAssociatedEntityThroughAsync([
@@ -215,10 +219,10 @@ describe(EntityAssociationLoader, () => {
 
       const fieldValue = uuidv4();
       const testEntity2 = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).setField('stringField', fieldValue).createAsync()
+        TestEntity.creator(viewerContext).setField('stringField', fieldValue).createAsync(),
       );
       const testEntity = await enforceAsyncResult(
-        TestEntity2.creator(viewerContext).setField('foreignKey', fieldValue).createAsync()
+        TestEntity2.creator(viewerContext).setField('foreignKey', fieldValue).createAsync(),
       );
 
       const loaded2Result = await testEntity.associationLoader().loadAssociatedEntityThroughAsync([
@@ -236,7 +240,7 @@ describe(EntityAssociationLoader, () => {
       const viewerContext = new TestViewerContext(companionProvider);
 
       const testEntity = await enforceAsyncResult(
-        TestEntity2.creator(viewerContext).setField('foreignKey', uuidv4()).createAsync()
+        TestEntity2.creator(viewerContext).setField('foreignKey', uuidv4()).createAsync(),
       );
 
       const loaded2Result = await testEntity.associationLoader().loadAssociatedEntityThroughAsync([
@@ -254,7 +258,7 @@ describe(EntityAssociationLoader, () => {
       const viewerContext = new TestViewerContext(companionProvider);
 
       const testEntity = await enforceAsyncResult(
-        TestEntity.creator(viewerContext).setField('nullableField', null).createAsync()
+        TestEntity.creator(viewerContext).setField('nullableField', null).createAsync(),
       );
 
       const loadedResult = await testEntity.associationLoader().loadAssociatedEntityThroughAsync([

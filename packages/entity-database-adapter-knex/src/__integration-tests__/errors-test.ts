@@ -58,10 +58,10 @@ describe('postgres errors', () => {
       acquireConnectionTimeout: 1,
     });
     const vc2 = new ViewerContext(
-      createKnexIntegrationTestEntityCompanionProvider(shortTimeoutKnexInstance)
+      createKnexIntegrationTestEntityCompanionProvider(shortTimeoutKnexInstance),
     );
     await expect(ErrorsTestEntity.loader(vc2).enforcing().loadByIDAsync(1)).rejects.toThrow(
-      EntityDatabaseAdapterTransientError
+      EntityDatabaseAdapterTransientError,
     );
     await shortTimeoutKnexInstance.destroy();
   });
@@ -72,7 +72,7 @@ describe('postgres errors', () => {
       ErrorsTestEntity.creator(vc)
         .setField('id', 1)
         .setField('fieldNonNull', null as any)
-        .enforceCreateAsync()
+        .enforceCreateAsync(),
     ).rejects.toThrow(EntityDatabaseAdapterNotNullConstraintError);
   });
 
@@ -83,7 +83,7 @@ describe('postgres errors', () => {
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('fieldForeignKey', 2)
-        .enforceCreateAsync()
+        .enforceCreateAsync(),
     ).rejects.toThrow(EntityDatabaseAdapterForeignKeyConstraintError);
   });
 
@@ -99,7 +99,7 @@ describe('postgres errors', () => {
       ErrorsTestEntity.creator(vc)
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
-        .enforceCreateAsync()
+        .enforceCreateAsync(),
     ).rejects.toThrow(EntityDatabaseAdapterUniqueConstraintError);
   });
 
@@ -116,7 +116,7 @@ describe('postgres errors', () => {
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('fieldUnique', 'hello')
-        .enforceCreateAsync()
+        .enforceCreateAsync(),
     ).rejects.toThrow(EntityDatabaseAdapterUniqueConstraintError);
   });
 
@@ -127,7 +127,7 @@ describe('postgres errors', () => {
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('checkLessThan5', 2)
-        .enforceCreateAsync()
+        .enforceCreateAsync(),
     ).resolves.toBeTruthy();
 
     await expect(
@@ -135,7 +135,7 @@ describe('postgres errors', () => {
         .setField('id', 2)
         .setField('fieldNonNull', 'hello')
         .setField('checkLessThan5', 10)
-        .enforceCreateAsync()
+        .enforceCreateAsync(),
     ).rejects.toThrow(EntityDatabaseAdapterCheckConstraintError);
   });
 
@@ -146,7 +146,7 @@ describe('postgres errors', () => {
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('fieldExclusion', 'what')
-        .enforceCreateAsync()
+        .enforceCreateAsync(),
     ).resolves.toBeTruthy();
 
     await expect(
@@ -154,7 +154,7 @@ describe('postgres errors', () => {
         .setField('id', 2)
         .setField('fieldNonNull', 'hello')
         .setField('fieldExclusion', 'what')
-        .enforceCreateAsync()
+        .enforceCreateAsync(),
     ).rejects.toThrow(EntityDatabaseAdapterExclusionConstraintError);
   });
 
@@ -165,7 +165,7 @@ describe('postgres errors', () => {
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('nonExistentColumn', 'what')
-        .enforceCreateAsync()
+        .enforceCreateAsync(),
     ).rejects.toThrow(EntityDatabaseAdapterUnknownError);
   });
 });

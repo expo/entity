@@ -12,7 +12,7 @@ export default abstract class EntityMutationValidator<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   abstract executeAsync(
     viewerContext: TViewerContext,
@@ -24,6 +24,6 @@ export default abstract class EntityMutationValidator<
       TViewerContext,
       TEntity,
       TSelectedFields
-    >
+    >,
   ): Promise<void>;
 }

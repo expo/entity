@@ -16,7 +16,7 @@ export default class EntityAssociationLoader<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields,
 > {
   constructor(private readonly entity: TEntity) {}
 
@@ -44,7 +44,7 @@ export default class EntityAssociationLoader<
       TAssociatedEntity,
       TAssociatedSelectedFields
     >,
-    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
+    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields,
   >(
     fieldIdentifyingAssociatedEntity: TIdentifyingField,
     associatedEntityClass: IEntityClass<
@@ -59,7 +59,7 @@ export default class EntityAssociationLoader<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getQueryContextProvider()
-      .getQueryContext()
+      .getQueryContext(),
   ): Promise<
     Result<null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity>
   > {
@@ -106,7 +106,7 @@ export default class EntityAssociationLoader<
       TAssociatedEntity,
       TAssociatedSelectedFields
     >,
-    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
+    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields,
   >(
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
@@ -121,7 +121,7 @@ export default class EntityAssociationLoader<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getQueryContextProvider()
-      .getQueryContext()
+      .getQueryContext(),
   ): Promise<readonly Result<TAssociatedEntity>[]> {
     const thisID = this.entity.getID();
     const loader = this.entity
@@ -131,7 +131,7 @@ export default class EntityAssociationLoader<
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
     return await loader.loadManyByFieldEqualingAsync(
       associatedEntityFieldContainingThisID,
-      thisID as any
+      thisID as any,
     );
   }
 
@@ -159,7 +159,7 @@ export default class EntityAssociationLoader<
       TAssociatedEntity,
       TAssociatedSelectedFields
     >,
-    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
+    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields,
   >(
     fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
     associatedEntityClass: IEntityClass<
@@ -175,7 +175,7 @@ export default class EntityAssociationLoader<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getQueryContextProvider()
-      .getQueryContext()
+      .getQueryContext(),
   ): Promise<Result<TAssociatedEntity> | null> {
     const associatedFieldValue = this.entity.getField(fieldIdentifyingAssociatedEntity);
     if (!associatedFieldValue) {
@@ -188,7 +188,7 @@ export default class EntityAssociationLoader<
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
     return await loader.loadByFieldEqualingAsync(
       associatedEntityLookupByField,
-      associatedFieldValue as any
+      associatedFieldValue as any,
     );
   }
 
@@ -216,7 +216,7 @@ export default class EntityAssociationLoader<
       TAssociatedEntity,
       TAssociatedSelectedFields
     >,
-    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
+    TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields,
   >(
     fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
     associatedEntityClass: IEntityClass<
@@ -232,7 +232,7 @@ export default class EntityAssociationLoader<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getQueryContextProvider()
-      .getQueryContext()
+      .getQueryContext(),
   ): Promise<readonly Result<TAssociatedEntity>[]> {
     const associatedFieldValue = this.entity.getField(fieldIdentifyingAssociatedEntity);
     if (!associatedFieldValue) {
@@ -246,7 +246,7 @@ export default class EntityAssociationLoader<
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
     return await loader.loadManyByFieldEqualingAsync(
       associatedEntityLookupByField,
-      associatedFieldValue as any
+      associatedFieldValue as any,
     );
   }
 
@@ -267,7 +267,7 @@ export default class EntityAssociationLoader<
       TEntity2,
       TSelectedFields2
     >,
-    TSelectedFields2 extends keyof TFields2 = keyof TFields2
+    TSelectedFields2 extends keyof TFields2 = keyof TFields2,
   >(
     loadDirectives: [
       EntityLoadThroughDirective<
@@ -279,9 +279,9 @@ export default class EntityAssociationLoader<
         TPrivacyPolicy2,
         TSelectedFields,
         TSelectedFields2
-      >
+      >,
     ],
-    queryContext?: EntityQueryContext
+    queryContext?: EntityQueryContext,
   ): Promise<Result<TEntity2> | null>;
 
   /**
@@ -312,7 +312,7 @@ export default class EntityAssociationLoader<
       TSelectedFields3
     >,
     TSelectedFields2 extends keyof TFields2 = keyof TFields2,
-    TSelectedFields3 extends keyof TFields3 = keyof TFields3
+    TSelectedFields3 extends keyof TFields3 = keyof TFields3,
   >(
     loadDirectives: [
       EntityLoadThroughDirective<
@@ -334,9 +334,9 @@ export default class EntityAssociationLoader<
         TPrivacyPolicy3,
         TSelectedFields2,
         TSelectedFields3
-      >
+      >,
     ],
-    queryContext?: EntityQueryContext
+    queryContext?: EntityQueryContext,
   ): Promise<Result<TEntity3> | null>;
 
   /**
@@ -378,9 +378,9 @@ export default class EntityAssociationLoader<
     >,
     TSelectedFields2 extends keyof TFields2 = keyof TFields2,
     TSelectedFields3 extends keyof TFields3 = keyof TFields3,
-    TSelectedFields4 extends keyof TFields4 = keyof TFields4
+    TSelectedFields4 extends keyof TFields4 = keyof TFields4,
   >(
-    loadDirective: [
+    loadDirectives: [
       EntityLoadThroughDirective<
         TViewerContext,
         TFields,
@@ -410,9 +410,9 @@ export default class EntityAssociationLoader<
         TPrivacyPolicy4,
         TSelectedFields3,
         TSelectedFields4
-      >
+      >,
     ],
-    queryContext?: EntityQueryContext
+    queryContext?: EntityQueryContext,
   ): Promise<Result<TEntity4> | null>;
 
   /**
@@ -423,12 +423,12 @@ export default class EntityAssociationLoader<
    */
   async loadAssociatedEntityThroughAsync(
     loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any, any>[],
-    queryContext?: EntityQueryContext
+    queryContext?: EntityQueryContext,
   ): Promise<Result<ReadonlyEntity<any, any, any, any>> | null>;
 
   async loadAssociatedEntityThroughAsync(
     loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any, any>[],
-    queryContext?: EntityQueryContext
+    queryContext?: EntityQueryContext,
   ): Promise<Result<ReadonlyEntity<any, any, any, any>> | null> {
     let currentEntity: ReadonlyEntity<any, any, any, any> = this.entity;
     for (const loadDirective of loadDirectives) {
@@ -445,7 +445,7 @@ export default class EntityAssociationLoader<
             fieldIdentifyingAssociatedEntity,
             associatedEntityClass,
             associatedEntityLookupByField,
-            queryContext
+            queryContext,
           );
       } else {
         const associatedEntityResultLocal = await currentEntity
@@ -453,7 +453,7 @@ export default class EntityAssociationLoader<
           .loadAssociatedEntityAsync(
             fieldIdentifyingAssociatedEntity,
             associatedEntityClass,
-            queryContext
+            queryContext,
           );
 
         if (associatedEntityResultLocal.ok && associatedEntityResultLocal.value === null) {
@@ -498,7 +498,7 @@ export interface EntityLoadThroughDirective<
     TAssociatedSelectedFields
   >,
   TSelectedFields extends keyof TFields = keyof TFields,
-  TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
+  TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields,
 > {
   /**
    * Class of entity to load at this step.

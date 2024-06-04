@@ -70,7 +70,7 @@ describe(zipToMap, () => {
     const keys = [1, 2];
     const values = [1];
     expect(() => zipToMap(keys, values)).toThrowError(
-      'zipToMap input length mismatch: keys[2], values[1]'
+      'zipToMap input length mismatch: keys[2], values[1]',
     );
   });
 });
@@ -115,7 +115,7 @@ describe(reduceMapAsync, () => {
     const reduction = await reduceMapAsync(
       map,
       async (acc, v, k) => acc.concat(v).concat(k),
-      'initial-'
+      'initial-',
     );
     expect(reduction).toEqual('initial-aabb');
   });

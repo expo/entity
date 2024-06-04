@@ -23,10 +23,10 @@ describe(ViewerScopedEntityCompanion, () => {
       >();
     const viewerScopedEntityCompanion = new ViewerScopedEntityCompanion(entityCompanion, vc);
     expect(viewerScopedEntityCompanion.getLoaderFactory()).toBeInstanceOf(
-      ViewerScopedEntityLoaderFactory
+      ViewerScopedEntityLoaderFactory,
     );
     expect(viewerScopedEntityCompanion.getMutatorFactory()).toBeInstanceOf(
-      ViewerScopedEntityMutatorFactory
+      ViewerScopedEntityMutatorFactory,
     );
   });
 });

@@ -45,7 +45,7 @@ describe(GenericLocalMemoryCacher, () => {
       'localMemoryCacheAdapterMap'
     ].get(
       viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)
-        .entityCompanionDefinition.entityConfiguration.tableName
+        .entityCompanionDefinition.entityConfiguration.tableName,
     )!['genericCacher'];
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),
@@ -63,9 +63,8 @@ describe(GenericLocalMemoryCacher, () => {
     // simulate non existent db fetch, should write negative result ('') to cache
     const nonExistentId = uuidv4();
 
-    const entityNonExistentResult = await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(
-      nonExistentId
-    );
+    const entityNonExistentResult =
+      await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedResult = await entitySpecificGenericCacher.loadManyAsync([
@@ -76,9 +75,8 @@ describe(GenericLocalMemoryCacher, () => {
     });
 
     // load again through entities framework to ensure it reads negative result
-    const entityNonExistentResult2 = await LocalMemoryTestEntity.loader(
-      viewerContext
-    ).loadByIDAsync(nonExistentId);
+    const entityNonExistentResult2 =
+      await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly
@@ -120,7 +118,7 @@ describe(GenericLocalMemoryCacher, () => {
       'localMemoryCacheAdapterMap'
     ].get(
       viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)
-        .entityCompanionDefinition.entityConfiguration.tableName
+        .entityCompanionDefinition.entityConfiguration.tableName,
     )!['genericCacher'];
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),
@@ -133,9 +131,8 @@ describe(GenericLocalMemoryCacher, () => {
     // a non existent db fetch should try to write negative result ('') but it's a noop cache, so it should be a miss
     const nonExistentId = uuidv4();
 
-    const entityNonExistentResult = await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(
-      nonExistentId
-    );
+    const entityNonExistentResult =
+      await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedResult = await entitySpecificGenericCacher.loadManyAsync([

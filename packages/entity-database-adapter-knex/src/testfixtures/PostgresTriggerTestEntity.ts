@@ -116,7 +116,10 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
   ViewerContext,
   PostgresTriggerTestEntity
 > {
-  constructor(private fieldName: keyof PostgresTriggerTestEntityFields, private badValue: string) {
+  constructor(
+    private fieldName: keyof PostgresTriggerTestEntityFields,
+    private badValue: string,
+  ) {
     super();
   }
 
@@ -129,7 +132,7 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
       string,
       ViewerContext,
       PostgresTriggerTestEntity
-    >
+    >,
   ): Promise<void> {
     if (entity.getField(this.fieldName) === this.badValue) {
       throw new Error(`${this.fieldName} cannot have value ${this.badValue}`);
@@ -143,13 +146,16 @@ class ThrowConditionallyNonTransactionalTrigger extends EntityNonTransactionalMu
   ViewerContext,
   PostgresTriggerTestEntity
 > {
-  constructor(private fieldName: keyof PostgresTriggerTestEntityFields, private badValue: string) {
+  constructor(
+    private fieldName: keyof PostgresTriggerTestEntityFields,
+    private badValue: string,
+  ) {
     super();
   }
 
   async executeAsync(
     _viewerContext: ViewerContext,
-    entity: PostgresTriggerTestEntity
+    entity: PostgresTriggerTestEntity,
   ): Promise<void> {
     if (entity.getField(this.fieldName) === this.badValue) {
       throw new Error(`${this.fieldName} cannot have value ${this.badValue}`);

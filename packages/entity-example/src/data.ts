@@ -15,7 +15,7 @@ import InMemoryQueryContextProvider from './adapters/InMemoryQueryContextProvide
  * One EntityCompanionProvider should be created per-request.
  */
 export const createEntityCompanionProvider = (
-  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
+  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
     metricsAdapter,
@@ -39,6 +39,6 @@ export const createEntityCompanionProvider = (
           cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
         },
       ],
-    ])
+    ]),
   );
 };

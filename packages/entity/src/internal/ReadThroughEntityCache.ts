@@ -29,7 +29,7 @@ export type CacheLoadResult<TFields> =
 export default class ReadThroughEntityCache<TFields extends Record<string, any>> {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
-    private readonly entityCacheAdapter: IEntityCacheAdapter<TFields>
+    private readonly entityCacheAdapter: IEntityCacheAdapter<TFields>,
   ) {}
 
   private isFieldCacheable<N extends keyof TFields>(fieldName: N): boolean {
@@ -56,8 +56,8 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[],
     fetcher: (
-      fetcherFieldValues: readonly NonNullable<TFields[N]>[]
-    ) => Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>>
+      fetcherFieldValues: readonly NonNullable<TFields[N]>[],
+    ) => Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>>,
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
     // return normal fetch when cache by fieldName not supported
     if (!this.isFieldCacheable(fieldName)) {
@@ -68,14 +68,14 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
 
     invariant(
       cacheLoadResults.size === fieldValues.length,
-      `${this.constructor.name} loadMany should return a result for each fieldValue`
+      `${this.constructor.name} loadMany should return a result for each fieldValue`,
     );
 
     const fieldValuesToFetchFromDB = Array.from(
       filterMap(
         cacheLoadResults,
-        (cacheLoadResult) => cacheLoadResult.status === CacheStatus.MISS
-      ).keys()
+        (cacheLoadResult) => cacheLoadResult.status === CacheStatus.MISS,
+      ).keys(),
     );
 
     // put transformed cache hits in result map
@@ -104,7 +104,7 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
           console.warn(
             `unique key ${String(fieldName)} in ${
               this.entityConfiguration.tableName
-            } returned multiple rows for ${fieldValue}`
+            } returned multiple rows for ${fieldValue}`,
           );
           continue;
         }
@@ -132,7 +132,7 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
    */
   public async invalidateManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {
     // no-op when cache by fieldName not supported
     if (!this.isFieldCacheable(fieldName)) {

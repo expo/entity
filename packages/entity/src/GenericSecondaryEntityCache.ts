@@ -15,14 +15,14 @@ export default abstract class GenericSecondaryEntityCache<TFields, TLoadParams>
 {
   constructor(
     protected readonly cacher: IEntityGenericCacher<TFields>,
-    protected readonly constructCacheKey: (params: Readonly<TLoadParams>) => string
+    protected readonly constructCacheKey: (params: Readonly<TLoadParams>) => string,
   ) {}
 
   public async loadManyThroughAsync(
     loadParamsArray: readonly Readonly<TLoadParams>[],
     fetcher: (
-      fetcherLoadParamsArray: readonly Readonly<TLoadParams>[]
-    ) => Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>>
+      fetcherLoadParamsArray: readonly Readonly<TLoadParams>[],
+    ) => Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>>,
   ): Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>> {
     const cacheKeys = loadParamsArray.map(this.constructCacheKey);
     const cacheKeyToLoadParamsMap = zipToMap(cacheKeys, loadParamsArray);
@@ -31,14 +31,14 @@ export default abstract class GenericSecondaryEntityCache<TFields, TLoadParams>
 
     invariant(
       cacheLoadResults.size === loadParamsArray.length,
-      `${this.constructor.name} loadMany should return a result for each key`
+      `${this.constructor.name} loadMany should return a result for each key`,
     );
 
     const cacheKeysToFetch = Array.from(
       filterMap(
         cacheLoadResults,
-        (cacheLoadResult) => cacheLoadResult.status === CacheStatus.MISS
-      ).keys()
+        (cacheLoadResult) => cacheLoadResult.status === CacheStatus.MISS,
+      ).keys(),
     );
 
     // put cache hits in result map

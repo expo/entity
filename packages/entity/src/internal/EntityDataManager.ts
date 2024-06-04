@@ -36,30 +36,30 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
     private readonly entityCache: ReadThroughEntityCache<TFields>,
     private readonly queryContextProvider: EntityQueryContextProvider,
     private readonly metricsAdapter: IEntityMetricsAdapter,
-    private readonly entityClassName: string
+    private readonly entityClassName: string,
   ) {}
 
   private getFieldDataLoaderForFieldName<N extends keyof TFields>(
-    fieldName: N
+    fieldName: N,
   ): DataLoader<NonNullable<TFields[N]>, readonly Readonly<TFields>[]> {
     return computeIfAbsent(this.fieldDataLoaders, fieldName, () => {
       return new DataLoader(
         async (
-          fieldValues: readonly NonNullable<TFields[N]>[]
+          fieldValues: readonly NonNullable<TFields[N]>[],
         ): Promise<readonly (readonly TFields[])[]> => {
           const objectMap = await this.loadManyForDataLoaderByFieldEqualingAsync(
             fieldName,
-            fieldValues
+            fieldValues,
           );
           return fieldValues.map((fv) => objectMap.get(fv) ?? []);
-        }
+        },
       );
     });
   }
 
   private async loadManyForDataLoaderByFieldEqualingAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
     this.metricsAdapter.incrementDataManagerLoadCount({
       type: IncrementLoadCountEventType.CACHE,
@@ -78,9 +78,9 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
         return await this.databaseAdapter.fetchManyWhereAsync(
           this.queryContextProvider.getQueryContext(),
           fieldName,
-          fetcherValues
+          fetcherValues,
         );
-      }
+      },
     );
   }
 
@@ -95,28 +95,28 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
   async loadManyByFieldEqualingAsync<N extends keyof TFields>(
     queryContext: EntityQueryContext,
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
     return await timeAndLogLoadMapEventAsync(
       this.metricsAdapter,
       EntityMetricsLoadType.LOAD_MANY,
-      this.entityClassName
+      this.entityClassName,
     )(this.loadManyByFieldEqualingInternalAsync(queryContext, fieldName, fieldValues));
   }
 
   private async loadManyByFieldEqualingInternalAsync<N extends keyof TFields>(
     queryContext: EntityQueryContext,
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
     const nullOrUndefinedValueIndex = fieldValues.findIndex(
-      (value) => value === null || value === undefined
+      (value) => value === null || value === undefined,
     );
     if (nullOrUndefinedValueIndex >= 0) {
       throw new Error(
         `Invalid load: ${this.entityClassName} (${String(fieldName)} = ${
           fieldValues[nullOrUndefinedValueIndex]
-        })`
+        })`,
       );
     }
 
@@ -153,18 +153,18 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
     queryContext: EntityQueryContext,
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
+    querySelectionModifiers: QuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
       EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
-      this.entityClassName
+      this.entityClassName,
     )(
       this.databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
         queryContext,
         fieldEqualityOperands,
-        querySelectionModifiers
-      )
+        querySelectionModifiers,
+      ),
     );
   }
 
@@ -181,25 +181,25 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
       EntityMetricsLoadType.LOAD_MANY_RAW,
-      this.entityClassName
+      this.entityClassName,
     )(
       this.databaseAdapter.fetchManyByRawWhereClauseAsync(
         queryContext,
         rawWhereClause,
         bindings,
-        querySelectionModifiers
-      )
+        querySelectionModifiers,
+      ),
     );
   }
 
   private async invalidateManyByFieldEqualingAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {
     await this.entityCache.invalidateManyAsync(fieldName, fieldValues);
     const dataLoader = this.getFieldDataLoaderForFieldName(fieldName);
@@ -222,7 +222,7 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
             value as NonNullable<TFields[keyof TFields]>,
           ]);
         }
-      })
+      }),
     );
   }
 }

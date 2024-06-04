@@ -23,7 +23,7 @@ export default class ViewerScopedEntityCompanion<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields,
 > {
   constructor(
     public readonly entityCompanion: EntityCompanion<
@@ -34,7 +34,7 @@ export default class ViewerScopedEntityCompanion<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly viewerContext: TViewerContext
+    private readonly viewerContext: TViewerContext,
   ) {}
 
   /**
@@ -50,7 +50,7 @@ export default class ViewerScopedEntityCompanion<
   > {
     return new ViewerScopedEntityLoaderFactory(
       this.entityCompanion.getLoaderFactory(),
-      this.viewerContext
+      this.viewerContext,
     );
   }
 
@@ -67,7 +67,7 @@ export default class ViewerScopedEntityCompanion<
   > {
     return new ViewerScopedEntityMutatorFactory(
       this.entityCompanion.getMutatorFactory(),
-      this.viewerContext
+      this.viewerContext,
     );
   }
 

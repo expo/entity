@@ -13,7 +13,7 @@ import { JSONArrayField, MaybeJSONArrayField } from './EntityFields';
 import wrapNativePostgresCallAsync from './errors/wrapNativePostgresCallAsync';
 
 export default class PostgresEntityDatabaseAdapter<
-  TFields extends Record<string, any>
+  TFields extends Record<string, any>,
 > extends EntityDatabaseAdapter<TFields> {
   protected getFieldTransformerMap(): FieldTransformerMap {
     return new Map<string, FieldTransformer<any>>([
@@ -45,19 +45,19 @@ export default class PostgresEntityDatabaseAdapter<
     queryInterface: Knex,
     tableName: string,
     tableField: string,
-    tableValues: readonly any[]
+    tableValues: readonly any[],
   ): Promise<object[]> {
     return await wrapNativePostgresCallAsync(() =>
       queryInterface
         .select()
         .from(tableName)
-        .whereRaw('?? = ANY(?)', [tableField, tableValues as any[]])
+        .whereRaw('?? = ANY(?)', [tableField, tableValues as any[]]),
     );
   }
 
   private applyQueryModifiersToQueryOrderByRaw(
     query: Knex.QueryBuilder,
-    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,
   ): Knex.QueryBuilder {
     let ret = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
 
@@ -71,7 +71,7 @@ export default class PostgresEntityDatabaseAdapter<
 
   private applyQueryModifiersToQuery(
     query: Knex.QueryBuilder,
-    querySelectionModifiers: TableQuerySelectionModifiers
+    querySelectionModifiers: TableQuerySelectionModifiers,
   ): Knex.QueryBuilder {
     const { orderBy, offset, limit } = querySelectionModifiers;
 
@@ -99,7 +99,7 @@ export default class PostgresEntityDatabaseAdapter<
     tableName: string,
     tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
     tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
-    querySelectionModifiers: TableQuerySelectionModifiers
+    querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]> {
     let query = queryInterface.select().from(tableName);
 
@@ -145,7 +145,7 @@ export default class PostgresEntityDatabaseAdapter<
     tableName: string,
     rawWhereClause: string,
     bindings: object | any[],
-    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,
   ): Promise<object[]> {
     let query = queryInterface
       .select()
@@ -158,10 +158,10 @@ export default class PostgresEntityDatabaseAdapter<
   protected async insertInternalAsync(
     queryInterface: Knex,
     tableName: string,
-    object: object
+    object: object,
   ): Promise<object[]> {
     return await wrapNativePostgresCallAsync(() =>
-      queryInterface.insert(object).into(tableName).returning('*')
+      queryInterface.insert(object).into(tableName).returning('*'),
     );
   }
 
@@ -170,10 +170,10 @@ export default class PostgresEntityDatabaseAdapter<
     tableName: string,
     tableIdField: string,
     id: any,
-    object: object
+    object: object,
   ): Promise<object[]> {
     return await wrapNativePostgresCallAsync(() =>
-      queryInterface.update(object).into(tableName).where(tableIdField, id).returning('*')
+      queryInterface.update(object).into(tableName).where(tableIdField, id).returning('*'),
     );
   }
 
@@ -181,10 +181,10 @@ export default class PostgresEntityDatabaseAdapter<
     queryInterface: Knex,
     tableName: string,
     tableIdField: string,
-    id: any
+    id: any,
   ): Promise<number> {
     return await wrapNativePostgresCallAsync(() =>
-      queryInterface.into(tableName).where(tableIdField, id).del()
+      queryInterface.into(tableName).where(tableIdField, id).del(),
     );
   }
 }

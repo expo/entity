@@ -27,7 +27,7 @@ export default class EntityCompanion<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields,
 > {
   public readonly privacyPolicy: TPrivacyPolicy;
 
@@ -59,7 +59,7 @@ export default class EntityCompanion<
       TSelectedFields
     >,
     private readonly tableDataCoordinator: EntityTableDataCoordinator<TFields>,
-    private readonly metricsAdapter: IEntityMetricsAdapter
+    private readonly metricsAdapter: IEntityMetricsAdapter,
   ) {
     this.privacyPolicy = new entityCompanionDefinition.privacyPolicyClass();
     this.entityLoaderFactory = new EntityLoaderFactory<
@@ -79,7 +79,7 @@ export default class EntityCompanion<
       entityCompanionDefinition.mutationTriggers ?? {},
       this.entityLoaderFactory,
       tableDataCoordinator.databaseAdapter,
-      metricsAdapter
+      metricsAdapter,
     );
   }
 

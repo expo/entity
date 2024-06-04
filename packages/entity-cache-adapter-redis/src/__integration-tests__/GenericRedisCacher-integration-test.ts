@@ -20,7 +20,7 @@ describe(GenericRedisCacher, () => {
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
-          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
+          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
         );
         return escapedParts.join(delimiter);
       },
@@ -39,11 +39,11 @@ describe(GenericRedisCacher, () => {
 
   it('has correct caching and loading behavior', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
     const genericRedisCacher = new GenericRedisCacher(
       genericRedisCacheContext,
-      redisTestEntityConfiguration
+      redisTestEntityConfiguration,
     );
     const date = new Date();
     const entity1Created = await RedisTestEntity.creator(viewerContext)
@@ -74,7 +74,7 @@ describe(GenericRedisCacher, () => {
   it('has correct negative caching behaviour', async () => {
     const genericRedisCacher = new GenericRedisCacher(
       genericRedisCacheContext,
-      redisTestEntityConfiguration
+      redisTestEntityConfiguration,
     );
 
     const testKey = `test-id-key-non-existent-id`;
@@ -85,11 +85,11 @@ describe(GenericRedisCacher, () => {
   });
   it('has correct invalidation behaviour', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
     const genericRedisCacher = new GenericRedisCacher(
       genericRedisCacheContext,
-      redisTestEntityConfiguration
+      redisTestEntityConfiguration,
     );
     const date = new Date();
     const entity1Created = await RedisTestEntity.creator(viewerContext)

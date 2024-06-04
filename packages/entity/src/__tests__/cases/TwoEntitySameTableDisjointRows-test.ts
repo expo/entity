@@ -28,16 +28,16 @@ describe('Two entities backed by the same table', () => {
     expect(two).toBeInstanceOf(TwoTestEntity);
 
     await expect(
-      TwoTestEntity.loader(viewerContext).enforcing().loadByIDAsync(one.getID())
+      TwoTestEntity.loader(viewerContext).enforcing().loadByIDAsync(one.getID()),
     ).rejects.toThrowError('TwoTestEntity must be instantiated with two data');
 
     await expect(
-      OneTestEntity.loader(viewerContext).enforcing().loadByIDAsync(two.getID())
+      OneTestEntity.loader(viewerContext).enforcing().loadByIDAsync(two.getID()),
     ).rejects.toThrowError('OneTestEntity must be instantiated with one data');
 
     const manyResults = await OneTestEntity.loader(viewerContext).loadManyByFieldEqualingAsync(
       'common_other_field',
-      'wat'
+      'wat',
     );
     const successfulManyResults = successfulResults(manyResults);
     const failedManyResults = failedResults(manyResults);
@@ -47,11 +47,11 @@ describe('Two entities backed by the same table', () => {
 
     expect(successfulManyResults[0]!.enforceValue().getID()).toEqual(one.getID());
     expect(failedManyResults[0]!.enforceError().message).toEqual(
-      'OneTestEntity must be instantiated with one data'
+      'OneTestEntity must be instantiated with one data',
     );
 
     const fieldEqualityConjunctionResults = await OneTestEntity.loader(
-      viewerContext
+      viewerContext,
     ).loadManyByFieldEqualityConjunctionAsync([
       {
         fieldName: 'common_other_field',
@@ -59,10 +59,10 @@ describe('Two entities backed by the same table', () => {
       },
     ]);
     const successfulfieldEqualityConjunctionResultsResults = successfulResults(
-      fieldEqualityConjunctionResults
+      fieldEqualityConjunctionResults,
     );
     const failedfieldEqualityConjunctionResultsResults = failedResults(
-      fieldEqualityConjunctionResults
+      fieldEqualityConjunctionResults,
     );
     expect(successfulfieldEqualityConjunctionResultsResults).toHaveLength(1);
     expect(failedfieldEqualityConjunctionResultsResults).toHaveLength(1);

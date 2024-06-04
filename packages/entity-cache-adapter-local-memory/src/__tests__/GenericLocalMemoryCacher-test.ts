@@ -54,7 +54,10 @@ describe('Use within GenericEntityCacheAdapter', () => {
   describe('loadManyAsync', () => {
     it('returns appropriate cache results', async () => {
       const cacheAdapter = new GenericEntityCacheAdapter(
-        new GenericLocalMemoryCacher(entityConfiguration, GenericLocalMemoryCacher.createLRUCache())
+        new GenericLocalMemoryCacher(
+          entityConfiguration,
+          GenericLocalMemoryCacher.createLRUCache(),
+        ),
       );
 
       const cacheHits = new Map<string, Readonly<BlahFields>>([['test-id-1', { id: 'test-id-1' }]]);
@@ -78,7 +81,10 @@ describe('Use within GenericEntityCacheAdapter', () => {
 
     it('returns empty map when passed empty array of fieldValues', async () => {
       const cacheAdapter = new GenericEntityCacheAdapter(
-        new GenericLocalMemoryCacher(entityConfiguration, GenericLocalMemoryCacher.createLRUCache())
+        new GenericLocalMemoryCacher(
+          entityConfiguration,
+          GenericLocalMemoryCacher.createLRUCache(),
+        ),
       );
       const results = await cacheAdapter.loadManyAsync('id', []);
       expect(results).toEqual(new Map());
@@ -118,7 +124,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
       const localMemoryCache = GenericLocalMemoryCacher.createLRUCache<BlahFields>({});
 
       const cacheAdapter = new GenericEntityCacheAdapter(
-        new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache)
+        new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache),
       );
       await cacheAdapter.cacheManyAsync('id', new Map([['test-id-1', { id: 'test-id-1' }]]));
       await cacheAdapter.cacheDBMissesAsync('id', ['test-id-2']);
@@ -133,8 +139,8 @@ describe('Use within GenericEntityCacheAdapter', () => {
       const cacheAdapter = new GenericEntityCacheAdapter(
         new GenericLocalMemoryCacher(
           entityConfiguration,
-          GenericLocalMemoryCacher.createLRUCache<BlahFields>({})
-        )
+          GenericLocalMemoryCacher.createLRUCache<BlahFields>({}),
+        ),
       );
       await cacheAdapter.invalidateManyAsync('id', []);
     });

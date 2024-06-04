@@ -10,7 +10,7 @@ import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
  * are replaced with in-memory simulations.
  */
 export const createUnitTestEntityCompanionProvider = (
-  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
+  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
     metricsAdapter,
@@ -30,6 +30,6 @@ export const createUnitTestEntityCompanionProvider = (
           cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
         },
       ],
-    ])
+    ]),
   );
 };
