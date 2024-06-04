@@ -22,6 +22,12 @@ node_modules/
 # Yarn Integrity file
 .yarn-integrity
 
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.pnp.*
+
 # [yarn](https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored)
 **/.yarn/*
 !**/.yarn/plugins
