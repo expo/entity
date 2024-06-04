@@ -42,7 +42,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">UpdateMutator</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L296">packages/entity/src/EntityMutator.ts:296</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L296">packages/entity/src/EntityMutator.ts:296</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -72,6 +72,7 @@
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
 <div class="tsd-index-list"><a href="_expo_entity.UpdateMutator.html#enforceUpdateAsync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>enforce<wbr/>Update<wbr/>Async</span></a>
+<a href="_expo_entity.UpdateMutator.html#ensureStableIDField" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>ensure<wbr/>StableIDField</span></a>
 <a href="_expo_entity.UpdateMutator.html#executeMutationTriggersAsync" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>execute<wbr/>Mutation<wbr/>Triggers<wbr/>Async</span></a>
 <a href="_expo_entity.UpdateMutator.html#executeMutationValidatorsAsync" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>execute<wbr/>Mutation<wbr/>Validators<wbr/>Async</span></a>
 <a href="_expo_entity.UpdateMutator.html#executeNonTransactionalMutationTriggersAsync" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>execute<wbr/>Non<wbr/>Transactional<wbr/>Mutation<wbr/>Triggers<wbr/>Async</span></a>
@@ -133,7 +134,7 @@
 <h4 class="tsd-returns-title">Returns <a href="_expo_entity.UpdateMutator.html" class="tsd-signature-type tsd-kind-class">UpdateMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Overrides BaseMutator&lt;TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields&gt;.constructor</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L314">packages/entity/src/EntityMutator.ts:314</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L314">packages/entity/src/EntityMutator.ts:314</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="companionProvider" class="tsd-anchor"></a>
@@ -141,82 +142,82 @@
 <div class="tsd-signature"><span class="tsd-kind-property">companion<wbr/>Provider</span><span class="tsd-signature-symbol">:</span> <a href="_expo_entity.EntityCompanionProvider.html" class="tsd-signature-type tsd-kind-class">EntityCompanionProvider</a></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.companionProvider</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L44">packages/entity/src/EntityMutator.ts:44</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L44">packages/entity/src/EntityMutator.ts:44</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="databaseAdapter" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>database<wbr/>Adapter</span><a href="#databaseAdapter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">database<wbr/>Adapter</span><span class="tsd-signature-symbol">:</span> <a href="_expo_entity.EntityDatabaseAdapter.html" class="tsd-signature-type tsd-kind-class">EntityDatabaseAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.databaseAdapter</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L79">packages/entity/src/EntityMutator.ts:79</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L79">packages/entity/src/EntityMutator.ts:79</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="entityClass" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>entity<wbr/>Class</span><a href="#entityClass" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">entity<wbr/>Class</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/_expo_entity.IEntityClass.html" class="tsd-signature-type tsd-kind-interface">IEntityClass</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.entityClass</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L48">packages/entity/src/EntityMutator.ts:48</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L48">packages/entity/src/EntityMutator.ts:48</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="entityConfiguration" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>entity<wbr/>Configuration</span><a href="#entityConfiguration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">entity<wbr/>Configuration</span><span class="tsd-signature-symbol">:</span> <a href="_expo_entity.EntityConfiguration.html" class="tsd-signature-type tsd-kind-class">EntityConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.entityConfiguration</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L47">packages/entity/src/EntityMutator.ts:47</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L47">packages/entity/src/EntityMutator.ts:47</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="entityLoaderFactory" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>entity<wbr/>Loader<wbr/>Factory</span><a href="#entityLoaderFactory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">entity<wbr/>Loader<wbr/>Factory</span><span class="tsd-signature-symbol">:</span> <a href="_expo_entity.EntityLoaderFactory.html" class="tsd-signature-type tsd-kind-class">EntityLoaderFactory</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.entityLoaderFactory</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L71">packages/entity/src/EntityMutator.ts:71</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L71">packages/entity/src/EntityMutator.ts:71</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="fieldsForEntity" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>fields<wbr/>For<wbr/>Entity</span><a href="#fieldsForEntity" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">fields<wbr/>For<wbr/>Entity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type tsd-kind-type-parameter">TFields</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L311">packages/entity/src/EntityMutator.ts:311</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L311">packages/entity/src/EntityMutator.ts:311</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="metricsAdapter" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>metrics<wbr/>Adapter</span><a href="#metricsAdapter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">metrics<wbr/>Adapter</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/_expo_entity.IEntityMetricsAdapter.html" class="tsd-signature-type tsd-kind-interface">IEntityMetricsAdapter</a></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.metricsAdapter</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L80">packages/entity/src/EntityMutator.ts:80</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L80">packages/entity/src/EntityMutator.ts:80</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="mutationTriggers" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>mutation<wbr/>Triggers</span><a href="#mutationTriggers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">mutation<wbr/>Triggers</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/_expo_entity.EntityMutationTriggerConfiguration.html" class="tsd-signature-type tsd-kind-interface">EntityMutationTriggerConfiguration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.mutationTriggers</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L64">packages/entity/src/EntityMutator.ts:64</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L64">packages/entity/src/EntityMutator.ts:64</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="mutationValidators" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>mutation<wbr/>Validators</span><a href="#mutationValidators" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">mutation<wbr/>Validators</span><span class="tsd-signature-symbol">:</span> <a href="_expo_entity.EntityMutationValidator.html" class="tsd-signature-type tsd-kind-class">EntityMutationValidator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.mutationValidators</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L57">packages/entity/src/EntityMutator.ts:57</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L57">packages/entity/src/EntityMutator.ts:57</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="originalEntity" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>original<wbr/>Entity</span><a href="#originalEntity" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">original<wbr/>Entity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L310">packages/entity/src/EntityMutator.ts:310</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L310">packages/entity/src/EntityMutator.ts:310</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="privacyPolicy" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>privacy<wbr/>Policy</span><a href="#privacyPolicy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">privacy<wbr/>Policy</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type tsd-kind-type-parameter">TPrivacyPolicy</span></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.privacyPolicy</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L56">packages/entity/src/EntityMutator.ts:56</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L56">packages/entity/src/EntityMutator.ts:56</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="queryContext" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>query<wbr/>Context</span><a href="#queryContext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">query<wbr/>Context</span><span class="tsd-signature-symbol">:</span> <a href="_expo_entity.EntityQueryContext.html" class="tsd-signature-type tsd-kind-class">EntityQueryContext</a></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.queryContext</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L46">packages/entity/src/EntityMutator.ts:46</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L46">packages/entity/src/EntityMutator.ts:46</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="updatedFields" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>updated<wbr/>Fields</span><a href="#updatedFields" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">updated<wbr/>Fields</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L312">packages/entity/src/EntityMutator.ts:312</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L312">packages/entity/src/EntityMutator.ts:312</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="viewerContext" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>viewer<wbr/>Context</span><a href="#viewerContext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">viewer<wbr/>Context</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type tsd-kind-type-parameter">TViewerContext</span></div><aside class="tsd-sources">
 <p>Inherited from BaseMutator.viewerContext</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L45">packages/entity/src/EntityMutator.ts:45</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L45">packages/entity/src/EntityMutator.ts:45</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="enforceUpdateAsync" class="tsd-anchor"></a>
@@ -229,7 +230,20 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L398">packages/entity/src/EntityMutator.ts:398</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L398">packages/entity/src/EntityMutator.ts:398</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="ensureStableIDField" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>ensure<wbr/>StableIDField</span><a href="#ensureStableIDField" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="ensureStableIDField.ensureStableIDField-1"><span class="tsd-kind-call-signature">ensure<wbr/>StableIDField</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">updatedFields</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#ensureStableIDField.ensureStableIDField-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">updatedFields</span>: <span class="tsd-signature-type ">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L518">packages/entity/src/EntityMutator.ts:518</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="executeMutationTriggersAsync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>execute<wbr/>Mutation<wbr/>Triggers<wbr/>Async</span><a href="#executeMutationTriggersAsync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
@@ -249,7 +263,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from BaseMutator.executeMutationTriggersAsync</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L114">packages/entity/src/EntityMutator.ts:114</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L114">packages/entity/src/EntityMutator.ts:114</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="executeMutationValidatorsAsync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>execute<wbr/>Mutation<wbr/>Validators<wbr/>Async</span><a href="#executeMutationValidatorsAsync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
@@ -269,7 +283,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from BaseMutator.executeMutationValidatorsAsync</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L95">packages/entity/src/EntityMutator.ts:95</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L95">packages/entity/src/EntityMutator.ts:95</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="executeNonTransactionalMutationTriggersAsync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>execute<wbr/>Non<wbr/>Transactional<wbr/>Mutation<wbr/>Triggers<wbr/>Async</span><a href="#executeNonTransactionalMutationTriggersAsync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
@@ -287,7 +301,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from BaseMutator.executeNonTransactionalMutationTriggersAsync</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L132">packages/entity/src/EntityMutator.ts:132</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L132">packages/entity/src/EntityMutator.ts:132</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="setField" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>set<wbr/>Field</span><a href="#setField" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -316,7 +330,7 @@
 <h4 class="tsd-returns-title">Returns <a href="_expo_entity.UpdateMutator.html" class="tsd-signature-type tsd-kind-class">UpdateMutator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TFields</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TID</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TViewerContext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TPrivacyPolicy</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">TSelectedFields</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L376">packages/entity/src/EntityMutator.ts:376</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L376">packages/entity/src/EntityMutator.ts:376</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="updateAsync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Async</span><a href="#updateAsync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -329,7 +343,7 @@ Invalidates all caches for pre-update entity.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L387">packages/entity/src/EntityMutator.ts:387</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L387">packages/entity/src/EntityMutator.ts:387</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="updateInTransactionAsync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>update<wbr/>In<wbr/>Transaction<wbr/>Async</span><a href="#updateInTransactionAsync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -344,7 +358,7 @@ Invalidates all caches for pre-update entity.</p>
 <h5><span class="tsd-kind-parameter">cascadingDeleteCause</span>: <a href="../types/_expo_entity.EntityCascadingDeletionInfo.html" class="tsd-signature-type tsd-kind-type-alias">EntityCascadingDeletionInfo</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L402">packages/entity/src/EntityMutator.ts:402</a></li></ul></aside></li>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L402">packages/entity/src/EntityMutator.ts:402</a></li></ul></aside></li>
 <li class="tsd-signature tsd-anchor-link" id="updateInTransactionAsync.updateInTransactionAsync-2"><span class="tsd-kind-call-signature">update<wbr/>In<wbr/>Transaction<wbr/>Async</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">skipDatabaseUpdate</span>, <span class="tsd-kind-parameter">cascadingDeleteCause</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#updateInTransactionAsync.updateInTransactionAsync-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
@@ -356,7 +370,7 @@ Invalidates all caches for pre-update entity.</p>
 <h5><span class="tsd-kind-parameter">cascadingDeleteCause</span>: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../types/_expo_entity.EntityCascadingDeletionInfo.html" class="tsd-signature-type tsd-kind-type-alias">EntityCascadingDeletionInfo</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L406">packages/entity/src/EntityMutator.ts:406</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L406">packages/entity/src/EntityMutator.ts:406</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="updateInternalAsync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>update<wbr/>Internal<wbr/>Async</span><a href="#updateInternalAsync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -373,7 +387,7 @@ Invalidates all caches for pre-update entity.</p>
 <h5><span class="tsd-kind-parameter">cascadingDeleteCause</span>: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../types/_expo_entity.EntityCascadingDeletionInfo.html" class="tsd-signature-type tsd-kind-type-alias">EntityCascadingDeletionInfo</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L419">packages/entity/src/EntityMutator.ts:419</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L419">packages/entity/src/EntityMutator.ts:419</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="validateFields" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>validate<wbr/>Fields</span><a href="#validateFields" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
@@ -387,7 +401,7 @@ Invalidates all caches for pre-update entity.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from BaseMutator.validateFields</p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/1e8ea64/packages/entity/src/EntityMutator.ts#L83">packages/entity/src/EntityMutator.ts:83</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/expo/entity/blob/7c3c985/packages/entity/src/EntityMutator.ts#L83">packages/entity/src/EntityMutator.ts:83</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -423,6 +437,7 @@ Invalidates all caches for pre-update entity.</p>
 <li><a href="#updatedFields" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>updated<wbr/>Fields</span></a></li>
 <li><a href="#viewerContext" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>viewer<wbr/>Context</span></a></li>
 <li><a href="#enforceUpdateAsync" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>enforce<wbr/>Update<wbr/>Async</span></a></li>
+<li><a href="#ensureStableIDField" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>ensure<wbr/>StableIDField</span></a></li>
 <li><a href="#executeMutationTriggersAsync" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>execute<wbr/>Mutation<wbr/>Triggers<wbr/>Async</span></a></li>
 <li><a href="#executeMutationValidatorsAsync" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>execute<wbr/>Mutation<wbr/>Validators<wbr/>Async</span></a></li>
 <li><a href="#executeNonTransactionalMutationTriggersAsync" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>execute<wbr/>Non<wbr/>Transactional<wbr/>Mutation<wbr/>Triggers<wbr/>Async</span></a></li>
