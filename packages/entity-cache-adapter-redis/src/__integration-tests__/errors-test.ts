@@ -18,7 +18,7 @@ describe(GenericRedisCacher, () => {
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
-          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
+          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
         );
         return escapedParts.join(delimiter);
       },
@@ -36,11 +36,11 @@ describe(GenericRedisCacher, () => {
     redisClient.disconnect();
 
     const vc1 = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
 
     await expect(
-      RedisTestEntity.creator(vc1).setField('name', 'blah').enforceCreateAsync()
+      RedisTestEntity.creator(vc1).setField('name', 'blah').enforceCreateAsync(),
     ).rejects.toThrow(EntityCacheAdapterTransientError);
   });
 });

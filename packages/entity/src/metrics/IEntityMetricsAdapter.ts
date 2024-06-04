@@ -140,7 +140,7 @@ export default interface IEntityMetricsAdapter {
    * Called when a dataloader, cache, or database load is initiated via the standard
    * load methods (not equality conjunction or raw). Most commonly used for logging
    * a waterfall to determine dataloader and cache hit rates and ratios.
-   * @param fieldValueCount - count of field values being loaded for a field
+   * @param incrementLoadCountEvent - count of field values being loaded for a field
    */
   incrementDataManagerLoadCount(incrementLoadCountEvent: IncrementLoadCountEvent): void;
 }

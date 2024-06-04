@@ -26,7 +26,7 @@ export default class EntityMutatorFactory<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   constructor(
     private readonly entityCompanionProvider: EntityCompanionProvider,
@@ -63,7 +63,7 @@ export default class EntityMutatorFactory<
       TSelectedFields
     >,
     private readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
-    private readonly metricsAdapter: IEntityMetricsAdapter
+    private readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
   /**
@@ -74,7 +74,7 @@ export default class EntityMutatorFactory<
    */
   forCreate(
     viewerContext: TViewerContext,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
   ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new CreateMutator(
       this.entityCompanionProvider,
@@ -87,7 +87,7 @@ export default class EntityMutatorFactory<
       this.mutationTriggers,
       this.entityLoaderFactory,
       this.databaseAdapter,
-      this.metricsAdapter
+      this.metricsAdapter,
     );
   }
 
@@ -99,7 +99,7 @@ export default class EntityMutatorFactory<
    */
   forUpdate(
     existingEntity: TEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
   ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new UpdateMutator(
       this.entityCompanionProvider,
@@ -113,7 +113,7 @@ export default class EntityMutatorFactory<
       this.entityLoaderFactory,
       this.databaseAdapter,
       this.metricsAdapter,
-      existingEntity
+      existingEntity,
     );
   }
 
@@ -124,7 +124,7 @@ export default class EntityMutatorFactory<
    */
   forDelete(
     existingEntity: TEntity,
-    queryContext: EntityQueryContext
+    queryContext: EntityQueryContext,
   ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return new DeleteMutator(
       this.entityCompanionProvider,
@@ -138,7 +138,7 @@ export default class EntityMutatorFactory<
       this.entityLoaderFactory,
       this.databaseAdapter,
       this.metricsAdapter,
-      existingEntity
+      existingEntity,
     );
   }
 }

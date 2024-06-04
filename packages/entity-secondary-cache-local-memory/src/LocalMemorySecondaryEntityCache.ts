@@ -13,14 +13,14 @@ import {
  */
 export default class LocalMemorySecondaryEntityCache<
   TFields extends Record<string, any>,
-  TLoadParams
+  TLoadParams,
 > extends GenericSecondaryEntityCache<TFields, TLoadParams> {
   constructor(
     entityConfiguration: EntityConfiguration<TFields>,
-    localMemoryCache: LocalMemoryCache<TFields>
+    localMemoryCache: LocalMemoryCache<TFields>,
   ) {
     super(new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache), (params) =>
-      JSON.stringify(params)
+      JSON.stringify(params),
     );
   }
 }

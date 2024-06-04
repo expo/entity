@@ -12,7 +12,7 @@ import {
  */
 export interface SingleValueFieldEqualityCondition<
   TFields,
-  N extends keyof TFields = keyof TFields
+  N extends keyof TFields = keyof TFields,
 > {
   fieldName: N;
   fieldValue: TFields[N];
@@ -23,7 +23,7 @@ export interface SingleValueFieldEqualityCondition<
  */
 export interface MultiValueFieldEqualityCondition<
   TFields,
-  N extends keyof TFields = keyof TFields
+  N extends keyof TFields = keyof TFields,
 > {
   fieldName: N;
   fieldValues: readonly TFields[N][];
@@ -39,9 +39,9 @@ export type FieldEqualityCondition<TFields, N extends keyof TFields = keyof TFie
 
 export function isSingleValueFieldEqualityCondition<
   TFields,
-  N extends keyof TFields = keyof TFields
+  N extends keyof TFields = keyof TFields,
 >(
-  condition: FieldEqualityCondition<TFields, N>
+  condition: FieldEqualityCondition<TFields, N>,
 ): condition is SingleValueFieldEqualityCondition<TFields, N> {
   return (condition as SingleValueFieldEqualityCondition<TFields, N>).fieldValue !== undefined;
 }
@@ -137,18 +137,18 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
    */
   async fetchManyWhereAsync<K extends keyof TFields>(
     queryContext: EntityQueryContext,
-    field: K,
-    fieldValues: readonly NonNullable<TFields[K]>[]
+    fieldName: K,
+    fieldValues: readonly NonNullable<TFields[K]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[K]>, readonly Readonly<TFields>[]>> {
-    const fieldColumn = getDatabaseFieldForEntityField(this.entityConfiguration, field);
+    const fieldColumn = getDatabaseFieldForEntityField(this.entityConfiguration, fieldName);
     const results = await this.fetchManyWhereInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       fieldColumn,
-      fieldValues
+      fieldValues,
     );
     const objects = results.map((result) =>
-      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result)
+      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
     );
 
     const objectMap = new Map();
@@ -157,7 +157,7 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
     }
 
     objects.forEach((object) => {
-      const objectFieldValue = object[field];
+      const objectFieldValue = object[fieldName];
       objectMap.get(objectFieldValue).push(object);
     });
 
@@ -168,7 +168,7 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
     queryInterface: any,
     tableName: string,
     tableField: string,
-    tableValues: readonly any[]
+    tableValues: readonly any[],
   ): Promise<object[]>;
 
   /**
@@ -183,7 +183,7 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
   async fetchManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
     queryContext: EntityQueryContext,
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
+    querySelectionModifiers: QuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     const tableFieldSingleValueOperands: TableFieldSingleValueEqualityCondition[] = [];
     const tableFieldMultipleValueOperands: TableFieldMultiValueEqualityCondition[] = [];
@@ -206,11 +206,11 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
       this.entityConfiguration.tableName,
       tableFieldSingleValueOperands,
       tableFieldMultipleValueOperands,
-      this.convertToTableQueryModifiers(querySelectionModifiers)
+      this.convertToTableQueryModifiers(querySelectionModifiers),
     );
 
     return results.map((result) =>
-      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result)
+      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
     );
   }
 
@@ -219,7 +219,7 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
     tableName: string,
     tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
     tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
-    querySelectionModifiers: TableQuerySelectionModifiers
+    querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]>;
 
   /**
@@ -235,18 +235,18 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     const results = await this.fetchManyByRawWhereClauseInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       rawWhereClause,
       bindings,
-      this.convertToTableQueryModifiersWithOrderByRaw(querySelectionModifiers)
+      this.convertToTableQueryModifiersWithOrderByRaw(querySelectionModifiers),
     );
 
     return results.map((result) =>
-      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result)
+      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
     );
   }
 
@@ -255,7 +255,7 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
     tableName: string,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,
   ): Promise<object[]>;
 
   /**
@@ -267,40 +267,40 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
    */
   async insertAsync(
     queryContext: EntityQueryContext,
-    object: Readonly<Partial<TFields>>
+    object: Readonly<Partial<TFields>>,
   ): Promise<Readonly<TFields>> {
     const dbObject = transformFieldsToDatabaseObject(
       this.entityConfiguration,
       this.fieldTransformerMap,
-      object
+      object,
     );
     const results = await this.insertInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
-      dbObject
+      dbObject,
     );
 
     if (results.length > 1) {
       throw new Error(
-        `Excessive results from database adapter insert: ${this.entityConfiguration.tableName}`
+        `Excessive results from database adapter insert: ${this.entityConfiguration.tableName}`,
       );
     } else if (results.length === 0) {
       throw new Error(
-        `Empty results from database adapter insert: ${this.entityConfiguration.tableName}`
+        `Empty results from database adapter insert: ${this.entityConfiguration.tableName}`,
       );
     }
 
     return transformDatabaseObjectToFields(
       this.entityConfiguration,
       this.fieldTransformerMap,
-      results[0]!
+      results[0]!,
     );
   }
 
   protected abstract insertInternalAsync(
     queryInterface: any,
     tableName: string,
-    object: object
+    object: object,
   ): Promise<object[]>;
 
   /**
@@ -316,36 +316,36 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
     queryContext: EntityQueryContext,
     idField: K,
     id: any,
-    object: Readonly<Partial<TFields>>
+    object: Readonly<Partial<TFields>>,
   ): Promise<Readonly<TFields>> {
     const idColumn = getDatabaseFieldForEntityField(this.entityConfiguration, idField);
     const dbObject = transformFieldsToDatabaseObject(
       this.entityConfiguration,
       this.fieldTransformerMap,
-      object
+      object,
     );
     const results = await this.updateInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       idColumn,
       id,
-      dbObject
+      dbObject,
     );
 
     if (results.length > 1) {
       throw new Error(
-        `Excessive results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`
+        `Excessive results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`,
       );
     } else if (results.length === 0) {
       throw new Error(
-        `Empty results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`
+        `Empty results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`,
       );
     }
 
     return transformDatabaseObjectToFields(
       this.entityConfiguration,
       this.fieldTransformerMap,
-      results[0]!
+      results[0]!,
     );
   }
 
@@ -354,7 +354,7 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
     tableName: string,
     tableIdField: string,
     id: any,
-    object: object
+    object: object,
   ): Promise<object[]>;
 
   /**
@@ -367,19 +367,19 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
   async deleteAsync<K extends keyof TFields>(
     queryContext: EntityQueryContext,
     idField: K,
-    id: any
+    id: any,
   ): Promise<void> {
     const idColumn = getDatabaseFieldForEntityField(this.entityConfiguration, idField);
     const numDeleted = await this.deleteInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       idColumn,
-      id
+      id,
     );
 
     if (numDeleted > 1) {
       throw new Error(
-        `Excessive deletions from database adapter delete: ${this.entityConfiguration.tableName}(id = ${id})`
+        `Excessive deletions from database adapter delete: ${this.entityConfiguration.tableName}(id = ${id})`,
       );
     }
   }
@@ -388,11 +388,11 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
     queryInterface: any,
     tableName: string,
     tableIdField: string,
-    id: any
+    id: any,
   ): Promise<number>;
 
   private convertToTableQueryModifiersWithOrderByRaw(
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>,
   ): TableQuerySelectionModifiersWithOrderByRaw {
     return {
       ...this.convertToTableQueryModifiers(querySelectionModifiers),
@@ -401,7 +401,7 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
   }
 
   private convertToTableQueryModifiers(
-    querySelectionModifiers: QuerySelectionModifiers<TFields>
+    querySelectionModifiers: QuerySelectionModifiers<TFields>,
   ): TableQuerySelectionModifiers {
     const orderBy = querySelectionModifiers.orderBy;
     return {
@@ -410,7 +410,7 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
           ? orderBy.map((orderBySpecification) => ({
               columnName: getDatabaseFieldForEntityField(
                 this.entityConfiguration,
-                orderBySpecification.fieldName
+                orderBySpecification.fieldName,
               ),
               order: orderBySpecification.order,
             }))

@@ -16,7 +16,7 @@ import { Knex } from 'knex';
 export const createFullIntegrationTestEntityCompanionProvider = (
   knex: Knex,
   genericRedisCacheContext: GenericRedisCacheContext,
-  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
+  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
     metricsAdapter,
@@ -36,6 +36,6 @@ export const createFullIntegrationTestEntityCompanionProvider = (
           cacheAdapterProvider: new RedisCacheAdapterProvider(genericRedisCacheContext),
         },
       ],
-    ])
+    ]),
   );
 };

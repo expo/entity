@@ -14,19 +14,19 @@ export default class ComposedSecondaryEntityCache<TLoadParams, TFields>
    *                                Typically, caches closer to the application should be ordered before caches closer to the database.
    */
   constructor(
-    private readonly secondaryEntityCaches: ISecondaryEntityCache<TFields, TLoadParams>[]
+    private readonly secondaryEntityCaches: ISecondaryEntityCache<TFields, TLoadParams>[],
   ) {}
 
   async loadManyThroughAsync(
     loadParamsArray: readonly Readonly<TLoadParams>[],
     fetcher: (
-      fetcherLoadParamsArray: readonly Readonly<TLoadParams>[]
-    ) => Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>>
+      fetcherLoadParamsArray: readonly Readonly<TLoadParams>[],
+    ) => Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>>,
   ): Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>> {
     return await ComposedSecondaryEntityCache.loadManyThroughRecursivelyAsync(
       this.secondaryEntityCaches,
       loadParamsArray,
-      fetcher
+      fetcher,
     );
   }
 
@@ -34,8 +34,8 @@ export default class ComposedSecondaryEntityCache<TLoadParams, TFields>
     secondaryEntityCaches: ISecondaryEntityCache<TFields, TLoadParams>[],
     loadParamsArray: readonly Readonly<TLoadParams>[],
     fetcher: (
-      fetcherLoadParamsArray: readonly Readonly<TLoadParams>[]
-    ) => Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>>
+      fetcherLoadParamsArray: readonly Readonly<TLoadParams>[],
+    ) => Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>>,
   ): Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>> {
     if (secondaryEntityCaches.length === 0) {
       return await fetcher(loadParamsArray);
@@ -49,8 +49,8 @@ export default class ComposedSecondaryEntityCache<TLoadParams, TFields>
         ComposedSecondaryEntityCache.loadManyThroughRecursivelyAsync(
           restCaches,
           fetcherLoadParamsArray,
-          fetcher
-        )
+          fetcher,
+        ),
     );
   }
 

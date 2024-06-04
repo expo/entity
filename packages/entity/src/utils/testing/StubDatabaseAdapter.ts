@@ -17,23 +17,23 @@ import {
 import { computeIfAbsent, mapMap } from '../collections/maps';
 
 export default class StubDatabaseAdapter<
-  T extends Record<string, any>
+  T extends Record<string, any>,
 > extends EntityDatabaseAdapter<T> {
   constructor(
     private readonly entityConfiguration2: EntityConfiguration<T>,
-    private readonly dataStore: Map<string, Readonly<{ [key: string]: any }>[]>
+    private readonly dataStore: Map<string, Readonly<{ [key: string]: any }>[]>,
   ) {
     super(entityConfiguration2);
   }
 
   public static convertFieldObjectsToDataStore<T extends Record<string, any>>(
     entityConfiguration: EntityConfiguration<T>,
-    dataStore: Map<string, Readonly<T>[]>
+    dataStore: Map<string, Readonly<T>[]>,
   ): Map<string, Readonly<{ [key: string]: any }>[]> {
     return mapMap(dataStore, (objectsForTable) =>
       objectsForTable.map((objectForTable) =>
-        transformFieldsToDatabaseObject(entityConfiguration, new Map(), objectForTable)
-      )
+        transformFieldsToDatabaseObject(entityConfiguration, new Map(), objectForTable),
+      ),
     );
   }
 
@@ -49,16 +49,19 @@ export default class StubDatabaseAdapter<
     _queryInterface: any,
     tableName: string,
     tableField: string,
-    tableValues: readonly any[]
+    tableValues: readonly any[],
   ): Promise<object[]> {
     const objectCollection = this.getObjectCollectionForTable(tableName);
-    return tableValues.reduce((acc, fieldValue) => {
-      return acc.concat(
-        objectCollection.filter((obj) => {
-          return obj[tableField] === fieldValue;
-        })
-      );
-    }, [] as { [key: string]: any });
+    return tableValues.reduce(
+      (acc, fieldValue) => {
+        return acc.concat(
+          objectCollection.filter((obj) => {
+            return obj[tableField] === fieldValue;
+          }),
+        );
+      },
+      [] as { [key: string]: any },
+    );
   }
 
   private static compareByOrderBys(
@@ -67,7 +70,7 @@ export default class StubDatabaseAdapter<
       order: OrderByOrdering;
     }[],
     objectA: { [key: string]: any },
-    objectB: { [key: string]: any }
+    objectB: { [key: string]: any },
   ): 0 | 1 | -1 {
     if (orderBys.length === 0) {
       return 0;
@@ -90,8 +93,8 @@ export default class StubDatabaseAdapter<
         return aField > bField
           ? -1
           : aField < bField
-          ? 1
-          : this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
+            ? 1
+            : this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
       }
       case OrderByOrdering.ASCENDING: {
         // simulate NULLS LAST for ASC
@@ -106,8 +109,8 @@ export default class StubDatabaseAdapter<
         return bField > aField
           ? -1
           : bField < aField
-          ? 1
-          : this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
+            ? 1
+            : this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
       }
     }
   }
@@ -117,7 +120,7 @@ export default class StubDatabaseAdapter<
     tableName: string,
     tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
     tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
-    querySelectionModifiers: TableQuerySelectionModifiers
+    querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]> {
     let filteredObjects = this.getObjectCollectionForTable(tableName);
     for (const { tableField, tableValue } of tableFieldSingleValueEqualityOperands) {
@@ -131,7 +134,7 @@ export default class StubDatabaseAdapter<
     const orderBy = querySelectionModifiers.orderBy;
     if (orderBy !== undefined) {
       filteredObjects = filteredObjects.sort((a, b) =>
-        StubDatabaseAdapter.compareByOrderBys(orderBy, a, b)
+        StubDatabaseAdapter.compareByOrderBys(orderBy, a, b),
       );
     }
 
@@ -153,7 +156,7 @@ export default class StubDatabaseAdapter<
     _tableName: string,
     _rawWhereClause: string,
     _bindings: object | any[],
-    _querySelectionModifiers: TableQuerySelectionModifiers
+    _querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]> {
     throw new Error('Raw WHERE clauses not supported for StubDatabaseAdapter');
   }
@@ -162,7 +165,7 @@ export default class StubDatabaseAdapter<
     const idSchemaField = this.entityConfiguration2.schema.get(this.entityConfiguration2.idField);
     invariant(
       idSchemaField,
-      `No schema field found for ${String(this.entityConfiguration2.idField)}`
+      `No schema field found for ${String(this.entityConfiguration2.idField)}`,
     );
     if (idSchemaField instanceof StringField) {
       return uuidv7();
@@ -170,7 +173,7 @@ export default class StubDatabaseAdapter<
       return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
     } else {
       throw new Error(
-        `Unsupported ID type for StubDatabaseAdapter: ${idSchemaField.constructor.name}`
+        `Unsupported ID type for StubDatabaseAdapter: ${idSchemaField.constructor.name}`,
       );
     }
   }
@@ -178,13 +181,13 @@ export default class StubDatabaseAdapter<
   protected async insertInternalAsync(
     _queryInterface: any,
     tableName: string,
-    object: object
+    object: object,
   ): Promise<object[]> {
     const objectCollection = this.getObjectCollectionForTable(tableName);
 
     const idField = getDatabaseFieldForEntityField(
       this.entityConfiguration2,
-      this.entityConfiguration2.idField
+      this.entityConfiguration2.idField,
     );
     const objectToInsert = {
       [idField]: this.generateRandomID(),
@@ -199,7 +202,7 @@ export default class StubDatabaseAdapter<
     tableName: string,
     tableIdField: string,
     id: any,
-    object: object
+    object: object,
   ): Promise<object[]> {
     // SQL does not support empty updates, mirror behavior here for better test simulation
     if (Object.keys(object).length === 0) {
@@ -223,7 +226,7 @@ export default class StubDatabaseAdapter<
     _queryInterface: any,
     tableName: string,
     tableIdField: string,
-    id: any
+    id: any,
   ): Promise<number> {
     const objectCollection = this.getObjectCollectionForTable(tableName);
 

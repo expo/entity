@@ -96,25 +96,33 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
       .enforceCreateAsync();
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(parentCategory.getID()),
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID())
+      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID()),
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subSubCategory.getID())
+      CategoryEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(subSubCategory.getID()),
     ).resolves.not.toBeNull();
 
     await CategoryEntity.enforceDeleteAsync(parentCategory);
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(parentCategory.getID()),
     ).resolves.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID())
+      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID()),
     ).resolves.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subSubCategory.getID())
+      CategoryEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(subSubCategory.getID()),
     ).resolves.toBeNull();
   });
 
@@ -135,10 +143,10 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
     await CategoryEntity.enforceDeleteAsync(categoryA);
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(categoryA.getID())
+      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(categoryA.getID()),
     ).resolves.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(categoryB.getID())
+      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(categoryB.getID()),
     ).resolves.toBeNull();
   });
 });
@@ -159,19 +167,25 @@ describe('EntityEdgeDeletionBehavior.SET_NULL', () => {
       .enforceCreateAsync();
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(parentCategory.getID()),
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID())
+      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID()),
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subSubCategory.getID())
+      CategoryEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(subSubCategory.getID()),
     ).resolves.not.toBeNull();
 
     await CategoryEntity.enforceDeleteAsync(parentCategory);
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(parentCategory.getID()),
     ).resolves.toBeNull();
 
     const loadedSubCategory = await CategoryEntity.loader(viewerContext)
@@ -211,7 +225,7 @@ describe('EntityEdgeDeletionBehavior.SET_NULL', () => {
 describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
   it('invalidates the cache', async () => {
     const { CategoryEntity } = makeEntityClass(
-      EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY
+      EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY,
     );
 
     const companionProvider = createUnitTestEntityCompanionProvider();
@@ -226,21 +240,23 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
       .enforceCreateAsync();
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(parentCategory.getID()),
     ).resolves.not.toBeNull();
     await expect(
       CategoryEntity.loader(viewerContext)
         .enforcing()
-        .loadByFieldEqualingAsync('parent_category_id', parentCategory.getID())
+        .loadByFieldEqualingAsync('parent_category_id', parentCategory.getID()),
     ).resolves.not.toBeNull();
     await expect(
       CategoryEntity.loader(viewerContext)
         .enforcing()
-        .loadByFieldEqualingAsync('parent_category_id', subCategory.getID())
+        .loadByFieldEqualingAsync('parent_category_id', subCategory.getID()),
     ).resolves.not.toBeNull();
 
     const categoryCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(
-      CategoryEntity
+      CategoryEntity,
     )['entityCompanion']['tableDataCoordinator'][
       'cacheAdapter'
     ] as InMemoryFullCacheStubCacheAdapter<CategoryFields>;
@@ -251,7 +267,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
 
     const subSubCategoryCachedBefore = await categoryCacheAdapter.loadManyAsync(
       'parent_category_id',
-      [subCategory.getID()]
+      [subCategory.getID()],
     );
     expect(subSubCategoryCachedBefore.get(subCategory.getID())?.status).toEqual(CacheStatus.HIT);
 
@@ -264,24 +280,28 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
 
     const subSubCategoryCachedAfter = await categoryCacheAdapter.loadManyAsync(
       'parent_category_id',
-      [subCategory.getID()]
+      [subCategory.getID()],
     );
     expect(subSubCategoryCachedAfter.get(subCategory.getID())?.status).toEqual(CacheStatus.MISS);
 
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parentCategory.getID())
+      CategoryEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(parentCategory.getID()),
     ).resolves.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID())
+      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subCategory.getID()),
     ).resolves.not.toBeNull();
     await expect(
-      CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(subSubCategory.getID())
+      CategoryEntity.loader(viewerContext)
+        .enforcing()
+        .loadByIDNullableAsync(subSubCategory.getID()),
     ).resolves.not.toBeNull();
   });
 
   it('handles cycles', async () => {
     const { CategoryEntity } = makeEntityClass(
-      EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY
+      EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY,
     );
 
     const companionProvider = createUnitTestEntityCompanionProvider();
@@ -298,16 +318,16 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     await expect(
       CategoryEntity.loader(viewerContext)
         .enforcing()
-        .loadByFieldEqualingAsync('parent_category_id', categoryA.getID())
+        .loadByFieldEqualingAsync('parent_category_id', categoryA.getID()),
     ).resolves.not.toBeNull();
     await expect(
       CategoryEntity.loader(viewerContext)
         .enforcing()
-        .loadByFieldEqualingAsync('parent_category_id', categoryB.getID())
+        .loadByFieldEqualingAsync('parent_category_id', categoryB.getID()),
     ).resolves.not.toBeNull();
 
     const categoryCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(
-      CategoryEntity
+      CategoryEntity,
     )['entityCompanion']['tableDataCoordinator'][
       'cacheAdapter'
     ] as InMemoryFullCacheStubCacheAdapter<CategoryFields>;

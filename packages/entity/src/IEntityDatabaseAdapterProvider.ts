@@ -10,6 +10,6 @@ export default interface IEntityDatabaseAdapterProvider {
    * Vend a database adapter.
    */
   getDatabaseAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>
+    entityConfiguration: EntityConfiguration<TFields>,
   ): EntityDatabaseAdapter<TFields>;
 }

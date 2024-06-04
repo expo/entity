@@ -20,8 +20,8 @@ export interface ISecondaryEntityCache<TFields, TLoadParams> {
   loadManyThroughAsync(
     loadParamsArray: readonly Readonly<TLoadParams>[],
     fetcher: (
-      fetcherLoadParamsArray: readonly Readonly<TLoadParams>[]
-    ) => Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>>
+      fetcherLoadParamsArray: readonly Readonly<TLoadParams>[],
+    ) => Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>>,
   ): Promise<ReadonlyMap<Readonly<TLoadParams>, Readonly<TFields> | null>>;
 
   /**
@@ -56,7 +56,7 @@ export default abstract class EntitySecondaryCacheLoader<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   constructor(
     private readonly secondaryEntityCache: ISecondaryEntityCache<TFields, TLoadParams>,
@@ -67,7 +67,7 @@ export default abstract class EntitySecondaryCacheLoader<
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
-    >
+    >,
   ) {}
 
   /**
@@ -76,16 +76,16 @@ export default abstract class EntitySecondaryCacheLoader<
    * @param loadParamsArray - array of loadParams to load through the cache
    */
   public async loadManyAsync(
-    loadParamsArray: readonly Readonly<TLoadParams>[]
+    loadParamsArray: readonly Readonly<TLoadParams>[],
   ): Promise<ReadonlyMap<Readonly<TLoadParams>, Result<TEntity> | null>> {
     const loadParamsToFieldObjects = await this.secondaryEntityCache.loadManyThroughAsync(
       loadParamsArray,
-      this.fetchObjectsFromDatabaseAsync.bind(this)
+      this.fetchObjectsFromDatabaseAsync.bind(this),
     );
 
     // convert value to and from array to reuse complex code
     const entitiesMap = await this.entityLoader.constructAndAuthorizeEntitiesAsync(
-      mapMap(loadParamsToFieldObjects, (fieldObject) => (fieldObject ? [fieldObject] : []))
+      mapMap(loadParamsToFieldObjects, (fieldObject) => (fieldObject ? [fieldObject] : [])),
     );
     return mapMap(entitiesMap, (fieldObjects) => fieldObjects[0] ?? null);
   }
@@ -96,7 +96,7 @@ export default abstract class EntitySecondaryCacheLoader<
    * @param loadParamsArray - array of load params objects to invalidate
    */
   public async invalidateManyAsync(
-    loadParamsArray: readonly Readonly<TLoadParams>[]
+    loadParamsArray: readonly Readonly<TLoadParams>[],
   ): Promise<void> {
     await this.secondaryEntityCache.invalidateManyAsync(loadParamsArray);
   }
@@ -107,6 +107,6 @@ export default abstract class EntitySecondaryCacheLoader<
    * @param loadParamsArray - array of load params objects to load
    */
   protected abstract fetchObjectsFromDatabaseAsync(
-    loadParamsArray: readonly Readonly<TLoadParams>[]
+    loadParamsArray: readonly Readonly<TLoadParams>[],
   ): Promise<ReadonlyMap<Readonly<Readonly<TLoadParams>>, Readonly<TFields> | null>>;
 }

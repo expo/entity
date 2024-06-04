@@ -13,7 +13,7 @@ export default interface IEntityCacheAdapter<TFields> {
    */
   loadManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>>;
 
   /**
@@ -23,7 +23,7 @@ export default interface IEntityCacheAdapter<TFields> {
    */
   cacheManyAsync<N extends keyof TFields>(
     fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>
+    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>,
   ): Promise<void>;
 
   /**
@@ -34,7 +34,7 @@ export default interface IEntityCacheAdapter<TFields> {
    */
   cacheDBMissesAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void>;
 
   /**
@@ -44,6 +44,6 @@ export default interface IEntityCacheAdapter<TFields> {
    */
   invalidateManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void>;
 }

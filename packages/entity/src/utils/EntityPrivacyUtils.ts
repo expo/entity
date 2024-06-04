@@ -38,7 +38,7 @@ export async function canViewerUpdateAsync<
     TMEntity,
     TMSelectedFields
   >,
-  TMSelectedFields extends keyof TMFields = keyof TMFields
+  TMSelectedFields extends keyof TMFields = keyof TMFields,
 >(
   entityClass: IEntityClass<
     TMFields,
@@ -53,13 +53,13 @@ export async function canViewerUpdateAsync<
     .getViewerContext()
     .getViewerScopedEntityCompanionForClass(entityClass)
     .getQueryContextProvider()
-    .getQueryContext()
+    .getQueryContext(),
 ): Promise<boolean> {
   return await canViewerUpdateInternalAsync(
     entityClass,
     sourceEntity,
     /* cascadingDeleteCause */ null,
-    queryContext
+    queryContext,
   );
 }
 
@@ -75,7 +75,7 @@ async function canViewerUpdateInternalAsync<
     TMEntity,
     TMSelectedFields
   >,
-  TMSelectedFields extends keyof TMFields = keyof TMFields
+  TMSelectedFields extends keyof TMFields = keyof TMFields,
 >(
   entityClass: IEntityClass<
     TMFields,
@@ -87,7 +87,7 @@ async function canViewerUpdateInternalAsync<
   >,
   sourceEntity: TMEntity,
   cascadingDeleteCause: EntityCascadingDeletionInfo | null,
-  queryContext: EntityQueryContext
+  queryContext: EntityQueryContext,
 ): Promise<boolean> {
   const companion = sourceEntity
     .getViewerContext()
@@ -99,8 +99,8 @@ async function canViewerUpdateInternalAsync<
       queryContext,
       { previousValue: null, cascadingDeleteCause },
       sourceEntity,
-      companion.getMetricsAdapter()
-    )
+      companion.getMetricsAdapter(),
+    ),
   );
   if (!evaluationResult.ok) {
     if (evaluationResult.reason instanceof EntityNotAuthorizedError) {
@@ -135,7 +135,7 @@ export async function canViewerDeleteAsync<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 >(
   entityClass: IEntityClass<
     TFields,
@@ -150,13 +150,13 @@ export async function canViewerDeleteAsync<
     .getViewerContext()
     .getViewerScopedEntityCompanionForClass(entityClass)
     .getQueryContextProvider()
-    .getQueryContext()
+    .getQueryContext(),
 ): Promise<boolean> {
   return await canViewerDeleteInternalAsync(
     entityClass,
     sourceEntity,
     /* cascadingDeleteCause */ null,
-    queryContext
+    queryContext,
   );
 }
 
@@ -172,7 +172,7 @@ async function canViewerDeleteInternalAsync<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 >(
   entityClass: IEntityClass<
     TFields,
@@ -184,7 +184,7 @@ async function canViewerDeleteInternalAsync<
   >,
   sourceEntity: TEntity,
   cascadingDeleteCause: EntityCascadingDeletionInfo | null,
-  queryContext: EntityQueryContext
+  queryContext: EntityQueryContext,
 ): Promise<boolean> {
   const viewerContext = sourceEntity.getViewerContext();
   const entityCompanionProvider = viewerContext.entityCompanionProvider;
@@ -199,8 +199,8 @@ async function canViewerDeleteInternalAsync<
       queryContext,
       { previousValue: null, cascadingDeleteCause },
       sourceEntity,
-      viewerScopedCompanion.getMetricsAdapter()
-    )
+      viewerScopedCompanion.getMetricsAdapter(),
+    ),
   );
   if (!evaluationResult.ok) {
     if (evaluationResult.reason instanceof EntityNotAuthorizedError) {
@@ -248,7 +248,7 @@ async function canViewerDeleteInternalAsync<
       }
 
       const associatedConfiguration = entityCompanionProvider.getCompanionForEntity(
-        association.associatedEntityClass
+        association.associatedEntityClass,
       ).entityCompanionDefinition.entityConfiguration;
       if (associatedConfiguration !== entityConfiguration) {
         continue;
@@ -258,7 +258,7 @@ async function canViewerDeleteInternalAsync<
         fieldName,
         association.associatedEntityLookupByField
           ? sourceEntity.getField(association.associatedEntityLookupByField as any)
-          : sourceEntity.getID()
+          : sourceEntity.getID(),
       );
 
       const failedEntityLoadResults = failedResults(entityResultsForInboundEdge);
@@ -283,9 +283,9 @@ async function canViewerDeleteInternalAsync<
                   inboundEdge,
                   entity,
                   newCascadingDeleteCause,
-                  queryContext
-                )
-              )
+                  queryContext,
+                ),
+              ),
             )
           ).every((b) => b);
 
@@ -304,9 +304,9 @@ async function canViewerDeleteInternalAsync<
                   inboundEdge,
                   entity,
                   newCascadingDeleteCause,
-                  queryContext
-                )
-              )
+                  queryContext,
+                ),
+              ),
             )
           ).every((b) => b);
 

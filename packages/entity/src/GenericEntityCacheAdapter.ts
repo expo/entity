@@ -13,16 +13,16 @@ export default class GenericEntityCacheAdapter<TFields> implements IEntityCacheA
 
   public async loadManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
     const redisCacheKeyToFieldValueMapping = new Map(
       fieldValues.map((fieldValue) => [
         this.genericCacher.makeCacheKey(fieldName, fieldValue),
         fieldValue,
-      ])
+      ]),
     );
     const cacheResults = await this.genericCacher.loadManyAsync(
-      Array.from(redisCacheKeyToFieldValueMapping.keys())
+      Array.from(redisCacheKeyToFieldValueMapping.keys()),
     );
 
     return mapKeys(cacheResults, (redisCacheKey) => {
@@ -30,7 +30,7 @@ export default class GenericEntityCacheAdapter<TFields> implements IEntityCacheA
       invariant(
         fieldValue !== undefined,
         'Unspecified cache key %s returned from generic cacher',
-        redisCacheKey
+        redisCacheKey,
       );
       return fieldValue;
     });
@@ -38,28 +38,28 @@ export default class GenericEntityCacheAdapter<TFields> implements IEntityCacheA
 
   public async cacheManyAsync<N extends keyof TFields>(
     fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>
+    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>,
   ): Promise<void> {
     await this.genericCacher.cacheManyAsync(
-      mapKeys(objectMap, (fieldValue) => this.genericCacher.makeCacheKey(fieldName, fieldValue))
+      mapKeys(objectMap, (fieldValue) => this.genericCacher.makeCacheKey(fieldName, fieldValue)),
     );
   }
 
   public async cacheDBMissesAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {
     await this.genericCacher.cacheDBMissesAsync(
-      fieldValues.map((fieldValue) => this.genericCacher.makeCacheKey(fieldName, fieldValue))
+      fieldValues.map((fieldValue) => this.genericCacher.makeCacheKey(fieldName, fieldValue)),
     );
   }
 
   public async invalidateManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {
     await this.genericCacher.invalidateManyAsync(
-      fieldValues.map((fieldValue) => this.genericCacher.makeCacheKey(fieldName, fieldValue))
+      fieldValues.map((fieldValue) => this.genericCacher.makeCacheKey(fieldName, fieldValue)),
     );
   }
 }

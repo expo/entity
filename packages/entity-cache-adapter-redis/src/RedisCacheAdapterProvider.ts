@@ -11,7 +11,7 @@ export default class RedisCacheAdapterProvider implements IEntityCacheAdapterPro
   constructor(private readonly context: GenericRedisCacheContext) {}
 
   getCacheAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>
+    entityConfiguration: EntityConfiguration<TFields>,
   ): IEntityCacheAdapter<TFields> {
     return new GenericEntityCacheAdapter(new GenericRedisCacher(this.context, entityConfiguration));
   }

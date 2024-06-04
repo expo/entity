@@ -16,9 +16,8 @@ describe(describePrivacyPolicyRuleWithAsyncTestCase, () => {
           async () => ({
             viewerContext: instance(mock(ViewerContext)),
             queryContext: instance(mock(EntityQueryContext)),
-            evaluationContext: instance(
-              mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()
-            ),
+            evaluationContext:
+              instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
             entity: anything(),
           }),
         ],
@@ -32,9 +31,8 @@ describe(describePrivacyPolicyRuleWithAsyncTestCase, () => {
           async () => ({
             viewerContext: instance(mock(ViewerContext)),
             queryContext: instance(mock(EntityQueryContext)),
-            evaluationContext: instance(
-              mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()
-            ),
+            evaluationContext:
+              instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
             entity: anything(),
           }),
         ],

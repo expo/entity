@@ -108,9 +108,9 @@ describe(EntityConfiguration, () => {
               },
               databaseAdapterFlavor: 'postgres',
               cacheAdapterFlavor: 'redis',
-            })
+            }),
         ).toThrow(
-          `Entity field name not allowed to prevent conflicts with standard Object prototype fields: ${keyName}`
+          `Entity field name not allowed to prevent conflicts with standard Object prototype fields: ${keyName}`,
         );
       });
     });

@@ -19,7 +19,7 @@ describe(EntityCompanion, () => {
       entityCompanionProvider,
       TestEntity.defineCompanionDefinition(),
       instance(tableDataCoordinatorMock),
-      instance(mock<IEntityMetricsAdapter>())
+      instance(mock<IEntityMetricsAdapter>()),
     );
     expect(companion.getLoaderFactory()).toBeInstanceOf(EntityLoaderFactory);
     expect(companion.getMutatorFactory()).toBeInstanceOf(EntityMutatorFactory);

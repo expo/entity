@@ -24,9 +24,10 @@ describe(EntityLoader, () => {
   it('loads entities', async () => {
     const dateToInsert = new Date();
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -58,8 +59,8 @@ describe(EntityLoader, () => {
               },
             ],
           ],
-        ])
-      )
+        ]),
+      ),
     );
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
@@ -70,7 +71,7 @@ describe(EntityLoader, () => {
       entityCache,
       StubQueryContextProvider,
       instance(mock<IEntityMetricsAdapter>()),
-      TestEntity.name
+      TestEntity.name,
     );
     const entityLoader = new EntityLoader(
       viewerContext,
@@ -81,14 +82,14 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
-      metricsAdapter
+      metricsAdapter,
     );
     const entity = await enforceAsyncResult(entityLoader.loadByIDAsync(id1));
     expect(entity.getID()).toEqual(id1);
     expect(entity.getField('dateField')).toEqual(dateToInsert);
 
     const entities = await enforceResultsAsync(
-      entityLoader.loadManyByFieldEqualingAsync('stringField', 'huh')
+      entityLoader.loadManyByFieldEqualingAsync('stringField', 'huh'),
     );
     expect(entities.map((m) => m.getID())).toEqual([id1, id2]);
 
@@ -106,7 +107,7 @@ describe(EntityLoader, () => {
     expect(entityResultDuplicateValues.get('huh')?.map((m) => m.getID())).toEqual([id1, id2]);
 
     await expect(entityLoader.loadByFieldEqualingAsync('stringField', 'huh')).rejects.toThrowError(
-      'loadByFieldEqualing: Multiple entities of type TestEntity found for stringField=huh'
+      'loadByFieldEqualing: Multiple entities of type TestEntity found for stringField=huh',
     );
 
     await expect(entityLoader.loadByIDNullableAsync(uuidv4())).resolves.toBeNull();
@@ -118,11 +119,11 @@ describe(EntityLoader, () => {
     expect(manyIdResults.get(id1)).not.toBeNull();
 
     await expect(enforceAsyncResult(entityLoader.loadByIDAsync(nonExistentId))).rejects.toThrow(
-      EntityNotFoundError
+      EntityNotFoundError,
     );
 
     await expect(entityLoader.loadByIDAsync('not-a-uuid')).rejects.toThrowError(
-      'Entity field not valid: TestEntity (customIdField = not-a-uuid)'
+      'Entity field not valid: TestEntity (customIdField = not-a-uuid)',
     );
   });
 
@@ -130,9 +131,10 @@ describe(EntityLoader, () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -173,8 +175,8 @@ describe(EntityLoader, () => {
               },
             ],
           ],
-        ])
-      )
+        ]),
+      ),
     );
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
@@ -184,7 +186,7 @@ describe(EntityLoader, () => {
       entityCache,
       StubQueryContextProvider,
       instance(mock<IEntityMetricsAdapter>()),
-      TestEntity.name
+      TestEntity.name,
     );
     const entityLoader = new EntityLoader(
       viewerContext,
@@ -195,7 +197,7 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
-      metricsAdapter
+      metricsAdapter,
     );
     const entities = await enforceResultsAsync(
       entityLoader.loadManyByFieldEqualityConjunctionAsync([
@@ -207,7 +209,7 @@ describe(EntityLoader, () => {
           fieldName: 'intField',
           fieldValues: [4],
         },
-      ])
+      ]),
     );
     expect(entities).toHaveLength(2);
     verify(
@@ -216,14 +218,14 @@ describe(EntityLoader, () => {
         queryContext,
         privacyPolicyEvaluationContext,
         anyOfClass(TestEntity),
-        anything()
-      )
+        anything(),
+      ),
     ).twice();
 
     await expect(
       entityLoader.loadManyByFieldEqualityConjunctionAsync([
         { fieldName: 'customIdField', fieldValue: 'not-a-uuid' },
-      ])
+      ]),
     ).rejects.toThrowError('Entity field not valid: TestEntity (customIdField = not-a-uuid)');
   });
 
@@ -231,9 +233,10 @@ describe(EntityLoader, () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -274,8 +277,8 @@ describe(EntityLoader, () => {
               },
             ],
           ],
-        ])
-      )
+        ]),
+      ),
     );
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
@@ -285,7 +288,7 @@ describe(EntityLoader, () => {
       entityCache,
       StubQueryContextProvider,
       instance(mock<IEntityMetricsAdapter>()),
-      TestEntity.name
+      TestEntity.name,
     );
     const entityLoader = new EntityLoader(
       viewerContext,
@@ -296,7 +299,7 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
-      metricsAdapter
+      metricsAdapter,
     );
     const result = await entityLoader.loadFirstByFieldEqualityConjunctionAsync(
       [
@@ -309,7 +312,7 @@ describe(EntityLoader, () => {
           fieldValue: 4,
         },
       ],
-      { orderBy: [{ fieldName: 'testIndexedField', order: OrderByOrdering.DESCENDING }] }
+      { orderBy: [{ fieldName: 'testIndexedField', order: OrderByOrdering.DESCENDING }] },
     );
     expect(result).not.toBeNull();
     expect(result!.ok).toBe(true);
@@ -320,8 +323,8 @@ describe(EntityLoader, () => {
         queryContext,
         privacyPolicyEvaluationContext,
         anyOfClass(TestEntity),
-        anything()
-      )
+        anything(),
+      ),
     ).once();
   });
 
@@ -329,9 +332,10 @@ describe(EntityLoader, () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -341,8 +345,8 @@ describe(EntityLoader, () => {
         queryContext,
         anything(),
         anything(),
-        anything()
-      )
+        anything(),
+      ),
     ).thenResolve([
       {
         customIdField: 'id',
@@ -363,7 +367,7 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
-      metricsAdapter
+      metricsAdapter,
     );
     const result = await entityLoader.loadManyByRawWhereClauseAsync('id = ?', [1], {
       orderBy: [{ fieldName: 'testIndexedField', order: OrderByOrdering.DESCENDING }],
@@ -378,8 +382,8 @@ describe(EntityLoader, () => {
         queryContext,
         privacyPolicyEvaluationContext,
         anyOfClass(TestEntity),
-        anything()
-      )
+        anything(),
+      ),
     ).once();
   });
 
@@ -388,9 +392,10 @@ describe(EntityLoader, () => {
     const spiedPrivacyPolicy = spy(privacyPolicy);
 
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
 
@@ -413,8 +418,8 @@ describe(EntityLoader, () => {
               },
             ],
           ],
-        ])
-      )
+        ]),
+      ),
     );
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
@@ -424,7 +429,7 @@ describe(EntityLoader, () => {
       entityCache,
       StubQueryContextProvider,
       instance(mock<IEntityMetricsAdapter>()),
-      TestEntity.name
+      TestEntity.name,
     );
     const entityLoader = new EntityLoader(
       viewerContext,
@@ -435,7 +440,7 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManager,
-      metricsAdapter
+      metricsAdapter,
     );
     const entity = await enforceAsyncResult(entityLoader.loadByIDAsync(id1));
     verify(
@@ -444,16 +449,17 @@ describe(EntityLoader, () => {
         queryContext,
         privacyPolicyEvaluationContext,
         entity,
-        anything()
-      )
+        anything(),
+      ),
     ).once();
   });
 
   it('invalidates upon invalidate one', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
@@ -470,20 +476,21 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManagerInstance,
-      metricsAdapter
+      metricsAdapter,
     );
     await entityLoader.invalidateFieldsAsync({ customIdField: id1 } as any);
 
     verify(
-      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any))
+      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any)),
     ).once();
   });
 
   it('invalidates upon invalidate by field', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
@@ -500,19 +507,20 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManagerInstance,
-      metricsAdapter
+      metricsAdapter,
     );
     await entityLoader.invalidateFieldsAsync({ customIdField: id1 } as any);
     verify(
-      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any))
+      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any)),
     ).once();
   });
 
   it('invalidates upon invalidate by entity', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
@@ -533,19 +541,20 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManagerInstance,
-      metricsAdapter
+      metricsAdapter,
     );
     await entityLoader.invalidateEntityAsync(entityInstance);
     verify(
-      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any))
+      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any)),
     ).once();
   });
 
   it('returns error result when not allowed', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicyMock = mock(TestEntityPrivacyPolicy);
@@ -553,7 +562,7 @@ describe(EntityLoader, () => {
 
     const id1 = uuidv4();
     when(
-      dataManagerMock.loadManyByFieldEqualingAsync(anything(), anything(), anything())
+      dataManagerMock.loadManyByFieldEqualingAsync(anything(), anything(), anything()),
     ).thenResolve(new Map().set(id1, [{ customIdField: id1 }]));
 
     const rejectionError = new Error();
@@ -564,8 +573,8 @@ describe(EntityLoader, () => {
         queryContext,
         privacyPolicyEvaluationContext,
         anyOfClass(TestEntity),
-        anything()
-      )
+        anything(),
+      ),
     ).thenReject(rejectionError);
 
     const privacyPolicy = instance(privacyPolicyMock);
@@ -580,7 +589,7 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManagerInstance,
-      metricsAdapter
+      metricsAdapter,
     );
 
     const entityResult = await entityLoader.loadByIDAsync(id1);
@@ -591,9 +600,10 @@ describe(EntityLoader, () => {
 
   it('throws upon database adapter error', async () => {
     const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext = instance(
-      mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = StubQueryContextProvider.getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
@@ -602,7 +612,7 @@ describe(EntityLoader, () => {
     const error = new Error();
 
     when(
-      dataManagerMock.loadManyByFieldEqualingAsync(anything(), anything(), anything())
+      dataManagerMock.loadManyByFieldEqualingAsync(anything(), anything(), anything()),
     ).thenReject(error);
 
     const dataManagerInstance = instance(dataManagerMock);
@@ -616,7 +626,7 @@ describe(EntityLoader, () => {
       /* entitySelectedFields */ undefined,
       privacyPolicy,
       dataManagerInstance,
-      metricsAdapter
+      metricsAdapter,
     );
 
     const loadByValue = uuidv4();
@@ -627,19 +637,19 @@ describe(EntityLoader, () => {
     await expect(entityLoader.enforcing().loadManyByIDsAsync([loadByValue])).rejects.toEqual(error);
     await expect(entityLoader.loadManyByIDsNullableAsync([loadByValue])).rejects.toEqual(error);
     await expect(
-      entityLoader.enforcing().loadManyByIDsNullableAsync([loadByValue])
+      entityLoader.enforcing().loadManyByIDsNullableAsync([loadByValue]),
     ).rejects.toEqual(error);
     await expect(
-      entityLoader.loadManyByFieldEqualingAsync('customIdField', loadByValue)
+      entityLoader.loadManyByFieldEqualingAsync('customIdField', loadByValue),
     ).rejects.toEqual(error);
     await expect(
-      entityLoader.enforcing().loadManyByFieldEqualingAsync('customIdField', loadByValue)
+      entityLoader.enforcing().loadManyByFieldEqualingAsync('customIdField', loadByValue),
     ).rejects.toEqual(error);
     await expect(
-      entityLoader.loadManyByFieldEqualingManyAsync('customIdField', [loadByValue])
+      entityLoader.loadManyByFieldEqualingManyAsync('customIdField', [loadByValue]),
     ).rejects.toEqual(error);
     await expect(
-      entityLoader.enforcing().loadManyByFieldEqualingManyAsync('customIdField', [loadByValue])
+      entityLoader.enforcing().loadManyByFieldEqualingManyAsync('customIdField', [loadByValue]),
     ).rejects.toEqual(error);
   });
 });

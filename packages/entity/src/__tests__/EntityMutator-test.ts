@@ -68,7 +68,7 @@ class TestMutationTrigger extends EntityMutationTrigger<
       ViewerContext,
       TestEntity,
       keyof TestFields
-    >
+    >,
   ): Promise<void> {}
 }
 
@@ -89,7 +89,7 @@ const setUpMutationValidatorSpies = (
     ViewerContext,
     TestEntity,
     keyof TestFields
-  >[]
+  >[],
 ): EntityMutationValidator<TestFields, string, ViewerContext, TestEntity, keyof TestFields>[] => {
   return mutationValidators.map((validator) => spy(validator));
 };
@@ -110,7 +110,7 @@ const verifyValidatorCounts = (
     ViewerContext,
     TestEntity,
     keyof TestFields
-  >
+  >,
 ): void => {
   for (const validator of mutationValidatorSpies) {
     verify(
@@ -118,8 +118,8 @@ const verifyValidatorCounts = (
         viewerContext,
         anyOfClass(EntityTransactionalQueryContext),
         anyOfClass(TestEntity),
-        deepEqual(mutationInfo)
-      )
+        deepEqual(mutationInfo),
+      ),
     ).times(expectedCalls);
   }
 };
@@ -131,7 +131,7 @@ const setUpMutationTriggerSpies = (
     ViewerContext,
     TestEntity,
     keyof TestFields
-  >
+  >,
 ): EntityMutationTriggerConfiguration<
   TestFields,
   string,
@@ -185,7 +185,7 @@ const verifyTriggerCounts = (
     ViewerContext,
     TestEntity,
     keyof TestFields
-  >
+  >,
 ): void => {
   Object.keys(executed).forEach((s) => {
     if ((executed as any)[s]) {
@@ -194,8 +194,8 @@ const verifyTriggerCounts = (
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
           anyOfClass(TestEntity),
-          deepEqual(mutationInfo)
-        )
+          deepEqual(mutationInfo),
+        ),
       ).once();
     } else {
       verify(
@@ -203,8 +203,8 @@ const verifyTriggerCounts = (
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
           anyOfClass(TestEntity),
-          deepEqual(mutationInfo)
-        )
+          deepEqual(mutationInfo),
+        ),
       ).never();
     }
   });
@@ -214,8 +214,8 @@ const verifyTriggerCounts = (
       viewerContext,
       anyOfClass(EntityTransactionalQueryContext),
       anyOfClass(TestEntity),
-      deepEqual(mutationInfo)
-    )
+      deepEqual(mutationInfo),
+    ),
   ).once();
 
   verify(
@@ -223,21 +223,21 @@ const verifyTriggerCounts = (
       viewerContext,
       anyOfClass(EntityTransactionalQueryContext),
       anyOfClass(TestEntity),
-      deepEqual(mutationInfo)
-    )
+      deepEqual(mutationInfo),
+    ),
   ).once();
 
   verify(
     mutationTriggerSpies.afterCommit![0]!.executeAsync(
       viewerContext,
       anyOfClass(TestEntity),
-      deepEqual(mutationInfo)
-    )
+      deepEqual(mutationInfo),
+    ),
   ).once();
 };
 
 const createEntityMutatorFactory = (
-  existingObjects: TestFields[]
+  existingObjects: TestFields[],
 ): {
   privacyPolicy: TestEntityPrivacyPolicy;
   entityLoaderFactory: EntityLoaderFactory<
@@ -299,12 +299,12 @@ const createEntityMutatorFactory = (
     testEntityConfiguration,
     StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
-      new Map([[testEntityConfiguration.tableName, existingObjects]])
-    )
+      new Map([[testEntityConfiguration.tableName, existingObjects]]),
+    ),
   );
   const customStubDatabaseAdapterProvider: IEntityDatabaseAdapterProvider = {
     getDatabaseAdapter<TFields extends Record<string, any>>(
-      _entityConfiguration: EntityConfiguration<TFields>
+      _entityConfiguration: EntityConfiguration<TFields>,
     ): EntityDatabaseAdapter<TFields> {
       return databaseAdapter as any as EntityDatabaseAdapter<TFields>;
     },
@@ -332,7 +332,7 @@ const createEntityMutatorFactory = (
           cacheAdapterProvider,
         },
       ],
-    ])
+    ]),
   );
 
   const dataManager = new EntityDataManager(
@@ -340,12 +340,12 @@ const createEntityMutatorFactory = (
     entityCache,
     StubQueryContextProvider,
     metricsAdapter,
-    TestEntity.name
+    TestEntity.name,
   );
   const entityLoaderFactory = new EntityLoaderFactory(
     companionProvider.getCompanionForEntity(TestEntity),
     dataManager,
-    metricsAdapter
+    metricsAdapter,
   );
   const entityMutatorFactory = new EntityMutatorFactory(
     companionProvider,
@@ -356,7 +356,7 @@ const createEntityMutatorFactory = (
     mutationTriggers,
     entityLoaderFactory,
     databaseAdapter,
-    metricsAdapter
+    metricsAdapter,
   );
   return {
     privacyPolicy: companionProvider.getCompanionForEntity(TestEntity).privacyPolicy,
@@ -439,8 +439,8 @@ describe(EntityMutatorFactory, () => {
           anyOfClass(EntityTransactionalQueryContext),
           deepEqual({ previousValue: null, cascadingDeleteCause: null }),
           anyOfClass(TestEntity),
-          anything()
-        )
+          anything(),
+        ),
       ).once();
     });
 
@@ -487,7 +487,7 @@ describe(EntityMutatorFactory, () => {
           beforeDelete: false,
           afterDelete: false,
         },
-        { type: EntityMutationType.CREATE }
+        { type: EntityMutationType.CREATE },
       );
     });
 
@@ -530,17 +530,18 @@ describe(EntityMutatorFactory, () => {
   describe('forUpdate', () => {
     it('updates entities', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(
-        mock<
-          EntityPrivacyPolicyEvaluationContext<
-            TestFields,
-            string,
-            ViewerContext,
-            TestEntity,
-            keyof TestFields
-          >
-        >()
-      );
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              string,
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -567,7 +568,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id2)
+          .loadByIDAsync(id2),
       );
 
       const updatedEntity = await entityMutatorFactory
@@ -582,7 +583,7 @@ describe(EntityMutatorFactory, () => {
       const reloadedEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id2)
+          .loadByIDAsync(id2),
       );
       expect(reloadedEntity.getAllFields()).toMatchObject(updatedEntity.getAllFields());
     });
@@ -618,7 +619,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, { previousValue: null, cascadingDeleteCause: null })
-          .loadByIDAsync(id2)
+          .loadByIDAsync(id2),
       );
 
       await entityMutatorFactory
@@ -632,8 +633,8 @@ describe(EntityMutatorFactory, () => {
           anyOfClass(EntityTransactionalQueryContext),
           deepEqual({ previousValue: existingEntity, cascadingDeleteCause: null }),
           anyOfClass(TestEntity),
-          anything()
-        )
+          anything(),
+        ),
       ).once();
 
       verify(
@@ -642,24 +643,25 @@ describe(EntityMutatorFactory, () => {
           anyOfClass(EntityTransactionalQueryContext),
           deepEqual({ previousValue: existingEntity, cascadingDeleteCause: null }),
           anyOfClass(TestEntity),
-          anything()
-        )
+          anything(),
+        ),
       ).once();
     });
 
     it('executes triggers', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(
-        mock<
-          EntityPrivacyPolicyEvaluationContext<
-            TestFields,
-            string,
-            ViewerContext,
-            TestEntity,
-            keyof TestFields
-          >
-        >()
-      );
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              string,
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -689,7 +691,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id2)
+          .loadByIDAsync(id2),
       );
 
       await entityMutatorFactory
@@ -712,23 +714,24 @@ describe(EntityMutatorFactory, () => {
           type: EntityMutationType.UPDATE,
           previousValue: existingEntity,
           cascadingDeleteCause: null,
-        }
+        },
       );
     });
 
     it('executes validators', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(
-        mock<
-          EntityPrivacyPolicyEvaluationContext<
-            TestFields,
-            string,
-            ViewerContext,
-            TestEntity,
-            keyof TestFields
-          >
-        >()
-      );
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              string,
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -758,7 +761,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id2)
+          .loadByIDAsync(id2),
       );
 
       await entityMutatorFactory
@@ -775,17 +778,18 @@ describe(EntityMutatorFactory, () => {
 
     it('throws when id field is updated', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(
-        mock<
-          EntityPrivacyPolicyEvaluationContext<
-            TestFields,
-            string,
-            ViewerContext,
-            TestEntity,
-            keyof TestFields
-          >
-        >()
-      );
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              string,
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -803,20 +807,20 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id1)
+          .loadByIDAsync(id1),
       );
 
       await expect(
         entityMutatorFactory
           .forUpdate(existingEntity, queryContext)
           .setField('customIdField', uuidv4())
-          .enforceUpdateAsync()
+          .enforceUpdateAsync(),
       ).rejects.toThrow('id field updates not supported: (entityClass = TestEntity)');
 
       const reloadedEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id1)
+          .loadByIDAsync(id1),
       );
       expect(reloadedEntity.getAllFields()).toMatchObject(existingEntity.getAllFields());
     });
@@ -825,17 +829,18 @@ describe(EntityMutatorFactory, () => {
   describe('forDelete', () => {
     it('deletes entities', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(
-        mock<
-          EntityPrivacyPolicyEvaluationContext<
-            TestFields,
-            string,
-            ViewerContext,
-            TestEntity,
-            keyof TestFields
-          >
-        >()
-      );
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              string,
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -853,7 +858,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id1)
+          .loadByIDAsync(id1),
       );
       expect(existingEntity).toBeTruthy();
 
@@ -863,24 +868,25 @@ describe(EntityMutatorFactory, () => {
         enforceAsyncResult(
           entityLoaderFactory
             .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-            .loadByIDAsync(id1)
-        )
+            .loadByIDAsync(id1),
+        ),
       ).rejects.toBeInstanceOf(Error);
     });
 
     it('checks privacy', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(
-        mock<
-          EntityPrivacyPolicyEvaluationContext<
-            TestFields,
-            string,
-            ViewerContext,
-            TestEntity,
-            keyof TestFields
-          >
-        >()
-      );
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              string,
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -901,7 +907,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id1)
+          .loadByIDAsync(id1),
       );
 
       await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
@@ -912,24 +918,25 @@ describe(EntityMutatorFactory, () => {
           anyOfClass(EntityTransactionalQueryContext),
           anything(),
           anyOfClass(TestEntity),
-          anything()
-        )
+          anything(),
+        ),
       ).once();
     });
 
     it('executes triggers', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(
-        mock<
-          EntityPrivacyPolicyEvaluationContext<
-            TestFields,
-            string,
-            ViewerContext,
-            TestEntity,
-            keyof TestFields
-          >
-        >()
-      );
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              string,
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -950,7 +957,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id1)
+          .loadByIDAsync(id1),
       );
 
       await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
@@ -966,23 +973,24 @@ describe(EntityMutatorFactory, () => {
           beforeDelete: true,
           afterDelete: true,
         },
-        { type: EntityMutationType.DELETE, cascadingDeleteCause: null }
+        { type: EntityMutationType.DELETE, cascadingDeleteCause: null },
       );
     });
 
     it('does not execute validators', async () => {
       const viewerContext = mock<ViewerContext>();
-      const privacyPolicyEvaluationContext = instance(
-        mock<
-          EntityPrivacyPolicyEvaluationContext<
-            TestFields,
-            string,
-            ViewerContext,
-            TestEntity,
-            keyof TestFields
-          >
-        >()
-      );
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              string,
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
       const id1 = uuidv4();
@@ -1003,7 +1011,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-          .loadByIDAsync(id1)
+          .loadByIDAsync(id1),
       );
 
       await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
@@ -1016,17 +1024,18 @@ describe(EntityMutatorFactory, () => {
 
   it('invalidates cache for fields upon create', async () => {
     const viewerContext = mock<ViewerContext>();
-    const privacyPolicyEvaluationContext = instance(
-      mock<
-        EntityPrivacyPolicyEvaluationContext<
-          TestFields,
-          string,
-          ViewerContext,
-          TestEntity,
-          keyof TestFields
-        >
-      >()
-    );
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            string,
+            ViewerContext,
+            TestEntity,
+            keyof TestFields
+          >
+        >(),
+      );
     const queryContext = StubQueryContextProvider.getQueryContext();
 
     const id1 = uuidv4();
@@ -1044,7 +1053,7 @@ describe(EntityMutatorFactory, () => {
     const entites1 = await enforceResultsAsync(
       entityLoaderFactory
         .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-        .loadManyByFieldEqualingAsync('stringField', 'huh')
+        .loadManyByFieldEqualingAsync('stringField', 'huh'),
     );
     expect(entites1).toHaveLength(1);
 
@@ -1052,13 +1061,13 @@ describe(EntityMutatorFactory, () => {
       entityMutatorFactory
         .forCreate(viewerContext, queryContext)
         .setField('stringField', 'huh')
-        .createAsync()
+        .createAsync(),
     );
 
     const entities2 = await enforceResultsAsync(
       entityLoaderFactory
         .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
-        .loadManyByFieldEqualingAsync('stringField', 'huh')
+        .loadManyByFieldEqualingAsync('stringField', 'huh'),
     );
     expect(entities2).toHaveLength(2);
   });
@@ -1082,7 +1091,7 @@ describe(EntityMutatorFactory, () => {
       entityMutatorFactory
         .forCreate(viewerContext, queryContext)
         .setField('stringField', 10 as any)
-        .createAsync()
+        .createAsync(),
     ).rejects.toThrowError('Entity field not valid: TestEntity (stringField = 10)');
 
     const createdEntity = await entityMutatorFactory
@@ -1094,7 +1103,7 @@ describe(EntityMutatorFactory, () => {
       entityMutatorFactory
         .forUpdate(createdEntity, queryContext)
         .setField('stringField', 10 as any)
-        .updateAsync()
+        .updateAsync(),
     ).rejects.toThrowError('Entity field not valid: TestEntity (stringField = 10)');
   });
 
@@ -1147,8 +1156,8 @@ describe(EntityMutatorFactory, () => {
       entityLoaderFactoryMock.forLoad(
         viewerContext,
         anyOfClass(EntityTransactionalQueryContext),
-        anything()
-      )
+        anything(),
+      ),
     ).thenReturn(entityLoader);
     const entityLoaderFactory = instance(entityLoaderFactoryMock);
 
@@ -1160,8 +1169,8 @@ describe(EntityMutatorFactory, () => {
         anyOfClass(EntityTransactionalQueryContext),
         anything(),
         anyOfClass(SimpleTestEntity),
-        anything()
-      )
+        anything(),
+      ),
     ).thenReject(rejectionError);
     when(
       privacyPolicyMock.authorizeUpdateAsync(
@@ -1169,8 +1178,8 @@ describe(EntityMutatorFactory, () => {
         anyOfClass(EntityTransactionalQueryContext),
         anything(),
         anyOfClass(SimpleTestEntity),
-        anything()
-      )
+        anything(),
+      ),
     ).thenReject(rejectionError);
     when(
       privacyPolicyMock.authorizeDeleteAsync(
@@ -1178,8 +1187,8 @@ describe(EntityMutatorFactory, () => {
         anyOfClass(EntityTransactionalQueryContext),
         anything(),
         anyOfClass(SimpleTestEntity),
-        anything()
-      )
+        anything(),
+      ),
     ).thenReject(rejectionError);
 
     const entityMutatorFactory = new EntityMutatorFactory(
@@ -1191,7 +1200,7 @@ describe(EntityMutatorFactory, () => {
       {},
       entityLoaderFactory,
       databaseAdapter,
-      metricsAdapter
+      metricsAdapter,
     );
 
     const entityCreateResult = await entityMutatorFactory
@@ -1271,30 +1280,30 @@ describe(EntityMutatorFactory, () => {
       entityLoaderFactoryMock.forLoad(
         viewerContext,
         anyOfClass(EntityTransactionalQueryContext),
-        anything()
-      )
+        anything(),
+      ),
     ).thenReturn(entityLoader);
     const entityLoaderFactory = instance(entityLoaderFactoryMock);
 
     const rejectionError = new Error();
 
     when(
-      databaseAdapterMock.insertAsync(anyOfClass(EntityTransactionalQueryContext), anything())
+      databaseAdapterMock.insertAsync(anyOfClass(EntityTransactionalQueryContext), anything()),
     ).thenReject(rejectionError);
     when(
       databaseAdapterMock.updateAsync(
         anyOfClass(EntityTransactionalQueryContext),
         anything(),
         anything(),
-        anything()
-      )
+        anything(),
+      ),
     ).thenReject(rejectionError);
     when(
       databaseAdapterMock.deleteAsync(
         anyOfClass(EntityTransactionalQueryContext),
         anything(),
-        anything()
-      )
+        anything(),
+      ),
     ).thenReject(rejectionError);
 
     const entityMutatorFactory = new EntityMutatorFactory(
@@ -1306,17 +1315,17 @@ describe(EntityMutatorFactory, () => {
       {},
       entityLoaderFactory,
       instance(databaseAdapterMock),
-      metricsAdapter
+      metricsAdapter,
     );
 
     await expect(
-      entityMutatorFactory.forCreate(viewerContext, queryContext).createAsync()
+      entityMutatorFactory.forCreate(viewerContext, queryContext).createAsync(),
     ).rejects.toEqual(rejectionError);
     await expect(
-      entityMutatorFactory.forUpdate(fakeEntity, queryContext).updateAsync()
+      entityMutatorFactory.forUpdate(fakeEntity, queryContext).updateAsync(),
     ).rejects.toEqual(rejectionError);
     await expect(
-      entityMutatorFactory.forDelete(fakeEntity, queryContext).deleteAsync()
+      entityMutatorFactory.forDelete(fakeEntity, queryContext).deleteAsync(),
     ).rejects.toEqual(rejectionError);
   });
 
@@ -1330,14 +1339,14 @@ describe(EntityMutatorFactory, () => {
       entityMutatorFactory
         .forCreate(viewerContext, queryContext)
         .setField('stringField', 'huh')
-        .createAsync()
+        .createAsync(),
     );
 
     await enforceAsyncResult(
       entityMutatorFactory
         .forUpdate(newEntity, queryContext)
         .setField('stringField', 'wat')
-        .updateAsync()
+        .updateAsync(),
     );
 
     await enforceAsyncResult(entityMutatorFactory.forDelete(newEntity, queryContext).deleteAsync());
@@ -1347,24 +1356,24 @@ describe(EntityMutatorFactory, () => {
         objectContaining({
           type: EntityMetricsMutationType.CREATE,
           entityClassName: TestEntity.name,
-        })
-      )
+        }),
+      ),
     ).once();
     verify(
       spiedMetricsAdapter.logMutatorMutationEvent(
         objectContaining({
           type: EntityMetricsMutationType.UPDATE,
           entityClassName: TestEntity.name,
-        })
-      )
+        }),
+      ),
     ).once();
     verify(
       spiedMetricsAdapter.logMutatorMutationEvent(
         objectContaining({
           type: EntityMetricsMutationType.DELETE,
           entityClassName: TestEntity.name,
-        })
-      )
+        }),
+      ),
     ).once();
     verify(spiedMetricsAdapter.logMutatorMutationEvent(anything())).thrice();
   });

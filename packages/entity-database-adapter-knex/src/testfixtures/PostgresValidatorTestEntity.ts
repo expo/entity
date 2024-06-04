@@ -107,7 +107,7 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
 > {
   constructor(
     private fieldName: keyof PostgresValidatorTestEntityFields,
-    private badValue: string
+    private badValue: string,
   ) {
     super();
   }
@@ -121,7 +121,7 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
       string,
       ViewerContext,
       PostgresValidatorTestEntity
-    >
+    >,
   ): Promise<void> {
     if (entity.getField(this.fieldName) === this.badValue) {
       throw new Error(`${this.fieldName} cannot have value ${this.badValue}`);

@@ -9,14 +9,14 @@ type TestLoadParams = { lp: string };
 
 class TestEntitySecondaryCache implements ISecondaryEntityCache<TestFields, TestLoadParams> {
   constructor(
-    private readonly prefilledResults: Map<Readonly<TestLoadParams>, Readonly<TestFields>>
+    private readonly prefilledResults: Map<Readonly<TestLoadParams>, Readonly<TestFields>>,
   ) {}
 
   async loadManyThroughAsync(
     loadParamsArray: readonly Readonly<TestLoadParams>[],
     fetcher: (
-      fetcherLoadParamsArray: readonly Readonly<TestLoadParams>[]
-    ) => Promise<ReadonlyMap<Readonly<TestLoadParams>, Readonly<TestFields> | null>>
+      fetcherLoadParamsArray: readonly Readonly<TestLoadParams>[],
+    ) => Promise<ReadonlyMap<Readonly<TestLoadParams>, Readonly<TestFields> | null>>,
   ): Promise<ReadonlyMap<Readonly<TestLoadParams>, Readonly<TestFields> | null>> {
     // this does an unusual method of calling fetcher, but there's no constraint that says fetcher can only be called once
     // so this tests that
@@ -50,10 +50,10 @@ describe(ComposedSecondaryEntityCache, () => {
     const lp3 = { lp: '3' };
 
     const primarySecondaryEntityCache = new TestEntitySecondaryCache(
-      new Map([[lp1, { id: 'primary-1' }]])
+      new Map([[lp1, { id: 'primary-1' }]]),
     );
     const fallbackSecondaryEntityCache = new TestEntitySecondaryCache(
-      new Map([[lp2, { id: 'fallback-2' }]])
+      new Map([[lp2, { id: 'fallback-2' }]]),
     );
 
     const composedSecondaryEntityCache = new ComposedSecondaryEntityCache([
@@ -64,7 +64,7 @@ describe(ComposedSecondaryEntityCache, () => {
     const results = await composedSecondaryEntityCache.loadManyThroughAsync(
       [lp1, lp2, lp3],
       async (fetcherLoadParamsArray) =>
-        new Map(fetcherLoadParamsArray.map((flp) => [flp, { id: `db-fetched-${flp.lp}` }]))
+        new Map(fetcherLoadParamsArray.map((flp) => [flp, { id: `db-fetched-${flp.lp}` }])),
     );
 
     expect(results.get(lp1)).toEqual({ id: 'primary-1' });
@@ -76,7 +76,7 @@ describe(ComposedSecondaryEntityCache, () => {
     const resultsAfterInvalidate = await composedSecondaryEntityCache.loadManyThroughAsync(
       [lp1, lp2, lp3],
       async (fetcherLoadParamsArray) =>
-        new Map(fetcherLoadParamsArray.map((flp) => [flp, { id: `db-fetched-${flp.lp}` }]))
+        new Map(fetcherLoadParamsArray.map((flp) => [flp, { id: `db-fetched-${flp.lp}` }])),
     );
 
     expect(resultsAfterInvalidate.get(lp1)).toEqual({ id: 'db-fetched-1' });
@@ -93,7 +93,7 @@ describe(ComposedSecondaryEntityCache, () => {
     const results = await composedSecondaryEntityCache.loadManyThroughAsync(
       [lp1],
       async (fetcherLoadParamsArray) =>
-        new Map(fetcherLoadParamsArray.map((flp) => [flp, { id: `db-fetched-${flp.lp}` }]))
+        new Map(fetcherLoadParamsArray.map((flp) => [flp, { id: `db-fetched-${flp.lp}` }])),
     );
 
     expect(results.get(lp1)).toEqual({ id: 'db-fetched-1' });

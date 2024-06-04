@@ -191,7 +191,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
-          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
+          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
         );
         return escapedParts.join(delimiter);
       },
@@ -214,11 +214,11 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   ])('behavior: %p', async (edgeDeletionBehavior) => {
     const { CategoryEntity, OtherEntity } = await makeEntityClasses(
       knexInstance,
-      edgeDeletionBehavior
+      edgeDeletionBehavior,
     );
 
     const viewerContext = new ViewerContext(
-      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
+      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
     );
 
     const category1 = await CategoryEntity.creator(viewerContext).enforceCreateAsync();
@@ -233,7 +233,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
     if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.SET_NULL) {
       await expect(
-        CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID())
+        CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID()),
       ).resolves.toBeNull();
       const otherLoaded = await OtherEntity.loader(viewerContext)
         .enforcing()
@@ -241,7 +241,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(otherLoaded?.getField('parent_category_id')).toBeNull();
     } else if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY) {
       await expect(
-        CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID())
+        CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID()),
       ).resolves.toBeNull();
       const otherLoaded = await OtherEntity.loader(viewerContext)
         .enforcing()
@@ -249,10 +249,10 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(otherLoaded?.getField('parent_category_id')).toBeNull();
     } else {
       await expect(
-        CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID())
+        CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(category1.getID()),
       ).resolves.toBeNull();
       await expect(
-        OtherEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(other1.getID())
+        OtherEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(other1.getID()),
       ).resolves.toBeNull();
     }
   });

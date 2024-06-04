@@ -19,7 +19,7 @@ export default abstract class ReadonlyEntity<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   private readonly viewerContext: TViewerContext;
   private readonly id: TID;
@@ -100,7 +100,7 @@ export default abstract class ReadonlyEntity<
    * @returns the value of the field or undefined if not loaded with that field
    */
   getField<K extends keyof Pick<TFields, TSelectedFields>>(
-    fieldName: K
+    fieldName: K,
   ): Pick<TFields, TSelectedFields>[K] {
     return this.selectedFields[fieldName];
   }
@@ -137,7 +137,7 @@ export default abstract class ReadonlyEntity<
       TMEntity,
       TMSelectedFields
     >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
   >(
     this: IEntityClass<
       TMFields,
@@ -151,7 +151,7 @@ export default abstract class ReadonlyEntity<
     queryContext: EntityQueryContext = viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getQueryContext()
+      .getQueryContext(),
   ): EntityLoader<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)

@@ -8,7 +8,7 @@ export const timeAndLogLoadEventAsync =
   (
     metricsAdapter: IEntityMetricsAdapter,
     loadType: EntityMetricsLoadType,
-    entityClassName: string
+    entityClassName: string,
   ) =>
   async <TFields>(promise: Promise<readonly Readonly<TFields>[]>) => {
     const startTime = Date.now();
@@ -29,10 +29,10 @@ export const timeAndLogLoadMapEventAsync =
   (
     metricsAdapter: IEntityMetricsAdapter,
     loadType: EntityMetricsLoadType,
-    entityClassName: string
+    entityClassName: string,
   ) =>
   async <TFields, N extends keyof TFields>(
-    promise: Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>>
+    promise: Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>>,
   ) => {
     const startTime = Date.now();
     const result = await promise;
@@ -54,7 +54,7 @@ export const timeAndLogMutationEventAsync =
   (
     metricsAdapter: IEntityMetricsAdapter,
     mutationType: EntityMetricsMutationType,
-    entityClassName: string
+    entityClassName: string,
   ) =>
   async <T>(promise: Promise<T>) => {
     const startTime = Date.now();

@@ -18,11 +18,11 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
 {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
-    private readonly localMemoryCache: LocalMemoryCache<TFields>
+    private readonly localMemoryCache: LocalMemoryCache<TFields>,
   ) {}
 
   static createLRUCache<TFields>(
-    options: { maxSize?: number; ttlSeconds?: number } = {}
+    options: { maxSize?: number; ttlSeconds?: number } = {},
   ): LocalMemoryCache<TFields> {
     const DEFAULT_LRU_CACHE_MAX_AGE_SECONDS = 10;
     const DEFAULT_LRU_CACHE_SIZE = 10000;
@@ -42,7 +42,7 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
   }
 
   public async loadManyAsync(
-    keys: readonly string[]
+    keys: readonly string[],
   ): Promise<ReadonlyMap<string, CacheLoadResult<TFields>>> {
     const cacheResults = new Map<string, CacheLoadResult<TFields>>();
     for (const key of keys) {
@@ -85,7 +85,7 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
 
   public makeCacheKey<N extends keyof TFields>(
     fieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TFields[N]>,
   ): string {
     const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
     invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
@@ -98,7 +98,7 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
 
     const delimiter = ':';
     const escapedParts = parts.map((part) =>
-      part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
+      part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
     );
     return escapedParts.join(delimiter);
   }

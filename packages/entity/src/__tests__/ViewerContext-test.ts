@@ -22,7 +22,7 @@ describe(ViewerContext, () => {
           'postgres',
           async (queryContext) => {
             return queryContext.isInTransaction();
-          }
+          },
         );
       expect(didCreateTransaction).toBe(true);
     });

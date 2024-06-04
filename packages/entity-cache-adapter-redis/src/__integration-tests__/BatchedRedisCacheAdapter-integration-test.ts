@@ -19,7 +19,7 @@ class BatchedRedis implements IRedis {
     this.batchMgetAsync.bind(this),
     {
       maxBatchInterval: 0,
-    }
+    },
   );
 
   constructor(private readonly redis: Redis) {}
@@ -40,7 +40,7 @@ class BatchedRedis implements IRedis {
         const result = keysToResults.get(key);
         invariant(result !== undefined, 'result should not be undefined');
         return result;
-      })
+      }),
     );
   }
 
@@ -69,7 +69,7 @@ describe(GenericRedisCacher, () => {
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
-          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
+          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
         );
         return escapedParts.join(delimiter);
       },
@@ -90,7 +90,7 @@ describe(GenericRedisCacher, () => {
   it('has correct caching behavior', async () => {
     // simulate two requests
     const viewerContext = new ViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
 
     const mgetSpy = jest.spyOn(redis, 'mget');
@@ -108,13 +108,13 @@ describe(GenericRedisCacher, () => {
     // loading an entity should put it in cache. load by multiple requests and multiple fields in same tick to ensure batch works
     mgetSpy.mockClear();
     const viewerContext1 = new ViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
     const viewerContext2 = new ViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
     const viewerContext3 = new ViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
     const [entity1, entity2, entity3] = await Promise.all([
       RedisTestEntity.loader(viewerContext1).enforcing().loadByIDAsync(entity1Created.getID()),
@@ -145,17 +145,15 @@ describe(GenericRedisCacher, () => {
 
     // simulate non existent db fetch, should write negative result ('') to cache
     const nonExistentId = uuidv4();
-    const entityNonExistentResult = await RedisTestEntity.loader(viewerContext).loadByIDAsync(
-      nonExistentId
-    );
+    const entityNonExistentResult =
+      await RedisTestEntity.loader(viewerContext).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
     const cacheKeyNonExistent = cacheKeyMaker('id', nonExistentId);
     const nonExistentCachedValue = await redis.get(cacheKeyNonExistent);
     expect(nonExistentCachedValue).toEqual('');
     // load again through entities framework to ensure it reads negative result
-    const entityNonExistentResult2 = await RedisTestEntity.loader(viewerContext).loadByIDAsync(
-      nonExistentId
-    );
+    const entityNonExistentResult2 =
+      await RedisTestEntity.loader(viewerContext).loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly in both caches

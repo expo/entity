@@ -11,7 +11,7 @@ import invariant from 'invariant';
 export const computeIfAbsent = <K, V>(
   map: Map<K, V>,
   key: K,
-  mappingFunction: (key: K) => V
+  mappingFunction: (key: K) => V,
 ): V => {
   if (!map.has(key)) {
     const value = mappingFunction(key);
@@ -28,7 +28,7 @@ export const computeIfAbsent = <K, V>(
  */
 export const mapMap = <K, V, M>(
   map: ReadonlyMap<K, V>,
-  mapper: (value: V, key: K) => M
+  mapper: (value: V, key: K) => M,
 ): Map<K, M> => {
   const resultingMap = new Map();
   for (const [k, v] of map) {
@@ -45,7 +45,7 @@ export const mapMap = <K, V, M>(
  */
 export const mapMapAsync = async function <K, V, M>(
   map: ReadonlyMap<K, V>,
-  mapper: (value: V, key: K) => Promise<M>
+  mapper: (value: V, key: K) => Promise<M>,
 ): Promise<Map<K, M>> {
   const resultingMap: Map<K, M> = new Map();
   await Promise.all(
@@ -53,7 +53,7 @@ export const mapMapAsync = async function <K, V, M>(
       const initialValue = map.get(k) as V;
       const result = await mapper(initialValue, k);
       resultingMap.set(k, result);
-    })
+    }),
   );
   return resultingMap;
 };
@@ -69,7 +69,7 @@ export const mapMapAsync = async function <K, V, M>(
  */
 export const mapKeys = <K, V, K2>(
   map: ReadonlyMap<K, V>,
-  mapper: (key: K, value: V) => K2
+  mapper: (key: K, value: V) => K2,
 ): Map<K2, V> => {
   const resultingMap = new Map();
   for (const [k, v] of map) {
@@ -92,7 +92,7 @@ export const mapKeys = <K, V, K2>(
 export const zipToMap = <K, V>(keys: readonly K[], values: readonly V[]): Map<K, V> => {
   invariant(
     keys.length === values.length,
-    `zipToMap input length mismatch: keys[${keys.length}], values[${values.length}]`
+    `zipToMap input length mismatch: keys[${keys.length}], values[${values.length}]`,
   );
   const resultingMap = new Map();
   for (let i = 0; i < keys.length; i++) {
@@ -126,7 +126,7 @@ export const invertMap = <K, V>(map: ReadonlyMap<K, V>): Map<V, K> => {
 export const reduceMap = <K, V, A>(
   map: ReadonlyMap<K, V>,
   reducer: (accumulator: A, value: V, key: K) => A,
-  initialValue: A
+  initialValue: A,
 ): A => {
   let newAccumulator = initialValue;
   for (const [k, v] of map) {
@@ -147,7 +147,7 @@ export const reduceMap = <K, V, A>(
 export const reduceMapAsync = async <K, V, A>(
   map: ReadonlyMap<K, V>,
   reducer: (accumulator: A, value: V, key: K) => Promise<A>,
-  initialValue: A
+  initialValue: A,
 ): Promise<A> => {
   let newAccumulator = initialValue;
   for (const [k, v] of map) {
@@ -163,7 +163,7 @@ export const reduceMapAsync = async <K, V, A>(
  */
 export function filterMap<K, V, S extends V>(
   map: ReadonlyMap<K, V>,
-  predicate: (value: V, key: K) => value is S
+  predicate: (value: V, key: K) => value is S,
 ): Map<K, S>;
 
 /**
@@ -173,7 +173,7 @@ export function filterMap<K, V, S extends V>(
  */
 export function filterMap<K, V>(
   map: ReadonlyMap<K, V>,
-  predicate: (value: V, key: K) => boolean
+  predicate: (value: V, key: K) => boolean,
 ): Map<K, V>;
 
 /**
@@ -183,7 +183,7 @@ export function filterMap<K, V>(
  */
 export function filterMap<K, V>(
   map: ReadonlyMap<K, V>,
-  predicate: (value: V, key: K) => unknown
+  predicate: (value: V, key: K) => unknown,
 ): Map<K, V> {
   const resultingMap = new Map();
   map.forEach((v, k) => {

@@ -52,7 +52,7 @@ describe(successfulResultsFilterMap, () => {
         a: result1,
         b: result2,
         c: result3,
-      })
+      }),
     );
 
     const resultingMap = successfulResultsFilterMap(allResults);
@@ -73,7 +73,7 @@ describe(failedResultsFilterMap, () => {
         a: result1,
         b: result2,
         c: result3,
-      })
+      }),
     );
 
     const resultingMap = failedResultsFilterMap(allResults);

@@ -29,7 +29,7 @@ export default abstract class Entity<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields> {
   /**
    * Vend mutator for creating a new entity in given query context.
@@ -50,7 +50,7 @@ export default abstract class Entity<
       TMEntity,
       TMSelectedFields
     >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
   >(
     this: IEntityClass<
       TMFields,
@@ -64,7 +64,7 @@ export default abstract class Entity<
     queryContext: EntityQueryContext = viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getQueryContext()
+      .getQueryContext(),
   ): CreateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
@@ -90,7 +90,7 @@ export default abstract class Entity<
       TMEntity,
       TMSelectedFields
     >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
   >(
     this: IEntityClass<
       TMFields,
@@ -105,7 +105,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getQueryContext()
+      .getQueryContext(),
   ): UpdateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
     return existingEntity
       .getViewerContext()
@@ -131,7 +131,7 @@ export default abstract class Entity<
       TMEntity,
       TMSelectedFields
     >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
   >(
     this: IEntityClass<
       TMFields,
@@ -146,7 +146,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getQueryContext()
+      .getQueryContext(),
   ): Promise<Result<void>> {
     return existingEntity
       .getViewerContext()
@@ -173,7 +173,7 @@ export default abstract class Entity<
       TMEntity,
       TMSelectedFields
     >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
   >(
     this: IEntityClass<
       TMFields,
@@ -188,7 +188,7 @@ export default abstract class Entity<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
-      .getQueryContext()
+      .getQueryContext(),
   ): Promise<void> {
     return existingEntity
       .getViewerContext()
@@ -214,7 +214,7 @@ export interface IEntityClass<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   new (constructorParam: {
     viewerContext: TViewerContext;

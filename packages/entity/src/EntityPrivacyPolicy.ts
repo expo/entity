@@ -16,7 +16,7 @@ export type EntityPrivacyPolicyEvaluationContext<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > = {
   /**
    * When this privacy policy is being evaluated as a result of an update, this will be populated with the value
@@ -57,7 +57,7 @@ export type EntityPrivacyPolicyEvaluator<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > =
   | {
       mode: EntityPrivacyPolicyEvaluationMode.ENFORCE;
@@ -65,13 +65,13 @@ export type EntityPrivacyPolicyEvaluator<
   | {
       mode: EntityPrivacyPolicyEvaluationMode.DRY_RUN;
       denyHandler: (
-        error: EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+        error: EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
       ) => void;
     }
   | {
       mode: EntityPrivacyPolicyEvaluationMode.ENFORCE_AND_LOG;
       denyHandler: (
-        error: EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TSelectedFields>
+        error: EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
       ) => void;
     };
 
@@ -108,7 +108,7 @@ export default abstract class EntityPrivacyPolicy<
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   protected readonly createRules: readonly PrivacyPolicyRule<
     TFields,
@@ -148,7 +148,7 @@ export default abstract class EntityPrivacyPolicy<
    * Override to enable dry run evaluation of the policy.
    */
   protected getPrivacyPolicyEvaluator(
-    _viewerContext: TViewerContext
+    _viewerContext: TViewerContext,
   ): EntityPrivacyPolicyEvaluator<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
     return {
       mode: EntityPrivacyPolicyEvaluationMode.ENFORCE,
@@ -174,7 +174,7 @@ export default abstract class EntityPrivacyPolicy<
       TSelectedFields
     >,
     entity: TEntity,
-    metricsAdapter: IEntityMetricsAdapter
+    metricsAdapter: IEntityMetricsAdapter,
   ): Promise<TEntity> {
     return await this.authorizeForRulesetAsync(
       this.createRules,
@@ -183,7 +183,7 @@ export default abstract class EntityPrivacyPolicy<
       evaluationContext,
       entity,
       EntityAuthorizationAction.CREATE,
-      metricsAdapter
+      metricsAdapter,
     );
   }
 
@@ -206,7 +206,7 @@ export default abstract class EntityPrivacyPolicy<
       TSelectedFields
     >,
     entity: TEntity,
-    metricsAdapter: IEntityMetricsAdapter
+    metricsAdapter: IEntityMetricsAdapter,
   ): Promise<TEntity> {
     return await this.authorizeForRulesetAsync(
       this.readRules,
@@ -215,7 +215,7 @@ export default abstract class EntityPrivacyPolicy<
       evaluationContext,
       entity,
       EntityAuthorizationAction.READ,
-      metricsAdapter
+      metricsAdapter,
     );
   }
 
@@ -238,7 +238,7 @@ export default abstract class EntityPrivacyPolicy<
       TSelectedFields
     >,
     entity: TEntity,
-    metricsAdapter: IEntityMetricsAdapter
+    metricsAdapter: IEntityMetricsAdapter,
   ): Promise<TEntity> {
     return await this.authorizeForRulesetAsync(
       this.updateRules,
@@ -247,7 +247,7 @@ export default abstract class EntityPrivacyPolicy<
       evaluationContext,
       entity,
       EntityAuthorizationAction.UPDATE,
-      metricsAdapter
+      metricsAdapter,
     );
   }
 
@@ -270,7 +270,7 @@ export default abstract class EntityPrivacyPolicy<
       TSelectedFields
     >,
     entity: TEntity,
-    metricsAdapter: IEntityMetricsAdapter
+    metricsAdapter: IEntityMetricsAdapter,
   ): Promise<TEntity> {
     return await this.authorizeForRulesetAsync(
       this.deleteRules,
@@ -279,7 +279,7 @@ export default abstract class EntityPrivacyPolicy<
       evaluationContext,
       entity,
       EntityAuthorizationAction.DELETE,
-      metricsAdapter
+      metricsAdapter,
     );
   }
 
@@ -296,7 +296,7 @@ export default abstract class EntityPrivacyPolicy<
     >,
     entity: TEntity,
     action: EntityAuthorizationAction,
-    metricsAdapter: IEntityMetricsAdapter
+    metricsAdapter: IEntityMetricsAdapter,
   ): Promise<TEntity> {
     const privacyPolicyEvaluator = this.getPrivacyPolicyEvaluator(viewerContext);
     switch (privacyPolicyEvaluator.mode) {
@@ -308,7 +308,7 @@ export default abstract class EntityPrivacyPolicy<
             queryContext,
             evaluationContext,
             entity,
-            action
+            action,
           );
           metricsAdapter.logAuthorizationEvent({
             entityClassName: entity.constructor.name,
@@ -337,7 +337,7 @@ export default abstract class EntityPrivacyPolicy<
             queryContext,
             evaluationContext,
             entity,
-            action
+            action,
           );
           metricsAdapter.logAuthorizationEvent({
             entityClassName: entity.constructor.name,
@@ -367,7 +367,7 @@ export default abstract class EntityPrivacyPolicy<
             queryContext,
             evaluationContext,
             entity,
-            action
+            action,
           );
           metricsAdapter.logAuthorizationEvent({
             entityClassName: entity.constructor.name,
@@ -404,7 +404,7 @@ export default abstract class EntityPrivacyPolicy<
       TSelectedFields
     >,
     entity: TEntity,
-    action: EntityAuthorizationAction
+    action: EntityAuthorizationAction,
   ): Promise<TEntity> {
     for (let i = 0; i < ruleset.length; i++) {
       const rule = ruleset[i]!;
@@ -412,7 +412,7 @@ export default abstract class EntityPrivacyPolicy<
         viewerContext,
         queryContext,
         evaluationContext,
-        entity
+        entity,
       );
       switch (ruleEvaluationResult) {
         case RuleEvaluationResult.DENY:
@@ -429,7 +429,7 @@ export default abstract class EntityPrivacyPolicy<
           return entity;
         default:
           throw new Error(
-            `Invalid RuleEvaluationResult returned from rule: ${entity} (viewer = ${viewerContext}, action = ${EntityAuthorizationAction[action]}, ruleIndex = ${i})`
+            `Invalid RuleEvaluationResult returned from rule: ${entity} (viewer = ${viewerContext}, action = ${EntityAuthorizationAction[action]}, ruleIndex = ${i})`,
           );
       }
     }
@@ -438,7 +438,7 @@ export default abstract class EntityPrivacyPolicy<
       entity,
       viewerContext,
       action,
-      -1
+      -1,
     );
   }
 }

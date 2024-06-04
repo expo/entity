@@ -10,7 +10,7 @@ import LocalMemoryCacheAdapterProvider from '../LocalMemoryCacheAdapterProvider'
 
 export const createLocalMemoryTestEntityCompanionProvider = (
   localMemoryOptions: { maxSize?: number; ttlSeconds?: number } = {},
-  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
+  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
 ): EntityCompanionProvider => {
   const localMemoryCacheAdapterProvider =
     localMemoryOptions.maxSize === 0 && localMemoryOptions.ttlSeconds === 0
@@ -34,15 +34,15 @@ export const createLocalMemoryTestEntityCompanionProvider = (
           cacheAdapterProvider: localMemoryCacheAdapterProvider,
         },
       ],
-    ])
+    ]),
   );
 };
 
 export const createNoOpLocalMemoryIntegrationTestEntityCompanionProvider = (
-  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
+  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
 ): EntityCompanionProvider => {
   return createLocalMemoryTestEntityCompanionProvider(
     { maxSize: 0, ttlSeconds: 0 },
-    metricsAdapter
+    metricsAdapter,
   );
 };

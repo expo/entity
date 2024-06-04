@@ -105,7 +105,7 @@ export const localMemoryTestEntityConfiguration =
   });
 
 export const createTestEntityCompanionProvider = (
-  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter()
+  metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
 ): EntityCompanionProvider => {
   return new EntityCompanionProvider(
     metricsAdapter,
@@ -125,7 +125,7 @@ export const createTestEntityCompanionProvider = (
           cacheAdapterProvider: LocalMemoryCacheAdapterProvider.createProviderWithOptions(),
         },
       ],
-    ])
+    ]),
   );
 };
 
@@ -146,7 +146,7 @@ class TestSecondaryLocalMemoryCacheLoader extends EntitySecondaryCacheLoader<
   public databaseLoadCount = 0;
 
   protected async fetchObjectsFromDatabaseAsync(
-    loadParamsArray: readonly Readonly<TestLoadParams>[]
+    loadParamsArray: readonly Readonly<TestLoadParams>[],
   ): Promise<ReadonlyMap<Readonly<TestLoadParams>, Readonly<LocalMemoryTestEntityFields> | null>> {
     this.databaseLoadCount += loadParamsArray.length;
 
@@ -162,7 +162,7 @@ class TestSecondaryLocalMemoryCacheLoader extends EntitySecondaryCacheLoader<
             .loadManyByFieldEqualityConjunctionAsync([
               { fieldName: 'id', fieldValue: loadParams.id },
             ])
-        )[0]
+        )[0],
       ).getAllFields();
     });
   }
@@ -179,22 +179,22 @@ describe(LocalMemorySecondaryEntityCache, () => {
     const secondaryCacheLoader = new TestSecondaryLocalMemoryCacheLoader(
       new LocalMemorySecondaryEntityCache(
         localMemoryTestEntityConfiguration,
-        GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({})
+        GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({}),
       ),
-      LocalMemoryTestEntity.loader(viewerContext)
+      LocalMemoryTestEntity.loader(viewerContext),
     );
 
     const loadParams = { id: createdEntity.getID() };
     const results = await secondaryCacheLoader.loadManyAsync([loadParams]);
     expect(nullthrows(results.get(loadParams)).enforceValue().getID()).toEqual(
-      createdEntity.getID()
+      createdEntity.getID(),
     );
 
     expect(secondaryCacheLoader.databaseLoadCount).toEqual(1);
 
     const results2 = await secondaryCacheLoader.loadManyAsync([loadParams]);
     expect(nullthrows(results2.get(loadParams)).enforceValue().getID()).toEqual(
-      createdEntity.getID()
+      createdEntity.getID(),
     );
 
     expect(secondaryCacheLoader.databaseLoadCount).toEqual(1);
@@ -203,7 +203,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
 
     const results3 = await secondaryCacheLoader.loadManyAsync([loadParams]);
     expect(nullthrows(results3.get(loadParams)).enforceValue().getID()).toEqual(
-      createdEntity.getID()
+      createdEntity.getID(),
     );
 
     expect(secondaryCacheLoader.databaseLoadCount).toEqual(2);
@@ -215,9 +215,9 @@ describe(LocalMemorySecondaryEntityCache, () => {
     const secondaryCacheLoader = new TestSecondaryLocalMemoryCacheLoader(
       new LocalMemorySecondaryEntityCache(
         localMemoryTestEntityConfiguration,
-        GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({})
+        GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({}),
       ),
-      LocalMemoryTestEntity.loader(viewerContext)
+      LocalMemoryTestEntity.loader(viewerContext),
     );
 
     const loadParams = { id: FAKE_ID };

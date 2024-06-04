@@ -63,7 +63,7 @@ describeFieldTestCase(
     uuidv5('wat', uuidv5.DNS),
     /* UUIDv7 */ '018ebfda-dc80-782d-a891-22a0aa057d52',
   ],
-  [uuidv4().replace('-', ''), '', 'hello']
+  [uuidv4().replace('-', ''), '', 'hello'],
 );
 describeFieldTestCase(new DateField({ columnName: 'wat' }), [new Date()], [Date.now()]);
 describeFieldTestCase(new BooleanField({ columnName: 'wat' }), [true, false], [0, 1, '']);
@@ -72,7 +72,7 @@ describeFieldTestCase(new FloatField({ columnName: 'wat' }), [1, 0.5, -0.5], ['1
 describeFieldTestCase(
   new StringArrayField({ columnName: 'wat' }),
   [[['what']] as any, [[]] as any], // jest test cases need extra wrapping array
-  ['hello']
+  ['hello'],
 );
 describeFieldTestCase(new JSONObjectField({ columnName: 'wat' }), [{}], [true, 'hello']);
 describeFieldTestCase(new EnumField({ columnName: 'wat' }), ['hello', 1], [true]);
@@ -85,5 +85,5 @@ enum TestEnum {
 describeFieldTestCase(
   new StrictEnumField({ columnName: 'wat', enum: TestEnum }),
   [TestEnum.HELLO, TestEnum.WHO, 'world'],
-  ['what', 1, true]
+  ['what', 1, true],
 );

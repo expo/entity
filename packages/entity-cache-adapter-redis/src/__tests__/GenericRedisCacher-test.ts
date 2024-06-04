@@ -27,7 +27,7 @@ describe(GenericRedisCacher, () => {
 
       // need to have one anything() for each element of spread, in this case 3
       when(mockRedisClient.mget(anything(), anything(), anything())).thenCall(async (...keys) =>
-        keys.map((k) => redisResults.get(k) ?? null)
+        keys.map((k) => redisResults.get(k) ?? null),
       );
 
       const genericCacher = new GenericRedisCacher(
@@ -38,7 +38,7 @@ describe(GenericRedisCacher, () => {
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
         },
-        entityConfiguration
+        entityConfiguration,
       );
 
       const cacheKeyWat = genericCacher['makeCacheKey']('id', 'wat');
@@ -68,7 +68,7 @@ describe(GenericRedisCacher, () => {
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
         },
-        entityConfiguration
+        entityConfiguration,
       );
       const results = await genericCacher.loadManyAsync([]);
       expect(results).toEqual(new Map());
@@ -84,7 +84,7 @@ describe(GenericRedisCacher, () => {
         (key, value, code, ttl) => {
           redisResults.set(key, { value, code, ttl });
           return pipeline;
-        }
+        },
       );
       when(mockPipeline.exec()).thenResolve({} as any);
       const pipeline = instance(mockPipeline);
@@ -100,7 +100,7 @@ describe(GenericRedisCacher, () => {
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
         },
-        entityConfiguration
+        entityConfiguration,
       );
 
       const cacheKey = genericCacher['makeCacheKey']('id', 'wat');
@@ -123,7 +123,7 @@ describe(GenericRedisCacher, () => {
         (key, value, code, ttl) => {
           redisResults.set(key, { value, code, ttl });
           return pipeline;
-        }
+        },
       );
       when(mockPipeline.exec()).thenResolve({} as any);
       const pipeline = instance(mockPipeline);
@@ -139,7 +139,7 @@ describe(GenericRedisCacher, () => {
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
         },
-        entityConfiguration
+        entityConfiguration,
       );
 
       const cacheKey = genericCacher['makeCacheKey']('id', 'wat');
@@ -167,7 +167,7 @@ describe(GenericRedisCacher, () => {
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
         },
-        entityConfiguration
+        entityConfiguration,
       );
       const cacheKey = genericCacher['makeCacheKey']('id', 'wat');
 
@@ -185,7 +185,7 @@ describe(GenericRedisCacher, () => {
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
         },
-        entityConfiguration
+        entityConfiguration,
       );
       await genericCacher.invalidateManyAsync([]);
     });

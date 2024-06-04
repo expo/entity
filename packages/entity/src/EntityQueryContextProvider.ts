@@ -25,11 +25,11 @@ export default abstract class EntityQueryContextProvider {
    * Vend a transaction runner for use in runInTransactionAsync.
    */
   protected abstract createTransactionRunner<T>(
-    transactionConfig?: TransactionConfig
+    transactionConfig?: TransactionConfig,
   ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T>;
 
   protected abstract createNestedTransactionRunner<T>(
-    outerQueryInterface: any
+    outerQueryInterface: any,
   ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T>;
 
   /**
@@ -38,7 +38,7 @@ export default abstract class EntityQueryContextProvider {
    */
   async runInTransactionAsync<T>(
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
-    transactionConfig?: TransactionConfig
+    transactionConfig?: TransactionConfig,
   ): Promise<T> {
     const [returnedValue, queryContext] = await this.createTransactionRunner<
       [T, EntityTransactionalQueryContext]
@@ -60,7 +60,7 @@ export default abstract class EntityQueryContextProvider {
    */
   async runInNestedTransactionAsync<T>(
     outerQueryContext: EntityTransactionalQueryContext,
-    transactionScope: (innerQueryContext: EntityNestedTransactionalQueryContext) => Promise<T>
+    transactionScope: (innerQueryContext: EntityNestedTransactionalQueryContext) => Promise<T>,
   ): Promise<T> {
     const [returnedValue, innerQueryContext] = await this.createNestedTransactionRunner<
       [T, EntityNestedTransactionalQueryContext]
@@ -68,7 +68,7 @@ export default abstract class EntityQueryContextProvider {
       const innerQueryContext = new EntityNestedTransactionalQueryContext(
         innerQueryInterface,
         outerQueryContext,
-        this
+        this,
       );
       const result = await transactionScope(innerQueryContext);
       await innerQueryContext.runPreCommitCallbacksAsync();

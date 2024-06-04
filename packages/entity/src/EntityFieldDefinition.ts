@@ -56,7 +56,7 @@ export interface EntityAssociationDefinition<
     TAssociatedEntity,
     TAssociatedSelectedFields
   >,
-  TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields
+  TAssociatedSelectedFields extends keyof TAssociatedFields = keyof TAssociatedFields,
 > {
   /**
    * Class of entity on the other end of this edge.
@@ -96,6 +96,28 @@ export interface EntityAssociationDefinition<
 }
 
 /**
+ * Options for EntityFieldDefinition
+ */
+export interface EntityFieldDefinitionOptions {
+  /**
+   * Column name in the database.
+   */
+  columnName: string;
+
+  /**
+   * Whether or not to cache loaded instances of the entity by this field. The column name is
+   * used to derive a cache key for the cache entry. If true, this column must be able uniquely
+   * identify the entity.
+   */
+  cache?: boolean;
+
+  /**
+   * Defines the association behavior for an entity that this column references.
+   */
+  association?: EntityAssociationDefinition<any, any, any, any, any, any>;
+}
+
+/**
  * Definition for a field referencing a column in the underlying database. Specifies things like
  * cache behavior and associations, and handles input validation.
  */
@@ -105,24 +127,12 @@ export abstract class EntityFieldDefinition<T> {
   readonly association: EntityAssociationDefinition<any, any, any, any, any, any> | undefined;
   /**
    *
-   * @param columnName - Column name in the database.
-   * @param cache - Whether or not to cache loaded instances of the entity by this field. The column name is
-   *              used to derive a cache key for the cache entry. If true, this column must be able uniquely
-   *              identify the entity.
-   * @param association - Defines the association behavior for an entity that this column references.
+   * @param options - options for this field definition
    */
-  constructor({
-    columnName,
-    cache = false,
-    association,
-  }: {
-    columnName: string;
-    cache?: boolean;
-    association?: EntityAssociationDefinition<any, any, any, any, any, any>;
-  }) {
-    this.columnName = columnName;
-    this.cache = cache;
-    this.association = association;
+  constructor(options: EntityFieldDefinitionOptions) {
+    this.columnName = options.columnName;
+    this.cache = options.cache ?? false;
+    this.association = options.association;
   }
 
   /**

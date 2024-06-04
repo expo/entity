@@ -28,15 +28,15 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
 {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
-    private readonly cache: Map<string, LocalMemoryCacheValue<TFields>>
+    private readonly cache: Map<string, LocalMemoryCacheValue<TFields>>,
   ) {}
 
   public async loadManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
     const localMemoryCacheKeyToFieldValueMapping = new Map(
-      fieldValues.map((fieldValue) => [this.makeCacheKey(fieldName, fieldValue), fieldValue])
+      fieldValues.map((fieldValue) => [this.makeCacheKey(fieldName, fieldValue), fieldValue]),
     );
     const cacheResults = new Map<NonNullable<TFields[N]>, CacheLoadResult<TFields>>();
     for (const [cacheKey, fieldValue] of localMemoryCacheKeyToFieldValueMapping) {
@@ -62,7 +62,7 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
 
   public async cacheManyAsync<N extends keyof TFields>(
     fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>
+    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>,
   ): Promise<void> {
     for (const [fieldValue, item] of objectMap) {
       const cacheKey = this.makeCacheKey(fieldName, fieldValue);
@@ -72,7 +72,7 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
 
   public async cacheDBMissesAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {
     for (const fieldValue of fieldValues) {
       const cacheKey = this.makeCacheKey(fieldName, fieldValue);
@@ -82,7 +82,7 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
 
   public async invalidateManyAsync<N extends keyof TFields>(
     fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[]
+    fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {
     for (const fieldValue of fieldValues) {
       const cacheKey = this.makeCacheKey(fieldName, fieldValue);
@@ -92,7 +92,7 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
 
   private makeCacheKey<N extends keyof TFields>(
     fieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TFields[N]>,
   ): string {
     const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
     invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
@@ -104,7 +104,7 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
     ];
     const delimiter = ':';
     const escapedParts = parts.map((part) =>
-      part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
+      part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
     );
     return escapedParts.join(delimiter);
   }
@@ -273,7 +273,7 @@ describe(ComposedEntityCacheAdapter, () => {
 
       const fallbackLocalMemoryCacheKey = fallbackCacheAdapter['makeCacheKey']('id', 'test-id-1');
       expect(fallbackCache.get(fallbackLocalMemoryCacheKey)).toBe(
-        DOES_NOT_EXIST_LOCAL_MEMORY_CACHE
+        DOES_NOT_EXIST_LOCAL_MEMORY_CACHE,
       );
     });
   });

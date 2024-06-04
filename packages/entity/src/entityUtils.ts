@@ -5,7 +5,7 @@ import { Result, Success, Failure } from '@expo/results';
  * @param resultsPromise - promise returning an array of results to enforce
  */
 export const enforceResultsAsync = async <T>(
-  resultsPromise: Promise<readonly Result<T>[]>
+  resultsPromise: Promise<readonly Result<T>[]>,
 ): Promise<readonly T[]> => {
   const results = await resultsPromise;
   return results.map((result) => result.enforceValue());
@@ -44,7 +44,7 @@ export const failedResults = <T>(results: readonly Result<T>[]): readonly Failur
  * @param results - map of results to filter.
  */
 export const successfulResultsFilterMap = <K, T>(
-  results: ReadonlyMap<K, Result<T>>
+  results: ReadonlyMap<K, Result<T>>,
 ): ReadonlyMap<K, Success<T>> => {
   const ret: Map<K, Success<T>> = new Map();
   for (const [k, result] of results) {
@@ -60,7 +60,7 @@ export const successfulResultsFilterMap = <K, T>(
  * @param results - map of results to filter.
  */
 export const failedResultsFilterMap = <K, T>(
-  results: ReadonlyMap<K, Result<T>>
+  results: ReadonlyMap<K, Result<T>>,
 ): ReadonlyMap<K, Failure<T>> => {
   const ret: Map<K, Failure<T>> = new Map();
   for (const [k, result] of results) {
@@ -97,6 +97,6 @@ const isError = <T>(value: T | Error): value is Error => {
 export const pick = <T extends object, U extends keyof T>(object: T, props: U[]): Pick<T, U> => {
   const propsSet = new Set(props);
   return Object.fromEntries(
-    Object.entries(object).filter((entry) => propsSet.has(entry[0] as any))
+    Object.entries(object).filter((entry) => propsSet.has(entry[0] as any)),
   ) as any;
 };

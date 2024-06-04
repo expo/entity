@@ -20,7 +20,7 @@ export default class ViewerScopedEntityLoaderFactory<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields
+  TSelectedFields extends keyof TFields,
 > {
   constructor(
     private readonly entityLoaderFactory: EntityLoaderFactory<
@@ -31,7 +31,7 @@ export default class ViewerScopedEntityLoaderFactory<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly viewerContext: TViewerContext
+    private readonly viewerContext: TViewerContext,
   ) {}
 
   forLoad(
@@ -42,12 +42,12 @@ export default class ViewerScopedEntityLoaderFactory<
       TViewerContext,
       TEntity,
       TSelectedFields
-    >
+    >,
   ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     return this.entityLoaderFactory.forLoad(
       this.viewerContext,
       queryContext,
-      privacyPolicyEvaluationContext
+      privacyPolicyEvaluationContext,
     );
   }
 }

@@ -103,7 +103,7 @@ describe('Entity integrity', () => {
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
-          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`)
+          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
         );
         return escapedParts.join(delimiter);
       },
@@ -126,18 +126,18 @@ describe('Entity integrity', () => {
 
   test('cannot update ID', async () => {
     const viewerContext = new ViewerContext(
-      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
+      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
     );
 
     const entity1 = await TestEntity.creator(viewerContext).enforceCreateAsync();
 
     await expect(
-      TestEntity.updater(entity1).setField('id', uuidv4()).enforceUpdateAsync()
+      TestEntity.updater(entity1).setField('id', uuidv4()).enforceUpdateAsync(),
     ).rejects.toThrow('id field updates not supported: (entityClass = TestEntity)');
 
     // ensure cache consistency
     const viewerContextLast = new ViewerContext(
-      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext)
+      createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
     );
 
     const loadedById = await TestEntity.loader(viewerContextLast)

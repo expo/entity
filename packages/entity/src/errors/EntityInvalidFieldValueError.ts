@@ -17,7 +17,7 @@ export default class EntityInvalidFieldValueError<
     TSelectedFields
   >,
   N extends keyof TFields,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityError {
   public readonly state = EntityErrorState.PERMANENT;
   public readonly code = EntityErrorCode.ERR_ENTITY_INVALID_FIELD_VALUE;
@@ -32,7 +32,7 @@ export default class EntityInvalidFieldValueError<
       TSelectedFields
     >,
     fieldName: N,
-    fieldValue?: TFields[N]
+    fieldValue?: TFields[N],
   ) {
     super(`Entity field not valid: ${entityClass.name} (${String(fieldName)} = ${fieldValue})`);
   }

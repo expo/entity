@@ -10,7 +10,7 @@ export default class PostgresEntityDatabaseAdapterProvider
   implements IEntityDatabaseAdapterProvider
 {
   getDatabaseAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>
+    entityConfiguration: EntityConfiguration<TFields>,
   ): EntityDatabaseAdapter<TFields> {
     return new PostgresEntityDatabaseAdapter(entityConfiguration);
   }

@@ -48,7 +48,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     _queryInterface: any,
     _tableName: string,
     _tableField: string,
-    _tableValues: readonly any[]
+    _tableValues: readonly any[],
   ): Promise<object[]> {
     return this.fetchResults;
   }
@@ -57,7 +57,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     _queryInterface: any,
     _tableName: string,
     _rawWhereClause: string,
-    _bindings: object | any[]
+    _bindings: object | any[],
   ): Promise<object[]> {
     return this.fetchRawWhereResults;
   }
@@ -66,7 +66,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     _queryInterface: any,
     _tableName: string,
     _tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
-    _tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[]
+    _tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
   ): Promise<object[]> {
     return this.fetchEqualityConditionResults;
   }
@@ -74,7 +74,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
   protected async insertInternalAsync(
     _queryInterface: any,
     _tableName: string,
-    _object: object
+    _object: object,
   ): Promise<object[]> {
     return this.insertResults;
   }
@@ -84,7 +84,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     _tableName: string,
     _tableIdField: string,
     _id: any,
-    _object: object
+    _object: object,
   ): Promise<object[]> {
     return this.updateResults;
   }
@@ -93,7 +93,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     _queryInterface: any,
     _tableName: string,
     _tableIdField: string,
-    _id: any
+    _id: any,
   ): Promise<number> {
     return this.deleteCount;
   }
@@ -166,7 +166,7 @@ describe(EntityDatabaseAdapter, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({ insertResults: [] });
       await expect(adapter.insertAsync(queryContext, {} as any)).rejects.toThrowError(
-        'Empty results from database adapter insert'
+        'Empty results from database adapter insert',
       );
     });
 
@@ -176,7 +176,7 @@ describe(EntityDatabaseAdapter, () => {
         insertResults: [{ string_field: 'hello' }, { string_field: 'hello2' }],
       });
       await expect(adapter.insertAsync(queryContext, {} as any)).rejects.toThrowError(
-        'Excessive results from database adapter insert'
+        'Excessive results from database adapter insert',
       );
     });
   });
@@ -193,7 +193,7 @@ describe(EntityDatabaseAdapter, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({ updateResults: [] });
       await expect(
-        adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any)
+        adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any),
       ).rejects.toThrowError('Empty results from database adapter update');
     });
 
@@ -203,7 +203,7 @@ describe(EntityDatabaseAdapter, () => {
         updateResults: [{ string_field: 'hello' }, { string_field: 'hello2' }],
       });
       await expect(
-        adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any)
+        adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any),
       ).rejects.toThrowError('Excessive results from database adapter update');
     });
   });
@@ -213,7 +213,7 @@ describe(EntityDatabaseAdapter, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({ deleteCount: 2 });
       await expect(adapter.deleteAsync(queryContext, 'customIdField', 'wat')).rejects.toThrowError(
-        'Excessive deletions from database adapter delet'
+        'Excessive deletions from database adapter delet',
       );
     });
   });

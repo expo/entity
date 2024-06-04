@@ -17,7 +17,7 @@ export default class EntityNotFoundError<
     TSelectedFields
   >,
   N extends keyof TFields,
-  TSelectedFields extends keyof TFields = keyof TFields
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityError {
   public readonly state = EntityErrorState.PERMANENT;
   public readonly code = EntityErrorCode.ERR_ENTITY_NOT_FOUND;
@@ -32,7 +32,7 @@ export default class EntityNotFoundError<
       TSelectedFields
     >,
     fieldName: N,
-    fieldValue: TFields[N]
+    fieldValue: TFields[N],
   ) {
     super(`Entity not found: ${entityClass.name} (${String(fieldName)} = ${fieldValue})`);
   }

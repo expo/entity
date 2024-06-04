@@ -22,7 +22,7 @@ export type FieldTransformerMap = Map<string, FieldTransformer<any>>;
 
 export const getDatabaseFieldForEntityField = <TFields extends Record<string, any>>(
   entityConfiguration: EntityConfiguration<TFields>,
-  entityField: keyof TFields
+  entityField: keyof TFields,
 ): string => {
   const databaseField = entityConfiguration.entityToDBFieldsKeyMapping.get(entityField);
   invariant(databaseField, `database field mapping missing for ${String(entityField)}`);
@@ -32,7 +32,7 @@ export const getDatabaseFieldForEntityField = <TFields extends Record<string, an
 export const transformDatabaseObjectToFields = <TFields extends Record<string, any>>(
   entityConfiguration: EntityConfiguration<TFields>,
   fieldTransformerMap: FieldTransformerMap,
-  databaseObject: { [key: string]: any }
+  databaseObject: { [key: string]: any },
 ): Readonly<TFields> => {
   const fields: TFields = {} as any;
   for (const k in databaseObject) {
@@ -43,7 +43,7 @@ export const transformDatabaseObjectToFields = <TFields extends Record<string, a
         entityConfiguration,
         fieldTransformerMap,
         fieldsKey,
-        val
+        val,
       );
     }
   }
@@ -53,7 +53,7 @@ export const transformDatabaseObjectToFields = <TFields extends Record<string, a
 export const transformFieldsToDatabaseObject = <TFields extends Record<string, any>>(
   entityConfiguration: EntityConfiguration<TFields>,
   fieldTransformerMap: FieldTransformerMap,
-  fields: Readonly<Partial<TFields>>
+  fields: Readonly<Partial<TFields>>,
 ): object => {
   const databaseObject: { [key: string]: any } = {};
   for (const k in fields) {
@@ -64,7 +64,7 @@ export const transformFieldsToDatabaseObject = <TFields extends Record<string, a
       entityConfiguration,
       fieldTransformerMap,
       k,
-      val
+      val,
     );
   }
   return databaseObject;
@@ -73,7 +73,7 @@ export const transformFieldsToDatabaseObject = <TFields extends Record<string, a
 export const transformCacheObjectToFields = <TFields extends Record<string, any>>(
   entityConfiguration: EntityConfiguration<TFields>,
   fieldTransformerMap: FieldTransformerMap,
-  cacheObject: { [key: string]: any }
+  cacheObject: { [key: string]: any },
 ): Readonly<TFields> => {
   const fields: TFields = {} as any;
   for (const fieldsKey in cacheObject) {
@@ -82,7 +82,7 @@ export const transformCacheObjectToFields = <TFields extends Record<string, any>
       entityConfiguration,
       fieldTransformerMap,
       fieldsKey as keyof TFields,
-      val
+      val,
     );
   }
   return fields;
@@ -91,7 +91,7 @@ export const transformCacheObjectToFields = <TFields extends Record<string, any>
 export const transformFieldsToCacheObject = <TFields extends Record<string, any>>(
   entityConfiguration: EntityConfiguration<TFields>,
   fieldTransformerMap: FieldTransformerMap,
-  fields: Readonly<Partial<TFields>>
+  fields: Readonly<Partial<TFields>>,
 ): object => {
   const cacheObject: { [key: string]: any } = {};
   for (const fieldsKey in fields) {
@@ -100,7 +100,7 @@ export const transformFieldsToCacheObject = <TFields extends Record<string, any>
       entityConfiguration,
       fieldTransformerMap,
       fieldsKey,
-      val
+      val,
     );
   }
   return cacheObject;
@@ -108,12 +108,12 @@ export const transformFieldsToCacheObject = <TFields extends Record<string, any>
 
 const maybeTransformDatabaseValueToFieldValue = <
   TFields extends Record<string, any>,
-  N extends keyof TFields
+  N extends keyof TFields,
 >(
   entityConfiguration: EntityConfiguration<TFields>,
   fieldTransformerMap: FieldTransformerMap,
   fieldName: N,
-  value: any
+  value: any,
 ): TFields[N] => {
   // this will always be non-null due to the way the dbToEntityFieldsKeyMapping is computed and this
   // function is called conditionally
@@ -125,12 +125,12 @@ const maybeTransformDatabaseValueToFieldValue = <
 
 const maybeTransformFieldValueToDatabaseValue = <
   TFields extends Record<string, any>,
-  N extends keyof TFields
+  N extends keyof TFields,
 >(
   entityConfiguration: EntityConfiguration<TFields>,
   fieldTransformerMap: FieldTransformerMap,
   fieldName: N,
-  value: TFields[N]
+  value: TFields[N],
 ): any => {
   const fieldDefinition = nullthrows(entityConfiguration.schema.get(fieldName));
   const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
@@ -140,12 +140,12 @@ const maybeTransformFieldValueToDatabaseValue = <
 
 const maybeTransformCacheValueToFieldValue = <
   TFields extends Record<string, any>,
-  N extends keyof TFields
+  N extends keyof TFields,
 >(
   entityConfiguration: EntityConfiguration<TFields>,
   fieldTransformerMap: FieldTransformerMap,
   fieldName: N,
-  value: any
+  value: any,
 ): TFields[N] => {
   const fieldDefinition = entityConfiguration.schema.get(fieldName);
   if (!fieldDefinition) {
@@ -159,12 +159,12 @@ const maybeTransformCacheValueToFieldValue = <
 
 const maybeTransformFieldValueToCacheValue = <
   TFields extends Record<string, any>,
-  N extends keyof TFields
+  N extends keyof TFields,
 >(
   entityConfiguration: EntityConfiguration<TFields>,
   fieldTransformerMap: FieldTransformerMap,
   fieldName: N,
-  value: TFields[N]
+  value: TFields[N],
 ): any => {
   const fieldDefinition = entityConfiguration.schema.get(fieldName);
   if (!fieldDefinition) {

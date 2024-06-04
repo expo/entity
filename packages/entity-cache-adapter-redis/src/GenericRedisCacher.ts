@@ -62,18 +62,18 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
 {
   constructor(
     private readonly context: GenericRedisCacheContext,
-    private readonly entityConfiguration: EntityConfiguration<TFields>
+    private readonly entityConfiguration: EntityConfiguration<TFields>,
   ) {}
 
   public async loadManyAsync(
-    keys: readonly string[]
+    keys: readonly string[],
   ): Promise<ReadonlyMap<string, CacheLoadResult<TFields>>> {
     if (keys.length === 0) {
       return new Map();
     }
 
     const redisResults = await wrapNativeRedisCallAsync(() =>
-      this.context.redisClient.mget(...keys)
+      this.context.redisClient.mget(...keys),
     );
 
     const results = new Map<string, CacheLoadResult<TFields>>();
@@ -91,7 +91,7 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
           item: transformCacheObjectToFields(
             this.entityConfiguration,
             redisTransformerMap,
-            JSON.parse(redisResult)
+            JSON.parse(redisResult),
           ),
         });
       } else {
@@ -113,10 +113,10 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
       redisTransaction = redisTransaction.set(
         key,
         JSON.stringify(
-          transformFieldsToCacheObject(this.entityConfiguration, redisTransformerMap, object)
+          transformFieldsToCacheObject(this.entityConfiguration, redisTransformerMap, object),
         ),
         'EX',
-        this.context.ttlSecondsPositive
+        this.context.ttlSecondsPositive,
       );
     });
     await wrapNativeRedisCallAsync(() => redisTransaction.exec());
@@ -133,7 +133,7 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
         key,
         DOES_NOT_EXIST_REDIS,
         'EX',
-        this.context.ttlSecondsNegative
+        this.context.ttlSecondsNegative,
       );
     });
     await wrapNativeRedisCallAsync(() => redisTransaction.exec());
@@ -149,7 +149,7 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
 
   public makeCacheKey<N extends keyof TFields>(
     fieldName: N,
-    fieldValue: NonNullable<TFields[N]>
+    fieldValue: NonNullable<TFields[N]>,
   ): string {
     const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
     invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
@@ -158,7 +158,7 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
       this.entityConfiguration.tableName,
       `v2.${this.entityConfiguration.cacheKeyVersion}`,
       columnName,
-      String(fieldValue)
+      String(fieldValue),
     );
   }
 }

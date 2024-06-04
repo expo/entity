@@ -29,7 +29,7 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
   public databaseLoadCount = 0;
 
   protected async fetchObjectsFromDatabaseAsync(
-    loadParamsArray: readonly Readonly<TestLoadParams>[]
+    loadParamsArray: readonly Readonly<TestLoadParams>[],
   ): Promise<ReadonlyMap<Readonly<TestLoadParams>, Readonly<RedisTestEntityFields> | null>> {
     this.databaseLoadCount += loadParamsArray.length;
 
@@ -45,7 +45,7 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
             .loadManyByFieldEqualityConjunctionAsync([
               { fieldName: 'id', fieldValue: loadParams.id },
             ])
-        )[0]
+        )[0],
       ).getAllFields();
     });
   }
@@ -76,7 +76,7 @@ describe(RedisSecondaryEntityCache, () => {
 
   it('Loads through secondary loader, caches, and invalidates', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
 
     const createdEntity = await RedisTestEntity.creator(viewerContext)
@@ -87,22 +87,22 @@ describe(RedisSecondaryEntityCache, () => {
       new RedisSecondaryEntityCache(
         redisTestEntityConfiguration,
         genericRedisCacheContext,
-        (loadParams) => `test-key-${loadParams.id}`
+        (loadParams) => `test-key-${loadParams.id}`,
       ),
-      RedisTestEntity.loader(viewerContext)
+      RedisTestEntity.loader(viewerContext),
     );
 
     const loadParams = { id: createdEntity.getID() };
     const results = await secondaryCacheLoader.loadManyAsync([loadParams]);
     expect(nullthrows(results.get(loadParams)).enforceValue().getID()).toEqual(
-      createdEntity.getID()
+      createdEntity.getID(),
     );
 
     expect(secondaryCacheLoader.databaseLoadCount).toEqual(1);
 
     const results2 = await secondaryCacheLoader.loadManyAsync([loadParams]);
     expect(nullthrows(results2.get(loadParams)).enforceValue().getID()).toEqual(
-      createdEntity.getID()
+      createdEntity.getID(),
     );
 
     expect(secondaryCacheLoader.databaseLoadCount).toEqual(1);
@@ -111,7 +111,7 @@ describe(RedisSecondaryEntityCache, () => {
 
     const results3 = await secondaryCacheLoader.loadManyAsync([loadParams]);
     expect(nullthrows(results3.get(loadParams)).enforceValue().getID()).toEqual(
-      createdEntity.getID()
+      createdEntity.getID(),
     );
 
     expect(secondaryCacheLoader.databaseLoadCount).toEqual(2);
@@ -119,16 +119,16 @@ describe(RedisSecondaryEntityCache, () => {
 
   it('correctly handles uncached and unfetchable load params', async () => {
     const viewerContext = new TestViewerContext(
-      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext)
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
 
     const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
       new RedisSecondaryEntityCache(
         redisTestEntityConfiguration,
         genericRedisCacheContext,
-        (loadParams) => `test-key-${loadParams.id}`
+        (loadParams) => `test-key-${loadParams.id}`,
       ),
-      RedisTestEntity.loader(viewerContext)
+      RedisTestEntity.loader(viewerContext),
     );
 
     const loadParams = { id: FAKE_ID };

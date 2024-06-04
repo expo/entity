@@ -70,7 +70,7 @@ export default class ErrorsTestEntity extends Entity<
         CHECK (check_less_than_5 IS NULL OR check_less_than_5 < 5);`,
         {
           tableName,
-        }
+        },
       );
 
       await knex.raw(
@@ -81,7 +81,7 @@ export default class ErrorsTestEntity extends Entity<
         `,
         {
           tableName,
-        }
+        },
       );
     }
 
