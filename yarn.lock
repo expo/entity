@@ -675,37 +675,38 @@
   integrity sha512-reebgVwjf8VfZxSXU7e+UjpXGwcUTIMpWR9FY54Oh70ulhXrQiZei62B4D9bH3SVYMwnDGzifHJ8INRrJ+0L1g==
 
 "@expo/entity-cache-adapter-local-memory@file:packages/entity-cache-adapter-local-memory":
-  version "0.31.1"
+  version "0.35.0"
   dependencies:
     lru-cache "^6.0.0"
 
 "@expo/entity-cache-adapter-redis@file:packages/entity-cache-adapter-redis":
-  version "0.31.1"
+  version "0.35.0"
 
 "@expo/entity-database-adapter-knex@file:packages/entity-database-adapter-knex":
-  version "0.31.1"
+  version "0.35.0"
   dependencies:
     knex "^2.4.2"
 
 "@expo/entity-ip-address-field@file:packages/entity-ip-address-field":
-  version "0.31.1"
+  version "0.35.0"
   dependencies:
     ip-address "^8.1.0"
 
 "@expo/entity-secondary-cache-local-memory@file:packages/entity-secondary-cache-local-memory":
-  version "0.31.1"
+  version "0.35.0"
 
 "@expo/entity-secondary-cache-redis@file:packages/entity-secondary-cache-redis":
-  version "0.31.1"
+  version "0.35.0"
 
 "@expo/entity@file:packages/entity":
-  version "0.31.1"
+  version "0.35.0"
   dependencies:
     "@expo/results" "^1.0.0"
     dataloader "^2.0.0"
     es6-error "^4.1.1"
     invariant "^2.2.4"
     uuid "^8.3.0"
+    uuidv7 "^1.0.0"
 
 "@expo/results@^1.0.0":
   version "1.0.0"
@@ -8660,6 +8661,11 @@ uuid@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
   integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
+
+uuidv7@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/uuidv7/-/uuidv7-1.0.0.tgz#b097dd0d48c5e48edf661199e033f10ebee08cda"
+  integrity sha512-XkvPwTtSmYwxIE1FSYQTYg79zHL1ZWV5vM/Qyl9ahXCU8enOPPA4bTjzvafvYUB7l2+miv4EqK/qEe75cOXIdA==
 
 v8-compile-cache@2.3.0:
   version "2.3.0"

@@ -75,7 +75,7 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
 
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups
-    // TODO(wschurman): validate schema
+    EntityConfiguration.validateSchema(schema);
     this.schema = new Map(Object.entries(schema));
 
     this.cacheableKeys = EntityConfiguration.computeCacheableKeys(this.schema);
@@ -83,6 +83,17 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
       this.schema
     );
     this.dbToEntityFieldsKeyMapping = invertMap(this.entityToDBFieldsKeyMapping);
+  }
+
+  private static validateSchema<TFields extends Record<string, any>>(schema: TFields): void {
+    const disallowedFieldsKeys = Object.getOwnPropertyNames(Object.prototype);
+    for (const disallowedFieldsKey of disallowedFieldsKeys) {
+      if (Object.hasOwn(schema, disallowedFieldsKey)) {
+        throw new Error(
+          `Entity field name not allowed to prevent conflicts with standard Object prototype fields: ${disallowedFieldsKey}`
+        );
+      }
+    }
   }
 
   private static computeCacheableKeys<TFields>(
