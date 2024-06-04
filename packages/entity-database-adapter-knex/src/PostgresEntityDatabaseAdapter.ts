@@ -12,7 +12,9 @@ import { Knex } from 'knex';
 import { JSONArrayField, MaybeJSONArrayField } from './EntityFields';
 import wrapNativePostgresCallAsync from './errors/wrapNativePostgresCallAsync';
 
-export default class PostgresEntityDatabaseAdapter<TFields> extends EntityDatabaseAdapter<TFields> {
+export default class PostgresEntityDatabaseAdapter<
+  TFields extends Record<string, any>
+> extends EntityDatabaseAdapter<TFields> {
   protected getFieldTransformerMap(): FieldTransformerMap {
     return new Map<string, FieldTransformer<any>>([
       [

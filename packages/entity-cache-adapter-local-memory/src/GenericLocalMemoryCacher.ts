@@ -13,7 +13,9 @@ export const DOES_NOT_EXIST_LOCAL_MEMORY_CACHE = Symbol('doesNotExist');
 type LocalMemoryCacheValue<TFields> = Readonly<TFields> | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
 export type LocalMemoryCache<TFields> = LRUCache<string, LocalMemoryCacheValue<TFields>>;
 
-export default class GenericLocalMemoryCacher<TFields> implements IEntityGenericCacher<TFields> {
+export default class GenericLocalMemoryCacher<TFields extends Record<string, any>>
+  implements IEntityGenericCacher<TFields>
+{
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
     private readonly localMemoryCache: LocalMemoryCache<TFields>

@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 const dbObjects: Readonly<{ [key: string]: any }>[] = [];
 
 export class InMemoryDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
-  getDatabaseAdapter<TFields>(
+  getDatabaseAdapter<TFields extends Record<string, any>>(
     entityConfiguration: EntityConfiguration<TFields>
   ): EntityDatabaseAdapter<TFields> {
     return new InMemoryDatabaseAdapter(entityConfiguration);
@@ -26,7 +26,7 @@ export class InMemoryDatabaseAdapterProvider implements IEntityDatabaseAdapterPr
  * In-memory database adapter for entity for the purposes of this example. Normally `@expo/entity-database-adapter-knex`
  * or another production adapter would be used. Very similar to StubDatabaseAdapter but shared in a way more akin to a normal database.
  */
-class InMemoryDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
+class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatabaseAdapter<T> {
   protected getFieldTransformerMap(): FieldTransformerMap {
     return new Map();
   }

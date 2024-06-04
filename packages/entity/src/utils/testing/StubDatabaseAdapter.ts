@@ -16,7 +16,9 @@ import {
 } from '../../internal/EntityFieldTransformationUtils';
 import { computeIfAbsent, mapMap } from '../collections/maps';
 
-export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
+export default class StubDatabaseAdapter<
+  T extends Record<string, any>
+> extends EntityDatabaseAdapter<T> {
   constructor(
     private readonly entityConfiguration2: EntityConfiguration<T>,
     private readonly dataStore: Map<string, Readonly<{ [key: string]: any }>[]>
@@ -24,7 +26,7 @@ export default class StubDatabaseAdapter<T> extends EntityDatabaseAdapter<T> {
     super(entityConfiguration2);
   }
 
-  public static convertFieldObjectsToDataStore<T>(
+  public static convertFieldObjectsToDataStore<T extends Record<string, any>>(
     entityConfiguration: EntityConfiguration<T>,
     dataStore: Map<string, Readonly<T>[]>
   ): Map<string, Readonly<{ [key: string]: any }>[]> {

@@ -7,7 +7,7 @@ import { mapMap, invertMap, reduceMap } from './utils/collections/maps';
  * The data storage configuration for a type of Entity. Contains information relating to IDs,
  * cachable fields, field mappings, and types of cache and database adapter.
  */
-export default class EntityConfiguration<TFields> {
+export default class EntityConfiguration<TFields extends Record<string, any>> {
   readonly idField: keyof TFields;
   readonly tableName: string;
   readonly cacheableKeys: ReadonlySet<keyof TFields>;
@@ -76,7 +76,7 @@ export default class EntityConfiguration<TFields> {
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups
     // TODO(wschurman): validate schema
-    this.schema = new Map(Object.entries(schema) as any);
+    this.schema = new Map(Object.entries(schema));
 
     this.cacheableKeys = EntityConfiguration.computeCacheableKeys(this.schema);
     this.entityToDBFieldsKeyMapping = EntityConfiguration.computeEntityToDBFieldsKeyMapping(
