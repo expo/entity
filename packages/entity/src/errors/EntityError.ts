@@ -24,7 +24,7 @@ export default abstract class EntityError extends ES6Error {
   public abstract readonly state: EntityErrorState;
   public abstract readonly code: EntityErrorCode;
 
-  constructor(message: string, public readonly cause?: Error) {
+  constructor(message: string, public override readonly cause?: Error) {
     super(message);
   }
 }
