@@ -67,8 +67,9 @@ describe(GenericRedisCacher, () => {
     // simulate non existent db fetch, should write negative result ('') to cache
     const nonExistentId = uuidv4();
 
-    const entityNonExistentResult =
-      await RedisTestEntity.loader(viewerContext).loadByIDAsync(nonExistentId);
+    const entityNonExistentResult = await RedisTestEntity.loader(viewerContext)
+      .nonEnforcing()
+      .loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedValue = await (genericRedisCacheContext.redisClient as Redis).get(
@@ -77,12 +78,15 @@ describe(GenericRedisCacher, () => {
     expect(nonExistentCachedValue).toEqual('');
 
     // load again through entities framework to ensure it reads negative result
-    const entityNonExistentResult2 =
-      await RedisTestEntity.loader(viewerContext).loadByIDAsync(nonExistentId);
+    const entityNonExistentResult2 = await RedisTestEntity.loader(viewerContext)
+      .nonEnforcing()
+      .loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly
-    await RedisTestEntity.loader(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
+    await RedisTestEntity.loader(viewerContext)
+      .nonEnforcing()
+      .invalidateFieldsAsync(entity1.getAllFields());
     const cachedValueNull = await (genericRedisCacheContext.redisClient as Redis).get(
       cacheKeyMaker('id', entity1.getID()),
     );

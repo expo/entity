@@ -3,15 +3,16 @@ import {
   QuerySelectionModifiers,
   QuerySelectionModifiersWithOrderByRaw,
 } from './EntityDatabaseAdapter';
-import EntityLoader from './EntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import NonEnforcingEntityLoader from './NonEnforcingEntityLoader';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import { mapMap } from './utils/collections/maps';
 
 /**
- * Enforcing view on an entity loader. All loads through this loader will throw
- * if the loads are not successful.
+ * Enforcing entity loader. All normal loads are batched,
+ * cached, and authorized against the entity's EntityPrivacyPolicy. All loads
+ * through this loader will throw if the load is not successful.
  */
 export default class EnforcingEntityLoader<
   TFields extends object,
@@ -28,7 +29,7 @@ export default class EnforcingEntityLoader<
   TSelectedFields extends keyof TFields,
 > {
   constructor(
-    private readonly entityLoader: EntityLoader<
+    private readonly entityLoader: NonEnforcingEntityLoader<
       TFields,
       TID,
       TViewerContext,

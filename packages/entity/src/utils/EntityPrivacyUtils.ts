@@ -254,12 +254,14 @@ async function canViewerDeleteInternalAsync<
         continue;
       }
 
-      const entityResultsForInboundEdge = await loader.loadManyByFieldEqualingAsync(
-        fieldName,
-        association.associatedEntityLookupByField
-          ? sourceEntity.getField(association.associatedEntityLookupByField as any)
-          : sourceEntity.getID(),
-      );
+      const entityResultsForInboundEdge = await loader
+        .nonEnforcing()
+        .loadManyByFieldEqualingAsync(
+          fieldName,
+          association.associatedEntityLookupByField
+            ? sourceEntity.getField(association.associatedEntityLookupByField as any)
+            : sourceEntity.getID(),
+        );
 
       const failedEntityLoadResults = failedResults(entityResultsForInboundEdge);
       for (const failedResult of failedEntityLoadResults) {

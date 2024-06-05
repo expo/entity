@@ -135,15 +135,15 @@ it('runs through a common workflow', async () => {
 
   // check that two people can't read each others data
   await expect(
-    enforceAsyncResult(BlahEntity.loader(vc1).loadByIDAsync(blahOwner2.getID())),
+    enforceAsyncResult(BlahEntity.loader(vc1).nonEnforcing().loadByIDAsync(blahOwner2.getID())),
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
   await expect(
-    enforceAsyncResult(BlahEntity.loader(vc2).loadByIDAsync(blahOwner1.getID())),
+    enforceAsyncResult(BlahEntity.loader(vc2).nonEnforcing().loadByIDAsync(blahOwner1.getID())),
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 
   // check that all of owner 1's objects can be loaded
   const results = await enforceResultsAsync(
-    BlahEntity.loader(vc1).loadManyByFieldEqualingAsync('ownerID', vc1.getUserID()!),
+    BlahEntity.loader(vc1).nonEnforcing().loadManyByFieldEqualingAsync('ownerID', vc1.getUserID()!),
   );
   expect(results).toHaveLength(2);
 
@@ -155,7 +155,9 @@ it('runs through a common workflow', async () => {
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 
   // check that empty load many returns nothing
-  const results2 = await BlahEntity.loader(vc1).loadManyByFieldEqualingManyAsync('ownerID', []);
+  const results2 = await BlahEntity.loader(vc1)
+    .nonEnforcing()
+    .loadManyByFieldEqualingManyAsync('ownerID', []);
   for (const value in results2.values) {
     expect(value).toHaveLength(0);
   }
