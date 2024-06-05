@@ -85,7 +85,7 @@ describe(GenericRedisCacher, () => {
 
     // invalidate from cache to ensure it invalidates correctly
     await RedisTestEntity.loader(viewerContext)
-      .withAuthorizationResults()
+      .utils()
       .invalidateFieldsAsync(entity1.getAllFields());
     const cachedValueNull = await (genericRedisCacheContext.redisClient as Redis).get(
       cacheKeyMaker('id', entity1.getID()),

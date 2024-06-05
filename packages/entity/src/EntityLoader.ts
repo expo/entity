@@ -2,6 +2,7 @@ import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEnti
 import EnforcingEntityLoader from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
 import EntityConfiguration from './EntityConfiguration';
+import EntityLoaderUtils from './EntityLoaderUtils';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
@@ -27,6 +28,15 @@ export default class EntityLoader<
   >,
   TSelectedFields extends keyof TFields,
 > {
+  private readonly utilsPrivate: EntityLoaderUtils<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >;
+
   constructor(
     private readonly viewerContext: TViewerContext,
     private readonly queryContext: EntityQueryContext,
@@ -50,7 +60,19 @@ export default class EntityLoader<
     private readonly privacyPolicy: TPrivacyPolicy,
     private readonly dataManager: EntityDataManager<TFields>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
-  ) {}
+  ) {
+    this.utilsPrivate = new EntityLoaderUtils(
+      this.viewerContext,
+      this.queryContext,
+      this.privacyPolicyEvaluationContext,
+      this.entityConfiguration,
+      this.entityClass,
+      this.entitySelectedFields,
+      this.privacyPolicy,
+      this.dataManager,
+      this.metricsAdapter,
+    );
+  }
 
   /**
    * Enforcing entity loader. All loads through this loader are
@@ -82,15 +104,27 @@ export default class EntityLoader<
     TSelectedFields
   > {
     return new AuthorizationResultBasedEntityLoader(
-      this.viewerContext,
       this.queryContext,
-      this.privacyPolicyEvaluationContext,
       this.entityConfiguration,
       this.entityClass,
-      this.entitySelectedFields,
-      this.privacyPolicy,
       this.dataManager,
       this.metricsAdapter,
+      this.utilsPrivate,
     );
+  }
+
+  /**
+   * Entity loader utilities for things like cache invalidation, entity construction, and authorization.
+   * Calling into these should only be necessary in rare cases.
+   */
+  public utils(): EntityLoaderUtils<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return this.utilsPrivate;
   }
 }

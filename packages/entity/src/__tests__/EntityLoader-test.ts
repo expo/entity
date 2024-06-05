@@ -500,9 +500,7 @@ describe(EntityLoader, () => {
       dataManagerInstance,
       metricsAdapter,
     );
-    await entityLoader
-      .withAuthorizationResults()
-      .invalidateFieldsAsync({ customIdField: id1 } as any);
+    await entityLoader.utils().invalidateFieldsAsync({ customIdField: id1 } as any);
 
     verify(
       dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any)),
@@ -533,9 +531,7 @@ describe(EntityLoader, () => {
       dataManagerInstance,
       metricsAdapter,
     );
-    await entityLoader
-      .withAuthorizationResults()
-      .invalidateFieldsAsync({ customIdField: id1 } as any);
+    await entityLoader.utils().invalidateFieldsAsync({ customIdField: id1 } as any);
     verify(
       dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any)),
     ).once();
@@ -569,7 +565,7 @@ describe(EntityLoader, () => {
       dataManagerInstance,
       metricsAdapter,
     );
-    await entityLoader.withAuthorizationResults().invalidateEntityAsync(entityInstance);
+    await entityLoader.utils().invalidateEntityAsync(entityInstance);
     verify(
       dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any)),
     ).once();

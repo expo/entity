@@ -1,4 +1,4 @@
-import { Result, asyncResult, result } from '@expo/results';
+import { Result, result } from '@expo/results';
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
 
@@ -10,16 +10,16 @@ import {
   isSingleValueFieldEqualityCondition,
   QuerySelectionModifiersWithOrderByRaw,
 } from './EntityDatabaseAdapter';
-import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
+import EntityLoaderUtils from './EntityLoaderUtils';
+import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
-import { pick } from './entityUtils';
 import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import EntityDataManager from './internal/EntityDataManager';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
-import { mapMap, mapMapAsync } from './utils/collections/maps';
+import { mapMap } from './utils/collections/maps';
 
 /**
  * Authorization-result-based entity loader. All normal loads are batched,
@@ -42,15 +42,7 @@ export default class AuthorizationResultBasedEntityLoader<
   TSelectedFields extends keyof TFields,
 > {
   constructor(
-    private readonly viewerContext: TViewerContext,
     private readonly queryContext: EntityQueryContext,
-    private readonly privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
-      TFields,
-      TID,
-      TViewerContext,
-      TEntity,
-      TSelectedFields
-    >,
     private readonly entityConfiguration: EntityConfiguration<TFields>,
     private readonly entityClass: IEntityClass<
       TFields,
@@ -60,10 +52,16 @@ export default class AuthorizationResultBasedEntityLoader<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly entitySelectedFields: TSelectedFields[] | undefined,
-    private readonly privacyPolicy: TPrivacyPolicy,
     private readonly dataManager: EntityDataManager<TFields>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
+    private readonly utils: EntityLoaderUtils<
+      TFields,
+      TID,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
   ) {}
 
   /**
@@ -85,7 +83,7 @@ export default class AuthorizationResultBasedEntityLoader<
       fieldValues,
     );
 
-    return await this.constructAndAuthorizeEntitiesAsync(fieldValuesToFieldObjects);
+    return await this.utils.constructAndAuthorizeEntitiesAsync(fieldValuesToFieldObjects);
   }
 
   /**
@@ -243,7 +241,7 @@ export default class AuthorizationResultBasedEntityLoader<
       fieldEqualityOperands,
       querySelectionModifiers,
     );
-    return await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
+    return await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
 
   /**
@@ -280,87 +278,7 @@ export default class AuthorizationResultBasedEntityLoader<
       bindings,
       querySelectionModifiers,
     );
-    return await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
-  }
-
-  /**
-   * Invalidate all caches for an entity's fields. Exposed primarily for internal use by EntityMutator.
-   * @param objectFields - entity data object to be invalidated
-   */
-  async invalidateFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
-    await this.dataManager.invalidateObjectFieldsAsync(objectFields);
-  }
-
-  /**
-   * Invalidate all caches for an entity. One potential use case would be to keep the entity
-   * framework in sync with changes made to data outside of the framework.
-   * @param entity - entity to be invalidated
-   */
-  async invalidateEntityAsync(entity: TEntity): Promise<void> {
-    await this.invalidateFieldsAsync(entity.getAllDatabaseFields());
-  }
-
-  private tryConstructEntities(fieldsObjects: readonly TFields[]): readonly Result<TEntity>[] {
-    return fieldsObjects.map((fieldsObject) => {
-      try {
-        return result(this.constructEntity(fieldsObject));
-      } catch (e) {
-        if (!(e instanceof Error)) {
-          throw e;
-        }
-        return result(e);
-      }
-    });
-  }
-
-  public constructEntity(fieldsObject: TFields): TEntity {
-    const idField = this.entityConfiguration.idField;
-    const id = nullthrows(fieldsObject[idField], 'must provide ID to create an entity');
-    const entitySelectedFields =
-      this.entitySelectedFields ?? Array.from(this.entityConfiguration.schema.keys());
-    const selectedFields = pick(fieldsObject, entitySelectedFields);
-    return new this.entityClass({
-      viewerContext: this.viewerContext,
-      id: id as TID,
-      databaseFields: fieldsObject,
-      selectedFields,
-    });
-  }
-
-  /**
-   * Construct and authorize entities from fields map, returning error results for entities that fail
-   * to construct or fail to authorize.
-   *
-   * @param map - map from an arbitrary key type to an array of entity field objects
-   */
-  public async constructAndAuthorizeEntitiesAsync<K>(
-    map: ReadonlyMap<K, readonly Readonly<TFields>[]>,
-  ): Promise<ReadonlyMap<K, readonly Result<TEntity>[]>> {
-    return await mapMapAsync(map, async (fieldObjects) => {
-      return await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
-    });
-  }
-
-  private async constructAndAuthorizeEntitiesArrayAsync(
-    fieldObjects: readonly Readonly<TFields>[],
-  ): Promise<readonly Result<TEntity>[]> {
-    const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
-    return await Promise.all(
-      uncheckedEntityResults.map(async (uncheckedEntityResult) => {
-        if (!uncheckedEntityResult.ok) {
-          return uncheckedEntityResult;
-        }
-        return await asyncResult(
-          this.privacyPolicy.authorizeReadAsync(
-            this.viewerContext,
-            this.queryContext,
-            this.privacyPolicyEvaluationContext,
-            uncheckedEntityResult.value,
-            this.metricsAdapter,
-          ),
-        );
-      }),
-    );
+    return await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
 
   private validateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(

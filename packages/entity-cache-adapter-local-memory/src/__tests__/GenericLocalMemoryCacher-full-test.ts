@@ -83,7 +83,7 @@ describe(GenericLocalMemoryCacher, () => {
 
     // invalidate from cache to ensure it invalidates correctly
     await LocalMemoryTestEntity.loader(viewerContext)
-      .withAuthorizationResults()
+      .utils()
       .invalidateFieldsAsync(entity1.getAllFields());
     const cachedResultMiss = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),
