@@ -17,7 +17,6 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "types": ["jest", "node"]
   }
 }
