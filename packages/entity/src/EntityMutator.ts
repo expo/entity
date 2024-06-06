@@ -78,35 +78,7 @@ abstract class BaseMutator<
     >,
     protected readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
-  ) {
-    this.mutationTriggers = [companionProvider.globalMutationTriggers, mutationTriggers].reduce<
-      EntityMutationTriggerConfiguration<TFields, TID, TViewerContext, TEntity, TSelectedFields>
-    >((accum, mutationObj) => {
-      (
-        Object.entries(mutationObj || {}) as [
-          keyof typeof mutationObj,
-          (EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields> &
-            EntityNonTransactionalMutationTrigger<
-              TFields,
-              TID,
-              TViewerContext,
-              TEntity,
-              TSelectedFields
-            >)[],
-        ][]
-      ).forEach(([triggerName, triggers]) => {
-        if (triggers?.length) {
-          if (accum[triggerName] == null) {
-            accum[triggerName] = triggers;
-          } else {
-            accum[triggerName] = (accum[triggerName] as typeof triggers)!.concat(triggers);
-          }
-        }
-      });
-
-      return accum;
-    }, {});
-  }
+  ) {}
 
   protected validateFields(fields: Partial<TFields>): void {
     for (const fieldName in fields) {

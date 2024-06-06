@@ -139,19 +139,17 @@ const setUpMutationTriggerSpies = (
   TestEntity,
   keyof TestFields
 > => {
-  return Object.entries(mutationTriggers).reduce<
-    EntityMutationTriggerConfiguration<
-      TestFields,
-      string,
-      ViewerContext,
-      TestEntity,
-      keyof TestFields
-    >
-  >((accum, [triggerName, triggers]) => {
-    accum[triggerName as keyof typeof mutationTriggers] = triggers.map(spy);
-
-    return accum;
-  }, {});
+  return {
+    beforeCreate: [spy(mutationTriggers.beforeCreate![0]!)],
+    afterCreate: [spy(mutationTriggers.afterCreate![0]!)],
+    beforeUpdate: [spy(mutationTriggers.beforeUpdate![0]!)],
+    afterUpdate: [spy(mutationTriggers.afterUpdate![0]!)],
+    beforeDelete: [spy(mutationTriggers.beforeDelete![0]!)],
+    afterDelete: [spy(mutationTriggers.afterDelete![0]!)],
+    beforeAll: [spy(mutationTriggers.beforeAll![0]!)],
+    afterAll: [spy(mutationTriggers.afterAll![0]!)],
+    afterCommit: [spy(mutationTriggers.afterCommit![0]!)],
+  };
 };
 
 const verifyTriggerCounts = (
@@ -163,25 +161,23 @@ const verifyTriggerCounts = (
     TestEntity,
     keyof TestFields
   >,
-  executed: Partial<
-    Record<
-      keyof Pick<
-        EntityMutationTriggerConfiguration<
-          TestFields,
-          string,
-          ViewerContext,
-          TestEntity,
-          keyof TestFields
-        >,
-        | 'beforeCreate'
-        | 'afterCreate'
-        | 'beforeUpdate'
-        | 'afterUpdate'
-        | 'beforeDelete'
-        | 'afterDelete'
+  executed: Record<
+    keyof Pick<
+      EntityMutationTriggerConfiguration<
+        TestFields,
+        string,
+        ViewerContext,
+        TestEntity,
+        keyof TestFields
       >,
-      boolean
-    >
+      | 'beforeCreate'
+      | 'afterCreate'
+      | 'beforeUpdate'
+      | 'afterUpdate'
+      | 'beforeDelete'
+      | 'afterDelete'
+    >,
+    boolean
   >,
   mutationInfo: EntityTriggerMutationInfo<
     TestFields,
@@ -191,60 +187,57 @@ const verifyTriggerCounts = (
     keyof TestFields
   >,
 ): void => {
-  for (const [triggerName, check] of Object.entries(executed)) {
-    const triggersSpies =
-      mutationTriggerSpies[triggerName as keyof typeof mutationTriggerSpies] ?? [];
-
-    for (const triggerSpy of triggersSpies) {
+  Object.keys(executed).forEach((s) => {
+    if ((executed as any)[s]) {
       verify(
-        triggerSpy.executeAsync(
-          viewerContext,
-          anyOfClass(EntityTransactionalQueryContext),
-          anyOfClass(TestEntity),
-          deepEqual(mutationInfo),
-        ),
-      )[check ? 'once' : 'never']();
-    }
-  }
-
-  if (mutationTriggerSpies.beforeAll?.length) {
-    for (const triggerSpy of mutationTriggerSpies.beforeAll) {
-      verify(
-        triggerSpy.executeAsync(
+        (mutationTriggerSpies as any)[s]![0].executeAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
           anyOfClass(TestEntity),
           deepEqual(mutationInfo),
         ),
       ).once();
-    }
-  }
-
-  if (mutationTriggerSpies.afterAll?.length) {
-    for (const triggerSpy of mutationTriggerSpies.afterAll) {
+    } else {
       verify(
-        triggerSpy.executeAsync(
+        (mutationTriggerSpies as any)[s]![0].executeAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
           anyOfClass(TestEntity),
           deepEqual(mutationInfo),
         ),
-      ).once();
+      ).never();
     }
-  }
+  });
 
-  if (mutationTriggerSpies.afterCommit?.length) {
-    for (const triggerSpy of mutationTriggerSpies.afterCommit) {
-      verify(
-        triggerSpy.executeAsync(viewerContext, anyOfClass(TestEntity), deepEqual(mutationInfo)),
-      ).once();
-    }
-  }
+  verify(
+    mutationTriggerSpies.beforeAll![0]!.executeAsync(
+      viewerContext,
+      anyOfClass(EntityTransactionalQueryContext),
+      anyOfClass(TestEntity),
+      deepEqual(mutationInfo),
+    ),
+  ).once();
+
+  verify(
+    mutationTriggerSpies.afterAll![0]!.executeAsync(
+      viewerContext,
+      anyOfClass(EntityTransactionalQueryContext),
+      anyOfClass(TestEntity),
+      deepEqual(mutationInfo),
+    ),
+  ).once();
+
+  verify(
+    mutationTriggerSpies.afterCommit![0]!.executeAsync(
+      viewerContext,
+      anyOfClass(TestEntity),
+      deepEqual(mutationInfo),
+    ),
+  ).once();
 };
 
 const createEntityMutatorFactory = (
   existingObjects: TestFields[],
-  globalMutationTriggers: EntityMutationTriggerConfiguration<any, any, any, any, any> = {},
 ): {
   privacyPolicy: TestEntityPrivacyPolicy;
   entityLoaderFactory: EntityLoaderFactory<
@@ -340,7 +333,6 @@ const createEntityMutatorFactory = (
         },
       ],
     ]),
-    globalMutationTriggers,
   );
 
   const dataManager = new EntityDataManager(
@@ -456,43 +448,28 @@ describe(EntityMutatorFactory, () => {
       const viewerContext = mock<ViewerContext>();
       const queryContext = StubQueryContextProvider.getQueryContext();
 
-      const globalMutationTriggers: EntityMutationTriggerConfiguration<
-        TestFields,
-        string,
-        ViewerContext,
-        TestEntity,
-        keyof TestFields
-      > = {
-        afterCreate: [new TestMutationTrigger()],
-        afterAll: [new TestMutationTrigger()],
-      };
-
       const id1 = uuidv4();
       const id2 = uuidv4();
-      const { mutationTriggers, entityMutatorFactory } = createEntityMutatorFactory(
-        [
-          {
-            customIdField: id1,
-            stringField: 'huh',
-            testIndexedField: '4',
-            intField: 1,
-            dateField: new Date(),
-            nullableField: null,
-          },
-          {
-            customIdField: id2,
-            stringField: 'huh',
-            testIndexedField: '5',
-            intField: 1,
-            dateField: new Date(),
-            nullableField: null,
-          },
-        ],
-        globalMutationTriggers,
-      );
+      const { mutationTriggers, entityMutatorFactory } = createEntityMutatorFactory([
+        {
+          customIdField: id1,
+          stringField: 'huh',
+          testIndexedField: '4',
+          intField: 1,
+          dateField: new Date(),
+          nullableField: null,
+        },
+        {
+          customIdField: id2,
+          stringField: 'huh',
+          testIndexedField: '5',
+          intField: 1,
+          dateField: new Date(),
+          nullableField: null,
+        },
+      ]);
 
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
-      const globalTriggerSpies = setUpMutationTriggerSpies(globalMutationTriggers);
 
       await entityMutatorFactory
         .forCreate(viewerContext, queryContext)
@@ -510,20 +487,6 @@ describe(EntityMutatorFactory, () => {
           beforeDelete: false,
           afterDelete: false,
         },
-        { type: EntityMutationType.CREATE },
-      );
-
-      verifyTriggerCounts(
-        viewerContext,
-        globalTriggerSpies,
-        {},
-        { type: EntityMutationType.CREATE },
-      );
-
-      verifyTriggerCounts(
-        viewerContext,
-        globalTriggerSpies,
-        {},
         { type: EntityMutationType.CREATE },
       );
     });
@@ -701,44 +664,29 @@ describe(EntityMutatorFactory, () => {
         );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
-      const globalMutationTriggers: EntityMutationTriggerConfiguration<
-        TestFields,
-        string,
-        ViewerContext,
-        TestEntity,
-        keyof TestFields
-      > = {
-        afterUpdate: [new TestMutationTrigger()],
-        afterAll: [new TestMutationTrigger()],
-      };
-
       const id1 = uuidv4();
       const id2 = uuidv4();
       const { mutationTriggers, entityMutatorFactory, entityLoaderFactory } =
-        createEntityMutatorFactory(
-          [
-            {
-              customIdField: id1,
-              stringField: 'huh',
-              testIndexedField: '3',
-              intField: 3,
-              dateField: new Date(),
-              nullableField: null,
-            },
-            {
-              customIdField: id2,
-              stringField: 'huh',
-              testIndexedField: '4',
-              intField: 3,
-              dateField: new Date(),
-              nullableField: null,
-            },
-          ],
-          globalMutationTriggers,
-        );
+        createEntityMutatorFactory([
+          {
+            customIdField: id1,
+            stringField: 'huh',
+            testIndexedField: '3',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+          {
+            customIdField: id2,
+            stringField: 'huh',
+            testIndexedField: '4',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ]);
 
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
-      const globalTriggerSpies = setUpMutationTriggerSpies(globalMutationTriggers);
 
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
@@ -762,17 +710,6 @@ describe(EntityMutatorFactory, () => {
           beforeDelete: false,
           afterDelete: false,
         },
-        {
-          type: EntityMutationType.UPDATE,
-          previousValue: existingEntity,
-          cascadingDeleteCause: null,
-        },
-      );
-
-      verifyTriggerCounts(
-        viewerContext,
-        globalTriggerSpies,
-        {},
         {
           type: EntityMutationType.UPDATE,
           previousValue: existingEntity,
@@ -1002,35 +939,20 @@ describe(EntityMutatorFactory, () => {
         );
       const queryContext = StubQueryContextProvider.getQueryContext();
 
-      const globalMutationTriggers: EntityMutationTriggerConfiguration<
-        TestFields,
-        string,
-        ViewerContext,
-        TestEntity,
-        keyof TestFields
-      > = {
-        afterDelete: [new TestMutationTrigger()],
-        afterAll: [new TestMutationTrigger()],
-      };
-
       const id1 = uuidv4();
       const { mutationTriggers, entityMutatorFactory, entityLoaderFactory } =
-        createEntityMutatorFactory(
-          [
-            {
-              customIdField: id1,
-              stringField: 'huh',
-              testIndexedField: '3',
-              intField: 3,
-              dateField: new Date(),
-              nullableField: null,
-            },
-          ],
-          globalMutationTriggers,
-        );
+        createEntityMutatorFactory([
+          {
+            customIdField: id1,
+            stringField: 'huh',
+            testIndexedField: '3',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ]);
 
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
-      const globalTriggerSpies = setUpMutationTriggerSpies(globalMutationTriggers);
 
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
@@ -1051,13 +973,6 @@ describe(EntityMutatorFactory, () => {
           beforeDelete: true,
           afterDelete: true,
         },
-        { type: EntityMutationType.DELETE, cascadingDeleteCause: null },
-      );
-
-      verifyTriggerCounts(
-        viewerContext,
-        globalTriggerSpies,
-        {},
         { type: EntityMutationType.DELETE, cascadingDeleteCause: null },
       );
     });
