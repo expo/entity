@@ -3,7 +3,10 @@ import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { StringField, UUIDField } from '../EntityFields';
 import { EntityTriggerMutationInfo } from '../EntityMutationInfo';
-import { EntityMutationTrigger } from '../EntityMutationTriggerConfiguration';
+import {
+  EntityMutationTrigger,
+  EntityNonTransactionalMutationTrigger,
+} from '../EntityMutationTriggerConfiguration';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
@@ -97,6 +100,33 @@ export class TestMutationTrigger extends EntityMutationTrigger<
   ): Promise<void> {}
 }
 
+export class NonTransactionalTestMutationTrigger extends EntityNonTransactionalMutationTrigger<
+  TestMTFields,
+  string,
+  ViewerContext,
+  TestEntityWithMutationTriggers,
+  keyof TestMTFields
+> {
+  constructor(
+    // @ts-expect-error key is never used but is helpful for debugging
+    private readonly key: string,
+  ) {
+    super();
+  }
+
+  async executeAsync(
+    _viewerContext: ViewerContext,
+    _entity: TestEntityWithMutationTriggers,
+    _mutationInfo: EntityTriggerMutationInfo<
+      TestMTFields,
+      string,
+      ViewerContext,
+      TestEntityWithMutationTriggers,
+      keyof TestMTFields
+    >,
+  ): Promise<void> {}
+}
+
 /**
  * A test Entity that has one afterCreate and one afterAll trigger
  */
@@ -119,6 +149,7 @@ export default class TestEntityWithMutationTriggers extends Entity<
       mutationTriggers: {
         afterCreate: [new TestMutationTrigger('localAfterCreate')],
         afterAll: [new TestMutationTrigger('localAfterAll')],
+        afterCommit: [new NonTransactionalTestMutationTrigger('localAfterCommit')],
       },
     };
   }

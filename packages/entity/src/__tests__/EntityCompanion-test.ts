@@ -74,5 +74,6 @@ describe(EntityCompanion, () => {
     expect(mergedTriggers.afterCreate![1]).toBe(globalMutationTriggers.afterCreate![0]);
     expect(mergedTriggers.afterAll![0]).toBe(localTriggers!.afterAll![0]);
     expect(mergedTriggers.afterAll![1]).toBe(globalMutationTriggers!.afterAll![0]);
+    expect(mergedTriggers.afterCommit![0]).toBe(localTriggers!.afterCommit![0]);
   });
 });

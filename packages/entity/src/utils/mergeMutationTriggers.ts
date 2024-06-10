@@ -21,7 +21,7 @@ export function mergeEntityMutationTriggerConfigurations<
     TSelectedFields
   >[]
 ): EntityMutationTriggerConfiguration<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
-  return {
+  const merged = {
     beforeCreate: mutationTriggerConfigurations.flatMap((c) => c.beforeCreate).filter(nonNullish),
     afterCreate: mutationTriggerConfigurations.flatMap((c) => c.afterCreate).filter(nonNullish),
     beforeUpdate: mutationTriggerConfigurations.flatMap((c) => c.beforeUpdate).filter(nonNullish),
@@ -32,4 +32,13 @@ export function mergeEntityMutationTriggerConfigurations<
     afterAll: mutationTriggerConfigurations.flatMap((c) => c.afterAll).filter(nonNullish),
     afterCommit: mutationTriggerConfigurations.flatMap((c) => c.afterCommit).filter(nonNullish),
   };
+
+  /** Remove any trigger that is an empty array */
+  for (const key of Object.keys(merged) as (keyof typeof merged)[]) {
+    if (!merged[key]?.length) {
+      delete merged[key];
+    }
+  }
+
+  return merged;
 }
