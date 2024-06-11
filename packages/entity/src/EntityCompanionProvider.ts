@@ -139,7 +139,7 @@ export default class EntityCompanionProvider {
    * @param metricsAdapter - An IEntityMetricsAdapter for collecting metrics on this instance
    * @param databaseAdapterFlavors - Database adapter configurations for this instance
    * @param cacheAdapterFlavors - Cache adapter configurations for this instance
-   * @param globalMutationTriggers - An optional list of EntityMutationTrigger for all entities.
+   * @param globalMutationTriggers - Optional set of EntityMutationTrigger to run for all entity mutations systemwide.
    */
   constructor(
     public readonly metricsAdapter: IEntityMetricsAdapter,

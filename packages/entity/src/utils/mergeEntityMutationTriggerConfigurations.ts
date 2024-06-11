@@ -35,7 +35,7 @@ export function mergeEntityMutationTriggerConfigurations<
 
   /** Remove any trigger that is an empty array */
   for (const key of Object.keys(merged) as (keyof typeof merged)[]) {
-    if (!merged[key]?.length) {
+    if (merged[key].length === 0) {
       delete merged[key];
     }
   }

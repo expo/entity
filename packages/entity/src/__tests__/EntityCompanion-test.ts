@@ -70,10 +70,10 @@ describe(EntityCompanion, () => {
     const localTriggers = companion.entityCompanionDefinition.mutationTriggers;
     expect(localTriggers).toBeTruthy();
 
-    expect(mergedTriggers.afterCreate![0]).toBe(localTriggers!.afterCreate![0]);
-    expect(mergedTriggers.afterCreate![1]).toBe(globalMutationTriggers.afterCreate![0]);
-    expect(mergedTriggers.afterAll![0]).toBe(localTriggers!.afterAll![0]);
-    expect(mergedTriggers.afterAll![1]).toBe(globalMutationTriggers!.afterAll![0]);
-    expect(mergedTriggers.afterCommit![0]).toBe(localTriggers!.afterCommit![0]);
+    expect(mergedTriggers).toStrictEqual({
+      afterCreate: [localTriggers!.afterCreate![0], globalMutationTriggers.afterCreate![0]],
+      afterAll: [localTriggers!.afterAll![0], globalMutationTriggers!.afterAll![0]],
+      afterCommit: [localTriggers!.afterCommit![0]],
+    });
   });
 });

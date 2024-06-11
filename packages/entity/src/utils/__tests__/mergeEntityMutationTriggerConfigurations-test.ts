@@ -1,5 +1,5 @@
 import { TestMutationTrigger } from '../../testfixtures/TestEntityWithMutationTriggers';
-import { mergeEntityMutationTriggerConfigurations } from '../mergeMutationTriggers';
+import { mergeEntityMutationTriggerConfigurations } from '../mergeEntityMutationTriggerConfigurations';
 
 describe(mergeEntityMutationTriggerConfigurations, () => {
   it('successfully merges triggers', async () => {
