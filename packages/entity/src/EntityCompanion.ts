@@ -7,6 +7,7 @@ import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import EntityTableDataCoordinator from './internal/EntityTableDataCoordinator';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
+import { mergeEntityMutationTriggerConfigurations } from './utils/mergeEntityMutationTriggerConfigurations';
 
 export interface IPrivacyPolicyClass<TPrivacyPolicy> {
   new (): TPrivacyPolicy;
@@ -76,7 +77,10 @@ export default class EntityCompanion<
       entityCompanionDefinition.entityClass,
       this.privacyPolicy,
       entityCompanionDefinition.mutationValidators ?? [],
-      entityCompanionDefinition.mutationTriggers ?? {},
+      mergeEntityMutationTriggerConfigurations(
+        entityCompanionDefinition.mutationTriggers ?? {},
+        entityCompanionProvider.globalMutationTriggers ?? {},
+      ),
       this.entityLoaderFactory,
       tableDataCoordinator.databaseAdapter,
       metricsAdapter,
