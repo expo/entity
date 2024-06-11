@@ -85,7 +85,7 @@ export default abstract class EntitySecondaryCacheLoader<
 
     // convert value to and from array to reuse complex code
     const entitiesMap = await this.entityLoader
-      .nonEnforcing()
+      .withAuthorizationResults()
       .constructAndAuthorizeEntitiesAsync(
         mapMap(loadParamsToFieldObjects, (fieldObject) => (fieldObject ? [fieldObject] : [])),
       );

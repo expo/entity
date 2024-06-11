@@ -36,7 +36,7 @@ describe('Two entities backed by the same table', () => {
     ).rejects.toThrowError('OneTestEntity must be instantiated with one data');
 
     const manyResults = await OneTestEntity.loader(viewerContext)
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadManyByFieldEqualingAsync('common_other_field', 'wat');
     const successfulManyResults = successfulResults(manyResults);
     const failedManyResults = failedResults(manyResults);
@@ -50,7 +50,7 @@ describe('Two entities backed by the same table', () => {
     );
 
     const fieldEqualityConjunctionResults = await OneTestEntity.loader(viewerContext)
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadManyByFieldEqualityConjunctionAsync([
         {
           fieldName: 'common_other_field',

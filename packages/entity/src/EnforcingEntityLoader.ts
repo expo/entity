@@ -1,10 +1,10 @@
+import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
 import {
   FieldEqualityCondition,
   QuerySelectionModifiers,
   QuerySelectionModifiersWithOrderByRaw,
 } from './EntityDatabaseAdapter';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import NonEnforcingEntityLoader from './NonEnforcingEntityLoader';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import { mapMap } from './utils/collections/maps';
@@ -29,7 +29,7 @@ export default class EnforcingEntityLoader<
   TSelectedFields extends keyof TFields,
 > {
   constructor(
-    private readonly entityLoader: NonEnforcingEntityLoader<
+    private readonly entityLoader: AuthorizationResultBasedEntityLoader<
       TFields,
       TID,
       TViewerContext,

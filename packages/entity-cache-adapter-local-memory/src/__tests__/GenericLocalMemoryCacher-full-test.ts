@@ -64,7 +64,7 @@ describe(GenericLocalMemoryCacher, () => {
     const nonExistentId = uuidv4();
 
     const entityNonExistentResult = await LocalMemoryTestEntity.loader(viewerContext)
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 
@@ -77,13 +77,13 @@ describe(GenericLocalMemoryCacher, () => {
 
     // load again through entities framework to ensure it reads negative result
     const entityNonExistentResult2 = await LocalMemoryTestEntity.loader(viewerContext)
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly
     await LocalMemoryTestEntity.loader(viewerContext)
-      .nonEnforcing()
+      .withAuthorizationResults()
       .invalidateFieldsAsync(entity1.getAllFields());
     const cachedResultMiss = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),
@@ -136,7 +136,7 @@ describe(GenericLocalMemoryCacher, () => {
     const nonExistentId = uuidv4();
 
     const entityNonExistentResult = await LocalMemoryTestEntity.loader(viewerContext)
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 

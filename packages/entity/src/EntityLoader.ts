@@ -1,9 +1,9 @@
+import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
 import EnforcingEntityLoader from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
 import EntityConfiguration from './EntityConfiguration';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import NonEnforcingEntityLoader from './NonEnforcingEntityLoader';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import EntityDataManager from './internal/EntityDataManager';
@@ -65,14 +65,15 @@ export default class EntityLoader<
     TPrivacyPolicy,
     TSelectedFields
   > {
-    return new EnforcingEntityLoader(this.nonEnforcing());
+    return new EnforcingEntityLoader(this.withAuthorizationResults());
   }
 
   /**
-   * Non-enforcing entity loader. All loads through this loader are are results (or null for some loader methods),
-   * where an unsuccessful result means an authorization error. Other errors are thrown.
+   * Authorization-result-based entity loader. All loads through this
+   * loader are are results (or null for some loader methods), where an unsuccessful result
+   * means an authorization error or entity construction error occurred. Other errors are thrown.
    */
-  nonEnforcing(): NonEnforcingEntityLoader<
+  withAuthorizationResults(): AuthorizationResultBasedEntityLoader<
     TFields,
     TID,
     TViewerContext,
@@ -80,7 +81,7 @@ export default class EntityLoader<
     TPrivacyPolicy,
     TSelectedFields
   > {
-    return new NonEnforcingEntityLoader(
+    return new AuthorizationResultBasedEntityLoader(
       this.viewerContext,
       this.queryContext,
       this.privacyPolicyEvaluationContext,

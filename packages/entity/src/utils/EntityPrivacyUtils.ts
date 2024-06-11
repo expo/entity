@@ -255,7 +255,7 @@ async function canViewerDeleteInternalAsync<
       }
 
       const entityResultsForInboundEdge = await loader
-        .nonEnforcing()
+        .withAuthorizationResults()
         .loadManyByFieldEqualingAsync(
           fieldName,
           association.associatedEntityLookupByField

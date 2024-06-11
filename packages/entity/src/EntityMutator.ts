@@ -216,7 +216,7 @@ export class CreateMutator<
       cascadingDeleteCause: null,
     });
 
-    const temporaryEntityForPrivacyCheck = entityLoader.nonEnforcing().constructEntity({
+    const temporaryEntityForPrivacyCheck = entityLoader.withAuthorizationResults().constructEntity({
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
       ...this.fieldsForEntity,
     } as unknown as TFields);
@@ -256,10 +256,14 @@ export class CreateMutator<
     const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
 
     queryContext.appendPostCommitInvalidationCallback(
-      entityLoader.nonEnforcing().invalidateFieldsAsync.bind(entityLoader, insertResult),
+      entityLoader
+        .withAuthorizationResults()
+        .invalidateFieldsAsync.bind(entityLoader, insertResult),
     );
 
-    const unauthorizedEntityAfterInsert = entityLoader.nonEnforcing().constructEntity(insertResult);
+    const unauthorizedEntityAfterInsert = entityLoader
+      .withAuthorizationResults()
+      .constructEntity(insertResult);
     const newEntity = await entityLoader
       .enforcing()
       .loadByIDAsync(unauthorizedEntityAfterInsert.getID());
@@ -430,7 +434,7 @@ export class UpdateMutator<
     });
 
     const entityAboutToBeUpdated = entityLoader
-      .nonEnforcing()
+      .withAuthorizationResults()
       .constructEntity(this.fieldsForEntity);
     const authorizeUpdateResult = await asyncResult(
       this.privacyPolicy.authorizeUpdateAsync(
@@ -476,11 +480,13 @@ export class UpdateMutator<
 
     queryContext.appendPostCommitInvalidationCallback(
       entityLoader
-        .nonEnforcing()
+        .withAuthorizationResults()
         .invalidateFieldsAsync.bind(entityLoader, this.originalEntity.getAllDatabaseFields()),
     );
     queryContext.appendPostCommitInvalidationCallback(
-      entityLoader.nonEnforcing().invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity),
+      entityLoader
+        .withAuthorizationResults()
+        .invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity),
     );
 
     const updatedEntity = await entityLoader
@@ -684,7 +690,7 @@ export class DeleteMutator<
     });
     queryContext.appendPostCommitInvalidationCallback(
       entityLoader
-        .nonEnforcing()
+        .withAuthorizationResults()
         .invalidateFieldsAsync.bind(entityLoader, this.entity.getAllDatabaseFields()),
     );
 

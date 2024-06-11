@@ -68,7 +68,7 @@ describe(GenericRedisCacher, () => {
     const nonExistentId = uuidv4();
 
     const entityNonExistentResult = await RedisTestEntity.loader(viewerContext)
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult.ok).toBe(false);
 
@@ -79,13 +79,13 @@ describe(GenericRedisCacher, () => {
 
     // load again through entities framework to ensure it reads negative result
     const entityNonExistentResult2 = await RedisTestEntity.loader(viewerContext)
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadByIDAsync(nonExistentId);
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly
     await RedisTestEntity.loader(viewerContext)
-      .nonEnforcing()
+      .withAuthorizationResults()
       .invalidateFieldsAsync(entity1.getAllFields());
     const cachedValueNull = await (genericRedisCacheContext.redisClient as Redis).get(
       cacheKeyMaker('id', entity1.getID()),

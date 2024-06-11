@@ -22,12 +22,12 @@ import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 import { mapMap, mapMapAsync } from './utils/collections/maps';
 
 /**
- * Non-enforcing entity loader. All normal loads are batched,
+ * Authorization-result-based entity loader. All normal loads are batched,
  * cached, and authorized against the entity's EntityPrivacyPolicy. All loads through this
  * loader are are results (or null for some loader methods), where an unsuccessful result
- * means an authorization error occurred. Other errors are thrown.
+ * means an authorization error or entity construction error occurred. Other errors are thrown.
  */
-export default class NonEnforcingEntityLoader<
+export default class AuthorizationResultBasedEntityLoader<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,

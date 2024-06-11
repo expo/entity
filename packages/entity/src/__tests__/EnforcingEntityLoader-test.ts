@@ -1,14 +1,15 @@
 import { result } from '@expo/results';
 import { mock, instance, when, anything } from 'ts-mockito';
 
+import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
 import EnforcingEntityLoader from '../EnforcingEntityLoader';
-import NonEnforcingEntityLoader from '../NonEnforcingEntityLoader';
 
 describe(EnforcingEntityLoader, () => {
   describe('loadManyByFieldEqualingManyAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const rejection = new Error();
       when(
         nonEnforcingEntityLoaderMock.loadManyByFieldEqualingManyAsync(anything(), anything()),
@@ -27,8 +28,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = {};
       when(
         nonEnforcingEntityLoaderMock.loadManyByFieldEqualingManyAsync(anything(), anything()),
@@ -55,8 +57,9 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadManyByFieldEqualingAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const rejection = new Error();
       when(
         nonEnforcingEntityLoaderMock.loadManyByFieldEqualingAsync(anything(), anything()),
@@ -69,8 +72,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = {};
       when(
         nonEnforcingEntityLoaderMock.loadManyByFieldEqualingAsync(anything(), anything()),
@@ -85,8 +89,9 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadByFieldEqualingAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const rejection = new Error();
       when(
         nonEnforcingEntityLoaderMock.loadByFieldEqualingAsync(anything(), anything()),
@@ -99,8 +104,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = {};
       when(
         nonEnforcingEntityLoaderMock.loadByFieldEqualingAsync(anything(), anything()),
@@ -113,8 +119,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns null when result is successful and no entity is found', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = null;
       when(
         nonEnforcingEntityLoaderMock.loadByFieldEqualingAsync(anything(), anything()),
@@ -127,8 +134,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('throws when multiple matching entities are found', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const multipleEntitiesError = new Error();
       when(
         nonEnforcingEntityLoaderMock.loadByFieldEqualingAsync(anything(), anything()),
@@ -143,8 +151,9 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadByIDAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const rejection = new Error();
       when(nonEnforcingEntityLoaderMock.loadByIDAsync(anything())).thenResolve(result(rejection));
       const nonEnforcingEntityLoader = instance(nonEnforcingEntityLoaderMock);
@@ -153,8 +162,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = {};
       when(nonEnforcingEntityLoaderMock.loadByIDAsync(anything())).thenResolve(result(resolved));
       const nonEnforcingEntityLoader = instance(nonEnforcingEntityLoaderMock);
@@ -165,8 +175,9 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadByIDNullableAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const rejection = new Error();
       when(nonEnforcingEntityLoaderMock.loadByIDNullableAsync(anything())).thenResolve(
         result(rejection),
@@ -179,8 +190,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = {};
       when(nonEnforcingEntityLoaderMock.loadByIDNullableAsync(anything())).thenResolve(
         result(resolved),
@@ -193,8 +205,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns null when non-existent object', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = null;
       when(nonEnforcingEntityLoaderMock.loadByIDNullableAsync(anything())).thenResolve(
         result(resolved),
@@ -209,8 +222,9 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadManyByIDsAsync', () => {
     it('throws when result is unsuccessful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const rejection = new Error();
       when(nonEnforcingEntityLoaderMock.loadManyByIDsAsync(anything())).thenResolve(
         new Map(
@@ -225,8 +239,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = {};
       when(nonEnforcingEntityLoaderMock.loadManyByIDsAsync(anything())).thenResolve(
         new Map(
@@ -249,8 +264,9 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadManyByIDsNullableAsync', () => {
     it('throws when result is unsuccessful even when there is a null result', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const rejection = new Error();
       when(nonEnforcingEntityLoaderMock.loadManyByIDsNullableAsync(anything())).thenResolve(
         new Map(
@@ -268,8 +284,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = {};
       when(nonEnforcingEntityLoaderMock.loadManyByIDsNullableAsync(anything())).thenResolve(
         new Map(
@@ -294,8 +311,9 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadFirstByFieldEqualityConjunction', () => {
     it('throws when result is unsuccessful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const rejection = new Error();
       when(
         nonEnforcingEntityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(
@@ -311,8 +329,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = {};
       when(
         nonEnforcingEntityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(
@@ -328,8 +347,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns null when the query is successful but no rows match', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       when(
         nonEnforcingEntityLoaderMock.loadFirstByFieldEqualityConjunctionAsync(
           anything(),
@@ -346,8 +366,9 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadManyByFieldEqualityConjunction', () => {
     it('throws when result is unsuccessful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const rejection = new Error();
       when(
         nonEnforcingEntityLoaderMock.loadManyByFieldEqualityConjunctionAsync(
@@ -363,8 +384,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = {};
       when(
         nonEnforcingEntityLoaderMock.loadManyByFieldEqualityConjunctionAsync(
@@ -382,8 +404,9 @@ describe(EnforcingEntityLoader, () => {
 
   describe('loadManyByRawWhereClause', () => {
     it('throws when result is unsuccessful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const rejection = new Error();
       when(
         nonEnforcingEntityLoaderMock.loadManyByRawWhereClauseAsync(
@@ -400,8 +423,9 @@ describe(EnforcingEntityLoader, () => {
     });
 
     it('returns value when result is successful', async () => {
-      const nonEnforcingEntityLoaderMock =
-        mock<NonEnforcingEntityLoader<any, any, any, any, any, any>>(NonEnforcingEntityLoader);
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
       const resolved = {};
       when(
         nonEnforcingEntityLoaderMock.loadManyByRawWhereClauseAsync(
@@ -421,7 +445,7 @@ describe(EnforcingEntityLoader, () => {
   it('has the same method names as EntityLoader', () => {
     const enforcingLoaderProperties = Object.getOwnPropertyNames(EnforcingEntityLoader.prototype);
     const nonEnforcingLoaderProperties = Object.getOwnPropertyNames(
-      NonEnforcingEntityLoader.prototype,
+      AuthorizationResultBasedEntityLoader.prototype,
     );
 
     // ensure known differences still exist for sanity check

@@ -77,7 +77,7 @@ export default class EntityAssociationLoader<
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
 
     return (await loader
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadByIDAsync(associatedEntityID as unknown as TAssociatedID)) as Result<
       null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity
     >;
@@ -132,7 +132,7 @@ export default class EntityAssociationLoader<
       .getLoaderFactory()
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
     return await loader
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadManyByFieldEqualingAsync(associatedEntityFieldContainingThisID, thisID as any);
   }
 
@@ -188,7 +188,7 @@ export default class EntityAssociationLoader<
       .getLoaderFactory()
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
     return await loader
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadByFieldEqualingAsync(associatedEntityLookupByField, associatedFieldValue as any);
   }
 
@@ -245,7 +245,7 @@ export default class EntityAssociationLoader<
       .getLoaderFactory()
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
     return await loader
-      .nonEnforcing()
+      .withAuthorizationResults()
       .loadManyByFieldEqualingAsync(associatedEntityLookupByField, associatedFieldValue as any);
   }
 
