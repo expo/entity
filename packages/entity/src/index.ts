@@ -35,6 +35,7 @@ export * from './EntityPrivacyPolicy';
 export * from './EntityQueryContext';
 export { default as EntityQueryContextProvider } from './EntityQueryContextProvider';
 export { default as EntitySecondaryCacheLoader } from './EntitySecondaryCacheLoader';
+export * from './EntitySecondaryCacheLoader';
 export { default as GenericEntityCacheAdapter } from './GenericEntityCacheAdapter';
 export { default as GenericSecondaryEntityCache } from './GenericSecondaryEntityCache';
 export { default as IEntityCacheAdapter } from './IEntityCacheAdapter';
