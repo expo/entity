@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.37.0](https://github.com/expo/entity/compare/v0.36.0...v0.37.0) (2024-06-12)
+
+
+### Bug Fixes
+
+* update barrels ([#241](https://github.com/expo/entity/issues/241)) ([8c5f81b](https://github.com/expo/entity/commit/8c5f81bcca107e9b7bbea5f0ab41b0105057806e))
+
+
+
+
+
 # [0.36.0](https://github.com/expo/entity/compare/v0.35.0...v0.36.0) (2024-06-12)
 
 ### Breaking Changes
