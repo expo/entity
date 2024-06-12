@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.36.0](https://github.com/expo/entity/compare/v0.35.0...v0.36.0) (2024-06-12)
+
+
+### Bug Fixes
+
+* always reload entity after update since cascading changes may have changed it since commit ([#233](https://github.com/expo/entity/issues/233)) ([7c3c985](https://github.com/expo/entity/commit/7c3c9854a4dd91d4b73ebdb18bdeadea8b63f4c7))
+
+
+
+
+
 # [0.35.0](https://github.com/expo/entity/compare/v0.34.0...v0.35.0) (2024-04-11)
 
 

@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.36.0](https://github.com/expo/entity/compare/v0.35.0...v0.36.0) (2024-06-12)
+
+
+### Bug Fixes
+
+* always reload entity after update since cascading changes may have changed it since commit ([#233](https://github.com/expo/entity/issues/233)) ([7c3c985](https://github.com/expo/entity/commit/7c3c9854a4dd91d4b73ebdb18bdeadea8b63f4c7))
+* constrain entity fields type to string-keyed object ([#235](https://github.com/expo/entity/issues/235)) ([7e2cea1](https://github.com/expo/entity/commit/7e2cea16973a0ae1917f867cd25d6ef7c8eaecef))
+* disallow keys of JS Object prototype for safety ([#236](https://github.com/expo/entity/issues/236)) ([05726d4](https://github.com/expo/entity/commit/05726d45fa9b91a6b25ddbc9c7e3e097b02097ca))
+
+
+### Features
+
+* Add global mutation trigger field to EntityCompanionProvider ([#215](https://github.com/expo/entity/issues/215)) ([6569486](https://github.com/expo/entity/commit/6569486ecddf2fd33c626f634c761e06636b1730))
+* add previousValue to privacy policy context for updates ([#232](https://github.com/expo/entity/issues/232)) ([af495a9](https://github.com/expo/entity/commit/af495a9a856a5042f00cfd150348e415139cb85e))
+* Add StrictEnumField with better validation ([#222](https://github.com/expo/entity/issues/222)) ([8753252](https://github.com/expo/entity/commit/87532525d090b3a67f1cedd95ac990f7dcb3ab5d))
+* make canViewerDeleteAsync recursive ([#224](https://github.com/expo/entity/issues/224)) ([60fc9a4](https://github.com/expo/entity/commit/60fc9a4c4b587b866f2f5a1b3bd22145bc77e6e9))
+* Use uuid v7 in stub database adapter ([#234](https://github.com/expo/entity/issues/234)) ([1e8ea64](https://github.com/expo/entity/commit/1e8ea64017430a2ce5ea197678bd78713ad77ecd))
+
+
+
+
+
 # [0.35.0](https://github.com/expo/entity/compare/v0.34.0...v0.35.0) (2024-04-11)
 
 
