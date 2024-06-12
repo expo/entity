@@ -5,6 +5,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [0.36.0](https://github.com/expo/entity/compare/v0.35.0...v0.36.0) (2024-06-12)
 
+### Breaking Changes
+
+* make using non-enforcing entity loader explicit ([#238](https://github.com/expo/entity/issues/238)) ([2edc7af](https://github.com/expo/entity/commit/2edc7af7e20c362688ff2ee674fa2245205d6de4))
 
 ### Bug Fixes
 
@@ -20,7 +23,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * Add StrictEnumField with better validation ([#222](https://github.com/expo/entity/issues/222)) ([8753252](https://github.com/expo/entity/commit/87532525d090b3a67f1cedd95ac990f7dcb3ab5d))
 * make canViewerDeleteAsync recursive ([#224](https://github.com/expo/entity/issues/224)) ([60fc9a4](https://github.com/expo/entity/commit/60fc9a4c4b587b866f2f5a1b3bd22145bc77e6e9))
 * Use uuid v7 in stub database adapter ([#234](https://github.com/expo/entity/issues/234)) ([1e8ea64](https://github.com/expo/entity/commit/1e8ea64017430a2ce5ea197678bd78713ad77ecd))
-
+* move entity loader utils into their own object ([#239](https://github.com/expo/entity/issues/239))([93905be](https://github.com/expo/entity/commit/93905be81cf74c5626ca19358794261c17223f95))
 
 
 
