@@ -1,7 +1,6 @@
 import {
   OrderByOrdering,
   createUnitTestEntityCompanionProvider,
-  enforceResultsAsync,
   ViewerContext,
   TransactionIsolationLevel,
 } from '@expo/entity';
@@ -92,7 +91,7 @@ describe('postgres entity integration', () => {
       PostgresTestEntity.creator(vc1).setField('name', 'hello').createAsync(),
     );
 
-    await enforceAsyncResult(PostgresTestEntity.loader(vc1).loadByIDAsync(firstEntity.getID()));
+    await PostgresTestEntity.loader(vc1).enforcing().loadByIDAsync(firstEntity.getID());
 
     const errorToThrow = new Error('Intentional error');
 
@@ -111,9 +110,9 @@ describe('postgres entity integration', () => {
       ),
     ).rejects.toEqual(errorToThrow);
 
-    const entities = await enforceResultsAsync(
-      PostgresTestEntity.loader(vc1).loadManyByFieldEqualingAsync('name', 'hello'),
-    );
+    const entities = await PostgresTestEntity.loader(vc1)
+      .enforcing()
+      .loadManyByFieldEqualingAsync('name', 'hello');
     expect(entities).toHaveLength(1);
   });
 

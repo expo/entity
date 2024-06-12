@@ -12,6 +12,7 @@ import {
 } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
+import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
 import EntityCompanionProvider from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
@@ -568,6 +569,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .withAuthorizationResults()
           .loadByIDAsync(id2),
       );
 
@@ -583,6 +585,7 @@ describe(EntityMutatorFactory, () => {
       const reloadedEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .withAuthorizationResults()
           .loadByIDAsync(id2),
       );
       expect(reloadedEntity.getAllFields()).toMatchObject(updatedEntity.getAllFields());
@@ -619,6 +622,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, { previousValue: null, cascadingDeleteCause: null })
+          .withAuthorizationResults()
           .loadByIDAsync(id2),
       );
 
@@ -691,6 +695,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .withAuthorizationResults()
           .loadByIDAsync(id2),
       );
 
@@ -761,6 +766,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .withAuthorizationResults()
           .loadByIDAsync(id2),
       );
 
@@ -807,6 +813,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .withAuthorizationResults()
           .loadByIDAsync(id1),
       );
 
@@ -820,6 +827,7 @@ describe(EntityMutatorFactory, () => {
       const reloadedEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .withAuthorizationResults()
           .loadByIDAsync(id1),
       );
       expect(reloadedEntity.getAllFields()).toMatchObject(existingEntity.getAllFields());
@@ -858,6 +866,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .withAuthorizationResults()
           .loadByIDAsync(id1),
       );
       expect(existingEntity).toBeTruthy();
@@ -868,6 +877,7 @@ describe(EntityMutatorFactory, () => {
         enforceAsyncResult(
           entityLoaderFactory
             .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+            .withAuthorizationResults()
             .loadByIDAsync(id1),
         ),
       ).rejects.toBeInstanceOf(Error);
@@ -907,6 +917,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .withAuthorizationResults()
           .loadByIDAsync(id1),
       );
 
@@ -957,6 +968,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .withAuthorizationResults()
           .loadByIDAsync(id1),
       );
 
@@ -1011,6 +1023,7 @@ describe(EntityMutatorFactory, () => {
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
           .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .withAuthorizationResults()
           .loadByIDAsync(id1),
       );
 
@@ -1053,6 +1066,7 @@ describe(EntityMutatorFactory, () => {
     const entites1 = await enforceResultsAsync(
       entityLoaderFactory
         .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .withAuthorizationResults()
         .loadManyByFieldEqualingAsync('stringField', 'huh'),
     );
     expect(entites1).toHaveLength(1);
@@ -1067,6 +1081,7 @@ describe(EntityMutatorFactory, () => {
     const entities2 = await enforceResultsAsync(
       entityLoaderFactory
         .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .withAuthorizationResults()
         .loadManyByFieldEqualingAsync('stringField', 'huh'),
     );
     expect(entities2).toHaveLength(2);
@@ -1138,7 +1153,20 @@ describe(EntityMutatorFactory, () => {
           keyof SimpleTestFields
         >
       >(EntityLoader);
-    when(entityLoaderMock.constructEntity(anything())).thenReturn(fakeEntity);
+    const nonEnforcingEntityLoaderMock = mock<
+      AuthorizationResultBasedEntityLoader<
+        SimpleTestFields,
+        string,
+        ViewerContext,
+        SimpleTestEntity,
+        SimpleTestEntityPrivacyPolicy,
+        keyof SimpleTestFields
+      >
+    >(AuthorizationResultBasedEntityLoader);
+    when(nonEnforcingEntityLoaderMock.constructEntity(anything())).thenReturn(fakeEntity);
+    when(entityLoaderMock.withAuthorizationResults()).thenReturn(
+      instance(nonEnforcingEntityLoaderMock),
+    );
     const entityLoader = instance(entityLoaderMock);
 
     const entityLoaderFactoryMock =
@@ -1262,7 +1290,20 @@ describe(EntityMutatorFactory, () => {
           keyof SimpleTestFields
         >
       >(EntityLoader);
-    when(entityLoaderMock.constructEntity(anything())).thenReturn(fakeEntity);
+    const nonEnforcingEntityLoaderMock = mock<
+      AuthorizationResultBasedEntityLoader<
+        SimpleTestFields,
+        string,
+        ViewerContext,
+        SimpleTestEntity,
+        SimpleTestEntityPrivacyPolicy,
+        keyof SimpleTestFields
+      >
+    >(AuthorizationResultBasedEntityLoader);
+    when(nonEnforcingEntityLoaderMock.constructEntity(anything())).thenReturn(fakeEntity);
+    when(entityLoaderMock.withAuthorizationResults()).thenReturn(
+      instance(nonEnforcingEntityLoaderMock),
+    );
     const entityLoader = instance(entityLoaderMock);
 
     const entityLoaderFactoryMock =
