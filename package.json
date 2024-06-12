@@ -25,7 +25,7 @@
     "@types/lru-cache": "^5.1.1",
     "@types/node": "^20.14.1",
     "@types/uuid": "^8.3.0",
-    "barrelsby": "^2.2.0",
+    "barrelsby": "^2.8.1",
     "eslint": "^8.56.0",
     "eslint-config-universe": "^13.0.0",
     "eslint-plugin-tsdoc": "^0.3.0",
