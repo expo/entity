@@ -12,12 +12,12 @@ import {
 } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
-import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
 import EntityCompanionProvider from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
 import EntityLoader from '../EntityLoader';
 import EntityLoaderFactory from '../EntityLoaderFactory';
+import EntityLoaderUtils from '../EntityLoaderUtils';
 import {
   EntityMutationType,
   EntityTriggerMutationInfo,
@@ -1153,20 +1153,19 @@ describe(EntityMutatorFactory, () => {
           keyof SimpleTestFields
         >
       >(EntityLoader);
-    const nonEnforcingEntityLoaderMock = mock<
-      AuthorizationResultBasedEntityLoader<
-        SimpleTestFields,
-        string,
-        ViewerContext,
-        SimpleTestEntity,
-        SimpleTestEntityPrivacyPolicy,
-        keyof SimpleTestFields
-      >
-    >(AuthorizationResultBasedEntityLoader);
-    when(nonEnforcingEntityLoaderMock.constructEntity(anything())).thenReturn(fakeEntity);
-    when(entityLoaderMock.withAuthorizationResults()).thenReturn(
-      instance(nonEnforcingEntityLoaderMock),
-    );
+    const entityLoaderUtilsMock =
+      mock<
+        EntityLoaderUtils<
+          SimpleTestFields,
+          string,
+          ViewerContext,
+          SimpleTestEntity,
+          SimpleTestEntityPrivacyPolicy,
+          keyof SimpleTestFields
+        >
+      >(EntityLoaderUtils);
+    when(entityLoaderUtilsMock.constructEntity(anything())).thenReturn(fakeEntity);
+    when(entityLoaderMock.utils()).thenReturn(instance(entityLoaderUtilsMock));
     const entityLoader = instance(entityLoaderMock);
 
     const entityLoaderFactoryMock =
@@ -1290,20 +1289,19 @@ describe(EntityMutatorFactory, () => {
           keyof SimpleTestFields
         >
       >(EntityLoader);
-    const nonEnforcingEntityLoaderMock = mock<
-      AuthorizationResultBasedEntityLoader<
-        SimpleTestFields,
-        string,
-        ViewerContext,
-        SimpleTestEntity,
-        SimpleTestEntityPrivacyPolicy,
-        keyof SimpleTestFields
-      >
-    >(AuthorizationResultBasedEntityLoader);
-    when(nonEnforcingEntityLoaderMock.constructEntity(anything())).thenReturn(fakeEntity);
-    when(entityLoaderMock.withAuthorizationResults()).thenReturn(
-      instance(nonEnforcingEntityLoaderMock),
-    );
+    const entityLoaderUtilsMock =
+      mock<
+        EntityLoaderUtils<
+          SimpleTestFields,
+          string,
+          ViewerContext,
+          SimpleTestEntity,
+          SimpleTestEntityPrivacyPolicy,
+          keyof SimpleTestFields
+        >
+      >(EntityLoaderUtils);
+    when(entityLoaderUtilsMock.constructEntity(anything())).thenReturn(fakeEntity);
+    when(entityLoaderMock.utils()).thenReturn(instance(entityLoaderUtilsMock));
     const entityLoader = instance(entityLoaderMock);
 
     const entityLoaderFactoryMock =

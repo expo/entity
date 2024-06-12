@@ -160,7 +160,7 @@ describe(GenericRedisCacher, () => {
 
     // invalidate from cache to ensure it invalidates correctly in both caches
     await RedisTestEntity.loader(viewerContext)
-      .withAuthorizationResults()
+      .utils()
       .invalidateFieldsAsync(entity1.getAllFields());
     await expect(redis.get(cacheKeyEntity1)).resolves.toBeNull();
     await expect(redis.get(cacheKeyEntity1NameField)).resolves.toBeNull();

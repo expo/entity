@@ -449,15 +449,7 @@ describe(EnforcingEntityLoader, () => {
     );
 
     // ensure known differences still exist for sanity check
-    const knownLoaderOnlyDifferences = [
-      'invalidateFieldsAsync',
-      'invalidateEntityAsync',
-      'tryConstructEntities',
-      'validateFieldValues',
-      'constructAndAuthorizeEntitiesAsync',
-      'constructAndAuthorizeEntitiesArrayAsync',
-      'constructEntity',
-    ];
+    const knownLoaderOnlyDifferences = ['validateFieldValues'];
     expect(nonEnforcingLoaderProperties).toEqual(
       expect.arrayContaining(knownLoaderOnlyDifferences),
     );
