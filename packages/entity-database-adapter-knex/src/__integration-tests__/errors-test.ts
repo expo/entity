@@ -31,11 +31,11 @@ describe('postgres errors', () => {
   });
 
   beforeEach(async () => {
-    await ErrorsTestEntity.createOrTruncatePostgresTable(knexInstance);
+    await ErrorsTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
   });
 
   afterAll(async () => {
-    await ErrorsTestEntity.dropPostgresTable(knexInstance);
+    await ErrorsTestEntity.dropPostgresTableAsync(knexInstance);
     await knexInstance.destroy();
   });
 

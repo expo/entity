@@ -49,7 +49,7 @@ export default class PostgresTriggerTestEntity extends Entity<
     };
   }
 
-  public static async createOrTruncatePostgresTable(knex: Knex): Promise<void> {
+  public static async createOrTruncatePostgresTableAsync(knex: Knex): Promise<void> {
     const tableName = 'postgres_test_entities';
     const hasTable = await knex.schema.hasTable(tableName);
     if (!hasTable) {
@@ -61,7 +61,7 @@ export default class PostgresTriggerTestEntity extends Entity<
     await knex.into(tableName).truncate();
   }
 
-  public static async dropPostgresTable(knex: Knex): Promise<void> {
+  public static async dropPostgresTableAsync(knex: Knex): Promise<void> {
     const tableName = 'postgres_test_entities';
     const hasTable = await knex.schema.hasTable(tableName);
     if (hasTable) {

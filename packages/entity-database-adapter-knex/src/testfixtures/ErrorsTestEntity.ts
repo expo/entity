@@ -41,7 +41,7 @@ export default class ErrorsTestEntity extends Entity<
     };
   }
 
-  public static async createOrTruncatePostgresTable(knex: Knex): Promise<void> {
+  public static async createOrTruncatePostgresTableAsync(knex: Knex): Promise<void> {
     await knex.raw('CREATE EXTENSION IF NOT EXISTS "btree_gist"'); // for gist exclusion on varchar
 
     const tableName = 'postgres_test_entities';
@@ -89,7 +89,7 @@ export default class ErrorsTestEntity extends Entity<
     await knex(foreignTableName).delete();
   }
 
-  public static async dropPostgresTable(knex: Knex): Promise<void> {
+  public static async dropPostgresTableAsync(knex: Knex): Promise<void> {
     const tableName = 'postgres_test_entities';
     const hasTable = await knex.schema.hasTable(tableName);
     if (hasTable) {
