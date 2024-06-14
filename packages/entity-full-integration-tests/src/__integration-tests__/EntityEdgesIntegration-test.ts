@@ -9,7 +9,7 @@ import ChildEntity from './entities/ChildEntity';
 import ParentEntity from './entities/ParentEntity';
 import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
 
-async function createOrTruncatePostgresTables(knex: Knex): Promise<void> {
+async function createOrTruncatePostgresTablesAsync(knex: Knex): Promise<void> {
   await knex.schema.createTable('parents', (table) => {
     table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
   });
@@ -22,7 +22,7 @@ async function createOrTruncatePostgresTables(knex: Knex): Promise<void> {
   await knex.into('children').truncate();
 }
 
-async function dropPostgresTable(knex: Knex): Promise<void> {
+async function dropPostgresTableAsync(knex: Knex): Promise<void> {
   if (await knex.schema.hasTable('children')) {
     await knex.schema.dropTable('children');
   }
@@ -63,12 +63,12 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
   });
 
   beforeEach(async () => {
-    await createOrTruncatePostgresTables(knexInstance);
+    await createOrTruncatePostgresTablesAsync(knexInstance);
     await redisClient.flushdb();
   });
 
   afterAll(async () => {
-    await dropPostgresTable(knexInstance);
+    await dropPostgresTableAsync(knexInstance);
     await knexInstance.destroy();
     redisClient.disconnect();
   });

@@ -69,14 +69,14 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
   cacheAdapterFlavor: 'redis',
 });
 
-async function createOrTruncatePostgresTables(knex: Knex): Promise<void> {
+async function createOrTruncatePostgresTablesAsync(knex: Knex): Promise<void> {
   await knex.schema.createTable('testentities', (table) => {
     table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
   });
   await knex.into('testentities').truncate();
 }
 
-async function dropPostgresTable(knex: Knex): Promise<void> {
+async function dropPostgresTableAsync(knex: Knex): Promise<void> {
   if (await knex.schema.hasTable('testentities')) {
     await knex.schema.dropTable('testentities');
   }
@@ -114,12 +114,12 @@ describe('Entity integrity', () => {
   });
 
   beforeEach(async () => {
-    await createOrTruncatePostgresTables(knexInstance);
+    await createOrTruncatePostgresTablesAsync(knexInstance);
     await redisClient.flushdb();
   });
 
   afterAll(async () => {
-    await dropPostgresTable(knexInstance);
+    await dropPostgresTableAsync(knexInstance);
     await knexInstance.destroy();
     redisClient.disconnect();
   });

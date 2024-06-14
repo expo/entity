@@ -44,6 +44,7 @@ class BatchedRedis implements IRedis {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   async mget(...args: string[]): Promise<(string | null)[]> {
     return await this.mgetBatcher.batchAsync(args);
   }
@@ -52,6 +53,7 @@ class BatchedRedis implements IRedis {
     return this.redis.multi();
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   async del(...args: string[]): Promise<void> {
     await this.redis.del(...args);
   }

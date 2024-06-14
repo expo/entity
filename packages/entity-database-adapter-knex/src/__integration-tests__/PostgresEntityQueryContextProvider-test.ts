@@ -23,11 +23,11 @@ describe(PostgresEntityQueryContextProvider, () => {
   });
 
   beforeEach(async () => {
-    await PostgresUniqueTestEntity.createOrTruncatePostgresTable(knexInstance);
+    await PostgresUniqueTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
   });
 
   afterAll(async () => {
-    await PostgresUniqueTestEntity.dropPostgresTable(knexInstance);
+    await PostgresUniqueTestEntity.dropPostgresTableAsync(knexInstance);
     await knexInstance.destroy();
   });
 

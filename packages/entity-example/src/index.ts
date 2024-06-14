@@ -1,8 +1,8 @@
 import createAppAsync from './app';
 
-async function main(): Promise<void> {
+async function mainAsync(): Promise<void> {
   const app = await createAppAsync();
   app.listen(3000);
 }
 
-main();
+mainAsync();

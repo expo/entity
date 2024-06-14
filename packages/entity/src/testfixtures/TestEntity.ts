@@ -84,7 +84,10 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
     return 'Hello World!';
   }
 
-  static async hello(viewerContext: ViewerContext, testValue: string): Promise<Result<TestEntity>> {
+  static async helloAsync(
+    viewerContext: ViewerContext,
+    testValue: string,
+  ): Promise<Result<TestEntity>> {
     const fields = {
       customIdField: testValue,
       testIndexedField: 'hello',
@@ -103,15 +106,15 @@ export default class TestEntity extends Entity<TestFields, string, ViewerContext
     );
   }
 
-  static async returnError(_viewerContext: ViewerContext): Promise<Result<TestEntity>> {
+  static async returnErrorAsync(_viewerContext: ViewerContext): Promise<Result<TestEntity>> {
     return result(new Error('return entity'));
   }
 
-  static async throwError(_viewerContext: ViewerContext): Promise<Result<TestEntity>> {
+  static async throwErrorAsync(_viewerContext: ViewerContext): Promise<Result<TestEntity>> {
     throw new Error('threw entity');
   }
 
-  static async nonResult(_viewerContext: ViewerContext, testValue: string): Promise<string> {
+  static async nonResultAsync(_viewerContext: ViewerContext, testValue: string): Promise<string> {
     return testValue;
   }
 }

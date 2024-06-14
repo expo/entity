@@ -23,11 +23,11 @@ describe('postgres entity integration', () => {
   });
 
   beforeEach(async () => {
-    await InvalidTestEntity.createOrTruncatePostgresTable(knexInstance);
+    await InvalidTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
   });
 
   afterAll(async () => {
-    await InvalidTestEntity.dropPostgresTable(knexInstance);
+    await InvalidTestEntity.dropPostgresTableAsync(knexInstance);
     await knexInstance.destroy();
   });
 
