@@ -36,6 +36,35 @@ export enum EntityEdgeDeletionBehavior {
   SET_NULL,
 }
 
+export enum EntityEdgeDeletionAuthorizationInferenceBehavior {
+  /**
+   * Authorization to delete (when CASCADE_DELETE_INVALIDATE_CACHE_ONLY or CASCADE_DELETE) or update
+   * (when SET_NULL_INVALIDATE_CACHE_ONLY or SET_NULL) all entities at the ends of edges of this type
+   * cannot be inferred from authorization of any single entity at the end of an edge of this type.
+   *
+   * To evaluate canViewerDeleteAsync for the source entity, canViewerDeleteAsync must be called on all
+   * entities at the ends of all edges of this type.
+   */
+  NONE,
+
+  /**
+   * Authorization to delete (when CASCADE_DELETE_INVALIDATE_CACHE_ONLY or CASCADE_DELETE) or update
+   * (when SET_NULL_INVALIDATE_CACHE_ONLY or SET_NULL) all entities at the ends of edges of this type
+   * may be inferred from authorization of any single entity at the end of an edge of this type.
+   *
+   * To evaluate canViewerDeleteAsync for the source entity, canViewerDeleteAsync must only be called on
+   * a single entity at the end of one edge of this type chosen at random.
+   *
+   * This should only be the case when the entity at the other end of this edge can be implicitly
+   * deleted/updated by virtue of the source entity deletion being authorized and a single authorization check
+   * on one edge of this type.
+   *
+   * Note that this is not used during actual deletions, only as an optimistic optimization during execution
+   * of canViewerDeleteAsync. Each entity being deleted will still check deletion privacy during actual deletion.
+   */
+  ONE_IMPLIES_ALL,
+}
+
 /**
  * Defines an association between entities. An association is primarily used to define cascading deletion behavior.
  */
@@ -77,7 +106,7 @@ export interface EntityAssociationDefinition<
   associatedEntityLookupByField?: keyof TAssociatedFields;
 
   /**
-   * What action to perform on the current entity when the entity on the referencing end of
+   * What action to perform on the entity at the other end of this edge when the entity on the source end of
    * this edge is deleted.
    *
    * @remarks
@@ -93,6 +122,14 @@ export interface EntityAssociationDefinition<
    *   integrity is recommended.
    */
   edgeDeletionBehavior: EntityEdgeDeletionBehavior;
+
+  /**
+   * Optimization setting for evaluation of this edge in canViewerDeleteAsync. Can be used to optimize permission checks
+   * for edge cascading deletions based on application-specific design of the entity association. Not used during actual deletions.
+   *
+   * Defaults to EntityEdgeDeletionAuthorizationInferenceBehavior.NONE.
+   */
+  edgeDeletionAuthorizationInferenceBehavior?: EntityEdgeDeletionAuthorizationInferenceBehavior;
 }
 
 /**
