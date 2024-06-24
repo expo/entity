@@ -346,6 +346,95 @@ describe(EntityLoader, () => {
     ).once();
   });
 
+  it('loads entities with loadFirstByFieldEqualingAsync', async () => {
+    const privacyPolicy = new TestEntityPrivacyPolicy();
+    const spiedPrivacyPolicy = spy(privacyPolicy);
+    const viewerContext = instance(mock(ViewerContext));
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
+    const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+    const queryContext = StubQueryContextProvider.getQueryContext();
+
+    const id1 = uuidv4();
+    const id2 = uuidv4();
+    const id3 = uuidv4();
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      testEntityConfiguration,
+      StubDatabaseAdapter.convertFieldObjectsToDataStore(
+        testEntityConfiguration,
+        new Map([
+          [
+            testEntityConfiguration.tableName,
+            [
+              {
+                customIdField: id1,
+                stringField: 'huh',
+                intField: 4,
+                testIndexedField: '4',
+                dateField: new Date(),
+                nullableField: null,
+              },
+              {
+                customIdField: id2,
+                stringField: 'huh',
+                intField: 4,
+                testIndexedField: '5',
+                dateField: new Date(),
+                nullableField: null,
+              },
+              {
+                customIdField: id3,
+                stringField: 'huh2',
+                intField: 4,
+                testIndexedField: '6',
+                dateField: new Date(),
+                nullableField: null,
+              },
+            ],
+          ],
+        ]),
+      ),
+    );
+    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const dataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      StubQueryContextProvider,
+      instance(mock<IEntityMetricsAdapter>()),
+      TestEntity.name,
+    );
+    const entityLoader = new EntityLoader(
+      viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+      testEntityConfiguration,
+      TestEntity,
+      /* entitySelectedFields */ undefined,
+      privacyPolicy,
+      dataManager,
+      metricsAdapter,
+    );
+    const result = await entityLoader
+      .withAuthorizationResults()
+      .loadFirstByFieldEqualingAsync('stringField', 'huh');
+    expect(result).not.toBeNull();
+    expect(result!.ok).toBe(true);
+    expect(result!.enforceValue().getField('testIndexedField')).toEqual('4'); // it should load the first one
+    verify(
+      spiedPrivacyPolicy.authorizeReadAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        anyOfClass(TestEntity),
+        anything(),
+      ),
+    ).once();
+  });
+
   it('loads entities with loadManyByRawWhereClauseAsync', async () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);

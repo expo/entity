@@ -212,6 +212,31 @@ export default class AuthorizationResultBasedEntityLoader<
   }
 
   /**
+   * Load a single of potentially many entities where fieldName equals fieldValue, or null if no matching entity exists.
+   * Entities loaded using this method are not batched or cached.
+   *
+   * This is a convenience method for a case of {@link loadFirstByFieldEqualityConjunctionAsync} where ordering doesn't matter.
+   *
+   * @param fieldName - entity field being queried
+   * @param fieldValue - fieldName field value being queried
+   * @returns single entity result that matches the query for fieldValue, where result error can be UnauthorizedError, or null
+   *  if no matching entity exists.
+   */
+  async loadFirstByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>,
+  ): Promise<Result<TEntity> | null> {
+    const results = await this.loadManyByFieldEqualityConjunctionAsync(
+      [{ fieldName, fieldValue }],
+      {
+        orderBy: [],
+        limit: 1,
+      },
+    );
+    return results[0] ?? null;
+  }
+
+  /**
    * Loads many entities matching the selection constructed from the conjunction of specified operands.
    * Entities loaded using this method are not batched or cached.
    *

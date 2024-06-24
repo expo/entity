@@ -142,6 +142,21 @@ export default class EnforcingEntityLoader<
 
   /**
    * Enforcing version of entity loader method by the same name.
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view the returned entity
+   */
+  async loadFirstByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>,
+  ): Promise<TEntity | null> {
+    const entityResult = await this.entityLoader.loadFirstByFieldEqualingAsync(
+      fieldName,
+      fieldValue,
+    );
+    return entityResult ? entityResult.enforceValue() : null;
+  }
+
+  /**
+   * Enforcing version of entity loader method by the same name.
    * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
