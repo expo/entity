@@ -3,7 +3,7 @@ import nullthrows from 'nullthrows';
 import { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
 
 /**
- * A ISecondaryEntityCache that composes other ISecondaryEntityCache instances.
+ * A ISecondaryEntityCache that composes other ISecondaryEntityCache instances..
  */
 export default class ComposedSecondaryEntityCache<TLoadParams, TFields>
   implements ISecondaryEntityCache<TFields, TLoadParams>
