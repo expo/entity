@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.38.0](https://github.com/expo/entity/compare/v0.37.0...v0.38.0) (2024-06-27)
+
+
+### Features
+
+* add EntityEdgeDeletionAuthorizationInferenceBehavior for canViewerDeleteAsync ([#243](https://github.com/expo/entity/issues/243)) ([162b192](https://github.com/expo/entity/commit/162b19257ac720c94fb84d64808fb75748adcdc7))
+
+
+
+
+
 # [0.37.0](https://github.com/expo/entity/compare/v0.36.0...v0.37.0) (2024-06-12)
 
 
