@@ -1,7 +1,10 @@
-import { asyncResult } from '@expo/results';
+import { Result, asyncResult } from '@expo/results';
 
 import Entity, { IEntityClass } from '../Entity';
-import { EntityEdgeDeletionBehavior } from '../EntityFieldDefinition';
+import {
+  EntityEdgeDeletionBehavior,
+  EntityEdgeDeletionAuthorizationInferenceBehavior,
+} from '../EntityFieldDefinition';
 import { EntityCascadingDeletionInfo } from '../EntityMutationInfo';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
@@ -254,16 +257,44 @@ async function canViewerDeleteInternalAsync<
         continue;
       }
 
-      const entityResultsForInboundEdge = await loader
-        .withAuthorizationResults()
-        .loadManyByFieldEqualingAsync(
-          fieldName,
-          association.associatedEntityLookupByField
-            ? sourceEntity.getField(association.associatedEntityLookupByField as any)
-            : sourceEntity.getID(),
-        );
+      const edgeDeletionPermissionInferenceBehavior =
+        association.edgeDeletionAuthorizationInferenceBehavior;
 
-      const failedEntityLoadResults = failedResults(entityResultsForInboundEdge);
+      let entityResultsToCheckForInboundEdge: readonly Result<any>[];
+
+      if (
+        edgeDeletionPermissionInferenceBehavior ===
+        EntityEdgeDeletionAuthorizationInferenceBehavior.ONE_IMPLIES_ALL
+      ) {
+        const singleEntityToTestForInboundEdge = await loader
+          .withAuthorizationResults()
+          .loadFirstByFieldEqualityConjunctionAsync(
+            [
+              {
+                fieldName,
+                fieldValue: association.associatedEntityLookupByField
+                  ? sourceEntity.getField(association.associatedEntityLookupByField as any)
+                  : sourceEntity.getID(),
+              },
+            ],
+            { orderBy: [] },
+          );
+        entityResultsToCheckForInboundEdge = singleEntityToTestForInboundEdge
+          ? [singleEntityToTestForInboundEdge]
+          : [];
+      } else {
+        const entityResultsForInboundEdge = await loader
+          .withAuthorizationResults()
+          .loadManyByFieldEqualingAsync(
+            fieldName,
+            association.associatedEntityLookupByField
+              ? sourceEntity.getField(association.associatedEntityLookupByField as any)
+              : sourceEntity.getID(),
+          );
+        entityResultsToCheckForInboundEdge = entityResultsForInboundEdge;
+      }
+
+      const failedEntityLoadResults = failedResults(entityResultsToCheckForInboundEdge);
       for (const failedResult of failedEntityLoadResults) {
         if (failedResult.reason instanceof EntityNotAuthorizedError) {
           return false;
@@ -273,7 +304,9 @@ async function canViewerDeleteInternalAsync<
       }
 
       // all results should be success at this point due to check above
-      const entitiesForInboundEdge = entityResultsForInboundEdge.map((r) => r.enforceValue());
+      const entitiesForInboundEdge = entityResultsToCheckForInboundEdge.map((r) =>
+        r.enforceValue(),
+      );
 
       switch (association.edgeDeletionBehavior) {
         case EntityEdgeDeletionBehavior.CASCADE_DELETE:
