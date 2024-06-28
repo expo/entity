@@ -17,7 +17,6 @@
   },
   "devDependencies": {
     "@expo/batcher": "^1.0.0",
-    "@expo/entity": "file:packages/entity",
     "@expo/results": "^1.0.0",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
@@ -35,11 +34,11 @@
     "lru-cache": "^6.0.0",
     "nullthrows": "^1.1.1",
     "pg": "8.12.0",
-    "prettier": "^3.3.0",
-    "ts-jest": "^29.1.4",
+    "prettier": "^3.3.2",
+    "ts-jest": "^29.1.5",
     "ts-mockito": "^2.6.1",
-    "typedoc": "^0.25.13",
-    "typescript": "^5.4.5",
+    "typedoc": "^0.26.2",
+    "typescript": "^5.5.2",
     "uuid": "^8.3.0"
   },
   "dependencies": {
