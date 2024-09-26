@@ -871,7 +871,7 @@ describe(EntityMutatorFactory, () => {
       );
       expect(existingEntity).toBeTruthy();
 
-      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync(null);
 
       await expect(
         enforceAsyncResult(
@@ -921,7 +921,7 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id1),
       );
 
-      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync(null);
 
       verify(
         spiedPrivacyPolicy.authorizeDeleteAsync(
@@ -972,7 +972,7 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id1),
       );
 
-      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync(null);
 
       verifyTriggerCounts(
         viewerContext,
@@ -1027,7 +1027,7 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id1),
       );
 
-      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync(null);
 
       verifyValidatorCounts(viewerContext, validatorSpies, 0, {
         type: EntityMutationType.DELETE as any,
@@ -1246,7 +1246,7 @@ describe(EntityMutatorFactory, () => {
 
     const entityDeleteResult = await entityMutatorFactory
       .forDelete(fakeEntity, queryContext)
-      .deleteAsync();
+      .deleteAsync(null);
     expect(entityDeleteResult.ok).toBe(false);
     expect(entityDeleteResult.reason).toEqual(rejectionError);
     expect(entityDeleteResult.value).toBe(undefined);
@@ -1364,7 +1364,7 @@ describe(EntityMutatorFactory, () => {
       entityMutatorFactory.forUpdate(fakeEntity, queryContext).updateAsync(),
     ).rejects.toEqual(rejectionError);
     await expect(
-      entityMutatorFactory.forDelete(fakeEntity, queryContext).deleteAsync(),
+      entityMutatorFactory.forDelete(fakeEntity, queryContext).deleteAsync(null),
     ).rejects.toEqual(rejectionError);
   });
 
@@ -1388,7 +1388,9 @@ describe(EntityMutatorFactory, () => {
         .updateAsync(),
     );
 
-    await enforceAsyncResult(entityMutatorFactory.forDelete(newEntity, queryContext).deleteAsync());
+    await enforceAsyncResult(
+      entityMutatorFactory.forDelete(newEntity, queryContext).deleteAsync(null),
+    );
 
     verify(
       spiedMetricsAdapter.logMutatorMutationEvent(

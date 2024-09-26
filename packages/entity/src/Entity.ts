@@ -153,7 +153,7 @@ export default abstract class Entity<
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
       .forDelete(existingEntity, queryContext)
-      .deleteAsync();
+      .deleteAsync(null);
   }
 
   /**
@@ -195,7 +195,7 @@ export default abstract class Entity<
       .getViewerScopedEntityCompanionForClass(this)
       .getMutatorFactory()
       .forDelete(existingEntity, queryContext)
-      .enforceDeleteAsync();
+      .enforceDeleteAsync(null);
   }
 }
 

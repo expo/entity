@@ -599,19 +599,23 @@ export class DeleteMutator<
    * Delete the entity after authorizing against delete privacy rules. The entity is invalidated in all caches.
    * @returns void result, where result error can be UnauthorizedError
    */
-  async deleteAsync(): Promise<Result<void>> {
+  async deleteAsync(
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
+  ): Promise<Result<void>> {
     return await timeAndLogMutationEventAsync(
       this.metricsAdapter,
       EntityMetricsMutationType.DELETE,
       this.entityClass.name,
-    )(this.deleteInTransactionAsync(new Set(), false, null));
+    )(this.deleteInTransactionAsync(new Set(), false, cascadingDeleteCause));
   }
 
   /**
    * Convenience method that throws upon delete failure.
    */
-  async enforceDeleteAsync(): Promise<void> {
-    return await enforceAsyncResult(this.deleteAsync());
+  async enforceDeleteAsync(
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
+  ): Promise<void> {
+    return await enforceAsyncResult(this.deleteAsync(cascadingDeleteCause));
   }
 
   private async deleteInTransactionAsync(
