@@ -9,8 +9,21 @@ import { EntityCascadingDeletionInfo } from '../EntityMutationInfo';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
-import { failedResults } from '../entityUtils';
+import { failedResults, partitionArray } from '../entityUtils';
 import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
+
+export type EntityPrivacyEvaluationResultSuccess = {
+  allowed: true;
+};
+
+export type EntityPrivacyEvaluationResultFailure = {
+  allowed: false;
+  authorizationErrors: EntityNotAuthorizedError<any, any, any, any, any>[];
+};
+
+export type EntityPrivacyEvaluationResult =
+  | EntityPrivacyEvaluationResultSuccess
+  | EntityPrivacyEvaluationResultFailure;
 
 /**
  * Check whether an entity loaded by a viewer can be updated by that same viewer.
@@ -30,34 +43,67 @@ import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
  * @param queryContext - query context in which to perform the check
  */
 export async function canViewerUpdateAsync<
-  TMFields extends object,
-  TMID extends NonNullable<TMFields[TMSelectedFields]>,
-  TMViewerContext extends ViewerContext,
-  TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
-  TMPrivacyPolicy extends EntityPrivacyPolicy<
-    TMFields,
-    TMID,
-    TMViewerContext,
-    TMEntity,
-    TMSelectedFields
+  TFields extends object,
+  TID extends NonNullable<TFields[TSelectedFields]>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
   >,
-  TMSelectedFields extends keyof TMFields = keyof TMFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 >(
-  entityClass: IEntityClass<
-    TMFields,
-    TMID,
-    TMViewerContext,
-    TMEntity,
-    TMPrivacyPolicy,
-    TMSelectedFields
-  >,
-  sourceEntity: TMEntity,
+  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
+  sourceEntity: TEntity,
   queryContext: EntityQueryContext = sourceEntity
     .getViewerContext()
     .getViewerScopedEntityCompanionForClass(entityClass)
     .getQueryContextProvider()
     .getQueryContext(),
 ): Promise<boolean> {
+  const result = await canViewerUpdateInternalAsync(
+    entityClass,
+    sourceEntity,
+    /* cascadingDeleteCause */ null,
+    queryContext,
+  );
+  return result.allowed;
+}
+
+/**
+ * Check whether an entity loaded by a viewer can be updated by that same viewer and return the evaluation result.
+ *
+ * @see canViewerUpdateAsync
+ *
+ * @param entityClass - class of entity
+ * @param sourceEntity - entity loaded by viewer
+ * @param queryContext - query context in which to perform the check
+ */
+export async function getCanViewerUpdateResultAsync<
+  TFields extends object,
+  TID extends NonNullable<TFields[TSelectedFields]>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields,
+>(
+  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
+  sourceEntity: TEntity,
+  queryContext: EntityQueryContext = sourceEntity
+    .getViewerContext()
+    .getViewerScopedEntityCompanionForClass(entityClass)
+    .getQueryContextProvider()
+    .getQueryContext(),
+): Promise<EntityPrivacyEvaluationResult> {
   return await canViewerUpdateInternalAsync(
     entityClass,
     sourceEntity,
@@ -67,31 +113,24 @@ export async function canViewerUpdateAsync<
 }
 
 async function canViewerUpdateInternalAsync<
-  TMFields extends object,
-  TMID extends NonNullable<TMFields[TMSelectedFields]>,
-  TMViewerContext extends ViewerContext,
-  TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
-  TMPrivacyPolicy extends EntityPrivacyPolicy<
-    TMFields,
-    TMID,
-    TMViewerContext,
-    TMEntity,
-    TMSelectedFields
+  TFields extends object,
+  TID extends NonNullable<TFields[TSelectedFields]>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
   >,
-  TMSelectedFields extends keyof TMFields = keyof TMFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 >(
-  entityClass: IEntityClass<
-    TMFields,
-    TMID,
-    TMViewerContext,
-    TMEntity,
-    TMPrivacyPolicy,
-    TMSelectedFields
-  >,
-  sourceEntity: TMEntity,
+  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
+  sourceEntity: TEntity,
   cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   queryContext: EntityQueryContext,
-): Promise<boolean> {
+): Promise<EntityPrivacyEvaluationResult> {
   const companion = sourceEntity
     .getViewerContext()
     .getViewerScopedEntityCompanionForClass(entityClass);
@@ -107,20 +146,19 @@ async function canViewerUpdateInternalAsync<
   );
   if (!evaluationResult.ok) {
     if (evaluationResult.reason instanceof EntityNotAuthorizedError) {
-      return false;
+      return { allowed: false, authorizationErrors: [evaluationResult.reason] };
     } else {
       throw evaluationResult.reason;
     }
   }
-  return evaluationResult.ok;
+  return { allowed: true };
 }
 
 /**
  * Check whether a single entity loaded by a viewer can be deleted by that same viewer.
  * This recursively checks edge cascade permissions (EntityEdgeDeletionBehavior) as well.
  *
- * @remarks
- * See remarks for canViewerUpdate.
+ * @see canViewerUpdateAsync
  *
  * @param entityClass - class of entity
  * @param sourceEntity - entity loaded by viewer
@@ -129,25 +167,18 @@ async function canViewerUpdateInternalAsync<
 export async function canViewerDeleteAsync<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
-  TMViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TMViewerContext, TSelectedFields>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
     TID,
-    TMViewerContext,
+    TViewerContext,
     TEntity,
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields = keyof TFields,
 >(
-  entityClass: IEntityClass<
-    TFields,
-    TID,
-    TMViewerContext,
-    TEntity,
-    TPrivacyPolicy,
-    TSelectedFields
-  >,
+  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
   sourceEntity: TEntity,
   queryContext: EntityQueryContext = sourceEntity
     .getViewerContext()
@@ -155,6 +186,46 @@ export async function canViewerDeleteAsync<
     .getQueryContextProvider()
     .getQueryContext(),
 ): Promise<boolean> {
+  const result = await canViewerDeleteInternalAsync(
+    entityClass,
+    sourceEntity,
+    /* cascadingDeleteCause */ null,
+    queryContext,
+  );
+  return result.allowed;
+}
+
+/**
+ * Check whether a single entity loaded by a viewer can be deleted by that same viewer and return the evaluation result.
+ *
+ * @see canViewerDeleteAsync
+ *
+ * @param entityClass - class of entity
+ * @param sourceEntity - entity loaded by viewer
+ * @param queryContext - query context in which to perform the check
+ */
+export async function getCanViewerDeleteResultAsync<
+  TFields extends object,
+  TID extends NonNullable<TFields[TSelectedFields]>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields = keyof TFields,
+>(
+  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
+  sourceEntity: TEntity,
+  queryContext: EntityQueryContext = sourceEntity
+    .getViewerContext()
+    .getViewerScopedEntityCompanionForClass(entityClass)
+    .getQueryContextProvider()
+    .getQueryContext(),
+): Promise<EntityPrivacyEvaluationResult> {
   return await canViewerDeleteInternalAsync(
     entityClass,
     sourceEntity,
@@ -166,29 +237,22 @@ export async function canViewerDeleteAsync<
 async function canViewerDeleteInternalAsync<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
-  TMViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TMViewerContext, TSelectedFields>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
     TID,
-    TMViewerContext,
+    TViewerContext,
     TEntity,
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields = keyof TFields,
 >(
-  entityClass: IEntityClass<
-    TFields,
-    TID,
-    TMViewerContext,
-    TEntity,
-    TPrivacyPolicy,
-    TSelectedFields
-  >,
+  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
   sourceEntity: TEntity,
   cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   queryContext: EntityQueryContext,
-): Promise<boolean> {
+): Promise<EntityPrivacyEvaluationResult> {
   const viewerContext = sourceEntity.getViewerContext();
   const entityCompanionProvider = viewerContext.entityCompanionProvider;
   const viewerScopedCompanion = sourceEntity
@@ -207,7 +271,7 @@ async function canViewerDeleteInternalAsync<
   );
   if (!evaluationResult.ok) {
     if (evaluationResult.reason instanceof EntityNotAuthorizedError) {
-      return false;
+      return { allowed: false, authorizationErrors: [evaluationResult.reason] };
     } else {
       throw evaluationResult.reason;
     }
@@ -297,7 +361,7 @@ async function canViewerDeleteInternalAsync<
       const failedEntityLoadResults = failedResults(entityResultsToCheckForInboundEdge);
       for (const failedResult of failedEntityLoadResults) {
         if (failedResult.reason instanceof EntityNotAuthorizedError) {
-          return false;
+          return { allowed: false, authorizationErrors: [failedResult.reason] };
         } else {
           throw failedResult.reason;
         }
@@ -311,48 +375,68 @@ async function canViewerDeleteInternalAsync<
       switch (association.edgeDeletionBehavior) {
         case EntityEdgeDeletionBehavior.CASCADE_DELETE:
         case EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY: {
-          const canDeleteAll = (
-            await Promise.all(
-              entitiesForInboundEdge.map((entity) =>
-                canViewerDeleteInternalAsync(
-                  inboundEdge,
-                  entity,
-                  newCascadingDeleteCause,
-                  queryContext,
-                ),
+          const canDeleteEvaluationResults = await Promise.all(
+            entitiesForInboundEdge.map((entity) =>
+              canViewerDeleteInternalAsync(
+                inboundEdge,
+                entity,
+                newCascadingDeleteCause,
+                queryContext,
               ),
-            )
-          ).every((b) => b);
+            ),
+          );
 
-          if (!canDeleteAll) {
-            return false;
+          const reducedEvaluationResult = reduceEvaluationResults(canDeleteEvaluationResults);
+          if (!reducedEvaluationResult.allowed) {
+            return reducedEvaluationResult;
           }
+
           break;
         }
 
         case EntityEdgeDeletionBehavior.SET_NULL:
         case EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY: {
-          const canUpdateAll = (
-            await Promise.all(
-              entitiesForInboundEdge.map((entity) =>
-                canViewerUpdateInternalAsync(
-                  inboundEdge,
-                  entity,
-                  newCascadingDeleteCause,
-                  queryContext,
-                ),
+          const canUpdateEvaluationResults = await Promise.all(
+            entitiesForInboundEdge.map((entity) =>
+              canViewerUpdateInternalAsync(
+                inboundEdge,
+                entity,
+                newCascadingDeleteCause,
+                queryContext,
               ),
-            )
-          ).every((b) => b);
+            ),
+          );
 
-          if (!canUpdateAll) {
-            return false;
+          const reducedEvaluationResult = reduceEvaluationResults(canUpdateEvaluationResults);
+          if (!reducedEvaluationResult.allowed) {
+            return reducedEvaluationResult;
           }
+
           break;
         }
       }
     }
   }
 
-  return true;
+  return { allowed: true };
+}
+
+function reduceEvaluationResults(
+  evaluationResults: EntityPrivacyEvaluationResult[],
+): EntityPrivacyEvaluationResult {
+  const [successResults, failureResults] = partitionArray<
+    EntityPrivacyEvaluationResultSuccess,
+    EntityPrivacyEvaluationResultFailure
+  >(evaluationResults, (evaluationResult) => evaluationResult.allowed);
+
+  if (successResults.length === evaluationResults.length) {
+    return { allowed: true };
+  }
+
+  return {
+    allowed: false,
+    authorizationErrors: failureResults.flatMap(
+      (failureResult) => failureResult.authorizationErrors,
+    ),
+  };
 }
