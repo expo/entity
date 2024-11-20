@@ -127,7 +127,7 @@ export const describePrivacyPolicyRule = <
       new Map(),
     );
 
-  return describePrivacyPolicyRuleWithAsyncTestCase(privacyPolicyRule, {
+  describePrivacyPolicyRuleWithAsyncTestCase(privacyPolicyRule, {
     allowCases: makeCasesMap(allowCases),
     skipCases: makeCasesMap(skipCases),
     denyCases: makeCasesMap(denyCases),

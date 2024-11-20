@@ -9,12 +9,12 @@ import { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils'
 import { TestFields, testEntityConfiguration } from '../testfixtures/TestEntity';
 
 class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
-  private fetchResults: object[];
-  private insertResults: object[];
-  private updateResults: object[];
-  private fetchEqualityConditionResults: object[];
-  private fetchRawWhereResults: object[];
-  private deleteCount: number;
+  private readonly fetchResults: object[];
+  private readonly insertResults: object[];
+  private readonly updateResults: object[];
+  private readonly fetchEqualityConditionResults: object[];
+  private readonly fetchRawWhereResults: object[];
+  private readonly deleteCount: number;
 
   constructor({
     fetchResults = [],

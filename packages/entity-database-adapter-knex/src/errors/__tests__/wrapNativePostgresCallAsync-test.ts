@@ -3,7 +3,7 @@ import wrapNativePostgresCallAsync from '../wrapNativePostgresCallAsync';
 describe(wrapNativePostgresCallAsync, () => {
   it('rethrows literals', async () => {
     const throwingFn = async (): Promise<void> => {
-      // eslint-disable-next-line no-throw-literal,@typescript-eslint/no-throw-literal
+      // eslint-disable-next-line no-throw-literal,@typescript-eslint/only-throw-error
       throw 'hello';
     };
 

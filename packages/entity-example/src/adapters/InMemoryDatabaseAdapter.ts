@@ -161,7 +161,7 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
       ...dbObjects[objectIndex],
       ...object,
     };
-    return [dbObjects[objectIndex]!];
+    return [dbObjects[objectIndex]];
   }
 
   protected async deleteInternalAsync(

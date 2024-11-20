@@ -219,7 +219,7 @@ export default class StubDatabaseAdapter<
       ...objectCollection[objectIndex],
       ...object,
     };
-    return [objectCollection[objectIndex]!];
+    return [objectCollection[objectIndex]];
   }
 
   protected async deleteInternalAsync(

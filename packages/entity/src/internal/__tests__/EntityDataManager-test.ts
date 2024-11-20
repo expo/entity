@@ -306,11 +306,11 @@ describe(EntityDataManager, () => {
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
 
     await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      objectInQuestion['testIndexedField']!,
+      objectInQuestion['testIndexedField'],
     ]);
     await entityDataManager.invalidateObjectFieldsAsync(objectInQuestion);
     await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      objectInQuestion['testIndexedField']!,
+      objectInQuestion['testIndexedField'],
     ]);
 
     expect(dbSpy).toHaveBeenCalledTimes(2);
@@ -345,11 +345,11 @@ describe(EntityDataManager, () => {
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
 
     await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      objectInQuestion['testIndexedField']!,
+      objectInQuestion['testIndexedField'],
     ]);
     await entityDataManager.invalidateObjectFieldsAsync(objectInQuestion);
     await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', [
-      objectInQuestion['customIdField']!,
+      objectInQuestion['customIdField'],
     ]);
 
     expect(dbSpy).toHaveBeenCalledTimes(2);

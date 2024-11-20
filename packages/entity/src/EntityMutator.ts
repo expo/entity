@@ -611,7 +611,7 @@ export class DeleteMutator<
    * Convenience method that throws upon delete failure.
    */
   async enforceDeleteAsync(): Promise<void> {
-    return await enforceAsyncResult(this.deleteAsync());
+    await enforceAsyncResult(this.deleteAsync());
   }
 
   private async deleteInTransactionAsync(

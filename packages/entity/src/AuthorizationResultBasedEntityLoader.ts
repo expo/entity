@@ -102,7 +102,7 @@ export default class AuthorizationResultBasedEntityLoader<
       entityResultsForFieldValue !== undefined,
       `${fieldValue} should be guaranteed to be present in returned map of entities`,
     );
-    return entityResultsForFieldValue!;
+    return entityResultsForFieldValue;
   }
 
   /**

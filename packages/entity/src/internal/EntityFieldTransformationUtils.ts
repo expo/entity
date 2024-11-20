@@ -26,7 +26,7 @@ export const getDatabaseFieldForEntityField = <TFields extends Record<string, an
 ): string => {
   const databaseField = entityConfiguration.entityToDBFieldsKeyMapping.get(entityField);
   invariant(databaseField, `database field mapping missing for ${String(entityField)}`);
-  return databaseField!;
+  return databaseField;
 };
 
 export const transformDatabaseObjectToFields = <TFields extends Record<string, any>>(
@@ -60,7 +60,7 @@ export const transformFieldsToDatabaseObject = <TFields extends Record<string, a
     const val = fields[k]!;
     const databaseKey = entityConfiguration.entityToDBFieldsKeyMapping.get(k as any);
     invariant(databaseKey, `must be database key for field: ${k}`);
-    databaseObject[databaseKey!] = maybeTransformFieldValueToDatabaseValue(
+    databaseObject[databaseKey] = maybeTransformFieldValueToDatabaseValue(
       entityConfiguration,
       fieldTransformerMap,
       k,
