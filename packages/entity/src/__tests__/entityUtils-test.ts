@@ -7,6 +7,7 @@ import {
   successfulResultsFilterMap,
   failedResultsFilterMap,
   pick,
+  partitionArray,
 } from '../entityUtils';
 
 describe(enforceResultsAsync, () => {
@@ -95,5 +96,16 @@ describe(pick, () => {
       a: 1,
       b: 2,
     });
+  });
+});
+
+describe(partitionArray, () => {
+  it('partitions array', () => {
+    type A = true;
+    type B = false;
+    const arr: (A | B)[] = [true, false, true, true, false];
+    const [as, bs] = partitionArray<A, B>(arr, (val: A | B): val is A => val === true);
+    expect(as).toMatchObject([true, true, true]);
+    expect(bs).toMatchObject([false, false]);
   });
 });

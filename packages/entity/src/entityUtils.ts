@@ -71,22 +71,37 @@ export const failedResultsFilterMap = <K, T>(
   return ret;
 };
 
+export type PartitionArrayPredicate<T, U> = (val: T | U) => val is T;
+
+/**
+ * Partition an array of values into two arrays based on evaluation of a binary predicate.
+ * @param values - array of values to partition
+ * @param predicate - binary predicate to evaluate partition group of each value
+ */
+export const partitionArray = <T, U>(
+  values: (T | U)[],
+  predicate: PartitionArrayPredicate<T, U>,
+): [T[], U[]] => {
+  const ts: T[] = [];
+  const us: U[] = [];
+
+  for (const value of values) {
+    if (predicate(value)) {
+      ts.push(value);
+    } else {
+      us.push(value);
+    }
+  }
+
+  return [ts, us];
+};
+
 /**
  * Partition array of values and errors into an array of values and an array of errors.
  * @param valuesAndErrors - array of values and errors
  */
 export const partitionErrors = <T>(valuesAndErrors: (T | Error)[]): [T[], Error[]] => {
-  const values: T[] = [];
-  const errors: Error[] = [];
-
-  for (const valueOrError of valuesAndErrors) {
-    if (isError(valueOrError)) {
-      errors.push(valueOrError);
-    } else {
-      values.push(valueOrError);
-    }
-  }
-
+  const [errors, values] = partitionArray<Error, T>(valuesAndErrors, isError);
   return [values, errors];
 };
 
