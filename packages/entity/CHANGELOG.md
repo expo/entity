@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.39.0](https://github.com/expo/entity/compare/v0.38.0...v0.39.0) (2024-11-21)
+
+
+### Features
+
+* add function to get authorization results for canViewerUpdateAsync/canViewerDeleteAsync ([#249](https://github.com/expo/entity/issues/249)) ([27a358d](https://github.com/expo/entity/commit/27a358d259503aa8d7d7413bfc1e52e0974dc626))
+
+
+
+
+
 # [0.38.0](https://github.com/expo/entity/compare/v0.37.0...v0.38.0) (2024-06-27)
 
 

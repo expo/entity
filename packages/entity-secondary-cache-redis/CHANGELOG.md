@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.39.0](https://github.com/expo/entity/compare/v0.38.0...v0.39.0) (2024-11-21)
+
+**Note:** Version bump only for package @expo/entity-secondary-cache-redis
+
+
+
+
+
 # [0.38.0](https://github.com/expo/entity/compare/v0.37.0...v0.38.0) (2024-06-27)
 
 **Note:** Version bump only for package @expo/entity-secondary-cache-redis
