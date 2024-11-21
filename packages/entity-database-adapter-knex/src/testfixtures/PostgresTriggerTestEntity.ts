@@ -117,8 +117,8 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
   PostgresTriggerTestEntity
 > {
   constructor(
-    private fieldName: keyof PostgresTriggerTestEntityFields,
-    private badValue: string,
+    private readonly fieldName: keyof PostgresTriggerTestEntityFields,
+    private readonly badValue: string,
   ) {
     super();
   }
@@ -147,8 +147,8 @@ class ThrowConditionallyNonTransactionalTrigger extends EntityNonTransactionalMu
   PostgresTriggerTestEntity
 > {
   constructor(
-    private fieldName: keyof PostgresTriggerTestEntityFields,
-    private badValue: string,
+    private readonly fieldName: keyof PostgresTriggerTestEntityFields,
+    private readonly badValue: string,
   ) {
     super();
   }

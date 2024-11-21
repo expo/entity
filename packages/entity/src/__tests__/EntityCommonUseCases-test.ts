@@ -118,15 +118,15 @@ it('runs through a common workflow', async () => {
   const vc2 = new TestUserViewerContext(entityCompanionProvider, uuidv4());
 
   const blahOwner1 = await enforceAsyncResult(
-    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()!).createAsync(),
+    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()).createAsync(),
   );
 
   await enforceAsyncResult(
-    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()!).createAsync(),
+    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()).createAsync(),
   );
 
   const blahOwner2 = await enforceAsyncResult(
-    BlahEntity.creator(vc2).setField('ownerID', vc2.getUserID()!).createAsync(),
+    BlahEntity.creator(vc2).setField('ownerID', vc2.getUserID()).createAsync(),
   );
 
   // sanity check created objects
@@ -149,7 +149,7 @@ it('runs through a common workflow', async () => {
   const results = await enforceResultsAsync(
     BlahEntity.loader(vc1)
       .withAuthorizationResults()
-      .loadManyByFieldEqualingAsync('ownerID', vc1.getUserID()!),
+      .loadManyByFieldEqualingAsync('ownerID', vc1.getUserID()),
   );
   expect(results).toHaveLength(2);
 

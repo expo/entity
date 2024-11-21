@@ -15,6 +15,7 @@ module.exports = {
         project: './tsconfig.json',
       },
       rules: {
+        'no-void': ['warn', { allowAsStatement: true }],
         '@typescript-eslint/explicit-function-return-type': [
           'warn',
           {
@@ -41,6 +42,16 @@ module.exports = {
         ],
         'no-dupe-class-members': 'off',
         '@typescript-eslint/no-dupe-class-members': ['error'],
+      },
+    },
+    {
+      files: ['**/__tests__/**/*.ts', '**/__tests__/**/*.tsx', '**/__tests__/**/*.d.ts'],
+      parserOptions: {
+        project: './tsconfig.json',
+      },
+      rules: {
+        // ts-mockito verify function needs void functions within verify which is a void function
+        '@typescript-eslint/no-confusing-void-expression': 'off',
       },
     },
   ],

@@ -72,7 +72,7 @@ describe(EntityCompanion, () => {
 
     expect(mergedTriggers).toStrictEqual({
       afterCreate: [localTriggers!.afterCreate![0], globalMutationTriggers.afterCreate![0]],
-      afterAll: [localTriggers!.afterAll![0], globalMutationTriggers!.afterAll![0]],
+      afterAll: [localTriggers!.afterAll![0], globalMutationTriggers.afterAll![0]],
       afterCommit: [localTriggers!.afterCommit![0]],
     });
   });

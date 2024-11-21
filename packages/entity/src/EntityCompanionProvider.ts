@@ -143,11 +143,14 @@ export default class EntityCompanionProvider {
    */
   constructor(
     public readonly metricsAdapter: IEntityMetricsAdapter,
-    private databaseAdapterFlavors: ReadonlyMap<
+    private readonly databaseAdapterFlavors: ReadonlyMap<
       DatabaseAdapterFlavor,
       DatabaseAdapterFlavorDefinition
     >,
-    private cacheAdapterFlavors: ReadonlyMap<CacheAdapterFlavor, CacheAdapterFlavorDefinition>,
+    private readonly cacheAdapterFlavors: ReadonlyMap<
+      CacheAdapterFlavor,
+      CacheAdapterFlavorDefinition
+    >,
     readonly globalMutationTriggers: EntityMutationTriggerConfiguration<
       any,
       any,

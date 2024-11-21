@@ -33,7 +33,7 @@ export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdap
     );
   }
 
-  private localMemoryCacheAdapterMap = new Map<string, GenericEntityCacheAdapter<any>>();
+  private readonly localMemoryCacheAdapterMap = new Map<string, GenericEntityCacheAdapter<any>>();
 
   private constructor(
     private readonly localMemoryCacheCreator: <TFields>() => LocalMemoryCache<TFields>,

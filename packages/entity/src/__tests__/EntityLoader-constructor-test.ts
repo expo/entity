@@ -94,7 +94,7 @@ export default class TestEntity extends Entity<
     selectedFields: Readonly<TestFields>;
   }) {
     if (constructorParams.selectedFields.id === ID_SENTINEL_THROW_LITERAL) {
-      // eslint-disable-next-line no-throw-literal,@typescript-eslint/no-throw-literal
+      // eslint-disable-next-line no-throw-literal,@typescript-eslint/only-throw-error
       throw 'hello';
     } else if (constructorParams.selectedFields.id === ID_SENTINEL_THROW_ERROR) {
       throw new Error('world');

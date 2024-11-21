@@ -5,4 +5,4 @@ async function mainAsync(): Promise<void> {
   app.listen(3000);
 }
 
-mainAsync();
+void mainAsync();

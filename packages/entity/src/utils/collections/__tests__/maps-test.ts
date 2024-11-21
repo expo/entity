@@ -51,7 +51,7 @@ describe(mapKeys, () => {
       ['hello', 'world'],
       ['amphibian', 'creature'],
     ]);
-    const map2 = await mapKeys(map, (k) => k.length);
+    const map2 = mapKeys(map, (k) => k.length);
     expect(map2.size).toEqual(2);
     expect(map2.get(5)).toEqual('world');
     expect(map2.get(9)).toEqual('creature');

@@ -106,8 +106,8 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
   PostgresValidatorTestEntity
 > {
   constructor(
-    private fieldName: keyof PostgresValidatorTestEntityFields,
-    private badValue: string,
+    private readonly fieldName: keyof PostgresValidatorTestEntityFields,
+    private readonly badValue: string,
   ) {
     super();
   }
