@@ -6,6 +6,7 @@ import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
 import ViewerContext from '../../ViewerContext';
 import { successfulResults, failedResults } from '../../entityUtils';
 import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
+import PrivacyPolicyRule from '../../rules/PrivacyPolicyRule';
 import { createUnitTestEntityCompanionProvider } from '../../utils/testing/createUnitTestEntityCompanionProvider';
 
 describe('Two entities backed by the same table', () => {
@@ -107,18 +108,45 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
 });
 
 class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {
-  protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
-  ];
-  protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
-  ];
-  protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
-  ];
-  protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
-  ];
+  protected override getReadRules(): readonly PrivacyPolicyRule<
+    any,
+    string,
+    ViewerContext,
+    any,
+    any
+  >[] {
+    return [new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>()];
+  }
+
+  protected override getCreateRules(): readonly PrivacyPolicyRule<
+    any,
+    string,
+    ViewerContext,
+    any,
+    any
+  >[] {
+    return [new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>()];
+  }
+
+  protected override getUpdateRules(): readonly PrivacyPolicyRule<
+    any,
+    string,
+    ViewerContext,
+    any,
+    any
+  >[] {
+    return [new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>()];
+  }
+
+  protected override getDeleteRules(): readonly PrivacyPolicyRule<
+    any,
+    string,
+    ViewerContext,
+    any,
+    any
+  >[] {
+    return [new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>()];
+  }
 }
 
 class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFields> {
