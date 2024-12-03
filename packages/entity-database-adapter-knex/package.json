@@ -34,6 +34,6 @@
   },
   "devDependencies": {
     "@expo/entity": "^0.39.0",
-    "pg": "8.12.0"
+    "pg": "8.13.1"
   }
 }
