@@ -1,5 +1,6 @@
+import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
 import EntityCompanion from './EntityCompanion';
-import EntityLoader from './EntityLoader';
+import EntityLoaderUtils from './EntityLoaderUtils';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
@@ -52,8 +53,15 @@ export default class EntityLoaderFactory<
       TEntity,
       TSelectedFields
     >,
-  ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return new EntityLoader(
+  ): AuthorizationResultBasedEntityLoader<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    const utils = new EntityLoaderUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -63,6 +71,15 @@ export default class EntityLoaderFactory<
       this.entityCompanion.privacyPolicy,
       this.dataManager,
       this.metricsAdapter,
+    );
+
+    return new AuthorizationResultBasedEntityLoader(
+      queryContext,
+      this.entityCompanion.entityCompanionDefinition.entityConfiguration,
+      this.entityCompanion.entityCompanionDefinition.entityClass,
+      this.dataManager,
+      this.metricsAdapter,
+      utils,
     );
   }
 }

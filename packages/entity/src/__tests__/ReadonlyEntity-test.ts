@@ -127,7 +127,7 @@ describe(ReadonlyEntity, () => {
     }).toThrow();
   });
 
-  it('returns correct viewerCo}ntext from instantiation', () => {
+  it('returns correct viewerContext from instantiation', () => {
     const viewerContext = instance(mock(ViewerContext));
     const data = {
       id: 'what',

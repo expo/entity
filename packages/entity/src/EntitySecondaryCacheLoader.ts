@@ -1,6 +1,6 @@
 import { Result } from '@expo/results';
 
-import EntityLoader from './EntityLoader';
+import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
@@ -60,7 +60,7 @@ export default abstract class EntitySecondaryCacheLoader<
 > {
   constructor(
     private readonly secondaryEntityCache: ISecondaryEntityCache<TFields, TLoadParams>,
-    protected readonly entityLoader: EntityLoader<
+    protected readonly entityLoader: AuthorizationResultBasedEntityLoader<
       TFields,
       TID,
       TViewerContext,
@@ -84,11 +84,9 @@ export default abstract class EntitySecondaryCacheLoader<
     );
 
     // convert value to and from array to reuse complex code
-    const entitiesMap = await this.entityLoader
-      .utils()
-      .constructAndAuthorizeEntitiesAsync(
-        mapMap(loadParamsToFieldObjects, (fieldObject) => (fieldObject ? [fieldObject] : [])),
-      );
+    const entitiesMap = await this.entityLoader.utils.constructAndAuthorizeEntitiesAsync(
+      mapMap(loadParamsToFieldObjects, (fieldObject) => (fieldObject ? [fieldObject] : [])),
+    );
     return mapMap(entitiesMap, (fieldObjects) => fieldObjects[0] ?? null);
   }
 

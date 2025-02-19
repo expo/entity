@@ -157,13 +157,13 @@ class TestSecondaryLocalMemoryCacheLoader extends EntitySecondaryCacheLoader<
       }
       return nullthrows(
         (
-          await this.entityLoader
-            .enforcing()
-            .loadManyByFieldEqualityConjunctionAsync([
-              { fieldName: 'id', fieldValue: loadParams.id },
-            ])
+          await this.entityLoader.loadManyByFieldEqualityConjunctionAsync([
+            { fieldName: 'id', fieldValue: loadParams.id },
+          ])
         )[0],
-      ).getAllFields();
+      )
+        .enforceValue()
+        .getAllFields();
     });
   }
 }
@@ -182,7 +182,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
         localMemoryTestEntityConfiguration,
         GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({}),
       ),
-      LocalMemoryTestEntity.loader(viewerContext),
+      LocalMemoryTestEntity.loader(viewerContext).withAuthorizationResults(),
     );
 
     const loadParams = { id: createdEntity.getID() };
@@ -218,7 +218,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
         localMemoryTestEntityConfiguration,
         GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({}),
       ),
-      LocalMemoryTestEntity.loader(viewerContext),
+      LocalMemoryTestEntity.loader(viewerContext).withAuthorizationResults(),
     );
 
     const loadParams = { id: FAKE_ID };

@@ -54,7 +54,7 @@ export default class AuthorizationResultBasedEntityLoader<
     >,
     private readonly dataManager: EntityDataManager<TFields>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
-    private readonly utils: EntityLoaderUtils<
+    public readonly utils: EntityLoaderUtils<
       TFields,
       TID,
       TViewerContext,

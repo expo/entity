@@ -21,6 +21,7 @@ import EntityMutationValidator from './EntityMutationValidator';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
 import ViewerContext from './ViewerContext';
+import { enforceResultsAsync } from './entityUtils';
 import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError';
 import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
 import IEntityMetricsAdapter, { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter';
@@ -216,7 +217,7 @@ export class AuthorizationResultBasedCreateMutator<
       cascadingDeleteCause: null,
     });
 
-    const temporaryEntityForPrivacyCheck = entityLoader.utils().constructEntity({
+    const temporaryEntityForPrivacyCheck = entityLoader.utils.constructEntity({
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
       ...this.fieldsForEntity,
     } as unknown as TFields);
@@ -256,13 +257,13 @@ export class AuthorizationResultBasedCreateMutator<
     const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
 
     queryContext.appendPostCommitInvalidationCallback(
-      entityLoader.utils().invalidateFieldsAsync.bind(entityLoader, insertResult),
+      entityLoader.utils.invalidateFieldsAsync.bind(entityLoader, insertResult),
     );
 
-    const unauthorizedEntityAfterInsert = entityLoader.utils().constructEntity(insertResult);
-    const newEntity = await entityLoader
-      .enforcing()
-      .loadByIDAsync(unauthorizedEntityAfterInsert.getID());
+    const unauthorizedEntityAfterInsert = entityLoader.utils.constructEntity(insertResult);
+    const newEntity = await enforceAsyncResult(
+      entityLoader.loadByIDAsync(unauthorizedEntityAfterInsert.getID()),
+    );
 
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterCreate,
@@ -429,7 +430,7 @@ export class AuthorizationResultBasedUpdateMutator<
       cascadingDeleteCause,
     });
 
-    const entityAboutToBeUpdated = entityLoader.utils().constructEntity(this.fieldsForEntity);
+    const entityAboutToBeUpdated = entityLoader.utils.constructEntity(this.fieldsForEntity);
     const authorizeUpdateResult = await asyncResult(
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
@@ -473,17 +474,18 @@ export class AuthorizationResultBasedUpdateMutator<
     }
 
     queryContext.appendPostCommitInvalidationCallback(
-      entityLoader
-        .utils()
-        .invalidateFieldsAsync.bind(entityLoader, this.originalEntity.getAllDatabaseFields()),
+      entityLoader.utils.invalidateFieldsAsync.bind(
+        entityLoader,
+        this.originalEntity.getAllDatabaseFields(),
+      ),
     );
     queryContext.appendPostCommitInvalidationCallback(
-      entityLoader.utils().invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity),
+      entityLoader.utils.invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity),
     );
 
-    const updatedEntity = await entityLoader
-      .enforcing()
-      .loadByIDAsync(entityAboutToBeUpdated.getID()); // ID is guaranteed to be stable by ensureStableIDField
+    const updatedEntity = await enforceAsyncResult(
+      entityLoader.loadByIDAsync(entityAboutToBeUpdated.getID()),
+    ); // ID is guaranteed to be stable by ensureStableIDField
 
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterUpdate,
@@ -681,9 +683,10 @@ export class AuthorizationResultBasedDeleteMutator<
       cascadingDeleteCause,
     });
     queryContext.appendPostCommitInvalidationCallback(
-      entityLoader
-        .utils()
-        .invalidateFieldsAsync.bind(entityLoader, this.entity.getAllDatabaseFields()),
+      entityLoader.utils.invalidateFieldsAsync.bind(
+        entityLoader,
+        this.entity.getAllDatabaseFields(),
+      ),
     );
 
     await this.executeMutationTriggersAsync(
@@ -782,18 +785,19 @@ export class AuthorizationResultBasedDeleteMutator<
               return;
             }
 
-            const inboundReferenceEntities = await loaderFactory
-              .forLoad(queryContext, {
-                previousValue: null,
-                cascadingDeleteCause: newCascadingDeleteCause,
-              })
-              .enforcing()
-              .loadManyByFieldEqualingAsync(
-                fieldName,
-                association.associatedEntityLookupByField
-                  ? entity.getField(association.associatedEntityLookupByField as any)
-                  : entity.getID(),
-              );
+            const inboundReferenceEntities = await enforceResultsAsync(
+              loaderFactory
+                .forLoad(queryContext, {
+                  previousValue: null,
+                  cascadingDeleteCause: newCascadingDeleteCause,
+                })
+                .loadManyByFieldEqualingAsync(
+                  fieldName,
+                  association.associatedEntityLookupByField
+                    ? entity.getField(association.associatedEntityLookupByField as any)
+                    : entity.getID(),
+                ),
+            );
 
             switch (association.edgeDeletionBehavior) {
               case EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY: {

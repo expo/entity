@@ -1,10 +1,11 @@
 import { instance, mock } from 'ts-mockito';
 
+import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
 import { StringField } from '../EntityFields';
-import EntityLoader from '../EntityLoader';
+import EntityLoaderUtils from '../EntityLoaderUtils';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
 import EntityDataManager from '../internal/EntityDataManager';
@@ -118,7 +119,7 @@ export default class TestEntity extends Entity<
   }
 }
 
-describe(EntityLoader, () => {
+describe(AuthorizationResultBasedEntityLoader, () => {
   it('handles thrown errors and literals from constructor', async () => {
     const viewerContext = instance(mock(ViewerContext));
     const privacyPolicyEvaluationContext =
@@ -166,7 +167,7 @@ describe(EntityLoader, () => {
       metricsAdapter,
       TestEntity.name,
     );
-    const entityLoader = new EntityLoader(
+    const utils = new EntityLoaderUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -177,19 +178,25 @@ describe(EntityLoader, () => {
       dataManager,
       metricsAdapter,
     );
+    const entityLoader = new AuthorizationResultBasedEntityLoader(
+      queryContext,
+      testEntityConfiguration,
+      TestEntity,
+      dataManager,
+      metricsAdapter,
+      utils,
+    );
 
     let capturedThrownThing1: any;
     try {
-      await entityLoader.withAuthorizationResults().loadByIDAsync(ID_SENTINEL_THROW_LITERAL);
+      await entityLoader.loadByIDAsync(ID_SENTINEL_THROW_LITERAL);
     } catch (e) {
       capturedThrownThing1 = e;
     }
     expect(capturedThrownThing1).not.toBeInstanceOf(Error);
     expect(capturedThrownThing1).toEqual('hello');
 
-    const result = await entityLoader
-      .withAuthorizationResults()
-      .loadByIDAsync(ID_SENTINEL_THROW_ERROR);
+    const result = await entityLoader.loadByIDAsync(ID_SENTINEL_THROW_ERROR);
     expect(result.ok).toBe(false);
     expect(result.enforceError().message).toEqual('world');
   });
