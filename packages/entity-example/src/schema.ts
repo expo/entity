@@ -73,25 +73,27 @@ export const resolvers: IResolvers<any, GraphqlContext> = {
       }
 
       return await NoteEntity.creator(viewerContext)
+        .enforcing()
         .setField('userID', viewerContext.userID)
         .setField('title', args.note.title)
         .setField('body', args.note.body)
-        .enforceCreateAsync();
+        .createAsync();
     },
     async updateNote(_root, args, { viewerContext }) {
       const existingNote = await NoteEntity.loader(viewerContext)
         .enforcing()
         .loadByIDAsync(args.id);
       return await NoteEntity.updater(existingNote)
+        .enforcing()
         .setField('title', args.note.title)
         .setField('body', args.note.body)
-        .enforceUpdateAsync();
+        .updateAsync();
     },
     async deleteNote(_root, args, { viewerContext }) {
       const existingNote = await NoteEntity.loader(viewerContext)
         .enforcing()
         .loadByIDAsync(args.id);
-      await NoteEntity.enforceDeleteAsync(existingNote);
+      await NoteEntity.deleter(existingNote).enforcing().deleteAsync();
       return existingNote;
     },
   } as IObjectTypeResolver<any, GraphqlContext>,

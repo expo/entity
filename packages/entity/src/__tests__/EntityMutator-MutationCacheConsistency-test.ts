@@ -93,11 +93,11 @@ describe('EntityMutator', () => {
     const viewerContext = new ViewerContext(companionProvider);
 
     // put it in cache
-    const entity = await BlahEntity.creator(viewerContext).enforceCreateAsync();
+    const entity = await BlahEntity.creator(viewerContext).enforcing().createAsync();
     const entityLoaded = await BlahEntity.loader(viewerContext)
       .enforcing()
       .loadByIDAsync(entity.getID());
 
-    await BlahEntity.enforceDeleteAsync(entityLoaded);
+    await BlahEntity.deleter(entityLoaded).enforcing().deleteAsync();
   });
 });

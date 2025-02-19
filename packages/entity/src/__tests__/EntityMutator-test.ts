@@ -395,10 +395,12 @@ describe(EntityMutatorFactory, () => {
           nullableField: null,
         },
       ]);
-      const newEntity = await entityMutatorFactory
-        .forCreate(viewerContext, queryContext)
-        .setField('stringField', 'huh')
-        .enforceCreateAsync();
+      const newEntity = await enforceAsyncResult(
+        entityMutatorFactory
+          .forCreate(viewerContext, queryContext)
+          .setField('stringField', 'huh')
+          .createAsync(),
+      );
       expect(newEntity).toBeTruthy();
     });
 
@@ -429,10 +431,12 @@ describe(EntityMutatorFactory, () => {
 
       const spiedPrivacyPolicy = spy(privacyPolicy);
 
-      await entityMutatorFactory
-        .forCreate(viewerContext, queryContext)
-        .setField('stringField', 'huh')
-        .enforceCreateAsync();
+      await enforceAsyncResult(
+        entityMutatorFactory
+          .forCreate(viewerContext, queryContext)
+          .setField('stringField', 'huh')
+          .createAsync(),
+      );
 
       verify(
         spiedPrivacyPolicy.authorizeCreateAsync(
@@ -472,10 +476,12 @@ describe(EntityMutatorFactory, () => {
 
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
 
-      await entityMutatorFactory
-        .forCreate(viewerContext, queryContext)
-        .setField('stringField', 'huh')
-        .enforceCreateAsync();
+      await enforceAsyncResult(
+        entityMutatorFactory
+          .forCreate(viewerContext, queryContext)
+          .setField('stringField', 'huh')
+          .createAsync(),
+      );
 
       verifyTriggerCounts(
         viewerContext,
@@ -519,10 +525,12 @@ describe(EntityMutatorFactory, () => {
 
       const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
 
-      await entityMutatorFactory
-        .forCreate(viewerContext, queryContext)
-        .setField('stringField', 'huh')
-        .enforceCreateAsync();
+      await enforceAsyncResult(
+        entityMutatorFactory
+          .forCreate(viewerContext, queryContext)
+          .setField('stringField', 'huh')
+          .createAsync(),
+      );
 
       verifyValidatorCounts(viewerContext, validatorSpies, 1, { type: EntityMutationType.CREATE });
     });
@@ -573,10 +581,12 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id2),
       );
 
-      const updatedEntity = await entityMutatorFactory
-        .forUpdate(existingEntity, queryContext)
-        .setField('stringField', 'huh2')
-        .enforceUpdateAsync();
+      const updatedEntity = await enforceAsyncResult(
+        entityMutatorFactory
+          .forUpdate(existingEntity, queryContext)
+          .setField('stringField', 'huh2')
+          .updateAsync(),
+      );
 
       expect(updatedEntity).toBeTruthy();
       expect(updatedEntity.getAllFields()).not.toMatchObject(existingEntity.getAllFields());
@@ -626,10 +636,12 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id2),
       );
 
-      await entityMutatorFactory
-        .forUpdate(existingEntity, queryContext)
-        .setField('stringField', 'huh2')
-        .enforceUpdateAsync();
+      await enforceAsyncResult(
+        entityMutatorFactory
+          .forUpdate(existingEntity, queryContext)
+          .setField('stringField', 'huh2')
+          .updateAsync(),
+      );
 
       verify(
         spiedPrivacyPolicy.authorizeUpdateAsync(
@@ -699,10 +711,12 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id2),
       );
 
-      await entityMutatorFactory
-        .forUpdate(existingEntity, queryContext)
-        .setField('stringField', 'huh2')
-        .enforceUpdateAsync();
+      await enforceAsyncResult(
+        entityMutatorFactory
+          .forUpdate(existingEntity, queryContext)
+          .setField('stringField', 'huh2')
+          .updateAsync(),
+      );
 
       verifyTriggerCounts(
         viewerContext,
@@ -770,10 +784,12 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id2),
       );
 
-      await entityMutatorFactory
-        .forUpdate(existingEntity, queryContext)
-        .setField('stringField', 'huh2')
-        .enforceUpdateAsync();
+      await enforceAsyncResult(
+        entityMutatorFactory
+          .forUpdate(existingEntity, queryContext)
+          .setField('stringField', 'huh2')
+          .updateAsync(),
+      );
 
       verifyValidatorCounts(viewerContext, validatorSpies, 1, {
         type: EntityMutationType.UPDATE,
@@ -818,10 +834,12 @@ describe(EntityMutatorFactory, () => {
       );
 
       await expect(
-        entityMutatorFactory
-          .forUpdate(existingEntity, queryContext)
-          .setField('customIdField', uuidv4())
-          .enforceUpdateAsync(),
+        enforceAsyncResult(
+          entityMutatorFactory
+            .forUpdate(existingEntity, queryContext)
+            .setField('customIdField', uuidv4())
+            .updateAsync(),
+        ),
       ).rejects.toThrow('id field updates not supported: (entityClass = TestEntity)');
 
       const reloadedEntity = await enforceAsyncResult(
@@ -871,7 +889,9 @@ describe(EntityMutatorFactory, () => {
       );
       expect(existingEntity).toBeTruthy();
 
-      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+      await enforceAsyncResult(
+        entityMutatorFactory.forDelete(existingEntity, queryContext).deleteAsync(),
+      );
 
       await expect(
         enforceAsyncResult(
@@ -921,7 +941,9 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id1),
       );
 
-      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+      await enforceAsyncResult(
+        entityMutatorFactory.forDelete(existingEntity, queryContext).deleteAsync(),
+      );
 
       verify(
         spiedPrivacyPolicy.authorizeDeleteAsync(
@@ -972,7 +994,9 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id1),
       );
 
-      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+      await enforceAsyncResult(
+        entityMutatorFactory.forDelete(existingEntity, queryContext).deleteAsync(),
+      );
 
       verifyTriggerCounts(
         viewerContext,
@@ -1027,7 +1051,9 @@ describe(EntityMutatorFactory, () => {
           .loadByIDAsync(id1),
       );
 
-      await entityMutatorFactory.forDelete(existingEntity, queryContext).enforceDeleteAsync();
+      await enforceAsyncResult(
+        entityMutatorFactory.forDelete(existingEntity, queryContext).deleteAsync(),
+      );
 
       verifyValidatorCounts(viewerContext, validatorSpies, 0, {
         type: EntityMutationType.DELETE as any,
@@ -1109,10 +1135,12 @@ describe(EntityMutatorFactory, () => {
         .createAsync(),
     ).rejects.toThrowError('Entity field not valid: TestEntity (stringField = 10)');
 
-    const createdEntity = await entityMutatorFactory
-      .forCreate(viewerContext, queryContext)
-      .setField('stringField', 'hello')
-      .enforceCreateAsync();
+    const createdEntity = await enforceAsyncResult(
+      entityMutatorFactory
+        .forCreate(viewerContext, queryContext)
+        .setField('stringField', 'hello')
+        .createAsync(),
+    );
 
     await expect(
       entityMutatorFactory

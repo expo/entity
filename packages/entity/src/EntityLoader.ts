@@ -92,7 +92,7 @@ export default class EntityLoader<
 
   /**
    * Authorization-result-based entity loader. All loads through this
-   * loader are are results (or null for some loader methods), where an unsuccessful result
+   * loader are results (or null for some loader methods), where an unsuccessful result
    * means an authorization error or entity construction error occurred. Other errors are thrown.
    */
   withAuthorizationResults(): AuthorizationResultBasedEntityLoader<

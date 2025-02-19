@@ -79,10 +79,11 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
       );
 
-      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
+      const parent = await ParentEntity.creator(viewerContext).enforcing().createAsync();
       const child = await ChildEntity.creator(viewerContext)
+        .enforcing()
         .setField('parent_id', parent.getID())
-        .enforceCreateAsync();
+        .createAsync();
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
@@ -93,7 +94,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
           .loadByFieldEqualingAsync('parent_id', parent.getID()),
       ).resolves.not.toBeNull();
 
-      await ParentEntity.enforceDeleteAsync(parent);
+      await ParentEntity.deleter(parent).enforcing().deleteAsync();
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),

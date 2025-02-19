@@ -34,10 +34,13 @@ describe(PostgresEntityQueryContextProvider, () => {
   it('supports nested transactions', async () => {
     const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
-    await PostgresUniqueTestEntity.creator(vc1).setField('name', 'unique').enforceCreateAsync();
+    await PostgresUniqueTestEntity.creator(vc1)
+      .enforcing()
+      .setField('name', 'unique')
+      .createAsync();
 
     const id = (
-      await PostgresUniqueTestEntity.creator(vc1).setField('name', 'wat').enforceCreateAsync()
+      await PostgresUniqueTestEntity.creator(vc1).enforcing().setField('name', 'wat').createAsync()
     ).getID();
 
     await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
@@ -45,8 +48,9 @@ describe(PostgresEntityQueryContextProvider, () => {
         .enforcing()
         .loadByIDAsync(id);
       await PostgresUniqueTestEntity.updater(entity, queryContext)
+        .enforcing()
         .setField('name', 'wat2')
-        .enforceUpdateAsync();
+        .updateAsync();
 
       // ensure the outer transaction is not aborted due to postgres error in inner transaction,
       // in this case the error triggered is a unique constraint violation
@@ -56,8 +60,9 @@ describe(PostgresEntityQueryContextProvider, () => {
             .enforcing()
             .loadByIDAsync(id);
           await PostgresUniqueTestEntity.updater(entity, innerQueryContext)
+            .enforcing()
             .setField('name', 'unique')
-            .enforceUpdateAsync();
+            .updateAsync();
         });
       } catch {}
 
@@ -65,8 +70,9 @@ describe(PostgresEntityQueryContextProvider, () => {
         .enforcing()
         .loadByIDAsync(id);
       await PostgresUniqueTestEntity.updater(entity2, queryContext)
+        .enforcing()
         .setField('name', 'wat3')
-        .enforceUpdateAsync();
+        .updateAsync();
     });
 
     const entityLoaded = await PostgresUniqueTestEntity.loader(vc1).enforcing().loadByIDAsync(id);
@@ -77,7 +83,7 @@ describe(PostgresEntityQueryContextProvider, () => {
     const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
     const id = (
-      await PostgresUniqueTestEntity.creator(vc1).setField('name', 'wat').enforceCreateAsync()
+      await PostgresUniqueTestEntity.creator(vc1).enforcing().setField('name', 'wat').createAsync()
     ).getID();
 
     await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
@@ -88,8 +94,9 @@ describe(PostgresEntityQueryContextProvider, () => {
               .enforcing()
               .loadByIDAsync(id);
             await PostgresUniqueTestEntity.updater(entity, innerQueryContex3)
+              .enforcing()
               .setField('name', 'wat3')
-              .enforceUpdateAsync();
+              .updateAsync();
           });
         });
       });

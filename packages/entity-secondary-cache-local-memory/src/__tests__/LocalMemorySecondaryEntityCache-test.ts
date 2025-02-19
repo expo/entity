@@ -173,8 +173,9 @@ describe(LocalMemorySecondaryEntityCache, () => {
     const viewerContext = new TestViewerContext(createTestEntityCompanionProvider());
 
     const createdEntity = await LocalMemoryTestEntity.creator(viewerContext)
+      .enforcing()
       .setField('name', 'wat')
-      .enforceCreateAsync();
+      .createAsync();
 
     const secondaryCacheLoader = new TestSecondaryLocalMemoryCacheLoader(
       new LocalMemorySecondaryEntityCache(

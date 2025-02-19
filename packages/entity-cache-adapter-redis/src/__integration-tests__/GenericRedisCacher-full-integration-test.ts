@@ -47,8 +47,9 @@ describe(GenericRedisCacher, () => {
     const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
+      .enforcing()
       .setField('name', 'blah')
-      .enforceCreateAsync();
+      .createAsync();
 
     // loading an entity should put it in cache
     const entity1 = await RedisTestEntity.loader(viewerContext)
@@ -99,7 +100,10 @@ describe(GenericRedisCacher, () => {
     );
     const date = new Date();
     const entity1 = await enforceAsyncResult(
-      RedisTestEntity.creator(viewerContext).setField('dateField', date).createAsync(),
+      RedisTestEntity.creator(viewerContext)
+        .withAuthorizationResults()
+        .setField('dateField', date)
+        .createAsync(),
     );
     expect(entity1.getField('dateField')).toEqual(date);
 
@@ -121,7 +125,10 @@ describe(GenericRedisCacher, () => {
       createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
     const entity1 = await enforceAsyncResult(
-      RedisTestEntity.creator(viewerContext).setField('name', '').createAsync(),
+      RedisTestEntity.creator(viewerContext)
+        .withAuthorizationResults()
+        .setField('name', '')
+        .createAsync(),
     );
     const entity2 = await RedisTestEntity.loader(viewerContext)
       .enforcing()

@@ -141,9 +141,10 @@ describe('Entity cache inconsistency', () => {
     );
 
     const entity1 = await TestEntity.creator(viewerContext)
+      .enforcing()
       .setField('other_string', 'hello')
       .setField('third_string', 'initial')
-      .enforceCreateAsync();
+      .createAsync();
 
     // put entities in cache and dataloader
     await TestEntity.loader(viewerContext).enforcing().loadByIDAsync(entity1.getID());
@@ -180,8 +181,9 @@ describe('Entity cache inconsistency', () => {
         'postgres',
         async (queryContext) => {
           await TestEntity.updater(entity1, queryContext)
+            .enforcing()
             .setField('third_string', 'updated')
-            .enforceUpdateAsync();
+            .updateAsync();
 
           openBarrier1();
 

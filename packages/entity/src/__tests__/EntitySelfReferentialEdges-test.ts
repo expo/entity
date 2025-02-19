@@ -87,13 +87,15 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new TestViewerContext(companionProvider);
 
-    const parentCategory = await CategoryEntity.creator(viewerContext).enforceCreateAsync();
+    const parentCategory = await CategoryEntity.creator(viewerContext).enforcing().createAsync();
     const subCategory = await CategoryEntity.creator(viewerContext)
+      .enforcing()
       .setField('parent_category_id', parentCategory.getID())
-      .enforceCreateAsync();
+      .createAsync();
     const subSubCategory = await CategoryEntity.creator(viewerContext)
+      .enforcing()
       .setField('parent_category_id', subCategory.getID())
-      .enforceCreateAsync();
+      .createAsync();
 
     await expect(
       CategoryEntity.loader(viewerContext)
@@ -109,7 +111,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
         .loadByIDNullableAsync(subSubCategory.getID()),
     ).resolves.not.toBeNull();
 
-    await CategoryEntity.enforceDeleteAsync(parentCategory);
+    await CategoryEntity.deleter(parentCategory).enforcing().deleteAsync();
 
     await expect(
       CategoryEntity.loader(viewerContext)
@@ -132,15 +134,17 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new TestViewerContext(companionProvider);
 
-    const categoryA = await CategoryEntity.creator(viewerContext).enforceCreateAsync();
+    const categoryA = await CategoryEntity.creator(viewerContext).enforcing().createAsync();
     const categoryB = await CategoryEntity.creator(viewerContext)
+      .enforcing()
       .setField('parent_category_id', categoryA.getID())
-      .enforceCreateAsync();
+      .createAsync();
     await CategoryEntity.updater(categoryA)
+      .enforcing()
       .setField('parent_category_id', categoryB.getID())
-      .enforceUpdateAsync();
+      .updateAsync();
 
-    await CategoryEntity.enforceDeleteAsync(categoryA);
+    await CategoryEntity.deleter(categoryA).enforcing().deleteAsync();
 
     await expect(
       CategoryEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(categoryA.getID()),
@@ -158,13 +162,15 @@ describe('EntityEdgeDeletionBehavior.SET_NULL', () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new TestViewerContext(companionProvider);
 
-    const parentCategory = await CategoryEntity.creator(viewerContext).enforceCreateAsync();
+    const parentCategory = await CategoryEntity.creator(viewerContext).enforcing().createAsync();
     const subCategory = await CategoryEntity.creator(viewerContext)
+      .enforcing()
       .setField('parent_category_id', parentCategory.getID())
-      .enforceCreateAsync();
+      .createAsync();
     const subSubCategory = await CategoryEntity.creator(viewerContext)
+      .enforcing()
       .setField('parent_category_id', subCategory.getID())
-      .enforceCreateAsync();
+      .createAsync();
 
     await expect(
       CategoryEntity.loader(viewerContext)
@@ -180,7 +186,7 @@ describe('EntityEdgeDeletionBehavior.SET_NULL', () => {
         .loadByIDNullableAsync(subSubCategory.getID()),
     ).resolves.not.toBeNull();
 
-    await CategoryEntity.enforceDeleteAsync(parentCategory);
+    await CategoryEntity.deleter(parentCategory).enforcing().deleteAsync();
 
     await expect(
       CategoryEntity.loader(viewerContext)
@@ -205,15 +211,17 @@ describe('EntityEdgeDeletionBehavior.SET_NULL', () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new TestViewerContext(companionProvider);
 
-    const categoryA = await CategoryEntity.creator(viewerContext).enforceCreateAsync();
+    const categoryA = await CategoryEntity.creator(viewerContext).enforcing().createAsync();
     const categoryB = await CategoryEntity.creator(viewerContext)
+      .enforcing()
       .setField('parent_category_id', categoryA.getID())
-      .enforceCreateAsync();
+      .createAsync();
     await CategoryEntity.updater(categoryA)
+      .enforcing()
       .setField('parent_category_id', categoryB.getID())
-      .enforceUpdateAsync();
+      .updateAsync();
 
-    await CategoryEntity.enforceDeleteAsync(categoryA);
+    await CategoryEntity.deleter(categoryA).enforcing().deleteAsync();
 
     const loadedCategoryB = await CategoryEntity.loader(viewerContext)
       .enforcing()
@@ -231,13 +239,15 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new TestViewerContext(companionProvider);
 
-    const parentCategory = await CategoryEntity.creator(viewerContext).enforceCreateAsync();
+    const parentCategory = await CategoryEntity.creator(viewerContext).enforcing().createAsync();
     const subCategory = await CategoryEntity.creator(viewerContext)
+      .enforcing()
       .setField('parent_category_id', parentCategory.getID())
-      .enforceCreateAsync();
+      .createAsync();
     const subSubCategory = await CategoryEntity.creator(viewerContext)
+      .enforcing()
       .setField('parent_category_id', subCategory.getID())
-      .enforceCreateAsync();
+      .createAsync();
 
     await expect(
       CategoryEntity.loader(viewerContext)
@@ -271,7 +281,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     );
     expect(subSubCategoryCachedBefore.get(subCategory.getID())?.status).toEqual(CacheStatus.HIT);
 
-    await CategoryEntity.enforceDeleteAsync(parentCategory);
+    await CategoryEntity.deleter(parentCategory).enforcing().deleteAsync();
 
     const subCategoryCachedAfter = await categoryCacheAdapter.loadManyAsync('parent_category_id', [
       parentCategory.getID(),
@@ -307,13 +317,15 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new TestViewerContext(companionProvider);
 
-    const categoryA = await CategoryEntity.creator(viewerContext).enforceCreateAsync();
+    const categoryA = await CategoryEntity.creator(viewerContext).enforcing().createAsync();
     const categoryB = await CategoryEntity.creator(viewerContext)
+      .enforcing()
       .setField('parent_category_id', categoryA.getID())
-      .enforceCreateAsync();
+      .createAsync();
     await CategoryEntity.updater(categoryA)
+      .enforcing()
       .setField('parent_category_id', categoryB.getID())
-      .enforceUpdateAsync();
+      .updateAsync();
 
     await expect(
       CategoryEntity.loader(viewerContext)
@@ -338,7 +350,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     expect(categoriesCachedBefore.get(categoryA.getID())?.status).toEqual(CacheStatus.HIT);
     expect(categoriesCachedBefore.get(categoryB.getID())?.status).toEqual(CacheStatus.HIT);
 
-    await CategoryEntity.enforceDeleteAsync(categoryA);
+    await CategoryEntity.deleter(categoryA).enforcing().deleteAsync();
 
     const categoriesCachedAfter = await categoryCacheAdapter.loadManyAsync('parent_category_id', [
       categoryA.getID(),

@@ -1,3 +1,8 @@
+import {
+  AuthorizationResultBasedCreateMutator,
+  AuthorizationResultBasedUpdateMutator,
+  AuthorizationResultBasedDeleteMutator,
+} from './AuthorizationResultBasedEntityMutator';
 import Entity, { IEntityClass } from './Entity';
 import EntityCompanionProvider from './EntityCompanionProvider';
 import EntityConfiguration from './EntityConfiguration';
@@ -5,7 +10,6 @@ import EntityDatabaseAdapter from './EntityDatabaseAdapter';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityMutationTriggerConfiguration from './EntityMutationTriggerConfiguration';
 import EntityMutationValidator from './EntityMutationValidator';
-import { CreateMutator, UpdateMutator, DeleteMutator } from './EntityMutator';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ViewerContext from './ViewerContext';
@@ -75,8 +79,15 @@ export default class EntityMutatorFactory<
   forCreate(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-  ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return new CreateMutator(
+  ): AuthorizationResultBasedCreateMutator<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return new AuthorizationResultBasedCreateMutator(
       this.entityCompanionProvider,
       viewerContext,
       queryContext,
@@ -100,8 +111,15 @@ export default class EntityMutatorFactory<
   forUpdate(
     existingEntity: TEntity,
     queryContext: EntityQueryContext,
-  ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return new UpdateMutator(
+  ): AuthorizationResultBasedUpdateMutator<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return new AuthorizationResultBasedUpdateMutator(
       this.entityCompanionProvider,
       existingEntity.getViewerContext(),
       queryContext,
@@ -125,8 +143,15 @@ export default class EntityMutatorFactory<
   forDelete(
     existingEntity: TEntity,
     queryContext: EntityQueryContext,
-  ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
-    return new DeleteMutator(
+  ): AuthorizationResultBasedDeleteMutator<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return new AuthorizationResultBasedDeleteMutator(
       this.entityCompanionProvider,
       existingEntity.getViewerContext(),
       queryContext,

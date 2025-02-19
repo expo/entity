@@ -26,7 +26,7 @@ import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
 import IEntityMetricsAdapter, { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
 
-abstract class BaseMutator<
+abstract class AuthorizationResultBasedBaseMutator<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
@@ -154,7 +154,7 @@ abstract class BaseMutator<
 /**
  * Mutator for creating a new entity.
  */
-export class CreateMutator<
+export class AuthorizationResultBasedCreateMutator<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
@@ -167,12 +167,19 @@ export class CreateMutator<
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields,
-> extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+> extends AuthorizationResultBasedBaseMutator<
+  TFields,
+  TID,
+  TViewerContext,
+  TEntity,
+  TPrivacyPolicy,
+  TSelectedFields
+> {
   private readonly fieldsForEntity: Partial<TFields> = {};
 
   /**
    * Set the value for entity field.
-   * @param fieldName - entity field being updated
+   * @param fieldName - entity field being set
    * @param value - value for entity field
    */
   setField<K extends keyof Pick<TFields, TSelectedFields>>(fieldName: K, value: TFields[K]): this {
@@ -191,13 +198,6 @@ export class CreateMutator<
       EntityMetricsMutationType.CREATE,
       this.entityClass.name,
     )(this.createInTransactionAsync());
-  }
-
-  /**
-   * Convenience method that returns the new entity or throws upon create failure.
-   */
-  async enforceCreateAsync(): Promise<TEntity> {
-    return await enforceAsyncResult(this.createAsync());
   }
 
   private async createInTransactionAsync(): Promise<Result<TEntity>> {
@@ -293,7 +293,7 @@ export class CreateMutator<
 /**
  * Mutator for updating an existing entity.
  */
-export class UpdateMutator<
+export class AuthorizationResultBasedUpdateMutator<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
@@ -306,7 +306,14 @@ export class UpdateMutator<
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields,
-> extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+> extends AuthorizationResultBasedBaseMutator<
+  TFields,
+  TID,
+  TViewerContext,
+  TEntity,
+  TPrivacyPolicy,
+  TSelectedFields
+> {
   private readonly originalEntity: TEntity;
   private readonly fieldsForEntity: TFields;
   private readonly updatedFields: Partial<TFields> = {};
@@ -390,13 +397,6 @@ export class UpdateMutator<
       EntityMetricsMutationType.UPDATE,
       this.entityClass.name,
     )(this.updateInTransactionAsync(false, null));
-  }
-
-  /**
-   * Convenience method that returns the updated entity or throws upon update failure.
-   */
-  async enforceUpdateAsync(): Promise<TEntity> {
-    return await enforceAsyncResult(this.updateAsync());
   }
 
   private async updateInTransactionAsync(
@@ -526,7 +526,7 @@ export class UpdateMutator<
 /**
  * Mutator for deleting an existing entity.
  */
-export class DeleteMutator<
+export class AuthorizationResultBasedDeleteMutator<
   TFields extends object,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
@@ -539,7 +539,14 @@ export class DeleteMutator<
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields,
-> extends BaseMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+> extends AuthorizationResultBasedBaseMutator<
+  TFields,
+  TID,
+  TViewerContext,
+  TEntity,
+  TPrivacyPolicy,
+  TSelectedFields
+> {
   constructor(
     companionProvider: EntityCompanionProvider,
     viewerContext: TViewerContext,
@@ -605,13 +612,6 @@ export class DeleteMutator<
       EntityMetricsMutationType.DELETE,
       this.entityClass.name,
     )(this.deleteInTransactionAsync(new Set(), false, null));
-  }
-
-  /**
-   * Convenience method that throws upon delete failure.
-   */
-  async enforceDeleteAsync(): Promise<void> {
-    await enforceAsyncResult(this.deleteAsync());
   }
 
   private async deleteInTransactionAsync(

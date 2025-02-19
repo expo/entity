@@ -11,6 +11,7 @@ describe(NoteEntity, () => {
     const viewerContext = new UserViewerContext(companionProvider, userId);
 
     const createdEntityResult = await NoteEntity.creator(viewerContext)
+      .withAuthorizationResults()
       .setField('userID', userId)
       .setField('body', 'image')
       .setField('title', 'page')
@@ -18,6 +19,7 @@ describe(NoteEntity, () => {
     expect(createdEntityResult.ok).toBe(true);
 
     const createdEntityResultImpersonate = await NoteEntity.creator(viewerContext)
+      .withAuthorizationResults()
       .setField('userID', uuidv4()) // a different user
       .setField('body', 'image')
       .setField('title', 'page')

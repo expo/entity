@@ -80,8 +80,9 @@ describe(RedisSecondaryEntityCache, () => {
     );
 
     const createdEntity = await RedisTestEntity.creator(viewerContext)
+      .enforcing()
       .setField('name', 'wat')
-      .enforceCreateAsync();
+      .createAsync();
 
     const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
       new RedisSecondaryEntityCache(

@@ -26,9 +26,10 @@ describe(GenericLocalMemoryCacher, () => {
 
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
+      .enforcing()
       .setField('name', 'blah')
       .setField('dateField', date)
-      .enforceCreateAsync();
+      .createAsync();
 
     // loading an entity should put it in cache
     const entity1 = await LocalMemoryTestEntity.loader(viewerContext)
@@ -103,9 +104,10 @@ describe(GenericLocalMemoryCacher, () => {
 
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
+      .enforcing()
       .setField('name', 'blah')
       .setField('dateField', date)
-      .enforceCreateAsync();
+      .createAsync();
 
     // loading an entity will try to put it in cache but it's a noop cache, so it should be a miss
     const entity1 = await LocalMemoryTestEntity.loader(viewerContext)
