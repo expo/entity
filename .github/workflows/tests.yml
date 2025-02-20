@@ -18,6 +18,8 @@ jobs:
         node-version-file: package.json
     - run: yarn --frozen-lockfile
     - run: yarn lint -- -- --max-warnings=0
+    - name: Check if barrels are up to date
+      run: yarn ctix && [ -z "$(git status --porcelain)" ]
     - run: yarn test -- -- --coverage
     - run: yarn integration -- -- --coverage
     - uses: codecov/codecov-action@v1
