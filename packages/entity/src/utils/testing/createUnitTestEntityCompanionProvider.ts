@@ -5,6 +5,8 @@ import EntityCompanionProvider from '../../EntityCompanionProvider';
 import IEntityMetricsAdapter from '../../metrics/IEntityMetricsAdapter';
 import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
 
+const queryContextProvider = new StubQueryContextProvider();
+
 /**
  * Entity companion provider for use in unit tests. All database and cache implementations
  * are replaced with in-memory simulations.
@@ -19,7 +21,7 @@ export const createUnitTestEntityCompanionProvider = (
         'postgres',
         {
           adapterProvider: new StubDatabaseAdapterProvider(),
-          queryContextProvider: StubQueryContextProvider,
+          queryContextProvider,
         },
       ],
     ]),

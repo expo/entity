@@ -16,7 +16,7 @@
     "test": "jest --rootDir . --config ../../resources/jest.config.js --passWithNoTests",
     "integration": "../../resources/run-with-docker yarn integration-no-setup",
     "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir . --runInBand --passWithNoTests",
-    "barrelsby": "barrelsby --config ../../.barrelsby.json"
+    "ctix": "ctix build --config ../../.ctirc && ../../resources/prepend-barrel.sh '@expo/entity-secondary-cache-local-memory'"
   },
   "engines": {
     "node": ">=16"

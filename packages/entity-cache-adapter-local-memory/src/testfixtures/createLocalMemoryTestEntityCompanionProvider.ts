@@ -8,6 +8,8 @@ import {
 
 import LocalMemoryCacheAdapterProvider from '../LocalMemoryCacheAdapterProvider';
 
+const queryContextProvider = new StubQueryContextProvider();
+
 export const createLocalMemoryTestEntityCompanionProvider = (
   localMemoryOptions: { maxSize?: number; ttlSeconds?: number } = {},
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
@@ -23,7 +25,7 @@ export const createLocalMemoryTestEntityCompanionProvider = (
         'postgres',
         {
           adapterProvider: new StubDatabaseAdapterProvider(),
-          queryContextProvider: StubQueryContextProvider,
+          queryContextProvider,
         },
       ],
     ]),

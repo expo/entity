@@ -14,7 +14,7 @@
     "lint": "eslint src",
     "lint-fix": "eslint src --fix",
     "test": "jest --rootDir . --config ../../resources/jest.config.js",
-    "barrelsby": "barrelsby --directory src --location top --exclude tests__ --singleQuotes --delete"
+    "ctix": "ctix build --config ../../.ctirc && ../../resources/prepend-barrel.sh '@expo/entity-ip-address-field'"
   },
   "engines": {
     "node": ">=16"
