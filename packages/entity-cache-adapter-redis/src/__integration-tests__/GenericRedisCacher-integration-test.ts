@@ -47,7 +47,6 @@ describe(GenericRedisCacher, () => {
     );
     const date = new Date();
     const entity1Created = await RedisTestEntity.creator(viewerContext)
-      .enforcing()
       .setField('name', 'blah')
       .setField('dateField', date)
       .createAsync();
@@ -94,7 +93,6 @@ describe(GenericRedisCacher, () => {
     );
     const date = new Date();
     const entity1Created = await RedisTestEntity.creator(viewerContext)
-      .enforcing()
       .setField('name', 'blah')
       .setField('dateField', date)
       .createAsync();

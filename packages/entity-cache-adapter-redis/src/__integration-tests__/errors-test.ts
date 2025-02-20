@@ -40,7 +40,7 @@ describe(GenericRedisCacher, () => {
     );
 
     await expect(
-      RedisTestEntity.creator(vc1).enforcing().setField('name', 'blah').createAsync(),
+      RedisTestEntity.creator(vc1).setField('name', 'blah').createAsync(),
     ).rejects.toThrow(EntityCacheAdapterTransientError);
   });
 });

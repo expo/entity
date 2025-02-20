@@ -42,7 +42,6 @@ describe('postgres errors', () => {
   it('throws EntityDatabaseAdapterTransientError on Knex timeout', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await ErrorsTestEntity.creator(vc)
-      .enforcing()
       .setField('id', 1)
       .setField('fieldNonNull', 'hello')
       .createAsync();
@@ -61,7 +60,7 @@ describe('postgres errors', () => {
     const vc2 = new ViewerContext(
       createKnexIntegrationTestEntityCompanionProvider(shortTimeoutKnexInstance),
     );
-    await expect(ErrorsTestEntity.loader(vc2).enforcing().loadByIDAsync(1)).rejects.toThrow(
+    await expect(ErrorsTestEntity.loader(vc2).loadByIDAsync(1)).rejects.toThrow(
       EntityDatabaseAdapterTransientError,
     );
     await shortTimeoutKnexInstance.destroy();
@@ -71,7 +70,6 @@ describe('postgres errors', () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
       ErrorsTestEntity.creator(vc)
-        .enforcing()
         .setField('id', 1)
         .setField('fieldNonNull', null as any)
         .createAsync(),
@@ -82,7 +80,6 @@ describe('postgres errors', () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
       ErrorsTestEntity.creator(vc)
-        .enforcing()
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('fieldForeignKey', 2)
@@ -94,14 +91,12 @@ describe('postgres errors', () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
     await ErrorsTestEntity.creator(vc)
-      .enforcing()
       .setField('id', 1)
       .setField('fieldNonNull', 'hello')
       .createAsync();
 
     await expect(
       ErrorsTestEntity.creator(vc)
-        .enforcing()
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .createAsync(),
@@ -111,7 +106,6 @@ describe('postgres errors', () => {
   it('throws EntityDatabaseAdapterUniqueConstraintError when unique constraint is violated', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await ErrorsTestEntity.creator(vc)
-      .enforcing()
       .setField('id', 2)
       .setField('fieldNonNull', 'hello')
       .setField('fieldUnique', 'hello')
@@ -119,7 +113,6 @@ describe('postgres errors', () => {
 
     await expect(
       ErrorsTestEntity.creator(vc)
-        .enforcing()
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('fieldUnique', 'hello')
@@ -131,7 +124,6 @@ describe('postgres errors', () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
       ErrorsTestEntity.creator(vc)
-        .enforcing()
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('checkLessThan5', 2)
@@ -140,7 +132,6 @@ describe('postgres errors', () => {
 
     await expect(
       ErrorsTestEntity.creator(vc)
-        .enforcing()
         .setField('id', 2)
         .setField('fieldNonNull', 'hello')
         .setField('checkLessThan5', 10)
@@ -152,7 +143,6 @@ describe('postgres errors', () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
       ErrorsTestEntity.creator(vc)
-        .enforcing()
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('fieldExclusion', 'what')
@@ -161,7 +151,6 @@ describe('postgres errors', () => {
 
     await expect(
       ErrorsTestEntity.creator(vc)
-        .enforcing()
         .setField('id', 2)
         .setField('fieldNonNull', 'hello')
         .setField('fieldExclusion', 'what')
@@ -173,7 +162,6 @@ describe('postgres errors', () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     await expect(
       ErrorsTestEntity.creator(vc)
-        .enforcing()
         .setField('id', 1)
         .setField('fieldNonNull', 'hello')
         .setField('nonExistentColumn', 'what')

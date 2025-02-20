@@ -129,10 +129,10 @@ describe('Entity integrity', () => {
       createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
     );
 
-    const entity1 = await TestEntity.creator(viewerContext).enforcing().createAsync();
+    const entity1 = await TestEntity.creator(viewerContext).createAsync();
 
     await expect(
-      TestEntity.updater(entity1).enforcing().setField('id', uuidv4()).updateAsync(),
+      TestEntity.updater(entity1).setField('id', uuidv4()).updateAsync(),
     ).rejects.toThrow('id field updates not supported: (entityClass = TestEntity)');
 
     // ensure cache consistency
@@ -140,9 +140,7 @@ describe('Entity integrity', () => {
       createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
     );
 
-    const loadedById = await TestEntity.loader(viewerContextLast)
-      .enforcing()
-      .loadByIDAsync(entity1.getID());
+    const loadedById = await TestEntity.loader(viewerContextLast).loadByIDAsync(entity1.getID());
 
     expect(loadedById.getID()).toEqual(entity1.getID());
   });

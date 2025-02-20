@@ -32,7 +32,7 @@ describe(EntitySecondaryCacheLoader, () => {
     it('calls into secondary cache with correct params', async () => {
       const vc1 = new ViewerContext(createUnitTestEntityCompanionProvider());
 
-      const createdEntity = await SimpleTestEntity.creator(vc1).enforcing().createAsync();
+      const createdEntity = await SimpleTestEntity.creator(vc1).createAsync();
       const loadParams = { id: createdEntity.getID() };
 
       const secondaryEntityCacheMock =
@@ -44,7 +44,7 @@ describe(EntitySecondaryCacheLoader, () => {
 
       const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
         secondaryEntityCache,
-        SimpleTestEntity.loader(vc1).withAuthorizationResults(),
+        SimpleTestEntity.loaderWithAuthorizationResults(vc1),
       );
 
       await secondaryCacheLoader.loadManyAsync([loadParams]);
@@ -57,7 +57,7 @@ describe(EntitySecondaryCacheLoader, () => {
     it('constructs and authorizes entities', async () => {
       const vc1 = new ViewerContext(createUnitTestEntityCompanionProvider());
 
-      const createdEntity = await SimpleTestEntity.creator(vc1).enforcing().createAsync();
+      const createdEntity = await SimpleTestEntity.creator(vc1).createAsync();
       const loadParams = { id: createdEntity.getID() };
 
       const secondaryEntityCacheMock =
@@ -67,7 +67,7 @@ describe(EntitySecondaryCacheLoader, () => {
       ).thenResolve(new Map([[loadParams, createdEntity.getAllFields()]]));
       const secondaryEntityCache = instance(secondaryEntityCacheMock);
 
-      const loader = SimpleTestEntity.loader(vc1).withAuthorizationResults();
+      const loader = SimpleTestEntity.loaderWithAuthorizationResults(vc1);
       const spiedPrivacyPolicy = spy(loader.utils['privacyPolicy']);
       const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(secondaryEntityCache, loader);
 
@@ -90,13 +90,13 @@ describe(EntitySecondaryCacheLoader, () => {
     it('calls invalidate on the secondary cache', async () => {
       const vc1 = new ViewerContext(createUnitTestEntityCompanionProvider());
 
-      const createdEntity = await SimpleTestEntity.creator(vc1).enforcing().createAsync();
+      const createdEntity = await SimpleTestEntity.creator(vc1).createAsync();
       const loadParams = { id: createdEntity.getID() };
 
       const secondaryEntityCacheMock =
         mock<ISecondaryEntityCache<SimpleTestFields, TestLoadParams>>();
       const secondaryEntityCache = instance(secondaryEntityCacheMock);
-      const loader = SimpleTestEntity.loader(vc1).withAuthorizationResults();
+      const loader = SimpleTestEntity.loaderWithAuthorizationResults(vc1);
       const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(secondaryEntityCache, loader);
       await secondaryCacheLoader.invalidateManyAsync([loadParams]);
 

@@ -50,9 +50,7 @@ describe(canViewerUpdateAsync, () => {
   it('appropriately executes update privacy policy', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestDenyDeleteEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestDenyDeleteEntity.creator(viewerContext).createAsync();
     const canViewerUpdate = await canViewerUpdateAsync(SimpleTestDenyDeleteEntity, testEntity);
     expect(canViewerUpdate).toBe(true);
     const canViewerUpdateResult = await getCanViewerUpdateResultAsync(
@@ -65,9 +63,7 @@ describe(canViewerUpdateAsync, () => {
   it('denies when policy denies', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     const canViewerUpdate = await canViewerUpdateAsync(SimpleTestDenyUpdateEntity, testEntity);
     expect(canViewerUpdate).toBe(false);
     const canViewerUpdateResult = await getCanViewerUpdateResultAsync(
@@ -83,9 +79,7 @@ describe(canViewerUpdateAsync, () => {
   it('rethrows non-authorization errors', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestThrowOtherErrorEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestThrowOtherErrorEntity.creator(viewerContext).createAsync();
     await expect(canViewerUpdateAsync(SimpleTestThrowOtherErrorEntity, testEntity)).rejects.toThrow(
       'update error',
     );
@@ -99,9 +93,7 @@ describe(canViewerDeleteAsync, () => {
   it('appropriately executes update privacy policy', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     const canViewerDelete = await canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity);
     expect(canViewerDelete).toBe(true);
     const canViewerDeleteResult = await getCanViewerDeleteResultAsync(
@@ -114,9 +106,7 @@ describe(canViewerDeleteAsync, () => {
   it('denies when policy denies', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestDenyDeleteEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestDenyDeleteEntity.creator(viewerContext).createAsync();
     const canViewerDelete = await canViewerDeleteAsync(SimpleTestDenyDeleteEntity, testEntity);
     expect(canViewerDelete).toBe(false);
     const canViewerDeleteResult = await getCanViewerDeleteResultAsync(
@@ -132,12 +122,9 @@ describe(canViewerDeleteAsync, () => {
   it('denies when recursive policy denies for CASCADE_DELETE', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     // add another entity referencing testEntity that would cascade deletion to itself when testEntity is deleted
     const leafEntity = await LeafDenyDeleteEntity.creator(viewerContext)
-      .enforcing()
       .setField('simple_test_deny_update_cascade_delete_id', testEntity.getID())
       .createAsync();
     const canViewerDelete = await canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity);
@@ -155,12 +142,9 @@ describe(canViewerDeleteAsync, () => {
   it('denies when recursive policy denies for SET_NULL', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     // add another entity referencing testEntity that would set null to its column when testEntity is deleted
     const leafEntity = await LeafDenyUpdateEntity.creator(viewerContext)
-      .enforcing()
       .setField('simple_test_deny_update_set_null_id', testEntity.getID())
       .createAsync();
     const canViewerDelete = await canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity);
@@ -178,17 +162,13 @@ describe(canViewerDeleteAsync, () => {
   it('allows when recursive policy allows for CASCADE_DELETE and SET_NULL', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     // add another entity referencing testEntity that would cascade deletion to itself when testEntity is deleted
     await LeafDenyUpdateEntity.creator(viewerContext)
-      .enforcing()
       .setField('simple_test_deny_update_cascade_delete_id', testEntity.getID())
       .createAsync();
     // add another entity referencing testEntity that would set null to its column when testEntity is deleted
     await LeafDenyDeleteEntity.creator(viewerContext)
-      .enforcing()
       .setField('simple_test_deny_update_set_null_id', testEntity.getID())
       .createAsync();
 
@@ -204,9 +184,7 @@ describe(canViewerDeleteAsync, () => {
   it('rethrows non-authorization errors', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestThrowOtherErrorEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestThrowOtherErrorEntity.creator(viewerContext).createAsync();
     await expect(
       canViewerDeleteAsync(SimpleTestThrowOtherErrorEntity, testEntity),
     ).rejects.toThrowError('delete error');
@@ -218,11 +196,8 @@ describe(canViewerDeleteAsync, () => {
   it('returns false when edge cannot be read', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     const leafEntity = await LeafDenyReadEntity.creator(viewerContext)
-      .enforcing()
       .setField('simple_test_id', testEntity.getID())
       .createAsync();
     const canViewerDelete = await canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity);
@@ -240,11 +215,8 @@ describe(canViewerDeleteAsync, () => {
   it('rethrows non-authorization edge read errors', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext)
-      .enforcing()
-      .createAsync();
+    const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     await SimpleTestThrowOtherErrorEntity.creator(viewerContext)
-      .enforcing()
       .setField('simple_test_id', testEntity.getID())
       .createAsync();
     await expect(canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity)).rejects.toThrowError(
@@ -261,11 +233,11 @@ describe(canViewerDeleteAsync, () => {
     const canViewerDelete = await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
       'postgres',
       async (queryContext) => {
-        const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext, queryContext)
-          .enforcing()
-          .createAsync();
+        const testEntity = await SimpleTestDenyUpdateEntity.creator(
+          viewerContext,
+          queryContext,
+        ).createAsync();
         await LeafDenyReadEntity.creator(viewerContext, queryContext)
-          .enforcing()
           .setField('simple_test_id', testEntity.getID())
           .createAsync();
         // this would fail if transactions weren't supported or correctly passed through
@@ -277,11 +249,11 @@ describe(canViewerDeleteAsync, () => {
     const canViewerDeleteResult = await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
       'postgres',
       async (queryContext) => {
-        const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext, queryContext)
-          .enforcing()
-          .createAsync();
+        const testEntity = await SimpleTestDenyUpdateEntity.creator(
+          viewerContext,
+          queryContext,
+        ).createAsync();
         await LeafDenyReadEntity.creator(viewerContext, queryContext)
-          .enforcing()
           .setField('simple_test_id', testEntity.getID())
           .createAsync();
         // this would fail if transactions weren't supported or correctly passed through

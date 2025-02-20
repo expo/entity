@@ -14,13 +14,11 @@ describe('Two entities backed by the same table', () => {
     const viewerContext = new ViewerContext(companionProvider);
 
     const one = await OneTestEntity.creator(viewerContext)
-      .enforcing()
       .setField('entity_type', EntityType.ONE)
       .setField('common_other_field', 'wat')
       .createAsync();
 
     const two = await TwoTestEntity.creator(viewerContext)
-      .enforcing()
       .setField('entity_type', EntityType.TWO)
       .setField('other_field', 'blah')
       .setField('common_other_field', 'wat')
@@ -30,16 +28,16 @@ describe('Two entities backed by the same table', () => {
     expect(two).toBeInstanceOf(TwoTestEntity);
 
     await expect(
-      TwoTestEntity.loader(viewerContext).enforcing().loadByIDAsync(one.getID()),
+      TwoTestEntity.loader(viewerContext).loadByIDAsync(one.getID()),
     ).rejects.toThrowError('TwoTestEntity must be instantiated with two data');
 
     await expect(
-      OneTestEntity.loader(viewerContext).enforcing().loadByIDAsync(two.getID()),
+      OneTestEntity.loader(viewerContext).loadByIDAsync(two.getID()),
     ).rejects.toThrowError('OneTestEntity must be instantiated with one data');
 
-    const manyResults = await OneTestEntity.loader(viewerContext)
-      .withAuthorizationResults()
-      .loadManyByFieldEqualingAsync('common_other_field', 'wat');
+    const manyResults = await OneTestEntity.loaderWithAuthorizationResults(
+      viewerContext,
+    ).loadManyByFieldEqualingAsync('common_other_field', 'wat');
     const successfulManyResults = successfulResults(manyResults);
     const failedManyResults = failedResults(manyResults);
 
@@ -51,14 +49,14 @@ describe('Two entities backed by the same table', () => {
       'OneTestEntity must be instantiated with one data',
     );
 
-    const fieldEqualityConjunctionResults = await OneTestEntity.loader(viewerContext)
-      .withAuthorizationResults()
-      .loadManyByFieldEqualityConjunctionAsync([
-        {
-          fieldName: 'common_other_field',
-          fieldValue: 'wat',
-        },
-      ]);
+    const fieldEqualityConjunctionResults = await OneTestEntity.loaderWithAuthorizationResults(
+      viewerContext,
+    ).loadManyByFieldEqualityConjunctionAsync([
+      {
+        fieldName: 'common_other_field',
+        fieldValue: 'wat',
+      },
+    ]);
     const successfulfieldEqualityConjunctionResultsResults = successfulResults(
       fieldEqualityConjunctionResults,
     );

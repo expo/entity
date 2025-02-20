@@ -410,8 +410,7 @@ export default class AuthorizationResultBasedEntityAssociationLoader<
       let associatedEntityResult: Result<ReadonlyEntity<any, any, any, any>> | null;
       if (associatedEntityLookupByField) {
         associatedEntityResult = await currentEntity
-          .associationLoader(this.queryContext)
-          .withAuthorizationResults()
+          .associationLoaderWithAuthorizationResults(this.queryContext)
           .loadAssociatedEntityByFieldEqualingAsync(
             fieldIdentifyingAssociatedEntity,
             associatedEntityClass,
@@ -419,8 +418,7 @@ export default class AuthorizationResultBasedEntityAssociationLoader<
           );
       } else {
         const associatedEntityResultLocal = await currentEntity
-          .associationLoader(this.queryContext)
-          .withAuthorizationResults()
+          .associationLoaderWithAuthorizationResults(this.queryContext)
           .loadAssociatedEntityAsync(fieldIdentifyingAssociatedEntity, associatedEntityClass);
 
         if (associatedEntityResultLocal.ok && associatedEntityResultLocal.value === null) {
