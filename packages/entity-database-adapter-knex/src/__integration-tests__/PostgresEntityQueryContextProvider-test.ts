@@ -34,21 +34,15 @@ describe(PostgresEntityQueryContextProvider, () => {
   it('supports nested transactions', async () => {
     const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
-    await PostgresUniqueTestEntity.creator(vc1)
-      .enforcing()
-      .setField('name', 'unique')
-      .createAsync();
+    await PostgresUniqueTestEntity.creator(vc1).setField('name', 'unique').createAsync();
 
     const id = (
-      await PostgresUniqueTestEntity.creator(vc1).enforcing().setField('name', 'wat').createAsync()
+      await PostgresUniqueTestEntity.creator(vc1).setField('name', 'wat').createAsync()
     ).getID();
 
     await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
-      const entity = await PostgresUniqueTestEntity.loader(vc1, queryContext)
-        .enforcing()
-        .loadByIDAsync(id);
+      const entity = await PostgresUniqueTestEntity.loader(vc1, queryContext).loadByIDAsync(id);
       await PostgresUniqueTestEntity.updater(entity, queryContext)
-        .enforcing()
         .setField('name', 'wat2')
         .updateAsync();
 
@@ -56,26 +50,23 @@ describe(PostgresEntityQueryContextProvider, () => {
       // in this case the error triggered is a unique constraint violation
       try {
         await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
-          const entity = await PostgresUniqueTestEntity.loader(vc1, innerQueryContext)
-            .enforcing()
-            .loadByIDAsync(id);
+          const entity = await PostgresUniqueTestEntity.loader(
+            vc1,
+            innerQueryContext,
+          ).loadByIDAsync(id);
           await PostgresUniqueTestEntity.updater(entity, innerQueryContext)
-            .enforcing()
             .setField('name', 'unique')
             .updateAsync();
         });
       } catch {}
 
-      const entity2 = await PostgresUniqueTestEntity.loader(vc1, queryContext)
-        .enforcing()
-        .loadByIDAsync(id);
+      const entity2 = await PostgresUniqueTestEntity.loader(vc1, queryContext).loadByIDAsync(id);
       await PostgresUniqueTestEntity.updater(entity2, queryContext)
-        .enforcing()
         .setField('name', 'wat3')
         .updateAsync();
     });
 
-    const entityLoaded = await PostgresUniqueTestEntity.loader(vc1).enforcing().loadByIDAsync(id);
+    const entityLoaded = await PostgresUniqueTestEntity.loader(vc1).loadByIDAsync(id);
     expect(entityLoaded.getField('name')).toEqual('wat3');
   });
 
@@ -83,18 +74,18 @@ describe(PostgresEntityQueryContextProvider, () => {
     const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
     const id = (
-      await PostgresUniqueTestEntity.creator(vc1).enforcing().setField('name', 'wat').createAsync()
+      await PostgresUniqueTestEntity.creator(vc1).setField('name', 'wat').createAsync()
     ).getID();
 
     await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
       await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
         await innerQueryContext.runInNestedTransactionAsync(async (innerQueryContex2) => {
           await innerQueryContex2.runInNestedTransactionAsync(async (innerQueryContex3) => {
-            const entity = await PostgresUniqueTestEntity.loader(vc1, innerQueryContex3)
-              .enforcing()
-              .loadByIDAsync(id);
+            const entity = await PostgresUniqueTestEntity.loader(
+              vc1,
+              innerQueryContex3,
+            ).loadByIDAsync(id);
             await PostgresUniqueTestEntity.updater(entity, innerQueryContex3)
-              .enforcing()
               .setField('name', 'wat3')
               .updateAsync();
           });
@@ -102,7 +93,7 @@ describe(PostgresEntityQueryContextProvider, () => {
       });
     });
 
-    const entityLoaded = await PostgresUniqueTestEntity.loader(vc1).enforcing().loadByIDAsync(id);
+    const entityLoaded = await PostgresUniqueTestEntity.loader(vc1).loadByIDAsync(id);
     expect(entityLoaded.getField('name')).toEqual('wat3');
   });
 });

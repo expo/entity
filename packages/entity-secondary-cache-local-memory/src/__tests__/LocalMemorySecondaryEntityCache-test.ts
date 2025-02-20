@@ -175,7 +175,6 @@ describe(LocalMemorySecondaryEntityCache, () => {
     const viewerContext = new TestViewerContext(createTestEntityCompanionProvider());
 
     const createdEntity = await LocalMemoryTestEntity.creator(viewerContext)
-      .enforcing()
       .setField('name', 'wat')
       .createAsync();
 
@@ -184,7 +183,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
         localMemoryTestEntityConfiguration,
         GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({}),
       ),
-      LocalMemoryTestEntity.loader(viewerContext).withAuthorizationResults(),
+      LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext),
     );
 
     const loadParams = { id: createdEntity.getID() };
@@ -220,7 +219,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
         localMemoryTestEntityConfiguration,
         GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({}),
       ),
-      LocalMemoryTestEntity.loader(viewerContext).withAuthorizationResults(),
+      LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext),
     );
 
     const loadParams = { id: FAKE_ID };

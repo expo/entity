@@ -1,7 +1,10 @@
 import { instance, mock } from 'ts-mockito';
 
-import EntityAssociationLoader from '../EntityAssociationLoader';
-import EntityLoader from '../EntityLoader';
+import AuthorizationResultBasedEntityAssociationLoader from '../AuthorizationResultBasedEntityAssociationLoader';
+import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
+import EnforcingEntityAssociationLoader from '../EnforcingEntityAssociationLoader';
+import EnforcingEntityLoader from '../EnforcingEntityLoader';
+import EntityLoaderUtils from '../EntityLoaderUtils';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
 import SimpleTestEntity from '../testfixtures/SimpleTestEntity';
@@ -157,7 +160,7 @@ describe(ReadonlyEntity, () => {
   });
 
   describe('associationLoader', () => {
-    it('returns a new association loader', () => {
+    it('returns a new EnforcingEntityAssociationLoader', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
       const data = {
@@ -169,15 +172,52 @@ describe(ReadonlyEntity, () => {
         databaseFields: data,
         selectedFields: data,
       });
-      expect(testEntity.associationLoader()).toBeInstanceOf(EntityAssociationLoader);
+      expect(testEntity.associationLoader()).toBeInstanceOf(EnforcingEntityAssociationLoader);
+    });
+  });
+
+  describe('associationLoaderWithAuthorizationResults', () => {
+    it('returns a new AuthorizationResultBasedEntityAssociationLoader', () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+      const data = {
+        id: 'what',
+      };
+      const testEntity = new SimpleTestEntity({
+        viewerContext,
+        id: 'what',
+        databaseFields: data,
+        selectedFields: data,
+      });
+      expect(testEntity.associationLoaderWithAuthorizationResults()).toBeInstanceOf(
+        AuthorizationResultBasedEntityAssociationLoader,
+      );
     });
   });
 
   describe('loader', () => {
-    it('creates a new EntityLoader', async () => {
+    it('creates a new EnforcingEntityLoader', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.loader(viewerContext)).toBeInstanceOf(EntityLoader);
+      expect(SimpleTestEntity.loader(viewerContext)).toBeInstanceOf(EnforcingEntityLoader);
+    });
+  });
+
+  describe('loaderWithAuthorizationResults', () => {
+    it('creates a new AuthorizationResultBasedEntityLoader', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+      expect(SimpleTestEntity.loaderWithAuthorizationResults(viewerContext)).toBeInstanceOf(
+        AuthorizationResultBasedEntityLoader,
+      );
+    });
+  });
+
+  describe('loaderUtils', () => {
+    it('creates a new EntityLoaderUtils', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+      expect(SimpleTestEntity.loaderUtils(viewerContext)).toBeInstanceOf(EntityLoaderUtils);
     });
   });
 });

@@ -1,3 +1,11 @@
+import {
+  AuthorizationResultBasedCreateMutator,
+  AuthorizationResultBasedDeleteMutator,
+  AuthorizationResultBasedUpdateMutator,
+} from './AuthorizationResultBasedEntityMutator';
+import EnforcingEntityCreator from './EnforcingEntityCreator';
+import EnforcingEntityDeleter from './EnforcingEntityDeleter';
+import EnforcingEntityUpdater from './EnforcingEntityUpdater';
 import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import EntityCreator from './EntityCreator';
 import EntityDeleter from './EntityDeleter';
@@ -65,16 +73,60 @@ export default abstract class Entity<
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getQueryContext(),
-  ): EntityCreator<
+  ): EnforcingEntityCreator<
     TMFields,
     TMID,
     TMViewerContext,
-    TMViewerContext2,
     TMEntity,
     TMPrivacyPolicy,
     TMSelectedFields
   > {
-    return new EntityCreator(viewerContext, queryContext, this);
+    return new EntityCreator(viewerContext, queryContext, this).enforcing();
+  }
+
+  /**
+   * Vend mutator for creating a new entity in given query context.
+   * @param viewerContext - viewer context of creating user
+   * @param queryContext - query context in which to perform the create
+   * @returns mutator for creating an entity
+   */
+  static creatorWithAuthorizationResults<
+    TMFields extends object,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMViewerContext extends ViewerContext,
+    TMViewerContext2 extends TMViewerContext,
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    viewerContext: TMViewerContext2,
+    queryContext: EntityQueryContext = viewerContext
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): AuthorizationResultBasedCreateMutator<
+    TMFields,
+    TMID,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityCreator(viewerContext, queryContext, this).withAuthorizationResults();
   }
 
   /**
@@ -111,8 +163,60 @@ export default abstract class Entity<
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getQueryContext(),
-  ): EntityUpdater<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
-    return new EntityUpdater(existingEntity, queryContext, this);
+  ): EnforcingEntityUpdater<
+    TMFields,
+    TMID,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityUpdater(existingEntity, queryContext, this).enforcing();
+  }
+
+  /**
+   * Vend mutator for updating an existing entity in given query context.
+   * @param existingEntity - entity to update
+   * @param queryContext - query context in which to perform the update
+   * @returns mutator for updating existingEntity
+   */
+  static updaterWithAuthorizationResults<
+    TMFields extends object,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    existingEntity: TMEntity,
+    queryContext: EntityQueryContext = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): AuthorizationResultBasedUpdateMutator<
+    TMFields,
+    TMID,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityUpdater(existingEntity, queryContext, this).withAuthorizationResults();
   }
 
   /**
@@ -149,8 +253,60 @@ export default abstract class Entity<
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getQueryContext(),
-  ): EntityDeleter<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
-    return new EntityDeleter(existingEntity, queryContext, this);
+  ): EnforcingEntityDeleter<
+    TMFields,
+    TMID,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityDeleter(existingEntity, queryContext, this).enforcing();
+  }
+
+  /**
+   * Vend mutator for deleting an existing entity in given query context.
+   * @param existingEntity - entity to delete
+   * @param queryContext - query context in which to perform the delete
+   * @returns mutator for deleting existingEntity
+   */
+  static deleterWithAuthorizationResults<
+    TMFields extends object,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    existingEntity: TMEntity,
+    queryContext: EntityQueryContext = existingEntity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): AuthorizationResultBasedDeleteMutator<
+    TMFields,
+    TMID,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityDeleter(existingEntity, queryContext, this).withAuthorizationResults();
   }
 }
 

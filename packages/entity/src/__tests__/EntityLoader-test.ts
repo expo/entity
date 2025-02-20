@@ -11,9 +11,7 @@ describe(EntityLoader, () => {
     it('creates a new EnforcingEntityLoader', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.loader(viewerContext).enforcing()).toBeInstanceOf(
-        EnforcingEntityLoader,
-      );
+      expect(SimpleTestEntity.loader(viewerContext)).toBeInstanceOf(EnforcingEntityLoader);
     });
   });
 
@@ -21,7 +19,7 @@ describe(EntityLoader, () => {
     it('creates a new AuthorizationResultBasedEntityLoader', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.loader(viewerContext).withAuthorizationResults()).toBeInstanceOf(
+      expect(SimpleTestEntity.loaderWithAuthorizationResults(viewerContext)).toBeInstanceOf(
         AuthorizationResultBasedEntityLoader,
       );
     });
@@ -31,7 +29,7 @@ describe(EntityLoader, () => {
     it('returns a instance of EntityLoaderUtils', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.loader(viewerContext).utils()).toBeInstanceOf(EntityLoaderUtils);
+      expect(SimpleTestEntity.loaderUtils(viewerContext)).toBeInstanceOf(EntityLoaderUtils);
     });
   });
 });

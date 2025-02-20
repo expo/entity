@@ -80,7 +80,6 @@ describe(RedisSecondaryEntityCache, () => {
     );
 
     const createdEntity = await RedisTestEntity.creator(viewerContext)
-      .enforcing()
       .setField('name', 'wat')
       .createAsync();
 
@@ -90,7 +89,7 @@ describe(RedisSecondaryEntityCache, () => {
         genericRedisCacheContext,
         (loadParams) => `test-key-${loadParams.id}`,
       ),
-      RedisTestEntity.loader(viewerContext).withAuthorizationResults(),
+      RedisTestEntity.loaderWithAuthorizationResults(viewerContext),
     );
 
     const loadParams = { id: createdEntity.getID() };
@@ -129,7 +128,7 @@ describe(RedisSecondaryEntityCache, () => {
         genericRedisCacheContext,
         (loadParams) => `test-key-${loadParams.id}`,
       ),
-      RedisTestEntity.loader(viewerContext).withAuthorizationResults(),
+      RedisTestEntity.loaderWithAuthorizationResults(viewerContext),
     );
 
     const loadParams = { id: FAKE_ID };

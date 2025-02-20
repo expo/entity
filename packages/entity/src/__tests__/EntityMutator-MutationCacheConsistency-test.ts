@@ -76,9 +76,9 @@ class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutation
     mutationInfo: EntityTriggerMutationInfo<BlahFields, string, ViewerContext, BlahEntity>,
   ): Promise<void> {
     if (mutationInfo.type === EntityMutationType.DELETE) {
-      const entityLoaded = await BlahEntity.loader(viewerContext)
-        .enforcing()
-        .loadByIDNullableAsync(entity.getID());
+      const entityLoaded = await BlahEntity.loader(viewerContext).loadByIDNullableAsync(
+        entity.getID(),
+      );
       if (entityLoaded) {
         throw new Error(
           'should not have been able to re-load the entity after delete. this means the cache has not been cleared',
@@ -94,11 +94,9 @@ describe(EntityMutatorFactory, () => {
     const viewerContext = new ViewerContext(companionProvider);
 
     // put it in cache
-    const entity = await BlahEntity.creator(viewerContext).enforcing().createAsync();
-    const entityLoaded = await BlahEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(entity.getID());
+    const entity = await BlahEntity.creator(viewerContext).createAsync();
+    const entityLoaded = await BlahEntity.loader(viewerContext).loadByIDAsync(entity.getID());
 
-    await BlahEntity.deleter(entityLoaded).enforcing().deleteAsync();
+    await BlahEntity.deleter(entityLoaded).deleteAsync();
   });
 });

@@ -21,20 +21,18 @@ describe(canViewerDeleteAsync, () => {
       const viewerContext = new ViewerContext(companionProvider);
 
       // create root
-      const testEntity = await TestEntity.creator(viewerContext).enforcing().createAsync();
+      const testEntity = await TestEntity.creator(viewerContext).createAsync();
 
       // create a bunch of leaves referencing root with
       // edgeDeletionPermissionInferenceBehavior = EntityEdgeDeletionPermissionInferenceBehavior.ONE_IMPLIES_ALL
       for (let i = 0; i < 10; i++) {
         await TestLeafEntity.creator(viewerContext)
-          .enforcing()
           .setField('test_entity_id', testEntity.getID())
           .createAsync();
       }
 
       for (let i = 0; i < 10; i++) {
         await TestLeafLookupByFieldEntity.creator(viewerContext)
-          .enforcing()
           .setField('test_entity_id', testEntity.getID())
           .createAsync();
       }
@@ -65,12 +63,11 @@ describe(canViewerDeleteAsync, () => {
       const viewerContext = new ViewerContext(companionProvider);
 
       // create root
-      const testEntity = await TestEntity.creator(viewerContext).enforcing().createAsync();
+      const testEntity = await TestEntity.creator(viewerContext).createAsync();
 
       // create a bunch of leaves with no edgeDeletionPermissionInferenceBehavior
       for (let i = 0; i < 10; i++) {
         await TestLeafNoInferenceEntity.creator(viewerContext)
-          .enforcing()
           .setField('test_entity_id', testEntity.getID())
           .createAsync();
       }

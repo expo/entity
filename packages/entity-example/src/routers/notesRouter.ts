@@ -19,9 +19,10 @@ router.get('/', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
   let notes: readonly NoteEntity[] = [];
   if (viewerContext.isUserViewerContext()) {
-    notes = await NoteEntity.loader(viewerContext)
-      .enforcing()
-      .loadManyByFieldEqualingAsync('userID', viewerContext.userID);
+    notes = await NoteEntity.loader(viewerContext).loadManyByFieldEqualingAsync(
+      'userID',
+      viewerContext.userID,
+    );
   }
   ctx.body = {
     notes: notes.map((note) => note.getAllFields()),
@@ -30,9 +31,9 @@ router.get('/', async (ctx) => {
 
 router.get('/:id', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
-  const noteResult = await NoteEntity.loader(viewerContext)
-    .withAuthorizationResults()
-    .loadByIDAsync(ctx.params['id']!);
+  const noteResult = await NoteEntity.loaderWithAuthorizationResults(viewerContext).loadByIDAsync(
+    ctx.params['id']!,
+  );
   if (!noteResult.ok) {
     ctx.throw(403, noteResult.reason);
     return;
@@ -55,8 +56,7 @@ router.post('/', async (ctx) => {
 
   const { title, body } = ctx.request.body as any;
 
-  const createResult = await NoteEntity.creator(viewerContext)
-    .withAuthorizationResults()
+  const createResult = await NoteEntity.creatorWithAuthorizationResults(viewerContext)
     .setField('userID', viewerContext.userID)
     .setField('title', title)
     .setField('body', body)
@@ -75,16 +75,15 @@ router.put('/:id', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
   const { title, body } = ctx.request.body as any;
 
-  const noteLoadResult = await NoteEntity.loader(viewerContext)
-    .withAuthorizationResults()
-    .loadByIDAsync(ctx.params['id']!);
+  const noteLoadResult = await NoteEntity.loaderWithAuthorizationResults(
+    viewerContext,
+  ).loadByIDAsync(ctx.params['id']!);
   if (!noteLoadResult.ok) {
     ctx.throw(403, noteLoadResult.reason);
     return;
   }
 
-  const noteUpdateResult = await NoteEntity.updater(noteLoadResult.value)
-    .withAuthorizationResults()
+  const noteUpdateResult = await NoteEntity.updaterWithAuthorizationResults(noteLoadResult.value)
     .setField('title', title)
     .setField('body', body)
     .updateAsync();
@@ -101,17 +100,17 @@ router.put('/:id', async (ctx) => {
 router.delete('/:id', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
 
-  const noteLoadResult = await NoteEntity.loader(viewerContext)
-    .withAuthorizationResults()
-    .loadByIDAsync(ctx.params['id']!);
+  const noteLoadResult = await NoteEntity.loaderWithAuthorizationResults(
+    viewerContext,
+  ).loadByIDAsync(ctx.params['id']!);
   if (!noteLoadResult.ok) {
     ctx.throw(403, noteLoadResult.reason);
     return;
   }
 
-  const noteDeleteResult = await NoteEntity.deleter(noteLoadResult.value)
-    .withAuthorizationResults()
-    .deleteAsync();
+  const noteDeleteResult = await NoteEntity.deleterWithAuthorizationResults(
+    noteLoadResult.value,
+  ).deleteAsync();
   if (!noteDeleteResult.ok) {
     ctx.throw(403, noteDeleteResult.reason);
     return;
