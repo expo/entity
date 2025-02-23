@@ -2,3 +2,4 @@ codecov:
   branch: main
 ignore:
   - "packages/entity-example"
+  - "packages/entity-codemod"

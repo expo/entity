@@ -1,0 +1,34 @@
+{
+  "name": "@expo/entity-codemod",
+  "version": "0.39.0",
+  "description": "jscodeshift codemods for @expo/entity upgrades",
+  "files": [
+    "build",
+    "src"
+  ],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "rm -rf build coverage coverage-integration",
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix",
+    "test": "jest --rootDir . --config ../../resources/jest.config.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "keywords": [
+    "entity"
+  ],
+  "author": "Expo",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jscodeshift": "^0.12.0",
+    "jscodeshift": "^17.1.2"
+  },
+  "peerDependencies": {
+    "@expo/entity": "*"
+  }
+}
