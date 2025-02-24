@@ -1,9 +1,9 @@
-import { Result } from '@expo/results';
-
 import { EntityCompanionDefinition } from './EntityCompanionProvider';
-import { CreateMutator, UpdateMutator } from './EntityMutator';
+import EntityCreator from './EntityCreator';
+import EntityDeleter from './EntityDeleter';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
+import EntityUpdater from './EntityUpdater';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 
@@ -65,11 +65,16 @@ export default abstract class Entity<
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getQueryContext(),
-  ): CreateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
-    return viewerContext
-      .getViewerScopedEntityCompanionForClass(this)
-      .getMutatorFactory()
-      .forCreate(queryContext);
+  ): EntityCreator<
+    TMFields,
+    TMID,
+    TMViewerContext,
+    TMViewerContext2,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityCreator(viewerContext, queryContext, this);
   }
 
   /**
@@ -106,20 +111,17 @@ export default abstract class Entity<
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getQueryContext(),
-  ): UpdateMutator<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
-    return existingEntity
-      .getViewerContext()
-      .getViewerScopedEntityCompanionForClass(this)
-      .getMutatorFactory()
-      .forUpdate(existingEntity, queryContext);
+  ): EntityUpdater<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
+    return new EntityUpdater(existingEntity, queryContext, this);
   }
 
   /**
-   * Delete an existing entity in given query context.
+   * Vend mutator for deleting an existing entity in given query context.
    * @param existingEntity - entity to delete
    * @param queryContext - query context in which to perform the delete
+   * @returns mutator for deleting existingEntity
    */
-  static deleteAsync<
+  static deleter<
     TMFields extends object,
     TMID extends NonNullable<TMFields[TMSelectedFields]>,
     TMViewerContext extends ViewerContext,
@@ -147,55 +149,8 @@ export default abstract class Entity<
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getQueryContext(),
-  ): Promise<Result<void>> {
-    return existingEntity
-      .getViewerContext()
-      .getViewerScopedEntityCompanionForClass(this)
-      .getMutatorFactory()
-      .forDelete(existingEntity, queryContext)
-      .deleteAsync();
-  }
-
-  /**
-   * Delete an existing entity in given query context, throwing if deletion is unsuccessful.
-   * @param existingEntity - entity to delete
-   * @param queryContext - query context in which to perform the delete
-   */
-  static enforceDeleteAsync<
-    TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
-    TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<
-      TMFields,
-      TMID,
-      TMViewerContext,
-      TMEntity,
-      TMSelectedFields
-    >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields,
-  >(
-    this: IEntityClass<
-      TMFields,
-      TMID,
-      TMViewerContext,
-      TMEntity,
-      TMPrivacyPolicy,
-      TMSelectedFields
-    >,
-    existingEntity: TMEntity,
-    queryContext: EntityQueryContext = existingEntity
-      .getViewerContext()
-      .getViewerScopedEntityCompanionForClass(this)
-      .getQueryContextProvider()
-      .getQueryContext(),
-  ): Promise<void> {
-    return existingEntity
-      .getViewerContext()
-      .getViewerScopedEntityCompanionForClass(this)
-      .getMutatorFactory()
-      .forDelete(existingEntity, queryContext)
-      .enforceDeleteAsync();
+  ): EntityDeleter<TMFields, TMID, TMViewerContext, TMEntity, TMPrivacyPolicy, TMSelectedFields> {
+    return new EntityDeleter(existingEntity, queryContext, this);
   }
 }
 

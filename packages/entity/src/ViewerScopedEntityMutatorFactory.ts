@@ -1,4 +1,8 @@
-import { CreateMutator, UpdateMutator, DeleteMutator } from './EntityMutator';
+import {
+  AuthorizationResultBasedCreateMutator,
+  AuthorizationResultBasedUpdateMutator,
+  AuthorizationResultBasedDeleteMutator,
+} from './AuthorizationResultBasedEntityMutator';
 import EntityMutatorFactory from './EntityMutatorFactory';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
@@ -36,21 +40,42 @@ export default class ViewerScopedEntityMutatorFactory<
 
   forCreate(
     queryContext: EntityQueryContext,
-  ): CreateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): AuthorizationResultBasedCreateMutator<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
     return this.entityMutatorFactory.forCreate(this.viewerContext, queryContext);
   }
 
   forUpdate(
     existingEntity: TEntity,
     queryContext: EntityQueryContext,
-  ): UpdateMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): AuthorizationResultBasedUpdateMutator<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
     return this.entityMutatorFactory.forUpdate(existingEntity, queryContext);
   }
 
   forDelete(
     existingEntity: TEntity,
     queryContext: EntityQueryContext,
-  ): DeleteMutator<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): AuthorizationResultBasedDeleteMutator<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
     return this.entityMutatorFactory.forDelete(existingEntity, queryContext);
   }
 }

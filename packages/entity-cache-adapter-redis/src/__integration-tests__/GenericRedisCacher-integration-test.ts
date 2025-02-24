@@ -47,9 +47,10 @@ describe(GenericRedisCacher, () => {
     );
     const date = new Date();
     const entity1Created = await RedisTestEntity.creator(viewerContext)
+      .enforcing()
       .setField('name', 'blah')
       .setField('dateField', date)
-      .enforceCreateAsync();
+      .createAsync();
     const testKey = `test-id-key-${entity1Created.getID()}`;
     const objectMap = new Map<string, Readonly<RedisTestEntityFields>>([
       [testKey, entity1Created.getAllFields()],
@@ -93,9 +94,10 @@ describe(GenericRedisCacher, () => {
     );
     const date = new Date();
     const entity1Created = await RedisTestEntity.creator(viewerContext)
+      .enforcing()
       .setField('name', 'blah')
       .setField('dateField', date)
-      .enforceCreateAsync();
+      .createAsync();
     const testKey = `test-id-key-${entity1Created.getID()}`;
     const objectMap = new Map<string, Readonly<RedisTestEntityFields>>([
       [testKey, entity1Created.getAllFields()],

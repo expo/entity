@@ -42,13 +42,16 @@ describe('postgres entity integration', () => {
   it('supports parallel partial updates', async () => {
     const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
     const entity = await enforceAsyncResult(
-      PostgresTestEntity.creator(vc).setField('name', 'hello').createAsync(),
+      PostgresTestEntity.creator(vc)
+        .withAuthorizationResults()
+        .setField('name', 'hello')
+        .createAsync(),
     );
 
     // update two different fields at the same time (from the same entity)
     await Promise.all([
-      PostgresTestEntity.updater(entity).setField('hasACat', true).updateAsync(),
-      PostgresTestEntity.updater(entity).setField('hasADog', false).updateAsync(),
+      PostgresTestEntity.updater(entity).enforcing().setField('hasACat', true).updateAsync(),
+      PostgresTestEntity.updater(entity).enforcing().setField('hasADog', false).updateAsync(),
     ]);
 
     const loadedEntity = await PostgresTestEntity.loader(vc)
@@ -62,24 +65,32 @@ describe('postgres entity integration', () => {
   describe('empty creates and updates', () => {
     it('allows empty create', async () => {
       const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-      const entity = await enforceAsyncResult(PostgresTestEntity.creator(vc).createAsync());
+      const entity = await enforceAsyncResult(
+        PostgresTestEntity.creator(vc).withAuthorizationResults().createAsync(),
+      );
       expect(entity.getID()).toBeTruthy();
     });
 
     it('throws knex error upon empty update', async () => {
       const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       const entity = await enforceAsyncResult(
-        PostgresTestEntity.creator(vc).setField('name', 'hello').createAsync(),
+        PostgresTestEntity.creator(vc)
+          .withAuthorizationResults()
+          .setField('name', 'hello')
+          .createAsync(),
       );
-      await expect(PostgresTestEntity.updater(entity).updateAsync()).rejects.toThrow();
+      await expect(PostgresTestEntity.updater(entity).enforcing().updateAsync()).rejects.toThrow();
     });
 
     it('throws error upon empty update for stub database adapter to match behavior', async () => {
       const vc = new ViewerContext(createUnitTestEntityCompanionProvider());
       const entity = await enforceAsyncResult(
-        PostgresTestEntity.creator(vc).setField('name', 'hello').createAsync(),
+        PostgresTestEntity.creator(vc)
+          .withAuthorizationResults()
+          .setField('name', 'hello')
+          .createAsync(),
       );
-      await expect(PostgresTestEntity.updater(entity).updateAsync()).rejects.toThrow();
+      await expect(PostgresTestEntity.updater(entity).enforcing().updateAsync()).rejects.toThrow();
     });
   });
 
@@ -88,7 +99,10 @@ describe('postgres entity integration', () => {
 
     // put one in the DB
     const firstEntity = await enforceAsyncResult(
-      PostgresTestEntity.creator(vc1).setField('name', 'hello').createAsync(),
+      PostgresTestEntity.creator(vc1)
+        .withAuthorizationResults()
+        .setField('name', 'hello')
+        .createAsync(),
     );
 
     await PostgresTestEntity.loader(vc1).enforcing().loadByIDAsync(firstEntity.getID());
@@ -101,7 +115,10 @@ describe('postgres entity integration', () => {
         async (queryContext) => {
           // put another in the DB that will be rolled back due to error thrown
           await enforceAsyncResult(
-            PostgresTestEntity.creator(vc1, queryContext).setField('name', 'hello').createAsync(),
+            PostgresTestEntity.creator(vc1, queryContext)
+              .withAuthorizationResults()
+              .setField('name', 'hello')
+              .createAsync(),
           );
 
           throw errorToThrow;
@@ -125,7 +142,10 @@ describe('postgres entity integration', () => {
         );
 
         const firstEntity = await enforceAsyncResult(
-          PostgresTestEntity.creator(vc1).setField('name', 'hello').createAsync(),
+          PostgresTestEntity.creator(vc1)
+            .withAuthorizationResults()
+            .setField('name', 'hello')
+            .createAsync(),
         );
 
         const loadAndUpdateAsync = async (
@@ -141,8 +161,9 @@ describe('postgres entity integration', () => {
                   .loadByIDAsync(firstEntity.getID());
                 await setTimeout(delay);
                 await PostgresTestEntity.updater(entity, queryContext)
+                  .enforcing()
                   .setField('name', entity.getField('name') + ',' + newName)
-                  .enforceUpdateAsync();
+                  .updateAsync();
               },
               { isolationLevel },
             );
@@ -179,6 +200,7 @@ describe('postgres entity integration', () => {
 
       const entity = await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('stringArray', ['hello', 'world'])
           .setField('jsonArrayField', ['hello', 'world'])
           .createAsync(),
@@ -193,6 +215,7 @@ describe('postgres entity integration', () => {
 
       const entity = await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('jsonObjectField', { hello: 'world' })
           .createAsync(),
       );
@@ -205,11 +228,13 @@ describe('postgres entity integration', () => {
 
       const entity1 = await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('maybeJsonArrayField', ['hello', 'world'])
           .createAsync(),
       );
       const entity2 = await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('maybeJsonArrayField', { hello: 'world' })
           .createAsync(),
       );
@@ -224,17 +249,26 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       let entity = await enforceAsyncResult(
-        PostgresTestEntity.creator(vc1).setField('bigintField', '72057594037928038').createAsync(),
+        PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
+          .setField('bigintField', '72057594037928038')
+          .createAsync(),
       );
       expect(entity.getField('bigintField')).toEqual('72057594037928038');
 
       entity = await enforceAsyncResult(
-        PostgresTestEntity.updater(entity).setField('bigintField', '10').updateAsync(),
+        PostgresTestEntity.updater(entity)
+          .withAuthorizationResults()
+          .setField('bigintField', '10')
+          .updateAsync(),
       );
       expect(entity.getField('bigintField')).toEqual('10');
 
       entity = await enforceAsyncResult(
-        PostgresTestEntity.updater(entity).setField('bigintField', '-10').updateAsync(),
+        PostgresTestEntity.updater(entity)
+          .withAuthorizationResults()
+          .setField('bigintField', '-10')
+          .updateAsync(),
       );
       expect(entity.getField('bigintField')).toEqual('-10');
     });
@@ -246,6 +280,7 @@ describe('postgres entity integration', () => {
 
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', 'hello')
           .setField('hasACat', false)
           .setField('hasADog', true)
@@ -254,6 +289,7 @@ describe('postgres entity integration', () => {
 
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', 'world')
           .setField('hasACat', false)
           .setField('hasADog', true)
@@ -262,6 +298,7 @@ describe('postgres entity integration', () => {
 
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', 'wat')
           .setField('hasACat', false)
           .setField('hasADog', false)
@@ -294,11 +331,26 @@ describe('postgres entity integration', () => {
     it('supports query modifiers', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
-      await enforceAsyncResult(PostgresTestEntity.creator(vc1).setField('name', 'a').createAsync());
+      await enforceAsyncResult(
+        PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
+          .setField('name', 'a')
+          .createAsync(),
+      );
 
-      await enforceAsyncResult(PostgresTestEntity.creator(vc1).setField('name', 'b').createAsync());
+      await enforceAsyncResult(
+        PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
+          .setField('name', 'b')
+          .createAsync(),
+      );
 
-      await enforceAsyncResult(PostgresTestEntity.creator(vc1).setField('name', 'c').createAsync());
+      await enforceAsyncResult(
+        PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
+          .setField('name', 'c')
+          .createAsync(),
+      );
 
       const results = await PostgresTestEntity.loader(vc1)
         .enforcing()
@@ -320,24 +372,28 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', 'a')
           .setField('hasADog', true)
           .createAsync(),
       );
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', 'b')
           .setField('hasADog', true)
           .createAsync(),
       );
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', null)
           .setField('hasADog', true)
           .createAsync(),
       );
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', null)
           .setField('hasADog', false)
           .createAsync(),
@@ -375,6 +431,7 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', 'hello')
           .setField('hasACat', false)
           .setField('hasADog', true)
@@ -392,6 +449,7 @@ describe('postgres entity integration', () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', 'hello')
           .setField('hasACat', false)
           .setField('hasADog', true)
@@ -410,6 +468,7 @@ describe('postgres entity integration', () => {
 
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', 'a')
           .setField('hasADog', true)
           .createAsync(),
@@ -417,6 +476,7 @@ describe('postgres entity integration', () => {
 
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', 'b')
           .setField('hasADog', true)
           .createAsync(),
@@ -424,6 +484,7 @@ describe('postgres entity integration', () => {
 
       await enforceAsyncResult(
         PostgresTestEntity.creator(vc1)
+          .withAuthorizationResults()
           .setField('name', 'c')
           .setField('hasADog', true)
           .createAsync(),
@@ -483,8 +544,9 @@ describe('postgres entity integration', () => {
 
         await expect(
           PostgresTriggerTestEntity.creator(vc1)
+            .enforcing()
             .setField('name', 'beforeCreate')
-            .enforceCreateAsync(),
+            .createAsync(),
         ).rejects.toThrowError('name cannot have value beforeCreate');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -494,8 +556,9 @@ describe('postgres entity integration', () => {
 
         await expect(
           PostgresTriggerTestEntity.creator(vc1)
+            .enforcing()
             .setField('name', 'afterCreate')
-            .enforceCreateAsync(),
+            .createAsync(),
         ).rejects.toThrowError('name cannot have value afterCreate');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -504,7 +567,10 @@ describe('postgres entity integration', () => {
         ).resolves.toBeNull();
 
         await expect(
-          PostgresTriggerTestEntity.creator(vc1).setField('name', 'beforeAll').enforceCreateAsync(),
+          PostgresTriggerTestEntity.creator(vc1)
+            .enforcing()
+            .setField('name', 'beforeAll')
+            .createAsync(),
         ).rejects.toThrowError('name cannot have value beforeAll');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -513,7 +579,10 @@ describe('postgres entity integration', () => {
         ).resolves.toBeNull();
 
         await expect(
-          PostgresTriggerTestEntity.creator(vc1).setField('name', 'afterAll').enforceCreateAsync(),
+          PostgresTriggerTestEntity.creator(vc1)
+            .enforcing()
+            .setField('name', 'afterAll')
+            .createAsync(),
         ).rejects.toThrowError('name cannot have value afterAll');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -523,8 +592,9 @@ describe('postgres entity integration', () => {
 
         await expect(
           PostgresTriggerTestEntity.creator(vc1)
+            .enforcing()
             .setField('name', 'afterCommit')
-            .enforceCreateAsync(),
+            .createAsync(),
         ).rejects.toThrowError('name cannot have value afterCommit');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -541,13 +611,15 @@ describe('postgres entity integration', () => {
         );
 
         const entity = await PostgresTriggerTestEntity.creator(vc1)
+          .enforcing()
           .setField('name', 'blah')
-          .enforceCreateAsync();
+          .createAsync();
 
         await expect(
           PostgresTriggerTestEntity.updater(entity)
+            .enforcing()
             .setField('name', 'beforeUpdate')
-            .enforceUpdateAsync(),
+            .updateAsync(),
         ).rejects.toThrowError('name cannot have value beforeUpdate');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -557,8 +629,9 @@ describe('postgres entity integration', () => {
 
         await expect(
           PostgresTriggerTestEntity.updater(entity)
+            .enforcing()
             .setField('name', 'afterUpdate')
-            .enforceUpdateAsync(),
+            .updateAsync(),
         ).rejects.toThrowError('name cannot have value afterUpdate');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -568,8 +641,9 @@ describe('postgres entity integration', () => {
 
         await expect(
           PostgresTriggerTestEntity.updater(entity)
+            .enforcing()
             .setField('name', 'beforeAll')
-            .enforceUpdateAsync(),
+            .updateAsync(),
         ).rejects.toThrowError('name cannot have value beforeAll');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -579,8 +653,9 @@ describe('postgres entity integration', () => {
 
         await expect(
           PostgresTriggerTestEntity.updater(entity)
+            .enforcing()
             .setField('name', 'afterAll')
-            .enforceUpdateAsync(),
+            .updateAsync(),
         ).rejects.toThrowError('name cannot have value afterAll');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -590,8 +665,9 @@ describe('postgres entity integration', () => {
 
         await expect(
           PostgresTriggerTestEntity.updater(entity)
+            .enforcing()
             .setField('name', 'afterCommit')
-            .enforceUpdateAsync(),
+            .updateAsync(),
         ).rejects.toThrowError('name cannot have value afterCommit');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -608,10 +684,11 @@ describe('postgres entity integration', () => {
         );
 
         const entityBeforeDelete = await PostgresTriggerTestEntity.creator(vc1)
+          .enforcing()
           .setField('name', 'beforeDelete')
-          .enforceCreateAsync();
+          .createAsync();
         await expect(
-          PostgresTriggerTestEntity.enforceDeleteAsync(entityBeforeDelete),
+          PostgresTriggerTestEntity.deleter(entityBeforeDelete).enforcing().deleteAsync(),
         ).rejects.toThrowError('name cannot have value beforeDelete');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -620,10 +697,11 @@ describe('postgres entity integration', () => {
         ).resolves.not.toBeNull();
 
         const entityAfterDelete = await PostgresTriggerTestEntity.creator(vc1)
+          .enforcing()
           .setField('name', 'afterDelete')
-          .enforceCreateAsync();
+          .createAsync();
         await expect(
-          PostgresTriggerTestEntity.enforceDeleteAsync(entityAfterDelete),
+          PostgresTriggerTestEntity.deleter(entityAfterDelete).enforcing().deleteAsync(),
         ).rejects.toThrowError('name cannot have value afterDelete');
         await expect(
           PostgresTriggerTestEntity.loader(vc1)
@@ -641,8 +719,9 @@ describe('postgres entity integration', () => {
 
           await expect(
             PostgresValidatorTestEntity.creator(vc1)
+              .enforcing()
               .setField('name', 'beforeCreateAndBeforeUpdate')
-              .enforceCreateAsync(),
+              .createAsync(),
           ).rejects.toThrowError('name cannot have value beforeCreateAndBeforeUpdate');
           await expect(
             PostgresValidatorTestEntity.loader(vc1)
@@ -658,13 +737,15 @@ describe('postgres entity integration', () => {
           );
 
           const entity = await PostgresValidatorTestEntity.creator(vc1)
+            .enforcing()
             .setField('name', 'blah')
-            .enforceCreateAsync();
+            .createAsync();
 
           await expect(
             PostgresValidatorTestEntity.updater(entity)
+              .enforcing()
               .setField('name', 'beforeCreateAndBeforeUpdate')
-              .enforceUpdateAsync(),
+              .updateAsync(),
           ).rejects.toThrowError('name cannot have value beforeCreateAndBeforeUpdate');
           await expect(
             PostgresValidatorTestEntity.loader(vc1)
@@ -680,9 +761,10 @@ describe('postgres entity integration', () => {
           );
 
           const entityToDelete = await PostgresValidatorTestEntity.creator(vc1)
+            .enforcing()
             .setField('name', 'shouldBeDeleted')
-            .enforceCreateAsync();
-          await PostgresValidatorTestEntity.enforceDeleteAsync(entityToDelete);
+            .createAsync();
+          await PostgresValidatorTestEntity.deleter(entityToDelete).enforcing().deleteAsync();
           await expect(
             PostgresValidatorTestEntity.loader(vc1)
               .enforcing()

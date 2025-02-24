@@ -56,6 +56,7 @@ router.post('/', async (ctx) => {
   const { title, body } = ctx.request.body as any;
 
   const createResult = await NoteEntity.creator(viewerContext)
+    .withAuthorizationResults()
     .setField('userID', viewerContext.userID)
     .setField('title', title)
     .setField('body', body)
@@ -83,6 +84,7 @@ router.put('/:id', async (ctx) => {
   }
 
   const noteUpdateResult = await NoteEntity.updater(noteLoadResult.value)
+    .withAuthorizationResults()
     .setField('title', title)
     .setField('body', body)
     .updateAsync();
@@ -107,7 +109,9 @@ router.delete('/:id', async (ctx) => {
     return;
   }
 
-  const noteDeleteResult = await NoteEntity.deleteAsync(noteLoadResult.value);
+  const noteDeleteResult = await NoteEntity.deleter(noteLoadResult.value)
+    .withAuthorizationResults()
+    .deleteAsync();
   if (!noteDeleteResult.ok) {
     ctx.throw(403, noteDeleteResult.reason);
     return;

@@ -14,15 +14,17 @@ describe('Two entities backed by the same table', () => {
     const viewerContext = new ViewerContext(companionProvider);
 
     const one = await OneTestEntity.creator(viewerContext)
+      .enforcing()
       .setField('entity_type', EntityType.ONE)
       .setField('common_other_field', 'wat')
-      .enforceCreateAsync();
+      .createAsync();
 
     const two = await TwoTestEntity.creator(viewerContext)
+      .enforcing()
       .setField('entity_type', EntityType.TWO)
       .setField('other_field', 'blah')
       .setField('common_other_field', 'wat')
-      .enforceCreateAsync();
+      .createAsync();
 
     expect(one).toBeInstanceOf(OneTestEntity);
     expect(two).toBeInstanceOf(TwoTestEntity);

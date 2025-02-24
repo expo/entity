@@ -118,15 +118,24 @@ it('runs through a common workflow', async () => {
   const vc2 = new TestUserViewerContext(entityCompanionProvider, uuidv4());
 
   const blahOwner1 = await enforceAsyncResult(
-    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()).createAsync(),
+    BlahEntity.creator(vc1)
+      .withAuthorizationResults()
+      .setField('ownerID', vc1.getUserID())
+      .createAsync(),
   );
 
   await enforceAsyncResult(
-    BlahEntity.creator(vc1).setField('ownerID', vc1.getUserID()).createAsync(),
+    BlahEntity.creator(vc1)
+      .withAuthorizationResults()
+      .setField('ownerID', vc1.getUserID())
+      .createAsync(),
   );
 
   const blahOwner2 = await enforceAsyncResult(
-    BlahEntity.creator(vc2).setField('ownerID', vc2.getUserID()).createAsync(),
+    BlahEntity.creator(vc2)
+      .withAuthorizationResults()
+      .setField('ownerID', vc2.getUserID())
+      .createAsync(),
   );
 
   // sanity check created objects
@@ -156,7 +165,10 @@ it('runs through a common workflow', async () => {
   // check that two people can't create objects owned by others
   await expect(
     enforceAsyncResult(
-      BlahEntity.creator(vc2).setField('ownerID', blahOwner1.getID()).createAsync(),
+      BlahEntity.creator(vc2)
+        .withAuthorizationResults()
+        .setField('ownerID', blahOwner1.getID())
+        .createAsync(),
     ),
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 
@@ -169,7 +181,7 @@ it('runs through a common workflow', async () => {
   }
 
   // check that the user can't delete their own data (as specified by privacy rules)
-  await expect(enforceAsyncResult(BlahEntity.deleteAsync(blahOwner2))).rejects.toBeInstanceOf(
-    EntityNotAuthorizedError,
-  );
+  await expect(
+    enforceAsyncResult(BlahEntity.deleter(blahOwner2).withAuthorizationResults().deleteAsync()),
+  ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 });

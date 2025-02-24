@@ -28,7 +28,7 @@ export * from './EntityMutationInfo';
 export { default as EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
 export * from './EntityMutationTriggerConfiguration';
 export { default as EntityMutationValidator } from './EntityMutationValidator';
-export * from './EntityMutator';
+export * from './AuthorizationResultBasedEntityMutator';
 export { default as EntityMutatorFactory } from './EntityMutatorFactory';
 export { default as EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 export * from './EntityPrivacyPolicy';

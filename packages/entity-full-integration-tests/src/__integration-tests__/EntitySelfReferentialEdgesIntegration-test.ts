@@ -221,15 +221,17 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
     );
 
-    const category1 = await CategoryEntity.creator(viewerContext).enforceCreateAsync();
+    const category1 = await CategoryEntity.creator(viewerContext).enforcing().createAsync();
     const other1 = await OtherEntity.creator(viewerContext)
+      .enforcing()
       .setField('parent_category_id', category1.getID())
-      .enforceCreateAsync();
+      .createAsync();
     await CategoryEntity.updater(category1)
+      .enforcing()
       .setField('parent_other_id', other1.getID())
-      .enforceUpdateAsync();
+      .updateAsync();
 
-    await CategoryEntity.enforceDeleteAsync(category1);
+    await CategoryEntity.deleter(category1).enforcing().deleteAsync();
 
     if (edgeDeletionBehavior === EntityEdgeDeletionBehavior.SET_NULL) {
       await expect(

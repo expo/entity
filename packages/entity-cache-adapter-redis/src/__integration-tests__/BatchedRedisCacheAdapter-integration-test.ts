@@ -104,8 +104,9 @@ describe(GenericRedisCacher, () => {
     const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
+      .enforcing()
       .setField('name', 'blah')
-      .enforceCreateAsync();
+      .createAsync();
 
     // loading an entity should put it in cache. load by multiple requests and multiple fields in same tick to ensure batch works
     mgetSpy.mockClear();

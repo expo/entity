@@ -32,7 +32,7 @@ describe(EntitySecondaryCacheLoader, () => {
     it('calls into secondary cache with correct params', async () => {
       const vc1 = new ViewerContext(createUnitTestEntityCompanionProvider());
 
-      const createdEntity = await SimpleTestEntity.creator(vc1).enforceCreateAsync();
+      const createdEntity = await SimpleTestEntity.creator(vc1).enforcing().createAsync();
       const loadParams = { id: createdEntity.getID() };
 
       const secondaryEntityCacheMock =
@@ -57,7 +57,7 @@ describe(EntitySecondaryCacheLoader, () => {
     it('constructs and authorizes entities', async () => {
       const vc1 = new ViewerContext(createUnitTestEntityCompanionProvider());
 
-      const createdEntity = await SimpleTestEntity.creator(vc1).enforceCreateAsync();
+      const createdEntity = await SimpleTestEntity.creator(vc1).enforcing().createAsync();
       const loadParams = { id: createdEntity.getID() };
 
       const secondaryEntityCacheMock =
@@ -90,7 +90,7 @@ describe(EntitySecondaryCacheLoader, () => {
     it('calls invalidate on the secondary cache', async () => {
       const vc1 = new ViewerContext(createUnitTestEntityCompanionProvider());
 
-      const createdEntity = await SimpleTestEntity.creator(vc1).enforceCreateAsync();
+      const createdEntity = await SimpleTestEntity.creator(vc1).enforcing().createAsync();
       const loadParams = { id: createdEntity.getID() };
 
       const secondaryEntityCacheMock =

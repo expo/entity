@@ -527,13 +527,15 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
-      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
+      const parent = await ParentEntity.creator(viewerContext).enforcing().createAsync();
       const child = await ChildEntity.creator(viewerContext)
+        .enforcing()
         .setField('parent_id', parent.getID())
-        .enforceCreateAsync();
+        .createAsync();
       const grandchild = await GrandChildEntity.creator(viewerContext)
+        .enforcing()
         .setField('parent_id', child.getID())
-        .enforceCreateAsync();
+        .createAsync();
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
@@ -548,7 +550,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       ).resolves.not.toBeNull();
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
-      await ParentEntity.enforceDeleteAsync(parent);
+      await ParentEntity.deleter(parent).enforcing().deleteAsync();
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       await expect(
@@ -649,13 +651,15 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
-      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
+      const parent = await ParentEntity.creator(viewerContext).enforcing().createAsync();
       const child = await ChildEntity.creator(viewerContext)
+        .enforcing()
         .setField('parent_id', parent.getID())
-        .enforceCreateAsync();
+        .createAsync();
       const grandchild = await GrandChildEntity.creator(viewerContext)
+        .enforcing()
         .setField('parent_id', child.getID())
-        .enforceCreateAsync();
+        .createAsync();
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
@@ -670,7 +674,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       ).resolves.not.toBeNull();
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
-      await ParentEntity.enforceDeleteAsync(parent);
+      await ParentEntity.deleter(parent).enforcing().deleteAsync();
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       await expect(
@@ -762,13 +766,15 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
-      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
+      const parent = await ParentEntity.creator(viewerContext).enforcing().createAsync();
       const child = await ChildEntity.creator(viewerContext)
+        .enforcing()
         .setField('parent_id', parent.getID())
-        .enforceCreateAsync();
+        .createAsync();
       const grandchild = await GrandChildEntity.creator(viewerContext)
+        .enforcing()
         .setField('parent_id', child.getID())
-        .enforceCreateAsync();
+        .createAsync();
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
@@ -803,7 +809,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(grandChildCachedBefore.get(child.getID())?.status).toEqual(CacheStatus.HIT);
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
-      await ParentEntity.enforceDeleteAsync(parent);
+      await ParentEntity.deleter(parent).enforcing().deleteAsync();
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       const childCachedAfter = await childCacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
@@ -901,13 +907,15 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new TestViewerContext(companionProvider);
 
-      const parent = await ParentEntity.creator(viewerContext).enforceCreateAsync();
+      const parent = await ParentEntity.creator(viewerContext).enforcing().createAsync();
       const child = await ChildEntity.creator(viewerContext)
+        .enforcing()
         .setField('parent_id', parent.getID())
-        .enforceCreateAsync();
+        .createAsync();
       const grandchild = await GrandChildEntity.creator(viewerContext)
+        .enforcing()
         .setField('parent_id', child.getID())
-        .enforceCreateAsync();
+        .createAsync();
 
       await expect(
         ParentEntity.loader(viewerContext).enforcing().loadByIDNullableAsync(parent.getID()),
@@ -942,7 +950,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       expect(grandChildCachedBefore.get(child.getID())?.status).toEqual(CacheStatus.HIT);
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
-      await ParentEntity.enforceDeleteAsync(parent);
+      await ParentEntity.deleter(parent).enforcing().deleteAsync();
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       const childCachedAfter = await childCacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
