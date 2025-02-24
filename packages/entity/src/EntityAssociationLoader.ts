@@ -76,9 +76,7 @@ export default class EntityAssociationLoader<
       .getLoaderFactory()
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
 
-    return (await loader
-      .withAuthorizationResults()
-      .loadByIDAsync(associatedEntityID as unknown as TAssociatedID)) as Result<
+    return (await loader.loadByIDAsync(associatedEntityID as unknown as TAssociatedID)) as Result<
       null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity
     >;
   }
@@ -131,9 +129,10 @@ export default class EntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getLoaderFactory()
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
-    return await loader
-      .withAuthorizationResults()
-      .loadManyByFieldEqualingAsync(associatedEntityFieldContainingThisID, thisID as any);
+    return await loader.loadManyByFieldEqualingAsync(
+      associatedEntityFieldContainingThisID,
+      thisID as any,
+    );
   }
 
   /**
@@ -187,9 +186,10 @@ export default class EntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getLoaderFactory()
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
-    return await loader
-      .withAuthorizationResults()
-      .loadByFieldEqualingAsync(associatedEntityLookupByField, associatedFieldValue as any);
+    return await loader.loadByFieldEqualingAsync(
+      associatedEntityLookupByField,
+      associatedFieldValue as any,
+    );
   }
 
   /**
@@ -244,9 +244,10 @@ export default class EntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getLoaderFactory()
       .forLoad(queryContext, { previousValue: null, cascadingDeleteCause: null });
-    return await loader
-      .withAuthorizationResults()
-      .loadManyByFieldEqualingAsync(associatedEntityLookupByField, associatedFieldValue as any);
+    return await loader.loadManyByFieldEqualingAsync(
+      associatedEntityLookupByField,
+      associatedFieldValue as any,
+    );
   }
 
   /**

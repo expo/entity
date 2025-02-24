@@ -4,6 +4,7 @@ import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import { EntityMutationType, EntityTriggerMutationInfo } from '../EntityMutationInfo';
 import { EntityNonTransactionalMutationTrigger } from '../EntityMutationTriggerConfiguration';
+import EntityMutatorFactory from '../EntityMutatorFactory';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
@@ -87,7 +88,7 @@ class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutation
   }
 }
 
-describe('EntityMutator', () => {
+describe(EntityMutatorFactory, () => {
   test('cache consistency with post-commit callbacks', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);

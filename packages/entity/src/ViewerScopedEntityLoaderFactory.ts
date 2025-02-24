@@ -1,4 +1,4 @@
-import EntityLoader from './EntityLoader';
+import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
 import EntityLoaderFactory from './EntityLoaderFactory';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
@@ -43,7 +43,14 @@ export default class ViewerScopedEntityLoaderFactory<
       TEntity,
       TSelectedFields
     >,
-  ): EntityLoader<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): AuthorizationResultBasedEntityLoader<
+    TFields,
+    TID,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
     return this.entityLoaderFactory.forLoad(
       this.viewerContext,
       queryContext,
