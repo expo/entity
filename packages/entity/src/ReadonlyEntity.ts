@@ -84,14 +84,10 @@ export default abstract class ReadonlyEntity<
   /**
    * @returns EntityAssociationLoader for this entity
    */
-  associationLoader(): EntityAssociationLoader<
-    TFields,
-    TID,
-    TViewerContext,
-    this,
-    TSelectedFields
-  > {
-    return new EntityAssociationLoader(this);
+  associationLoader(
+    queryContext?: EntityQueryContext,
+  ): EntityAssociationLoader<TFields, TID, TViewerContext, this, TSelectedFields> {
+    return new EntityAssociationLoader(this, queryContext);
   }
 
   /**

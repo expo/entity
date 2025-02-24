@@ -4,10 +4,13 @@
  * @module @expo/entity
  */
 
+export { default as AuthorizationResultBasedEntityAssociationLoader } from './AuthorizationResultBasedEntityAssociationLoader';
+export * from './AuthorizationResultBasedEntityAssociationLoader';
 export { default as AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
 export * from './AuthorizationResultBasedEntityMutator';
 export { default as ComposedEntityCacheAdapter } from './ComposedEntityCacheAdapter';
 export { default as ComposedSecondaryEntityCache } from './ComposedSecondaryEntityCache';
+export { default as EnforcingEntityAssociationLoader } from './EnforcingEntityAssociationLoader';
 export { default as EnforcingEntityCreator } from './EnforcingEntityCreator';
 export { default as EnforcingEntityDeleter } from './EnforcingEntityDeleter';
 export { default as EnforcingEntityLoader } from './EnforcingEntityLoader';
@@ -15,7 +18,6 @@ export { default as EnforcingEntityUpdater } from './EnforcingEntityUpdater';
 export { default as Entity } from './Entity';
 export * from './Entity';
 export { default as EntityAssociationLoader } from './EntityAssociationLoader';
-export * from './EntityAssociationLoader';
 export { default as EntityCompanion } from './EntityCompanion';
 export * from './EntityCompanion';
 export { default as EntityCompanionProvider } from './EntityCompanionProvider';
