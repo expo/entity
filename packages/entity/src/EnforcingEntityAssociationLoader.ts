@@ -5,7 +5,6 @@ import AuthorizationResultBasedEntityAssociationLoader, {
 } from './AuthorizationResultBasedEntityAssociationLoader';
 import { IEntityClass } from './Entity';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import { enforceResultsAsync } from './entityUtils';
@@ -37,7 +36,6 @@ export default class EnforcingEntityAssociationLoader<
    * the field in this entity is a foreign key to the ID of the associated entity.
    * @param fieldIdentifyingAssociatedEntity - field of this entity containing the ID of the associated entity
    * @param associatedEntityClass - class of the associated entity
-   * @param queryContext - query context in which to perform the load
    */
   async loadAssociatedEntityAsync<
     TIdentifyingField extends keyof Pick<TFields, TSelectedFields>,
@@ -67,7 +65,6 @@ export default class EnforcingEntityAssociationLoader<
       TAssociatedPrivacyPolicy,
       TAssociatedSelectedFields
     >,
-    queryContext?: EntityQueryContext,
   ): Promise<
     null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity
   > {
@@ -75,7 +72,6 @@ export default class EnforcingEntityAssociationLoader<
       this.authorizationResultBasedEntityAssociationLoader.loadAssociatedEntityAsync(
         fieldIdentifyingAssociatedEntity,
         associatedEntityClass,
-        queryContext,
       ),
     );
   }
@@ -87,7 +83,6 @@ export default class EnforcingEntityAssociationLoader<
    * where this entity has many associated entities.
    * @param associatedEntityClass - class of the associated entities
    * @param associatedEntityFieldContainingThisID - field of associated entity which contains the ID of this entity
-   * @param queryContext - query context in which to perform the load
    */
   async loadManyAssociatedEntitiesAsync<
     TAssociatedFields extends object,
@@ -116,13 +111,11 @@ export default class EnforcingEntityAssociationLoader<
       TAssociatedSelectedFields
     >,
     associatedEntityFieldContainingThisID: keyof Pick<TAssociatedFields, TAssociatedSelectedFields>,
-    queryContext?: EntityQueryContext,
   ): Promise<readonly TAssociatedEntity[]> {
     return await enforceResultsAsync(
       this.authorizationResultBasedEntityAssociationLoader.loadManyAssociatedEntitiesAsync(
         associatedEntityClass,
         associatedEntityFieldContainingThisID,
-        queryContext,
       ),
     );
   }
@@ -133,7 +126,6 @@ export default class EnforcingEntityAssociationLoader<
    * @param fieldIdentifyingAssociatedEntity - field of this entity containing the value with which to look up associated entity
    * @param associatedEntityClass - class of the associated entity
    * @param associatedEntityLookupByField - field of associated entity with which to look up the associated entity
-   * @param queryContext - query context in which to perform the load
    */
   async loadAssociatedEntityByFieldEqualingAsync<
     TAssociatedFields extends object,
@@ -163,14 +155,12 @@ export default class EnforcingEntityAssociationLoader<
       TAssociatedSelectedFields
     >,
     associatedEntityLookupByField: keyof Pick<TAssociatedFields, TAssociatedSelectedFields>,
-    queryContext?: EntityQueryContext,
   ): Promise<TAssociatedEntity | null> {
     const result =
       await this.authorizationResultBasedEntityAssociationLoader.loadAssociatedEntityByFieldEqualingAsync(
         fieldIdentifyingAssociatedEntity,
         associatedEntityClass,
         associatedEntityLookupByField,
-        queryContext,
       );
     return result?.enforceValue() ?? null;
   }
@@ -181,7 +171,6 @@ export default class EnforcingEntityAssociationLoader<
    * @param fieldIdentifyingAssociatedEntity - field of this entity containing the value with which to look up associated entities
    * @param associatedEntityClass - class of the associated entities
    * @param associatedEntityLookupByField - field of associated entities with which to look up the associated entities
-   * @param queryContext - query context in which to perform the load
    */
   async loadManyAssociatedEntitiesByFieldEqualingAsync<
     TAssociatedFields extends object,
@@ -211,14 +200,12 @@ export default class EnforcingEntityAssociationLoader<
       TAssociatedSelectedFields
     >,
     associatedEntityLookupByField: keyof Pick<TAssociatedFields, TAssociatedSelectedFields>,
-    queryContext?: EntityQueryContext,
   ): Promise<readonly TAssociatedEntity[]> {
     return await enforceResultsAsync(
       this.authorizationResultBasedEntityAssociationLoader.loadManyAssociatedEntitiesByFieldEqualingAsync(
         fieldIdentifyingAssociatedEntity,
         associatedEntityClass,
         associatedEntityLookupByField,
-        queryContext,
       ),
     );
   }
@@ -226,8 +213,7 @@ export default class EnforcingEntityAssociationLoader<
   /**
    * Load an associated entity by folding a sequence of EntityLoadThroughDirective. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
-   * @param loadDirectives - associated entity load directives instructing each step of the fold
-   * @param queryContext - query context in which to perform the loads
+   * @param loadDirectives - associated entity load directives instructing each step of the folds
    */
   async loadAssociatedEntityThroughAsync<
     TFields2 extends object,
@@ -254,14 +240,12 @@ export default class EnforcingEntityAssociationLoader<
         TSelectedFields2
       >,
     ],
-    queryContext?: EntityQueryContext,
   ): Promise<TEntity2 | null>;
 
   /**
    * Load an associated entity by folding a sequence of EntityLoadThroughDirective. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
-   * @param loadDirectives - associated entity load directives instructing each step of the fold
-   * @param queryContext - query context in which to perform the loads
+   * @param loadDirectives - associated entity load directives instructing each step of the folds
    */
   async loadAssociatedEntityThroughAsync<
     TFields2 extends object,
@@ -309,14 +293,12 @@ export default class EnforcingEntityAssociationLoader<
         TSelectedFields3
       >,
     ],
-    queryContext?: EntityQueryContext,
   ): Promise<TEntity3 | null>;
 
   /**
    * Load an associated entity by folding a sequence of EntityLoadThroughDirective. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
-   * @param loadDirectives - associated entity load directives instructing each step of the fold
-   * @param queryContext - query context in which to perform the loads
+   * @param loadDirectives - associated entity load directives instructing each step of the folds
    */
   async loadAssociatedEntityThroughAsync<
     TFields2 extends object,
@@ -385,28 +367,23 @@ export default class EnforcingEntityAssociationLoader<
         TSelectedFields4
       >,
     ],
-    queryContext?: EntityQueryContext,
   ): Promise<TEntity4 | null>;
 
   /**
    * Load an associated entity by folding a sequence of EntityLoadThroughDirective. At each
    * fold step, load an associated entity identified by a field value of the current fold value.
-   * @param loadDirectives - associated entity load directives instructing each step of the fold
-   * @param queryContext - query context in which to perform the loads
+   * @param loadDirectives - associated entity load directives instructing each step of the folds
    */
   async loadAssociatedEntityThroughAsync(
     loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any, any>[],
-    queryContext?: EntityQueryContext,
   ): Promise<ReadonlyEntity<any, any, any, any> | null>;
 
   async loadAssociatedEntityThroughAsync(
     loadDirectives: EntityLoadThroughDirective<TViewerContext, any, any, any, any, any, any, any>[],
-    queryContext?: EntityQueryContext,
   ): Promise<ReadonlyEntity<any, any, any, any> | null> {
     const result =
       await this.authorizationResultBasedEntityAssociationLoader.loadAssociatedEntityThroughAsync(
         loadDirectives,
-        queryContext,
       );
     return result?.enforceValue() ?? null;
   }

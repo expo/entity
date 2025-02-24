@@ -1,5 +1,7 @@
 import AuthorizationResultBasedEntityAssociationLoader from './AuthorizationResultBasedEntityAssociationLoader';
 import EnforcingEntityAssociationLoader from './EnforcingEntityAssociationLoader';
+import { IEntityClass } from './Entity';
+import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 
@@ -15,7 +17,23 @@ export default class EntityAssociationLoader<
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields,
 > {
-  constructor(private readonly entity: TEntity) {}
+  constructor(
+    private readonly entity: TEntity,
+    private readonly queryContext: EntityQueryContext = entity
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(
+        entity.constructor as IEntityClass<
+          TFields,
+          TID,
+          TViewerContext,
+          TEntity,
+          any,
+          TSelectedFields
+        >,
+      )
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ) {}
 
   /**
    * Enforcing entity association loader. All loads through this loader are
@@ -44,6 +62,6 @@ export default class EntityAssociationLoader<
     TEntity,
     TSelectedFields
   > {
-    return new AuthorizationResultBasedEntityAssociationLoader(this.entity);
+    return new AuthorizationResultBasedEntityAssociationLoader(this.entity, this.queryContext);
   }
 }

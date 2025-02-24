@@ -11,22 +11,14 @@ describe(EnforcingEntityAssociationLoader, () => {
         mock<AuthorizationResultBasedEntityAssociationLoader<any, any, any, any, any>>();
       const rejection = new Error();
       when(
-        nonEnforcingEntityAssociationLoaderMock.loadAssociatedEntityAsync(
-          anything(),
-          anything(),
-          anything(),
-        ),
+        nonEnforcingEntityAssociationLoaderMock.loadAssociatedEntityAsync(anything(), anything()),
       ).thenResolve(result(rejection));
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
       const enforcingEntityAssociationLoader = new EnforcingEntityAssociationLoader(
         nonEnforcingEntityAssociationLoader,
       );
       await expect(
-        enforcingEntityAssociationLoader.loadAssociatedEntityAsync(
-          anything(),
-          anything(),
-          anything(),
-        ),
+        enforcingEntityAssociationLoader.loadAssociatedEntityAsync(anything(), anything()),
       ).rejects.toThrow(rejection);
     });
 
@@ -35,18 +27,14 @@ describe(EnforcingEntityAssociationLoader, () => {
         mock<AuthorizationResultBasedEntityAssociationLoader<any, any, any, any, any>>();
       const resolved = {} as any;
       when(
-        nonEnforcingEntityAssociationLoaderMock.loadAssociatedEntityAsync(
-          anything(),
-          anything(),
-          anything(),
-        ),
+        nonEnforcingEntityAssociationLoaderMock.loadAssociatedEntityAsync(anything(), anything()),
       ).thenResolve(result(resolved));
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityAssociationLoader(
         nonEnforcingEntityAssociationLoader,
       );
       await expect(
-        enforcingEntityLoader.loadAssociatedEntityAsync(anything(), anything(), anything()),
+        enforcingEntityLoader.loadAssociatedEntityAsync(anything(), anything()),
       ).resolves.toEqual(resolved);
     });
   });
@@ -60,7 +48,6 @@ describe(EnforcingEntityAssociationLoader, () => {
         nonEnforcingEntityAssociationLoaderMock.loadManyAssociatedEntitiesAsync(
           anything(),
           anything() as never,
-          anything(),
         ),
       ).thenResolve([result(rejection)]);
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
@@ -71,7 +58,6 @@ describe(EnforcingEntityAssociationLoader, () => {
         enforcingEntityAssociationLoader.loadManyAssociatedEntitiesAsync(
           anything(),
           anything() as never,
-          anything(),
         ),
       ).rejects.toThrow(rejection);
     });
@@ -84,7 +70,6 @@ describe(EnforcingEntityAssociationLoader, () => {
         nonEnforcingEntityAssociationLoaderMock.loadManyAssociatedEntitiesAsync(
           anything(),
           anything() as never,
-          anything(),
         ),
       ).thenResolve([result(resolved)]);
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
@@ -92,11 +77,7 @@ describe(EnforcingEntityAssociationLoader, () => {
         nonEnforcingEntityAssociationLoader,
       );
       await expect(
-        enforcingEntityLoader.loadManyAssociatedEntitiesAsync(
-          anything(),
-          anything() as never,
-          anything(),
-        ),
+        enforcingEntityLoader.loadManyAssociatedEntitiesAsync(anything(), anything() as never),
       ).resolves.toEqual([resolved]);
     });
   });
@@ -111,7 +92,6 @@ describe(EnforcingEntityAssociationLoader, () => {
           anything(),
           anything(),
           anything() as never,
-          anything(),
         ),
       ).thenResolve(result(rejection));
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
@@ -123,7 +103,6 @@ describe(EnforcingEntityAssociationLoader, () => {
           anything(),
           anything(),
           anything() as never,
-          anything(),
         ),
       ).rejects.toThrow(rejection);
     });
@@ -137,7 +116,6 @@ describe(EnforcingEntityAssociationLoader, () => {
           anything(),
           anything(),
           anything() as never,
-          anything(),
         ),
       ).thenResolve(result(resolved));
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
@@ -149,7 +127,6 @@ describe(EnforcingEntityAssociationLoader, () => {
           anything(),
           anything(),
           anything() as never,
-          anything(),
         ),
       ).resolves.toEqual(resolved);
     });
@@ -163,7 +140,6 @@ describe(EnforcingEntityAssociationLoader, () => {
           anything(),
           anything(),
           anything() as never,
-          anything(),
         ),
       ).thenResolve(resolved);
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
@@ -175,7 +151,6 @@ describe(EnforcingEntityAssociationLoader, () => {
           anything(),
           anything(),
           anything() as never,
-          anything(),
         ),
       ).resolves.toEqual(resolved);
     });
@@ -191,7 +166,6 @@ describe(EnforcingEntityAssociationLoader, () => {
           anything(),
           anything(),
           anything() as never,
-          anything(),
         ),
       ).thenResolve([result(rejection)]);
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
@@ -203,7 +177,6 @@ describe(EnforcingEntityAssociationLoader, () => {
           anything(),
           anything(),
           anything() as never,
-          anything(),
         ),
       ).rejects.toThrow(rejection);
     });
@@ -217,7 +190,6 @@ describe(EnforcingEntityAssociationLoader, () => {
           anything(),
           anything(),
           anything() as never,
-          anything(),
         ),
       ).thenResolve([result(resolved)]);
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
@@ -229,7 +201,6 @@ describe(EnforcingEntityAssociationLoader, () => {
           anything(),
           anything(),
           anything() as never,
-          anything(),
         ),
       ).resolves.toEqual([resolved]);
     });
@@ -241,17 +212,14 @@ describe(EnforcingEntityAssociationLoader, () => {
         mock<AuthorizationResultBasedEntityAssociationLoader<any, any, any, any, any>>();
       const rejection = new Error();
       when(
-        nonEnforcingEntityAssociationLoaderMock.loadAssociatedEntityThroughAsync(
-          anything(),
-          anything(),
-        ),
+        nonEnforcingEntityAssociationLoaderMock.loadAssociatedEntityThroughAsync(anything()),
       ).thenResolve(result(rejection));
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
       const enforcingEntityAssociationLoader = new EnforcingEntityAssociationLoader(
         nonEnforcingEntityAssociationLoader,
       );
       await expect(
-        enforcingEntityAssociationLoader.loadAssociatedEntityThroughAsync(anything(), anything()),
+        enforcingEntityAssociationLoader.loadAssociatedEntityThroughAsync(anything()),
       ).rejects.toThrow(rejection);
     });
 
@@ -260,17 +228,14 @@ describe(EnforcingEntityAssociationLoader, () => {
         mock<AuthorizationResultBasedEntityAssociationLoader<any, any, any, any, any>>();
       const resolved = {} as any;
       when(
-        nonEnforcingEntityAssociationLoaderMock.loadAssociatedEntityThroughAsync(
-          anything(),
-          anything(),
-        ),
+        nonEnforcingEntityAssociationLoaderMock.loadAssociatedEntityThroughAsync(anything()),
       ).thenResolve(result(resolved));
       const nonEnforcingEntityAssociationLoader = instance(nonEnforcingEntityAssociationLoaderMock);
       const enforcingEntityLoader = new EnforcingEntityAssociationLoader(
         nonEnforcingEntityAssociationLoader,
       );
       await expect(
-        enforcingEntityLoader.loadAssociatedEntityThroughAsync(anything(), anything()),
+        enforcingEntityLoader.loadAssociatedEntityThroughAsync(anything()),
       ).resolves.toEqual(resolved);
     });
   });
