@@ -135,7 +135,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         >(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
 
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(
       testEntityConfiguration,
@@ -163,7 +163,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const dataManager = new EntityDataManager(
       databaseAdapter,
       entityCache,
-      StubQueryContextProvider,
+      new StubQueryContextProvider(),
       metricsAdapter,
       TestEntity.name,
     );

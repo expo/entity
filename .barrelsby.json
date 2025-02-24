@@ -1,8 +1,0 @@
-{
-  "directory": "./src",
-  "location": "top",
-  "exclude": ["tests__", "testfixtures"],
-  "singleQuotes": true,
-  "exportDefault": true,
-  "delete": true
-}

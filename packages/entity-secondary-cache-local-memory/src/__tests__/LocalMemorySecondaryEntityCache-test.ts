@@ -104,6 +104,8 @@ export const localMemoryTestEntityConfiguration =
     cacheAdapterFlavor: 'local-memory',
   });
 
+const queryContextProvider = new StubQueryContextProvider();
+
 export const createTestEntityCompanionProvider = (
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
 ): EntityCompanionProvider => {
@@ -114,7 +116,7 @@ export const createTestEntityCompanionProvider = (
         'postgres',
         {
           adapterProvider: new StubDatabaseAdapterProvider(),
-          queryContextProvider: StubQueryContextProvider,
+          queryContextProvider,
         },
       ],
     ]),

@@ -30,7 +30,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
 
     const id1 = uuidv4();
     const id2 = uuidv4();
@@ -70,7 +70,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const dataManager = new EntityDataManager(
       databaseAdapter,
       entityCache,
-      StubQueryContextProvider,
+      new StubQueryContextProvider(),
       instance(mock<IEntityMetricsAdapter>()),
       TestEntity.name,
     );
@@ -150,7 +150,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
 
     const id1 = uuidv4();
     const id2 = uuidv4();
@@ -198,7 +198,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const dataManager = new EntityDataManager(
       databaseAdapter,
       entityCache,
-      StubQueryContextProvider,
+      new StubQueryContextProvider(),
       instance(mock<IEntityMetricsAdapter>()),
       TestEntity.name,
     );
@@ -260,7 +260,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
 
     const id1 = uuidv4();
     const id2 = uuidv4();
@@ -308,7 +308,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const dataManager = new EntityDataManager(
       databaseAdapter,
       entityCache,
-      StubQueryContextProvider,
+      new StubQueryContextProvider(),
       instance(mock<IEntityMetricsAdapter>()),
       TestEntity.name,
     );
@@ -367,7 +367,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
 
     const dataManagerMock = mock<EntityDataManager<TestFields>>(EntityDataManager);
     when(
@@ -435,7 +435,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
 
     const id1 = uuidv4();
     const databaseAdapter = new StubDatabaseAdapter<TestFields>(
@@ -465,7 +465,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const dataManager = new EntityDataManager(
       databaseAdapter,
       entityCache,
-      StubQueryContextProvider,
+      new StubQueryContextProvider(),
       instance(mock<IEntityMetricsAdapter>()),
       TestEntity.name,
     );
@@ -507,7 +507,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
     const dataManagerMock = mock<EntityDataManager<TestFields>>();
     const dataManagerInstance = instance(dataManagerMock);
@@ -546,7 +546,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
     const dataManagerMock = mock<EntityDataManager<TestFields>>();
     const dataManagerInstance = instance(dataManagerMock);
@@ -584,7 +584,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
     const dataManagerMock = mock<EntityDataManager<TestFields>>();
     const dataManagerInstance = instance(dataManagerMock);
@@ -626,7 +626,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
     const privacyPolicyMock = mock(TestEntityPrivacyPolicy);
     const dataManagerMock = mock<EntityDataManager<TestFields>>();
 
@@ -683,7 +683,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = StubQueryContextProvider.getQueryContext();
+    const queryContext = new StubQueryContextProvider().getQueryContext();
     const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
     const dataManagerMock = mock<EntityDataManager<TestFields>>();
 

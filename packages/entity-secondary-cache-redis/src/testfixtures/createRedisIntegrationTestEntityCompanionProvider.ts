@@ -10,6 +10,8 @@ import {
   RedisCacheAdapterProvider,
 } from '@expo/entity-cache-adapter-redis';
 
+const queryContextProvider = new StubQueryContextProvider();
+
 export const createRedisIntegrationTestEntityCompanionProvider = (
   genericRedisCacheContext: GenericRedisCacheContext,
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
@@ -21,7 +23,7 @@ export const createRedisIntegrationTestEntityCompanionProvider = (
         'postgres',
         {
           adapterProvider: new StubDatabaseAdapterProvider(),
-          queryContextProvider: StubQueryContextProvider,
+          queryContextProvider,
         },
       ],
     ]),

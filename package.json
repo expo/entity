@@ -13,7 +13,7 @@
     "integration": "./resources/run-with-docker lerna run integration-no-setup",
     "prepublish": "lerna link && lerna run clean",
     "prepare": "lerna run tsc",
-    "barrelsby": "lerna run barrelsby"
+    "ctix": "lerna run ctix"
   },
   "devDependencies": {
     "@expo/batcher": "^1.0.0",
@@ -24,7 +24,7 @@
     "@types/lru-cache": "^5.1.1",
     "@types/node": "^20.14.1",
     "@types/uuid": "^8.3.0",
-    "barrelsby": "^2.8.1",
+    "ctix": "^2.7.0",
     "eslint": "^8.57.1",
     "eslint-config-universe": "^14.0.0",
     "eslint-plugin-tsdoc": "^0.3.0",

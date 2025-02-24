@@ -10,8 +10,7 @@
     "lint-fix": "eslint src --fix",
     "test": "jest --rootDir . --config ../../resources/jest.config.js --passWithNoTests",
     "integration": "../../resources/run-with-docker yarn integration-no-setup",
-    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir . --runInBand --passWithNoTests",
-    "barrelsby": "barrelsby --config ../../.barrelsby.json"
+    "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir . --runInBand --passWithNoTests"
   },
   "engines": {
     "node": ">=16"

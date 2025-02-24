@@ -11,7 +11,6 @@
     "test": "jest --rootDir . --config ../../resources/jest.config.js",
     "integration": "../../resources/run-with-docker yarn integration-no-setup",
     "integration-no-setup": "jest --config ../../resources/jest-integration.config.js --rootDir . --runInBand --passWithNoTests",
-    "barrelsby": "",
     "start": "tsnd --transpile-only --inspect --respawn --no-notify --async-stack-traces --throw-deprecation -- src/index.ts"
   },
   "engines": {

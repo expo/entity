@@ -1,7 +1,7 @@
 import { TransactionConfig } from '../../EntityQueryContext';
 import EntityQueryContextProvider from '../../EntityQueryContextProvider';
 
-export class StubQueryContextProvider extends EntityQueryContextProvider {
+export default class StubQueryContextProvider extends EntityQueryContextProvider {
   protected getQueryInterface(): any {
     return {};
   }
@@ -18,5 +18,3 @@ export class StubQueryContextProvider extends EntityQueryContextProvider {
     return (transactionScope) => Promise.resolve(transactionScope({}));
   }
 }
-
-export default new StubQueryContextProvider();

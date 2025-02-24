@@ -1,0 +1,26 @@
+{
+  "options": [
+    {
+      "mode": "bundle",
+      "project": "tsconfig.json",
+      "exportFilename": "index.ts",
+      "useSemicolon": true,
+      "useBanner": false,
+      "useTimestamp": false,
+      "quote": "'",
+      "directive": "",
+      "fileExt": "none",
+      "overwrite": true,
+      "backup": false,
+      "generationStyle": "default-alias-named-star",
+      "include": [
+        "src/**"
+      ],
+      "exclude": [
+        "**/*tests__/**",
+        "**/testfixtures/**"
+      ],
+      "output": "src"
+    }
+  ]
+}
