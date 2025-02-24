@@ -10,7 +10,9 @@ import LRUCache from 'lru-cache';
 // Sentinel value we store in local memory to negatively cache a database miss.
 // The sentinel value is distinct from any (positively) cached value.
 export const DOES_NOT_EXIST_LOCAL_MEMORY_CACHE = Symbol('doesNotExist');
-type LocalMemoryCacheValue<TFields> = Readonly<TFields> | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
+export type LocalMemoryCacheValue<TFields> =
+  | Readonly<TFields>
+  | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
 export type LocalMemoryCache<TFields> = LRUCache<string, LocalMemoryCacheValue<TFields>>;
 
 export default class GenericLocalMemoryCacher<TFields extends Record<string, any>>
