@@ -10,7 +10,9 @@
   "exclude": [
     "**/__tests__/**/*.ts",
     "**/__integration-tests__/**/*.ts",
-    "**/testfixtures/**/*.ts"
+    "**/testfixtures/**/*.ts",
+    "packages/entity-example",
+    "packages/entity-full-integration-tests",
   ],
   "name": "Entity",
   "readme": "README.md"
