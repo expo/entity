@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-ip-address-field",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "description": "IP address EntityField definitions for @expo/entity",
   "files": [
     "build",
@@ -28,7 +28,7 @@
     "ip-address": "^8.1.0"
   },
   "devDependencies": {
-    "@expo/entity": "^0.39.0",
+    "@expo/entity": "^0.40.0",
     "@types/jsbn": "^1.2.29"
   },
   "peerDependencies": {

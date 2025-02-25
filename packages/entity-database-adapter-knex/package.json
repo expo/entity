@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-database-adapter-knex",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "description": "Knex database adapter for @expo/entity",
   "files": [
     "build",
@@ -33,7 +33,7 @@
     "knex": "^3.1.0"
   },
   "devDependencies": {
-    "@expo/entity": "^0.39.0",
+    "@expo/entity": "^0.40.0",
     "pg": "8.13.1"
   }
 }
