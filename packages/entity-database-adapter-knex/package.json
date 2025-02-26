@@ -26,14 +26,11 @@
   ],
   "author": "Expo",
   "license": "MIT",
-  "peerDependencies": {
-    "@expo/entity": "*"
-  },
   "dependencies": {
+    "@expo/entity": "workspace:^",
     "knex": "^3.1.0"
   },
   "devDependencies": {
-    "@expo/entity": "^0.39.0",
     "pg": "8.13.1"
   }
 }

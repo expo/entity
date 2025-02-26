@@ -12,7 +12,7 @@
     "test": "lerna run test",
     "integration": "./resources/run-with-docker lerna run integration-no-setup",
     "prepublish": "lerna run clean",
-    "prepare": "lerna run tsc",
+    "prepack": "lerna run tsc",
     "ctix": "lerna run ctix"
   },
   "devDependencies": {
@@ -41,16 +41,8 @@
     "typescript": "^5.7.3",
     "uuid": "^8.3.0"
   },
-  "dependencies": {
-    "@expo/entity": "file:packages/entity",
-    "@expo/entity-cache-adapter-local-memory": "file:packages/entity-cache-adapter-local-memory",
-    "@expo/entity-cache-adapter-redis": "file:packages/entity-cache-adapter-redis",
-    "@expo/entity-database-adapter-knex": "file:packages/entity-database-adapter-knex",
-    "@expo/entity-ip-address-field": "file:packages/entity-ip-address-field",
-    "@expo/entity-secondary-cache-local-memory": "file:packages/entity-secondary-cache-local-memory",
-    "@expo/entity-secondary-cache-redis": "file:packages/entity-secondary-cache-redis"
-  },
   "volta": {
     "node": "20.14.0"
-  }
+  },
+  "packageManager": "yarn@4.6.0"
 }

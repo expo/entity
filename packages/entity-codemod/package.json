@@ -23,12 +23,8 @@
   ],
   "author": "Expo",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "@types/jscodeshift": "^0.12.0",
     "jscodeshift": "^17.1.2"
-  },
-  "peerDependencies": {
-    "@expo/entity": "*"
   }
 }

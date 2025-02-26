@@ -26,13 +26,8 @@
   ],
   "author": "Expo",
   "license": "MIT",
-  "peerDependencies": {
-    "@expo/entity": "*"
-  },
   "dependencies": {
+    "@expo/entity": "workspace:^",
     "lru-cache": "^6.0.0"
-  },
-  "devDependencies": {
-    "@expo/entity": "^0.39.0"
   }
 }

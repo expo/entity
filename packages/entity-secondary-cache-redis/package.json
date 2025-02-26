@@ -26,13 +26,11 @@
   ],
   "author": "Expo",
   "license": "MIT",
-  "peerDependencies": {
-    "@expo/entity": "*",
-    "@expo/entity-cache-adapter-redis": "*"
+  "dependencies": {
+    "@expo/entity": "workspace:^",
+    "@expo/entity-cache-adapter-redis": "workspace:^"
   },
   "devDependencies": {
-    "@expo/entity": "^0.39.0",
-    "@expo/entity-cache-adapter-redis": "^0.39.0",
     "ioredis": "^5.2.5",
     "nullthrows": "^1.1.1"
   }

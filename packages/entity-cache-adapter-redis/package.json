@@ -26,12 +26,13 @@
   ],
   "author": "Expo",
   "license": "MIT",
+  "dependencies": {
+    "@expo/entity": "workspace:^"
+  },
   "peerDependencies": {
-    "@expo/entity": "*",
     "ioredis": ">=5"
   },
   "devDependencies": {
-    "@expo/entity": "^0.39.0",
     "ioredis": "^5.2.5"
   }
 }

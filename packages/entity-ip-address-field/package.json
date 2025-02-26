@@ -25,13 +25,10 @@
   "author": "Expo",
   "license": "MIT",
   "dependencies": {
+    "@expo/entity": "workspace:^",
     "ip-address": "^8.1.0"
   },
   "devDependencies": {
-    "@expo/entity": "^0.39.0",
     "@types/jsbn": "^1.2.29"
-  },
-  "peerDependencies": {
-    "@expo/entity": "*"
   }
 }

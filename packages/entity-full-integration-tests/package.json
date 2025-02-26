@@ -20,14 +20,9 @@
   ],
   "author": "Expo",
   "license": "MIT",
-  "peerDependencies": {
-    "@expo/entity": "*",
-    "@expo/entity-cache-adapter-redis": "*",
-    "@expo/entity-database-adapter-knex": "*"
-  },
-  "devDependencies": {
-    "@expo/entity": "^0.39.0",
-    "@expo/entity-cache-adapter-redis": "^0.39.0",
-    "@expo/entity-database-adapter-knex": "^0.39.0"
+  "dependencies": {
+    "@expo/entity": "workspace:^",
+    "@expo/entity-cache-adapter-redis": "workspace:^",
+    "@expo/entity-database-adapter-knex": "workspace:^"
   }
 }

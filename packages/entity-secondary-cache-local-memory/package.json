@@ -26,13 +26,11 @@
   ],
   "author": "Expo",
   "license": "MIT",
-  "peerDependencies": {
-    "@expo/entity": "*",
-    "@expo/entity-cache-adapter-local-memory": "*"
+  "dependencies": {
+    "@expo/entity": "workspace:^",
+    "@expo/entity-cache-adapter-local-memory": "workspace:^"
   },
   "devDependencies": {
-    "@expo/entity": "^0.39.0",
-    "@expo/entity-cache-adapter-local-memory": "^0.39.0",
     "nullthrows": "^1.1.1"
   }
 }
