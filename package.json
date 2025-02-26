@@ -11,7 +11,7 @@
     "lint-fix": "lerna run lint-fix",
     "test": "lerna run test",
     "integration": "./resources/run-with-docker lerna run integration-no-setup",
-    "prepublish": "lerna link && lerna run clean",
+    "prepublish": "lerna run clean",
     "prepare": "lerna run tsc",
     "ctix": "lerna run ctix"
   },
@@ -30,7 +30,7 @@
     "eslint-plugin-tsdoc": "^0.3.0",
     "ioredis": "^5.4.1",
     "jest": "^29.7.0",
-    "lerna": "^5.4.0",
+    "lerna": "^8.2.0",
     "lru-cache": "^6.0.0",
     "nullthrows": "^1.1.1",
     "pg": "8.13.1",
