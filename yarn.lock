@@ -1577,7 +1577,20 @@ __metadata:
   resolution: "@expo/entity-cache-adapter-local-memory@workspace:packages/entity-cache-adapter-local-memory"
   dependencies:
     "@expo/entity": "workspace:^"
+    "@types/jest": "npm:^29.5.12"
+    "@types/lru-cache": "npm:^5.1.1"
+    "@types/node": "npm:^20.14.1"
+    ctix: "npm:^2.7.0"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
+    jest: "npm:^29.7.0"
     lru-cache: "npm:^6.0.0"
+    prettier: "npm:^3.3.3"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
+    typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
 
@@ -1585,8 +1598,21 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@expo/entity-cache-adapter-redis@workspace:packages/entity-cache-adapter-redis"
   dependencies:
+    "@expo/batcher": "npm:^1.0.0"
     "@expo/entity": "workspace:^"
-    ioredis: "npm:^5.2.5"
+    "@types/jest": "npm:^29.5.12"
+    "@types/node": "npm:^20.14.1"
+    ctix: "npm:^2.7.0"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
+    ioredis: "npm:^5.4.1"
+    jest: "npm:^29.7.0"
+    prettier: "npm:^3.3.3"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
+    typescript: "npm:^5.7.3"
   peerDependencies:
     ioredis: ">=5"
   languageName: unknown
@@ -1596,8 +1622,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@expo/entity-codemod@workspace:packages/entity-codemod"
   dependencies:
+    "@types/jest": "npm:^29.5.12"
     "@types/jscodeshift": "npm:^0.12.0"
+    "@types/node": "npm:^20.14.1"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
+    jest: "npm:^29.7.0"
     jscodeshift: "npm:^17.1.2"
+    prettier: "npm:^3.3.3"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
+    typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
 
@@ -1606,8 +1642,20 @@ __metadata:
   resolution: "@expo/entity-database-adapter-knex@workspace:packages/entity-database-adapter-knex"
   dependencies:
     "@expo/entity": "workspace:^"
+    "@types/jest": "npm:^29.5.12"
+    "@types/node": "npm:^20.14.1"
+    ctix: "npm:^2.7.0"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
+    jest: "npm:^29.7.0"
     knex: "npm:^3.1.0"
     pg: "npm:8.13.1"
+    prettier: "npm:^3.3.3"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
+    typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
 
@@ -1620,16 +1668,26 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@koa/cors": "npm:^4.0.0"
     "@koa/router": "npm:^12.0.0"
+    "@types/jest": "npm:^29.5.12"
     "@types/koa": "npm:^2.13.6"
     "@types/koa-bodyparser": "npm:^4.3.10"
     "@types/koa__cors": "npm:^4.0.0"
     "@types/koa__router": "npm:^12.0.0"
+    "@types/node": "npm:^20.14.1"
     "@types/supertest": "npm:^2.0.10"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
     graphql: "npm:^16.6.0"
+    jest: "npm:^29.7.0"
     koa: "npm:^2.14.2"
     koa-bodyparser: "npm:^4.4.0"
+    prettier: "npm:^3.3.3"
     supertest: "npm:^4.0.2"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
     ts-node-dev: "npm:^1.0.0-pre.60"
+    typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
 
@@ -1640,6 +1698,16 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-redis": "workspace:^"
     "@expo/entity-database-adapter-knex": "workspace:^"
+    "@types/jest": "npm:^29.5.12"
+    "@types/node": "npm:^20.14.1"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
+    jest: "npm:^29.7.0"
+    prettier: "npm:^3.3.3"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
+    typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
 
@@ -1648,8 +1716,20 @@ __metadata:
   resolution: "@expo/entity-ip-address-field@workspace:packages/entity-ip-address-field"
   dependencies:
     "@expo/entity": "workspace:^"
+    "@types/jest": "npm:^29.5.12"
     "@types/jsbn": "npm:^1.2.29"
+    "@types/node": "npm:^20.14.1"
+    ctix: "npm:^2.7.0"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
     ip-address: "npm:^8.1.0"
+    jest: "npm:^29.7.0"
+    prettier: "npm:^3.3.3"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
+    typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
 
@@ -1659,7 +1739,19 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-local-memory": "workspace:^"
+    "@types/jest": "npm:^29.5.12"
+    "@types/node": "npm:^20.14.1"
+    ctix: "npm:^2.7.0"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
+    jest: "npm:^29.7.0"
     nullthrows: "npm:^1.1.1"
+    prettier: "npm:^3.3.3"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
+    typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
 
@@ -1669,8 +1761,20 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-redis": "workspace:^"
-    ioredis: "npm:^5.2.5"
+    "@types/jest": "npm:^29.5.12"
+    "@types/node": "npm:^20.14.1"
+    ctix: "npm:^2.7.0"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
+    ioredis: "npm:^5.4.1"
+    jest: "npm:^29.7.0"
     nullthrows: "npm:^1.1.1"
+    prettier: "npm:^3.3.3"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
+    typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
 
@@ -1679,9 +1783,23 @@ __metadata:
   resolution: "@expo/entity@workspace:packages/entity"
   dependencies:
     "@expo/results": "npm:^1.0.0"
+    "@types/invariant": "npm:^2.2.37"
+    "@types/jest": "npm:^29.5.12"
+    "@types/node": "npm:^20.14.1"
+    "@types/uuid": "npm:^8.3.0"
+    ctix: "npm:^2.7.0"
     dataloader: "npm:^2.0.0"
     es6-error: "npm:^4.1.1"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
     invariant: "npm:^2.2.4"
+    jest: "npm:^29.7.0"
+    prettier: "npm:^3.3.3"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
+    typescript: "npm:^5.7.3"
     uuid: "npm:^8.3.0"
     uuidv7: "npm:^1.0.0"
   languageName: unknown
@@ -8026,7 +8144,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis@npm:^5.2.5":
+"ioredis@npm:^5.4.1":
   version: 5.5.0
   resolution: "ioredis@npm:5.5.0"
   dependencies:
@@ -8040,23 +8158,6 @@ __metadata:
     redis-parser: "npm:^3.0.0"
     standard-as-callback: "npm:^2.1.0"
   checksum: 10c0/ba64502fc92d9e05465793fafcd0568cb668af6e2350462b61daadfd499e3a48239d9a723d3ce08b08c93f3f745d05dda91136cdc597d4d485604e6730305305
-  languageName: node
-  linkType: hard
-
-"ioredis@npm:^5.4.1":
-  version: 5.4.1
-  resolution: "ioredis@npm:5.4.1"
-  dependencies:
-    "@ioredis/commands": "npm:^1.1.1"
-    cluster-key-slot: "npm:^1.1.0"
-    debug: "npm:^4.3.4"
-    denque: "npm:^2.1.0"
-    lodash.defaults: "npm:^4.2.0"
-    lodash.isarguments: "npm:^3.1.0"
-    redis-errors: "npm:^1.2.0"
-    redis-parser: "npm:^3.0.0"
-    standard-as-callback: "npm:^2.1.0"
-  checksum: 10c0/5d28b7c89a3cab5b76d75923d7d4ce79172b3a1ca9be690133f6e8e393a7a4b4ffd55513e618bbb5504fed80d9e1395c9d9531a7c5c5c84aa4c4e765cca75456
   languageName: node
   linkType: hard
 
@@ -11647,6 +11748,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier-plugin-organize-imports@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "prettier-plugin-organize-imports@npm:4.1.0"
+  peerDependencies:
+    prettier: ">=2.0"
+    typescript: ">=2.9"
+    vue-tsc: ^2.1.0
+  peerDependenciesMeta:
+    vue-tsc:
+      optional: true
+  checksum: 10c0/fb2d6d415bac96b65a77ea7de9f708e8613436aeb9d82bbe63edeb312fd1362c0d3c57319bd4cc4adfc8b9964fb6c205cbbf8efd9546931b0f9874c0ae624a6a
+  languageName: node
+  linkType: hard
+
 "prettier@npm:^3.3.3":
   version: 3.3.3
   resolution: "prettier@npm:3.3.3"
@@ -12368,30 +12483,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root@workspace:."
   dependencies:
-    "@expo/batcher": "npm:^1.0.0"
-    "@expo/results": "npm:^1.0.0"
-    "@types/invariant": "npm:^2.2.37"
-    "@types/jest": "npm:^29.5.12"
-    "@types/jsbn": "npm:^1.2.29"
-    "@types/lru-cache": "npm:^5.1.1"
-    "@types/node": "npm:^20.14.1"
-    "@types/uuid": "npm:^8.3.0"
-    ctix: "npm:^2.7.0"
-    eslint: "npm:^8.57.1"
-    eslint-config-universe: "npm:^14.0.0"
-    eslint-plugin-tsdoc: "npm:^0.3.0"
-    ioredis: "npm:^5.4.1"
-    jest: "npm:^29.7.0"
     lerna: "npm:^8.2.0"
-    lru-cache: "npm:^6.0.0"
-    nullthrows: "npm:^1.1.1"
-    pg: "npm:8.13.1"
-    prettier: "npm:^3.3.3"
-    ts-jest: "npm:^29.2.5"
-    ts-mockito: "npm:^2.6.1"
     typedoc: "npm:^0.27.7"
     typescript: "npm:^5.7.3"
-    uuid: "npm:^8.3.0"
   languageName: unknown
   linkType: soft
 

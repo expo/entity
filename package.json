@@ -16,30 +16,9 @@
     "ctix": "lerna run ctix"
   },
   "devDependencies": {
-    "@expo/batcher": "^1.0.0",
-    "@expo/results": "^1.0.0",
-    "@types/invariant": "^2.2.37",
-    "@types/jest": "^29.5.12",
-    "@types/jsbn": "^1.2.29",
-    "@types/lru-cache": "^5.1.1",
-    "@types/node": "^20.14.1",
-    "@types/uuid": "^8.3.0",
-    "ctix": "^2.7.0",
-    "eslint": "^8.57.1",
-    "eslint-config-universe": "^14.0.0",
-    "eslint-plugin-tsdoc": "^0.3.0",
-    "ioredis": "^5.4.1",
-    "jest": "^29.7.0",
     "lerna": "^8.2.0",
-    "lru-cache": "^6.0.0",
-    "nullthrows": "^1.1.1",
-    "pg": "8.13.1",
-    "prettier": "^3.3.3",
-    "ts-jest": "^29.2.5",
-    "ts-mockito": "^2.6.1",
     "typedoc": "^0.27.7",
-    "typescript": "^5.7.3",
-    "uuid": "^8.3.0"
+    "typescript": "^5.7.3"
   },
   "volta": {
     "node": "20.14.0"
