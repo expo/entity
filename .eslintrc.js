@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   extends: ['universe/node', 'universe/shared/typescript-analysis'],
   plugins: ['eslint-plugin-tsdoc'],
   rules: {
