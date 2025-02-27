@@ -1,0 +1,13 @@
+{
+  "targetDefaults": {
+    "tsc": {
+      "dependsOn": ["^clean", "clean", "^tsc"]
+    },
+    "test": {
+      "dependsOn": ["^tsc"]
+    },
+    "integration": {
+      "dependsOn": ["^tsc"]
+    }
+  }
+}

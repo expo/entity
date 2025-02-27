@@ -38,6 +38,9 @@ node_modules/
 !**/.yarn/versions
 **/.pnp.*
 
+.nx/cache
+.nx/workspace-data
+
 # Entity-specific ignores
 
 build/
