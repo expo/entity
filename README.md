@@ -82,7 +82,7 @@ Note: The entity framework instance should not be shared across multiple request
 
 To release a new version:
 1. `git checkout main`
-1. `yarn lerna publish [patch|minor|major] -- --conventional-commits`
+1. `yarn lerna publish [patch|minor|major] -- --conventional-commits  --force-publish`
 1. In GitHub release interface, create a new release from the tag, copy changelog changes to release description.
 
 ## License

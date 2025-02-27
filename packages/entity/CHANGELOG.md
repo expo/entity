@@ -5,6 +5,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [0.40.0](https://github.com/expo/entity/compare/v0.39.0...v0.40.0) (2025-02-27)
 
+### Features
+
+* Make load/create/update/delete entity authorization result interfaces consistent ([#253](https://github.com/expo/entity/issues/253)) ([4d56065](https://github.com/expo/entity/commit/4d5606551827254e8379815d54df741065413838))
+* Add enforcing entity association loader ([#257](https://github.com/expo/entity/issues/257)) ([c6f74a1](https://github.com/expo/entity/commit/c6f74a14a9859eb67519143991d95824115664a5))
 
 ### Reverts
 
@@ -233,7 +237,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Chores
 
-* Refactor cachers to use an abstract class and interface  ([#157](https://github.com/expo/entity/pull/157)) 
+* Refactor cachers to use an abstract class and interface  ([#157](https://github.com/expo/entity/pull/157))
 
 # [0.23.0](https://github.com/expo/entity/compare/v0.22.0...v0.23.0) (2022-02-09)
 
