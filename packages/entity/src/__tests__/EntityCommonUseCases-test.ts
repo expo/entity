@@ -118,22 +118,19 @@ it('runs through a common workflow', async () => {
   const vc2 = new TestUserViewerContext(entityCompanionProvider, uuidv4());
 
   const blahOwner1 = await enforceAsyncResult(
-    BlahEntity.creator(vc1)
-      .withAuthorizationResults()
+    BlahEntity.creatorWithAuthorizationResults(vc1)
       .setField('ownerID', vc1.getUserID())
       .createAsync(),
   );
 
   await enforceAsyncResult(
-    BlahEntity.creator(vc1)
-      .withAuthorizationResults()
+    BlahEntity.creatorWithAuthorizationResults(vc1)
       .setField('ownerID', vc1.getUserID())
       .createAsync(),
   );
 
   const blahOwner2 = await enforceAsyncResult(
-    BlahEntity.creator(vc2)
-      .withAuthorizationResults()
+    BlahEntity.creatorWithAuthorizationResults(vc2)
       .setField('ownerID', vc2.getUserID())
       .createAsync(),
   );
@@ -145,43 +142,43 @@ it('runs through a common workflow', async () => {
   // check that two people can't read each others data
   await expect(
     enforceAsyncResult(
-      BlahEntity.loader(vc1).withAuthorizationResults().loadByIDAsync(blahOwner2.getID()),
+      BlahEntity.loaderWithAuthorizationResults(vc1).loadByIDAsync(blahOwner2.getID()),
     ),
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
   await expect(
     enforceAsyncResult(
-      BlahEntity.loader(vc2).withAuthorizationResults().loadByIDAsync(blahOwner1.getID()),
+      BlahEntity.loaderWithAuthorizationResults(vc2).loadByIDAsync(blahOwner1.getID()),
     ),
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 
   // check that all of owner 1's objects can be loaded
   const results = await enforceResultsAsync(
-    BlahEntity.loader(vc1)
-      .withAuthorizationResults()
-      .loadManyByFieldEqualingAsync('ownerID', vc1.getUserID()),
+    BlahEntity.loaderWithAuthorizationResults(vc1).loadManyByFieldEqualingAsync(
+      'ownerID',
+      vc1.getUserID(),
+    ),
   );
   expect(results).toHaveLength(2);
 
   // check that two people can't create objects owned by others
   await expect(
     enforceAsyncResult(
-      BlahEntity.creator(vc2)
-        .withAuthorizationResults()
+      BlahEntity.creatorWithAuthorizationResults(vc2)
         .setField('ownerID', blahOwner1.getID())
         .createAsync(),
     ),
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 
   // check that empty load many returns nothing
-  const results2 = await BlahEntity.loader(vc1)
-    .withAuthorizationResults()
-    .loadManyByFieldEqualingManyAsync('ownerID', []);
+  const results2 = await BlahEntity.loaderWithAuthorizationResults(
+    vc1,
+  ).loadManyByFieldEqualingManyAsync('ownerID', []);
   for (const value in results2.values) {
     expect(value).toHaveLength(0);
   }
 
   // check that the user can't delete their own data (as specified by privacy rules)
   await expect(
-    enforceAsyncResult(BlahEntity.deleter(blahOwner2).withAuthorizationResults().deleteAsync()),
+    enforceAsyncResult(BlahEntity.deleterWithAuthorizationResults(blahOwner2).deleteAsync()),
   ).rejects.toBeInstanceOf(EntityNotAuthorizedError);
 });

@@ -10,10 +10,8 @@ describe(EntityAssociationLoader, () => {
     it('creates a new EnforcingEntityLoader', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      const testEntity = await SimpleTestEntity.creator(viewerContext).enforcing().createAsync();
-      expect(testEntity.associationLoader().enforcing()).toBeInstanceOf(
-        EnforcingEntityAssociationLoader,
-      );
+      const testEntity = await SimpleTestEntity.creator(viewerContext).createAsync();
+      expect(testEntity.associationLoader()).toBeInstanceOf(EnforcingEntityAssociationLoader);
     });
   });
 
@@ -21,8 +19,8 @@ describe(EntityAssociationLoader, () => {
     it('creates a new AuthorizationResultBasedEntityAssociationLoader', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      const testEntity = await SimpleTestEntity.creator(viewerContext).enforcing().createAsync();
-      expect(testEntity.associationLoader().withAuthorizationResults()).toBeInstanceOf(
+      const testEntity = await SimpleTestEntity.creator(viewerContext).createAsync();
+      expect(testEntity.associationLoaderWithAuthorizationResults()).toBeInstanceOf(
         AuthorizationResultBasedEntityAssociationLoader,
       );
     });

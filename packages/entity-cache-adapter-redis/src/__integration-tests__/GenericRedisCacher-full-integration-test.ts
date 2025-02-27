@@ -47,14 +47,13 @@ describe(GenericRedisCacher, () => {
     const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
-      .enforcing()
       .setField('name', 'blah')
       .createAsync();
 
     // loading an entity should put it in cache
-    const entity1 = await RedisTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(entity1Created.getID());
+    const entity1 = await RedisTestEntity.loader(viewerContext).loadByIDAsync(
+      entity1Created.getID(),
+    );
 
     const cachedJSON = await (genericRedisCacheContext.redisClient as Redis).get(
       cacheKeyMaker('id', entity1.getID()),
@@ -68,9 +67,10 @@ describe(GenericRedisCacher, () => {
     // simulate non existent db fetch, should write negative result ('') to cache
     const nonExistentId = uuidv4();
 
-    const entityNonExistentResult = await RedisTestEntity.loader(viewerContext)
-      .withAuthorizationResults()
-      .loadByIDAsync(nonExistentId);
+    const entityNonExistentResult =
+      await RedisTestEntity.loaderWithAuthorizationResults(viewerContext).loadByIDAsync(
+        nonExistentId,
+      );
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedValue = await (genericRedisCacheContext.redisClient as Redis).get(
@@ -79,15 +79,14 @@ describe(GenericRedisCacher, () => {
     expect(nonExistentCachedValue).toEqual('');
 
     // load again through entities framework to ensure it reads negative result
-    const entityNonExistentResult2 = await RedisTestEntity.loader(viewerContext)
-      .withAuthorizationResults()
-      .loadByIDAsync(nonExistentId);
+    const entityNonExistentResult2 =
+      await RedisTestEntity.loaderWithAuthorizationResults(viewerContext).loadByIDAsync(
+        nonExistentId,
+      );
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly
-    await RedisTestEntity.loader(viewerContext)
-      .utils()
-      .invalidateFieldsAsync(entity1.getAllFields());
+    await RedisTestEntity.loaderUtils(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
     const cachedValueNull = await (genericRedisCacheContext.redisClient as Redis).get(
       cacheKeyMaker('id', entity1.getID()),
     );
@@ -100,23 +99,20 @@ describe(GenericRedisCacher, () => {
     );
     const date = new Date();
     const entity1 = await enforceAsyncResult(
-      RedisTestEntity.creator(viewerContext)
-        .withAuthorizationResults()
+      RedisTestEntity.creatorWithAuthorizationResults(viewerContext)
         .setField('dateField', date)
         .createAsync(),
     );
     expect(entity1.getField('dateField')).toEqual(date);
 
-    const entity2 = await RedisTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(entity1.getID());
+    const entity2 = await RedisTestEntity.loader(viewerContext).loadByIDAsync(entity1.getID());
     expect(entity2.getField('dateField')).toEqual(date);
 
     // simulate new request
     const vc2 = new TestViewerContext(
       createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
-    const entity3 = await RedisTestEntity.loader(vc2).enforcing().loadByIDAsync(entity1.getID());
+    const entity3 = await RedisTestEntity.loader(vc2).loadByIDAsync(entity1.getID());
     expect(entity3.getField('dateField')).toEqual(date);
   });
 
@@ -125,23 +121,21 @@ describe(GenericRedisCacher, () => {
       createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
     const entity1 = await enforceAsyncResult(
-      RedisTestEntity.creator(viewerContext)
-        .withAuthorizationResults()
+      RedisTestEntity.creatorWithAuthorizationResults(viewerContext)
         .setField('name', '')
         .createAsync(),
     );
-    const entity2 = await RedisTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByFieldEqualingAsync('name', '');
+    const entity2 = await RedisTestEntity.loader(viewerContext).loadByFieldEqualingAsync(
+      'name',
+      '',
+    );
     expect(entity2?.getID()).toEqual(entity1.getID());
 
     // simulate new request
     const vc2 = new TestViewerContext(
       createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
-    const entity3 = await RedisTestEntity.loader(vc2)
-      .enforcing()
-      .loadByFieldEqualingAsync('name', '');
+    const entity3 = await RedisTestEntity.loader(vc2).loadByFieldEqualingAsync('name', '');
     expect(entity3?.getID()).toEqual(entity1.getID());
   });
 });
