@@ -38,7 +38,7 @@
 <a id="releasing" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Releasing<a href="#releasing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>To release a new version:</p>
 <ol>
 <li><code>git checkout main</code></li>
-<li><code>yarn lerna publish [patch|minor|major] -- --conventional-commits</code></li>
+<li><code>yarn lerna publish [patch|minor|major] -- --conventional-commits  --force-publish</code></li>
 <li>In GitHub release interface, create a new release from the tag, copy changelog changes to release description.</li>
 </ol>
 <a id="license" class="tsd-anchor"></a><h2 class="tsd-anchor-link">License<a href="#license" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>The Entity source code is made available under the <a href="media/LICENSE">MIT license</a>.</p>
