@@ -13,7 +13,8 @@
     "integration": "./resources/run-with-docker lerna run integration-no-setup",
     "prepublish": "lerna run clean",
     "prepack": "lerna run tsc",
-    "ctix": "lerna run ctix"
+    "ctix": "lerna run ctix",
+    "typedoc": "yarn tsc && typedoc"
   },
   "devDependencies": {
     "lerna": "^8.2.0",
