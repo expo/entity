@@ -35,60 +35,55 @@ describe('postgres entity integration', () => {
     it('throws after deletion of multiple rows or no rows', async () => {
       const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       const entity1 = await enforceAsyncResult(
-        InvalidTestEntity.creator(vc)
-          .withAuthorizationResults()
+        InvalidTestEntity.creatorWithAuthorizationResults(vc)
           .setField('id', 1)
           .setField('name', 'hello')
           .createAsync(),
       );
       await enforceAsyncResult(
-        InvalidTestEntity.creator(vc)
-          .withAuthorizationResults()
+        InvalidTestEntity.creatorWithAuthorizationResults(vc)
           .setField('id', 1)
           .setField('name', 'world')
           .createAsync(),
       );
 
-      await expect(
-        InvalidTestEntity.deleter(entity1).enforcing().deleteAsync(),
-      ).rejects.toThrowError('Excessive deletions from database adapter delete');
+      await expect(InvalidTestEntity.deleter(entity1).deleteAsync()).rejects.toThrowError(
+        'Excessive deletions from database adapter delete',
+      );
     });
 
     it('throws after update of multiple rows', async () => {
       const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       const entity1 = await enforceAsyncResult(
-        InvalidTestEntity.creator(vc)
-          .withAuthorizationResults()
+        InvalidTestEntity.creatorWithAuthorizationResults(vc)
           .setField('id', 1)
           .setField('name', 'hello')
           .createAsync(),
       );
       await enforceAsyncResult(
-        InvalidTestEntity.creator(vc)
-          .withAuthorizationResults()
+        InvalidTestEntity.creatorWithAuthorizationResults(vc)
           .setField('id', 1)
           .setField('name', 'world')
           .createAsync(),
       );
 
       await expect(
-        InvalidTestEntity.updater(entity1).enforcing().setField('name', 'blah').updateAsync(),
+        InvalidTestEntity.updater(entity1).setField('name', 'blah').updateAsync(),
       ).rejects.toThrowError('Excessive results from database adapter update');
     });
 
     it('throws after update of no rows', async () => {
       const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       const entity1 = await enforceAsyncResult(
-        InvalidTestEntity.creator(vc)
-          .withAuthorizationResults()
+        InvalidTestEntity.creatorWithAuthorizationResults(vc)
           .setField('id', 1)
           .setField('name', 'hello')
           .createAsync(),
       );
-      await InvalidTestEntity.deleter(entity1).enforcing().deleteAsync();
+      await InvalidTestEntity.deleter(entity1).deleteAsync();
 
       await expect(
-        InvalidTestEntity.updater(entity1).enforcing().setField('name', 'blah').updateAsync(),
+        InvalidTestEntity.updater(entity1).setField('name', 'blah').updateAsync(),
       ).rejects.toThrowError('Empty results from database adapter update');
     });
   });

@@ -1,8 +1,13 @@
 import invariant from 'invariant';
 
+import AuthorizationResultBasedEntityAssociationLoader from './AuthorizationResultBasedEntityAssociationLoader';
+import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
+import EnforcingEntityAssociationLoader from './EnforcingEntityAssociationLoader';
+import EnforcingEntityLoader from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
 import EntityAssociationLoader from './EntityAssociationLoader';
 import EntityLoader from './EntityLoader';
+import EntityLoaderUtils from './EntityLoaderUtils';
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ViewerContext from './ViewerContext';
@@ -82,12 +87,33 @@ export default abstract class ReadonlyEntity<
   }
 
   /**
-   * @returns EntityAssociationLoader for this entity
+   * @returns EnforcingEntityAssociationLoader for this entity
    */
   associationLoader(
     queryContext?: EntityQueryContext,
-  ): EntityAssociationLoader<TFields, TID, TViewerContext, this, TSelectedFields> {
-    return new EntityAssociationLoader(this, queryContext);
+  ): EnforcingEntityAssociationLoader<TFields, TID, TViewerContext, this, TSelectedFields> {
+    return new EntityAssociationLoader<TFields, TID, TViewerContext, this, TSelectedFields>(
+      this,
+      queryContext,
+    ).enforcing();
+  }
+
+  /**
+   * @returns AuthorizationResultBasedEntityAssociationLoader for this entity
+   */
+  associationLoaderWithAuthorizationResults(
+    queryContext?: EntityQueryContext,
+  ): AuthorizationResultBasedEntityAssociationLoader<
+    TFields,
+    TID,
+    TViewerContext,
+    this,
+    TSelectedFields
+  > {
+    return new EntityAssociationLoader<TFields, TID, TViewerContext, this, TSelectedFields>(
+      this,
+      queryContext,
+    ).withAuthorizationResults();
   }
 
   /**
@@ -148,15 +174,102 @@ export default abstract class ReadonlyEntity<
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getQueryContext(),
-  ): EntityLoader<
+  ): EnforcingEntityLoader<
     TMFields,
     TMID,
     TMViewerContext,
-    TMViewerContext2,
     TMEntity,
     TMPrivacyPolicy,
     TMSelectedFields
   > {
-    return new EntityLoader(viewerContext, queryContext, this);
+    return new EntityLoader(viewerContext, queryContext, this).enforcing();
+  }
+
+  /**
+   * Vend loader for loading an entity in a given query context.
+   * @param viewerContext - viewer context of loading user
+   * @param queryContext - query context in which to perform the load
+   */
+  static loaderWithAuthorizationResults<
+    TMFields extends object,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMViewerContext extends ViewerContext,
+    TMViewerContext2 extends TMViewerContext,
+    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    viewerContext: TMViewerContext2,
+    queryContext: EntityQueryContext = viewerContext
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): AuthorizationResultBasedEntityLoader<
+    TMFields,
+    TMID,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityLoader(viewerContext, queryContext, this).withAuthorizationResults();
+  }
+
+  /**
+   * Vend loader for loading an entity in a given query context.
+   * @param viewerContext - viewer context of loading user
+   * @param queryContext - query context in which to perform the load
+   */
+  static loaderUtils<
+    TMFields extends object,
+    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMViewerContext extends ViewerContext,
+    TMViewerContext2 extends TMViewerContext,
+    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMID,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    viewerContext: TMViewerContext2,
+    queryContext: EntityQueryContext = viewerContext
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): EntityLoaderUtils<
+    TMFields,
+    TMID,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityLoader(viewerContext, queryContext, this).utils();
   }
 }

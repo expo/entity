@@ -26,15 +26,14 @@ describe(GenericLocalMemoryCacher, () => {
 
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
-      .enforcing()
       .setField('name', 'blah')
       .setField('dateField', date)
       .createAsync();
 
     // loading an entity should put it in cache
-    const entity1 = await LocalMemoryTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(entity1Created.getID());
+    const entity1 = await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(
+      entity1Created.getID(),
+    );
 
     const localMemoryCacheAdapterProvider = (
       entityCompanionProvider['cacheAdapterFlavors'] as ReadonlyMap<
@@ -64,9 +63,10 @@ describe(GenericLocalMemoryCacher, () => {
     // simulate non existent db fetch, should write negative result ('') to cache
     const nonExistentId = uuidv4();
 
-    const entityNonExistentResult = await LocalMemoryTestEntity.loader(viewerContext)
-      .withAuthorizationResults()
-      .loadByIDAsync(nonExistentId);
+    const entityNonExistentResult =
+      await LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext).loadByIDAsync(
+        nonExistentId,
+      );
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedResult = await entitySpecificGenericCacher.loadManyAsync([
@@ -77,15 +77,16 @@ describe(GenericLocalMemoryCacher, () => {
     });
 
     // load again through entities framework to ensure it reads negative result
-    const entityNonExistentResult2 = await LocalMemoryTestEntity.loader(viewerContext)
-      .withAuthorizationResults()
-      .loadByIDAsync(nonExistentId);
+    const entityNonExistentResult2 =
+      await LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext).loadByIDAsync(
+        nonExistentId,
+      );
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly
-    await LocalMemoryTestEntity.loader(viewerContext)
-      .utils()
-      .invalidateFieldsAsync(entity1.getAllFields());
+    await LocalMemoryTestEntity.loaderUtils(viewerContext).invalidateFieldsAsync(
+      entity1.getAllFields(),
+    );
     const cachedResultMiss = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker('id', entity1.getID()),
     ]);
@@ -104,15 +105,14 @@ describe(GenericLocalMemoryCacher, () => {
 
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
-      .enforcing()
       .setField('name', 'blah')
       .setField('dateField', date)
       .createAsync();
 
     // loading an entity will try to put it in cache but it's a noop cache, so it should be a miss
-    const entity1 = await LocalMemoryTestEntity.loader(viewerContext)
-      .enforcing()
-      .loadByIDAsync(entity1Created.getID());
+    const entity1 = await LocalMemoryTestEntity.loader(viewerContext).loadByIDAsync(
+      entity1Created.getID(),
+    );
 
     const localMemoryCacheAdapterProvider = (
       entityCompanionProvider['cacheAdapterFlavors'] as ReadonlyMap<
@@ -137,9 +137,10 @@ describe(GenericLocalMemoryCacher, () => {
     // a non existent db fetch should try to write negative result ('') but it's a noop cache, so it should be a miss
     const nonExistentId = uuidv4();
 
-    const entityNonExistentResult = await LocalMemoryTestEntity.loader(viewerContext)
-      .withAuthorizationResults()
-      .loadByIDAsync(nonExistentId);
+    const entityNonExistentResult =
+      await LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext).loadByIDAsync(
+        nonExistentId,
+      );
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedResult = await entitySpecificGenericCacher.loadManyAsync([
