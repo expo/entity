@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.41.0](https://github.com/expo/entity/compare/v0.40.0...v0.41.0) (2025-03-07)
+
+
+* feat!: Default all loaders and mutators to enforcing (#256) ([a976e76](https://github.com/expo/entity/commit/a976e765098bca27049585e43a3bed5c71b9ac6b)), closes [#256](https://github.com/expo/entity/issues/256)
+
+
+### BREAKING CHANGES
+
+* Default all loaders and mutators to enforcing
+
+
+
+
+
 # [0.40.0](https://github.com/expo/entity/compare/v0.39.0...v0.40.0) (2025-02-27)
 
 ### Features

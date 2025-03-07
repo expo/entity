@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.41.0](https://github.com/expo/entity/compare/v0.40.0...v0.41.0) (2025-03-07)
+
+
+### Features
+
+* Create codemod for v0.40.0 -> v0.41.0 ([#260](https://github.com/expo/entity/issues/260)) ([4a2b61f](https://github.com/expo/entity/commit/4a2b61f2bd8edfc19109ef4c8ac780eaf0f7795c))
+
+
+
+
+
 # [0.40.0](https://github.com/expo/entity/compare/v0.39.0...v0.40.0) (2025-02-27)
 
 

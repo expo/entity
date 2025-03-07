@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-codemod",
-  "version": "0.40.0",
+  "version": "0.41.0",
   "description": "jscodeshift codemods for @expo/entity upgrades",
   "files": [
     "build",
