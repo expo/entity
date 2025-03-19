@@ -1,8 +1,16 @@
 import invariant from 'invariant';
 
-import EntityConfiguration from '../../EntityConfiguration';
+import EntityConfiguration, { EntityCompositeField } from '../../EntityConfiguration';
 import IEntityCacheAdapter from '../../IEntityCacheAdapter';
 import IEntityCacheAdapterProvider from '../../IEntityCacheAdapterProvider';
+import {
+  CompositeFieldValueHolder,
+  CompositeFieldHolder,
+} from '../../internal/CompositeFieldHolder';
+import {
+  CompositeFieldValueHolderMap,
+  CompositeFieldValueHolderReadonlyMap,
+} from '../../internal/CompositeFieldValueHolderMap';
 import { CacheStatus, CacheLoadResult } from '../../internal/ReadThroughEntityCache';
 
 export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
@@ -13,7 +21,9 @@ export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvi
   }
 }
 
-export class NoCacheStubCacheAdapter<TFields> implements IEntityCacheAdapter<TFields> {
+export class NoCacheStubCacheAdapter<TFields extends Record<string, any>>
+  implements IEntityCacheAdapter<TFields>
+{
   public async loadManyAsync<N extends keyof TFields>(
     _fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[],
@@ -36,9 +46,39 @@ export class NoCacheStubCacheAdapter<TFields> implements IEntityCacheAdapter<TFi
     _fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<void> {}
 
-  async invalidateManyAsync<N extends keyof TFields>(
+  public async invalidateManyAsync<N extends keyof TFields>(
     _fieldName: N,
     _fieldValues: readonly TFields[N][],
+  ): Promise<void> {}
+
+  public async loadManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
+    _compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
+  ): Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, CacheLoadResult<TFields>>> {
+    return compositeFieldValueHolders.reduce(
+      (acc: CompositeFieldValueHolderMap<TFields, N, CacheLoadResult<TFields>>, v) => {
+        acc.set(v, {
+          status: CacheStatus.MISS,
+        });
+        return acc;
+      },
+      new CompositeFieldValueHolderMap<TFields, N, CacheLoadResult<TFields>>(),
+    );
+  }
+
+  public async cacheManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
+    _compositeFieldHolder: CompositeFieldHolder<TFields>,
+    _objectMap: CompositeFieldValueHolderReadonlyMap<TFields, N, Readonly<TFields>>,
+  ): Promise<void> {}
+
+  public async cacheCompositeFieldDBMissesAsync<N extends EntityCompositeField<TFields>>(
+    _compositeFieldHolder: CompositeFieldHolder<TFields>,
+    _compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
+  ): Promise<void> {}
+
+  public async invalidateManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
+    _compositeFieldHolder: CompositeFieldHolder<TFields>,
+    _compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
   ): Promise<void> {}
 }
 
@@ -111,12 +151,84 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
     });
   }
 
+  public async loadManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
+  ): Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, CacheLoadResult<TFields>>> {
+    const results = new CompositeFieldValueHolderMap<TFields, N, CacheLoadResult<TFields>>();
+    compositeFieldValueHolders.forEach((compositeFieldValueHolder) => {
+      const cacheKey = this.createCompositeCacheKey(
+        compositeFieldHolder,
+        compositeFieldValueHolder,
+      );
+      if (!this.cache.has(cacheKey)) {
+        results.set(compositeFieldValueHolder, {
+          status: CacheStatus.MISS,
+        });
+      } else {
+        const objectForCompositeFieldValueHolder = this.cache.get(cacheKey);
+        invariant(
+          objectForCompositeFieldValueHolder !== undefined,
+          'should have set value for key',
+        );
+        results.set(compositeFieldValueHolder, {
+          status: CacheStatus.HIT,
+          item: objectForCompositeFieldValueHolder,
+        });
+      }
+    });
+    return results;
+  }
+
+  public async cacheManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    objectMap: CompositeFieldValueHolderReadonlyMap<TFields, N, Readonly<TFields>>,
+  ): Promise<void> {
+    objectMap.forEach((obj, compositeFieldValueHolders) => {
+      const cacheKey = this.createCompositeCacheKey(
+        compositeFieldHolder,
+        compositeFieldValueHolders,
+      );
+      this.cache.set(cacheKey, obj);
+    });
+  }
+
+  public async cacheCompositeFieldDBMissesAsync<N extends EntityCompositeField<TFields>>(
+    _compositeFieldHolder: CompositeFieldHolder<TFields>,
+    _compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
+  ): Promise<void> {}
+
+  public async invalidateManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
+  ): Promise<void> {
+    compositeFieldValueHolders.forEach((compositeFieldValueHolder) => {
+      const cacheKey = this.createCompositeCacheKey(
+        compositeFieldHolder,
+        compositeFieldValueHolder,
+      );
+      this.cache.delete(cacheKey);
+    });
+  }
+
   private createCacheKey<N extends keyof TFields>(fieldName: N, fieldValue: TFields[N]): string {
     return [
       this.entityConfiguration.tableName,
       `v${this.entityConfiguration.cacheKeyVersion}`,
       fieldName as string,
       String(fieldValue),
+    ].join(':');
+  }
+
+  private createCompositeCacheKey<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolders: CompositeFieldValueHolder<TFields, N>,
+  ): string {
+    return [
+      this.entityConfiguration.tableName,
+      `v${this.entityConfiguration.cacheKeyVersion}`,
+      compositeFieldHolder.serialize(),
+      compositeFieldValueHolders.serialize(),
     ].join(':');
   }
 }

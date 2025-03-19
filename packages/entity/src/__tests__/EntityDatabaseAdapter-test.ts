@@ -10,6 +10,7 @@ import { TestFields, testEntityConfiguration } from '../testfixtures/TestEntity'
 
 class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
   private readonly fetchResults: object[];
+  private readonly fetchCompositeFieldResults: object[];
   private readonly insertResults: object[];
   private readonly updateResults: object[];
   private readonly fetchEqualityConditionResults: object[];
@@ -18,6 +19,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
 
   constructor({
     fetchResults = [],
+    fetchCompositeFieldResults = [],
     insertResults = [],
     updateResults = [],
     fetchEqualityConditionResults = [],
@@ -25,6 +27,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     deleteCount = 0,
   }: {
     fetchResults?: object[];
+    fetchCompositeFieldResults?: object[];
     insertResults?: object[];
     updateResults?: object[];
     fetchEqualityConditionResults?: object[];
@@ -33,6 +36,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
   }) {
     super(testEntityConfiguration);
     this.fetchResults = fetchResults;
+    this.fetchCompositeFieldResults = fetchCompositeFieldResults;
     this.insertResults = insertResults;
     this.updateResults = updateResults;
     this.fetchEqualityConditionResults = fetchEqualityConditionResults;
@@ -51,6 +55,15 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     _tableValues: readonly any[],
   ): Promise<object[]> {
     return this.fetchResults;
+  }
+
+  protected async fetchManyWhereCompositeFieldInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableFields: string[],
+    _tableFieldsValues: readonly any[][],
+  ): Promise<object[]> {
+    return this.fetchCompositeFieldResults;
   }
 
   protected async fetchManyByRawWhereClauseInternalAsync(

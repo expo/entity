@@ -2,12 +2,17 @@ import { Result, asyncResult, result } from '@expo/results';
 import nullthrows from 'nullthrows';
 
 import { IEntityClass } from './Entity';
-import EntityConfiguration from './EntityConfiguration';
+import EntityConfiguration, {
+  EntityCompositeField,
+  EntityCompositeFieldValue,
+} from './EntityConfiguration';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import { pick } from './entityUtils';
+import { CompositeFieldValueHolderReadonlyMap } from './internal/CompositeFieldValueHolderMap';
+import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap';
 import EntityDataManager from './internal/EntityDataManager';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
@@ -104,6 +109,29 @@ export default class EntityLoaderUtils<
     return await mapMapAsync(map, async (fieldObjects) => {
       return await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
     });
+  }
+
+  /**
+   * Construct and authorize entities from fields serializable key map, returning error results for entities that fail
+   * to construct or fail to authorize.
+   *
+   * @param map - serializable key map from an arbitrary key type to an array of entity field objects
+   */
+  public async constructAndAuthorizeEntitiesFromCompositeFieldValueHolderMapAsync<
+    N extends EntityCompositeField<Pick<TFields, TSelectedFields>>,
+  >(
+    map: CompositeFieldValueHolderReadonlyMap<TFields, N, readonly Readonly<TFields>[]>,
+  ): Promise<ReadonlyMap<EntityCompositeFieldValue<TFields, N>, readonly Result<TEntity>[]>> {
+    return new CompositeFieldValueMap(
+      await Promise.all(
+        Array.from(map.entries()).map(async ([compositeFieldValueHolder, fieldObjects]) => {
+          return [
+            compositeFieldValueHolder,
+            await this.constructAndAuthorizeEntitiesArrayAsync(fieldObjects),
+          ];
+        }),
+      ),
+    );
   }
 
   /**

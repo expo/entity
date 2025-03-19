@@ -161,6 +161,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const dataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),

@@ -46,6 +46,23 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
     }, []);
   }
 
+  protected override async fetchManyWhereCompositeFieldInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    tableFields: string[],
+    tableFieldsValues: readonly any[][],
+  ): Promise<object[]> {
+    return tableFieldsValues.reduce((acc, fieldValues) => {
+      return acc.concat(
+        dbObjects.filter((obj) => {
+          return tableFields.every((field, index) => {
+            return obj[field] === fieldValues[index];
+          });
+        }),
+      );
+    }, []);
+  }
+
   private static compareByOrderBys(
     orderBys: {
       columnName: string;

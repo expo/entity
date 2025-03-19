@@ -55,6 +55,22 @@ export default class PostgresEntityDatabaseAdapter<
     );
   }
 
+  protected override async fetchManyWhereCompositeFieldInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    tableFields: string[],
+    tableFieldsValues: readonly any[][],
+  ): Promise<object[]> {
+    const rawPlaceholders = tableFields.map(() => '??').join(', ');
+    return await wrapNativePostgresCallAsync(() =>
+      // queryInterface.select().from(tableName).whereIn(tableFields, tableFieldsValues),
+      queryInterface
+        .select()
+        .from(tableName)
+        .whereRaw(`(${rawPlaceholders}) = ANY(?)`, [...tableFields, tableFieldsValues as any[]]),
+    );
+  }
+
   private applyQueryModifiersToQueryOrderByRaw(
     query: Knex.QueryBuilder,
     querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,

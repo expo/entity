@@ -29,6 +29,7 @@ export default class EntityTableDataCoordinator<TFields extends Record<string, a
     this.databaseAdapter = databaseAdapterProvider.getDatabaseAdapter(entityConfiguration);
     this.cacheAdapter = cacheAdapterProvider.getCacheAdapter(entityConfiguration);
     this.dataManager = new EntityDataManager(
+      entityConfiguration,
       this.databaseAdapter,
       new ReadThroughEntityCache(entityConfiguration, this.cacheAdapter),
       queryContextProvider,

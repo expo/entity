@@ -3,6 +3,9 @@ import {
   CacheStatus,
   EntityConfiguration,
   IEntityGenericCacher,
+  EntityCompositeField,
+  CompositeFieldHolder,
+  CompositeFieldValueHolder,
 } from '@expo/entity';
 import invariant from 'invariant';
 import LRUCache from 'lru-cache';
@@ -96,6 +99,34 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
       `${this.entityConfiguration.cacheKeyVersion}`,
       columnName,
       String(fieldValue),
+    ];
+
+    const delimiter = ':';
+    const escapedParts = parts.map((part) =>
+      part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
+    );
+    return escapedParts.join(delimiter);
+  }
+
+  public makeCompositeFieldCacheKey<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolder: CompositeFieldValueHolder<TFields, N>,
+  ): string {
+    const compositeField = compositeFieldHolder.compositeField;
+    const columnNames = compositeField.map((fieldName) => {
+      const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
+      invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
+      return columnName;
+    });
+    const compositeFieldValues = compositeField.map(
+      (fieldName) => compositeFieldValueHolder.compositeFieldValue[fieldName],
+    );
+    const parts = [
+      'composite',
+      this.entityConfiguration.tableName,
+      `${this.entityConfiguration.cacheKeyVersion}`,
+      ...columnNames,
+      ...compositeFieldValues.map((value) => String(value)),
     ];
 
     const delimiter = ':';

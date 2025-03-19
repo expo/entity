@@ -5,6 +5,9 @@ import {
   transformCacheObjectToFields,
   transformFieldsToCacheObject,
   IEntityGenericCacher,
+  EntityCompositeField,
+  CompositeFieldHolder,
+  CompositeFieldValueHolder,
 } from '@expo/entity';
 import invariant from 'invariant';
 
@@ -159,6 +162,29 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
       `v2.${this.entityConfiguration.cacheKeyVersion}`,
       columnName,
       String(fieldValue),
+    );
+  }
+
+  makeCompositeFieldCacheKey<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolder: CompositeFieldValueHolder<TFields, N>,
+  ): string {
+    const compositeField = compositeFieldHolder.compositeField;
+    const columnNames = compositeField.map((fieldName) => {
+      const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
+      invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
+      return columnName;
+    });
+    const compositeFieldValues = compositeField.map(
+      (fieldName) => compositeFieldValueHolder.compositeFieldValue[fieldName],
+    );
+    return this.context.makeKeyFn(
+      this.context.cacheKeyPrefix,
+      'composite',
+      this.entityConfiguration.tableName,
+      `v2.${this.entityConfiguration.cacheKeyVersion}`,
+      ...columnNames,
+      ...compositeFieldValues.map((value) => String(value)),
     );
   }
 }

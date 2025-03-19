@@ -1,4 +1,5 @@
 import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
+import { EntityCompositeField, EntityCompositeFieldValue } from './EntityConfiguration';
 import {
   FieldEqualityCondition,
   QuerySelectionModifiers,
@@ -7,6 +8,8 @@ import {
 import EntityPrivacyPolicy from './EntityPrivacyPolicy';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
+import { CompositeFieldValueHolder } from './internal/CompositeFieldHolder';
+import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap';
 import { mapMap } from './utils/collections/maps';
 
 /**
@@ -60,6 +63,35 @@ export default class EnforcingEntityLoader<
   }
 
   /**
+   * Load many entities where compositeField is one of compositeFieldValues.
+   * @param compositeField - composite field being queried
+   * @param compositeFieldValues - compositeField values being queried
+   * @returns map from compositeFieldValue to entities that match the query for that compositeFieldValue
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
+   */
+  async loadManyByCompositeFieldEqualingManyAsync<
+    N extends EntityCompositeField<Pick<TFields, TSelectedFields>>,
+  >(
+    compositeField: N,
+    compositeFieldValues: readonly EntityCompositeFieldValue<Pick<TFields, TSelectedFields>, N>[],
+  ): Promise<ReadonlyMap<EntityCompositeFieldValue<TFields, N>, readonly TEntity[]>> {
+    const compositeFieldValuesToResults =
+      await this.entityLoader.loadManyByCompositeFieldEqualingManyAsync(
+        compositeField,
+        compositeFieldValues,
+      );
+
+    return new CompositeFieldValueMap(
+      Array.from(compositeFieldValuesToResults.entries()).map(([compositeFieldValue, results]) => {
+        return [
+          new CompositeFieldValueHolder(compositeFieldValue),
+          results.map((result) => result.enforceValue()),
+        ];
+      }),
+    );
+  }
+
+  /**
    * Load many entities where fieldName equals fieldValue.
    * @param fieldName - entity field being queried
    * @param fieldValue - fieldName field value being queried
@@ -73,6 +105,26 @@ export default class EnforcingEntityLoader<
     const entityResults = await this.entityLoader.loadManyByFieldEqualingAsync(
       fieldName,
       fieldValue,
+    );
+    return entityResults.map((result) => result.enforceValue());
+  }
+
+  /**
+   * Load many entities where compositeField equals compositeFieldValue.
+   * @param compositeField - composite field being queried
+   * @param compositeFieldValue - compositeField value being queried
+   * @returns array of entities that match the query for compositeFieldValue
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
+   */
+  async loadManyByCompositeFieldEqualingAsync<
+    N extends EntityCompositeField<Pick<TFields, TSelectedFields>>,
+  >(
+    compositeField: N,
+    compositeFieldValue: EntityCompositeFieldValue<Pick<TFields, TSelectedFields>, N>,
+  ): Promise<readonly TEntity[]> {
+    const entityResults = await this.entityLoader.loadManyByCompositeFieldEqualingAsync(
+      compositeField,
+      compositeFieldValue,
     );
     return entityResults.map((result) => result.enforceValue());
   }
@@ -92,6 +144,27 @@ export default class EnforcingEntityLoader<
     const entityResult = await this.entityLoader.loadByFieldEqualingAsync(
       uniqueFieldName,
       fieldValue,
+    );
+    return entityResult ? entityResult.enforceValue() : null;
+  }
+
+  /**
+   * Load an entity where compositeField equals compositeFieldValue, or null if no entity exists.
+   * @param compositeField - composite field being queried
+   * @param compositeFieldValue - compositeField value being queried
+   * @returns entity where compositeField equals compositeFieldValue, or null if no entity matches the condition.
+   * @throws when multiple entities match the condition
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view the returned entity
+   */
+  async loadByCompositeFieldEqualingAsync<
+    N extends EntityCompositeField<Pick<TFields, TSelectedFields>>,
+  >(
+    compositeField: N,
+    compositeFieldValue: EntityCompositeFieldValue<Pick<TFields, TSelectedFields>, N>,
+  ): Promise<TEntity | null> {
+    const entityResult = await this.entityLoader.loadByCompositeFieldEqualingAsync(
+      compositeField,
+      compositeFieldValue,
     );
     return entityResult ? entityResult.enforceValue() : null;
   }

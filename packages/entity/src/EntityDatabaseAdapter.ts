@@ -1,5 +1,12 @@
-import EntityConfiguration from './EntityConfiguration';
+import invariant from 'invariant';
+
+import EntityConfiguration, { EntityCompositeField } from './EntityConfiguration';
 import { EntityQueryContext } from './EntityQueryContext';
+import { CompositeFieldValueHolder, CompositeFieldHolder } from './internal/CompositeFieldHolder';
+import {
+  CompositeFieldValueHolderMap,
+  CompositeFieldValueHolderReadonlyMap,
+} from './internal/CompositeFieldValueHolderMap';
 import {
   getDatabaseFieldForEntityField,
   transformDatabaseObjectToFields,
@@ -151,14 +158,19 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
       transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
     );
 
-    const objectMap = new Map();
+    const objectMap = new Map<NonNullable<TFields[K]>, Readonly<TFields>[]>();
     for (const fieldValue of fieldValues) {
       objectMap.set(fieldValue, []);
     }
 
     objects.forEach((object) => {
       const objectFieldValue = object[fieldName];
-      objectMap.get(objectFieldValue).push(object);
+      const objectList = objectMap.get(objectFieldValue);
+      invariant(
+        objectList !== undefined,
+        `Unexpected object field value during database result transformation: ${objectFieldValue}. This should never happen.`,
+      );
+      objectList.push(object);
     });
 
     return objectMap;
@@ -169,6 +181,67 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
     tableName: string,
     tableField: string,
     tableValues: readonly any[],
+  ): Promise<object[]>;
+
+  /**
+   * Fetch many objects where composite field is one of composite field values.
+   *
+   * @param queryContext - query context with which to perform the fetch
+   * @param fieldName - object field being queried
+   * @param fieldValues - fieldName field values being queried
+   * @returns map from fieldValue to objects that match the query for that fieldValue
+   */
+  async fetchManyWhereCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
+    queryContext: EntityQueryContext,
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
+  ): Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, readonly Readonly<TFields>[]>> {
+    const compositeField = compositeFieldHolder.compositeField;
+    const compositeFieldColumns = compositeField.map((fieldName) =>
+      getDatabaseFieldForEntityField(this.entityConfiguration, fieldName),
+    );
+    const compositeFieldValueValues = compositeFieldValueHolders.map((compositeFieldValueHolder) =>
+      compositeField.map((fieldName) => compositeFieldValueHolder.compositeFieldValue[fieldName]),
+    );
+    const results = await this.fetchManyWhereCompositeFieldInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      compositeFieldColumns,
+      compositeFieldValueValues,
+    );
+    const objects = results.map((result) =>
+      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
+    );
+
+    const underlyingMap = new CompositeFieldValueHolderMap<TFields, N, Readonly<TFields>[]>();
+    for (const compositeFieldValueHolder of compositeFieldValueHolders) {
+      underlyingMap.set(compositeFieldValueHolder, []);
+    }
+
+    objects.forEach((object) => {
+      const compositeFieldValueHolderForObject =
+        compositeFieldHolder.extractCompositeFieldValueHolderFromObjectFields(object);
+      invariant(
+        compositeFieldValueHolderForObject !== null,
+        `One or more fields from the object is null for composite field: ${JSON.stringify(object)}. This should never happen.`,
+      );
+
+      const objectList = underlyingMap.get(compositeFieldValueHolderForObject);
+      invariant(
+        objectList !== undefined,
+        `Unexpected object field value during database result transformation: ${JSON.stringify(object)}. This should never happen.`,
+      );
+      objectList.push(object);
+    });
+
+    return new CompositeFieldValueHolderMap(underlyingMap);
+  }
+
+  protected abstract fetchManyWhereCompositeFieldInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    compositeFieldColumns: string[],
+    compositeFieldValueValues: readonly any[][],
   ): Promise<object[]>;
 
   /**

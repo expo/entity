@@ -338,6 +338,7 @@ const createEntityMutatorFactory = (
   );
 
   const dataManager = new EntityDataManager(
+    testEntityConfiguration,
     databaseAdapter,
     entityCache,
     queryContextProvider,

@@ -68,6 +68,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const dataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -141,6 +142,121 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     );
   });
 
+  it('loads entities by composite fields', async () => {
+    const dateToInsert = new Date();
+    const viewerContext = instance(mock(ViewerContext));
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
+    const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+    const queryContext = new StubQueryContextProvider().getQueryContext();
+
+    const id1 = uuidv4();
+    const id2 = uuidv4();
+    const id3 = uuidv4();
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      testEntityConfiguration,
+      StubDatabaseAdapter.convertFieldObjectsToDataStore(
+        testEntityConfiguration,
+        new Map([
+          [
+            testEntityConfiguration.tableName,
+            [
+              {
+                customIdField: id1,
+                testIndexedField: 'h1',
+                intField: 5,
+                stringField: 'huh',
+                dateField: dateToInsert,
+                nullableField: null,
+              },
+              {
+                customIdField: id2,
+                testIndexedField: 'h2',
+                intField: 5,
+                stringField: 'huh',
+                dateField: dateToInsert,
+                nullableField: null,
+              },
+              {
+                customIdField: id3,
+                testIndexedField: 'h2',
+                intField: 3,
+                stringField: 'huh',
+                dateField: dateToInsert,
+                nullableField: null,
+              },
+            ],
+          ],
+        ]),
+      ),
+    );
+    const privacyPolicy = new TestEntityPrivacyPolicy();
+    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const dataManager = new EntityDataManager(
+      testEntityConfiguration,
+      databaseAdapter,
+      entityCache,
+      new StubQueryContextProvider(),
+      instance(mock<IEntityMetricsAdapter>()),
+      TestEntity.name,
+    );
+    const utils = new EntityLoaderUtils(
+      viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+      testEntityConfiguration,
+      TestEntity,
+      /* entitySelectedFields */ undefined,
+      privacyPolicy,
+      dataManager,
+      metricsAdapter,
+    );
+    const entityLoader = new AuthorizationResultBasedEntityLoader(
+      queryContext,
+      testEntityConfiguration,
+      TestEntity,
+      dataManager,
+      metricsAdapter,
+      utils,
+    );
+
+    const entities = await enforceResultsAsync(
+      entityLoader.loadManyByCompositeFieldEqualingAsync(['stringField', 'intField'], {
+        stringField: 'huh',
+        intField: 5,
+      }),
+    );
+    expect(entities.map((m) => m.getID())).toEqual([id1, id2]);
+
+    const entityResultDuplicateValues =
+      await entityLoader.loadManyByCompositeFieldEqualingManyAsync(
+        ['stringField', 'intField'],
+        [
+          { stringField: 'huh', intField: 5 },
+          { stringField: 'huh', intField: 5 },
+        ],
+      );
+    expect(entityResultDuplicateValues.size).toBe(1);
+    expect(
+      entityResultDuplicateValues
+        .get({ stringField: 'huh', intField: 5 })
+        ?.map((m) => m.enforceValue().getID()),
+    ).toEqual([id1, id2]);
+
+    await expect(
+      entityLoader.loadByCompositeFieldEqualingAsync(['stringField', 'intField'], {
+        stringField: 'huh',
+        intField: 5,
+      }),
+    ).rejects.toThrowError(
+      'loadByCompositeFieldEqualing: Multiple entities of type TestEntity found for composite field stringField,intField={"stringField":"huh","intField":5}',
+    );
+  });
+
   it('loads entities with loadManyByFieldEqualityConjunction', async () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);
@@ -196,6 +312,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const dataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -306,6 +423,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const dataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -463,6 +581,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const dataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),

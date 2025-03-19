@@ -60,7 +60,28 @@ export default class StubDatabaseAdapter<
           }),
         );
       },
-      [] as { [key: string]: any },
+      [] as { [key: string]: any }[],
+    );
+  }
+
+  protected async fetchManyWhereCompositeFieldInternalAsync(
+    _queryInterface: any,
+    tableName: string,
+    tableFields: string[],
+    tableFieldsValues: readonly any[][],
+  ): Promise<object[]> {
+    const objectCollection = this.getObjectCollectionForTable(tableName);
+    return tableFieldsValues.reduce(
+      (acc, fieldValues) => {
+        return acc.concat(
+          objectCollection.filter((obj) => {
+            return tableFields.every((field, index) => {
+              return obj[field] === fieldValues[index];
+            });
+          }),
+        );
+      },
+      [] as { [key: string]: any }[],
     );
   }
 

@@ -14,6 +14,7 @@ import {
 import EntityDatabaseAdapter from '../../EntityDatabaseAdapter';
 import IEntityMetricsAdapter, {
   EntityMetricsLoadType,
+  IncrementLoadCountEventLoadMethodType,
   IncrementLoadCountEventType,
 } from '../../metrics/IEntityMetricsAdapter';
 import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
@@ -72,6 +73,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -120,6 +122,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -168,6 +171,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -177,6 +181,7 @@ describe(EntityDataManager, () => {
     const queryContext = new StubQueryContextProvider().getQueryContext();
     // use second data manager to ensure that cache is hit instead of data loader
     const entityDataManager2 = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -212,6 +217,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -248,6 +254,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -292,6 +299,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -331,6 +339,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -370,6 +379,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -409,6 +419,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -455,6 +466,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -482,6 +494,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),
@@ -525,6 +538,7 @@ describe(EntityDataManager, () => {
       metricsAdapterMock.incrementDataManagerLoadCount(
         deepEqual({
           type: IncrementLoadCountEventType.DATALOADER,
+          loadType: IncrementLoadCountEventLoadMethodType.STANDARD,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
         }),
@@ -534,6 +548,7 @@ describe(EntityDataManager, () => {
       metricsAdapterMock.incrementDataManagerLoadCount(
         deepEqual({
           type: IncrementLoadCountEventType.CACHE,
+          loadType: IncrementLoadCountEventLoadMethodType.STANDARD,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
         }),
@@ -543,6 +558,7 @@ describe(EntityDataManager, () => {
       metricsAdapterMock.incrementDataManagerLoadCount(
         deepEqual({
           type: IncrementLoadCountEventType.DATABASE,
+          loadType: IncrementLoadCountEventLoadMethodType.STANDARD,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
         }),
@@ -585,6 +601,7 @@ describe(EntityDataManager, () => {
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
     const entityDataManager = new EntityDataManager(
+      testEntityConfiguration,
       databaseAdapter,
       entityCache,
       new StubQueryContextProvider(),

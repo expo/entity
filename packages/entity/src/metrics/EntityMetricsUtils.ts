@@ -31,8 +31,8 @@ export const timeAndLogLoadMapEventAsync =
     loadType: EntityMetricsLoadType,
     entityClassName: string,
   ) =>
-  async <TFields, N extends keyof TFields>(
-    promise: Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>>,
+  async <TFields, K, TMap extends ReadonlyMap<K, readonly Readonly<TFields>[]>>(
+    promise: Promise<TMap>,
   ) => {
     const startTime = Date.now();
     const result = await promise;

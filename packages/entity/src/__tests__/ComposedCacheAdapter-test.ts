@@ -1,9 +1,14 @@
 import invariant from 'invariant';
 
 import ComposedEntityCacheAdapter from '../ComposedEntityCacheAdapter';
-import EntityConfiguration from '../EntityConfiguration';
+import EntityConfiguration, { EntityCompositeField } from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import IEntityCacheAdapter from '../IEntityCacheAdapter';
+import { CompositeFieldValueHolder, CompositeFieldHolder } from '../internal/CompositeFieldHolder';
+import {
+  CompositeFieldValueHolderMap,
+  CompositeFieldValueHolderReadonlyMap,
+} from '../internal/CompositeFieldValueHolderMap';
 import { CacheLoadResult, CacheStatus } from '../internal/ReadThroughEntityCache';
 
 type BlahFields = {
@@ -90,6 +95,68 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
     }
   }
 
+  public async loadManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
+  ): Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, CacheLoadResult<TFields>>> {
+    const localMemoryCacheKeyToCompositeFieldValueMapping = new Map(
+      compositeFieldValueHolders.map((compositeFieldValueHolder) => [
+        this.makeCompositeCacheKey(compositeFieldHolder, compositeFieldValueHolder),
+        compositeFieldValueHolder,
+      ]),
+    );
+    const cacheResults = new CompositeFieldValueHolderMap<TFields, N, CacheLoadResult<TFields>>();
+    for (const [cacheKey, compositeFieldValue] of localMemoryCacheKeyToCompositeFieldValueMapping) {
+      const cacheResult = this.cache.get(cacheKey);
+      if (cacheResult === DOES_NOT_EXIST_LOCAL_MEMORY_CACHE) {
+        cacheResults.set(compositeFieldValue, {
+          status: CacheStatus.NEGATIVE,
+        });
+      } else if (cacheResult) {
+        cacheResults.set(compositeFieldValue, {
+          status: CacheStatus.HIT,
+          item: cacheResult,
+        });
+      } else {
+        cacheResults.set(compositeFieldValue, {
+          status: CacheStatus.MISS,
+        });
+      }
+    }
+
+    return cacheResults;
+  }
+
+  public async cacheManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    objectMap: CompositeFieldValueHolderReadonlyMap<TFields, N, Readonly<TFields>>,
+  ): Promise<void> {
+    objectMap.forEach((obj, compositeFieldValueHolders) => {
+      const cacheKey = this.makeCompositeCacheKey(compositeFieldHolder, compositeFieldValueHolders);
+      this.cache.set(cacheKey, obj);
+    });
+  }
+
+  public async cacheCompositeFieldDBMissesAsync<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
+  ): Promise<void> {
+    for (const compositeFieldValueHolder of compositeFieldValueHolders) {
+      const cacheKey = this.makeCompositeCacheKey(compositeFieldHolder, compositeFieldValueHolder);
+      this.cache.set(cacheKey, DOES_NOT_EXIST_LOCAL_MEMORY_CACHE);
+    }
+  }
+
+  public async invalidateManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
+  ): Promise<void> {
+    for (const compositeFieldValueHolder of compositeFieldValueHolders) {
+      const cacheKey = this.makeCompositeCacheKey(compositeFieldHolder, compositeFieldValueHolder);
+      this.cache.delete(cacheKey);
+    }
+  }
+
   private makeCacheKey<N extends keyof TFields>(
     fieldName: N,
     fieldValue: NonNullable<TFields[N]>,
@@ -101,6 +168,34 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
       `${this.entityConfiguration.cacheKeyVersion}`,
       columnName,
       String(fieldValue),
+    ];
+    const delimiter = ':';
+    const escapedParts = parts.map((part) =>
+      part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
+    );
+    return escapedParts.join(delimiter);
+  }
+
+  private makeCompositeCacheKey<N extends EntityCompositeField<TFields>>(
+    compositeFieldHolder: CompositeFieldHolder<TFields>,
+    compositeFieldValueHolder: CompositeFieldValueHolder<TFields, N>,
+  ): string {
+    const compositeField = compositeFieldHolder.compositeField;
+    const columnNames = compositeField.map((fieldName) => {
+      const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
+      invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
+      return columnName;
+    });
+    const compositeFieldValues = compositeField.map(
+      (fieldName) => compositeFieldValueHolder.compositeFieldValue[fieldName],
+    );
+
+    const parts = [
+      'composite',
+      this.entityConfiguration.tableName,
+      `${this.entityConfiguration.cacheKeyVersion}`,
+      ...columnNames,
+      ...compositeFieldValues.map((value) => String(value)),
     ];
     const delimiter = ':';
     const escapedParts = parts.map((part) =>

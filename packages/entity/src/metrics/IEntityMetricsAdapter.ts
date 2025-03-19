@@ -7,6 +7,7 @@ export enum EntityMetricsLoadType {
   LOAD_MANY,
   LOAD_MANY_EQUALITY_CONJUNCTION,
   LOAD_MANY_RAW,
+  LOAD_MANY_COMPOSITE_KEY,
 }
 
 /**
@@ -75,6 +76,18 @@ export enum IncrementLoadCountEventType {
   DATABASE,
 }
 
+export enum IncrementLoadCountEventLoadMethodType {
+  /**
+   * Load method type for field loads.
+   */
+  STANDARD,
+
+  /**
+   * Load method type for composite field loads.
+   */
+  COMPOSITE,
+}
+
 /**
  * Event used to record dataloader, cache, and database load counts in EntityDataManager.
  */
@@ -83,6 +96,11 @@ export interface IncrementLoadCountEvent {
    * Type of this event.
    */
   type: IncrementLoadCountEventType;
+
+  /**
+   * Load method type for this event.
+   */
+  loadType: IncrementLoadCountEventLoadMethodType;
 
   /**
    * Number of field values being loaded for this call.
