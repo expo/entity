@@ -11,6 +11,7 @@ import { enforceResultsAsync } from '../entityUtils';
 import EntityNotFoundError from '../errors/EntityNotFoundError';
 import EntityDataManager from '../internal/EntityDataManager';
 import ReadThroughEntityCache from '../internal/ReadThroughEntityCache';
+import { SingleFieldValueHolder, SingleFieldValueHolderMap } from '../internal/SingleFieldHolder';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
 import TestEntity, {
   TestFields,
@@ -750,9 +751,22 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const dataManagerMock = mock<EntityDataManager<TestFields>>();
 
     const id1 = uuidv4();
-    when(
-      dataManagerMock.loadManyByFieldEqualingAsync(anything(), anything(), anything()),
-    ).thenResolve(new Map().set(id1, [{ customIdField: id1 }]));
+    when(dataManagerMock.loadManyEqualingAsync(anything(), anything(), anything())).thenResolve(
+      new SingleFieldValueHolderMap<
+        TestFields,
+        'customIdField',
+        readonly Readonly<TestFields>[]
+      >().set(new SingleFieldValueHolder(id1), [
+        {
+          customIdField: id1,
+          testIndexedField: '',
+          stringField: '',
+          intField: 0,
+          dateField: new Date(),
+          nullableField: null,
+        },
+      ]),
+    );
 
     const rejectionError = new Error();
 
@@ -808,9 +822,9 @@ describe(AuthorizationResultBasedEntityLoader, () => {
 
     const error = new Error();
 
-    when(
-      dataManagerMock.loadManyByFieldEqualingAsync(anything(), anything(), anything()),
-    ).thenReject(error);
+    when(dataManagerMock.loadManyEqualingAsync(anything(), anything(), anything())).thenReject(
+      error,
+    );
 
     const dataManagerInstance = instance(dataManagerMock);
 

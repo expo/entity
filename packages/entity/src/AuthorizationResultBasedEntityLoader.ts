@@ -22,8 +22,9 @@ import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError'
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import { CompositeFieldValueHolder, CompositeFieldHolder } from './internal/CompositeFieldHolder';
 import EntityDataManager from './internal/EntityDataManager';
+import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
-import { mapMap } from './utils/collections/maps';
+import { mapKeys, mapMap } from './utils/collections/maps';
 import { areSetsEqual } from './utils/collections/sets';
 
 /**
@@ -78,14 +79,21 @@ export default class AuthorizationResultBasedEntityLoader<
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
-    this.validateFieldValues(fieldName, fieldValues);
-
-    const fieldValuesToFieldObjects = await this.dataManager.loadManyByFieldEqualingAsync(
-      this.queryContext,
+    const { loadKey, loadValues } = this.validateFieldAndValuesAndConvertToHolders(
       fieldName,
       fieldValues,
     );
 
+    const loadValuesToFieldObjects = await this.dataManager.loadManyEqualingAsync(
+      this.queryContext,
+      loadKey,
+      loadValues,
+    );
+
+    const fieldValuesToFieldObjects = mapKeys(
+      loadValuesToFieldObjects,
+      (loadValue) => loadValue.fieldValue,
+    );
     return await this.utils.constructAndAuthorizeEntitiesAsync(fieldValuesToFieldObjects);
   }
 
@@ -103,12 +111,11 @@ export default class AuthorizationResultBasedEntityLoader<
     const { compositeFieldHolder, compositeFieldValueHolders } =
       this.validateCompositeFieldAndValuesAndConvertToHolders(compositeField, compositeFieldValues);
 
-    const compositeFieldValuesToFieldObjects =
-      await this.dataManager.loadManyByCompositeFieldEqualingAsync(
-        this.queryContext,
-        compositeFieldHolder,
-        compositeFieldValueHolders,
-      );
+    const compositeFieldValuesToFieldObjects = await this.dataManager.loadManyEqualingAsync(
+      this.queryContext,
+      compositeFieldHolder,
+      compositeFieldValueHolders,
+    );
 
     return await this.utils.constructAndAuthorizeEntitiesFromCompositeFieldValueHolderMapAsync(
       compositeFieldValuesToFieldObjects,
@@ -277,7 +284,7 @@ export default class AuthorizationResultBasedEntityLoader<
       const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
         ? [fieldEqualityOperand.fieldValue]
         : fieldEqualityOperand.fieldValues;
-      this.validateFieldValues(fieldEqualityOperand.fieldName, fieldValues);
+      this.validateFieldAndValues(fieldEqualityOperand.fieldName, fieldValues);
     }
 
     const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
@@ -307,7 +314,7 @@ export default class AuthorizationResultBasedEntityLoader<
     return await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
 
-  private validateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
+  private validateFieldAndValues<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValues: readonly TFields[N][],
   ): void {
@@ -321,14 +328,31 @@ export default class AuthorizationResultBasedEntityLoader<
     }
   }
 
+  private validateFieldAndValuesAndConvertToHolders<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValues: readonly NonNullable<TFields[N]>[],
+  ): {
+    loadKey: SingleFieldHolder<TFields, N>;
+    loadValues: readonly SingleFieldValueHolder<TFields, N>[];
+  } {
+    this.validateFieldAndValues(fieldName, fieldValues);
+
+    return {
+      loadKey: new SingleFieldHolder<TFields, N>(fieldName),
+      loadValues: fieldValues.map(
+        (fieldValue) => new SingleFieldValueHolder<TFields, N>(fieldValue),
+      ),
+    };
+  }
+
   private validateCompositeFieldAndValuesAndConvertToHolders<
     N extends EntityCompositeField<Pick<TFields, TSelectedFields>>,
   >(
     compositeField: N,
-    compositeFieldValues: readonly EntityCompositeFieldValue<Pick<TFields, TSelectedFields>, N>[],
+    compositeFieldValues: readonly EntityCompositeFieldValue<TFields, N>[],
   ): {
     compositeFieldHolder: CompositeFieldHolder<TFields>;
-    compositeFieldValueHolders: CompositeFieldValueHolder<Pick<TFields, TSelectedFields>, N>[];
+    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[];
   } {
     // validate that the composite field input is defined in the entity configuration
     const compositeFieldHolder =
@@ -354,7 +378,7 @@ export default class AuthorizationResultBasedEntityLoader<
       );
       for (const field of compositeField) {
         const fieldValue = compositeFieldValueHolder.compositeFieldValue[field];
-        this.validateFieldValues(field, [fieldValue]);
+        this.validateFieldAndValues(field, [fieldValue]);
       }
     }
 

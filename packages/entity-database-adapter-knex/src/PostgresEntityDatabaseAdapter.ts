@@ -42,32 +42,18 @@ export default class PostgresEntityDatabaseAdapter<
   }
 
   protected async fetchManyWhereInternalAsync(
-    queryInterface: Knex,
-    tableName: string,
-    tableField: string,
-    tableValues: readonly any[],
-  ): Promise<object[]> {
-    return await wrapNativePostgresCallAsync(() =>
-      queryInterface
-        .select()
-        .from(tableName)
-        .whereRaw('?? = ANY(?)', [tableField, tableValues as any[]]),
-    );
-  }
-
-  protected override async fetchManyWhereCompositeFieldInternalAsync(
     queryInterface: any,
     tableName: string,
-    tableFields: string[],
-    tableFieldsValues: readonly any[][],
+    tableColumns: readonly string[],
+    tableValueValues: (readonly any[])[],
   ): Promise<object[]> {
-    const rawPlaceholders = tableFields.map(() => '??').join(', ');
+    const rawPlaceholders = tableColumns.map(() => '??').join(', ');
     return await wrapNativePostgresCallAsync(() =>
       // queryInterface.select().from(tableName).whereIn(tableFields, tableFieldsValues),
       queryInterface
         .select()
         .from(tableName)
-        .whereRaw(`(${rawPlaceholders}) = ANY(?)`, [...tableFields, tableFieldsValues as any[]]),
+        .whereRaw(`(${rawPlaceholders}) = ANY(?)`, [...tableColumns, tableValueValues]),
     );
   }
 

@@ -1,13 +1,8 @@
 import DataLoader from 'dataloader';
+import invariant from 'invariant';
 
-import {
-  CompositeFieldHolder,
-  SerializedCompositeFieldHolder,
-  CompositeFieldValueHolder,
-  SerializedCompositeFieldValueHolder,
-} from './CompositeFieldHolder';
 import ReadThroughEntityCache from './ReadThroughEntityCache';
-import EntityConfiguration, { EntityCompositeField } from '../EntityConfiguration';
+import EntityConfiguration from '../EntityConfiguration';
 import EntityDatabaseAdapter, {
   FieldEqualityCondition,
   QuerySelectionModifiers,
@@ -16,20 +11,17 @@ import EntityDatabaseAdapter, {
 import { EntityQueryContext } from '../EntityQueryContext';
 import EntityQueryContextProvider from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
-import {
-  CompositeFieldValueHolderMap,
-  CompositeFieldValueHolderReadonlyMap,
-} from './CompositeFieldValueHolderMap';
+import { IEntityLoadKey, IEntityLoadValue } from './EntityAdapterLoadInterfaces';
+import { SingleFieldHolder, SingleFieldValueHolder } from './SingleFieldHolder';
 import {
   timeAndLogLoadEventAsync,
   timeAndLogLoadMapEventAsync,
 } from '../metrics/EntityMetricsUtils';
 import IEntityMetricsAdapter, {
   EntityMetricsLoadType,
-  IncrementLoadCountEventLoadMethodType,
   IncrementLoadCountEventType,
 } from '../metrics/IEntityMetricsAdapter';
-import { computeIfAbsent, zipToMap } from '../utils/collections/maps';
+import { computeIfAbsent } from '../utils/collections/maps';
 
 /**
  * A data manager is responsible for orchestrating multiple sources of entity
@@ -38,14 +30,8 @@ import { computeIfAbsent, zipToMap } from '../utils/collections/maps';
  * It is also responsible for invalidating all sources of data when mutated using EntityMutator.
  */
 export default class EntityDataManager<TFields extends Record<string, any>> {
-  private readonly fieldDataLoaders: Map<
-    keyof TFields,
-    DataLoader<NonNullable<TFields[keyof TFields]>, readonly Readonly<TFields>[]>
-  > = new Map();
-  private readonly compositeFieldDataLoaders: Map<
-    SerializedCompositeFieldHolder,
-    DataLoader<string, readonly Readonly<TFields>[]>
-  > = new Map();
+  private readonly dataloaders: Map<string, DataLoader<unknown, readonly Readonly<TFields>[]>> =
+    new Map();
 
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
@@ -56,229 +42,125 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
     private readonly entityClassName: string,
   ) {}
 
-  private getFieldDataLoaderForFieldName<N extends keyof TFields>(
-    fieldName: N,
-  ): DataLoader<NonNullable<TFields[N]>, readonly Readonly<TFields>[]> {
-    return computeIfAbsent(this.fieldDataLoaders, fieldName, () => {
-      return new DataLoader(
-        async (
-          fieldValues: readonly NonNullable<TFields[N]>[],
-        ): Promise<readonly (readonly TFields[])[]> => {
-          const objectMap = await this.loadManyForDataLoaderByFieldEqualingAsync(
-            fieldName,
-            fieldValues,
-          );
-          return fieldValues.map((fv) => objectMap.get(fv) ?? []);
-        },
-      );
-    });
-  }
-
-  private getCompositeFieldDataLoaderForCompositeField(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-  ): DataLoader<SerializedCompositeFieldValueHolder, readonly Readonly<TFields>[]> {
-    return computeIfAbsent(this.compositeFieldDataLoaders, compositeFieldHolder.serialize(), () => {
-      return new DataLoader(
-        async (
-          serializedCompositeFieldValueHolders: readonly SerializedCompositeFieldValueHolder[],
-        ): Promise<readonly (readonly TFields[])[]> => {
-          const objectMap =
-            await this.loadManyForDataLoaderBySerializedCompositeFieldValueHoldersAsync(
-              compositeFieldHolder,
-              serializedCompositeFieldValueHolders,
+  private getDataLoaderForLoadKey<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey): DataLoader<unknown, readonly Readonly<TFields>[]> {
+    return computeIfAbsent(
+      this.dataloaders,
+      key.getDataManagerLoadMethodType() + key.getDataManagerDataLoaderKey(),
+      () => {
+        return new DataLoader(
+          async (
+            serializedLoadValues: readonly string[],
+          ): Promise<readonly (readonly TFields[])[]> => {
+            const values = serializedLoadValues.map((serializedLoadValue) =>
+              key.deserializeLoadValueForDataManagerDataLoader(serializedLoadValue),
             );
-          return serializedCompositeFieldValueHolders.map(
-            (compositeFieldValueHolderSerialized) =>
-              objectMap.get(
-                CompositeFieldValueHolder.deserialize(compositeFieldValueHolderSerialized),
-              ) ?? [],
-          );
-        },
+            const objectMap = await this.loadManyForDataLoaderAsync(key, values);
+            return values.map((value) => objectMap.get(value) ?? []);
+          },
+        );
+      },
+    );
+  }
+
+  private async loadManyForDataLoaderAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    values: readonly TLoadValue[],
+  ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
+    this.metricsAdapter.incrementDataManagerLoadCount({
+      type: IncrementLoadCountEventType.CACHE,
+      fieldValueCount: values.length,
+      entityClassName: this.entityClassName,
+      loadType: key.getDataManagerLoadMethodType(),
+    });
+
+    return await this.entityCache.readManyThroughAsync(key, values, async (fetcherValues) => {
+      this.metricsAdapter.incrementDataManagerLoadCount({
+        type: IncrementLoadCountEventType.DATABASE,
+        fieldValueCount: fetcherValues.length,
+        entityClassName: this.entityClassName,
+        loadType: key.getDataManagerLoadMethodType(),
+      });
+      return await this.databaseAdapter.fetchManyWhereAsync(
+        this.queryContextProvider.getQueryContext(),
+        key,
+        fetcherValues,
       );
     });
-  }
-
-  private async loadManyForDataLoaderByFieldEqualingAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
-    this.metricsAdapter.incrementDataManagerLoadCount({
-      type: IncrementLoadCountEventType.CACHE,
-      fieldValueCount: fieldValues.length,
-      entityClassName: this.entityClassName,
-      loadType: IncrementLoadCountEventLoadMethodType.STANDARD,
-    });
-    return await this.entityCache.readManyThroughAsync(
-      fieldName,
-      fieldValues,
-      async (fetcherValues) => {
-        this.metricsAdapter.incrementDataManagerLoadCount({
-          type: IncrementLoadCountEventType.DATABASE,
-          fieldValueCount: fieldValues.length,
-          entityClassName: this.entityClassName,
-          loadType: IncrementLoadCountEventLoadMethodType.STANDARD,
-        });
-        return await this.databaseAdapter.fetchManyWhereAsync(
-          this.queryContextProvider.getQueryContext(),
-          fieldName,
-          fetcherValues,
-        );
-      },
-    );
-  }
-
-  private async loadManyForDataLoaderBySerializedCompositeFieldValueHoldersAsync<
-    N extends EntityCompositeField<TFields>,
-  >(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    serializedCompositeFieldValueHolders: readonly SerializedCompositeFieldValueHolder[],
-  ): Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, readonly Readonly<TFields>[]>> {
-    const compositeFieldValueHolders = serializedCompositeFieldValueHolders.map((v) =>
-      CompositeFieldValueHolder.deserialize(v),
-    ) as readonly CompositeFieldValueHolder<TFields, N>[];
-    this.metricsAdapter.incrementDataManagerLoadCount({
-      type: IncrementLoadCountEventType.CACHE,
-      fieldValueCount: compositeFieldValueHolders.length,
-      entityClassName: this.entityClassName,
-      loadType: IncrementLoadCountEventLoadMethodType.COMPOSITE,
-    });
-    return await this.entityCache.readManyCompositeFieldThroughAsync<N>(
-      compositeFieldHolder,
-      compositeFieldValueHolders,
-      async (fetcherCompositeFieldValueHolders) => {
-        this.metricsAdapter.incrementDataManagerLoadCount({
-          type: IncrementLoadCountEventType.DATABASE,
-          fieldValueCount: fetcherCompositeFieldValueHolders.length,
-          entityClassName: this.entityClassName,
-          loadType: IncrementLoadCountEventLoadMethodType.COMPOSITE,
-        });
-        return await this.databaseAdapter.fetchManyWhereCompositeFieldAsync(
-          this.queryContextProvider.getQueryContext(),
-          compositeFieldHolder,
-          fetcherCompositeFieldValueHolders,
-        );
-      },
-    );
   }
 
   /**
-   * Load many objects where fieldName is one of fieldValues.
+   * Load many objects through read-through dataloader (batcher) and cache (optional).
    *
    * @param queryContext - query context in which to perform the load
    * @param fieldName - object field being queried
    * @param fieldValues - fieldName field values being queried
    * @returns map from fieldValue to objects that match the query for that fieldValue
    */
-  async loadManyByFieldEqualingAsync<N extends keyof TFields>(
+  async loadManyEqualingAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
     queryContext: EntityQueryContext,
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
+    key: TLoadKey,
+    values: readonly TLoadValue[],
+  ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
     return await timeAndLogLoadMapEventAsync(
       this.metricsAdapter,
       EntityMetricsLoadType.LOAD_MANY,
       this.entityClassName,
-    )(this.loadManyByFieldEqualingInternalAsync(queryContext, fieldName, fieldValues));
+    )(this.loadManyEqualingInternalAsync(queryContext, key, values));
   }
 
-  private async loadManyByFieldEqualingInternalAsync<N extends keyof TFields>(
-    queryContext: EntityQueryContext,
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
-    const nullOrUndefinedValueIndex = fieldValues.findIndex(
-      (value) => value === null || value === undefined,
-    );
-    if (nullOrUndefinedValueIndex >= 0) {
-      throw new Error(
-        `Invalid load: ${this.entityClassName} (${String(fieldName)} = ${
-          fieldValues[nullOrUndefinedValueIndex]
-        })`,
-      );
-    }
-
-    // don't cache when in transaction, as rollbacks complicate things significantly
-    if (queryContext.isInTransaction()) {
-      return await this.databaseAdapter.fetchManyWhereAsync(queryContext, fieldName, fieldValues);
-    }
-
-    this.metricsAdapter.incrementDataManagerLoadCount({
-      type: IncrementLoadCountEventType.DATALOADER,
-      fieldValueCount: fieldValues.length,
-      entityClassName: this.entityClassName,
-      loadType: IncrementLoadCountEventLoadMethodType.STANDARD,
-    });
-    const dataLoader = this.getFieldDataLoaderForFieldName(fieldName);
-    const results = await dataLoader.loadMany(fieldValues);
-    const [values, errors] = partitionErrors(results);
-    if (errors.length > 0) {
-      const error = errors[0]!;
-      throw error;
-    }
-
-    return zipToMap(fieldValues, values);
-  }
-
-  async loadManyByCompositeFieldEqualingAsync<N extends EntityCompositeField<TFields>>(
-    queryContext: EntityQueryContext,
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-  ): Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, readonly Readonly<TFields>[]>> {
-    return await timeAndLogLoadMapEventAsync(
-      this.metricsAdapter,
-      EntityMetricsLoadType.LOAD_MANY_COMPOSITE_KEY,
-      this.entityClassName,
-    )(
-      this.loadManyByCompositeFieldEqualingInternalAsync(
-        queryContext,
-        compositeFieldHolder,
-        compositeFieldValueHolders,
-      ),
-    );
-  }
-
-  private async loadManyByCompositeFieldEqualingInternalAsync<
-    N extends EntityCompositeField<TFields>,
+  private async loadManyEqualingInternalAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
     queryContext: EntityQueryContext,
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-  ): Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, readonly Readonly<TFields>[]>> {
-    // const nullOrUndefinedValueIndex = fieldValues.findIndex(
-    //   (value) => value === null || value === undefined,
-    // );
-    // if (nullOrUndefinedValueIndex >= 0) {
-    //   throw new Error(
-    //     `Invalid load: ${this.entityClassName} (${String(fieldName)} = ${
-    //       fieldValues[nullOrUndefinedValueIndex]
-    //     })`,
-    //   );
-    // }
+    key: TLoadKey,
+    values: readonly TLoadValue[],
+  ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
+    key.validateRuntimeLoadValuesForDataManagerDataLoader(values, this.entityClassName);
 
     // don't cache when in transaction, as rollbacks complicate things significantly
     if (queryContext.isInTransaction()) {
-      return await this.databaseAdapter.fetchManyWhereCompositeFieldAsync(
-        queryContext,
-        compositeFieldHolder,
-        compositeFieldValueHolders,
-      );
+      return await this.databaseAdapter.fetchManyWhereAsync(queryContext, key, values);
     }
 
     this.metricsAdapter.incrementDataManagerLoadCount({
       type: IncrementLoadCountEventType.DATALOADER,
-      fieldValueCount: compositeFieldValueHolders.length,
+      fieldValueCount: values.length,
       entityClassName: this.entityClassName,
-      loadType: IncrementLoadCountEventLoadMethodType.COMPOSITE,
+      loadType: key.getDataManagerLoadMethodType(),
     });
-    const dataLoader = this.getCompositeFieldDataLoaderForCompositeField(compositeFieldHolder);
-    const results = await dataLoader.loadMany(compositeFieldValueHolders.map((v) => v.serialize()));
-    const [values, errors] = partitionErrors(results);
+    const dataLoader = this.getDataLoaderForLoadKey(key);
+    const results = await dataLoader.loadMany(
+      values.map((v) => key.serializeLoadValueForDataManagerDataLoader(v)),
+    );
+    const [successfulValues, errors] = partitionErrors(results);
     if (errors.length > 0) {
       const error = errors[0]!;
       throw error;
     }
 
-    return CompositeFieldValueHolderMap.fromKeysAndValueZip(compositeFieldValueHolders, values);
+    invariant(
+      values.length === successfulValues.length,
+      `length mismatch between values (${values.length}) and successful values (${successfulValues.length})`,
+    );
+    const mapToReturn = key.vendNewLoadValueMap<readonly Readonly<TFields>[]>();
+    for (let i = 0; i < successfulValues.length; i++) {
+      mapToReturn.set(values[i]!, successfulValues[i]!);
+    }
+    return mapToReturn;
   }
 
   /**
@@ -337,28 +219,15 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
     );
   }
 
-  private async invalidateManyByFieldEqualingAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<void> {
-    await this.entityCache.invalidateManyAsync(fieldName, fieldValues);
-    const dataLoader = this.getFieldDataLoaderForFieldName(fieldName);
-    fieldValues.forEach((fieldValue) => dataLoader.clear(fieldValue));
-  }
-
-  private async invalidateManyByCompositeFieldEqualingAsync<
-    N extends EntityCompositeField<TFields>,
-  >(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-  ): Promise<void> {
-    await this.entityCache.invalidateManyCompositeFieldAsync(
-      compositeFieldHolder,
-      compositeFieldValueHolders,
-    );
-    const dataLoader = this.getCompositeFieldDataLoaderForCompositeField(compositeFieldHolder);
-    compositeFieldValueHolders.forEach((compositeFieldValueHolder) =>
-      dataLoader.clear(compositeFieldValueHolder.serialize()),
+  private async invalidateManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
+    await this.entityCache.invalidateManyAsync(key, values);
+    const dataLoader = this.getDataLoaderForLoadKey(key);
+    values.forEach((value) =>
+      dataLoader.clear(key.serializeLoadValueForDataManagerDataLoader(value)),
     );
   }
 
@@ -374,7 +243,10 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
       ...keys.map(async (fieldName: keyof TFields) => {
         const value = objectFields[fieldName];
         if (value !== undefined && value !== null) {
-          await this.invalidateManyByFieldEqualingAsync(fieldName, [value]);
+          await this.invalidateManyAsync(
+            new SingleFieldHolder<TFields, typeof fieldName>(fieldName),
+            [new SingleFieldValueHolder(value)],
+          );
         }
       }),
       ...this.entityConfiguration.compositeFieldInfo
@@ -383,9 +255,7 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
           const compositeFieldValueHolder =
             compositeFieldHolder.extractCompositeFieldValueHolderFromObjectFields(objectFields);
           if (compositeFieldValueHolder) {
-            await this.invalidateManyByCompositeFieldEqualingAsync(compositeFieldHolder, [
-              compositeFieldValueHolder,
-            ]);
+            await this.invalidateManyAsync(compositeFieldHolder, [compositeFieldValueHolder]);
           }
         }),
     ]);

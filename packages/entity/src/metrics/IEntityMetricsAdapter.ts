@@ -2,6 +2,7 @@ import {
   EntityAuthorizationAction,
   EntityPrivacyPolicyEvaluationMode,
 } from '../EntityPrivacyPolicy';
+import { DataManagerLoadMethodType } from '../internal/EntityAdapterLoadInterfaces';
 
 export enum EntityMetricsLoadType {
   LOAD_MANY,
@@ -76,18 +77,6 @@ export enum IncrementLoadCountEventType {
   DATABASE,
 }
 
-export enum IncrementLoadCountEventLoadMethodType {
-  /**
-   * Load method type for field loads.
-   */
-  STANDARD,
-
-  /**
-   * Load method type for composite field loads.
-   */
-  COMPOSITE,
-}
-
 /**
  * Event used to record dataloader, cache, and database load counts in EntityDataManager.
  */
@@ -100,7 +89,7 @@ export interface IncrementLoadCountEvent {
   /**
    * Load method type for this event.
    */
-  loadType: IncrementLoadCountEventLoadMethodType;
+  loadType: DataManagerLoadMethodType;
 
   /**
    * Number of field values being loaded for this call.

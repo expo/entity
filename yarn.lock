@@ -1785,6 +1785,7 @@ __metadata:
     "@expo/results": "npm:^1.0.0"
     "@types/invariant": "npm:^2.2.37"
     "@types/jest": "npm:^29.5.12"
+    "@types/lodash": "npm:^4.17.16"
     "@types/node": "npm:^20.14.1"
     "@types/uuid": "npm:^8.3.0"
     ctix: "npm:^2.7.0"
@@ -1795,6 +1796,7 @@ __metadata:
     eslint-plugin-tsdoc: "npm:^0.3.0"
     invariant: "npm:^2.2.4"
     jest: "npm:^29.7.0"
+    lodash: "npm:^4.17.21"
     prettier: "npm:^3.3.3"
     prettier-plugin-organize-imports: "npm:^4.1.0"
     ts-jest: "npm:^29.2.5"
@@ -3526,6 +3528,13 @@ __metadata:
   dependencies:
     "@types/koa": "npm:*"
   checksum: 10c0/e5a924254b0416ec929b148d39505e3084cfedd5043003baaf76db6e3e9a172a3373e0093e4668375c0e59e81dc7686f4abb201160e8614d84ed40c68b9b5c56
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:^4.17.16":
+  version: 4.17.16
+  resolution: "@types/lodash@npm:4.17.16"
+  checksum: 10c0/cf017901b8ab1d7aabc86d5189d9288f4f99f19a75caf020c0e2c77b8d4cead4db0d0b842d009b029339f92399f49f34377dd7c2721053388f251778b4c23534
   languageName: node
   linkType: hard
 

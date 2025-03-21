@@ -1,5 +1,4 @@
-import { EntityCompositeField } from './EntityConfiguration';
-import { CompositeFieldValueHolder, CompositeFieldHolder } from './internal/CompositeFieldHolder';
+import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityAdapterLoadInterfaces';
 import { CacheLoadResult } from './internal/ReadThroughEntityCache';
 
 /**
@@ -43,15 +42,12 @@ export default interface IEntityGenericCacher<TFields extends Record<string, any
    * @param fieldName - name of the object field for this cache key
    * @param fieldValue - value of the obejct field for this cache key
    */
-  makeCacheKey<N extends keyof TFields>(fieldName: N, fieldValue: NonNullable<TFields[N]>): string;
-
-  /**
-   * Create a cache key for a composite field and composite field value of a object being cached or invalidated.
-   * @param compositeFieldHolder - composite field
-   * @param compositeFieldValueHolder - composite field value
-   */
-  makeCompositeFieldCacheKey<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolder: CompositeFieldValueHolder<TFields, N>,
+  makeCacheKey<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    value: TLoadValue,
   ): string;
 }

@@ -1,12 +1,8 @@
-export interface ISerializable<TSerialized extends string> {
+export interface ISerializable<TSerialized> {
   serialize(): TSerialized;
 }
 
-export abstract class SerializableKeyMap<
-    TSerialized extends string,
-    K extends ISerializable<TSerialized>,
-    V,
-  >
+export abstract class SerializableKeyMap<TSerialized, K extends ISerializable<TSerialized>, V>
   implements ReadonlyMap<K, V>, Map<K, V>
 {
   protected readonly underlyingMap: Map<TSerialized, V>;

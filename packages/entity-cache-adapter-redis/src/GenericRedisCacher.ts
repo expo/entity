@@ -5,11 +5,9 @@ import {
   transformCacheObjectToFields,
   transformFieldsToCacheObject,
   IEntityGenericCacher,
-  EntityCompositeField,
-  CompositeFieldHolder,
-  CompositeFieldValueHolder,
+  IEntityLoadKey,
+  IEntityLoadValue,
 } from '@expo/entity';
-import invariant from 'invariant';
 
 import { redisTransformerMap } from './RedisCommon';
 import wrapNativeRedisCallAsync from './errors/wrapNativeRedisCallAsync';
@@ -150,41 +148,18 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
     await wrapNativeRedisCallAsync(() => this.context.redisClient.del(...keys));
   }
 
-  public makeCacheKey<N extends keyof TFields>(
-    fieldName: N,
-    fieldValue: NonNullable<TFields[N]>,
-  ): string {
-    const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
-    invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
+  public makeCacheKey<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, value: TLoadValue): string {
+    const { cacheKeyType, parts } = key.getCacheKeyParts(this.entityConfiguration, value);
     return this.context.makeKeyFn(
       this.context.cacheKeyPrefix,
+      cacheKeyType,
       this.entityConfiguration.tableName,
       `v2.${this.entityConfiguration.cacheKeyVersion}`,
-      columnName,
-      String(fieldValue),
-    );
-  }
-
-  makeCompositeFieldCacheKey<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolder: CompositeFieldValueHolder<TFields, N>,
-  ): string {
-    const compositeField = compositeFieldHolder.compositeField;
-    const columnNames = compositeField.map((fieldName) => {
-      const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
-      invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
-      return columnName;
-    });
-    const compositeFieldValues = compositeField.map(
-      (fieldName) => compositeFieldValueHolder.compositeFieldValue[fieldName],
-    );
-    return this.context.makeKeyFn(
-      this.context.cacheKeyPrefix,
-      'composite',
-      this.entityConfiguration.tableName,
-      `v2.${this.entityConfiguration.cacheKeyVersion}`,
-      ...columnNames,
-      ...compositeFieldValues.map((value) => String(value)),
+      ...parts,
     );
   }
 }

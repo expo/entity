@@ -13,6 +13,7 @@ import EntityPrivacyPolicy, {
 } from '../EntityPrivacyPolicy';
 import { EntityTransactionalQueryContext, EntityQueryContext } from '../EntityQueryContext';
 import { CacheStatus } from '../internal/ReadThroughEntityCache';
+import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
 import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
 import TestViewerContext from '../testfixtures/TestViewerContext';
 import { InMemoryFullCacheStubCacheAdapter } from '../utils/testing/StubCacheAdapter';
@@ -775,32 +776,46 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const childCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(ChildEntity)[
         'entityCompanion'
       ]['tableDataCoordinator']['cacheAdapter'] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
-      const childCachedBefore = await childCacheAdapter.loadManyAsync('parent_id', [
-        parent.getID(),
-      ]);
-      expect(childCachedBefore.get(parent.getID())?.status).toEqual(CacheStatus.HIT);
+      const childCachedBefore = await childCacheAdapter.loadManyAsync(
+        new SingleFieldHolder('parent_id'),
+        [new SingleFieldValueHolder(parent.getID())],
+      );
+      expect(childCachedBefore.get(new SingleFieldValueHolder(parent.getID()))?.status).toEqual(
+        CacheStatus.HIT,
+      );
 
       const grandChildCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(
         GrandChildEntity,
       )['entityCompanion']['tableDataCoordinator'][
         'cacheAdapter'
       ] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
-      const grandChildCachedBefore = await grandChildCacheAdapter.loadManyAsync('parent_id', [
-        child.getID(),
-      ]);
-      expect(grandChildCachedBefore.get(child.getID())?.status).toEqual(CacheStatus.HIT);
+      const grandChildCachedBefore = await grandChildCacheAdapter.loadManyAsync(
+        new SingleFieldHolder('parent_id'),
+        [new SingleFieldValueHolder(child.getID())],
+      );
+      expect(grandChildCachedBefore.get(new SingleFieldValueHolder(child.getID()))?.status).toEqual(
+        CacheStatus.HIT,
+      );
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
       await ParentEntity.deleter(parent).deleteAsync();
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
-      const childCachedAfter = await childCacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
-      expect(childCachedAfter.get(parent.getID())?.status).toEqual(CacheStatus.MISS);
+      const childCachedAfter = await childCacheAdapter.loadManyAsync(
+        new SingleFieldHolder('parent_id'),
+        [new SingleFieldValueHolder(parent.getID())],
+      );
+      expect(childCachedAfter.get(new SingleFieldValueHolder(parent.getID()))?.status).toEqual(
+        CacheStatus.MISS,
+      );
 
-      const grandChildCachedAfter = await grandChildCacheAdapter.loadManyAsync('parent_id', [
-        child.getID(),
-      ]);
-      expect(grandChildCachedAfter.get(child.getID())?.status).toEqual(CacheStatus.HIT);
+      const grandChildCachedAfter = await grandChildCacheAdapter.loadManyAsync(
+        new SingleFieldHolder('parent_id'),
+        [new SingleFieldValueHolder(child.getID())],
+      );
+      expect(grandChildCachedAfter.get(new SingleFieldValueHolder(child.getID()))?.status).toEqual(
+        CacheStatus.HIT,
+      );
 
       await expect(
         ParentEntity.loader(viewerContext).loadByIDNullableAsync(parent.getID()),
@@ -908,32 +923,46 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       const childCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(ChildEntity)[
         'entityCompanion'
       ]['tableDataCoordinator']['cacheAdapter'] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
-      const childCachedBefore = await childCacheAdapter.loadManyAsync('parent_id', [
-        parent.getID(),
-      ]);
-      expect(childCachedBefore.get(parent.getID())?.status).toEqual(CacheStatus.HIT);
+      const childCachedBefore = await childCacheAdapter.loadManyAsync(
+        new SingleFieldHolder('parent_id'),
+        [new SingleFieldValueHolder(parent.getID())],
+      );
+      expect(childCachedBefore.get(new SingleFieldValueHolder(parent.getID()))?.status).toEqual(
+        CacheStatus.HIT,
+      );
 
       const grandChildCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(
         GrandChildEntity,
       )['entityCompanion']['tableDataCoordinator'][
         'cacheAdapter'
       ] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
-      const grandChildCachedBefore = await grandChildCacheAdapter.loadManyAsync('parent_id', [
-        child.getID(),
-      ]);
-      expect(grandChildCachedBefore.get(child.getID())?.status).toEqual(CacheStatus.HIT);
+      const grandChildCachedBefore = await grandChildCacheAdapter.loadManyAsync(
+        new SingleFieldHolder('parent_id'),
+        [new SingleFieldValueHolder(child.getID())],
+      );
+      expect(grandChildCachedBefore.get(new SingleFieldValueHolder(child.getID()))?.status).toEqual(
+        CacheStatus.HIT,
+      );
 
       privacyPolicyEvaluationRecords.shouldRecord = true;
       await ParentEntity.deleter(parent).deleteAsync();
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
-      const childCachedAfter = await childCacheAdapter.loadManyAsync('parent_id', [parent.getID()]);
-      expect(childCachedAfter.get(parent.getID())?.status).toEqual(CacheStatus.MISS);
+      const childCachedAfter = await childCacheAdapter.loadManyAsync(
+        new SingleFieldHolder('parent_id'),
+        [new SingleFieldValueHolder(parent.getID())],
+      );
+      expect(childCachedAfter.get(new SingleFieldValueHolder(parent.getID()))?.status).toEqual(
+        CacheStatus.MISS,
+      );
 
-      const grandChildCachedAfter = await grandChildCacheAdapter.loadManyAsync('parent_id', [
-        child.getID(),
-      ]);
-      expect(grandChildCachedAfter.get(child.getID())?.status).toEqual(CacheStatus.MISS);
+      const grandChildCachedAfter = await grandChildCacheAdapter.loadManyAsync(
+        new SingleFieldHolder('parent_id'),
+        [new SingleFieldValueHolder(child.getID())],
+      );
+      expect(grandChildCachedAfter.get(new SingleFieldValueHolder(child.getID()))?.status).toEqual(
+        CacheStatus.MISS,
+      );
 
       await expect(
         ParentEntity.loader(viewerContext).loadByIDNullableAsync(parent.getID()),

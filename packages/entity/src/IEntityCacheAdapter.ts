@@ -1,6 +1,4 @@
-import { EntityCompositeField } from './EntityConfiguration';
-import { CompositeFieldValueHolder, CompositeFieldHolder } from './internal/CompositeFieldHolder';
-import { CompositeFieldValueHolderReadonlyMap } from './internal/CompositeFieldValueHolderMap';
+import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityAdapterLoadInterfaces';
 import { CacheLoadResult } from './internal/ReadThroughEntityCache';
 
 /**
@@ -14,19 +12,27 @@ export default interface IEntityCacheAdapter<TFields extends Record<string, any>
    * @param fieldValues - fieldName field values being queried
    * @returns map from all field values to a CacheLoadResult for each input value
    */
-  loadManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>>;
+  loadManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    values: readonly TLoadValue[],
+  ): Promise<ReadonlyMap<TLoadValue, CacheLoadResult<TFields>>>;
 
   /**
    * Cache many objects fetched from the DB.
    * @param fieldName - object field being queried
    * @param objectMap - map from field value to object to cache
    */
-  cacheManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>,
+  cacheManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    objectMap: ReadonlyMap<TLoadValue, Readonly<TFields>>,
   ): Promise<void>;
 
   /**
@@ -35,9 +41,13 @@ export default interface IEntityCacheAdapter<TFields extends Record<string, any>
    * @param fieldValues - fieldValues for objects reported as CacheStatus.NEGATIVE
    *                    in the cache and not found in the DB.
    */
-  cacheDBMissesAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
+  cacheDBMissesAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    values: readonly TLoadValue[],
   ): Promise<void>;
 
   /**
@@ -45,49 +55,12 @@ export default interface IEntityCacheAdapter<TFields extends Record<string, any>
    * @param fieldName - object field being queried
    * @param fieldValues - fieldName field values to be invalidated
    */
-  invalidateManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<void>;
-
-  /**
-   * Load many objects from cache.
-   * @param compositeFieldHolder - object composite field being queried
-   * @param compositeFieldValueHolders - object composite field values being queried
-   * @returns map from all object composite field values to a CacheLoadResult for each input value
-   */
-  loadManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-  ): Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, CacheLoadResult<TFields>>>;
-
-  /**
-   * Cache many objects fetched from the DB by composite field.
-   * @param compositeFieldHolder - object composite field being queried
-   * @param objectMap - map from object composite field values to object to cache
-   */
-  cacheManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    objectMap: CompositeFieldValueHolderReadonlyMap<TFields, N, Readonly<TFields>>,
-  ): Promise<void>;
-
-  /**
-   * Negatively cache objects that could not be found in the cache or DB by composite field.
-   * @param compositeFieldHolder - object composite field being queried
-   * @param compositeFieldValueHolders - composite field values for objects reported as CacheStatus.NEGATIVE in the cache and not found in the DB.
-   */
-  cacheCompositeFieldDBMissesAsync<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-  ): Promise<void>;
-
-  /**
-   * Invalidate the cache for objects cached by (fieldName, fieldValue).
-   * @param fieldName - object field being queried
-   * @param fieldValues - fieldName field values to be invalidated
-   */
-  invalidateManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
+  invalidateManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    values: readonly TLoadValue[],
   ): Promise<void>;
 }

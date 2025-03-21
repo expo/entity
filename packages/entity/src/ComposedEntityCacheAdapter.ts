@@ -1,12 +1,7 @@
 import nullthrows from 'nullthrows';
 
-import { EntityCompositeField } from './EntityConfiguration';
 import IEntityCacheAdapter from './IEntityCacheAdapter';
-import { CompositeFieldValueHolder, CompositeFieldHolder } from './internal/CompositeFieldHolder';
-import {
-  CompositeFieldValueHolderMap,
-  CompositeFieldValueHolderReadonlyMap,
-} from './internal/CompositeFieldValueHolderMap';
+import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityAdapterLoadInterfaces';
 import { CacheStatus, CacheLoadResult } from './internal/ReadThroughEntityCache';
 
 /**
@@ -23,35 +18,36 @@ export default class ComposedEntityCacheAdapter<TFields extends Record<string, a
    */
   constructor(private readonly cacheAdapters: IEntityCacheAdapter<TFields>[]) {}
 
-  public async loadManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
-    const retMap = new Map<NonNullable<TFields[N]>, CacheLoadResult<TFields>>();
-    const fulfilledFieldValuesByCacheIndex: NonNullable<TFields[N]>[][] = Array.from(
+  public async loadManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    values: readonly TLoadValue[],
+  ): Promise<ReadonlyMap<TLoadValue, CacheLoadResult<TFields>>> {
+    const retMap = key.vendNewLoadValueMap<CacheLoadResult<TFields>>();
+    const fulfilledFieldValuesByCacheIndex: TLoadValue[][] = Array.from(
       { length: this.cacheAdapters.length },
       () => [],
     );
 
-    let unfulfilledFieldValues = fieldValues;
+    let unfulfilledValues = values;
     for (let i = 0; i < this.cacheAdapters.length; i++) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      const cacheResultsFromAdapter = await cacheAdapter.loadManyAsync(
-        fieldName,
-        unfulfilledFieldValues,
-      );
+      const cacheResultsFromAdapter = await cacheAdapter.loadManyAsync(key, unfulfilledValues);
 
       const newUnfulfilledFieldValues = [];
-      for (const [fieldValue, cacheResult] of cacheResultsFromAdapter) {
+      for (const [value, cacheResult] of cacheResultsFromAdapter) {
         if (cacheResult.status === CacheStatus.MISS) {
-          newUnfulfilledFieldValues.push(fieldValue);
+          newUnfulfilledFieldValues.push(value);
         } else {
-          retMap.set(fieldValue, cacheResult);
-          nullthrows(fulfilledFieldValuesByCacheIndex[i]).push(fieldValue);
+          retMap.set(value, cacheResult);
+          nullthrows(fulfilledFieldValuesByCacheIndex[i]).push(value);
         }
       }
-      unfulfilledFieldValues = newUnfulfilledFieldValues;
-      if (unfulfilledFieldValues.length === 0) {
+      unfulfilledValues = newUnfulfilledFieldValues;
+      if (unfulfilledValues.length === 0) {
         break;
       }
     }
@@ -60,180 +56,72 @@ export default class ComposedEntityCacheAdapter<TFields extends Record<string, a
     // Write to lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      const hitsToCache = new Map<NonNullable<TFields[N]>, Readonly<TFields>>();
-      const negativesToCache: NonNullable<TFields[N]>[] = [];
+      const hitsToCache = key.vendNewLoadValueMap<Readonly<TFields>>();
+      const negativesToCache: TLoadValue[] = [];
 
       // Loop over all lower layer caches to collect hits and misses
       for (let j = i + 1; j < this.cacheAdapters.length; j++) {
         const fulfilledFieldValues = nullthrows(fulfilledFieldValuesByCacheIndex[j]);
-        fulfilledFieldValues.forEach((fieldValue) => {
-          const cacheResult = nullthrows(retMap.get(fieldValue));
+        fulfilledFieldValues.forEach((value) => {
+          const cacheResult = nullthrows(retMap.get(value));
           if (cacheResult.status === CacheStatus.HIT) {
-            hitsToCache.set(fieldValue, cacheResult.item);
+            hitsToCache.set(value, cacheResult.item);
           } else if (cacheResult.status === CacheStatus.NEGATIVE) {
-            negativesToCache.push(fieldValue);
+            negativesToCache.push(value);
           }
         });
       }
 
       const promises = [];
       if (hitsToCache.size > 0) {
-        promises.push(cacheAdapter.cacheManyAsync(fieldName, hitsToCache));
+        promises.push(cacheAdapter.cacheManyAsync(key, hitsToCache));
       }
       if (negativesToCache.length > 0) {
-        promises.push(cacheAdapter.cacheDBMissesAsync(fieldName, negativesToCache));
+        promises.push(cacheAdapter.cacheDBMissesAsync(key, negativesToCache));
       }
       await Promise.all(promises);
     }
 
-    for (const fieldValue of unfulfilledFieldValues) {
-      retMap.set(fieldValue, { status: CacheStatus.MISS });
+    for (const value of unfulfilledValues) {
+      retMap.set(value, { status: CacheStatus.MISS });
     }
 
     return retMap;
   }
 
-  public async cacheManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>,
-  ): Promise<void> {
+  public async cacheManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, objectMap: ReadonlyMap<TLoadValue, Readonly<TFields>>): Promise<void> {
     // write to lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      await cacheAdapter.cacheManyAsync(fieldName, objectMap);
+      await cacheAdapter.cacheManyAsync(key, objectMap);
     }
   }
 
-  public async cacheDBMissesAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<void> {
+  public async cacheDBMissesAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
     // write to lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      await cacheAdapter.cacheDBMissesAsync(fieldName, fieldValues);
+      await cacheAdapter.cacheDBMissesAsync(key, values);
     }
   }
 
-  public async invalidateManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<void> {
+  public async invalidateManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
     // delete from lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      await cacheAdapter.invalidateManyAsync(fieldName, fieldValues);
-    }
-  }
-
-  public async loadManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-  ): Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, CacheLoadResult<TFields>>> {
-    const retMap = new CompositeFieldValueHolderMap<TFields, N, CacheLoadResult<TFields>>();
-    const fulfilledCompositeFieldValuesByCacheIndex: CompositeFieldValueHolder<TFields, N>[][] =
-      Array.from({ length: this.cacheAdapters.length }, () => []);
-
-    let unfulfilledCompositeFieldValues = compositeFieldValueHolders;
-    for (let i = 0; i < this.cacheAdapters.length; i++) {
-      const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      const cacheResultsFromAdapter = await cacheAdapter.loadManyCompositeFieldAsync(
-        compositeFieldHolder,
-        unfulfilledCompositeFieldValues,
-      );
-
-      const newUnfulfilledCompositeFieldValues = [];
-      for (const [compositeFieldValue, cacheResult] of cacheResultsFromAdapter) {
-        if (cacheResult.status === CacheStatus.MISS) {
-          newUnfulfilledCompositeFieldValues.push(compositeFieldValue);
-        } else {
-          retMap.set(compositeFieldValue, cacheResult);
-          nullthrows(fulfilledCompositeFieldValuesByCacheIndex[i]).push(compositeFieldValue);
-        }
-      }
-      unfulfilledCompositeFieldValues = newUnfulfilledCompositeFieldValues;
-      if (unfulfilledCompositeFieldValues.length === 0) {
-        break;
-      }
-    }
-
-    // Recache values from lower layers that were not found in higher layers
-    // Write to lower layers first
-    for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
-      const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      const hitsToCache = new CompositeFieldValueHolderMap<TFields, N, Readonly<TFields>>();
-      const negativesToCache: CompositeFieldValueHolder<TFields, N>[] = [];
-
-      // Loop over all lower layer caches to collect hits and misses
-      for (let j = i + 1; j < this.cacheAdapters.length; j++) {
-        const fulfilledCompositeFieldValues = nullthrows(
-          fulfilledCompositeFieldValuesByCacheIndex[j],
-        );
-        fulfilledCompositeFieldValues.forEach((compositeFieldValue) => {
-          const cacheResult = nullthrows(retMap.get(compositeFieldValue));
-          if (cacheResult.status === CacheStatus.HIT) {
-            hitsToCache.set(compositeFieldValue, cacheResult.item);
-          } else if (cacheResult.status === CacheStatus.NEGATIVE) {
-            negativesToCache.push(compositeFieldValue);
-          }
-        });
-      }
-
-      const promises = [];
-      if (hitsToCache.size > 0) {
-        promises.push(cacheAdapter.cacheManyCompositeFieldAsync(compositeFieldHolder, hitsToCache));
-      }
-      if (negativesToCache.length > 0) {
-        promises.push(
-          cacheAdapter.cacheCompositeFieldDBMissesAsync(compositeFieldHolder, negativesToCache),
-        );
-      }
-      await Promise.all(promises);
-    }
-
-    for (const compositeFieldValue of unfulfilledCompositeFieldValues) {
-      retMap.set(compositeFieldValue, { status: CacheStatus.MISS });
-    }
-
-    return retMap;
-  }
-
-  public async cacheManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    objectMap: CompositeFieldValueHolderReadonlyMap<TFields, N, Readonly<TFields>>,
-  ): Promise<void> {
-    // write to lower layers first
-    for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
-      const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      await cacheAdapter.cacheManyCompositeFieldAsync(compositeFieldHolder, objectMap);
-    }
-  }
-
-  public async cacheCompositeFieldDBMissesAsync<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-  ): Promise<void> {
-    // write to lower layers first
-    for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
-      const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      await cacheAdapter.cacheCompositeFieldDBMissesAsync(
-        compositeFieldHolder,
-        compositeFieldValueHolders,
-      );
-    }
-  }
-
-  public async invalidateManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-  ): Promise<void> {
-    // delete from lower layers first
-    for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
-      const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      await cacheAdapter.invalidateManyCompositeFieldAsync(
-        compositeFieldHolder,
-        compositeFieldValueHolders,
-      );
+      await cacheAdapter.invalidateManyAsync(key, values);
     }
   }
 }

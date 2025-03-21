@@ -3,11 +3,9 @@ import {
   CacheStatus,
   EntityConfiguration,
   IEntityGenericCacher,
-  EntityCompositeField,
-  CompositeFieldHolder,
-  CompositeFieldValueHolder,
+  IEntityLoadKey,
+  IEntityLoadValue,
 } from '@expo/entity';
-import invariant from 'invariant';
 import LRUCache from 'lru-cache';
 
 // Sentinel value we store in local memory to negatively cache a database miss.
@@ -88,45 +86,21 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
     }
   }
 
-  public makeCacheKey<N extends keyof TFields>(
-    fieldName: N,
-    fieldValue: NonNullable<TFields[N]>,
-  ): string {
-    const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
-    invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
+  public makeCacheKey<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, value: TLoadValue): string {
+    const { cacheKeyType, parts: keyAndValueParts } = key.getCacheKeyParts(
+      this.entityConfiguration,
+      value,
+    );
+
     const parts = [
       this.entityConfiguration.tableName,
+      cacheKeyType,
       `${this.entityConfiguration.cacheKeyVersion}`,
-      columnName,
-      String(fieldValue),
-    ];
-
-    const delimiter = ':';
-    const escapedParts = parts.map((part) =>
-      part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
-    );
-    return escapedParts.join(delimiter);
-  }
-
-  public makeCompositeFieldCacheKey<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolder: CompositeFieldValueHolder<TFields, N>,
-  ): string {
-    const compositeField = compositeFieldHolder.compositeField;
-    const columnNames = compositeField.map((fieldName) => {
-      const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
-      invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
-      return columnName;
-    });
-    const compositeFieldValues = compositeField.map(
-      (fieldName) => compositeFieldValueHolder.compositeFieldValue[fieldName],
-    );
-    const parts = [
-      'composite',
-      this.entityConfiguration.tableName,
-      `${this.entityConfiguration.cacheKeyVersion}`,
-      ...columnNames,
-      ...compositeFieldValues.map((value) => String(value)),
+      ...keyAndValueParts,
     ];
 
     const delimiter = ':';

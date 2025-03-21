@@ -1,12 +1,8 @@
 import invariant from 'invariant';
 
-import EntityConfiguration, { EntityCompositeField } from '../EntityConfiguration';
-import { CompositeFieldValueHolder, CompositeFieldHolder } from './CompositeFieldHolder';
+import EntityConfiguration from '../EntityConfiguration';
 import IEntityCacheAdapter from '../IEntityCacheAdapter';
-import {
-  CompositeFieldValueHolderReadonlyMap,
-  CompositeFieldValueHolderMap,
-} from './CompositeFieldValueHolderMap';
+import { IEntityLoadKey, IEntityLoadValue } from './EntityAdapterLoadInterfaces';
 import { filterMap } from '../utils/collections/maps';
 
 export enum CacheStatus {
@@ -37,14 +33,12 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
     private readonly entityCacheAdapter: IEntityCacheAdapter<TFields>,
   ) {}
 
-  private isFieldCacheable<N extends keyof TFields>(fieldName: N): boolean {
-    return this.entityConfiguration.cacheableKeys.has(fieldName);
-  }
-
-  private isCompositeFieldCacheable(compositeFieldHolder: CompositeFieldHolder<TFields>): boolean {
-    return this.entityConfiguration.compositeFieldInfo.canCacheCompositeField(
-      compositeFieldHolder.compositeField,
-    );
+  private isLoadKeyCacheable<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey): boolean {
+    return key.isCacheable(this.entityConfiguration);
   }
 
   /**
@@ -63,26 +57,30 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
    * @param fetcher - closure used to provide underlying data source objects for fieldName and fetcherFieldValues
    * @returns map from fieldValue to objects that match the query for that fieldValue
    */
-  public async readManyThroughAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
+  public async readManyThroughAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    values: readonly TLoadValue[],
     fetcher: (
-      fetcherFieldValues: readonly NonNullable<TFields[N]>[],
-    ) => Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>>,
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
+      fetcherFieldValues: readonly TLoadValue[],
+    ) => Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>>,
+  ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
     // return normal fetch when cache by fieldName not supported
-    if (!this.isFieldCacheable(fieldName)) {
-      return await fetcher(fieldValues);
+    if (!this.isLoadKeyCacheable(key)) {
+      return await fetcher(values);
     }
 
-    const cacheLoadResults = await this.entityCacheAdapter.loadManyAsync(fieldName, fieldValues);
+    const cacheLoadResults = await this.entityCacheAdapter.loadManyAsync(key, values);
 
     invariant(
-      cacheLoadResults.size === fieldValues.length,
-      `${this.constructor.name} loadMany should return a result for each fieldValue`,
+      cacheLoadResults.size === values.length,
+      `${this.constructor.name} loadMany should return a result for each value`,
     );
 
-    const fieldValuesToFetchFromDB = Array.from(
+    const valuesToFetchFromDB = Array.from(
       filterMap(
         cacheLoadResults,
         (cacheLoadResult) => cacheLoadResult.status === CacheStatus.MISS,
@@ -90,128 +88,45 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
     );
 
     // put transformed cache hits in result map
-    const results: Map<NonNullable<TFields[N]>, readonly Readonly<TFields>[]> = new Map();
-    cacheLoadResults.forEach((cacheLoadResult, fieldValue) => {
+    const results = key.vendNewLoadValueMap<readonly Readonly<TFields>[]>();
+    cacheLoadResults.forEach((cacheLoadResult, value) => {
       if (cacheLoadResult.status === CacheStatus.HIT) {
-        results.set(fieldValue, [cacheLoadResult.item]);
+        results.set(value, [cacheLoadResult.item]);
       }
     });
 
     // fetch any misses from DB, add DB objects to results, cache DB results, inform cache of any missing DB results
-    if (fieldValuesToFetchFromDB.length > 0) {
-      const dbFetchResults = await fetcher(fieldValuesToFetchFromDB);
+    if (valuesToFetchFromDB.length > 0) {
+      const dbFetchResults = await fetcher(valuesToFetchFromDB);
 
-      const fieldValueDBMisses = fieldValuesToFetchFromDB.filter((fv) => {
+      const valueDBMisses = valuesToFetchFromDB.filter((fv) => {
         const objectsFromFulfillerForFv = dbFetchResults.get(fv);
         return !objectsFromFulfillerForFv || objectsFromFulfillerForFv.length === 0;
       });
 
-      const objectsToCache: Map<NonNullable<TFields[N]>, Readonly<TFields>> = new Map();
-      for (const [fieldValue, objects] of dbFetchResults.entries()) {
+      const objectsToCache = key.vendNewLoadValueMap<Readonly<TFields>>();
+      for (const [value, objects] of dbFetchResults.entries()) {
         if (objects.length > 1) {
           // multiple objects received for what was supposed to be a unique query, don't add to return map nor cache
           // TODO(wschurman): emit or throw here since console may not be available
           // eslint-disable-next-line no-console
           console.warn(
-            `unique key ${String(fieldName)} in ${
+            `unique key ${key.debugString()} in table ${
               this.entityConfiguration.tableName
-            } returned multiple rows for ${fieldValue}`,
+            } returned multiple rows for ${value.debugString()}`,
           );
           continue;
         }
         const uniqueObject = objects[0];
         if (uniqueObject) {
-          objectsToCache.set(fieldValue, uniqueObject);
-          results.set(fieldValue, [uniqueObject]);
+          objectsToCache.set(value, uniqueObject);
+          results.set(value, [uniqueObject]);
         }
       }
 
       await Promise.all([
-        this.entityCacheAdapter.cacheManyAsync(fieldName, objectsToCache),
-        this.entityCacheAdapter.cacheDBMissesAsync(fieldName, fieldValueDBMisses),
-      ]);
-    }
-
-    return results;
-  }
-
-  public async readManyCompositeFieldThroughAsync<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-    fetcher: (
-      fetcherCompositeFieldHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-    ) => Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, readonly Readonly<TFields>[]>>,
-  ): Promise<CompositeFieldValueHolderReadonlyMap<TFields, N, readonly Readonly<TFields>[]>> {
-    // return normal fetch when cache by composite field not supported
-    if (!this.isCompositeFieldCacheable(compositeFieldHolder)) {
-      return await fetcher(compositeFieldValueHolders);
-    }
-
-    const cacheLoadResults = await this.entityCacheAdapter.loadManyCompositeFieldAsync(
-      compositeFieldHolder,
-      compositeFieldValueHolders,
-    );
-
-    invariant(
-      cacheLoadResults.size === compositeFieldValueHolders.length,
-      `${this.constructor.name} loadManyCompositeFieldAsync should return a result for each compositeFieldValueHolders`,
-    );
-
-    const compositeFieldValueHoldersToFetchFromDB = Array.from(
-      filterMap(
-        cacheLoadResults,
-        (cacheLoadResult) => cacheLoadResult.status === CacheStatus.MISS,
-      ).keys(),
-    );
-
-    // put transformed cache hits in result map
-    const results: CompositeFieldValueHolderMap<TFields, N, readonly Readonly<TFields>[]> =
-      new CompositeFieldValueHolderMap();
-    cacheLoadResults.forEach((cacheLoadResult, compositeFieldValueHolder) => {
-      if (cacheLoadResult.status === CacheStatus.HIT) {
-        results.set(compositeFieldValueHolder, [cacheLoadResult.item]);
-      }
-    });
-
-    // fetch any misses from DB, add DB objects to results, cache DB results, inform cache of any missing DB results
-    if (compositeFieldValueHoldersToFetchFromDB.length > 0) {
-      const dbFetchResults = await fetcher(compositeFieldValueHoldersToFetchFromDB);
-
-      const compositeFieldValueDBMisses = compositeFieldValueHoldersToFetchFromDB.filter((fv) => {
-        const objectsFromFulfillerForFv = dbFetchResults.get(fv);
-        return !objectsFromFulfillerForFv || objectsFromFulfillerForFv.length === 0;
-      });
-
-      const objectsToCache: CompositeFieldValueHolderMap<
-        TFields,
-        N,
-        Readonly<TFields>
-      > = new CompositeFieldValueHolderMap();
-      for (const [compositeFieldValue, objects] of dbFetchResults.entries()) {
-        if (objects.length > 1) {
-          // multiple objects received for what was supposed to be a unique query, don't add to return map nor cache
-          // TODO(wschurman): emit or throw here since console may not be available
-          // eslint-disable-next-line no-console
-          console.warn(
-            `unique composite field ${String(compositeFieldHolder.compositeField)} in ${
-              this.entityConfiguration.tableName
-            } returned multiple rows for ${compositeFieldValue.compositeFieldValue}`,
-          );
-          continue;
-        }
-        const uniqueObject = objects[0];
-        if (uniqueObject) {
-          objectsToCache.set(compositeFieldValue, uniqueObject);
-          results.set(compositeFieldValue, [uniqueObject]);
-        }
-      }
-
-      await Promise.all([
-        this.entityCacheAdapter.cacheManyCompositeFieldAsync(compositeFieldHolder, objectsToCache),
-        this.entityCacheAdapter.cacheCompositeFieldDBMissesAsync(
-          compositeFieldHolder,
-          compositeFieldValueDBMisses,
-        ),
+        this.entityCacheAdapter.cacheManyAsync(key, objectsToCache),
+        this.entityCacheAdapter.cacheDBMissesAsync(key, valueDBMisses),
       ]);
     }
 
@@ -224,36 +139,16 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
    * @param fieldName - object field being queried
    * @param fieldValues - fieldName field values to be invalidated
    */
-  public async invalidateManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<void> {
-    // no-op when cache by fieldName not supported
-    if (!this.isFieldCacheable(fieldName)) {
+  public async invalidateManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
+    // no-op when cache by key not supported
+    if (!this.isLoadKeyCacheable(key)) {
       return;
     }
 
-    await this.entityCacheAdapter.invalidateManyAsync(fieldName, fieldValues);
-  }
-
-  /**
-   * Invalidate the cache for objects cached by composite field.
-   *
-   * @param compositeFieldHolder - composite field being queried
-   * @param compositeFieldValueHolders - composite field field values to be invalidated
-   */
-  public async invalidateManyCompositeFieldAsync<N extends EntityCompositeField<TFields>>(
-    compositeFieldHolder: CompositeFieldHolder<TFields>,
-    compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[],
-  ): Promise<void> {
-    // no-op when cache by composite field not supported
-    if (!this.isCompositeFieldCacheable(compositeFieldHolder)) {
-      return;
-    }
-
-    await this.entityCacheAdapter.invalidateManyCompositeFieldAsync(
-      compositeFieldHolder,
-      compositeFieldValueHolders,
-    );
+    await this.entityCacheAdapter.invalidateManyAsync(key, values);
   }
 }

@@ -48,34 +48,15 @@ export default class StubDatabaseAdapter<
   protected async fetchManyWhereInternalAsync(
     _queryInterface: any,
     tableName: string,
-    tableField: string,
-    tableValues: readonly any[],
+    tableColumns: readonly string[],
+    tableValueValues: (readonly any[])[],
   ): Promise<object[]> {
     const objectCollection = this.getObjectCollectionForTable(tableName);
-    return tableValues.reduce(
-      (acc, fieldValue) => {
-        return acc.concat(
-          objectCollection.filter((obj) => {
-            return obj[tableField] === fieldValue;
-          }),
-        );
-      },
-      [] as { [key: string]: any }[],
-    );
-  }
-
-  protected async fetchManyWhereCompositeFieldInternalAsync(
-    _queryInterface: any,
-    tableName: string,
-    tableFields: string[],
-    tableFieldsValues: readonly any[][],
-  ): Promise<object[]> {
-    const objectCollection = this.getObjectCollectionForTable(tableName);
-    return tableFieldsValues.reduce(
+    const results = tableValueValues.reduce(
       (acc, fieldValues) => {
         return acc.concat(
           objectCollection.filter((obj) => {
-            return tableFields.every((field, index) => {
+            return tableColumns.every((field, index) => {
               return obj[field] === fieldValues[index];
             });
           }),
@@ -83,6 +64,7 @@ export default class StubDatabaseAdapter<
       },
       [] as { [key: string]: any }[],
     );
+    return [...results];
   }
 
   private static compareByOrderBys(

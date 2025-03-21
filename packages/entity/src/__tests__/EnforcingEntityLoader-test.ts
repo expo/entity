@@ -450,7 +450,8 @@ describe(EnforcingEntityLoader, () => {
 
     // ensure known differences still exist for sanity check
     const knownLoaderOnlyDifferences = [
-      'validateFieldValues',
+      'validateFieldAndValues',
+      'validateFieldAndValuesAndConvertToHolders',
       'validateCompositeFieldAndValuesAndConvertToHolders',
     ];
     expect(nonEnforcingLoaderProperties).toEqual(
