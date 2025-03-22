@@ -83,6 +83,8 @@ export * from './rules/PrivacyPolicyRule';
 export * from './utils/EntityPrivacyUtils';
 export * from './utils/mergeEntityMutationTriggerConfigurations';
 export * from './utils/collections/maps';
+export * from './utils/collections/SerializableKeyMap';
+export * from './utils/collections/sets';
 export * from './utils/testing/createUnitTestEntityCompanionProvider';
 export { default as describeFieldTestCase } from './utils/testing/describeFieldTestCase';
 export * from './utils/testing/PrivacyPolicyRuleTestUtils';

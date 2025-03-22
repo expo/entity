@@ -30,7 +30,7 @@ export const mapMap = <K, V, M>(
   map: ReadonlyMap<K, V>,
   mapper: (value: V, key: K) => M,
 ): Map<K, M> => {
-  const resultingMap = new Map();
+  const resultingMap = new Map<K, M>();
   for (const [k, v] of map) {
     resultingMap.set(k, mapper(v, k));
   }
@@ -47,7 +47,7 @@ export const mapMapAsync = async function <K, V, M>(
   map: ReadonlyMap<K, V>,
   mapper: (value: V, key: K) => Promise<M>,
 ): Promise<Map<K, M>> {
-  const resultingMap: Map<K, M> = new Map();
+  const resultingMap = new Map<K, M>();
   await Promise.all(
     Array.from(map.keys()).map(async (k) => {
       const initialValue = map.get(k) as V;
@@ -71,7 +71,7 @@ export const mapKeys = <K, V, K2>(
   map: ReadonlyMap<K, V>,
   mapper: (key: K, value: V) => K2,
 ): Map<K2, V> => {
-  const resultingMap = new Map();
+  const resultingMap = new Map<K2, V>();
   for (const [k, v] of map) {
     resultingMap.set(mapper(k, v), v);
   }
@@ -94,10 +94,9 @@ export const zipToMap = <K, V>(keys: readonly K[], values: readonly V[]): Map<K,
     keys.length === values.length,
     `zipToMap input length mismatch: keys[${keys.length}], values[${values.length}]`,
   );
-  const resultingMap = new Map();
+  const resultingMap = new Map<K, V>();
   for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    resultingMap.set(key, values[i]);
+    resultingMap.set(keys[i]!, values[i]!);
   }
   return resultingMap;
 };
@@ -108,7 +107,7 @@ export const zipToMap = <K, V>(keys: readonly K[], values: readonly V[]): Map<K,
  * @param map - map to invert
  */
 export const invertMap = <K, V>(map: ReadonlyMap<K, V>): Map<V, K> => {
-  const resultingMap = new Map();
+  const resultingMap = new Map<V, K>();
   for (const [k, v] of map) {
     resultingMap.set(v, k);
   }
@@ -185,7 +184,7 @@ export function filterMap<K, V>(
   map: ReadonlyMap<K, V>,
   predicate: (value: V, key: K) => unknown,
 ): Map<K, V> {
-  const resultingMap = new Map();
+  const resultingMap = new Map<K, V>();
   map.forEach((v, k) => {
     if (predicate(v, k)) {
       resultingMap.set(k, v);
