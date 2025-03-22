@@ -49,15 +49,15 @@ export default class StubDatabaseAdapter<
     _queryInterface: any,
     tableName: string,
     tableColumns: readonly string[],
-    tableValueValues: (readonly any[])[],
+    tableTuples: (readonly any[])[],
   ): Promise<object[]> {
     const objectCollection = this.getObjectCollectionForTable(tableName);
-    const results = tableValueValues.reduce(
-      (acc, fieldValues) => {
+    const results = tableTuples.reduce(
+      (acc, tableTuple) => {
         return acc.concat(
           objectCollection.filter((obj) => {
-            return tableColumns.every((field, index) => {
-              return obj[field] === fieldValues[index];
+            return tableColumns.every((tableColumn, index) => {
+              return obj[tableColumn] === tableTuple[index];
             });
           }),
         );

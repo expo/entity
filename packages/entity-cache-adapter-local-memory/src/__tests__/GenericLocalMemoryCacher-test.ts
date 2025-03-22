@@ -90,7 +90,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
       expect(results.size).toBe(3);
     });
 
-    it('returns empty map when passed empty array of fieldValues', async () => {
+    it('returns empty map when passed empty array of values', async () => {
       const cacheAdapter = new GenericEntityCacheAdapter(
         new GenericLocalMemoryCacher(
           entityConfiguration,
@@ -175,7 +175,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
       });
     });
 
-    it('returns when passed empty array of fieldValues', async () => {
+    it('returns when passed empty array of values', async () => {
       const cacheAdapter = new GenericEntityCacheAdapter(
         new GenericLocalMemoryCacher(
           entityConfiguration,

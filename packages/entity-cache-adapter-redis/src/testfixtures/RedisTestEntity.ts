@@ -90,4 +90,8 @@ export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEnt
   },
   databaseAdapterFlavor: 'postgres',
   cacheAdapterFlavor: 'redis',
+  compositeFieldDefinitions: [
+    { compositeField: ['id', 'name'], cache: true },
+    { compositeField: ['id', 'dateField'], cache: true },
+  ],
 });

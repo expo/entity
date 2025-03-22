@@ -45,15 +45,43 @@ export default class PostgresEntityDatabaseAdapter<
     queryInterface: Knex,
     tableName: string,
     tableColumns: readonly string[],
-    tableValueValues: (readonly any[])[],
+    tableTuples: any[][],
   ): Promise<object[]> {
-    const rawPlaceholders = tableColumns.map(() => '??').join(', ');
+    // For single column queries, use the ANY operator to derive a consistent
+    // query shape in the postgres query stats table.
+    // This produces a query of the form `SELECT * FROM table WHERE ("id") = ANY(?)`
+    // with value bindings of the form `[[1]]`, thus not making different value cardinalities
+    // produce different query shapes.
+    //
+    // But for multi-column queries, we must use the IN operator as the ANY operator
+    // does not support anonymous composite types. The solution to keep using the ANY operator would be explicit
+    // postgres type casting on each value in each tableTuple, thus creating a unique query shape and defeating the purpose.
+    // The same applies to using UNNEST on anonymous composite types.
+    // Note that this solution is not possible in entity though since we don't have the postgres column types and they
+    // can't be derived dynamically.
+    //
+    // Therefore, for multi-column quries, we use the IN operator which produces a query of the form
+    // `SELECT * FROM table WHERE ("id", "name") IN ((?, ?), (?, ?))` with value bindings of the form
+    // `[[1, 'a'], [2, 'b']]`, which will produce a unique query shape in the postgres query stats table for
+    // each value cardinality.
+    //
+    // We could use the IN operator for single column queries as well, but we prefer to use ANY to at least keep some
+    // consistency in the query shape for the stats table.
+
+    if (tableColumns.length === 1) {
+      return await wrapNativePostgresCallAsync(() =>
+        queryInterface
+          .select()
+          .from(tableName)
+          .whereRaw(`(??) = ANY(?)`, [
+            tableColumns[0],
+            tableTuples.map((tableTuple) => tableTuple[0]),
+          ]),
+      );
+    }
+
     return await wrapNativePostgresCallAsync(() =>
-      // queryInterface.select().from(tableName).whereIn(tableFields, tableFieldsValues),
-      queryInterface
-        .select()
-        .from(tableName)
-        .whereRaw(`(${rawPlaceholders}) = ANY(?)`, [...tableColumns, tableValueValues]),
+      queryInterface.select().from(tableName).whereIn(tableColumns, tableTuples),
     );
   }
 

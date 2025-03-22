@@ -1,5 +1,5 @@
 import { enforceAsyncResult } from '@expo/results';
-import { mock, instance, verify, spy, deepEqual, anyOfClass, anything, when } from 'ts-mockito';
+import { mock, instance, verify, spy, anyOfClass, anything, when } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
 import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
@@ -9,9 +9,15 @@ import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import EntityNotFoundError from '../errors/EntityNotFoundError';
+import { CompositeFieldHolder, CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
 import EntityDataManager from '../internal/EntityDataManager';
 import ReadThroughEntityCache from '../internal/ReadThroughEntityCache';
-import { SingleFieldValueHolder, SingleFieldValueHolderMap } from '../internal/SingleFieldHolder';
+import {
+  SingleFieldHolder,
+  SingleFieldValueHolder,
+  SingleFieldValueHolderMap,
+} from '../internal/SingleFieldHolder';
+import { deepEqualEntityAware } from '../internal/__tests__/TSMockitoExtensions';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
 import TestEntity, {
   TestFields,
@@ -140,6 +146,164 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     await expect(entityLoader.loadByIDAsync('not-a-uuid')).rejects.toThrowError(
       'Entity field not valid: TestEntity (customIdField = not-a-uuid)',
     );
+  });
+
+  it('loads entities by composite fields', async () => {
+    const dateToInsert = new Date();
+    const viewerContext = instance(mock(ViewerContext));
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
+      );
+    const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+    const queryContext = new StubQueryContextProvider().getQueryContext();
+
+    const id1 = uuidv4();
+    const id2 = uuidv4();
+    const id3 = uuidv4();
+    const id4 = uuidv4();
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      testEntityConfiguration,
+      StubDatabaseAdapter.convertFieldObjectsToDataStore(
+        testEntityConfiguration,
+        new Map([
+          [
+            testEntityConfiguration.tableName,
+            [
+              {
+                customIdField: id1,
+                testIndexedField: 'h1',
+                intField: 5,
+                stringField: 'huh',
+                dateField: dateToInsert,
+                nullableField: null,
+              },
+              {
+                customIdField: id2,
+                testIndexedField: 'h2',
+                intField: 5,
+                stringField: 'huh',
+                dateField: dateToInsert,
+                nullableField: null,
+              },
+              {
+                customIdField: id3,
+                testIndexedField: 'h2',
+                intField: 3,
+                stringField: 'huh',
+                dateField: dateToInsert,
+                nullableField: null,
+              },
+              {
+                customIdField: id4,
+                stringField: 'huh3',
+                intField: 4,
+                testIndexedField: '7',
+                dateField: new Date(),
+                nullableField: 'non-null-nullable-field',
+              },
+            ],
+          ],
+        ]),
+      ),
+    );
+    const privacyPolicy = new TestEntityPrivacyPolicy();
+    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const dataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      new StubQueryContextProvider(),
+      instance(mock<IEntityMetricsAdapter>()),
+      TestEntity.name,
+    );
+    const utils = new EntityLoaderUtils(
+      viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+      testEntityConfiguration,
+      TestEntity,
+      /* entitySelectedFields */ undefined,
+      privacyPolicy,
+      dataManager,
+      metricsAdapter,
+    );
+    const entityLoader = new AuthorizationResultBasedEntityLoader(
+      queryContext,
+      testEntityConfiguration,
+      TestEntity,
+      dataManager,
+      metricsAdapter,
+      utils,
+    );
+
+    const entities = await enforceResultsAsync(
+      entityLoader.loadManyByCompositeFieldEqualingAsync(['stringField', 'intField'], {
+        stringField: 'huh',
+        intField: 5,
+      }),
+    );
+    expect(entities.map((m) => m.getID())).toEqual([id1, id2]);
+
+    const entityNullableCompositeValueResult = await entityLoader.loadByCompositeFieldEqualingAsync(
+      ['nullableField', 'testIndexedField'],
+      {
+        nullableField: 'non-null-nullable-field',
+        testIndexedField: '7',
+      },
+    );
+    expect(entityNullableCompositeValueResult?.enforceValue().getID()).toBe(id4);
+
+    const entityResultDuplicateValues =
+      await entityLoader.loadManyByCompositeFieldEqualingManyAsync(
+        ['stringField', 'intField'],
+        [
+          { stringField: 'huh', intField: 5 },
+          { stringField: 'huh', intField: 5 },
+        ],
+      );
+    expect(entityResultDuplicateValues.size).toBe(1);
+    expect(
+      entityResultDuplicateValues
+        .get({ stringField: 'huh', intField: 5 })
+        ?.map((m) => m.enforceValue().getID()),
+    ).toEqual([id1, id2]);
+
+    const entityResultNoValues = await entityLoader.loadManyByCompositeFieldEqualingAsync(
+      ['stringField', 'intField'],
+      { stringField: 'huh', intField: 999 },
+    );
+    expect(entityResultNoValues).toHaveLength(0);
+
+    await expect(
+      entityLoader.loadByCompositeFieldEqualingAsync(['stringField', 'intField'], {
+        stringField: 'huh',
+        intField: 5,
+      }),
+    ).rejects.toThrowError(
+      'loadByCompositeFieldEqualing: Multiple entities of type TestEntity found for composite field (stringField,intField)={"stringField":"huh","intField":5}',
+    );
+
+    // test the result map
+    const entityResultMap = await entityLoader.loadManyByCompositeFieldEqualingManyAsync(
+      ['stringField', 'intField'],
+      [
+        { stringField: 'huh', intField: 5 },
+        { stringField: 'huh', intField: 3 },
+      ],
+    );
+    expect(entityResultMap.size).toBe(2);
+    expect(
+      entityResultMap
+        .get({ stringField: 'huh', intField: 5 })
+        ?.map((m) => m.enforceValue().getID()),
+    ).toEqual([id1, id2]);
+    expect(
+      entityResultMap
+        .get({ stringField: 'huh', intField: 3 })
+        ?.map((m) => m.enforceValue().getID()),
+    ).toEqual([id3]);
   });
 
   it('loads entities with loadManyByFieldEqualityConjunction', async () => {
@@ -533,48 +697,52 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       metricsAdapter,
       utils,
     );
-    await entityLoader.utils.invalidateFieldsAsync({ customIdField: id1 } as any);
 
+    const date = new Date();
+
+    await entityLoader.utils.invalidateFieldsAsync({
+      customIdField: id1,
+      testIndexedField: 'h1',
+      intField: 5,
+      stringField: 'huh',
+      dateField: date,
+      nullableField: null,
+    });
+
+    verify(dataManagerMock.invalidateKeyValuePairsAsync(anything())).once();
     verify(
-      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any)),
-    ).once();
-  });
-
-  it('invalidates upon invalidate by field', async () => {
-    const viewerContext = instance(mock(ViewerContext));
-    const privacyPolicyEvaluationContext =
-      instance(
-        mock<EntityPrivacyPolicyEvaluationContext<TestFields, string, ViewerContext, TestEntity>>(),
-      );
-    const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = new StubQueryContextProvider().getQueryContext();
-    const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
-    const dataManagerMock = mock<EntityDataManager<TestFields>>();
-    const dataManagerInstance = instance(dataManagerMock);
-
-    const id1 = uuidv4();
-    const utils = new EntityLoaderUtils(
-      viewerContext,
-      queryContext,
-      privacyPolicyEvaluationContext,
-      testEntityConfiguration,
-      TestEntity,
-      /* entitySelectedFields */ undefined,
-      privacyPolicy,
-      dataManagerInstance,
-      metricsAdapter,
-    );
-    const entityLoader = new AuthorizationResultBasedEntityLoader(
-      queryContext,
-      testEntityConfiguration,
-      TestEntity,
-      dataManagerInstance,
-      metricsAdapter,
-      utils,
-    );
-    await entityLoader.utils.invalidateFieldsAsync({ customIdField: id1 } as any);
-    verify(
-      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any)),
+      dataManagerMock.invalidateKeyValuePairsAsync(
+        deepEqualEntityAware([
+          [
+            new SingleFieldHolder<TestFields, 'customIdField'>('customIdField'),
+            new SingleFieldValueHolder<TestFields, 'customIdField'>(id1),
+          ],
+          [
+            new SingleFieldHolder<TestFields, 'testIndexedField'>('testIndexedField'),
+            new SingleFieldValueHolder<TestFields, 'testIndexedField'>('h1'),
+          ],
+          [
+            new SingleFieldHolder<TestFields, 'intField'>('intField'),
+            new SingleFieldValueHolder<TestFields, 'intField'>(5),
+          ],
+          [
+            new SingleFieldHolder<TestFields, 'stringField'>('stringField'),
+            new SingleFieldValueHolder<TestFields, 'stringField'>('huh'),
+          ],
+          [
+            new SingleFieldHolder<TestFields, 'dateField'>('dateField'),
+            new SingleFieldValueHolder<TestFields, 'dateField'>(date),
+          ],
+          [
+            new CompositeFieldHolder(['stringField', 'intField']),
+            new CompositeFieldValueHolder({ stringField: 'huh', intField: 5 }),
+          ],
+          [
+            new CompositeFieldHolder(['stringField', 'testIndexedField']),
+            new CompositeFieldValueHolder({ stringField: 'huh', testIndexedField: 'h1' }),
+          ],
+        ]),
+      ),
     ).once();
   });
 
@@ -592,7 +760,16 @@ describe(AuthorizationResultBasedEntityLoader, () => {
 
     const id1 = uuidv4();
     const entityMock = mock(TestEntity);
-    when(entityMock.getAllDatabaseFields()).thenReturn({ customIdField: id1 } as any);
+    const date = new Date();
+
+    when(entityMock.getAllDatabaseFields()).thenReturn({
+      customIdField: id1,
+      testIndexedField: 'h1',
+      intField: 5,
+      stringField: 'huh',
+      dateField: date,
+      nullableField: null,
+    });
     const entityInstance = instance(entityMock);
 
     const utils = new EntityLoaderUtils(
@@ -615,8 +792,41 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       utils,
     );
     await entityLoader.utils.invalidateEntityAsync(entityInstance);
+
+    verify(dataManagerMock.invalidateKeyValuePairsAsync(anything())).once();
     verify(
-      dataManagerMock.invalidateObjectFieldsAsync(deepEqual({ customIdField: id1 } as any)),
+      dataManagerMock.invalidateKeyValuePairsAsync(
+        deepEqualEntityAware([
+          [
+            new SingleFieldHolder<TestFields, 'customIdField'>('customIdField'),
+            new SingleFieldValueHolder<TestFields, 'customIdField'>(id1),
+          ],
+          [
+            new SingleFieldHolder<TestFields, 'testIndexedField'>('testIndexedField'),
+            new SingleFieldValueHolder<TestFields, 'testIndexedField'>('h1'),
+          ],
+          [
+            new SingleFieldHolder<TestFields, 'intField'>('intField'),
+            new SingleFieldValueHolder<TestFields, 'intField'>(5),
+          ],
+          [
+            new SingleFieldHolder<TestFields, 'stringField'>('stringField'),
+            new SingleFieldValueHolder<TestFields, 'stringField'>('huh'),
+          ],
+          [
+            new SingleFieldHolder<TestFields, 'dateField'>('dateField'),
+            new SingleFieldValueHolder<TestFields, 'dateField'>(date),
+          ],
+          [
+            new CompositeFieldHolder(['stringField', 'intField']),
+            new CompositeFieldValueHolder({ stringField: 'huh', intField: 5 }),
+          ],
+          [
+            new CompositeFieldHolder(['stringField', 'testIndexedField']),
+            new CompositeFieldValueHolder({ stringField: 'huh', testIndexedField: 'h1' }),
+          ],
+        ]),
+      ),
     ).once();
   });
 
