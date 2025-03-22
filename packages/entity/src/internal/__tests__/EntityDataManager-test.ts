@@ -25,7 +25,9 @@ import {
 import StubDatabaseAdapter from '../../utils/testing/StubDatabaseAdapter';
 import StubQueryContextProvider from '../../utils/testing/StubQueryContextProvider';
 import EntityDataManager from '../EntityDataManager';
+import { EntityLoadMethodType } from '../EntityLoadInterfaces';
 import ReadThroughEntityCache from '../ReadThroughEntityCache';
+import { SingleFieldHolder, SingleFieldValueHolder } from '../SingleFieldHolder';
 
 const getObjects = (): Map<string, TestFields[]> =>
   new Map([
@@ -83,25 +85,25 @@ describe(EntityDataManager, () => {
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
 
-    const entityDatas = await entityDataManager.loadManyByFieldEqualingAsync(
+    const entityDatas = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      'customIdField',
-      ['2'],
+      new SingleFieldHolder('customIdField'),
+      [new SingleFieldValueHolder('2')],
     );
-    expect(entityDatas.get('2')).toHaveLength(1);
+    expect(entityDatas.get(new SingleFieldValueHolder('2'))).toHaveLength(1);
 
     expect(dbSpy).toHaveBeenCalled();
     expect(cacheSpy).toHaveBeenCalled();
     dbSpy.mockClear();
     cacheSpy.mockClear();
 
-    const entityDatas2 = await entityDataManager.loadManyByFieldEqualingAsync(
+    const entityDatas2 = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      'testIndexedField',
-      ['unique2', 'unique3'],
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder('unique2'), new SingleFieldValueHolder('unique3')],
     );
-    expect(entityDatas2.get('unique2')).toHaveLength(1);
-    expect(entityDatas2.get('unique3')).toHaveLength(1);
+    expect(entityDatas2.get(new SingleFieldValueHolder('unique2'))).toHaveLength(1);
+    expect(entityDatas2.get(new SingleFieldValueHolder('unique3'))).toHaveLength(1);
 
     expect(dbSpy).toHaveBeenCalled();
     expect(cacheSpy).toHaveBeenCalled();
@@ -131,25 +133,25 @@ describe(EntityDataManager, () => {
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
 
-    const entityDatas = await entityDataManager.loadManyByFieldEqualingAsync(
+    const entityDatas = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      'customIdField',
-      ['1'],
+      new SingleFieldHolder('customIdField'),
+      [new SingleFieldValueHolder('1')],
     );
-    expect(entityDatas.get('1')).toHaveLength(1);
+    expect(entityDatas.get(new SingleFieldValueHolder('1'))).toHaveLength(1);
 
     expect(dbSpy).toHaveBeenCalled();
     expect(cacheSpy).toHaveBeenCalled();
     dbSpy.mockClear();
     cacheSpy.mockClear();
 
-    const entityDatas2 = await entityDataManager.loadManyByFieldEqualingAsync(
+    const entityDatas2 = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      'testIndexedField',
-      ['unique2', 'unique3'],
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder('unique2'), new SingleFieldValueHolder('unique3')],
     );
-    expect(entityDatas2.get('unique2')).toHaveLength(1);
-    expect(entityDatas2.get('unique3')).toHaveLength(1);
+    expect(entityDatas2.get(new SingleFieldValueHolder('unique2'))).toHaveLength(1);
+    expect(entityDatas2.get(new SingleFieldValueHolder('unique3'))).toHaveLength(1);
 
     expect(dbSpy).toHaveBeenCalled();
     expect(cacheSpy).toHaveBeenCalled();
@@ -187,12 +189,16 @@ describe(EntityDataManager, () => {
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
 
-    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      'unique2',
-    ]);
-    await entityDataManager2.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      'unique2',
-    ]);
+    await entityDataManager.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder('unique2')],
+    );
+    await entityDataManager2.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder('unique2')],
+    );
 
     expect(dbSpy).toHaveBeenCalledTimes(1);
     expect(cacheSpy).toHaveBeenCalledTimes(2);
@@ -223,12 +229,16 @@ describe(EntityDataManager, () => {
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
 
-    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      'unique2',
-    ]);
-    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      'unique2',
-    ]);
+    await entityDataManager.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder('unique2')],
+    );
+    await entityDataManager.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder('unique2')],
+    );
 
     expect(dbSpy).toHaveBeenCalledTimes(1);
     expect(cacheSpy).toHaveBeenCalledTimes(1);
@@ -259,23 +269,23 @@ describe(EntityDataManager, () => {
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
 
-    const entityData = await entityDataManager.loadManyByFieldEqualingAsync(
+    const entityData = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      'stringField',
-      ['hello', 'world'],
+      new SingleFieldHolder('stringField'),
+      [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
     );
-    const entityData2 = await entityDataManager.loadManyByFieldEqualingAsync(
+    const entityData2 = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      'stringField',
-      ['hello', 'world'],
+      new SingleFieldHolder('stringField'),
+      [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
     );
 
     expect(dbSpy).toHaveBeenCalledTimes(1);
     expect(cacheSpy).toHaveBeenCalledTimes(1);
 
     expect(entityData).toMatchObject(entityData2);
-    expect(entityData.get('hello')).toHaveLength(2);
-    expect(entityData.get('world')).toHaveLength(1);
+    expect(entityData.get(new SingleFieldValueHolder('hello'))).toHaveLength(2);
+    expect(entityData.get(new SingleFieldValueHolder('world'))).toHaveLength(1);
 
     dbSpy.mockReset();
     cacheSpy.mockReset();
@@ -305,13 +315,17 @@ describe(EntityDataManager, () => {
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
 
-    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      objectInQuestion['testIndexedField'],
-    ]);
+    await entityDataManager.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
+    );
     await entityDataManager.invalidateObjectFieldsAsync(objectInQuestion);
-    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      objectInQuestion['testIndexedField'],
-    ]);
+    await entityDataManager.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
+    );
 
     expect(dbSpy).toHaveBeenCalledTimes(2);
     expect(cacheSpy).toHaveBeenCalledTimes(2);
@@ -344,13 +358,17 @@ describe(EntityDataManager, () => {
     const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
     const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
 
-    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      objectInQuestion['testIndexedField'],
-    ]);
+    await entityDataManager.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
+    );
     await entityDataManager.invalidateObjectFieldsAsync(objectInQuestion);
-    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', [
-      objectInQuestion['customIdField'],
-    ]);
+    await entityDataManager.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('customIdField'),
+      [new SingleFieldValueHolder(objectInQuestion['customIdField'])],
+    );
 
     expect(dbSpy).toHaveBeenCalledTimes(2);
     expect(cacheSpy).toHaveBeenCalledTimes(2);
@@ -382,14 +400,16 @@ describe(EntityDataManager, () => {
 
     const entityDatas = await new StubQueryContextProvider().runInTransactionAsync(
       async (queryContext) => {
-        return await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', [
-          '1',
-        ]);
+        return await entityDataManager.loadManyEqualingAsync(
+          queryContext,
+          new SingleFieldHolder('customIdField'),
+          [new SingleFieldValueHolder('1')],
+        );
       },
       {},
     );
 
-    expect(entityDatas.get('1')).toHaveLength(1);
+    expect(entityDatas.get(new SingleFieldValueHolder('1'))).toHaveLength(1);
 
     expect(dbSpy).toHaveBeenCalled();
     expect(cacheSpy).not.toHaveBeenCalled();
@@ -464,7 +484,11 @@ describe(EntityDataManager, () => {
     const queryContext = new StubQueryContextProvider().getQueryContext();
 
     await expect(
-      entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', ['2']),
+      entityDataManager.loadManyEqualingAsync(
+        queryContext,
+        new SingleFieldHolder('customIdField'),
+        [new SingleFieldValueHolder('2')],
+      ),
     ).rejects.toThrow();
   });
 
@@ -492,9 +516,11 @@ describe(EntityDataManager, () => {
 
     // make call to loadManyByFieldEqualingAsync to populate cache and dataloader, ensure metrics are recorded
     // for dataloader, cache, and database
-    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      'unique1',
-    ]);
+    await entityDataManager.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder('unique1')],
+    );
     verify(
       metricsAdapterMock.logDataManagerLoadEvent(
         objectContaining({
@@ -511,6 +537,7 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.DATALOADER,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
+          loadType: EntityLoadMethodType.SINGLE,
         }),
       ),
     ).once();
@@ -520,6 +547,7 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.CACHE,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
+          loadType: EntityLoadMethodType.SINGLE,
         }),
       ),
     ).once();
@@ -529,6 +557,7 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.DATABASE,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
+          loadType: EntityLoadMethodType.SINGLE,
         }),
       ),
     ).once();
@@ -537,9 +566,11 @@ describe(EntityDataManager, () => {
 
     // make second call to loadManyByFieldEqualingAsync, ensure metrics are only recorded for dataloader since
     // entity is in local dataloader
-    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      'unique1',
-    ]);
+    await entityDataManager.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder('unique1')],
+    );
     verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).once();
     verify(
       metricsAdapterMock.incrementDataManagerLoadCount(
@@ -547,6 +578,7 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.DATALOADER,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
+          loadType: EntityLoadMethodType.SINGLE,
         }),
       ),
     ).once();
@@ -563,10 +595,11 @@ describe(EntityDataManager, () => {
       metricsAdapter,
       TestEntity.name,
     );
-    await entityDataManager2.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
-      'unique1',
-      'unique2',
-    ]);
+    await entityDataManager2.loadManyEqualingAsync(
+      queryContext,
+      new SingleFieldHolder('testIndexedField'),
+      [new SingleFieldValueHolder('unique1'), new SingleFieldValueHolder('unique2')],
+    );
     verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).thrice();
     verify(
       metricsAdapterMock.incrementDataManagerLoadCount(
@@ -574,6 +607,7 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.DATALOADER,
           fieldValueCount: 2,
           entityClassName: TestEntity.name,
+          loadType: EntityLoadMethodType.SINGLE,
         }),
       ),
     ).once();
@@ -583,6 +617,7 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.CACHE,
           fieldValueCount: 2,
           entityClassName: TestEntity.name,
+          loadType: EntityLoadMethodType.SINGLE,
         }),
       ),
     ).once();
@@ -592,6 +627,7 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.DATABASE,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
+          loadType: EntityLoadMethodType.SINGLE,
         }),
       ),
     ).once();
@@ -663,13 +699,19 @@ describe(EntityDataManager, () => {
     const queryContext = new StubQueryContextProvider().getQueryContext();
 
     await expect(
-      entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'nullableField', [null as any]),
+      entityDataManager.loadManyEqualingAsync(
+        queryContext,
+        new SingleFieldHolder('nullableField'),
+        [new SingleFieldValueHolder(null as any)],
+      ),
     ).rejects.toThrowError('Invalid load: TestEntity (nullableField = null)');
 
     await expect(
-      entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'nullableField', [
-        undefined as any,
-      ]),
+      entityDataManager.loadManyEqualingAsync(
+        queryContext,
+        new SingleFieldHolder('nullableField'),
+        [new SingleFieldValueHolder(undefined as any)],
+      ),
     ).rejects.toThrowError('Invalid load: TestEntity (nullableField = undefined)');
   });
 });

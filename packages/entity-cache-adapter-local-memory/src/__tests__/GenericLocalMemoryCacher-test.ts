@@ -3,6 +3,9 @@ import {
   UUIDField,
   EntityConfiguration,
   GenericEntityCacheAdapter,
+  SingleFieldHolder,
+  SingleFieldValueHolder,
+  SingleFieldValueHolderMap,
 } from '@expo/entity';
 
 import GenericLocalMemoryCacher, {
@@ -60,22 +63,30 @@ describe('Use within GenericEntityCacheAdapter', () => {
         ),
       );
 
-      const cacheHits = new Map<string, Readonly<BlahFields>>([['test-id-1', { id: 'test-id-1' }]]);
-      await cacheAdapter.cacheManyAsync('id', cacheHits);
-      await cacheAdapter.cacheDBMissesAsync('id', ['test-id-2']);
-
-      const results = await cacheAdapter.loadManyAsync('id', [
-        'test-id-1',
-        'test-id-2',
-        'test-id-3',
+      const cacheHits = new Map<SingleFieldValueHolder<BlahFields, 'id'>, Readonly<BlahFields>>([
+        [new SingleFieldValueHolder('test-id-1'), { id: 'test-id-1' }],
+      ]);
+      await cacheAdapter.cacheManyAsync(new SingleFieldHolder<BlahFields, 'id'>('id'), cacheHits);
+      await cacheAdapter.cacheDBMissesAsync(new SingleFieldHolder('id'), [
+        new SingleFieldValueHolder('test-id-2'),
       ]);
 
-      expect(results.get('test-id-1')).toMatchObject({
+      const results = await cacheAdapter.loadManyAsync(new SingleFieldHolder('id'), [
+        new SingleFieldValueHolder('test-id-1'),
+        new SingleFieldValueHolder('test-id-2'),
+        new SingleFieldValueHolder('test-id-3'),
+      ]);
+
+      expect(results.get(new SingleFieldValueHolder('test-id-1'))).toMatchObject({
         status: CacheStatus.HIT,
         item: { id: 'test-id-1' },
       });
-      expect(results.get('test-id-2')).toMatchObject({ status: CacheStatus.NEGATIVE });
-      expect(results.get('test-id-3')).toMatchObject({ status: CacheStatus.MISS });
+      expect(results.get(new SingleFieldValueHolder('test-id-2'))).toMatchObject({
+        status: CacheStatus.NEGATIVE,
+      });
+      expect(results.get(new SingleFieldValueHolder('test-id-3'))).toMatchObject({
+        status: CacheStatus.MISS,
+      });
       expect(results.size).toBe(3);
     });
 
@@ -86,8 +97,11 @@ describe('Use within GenericEntityCacheAdapter', () => {
           GenericLocalMemoryCacher.createLRUCache(),
         ),
       );
-      const results = await cacheAdapter.loadManyAsync('id', []);
-      expect(results).toEqual(new Map());
+      const results = await cacheAdapter.loadManyAsync(
+        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        [] as SingleFieldValueHolder<BlahFields, 'id'>[],
+      );
+      expect(results).toEqual(new SingleFieldValueHolderMap(new Map()));
     });
   });
 
@@ -97,9 +111,15 @@ describe('Use within GenericEntityCacheAdapter', () => {
 
       const localMemoryCacher = new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache);
       const cacheAdapter = new GenericEntityCacheAdapter(localMemoryCacher);
-      await cacheAdapter.cacheManyAsync('id', new Map([['test-id-1', { id: 'test-id-1' }]]));
+      await cacheAdapter.cacheManyAsync(
+        new SingleFieldHolder('id'),
+        new Map([[new SingleFieldValueHolder('test-id-1'), { id: 'test-id-1' }]]),
+      );
 
-      const cacheKey = localMemoryCacher['makeCacheKey']('id', 'test-id-1');
+      const cacheKey = localMemoryCacher['makeCacheKey'](
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder('test-id-1'),
+      );
       expect(localMemoryCache.get(cacheKey)).toMatchObject({
         id: 'test-id-1',
       });
@@ -112,9 +132,14 @@ describe('Use within GenericEntityCacheAdapter', () => {
 
       const localMemoryCacher = new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache);
       const cacheAdapter = new GenericEntityCacheAdapter(localMemoryCacher);
-      await cacheAdapter.cacheDBMissesAsync('id', ['test-id-1']);
+      await cacheAdapter.cacheDBMissesAsync(new SingleFieldHolder('id'), [
+        new SingleFieldValueHolder('test-id-1'),
+      ]);
 
-      const cacheKey = localMemoryCacher['makeCacheKey']('id', 'test-id-1');
+      const cacheKey = localMemoryCacher['makeCacheKey'](
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder('test-id-1'),
+      );
       expect(localMemoryCache.get(cacheKey)).toEqual(DOES_NOT_EXIST_LOCAL_MEMORY_CACHE);
     });
   });
@@ -126,13 +151,28 @@ describe('Use within GenericEntityCacheAdapter', () => {
       const cacheAdapter = new GenericEntityCacheAdapter(
         new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache),
       );
-      await cacheAdapter.cacheManyAsync('id', new Map([['test-id-1', { id: 'test-id-1' }]]));
-      await cacheAdapter.cacheDBMissesAsync('id', ['test-id-2']);
-      await cacheAdapter.invalidateManyAsync('id', ['test-id-1', 'test-id-2']);
+      await cacheAdapter.cacheManyAsync(
+        new SingleFieldHolder('id'),
+        new Map([[new SingleFieldValueHolder('test-id-1'), { id: 'test-id-1' }]]),
+      );
+      await cacheAdapter.cacheDBMissesAsync(new SingleFieldHolder('id'), [
+        new SingleFieldValueHolder('test-id-2'),
+      ]);
+      await cacheAdapter.invalidateManyAsync(new SingleFieldHolder('id'), [
+        new SingleFieldValueHolder('test-id-1'),
+        new SingleFieldValueHolder('test-id-2'),
+      ]);
 
-      const results = await cacheAdapter.loadManyAsync('id', ['test-id-1', 'test-id-2']);
-      expect(results.get('test-id-1')).toMatchObject({ status: CacheStatus.MISS });
-      expect(results.get('test-id-2')).toMatchObject({ status: CacheStatus.MISS });
+      const results = await cacheAdapter.loadManyAsync(new SingleFieldHolder('id'), [
+        new SingleFieldValueHolder('test-id-1'),
+        new SingleFieldValueHolder('test-id-2'),
+      ]);
+      expect(results.get(new SingleFieldValueHolder('test-id-1'))).toMatchObject({
+        status: CacheStatus.MISS,
+      });
+      expect(results.get(new SingleFieldValueHolder('test-id-2'))).toMatchObject({
+        status: CacheStatus.MISS,
+      });
     });
 
     it('returns when passed empty array of fieldValues', async () => {
@@ -142,7 +182,10 @@ describe('Use within GenericEntityCacheAdapter', () => {
           GenericLocalMemoryCacher.createLRUCache<BlahFields>({}),
         ),
       );
-      await cacheAdapter.invalidateManyAsync('id', []);
+      await cacheAdapter.invalidateManyAsync(
+        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        [] as SingleFieldValueHolder<BlahFields, 'id'>[],
+      );
     });
   });
 });

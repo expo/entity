@@ -3,8 +3,9 @@ import {
   CacheStatus,
   EntityConfiguration,
   IEntityGenericCacher,
+  IEntityLoadKey,
+  IEntityLoadValue,
 } from '@expo/entity';
-import invariant from 'invariant';
 import LRUCache from 'lru-cache';
 
 // Sentinel value we store in local memory to negatively cache a database miss.
@@ -88,17 +89,18 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
     }
   }
 
-  public makeCacheKey<N extends keyof TFields>(
-    fieldName: N,
-    fieldValue: NonNullable<TFields[N]>,
-  ): string {
-    const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
-    invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
+  public makeCacheKey<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, value: TLoadValue): string {
+    const cacheKeyType = key.getLoadMethodType();
+    const keyAndValueParts = key.createCacheKeyPartsForLoadValue(this.entityConfiguration, value);
     const parts = [
       this.entityConfiguration.tableName,
+      cacheKeyType,
       `${this.entityConfiguration.cacheKeyVersion}`,
-      columnName,
-      String(fieldValue),
+      ...keyAndValueParts,
     ];
 
     const delimiter = ':';

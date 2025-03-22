@@ -96,7 +96,7 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
     }
   }
 
-  private static computeCacheableKeys<TFields>(
+  private static computeCacheableKeys<TFields extends Record<string, any>>(
     schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>,
   ): ReadonlySet<keyof TFields> {
     return reduceMap(

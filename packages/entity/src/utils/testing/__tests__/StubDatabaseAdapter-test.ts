@@ -2,6 +2,7 @@ import { instance, mock } from 'ts-mockito';
 
 import { OrderByOrdering } from '../../../EntityDatabaseAdapter';
 import { EntityQueryContext } from '../../../EntityQueryContext';
+import { SingleFieldHolder, SingleFieldValueHolder } from '../../../internal/SingleFieldHolder';
 import {
   DateIDTestFields,
   dateIDTestEntityConfiguration,
@@ -51,10 +52,12 @@ describe(StubDatabaseAdapter, () => {
         ),
       );
 
-      const results = await databaseAdapter.fetchManyWhereAsync(queryContext, 'stringField', [
-        'huh',
-      ]);
-      expect(results.get('huh')).toHaveLength(1);
+      const results = await databaseAdapter.fetchManyWhereAsync(
+        queryContext,
+        new SingleFieldHolder('stringField'),
+        [new SingleFieldValueHolder('huh')],
+      );
+      expect(results.get(new SingleFieldValueHolder('huh'))).toHaveLength(1);
     });
   });
 

@@ -34,16 +34,19 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
   protected async fetchManyWhereInternalAsync(
     _queryInterface: any,
     _tableName: string,
-    tableField: string,
-    tableValues: readonly any[],
+    tableColumns: readonly string[],
+    tableValueValues: (readonly any[])[],
   ): Promise<object[]> {
-    return tableValues.reduce((acc, fieldValue) => {
+    const results = tableValueValues.reduce((acc, tableValues) => {
       return acc.concat(
         dbObjects.filter((obj) => {
-          return obj[tableField] === fieldValue;
+          return tableColumns.every((tableColumn, index) => {
+            return obj[tableColumn] === tableValues[index];
+          });
         }),
       );
     }, []);
+    return [...results];
   }
 
   private static compareByOrderBys(

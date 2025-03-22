@@ -18,8 +18,9 @@ import ViewerContext from './ViewerContext';
 import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import EntityDataManager from './internal/EntityDataManager';
+import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
-import { mapMap } from './utils/collections/maps';
+import { mapKeys, mapMap } from './utils/collections/maps';
 
 /**
  * Authorization-result-based entity loader. All normal loads are batched,
@@ -73,14 +74,21 @@ export default class AuthorizationResultBasedEntityLoader<
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
-    this.validateFieldValues(fieldName, fieldValues);
-
-    const fieldValuesToFieldObjects = await this.dataManager.loadManyByFieldEqualingAsync(
-      this.queryContext,
+    const { loadKey, loadValues } = this.validateFieldAndValuesAndConvertToHolders(
       fieldName,
       fieldValues,
     );
 
+    const loadValuesToFieldObjects = await this.dataManager.loadManyEqualingAsync(
+      this.queryContext,
+      loadKey,
+      loadValues,
+    );
+
+    const fieldValuesToFieldObjects = mapKeys(
+      loadValuesToFieldObjects,
+      (loadValue) => loadValue.fieldValue,
+    );
     return await this.utils.constructAndAuthorizeEntitiesAsync(fieldValuesToFieldObjects);
   }
 
@@ -204,7 +212,7 @@ export default class AuthorizationResultBasedEntityLoader<
       const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
         ? [fieldEqualityOperand.fieldValue]
         : fieldEqualityOperand.fieldValues;
-      this.validateFieldValues(fieldEqualityOperand.fieldName, fieldValues);
+      this.validateFieldAndValues(fieldEqualityOperand.fieldName, fieldValues);
     }
 
     const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
@@ -234,7 +242,7 @@ export default class AuthorizationResultBasedEntityLoader<
     return await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
 
-  private validateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
+  private validateFieldAndValues<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValues: readonly TFields[N][],
   ): void {
@@ -246,5 +254,22 @@ export default class AuthorizationResultBasedEntityLoader<
         throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
       }
     }
+  }
+
+  private validateFieldAndValuesAndConvertToHolders<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValues: readonly NonNullable<TFields[N]>[],
+  ): {
+    loadKey: SingleFieldHolder<TFields, N>;
+    loadValues: readonly SingleFieldValueHolder<TFields, N>[];
+  } {
+    this.validateFieldAndValues(fieldName, fieldValues);
+
+    return {
+      loadKey: new SingleFieldHolder<TFields, N>(fieldName),
+      loadValues: fieldValues.map(
+        (fieldValue) => new SingleFieldValueHolder<TFields, N>(fieldValue),
+      ),
+    };
   }
 }

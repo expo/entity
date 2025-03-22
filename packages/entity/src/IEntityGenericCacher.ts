@@ -1,3 +1,4 @@
+import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
 import { CacheLoadResult } from './internal/ReadThroughEntityCache';
 
 /**
@@ -36,10 +37,17 @@ export default interface IEntityGenericCacher<TFields extends Record<string, any
   invalidateManyAsync(keys: readonly string[]): Promise<void>;
 
   /**
-   * Create a cache key for a field and value of a object being cached or invalidated.
+   * Create a cache key for a load key and load value of a object being cached or invalidated.
    *
-   * @param fieldName - name of the object field for this cache key
-   * @param fieldValue - value of the obejct field for this cache key
+   * @param key - load key of the cache key
+   * @param value - load value of the cache key
    */
-  makeCacheKey<N extends keyof TFields>(fieldName: N, fieldValue: NonNullable<TFields[N]>): string;
+  makeCacheKey<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    value: TLoadValue,
+  ): string;
 }

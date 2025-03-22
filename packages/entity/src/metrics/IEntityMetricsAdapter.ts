@@ -2,6 +2,7 @@ import {
   EntityAuthorizationAction,
   EntityPrivacyPolicyEvaluationMode,
 } from '../EntityPrivacyPolicy';
+import { EntityLoadMethodType } from '../internal/EntityLoadInterfaces';
 
 export enum EntityMetricsLoadType {
   LOAD_MANY,
@@ -83,6 +84,11 @@ export interface IncrementLoadCountEvent {
    * Type of this event.
    */
   type: IncrementLoadCountEventType;
+
+  /**
+   * Load method type for this event.
+   */
+  loadType: EntityLoadMethodType;
 
   /**
    * Number of field values being loaded for this call.

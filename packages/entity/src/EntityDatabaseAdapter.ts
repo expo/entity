@@ -1,3 +1,5 @@
+import invariant from 'invariant';
+
 import EntityConfiguration from './EntityConfiguration';
 import { EntityQueryContext } from './EntityQueryContext';
 import {
@@ -6,6 +8,7 @@ import {
   transformFieldsToDatabaseObject,
   FieldTransformerMap,
 } from './internal/EntityFieldTransformationUtils';
+import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
 
 /**
  * Equality operand that is used for selecting entities with a field with a single value.
@@ -129,37 +132,52 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
   protected abstract getFieldTransformerMap(): FieldTransformerMap;
 
   /**
-   * Fetch many objects where fieldName is one of fieldValues.
+   * Fetch many objects where key is one of values.
    *
    * @param queryContext - query context with which to perform the fetch
-   * @param fieldName - object field being queried
-   * @param fieldValues - fieldName field values being queried
-   * @returns map from fieldValue to objects that match the query for that fieldValue
+   * @param key - load key being queried
+   * @param values - load values being queried
+   * @returns map from value to objects that match the query for that value
    */
-  async fetchManyWhereAsync<K extends keyof TFields>(
+  async fetchManyWhereAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
     queryContext: EntityQueryContext,
-    fieldName: K,
-    fieldValues: readonly NonNullable<TFields[K]>[],
-  ): Promise<ReadonlyMap<NonNullable<TFields[K]>, readonly Readonly<TFields>[]>> {
-    const fieldColumn = getDatabaseFieldForEntityField(this.entityConfiguration, fieldName);
+    key: TLoadKey,
+    values: readonly TLoadValue[],
+  ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
+    const keyDatabaseColumns = key.getDatabaseColumns(this.entityConfiguration);
+    const valueDatabaseValues = values.map((value) => key.getDatabaseValues(value));
+
     const results = await this.fetchManyWhereInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
-      fieldColumn,
-      fieldValues,
+      keyDatabaseColumns,
+      valueDatabaseValues,
     );
     const objects = results.map((result) =>
       transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
     );
 
-    const objectMap = new Map();
-    for (const fieldValue of fieldValues) {
-      objectMap.set(fieldValue, []);
+    const objectMap = key.vendNewLoadValueMap<Readonly<TFields>[]>();
+    for (const value of values) {
+      objectMap.set(value, []);
     }
 
     objects.forEach((object) => {
-      const objectFieldValue = object[fieldName];
-      objectMap.get(objectFieldValue).push(object);
+      const objectMapKeyForObject = key.getLoadValueForObject(object);
+      invariant(
+        objectMapKeyForObject !== null,
+        `One or more fields from the object is invalid for key ${key.debugString()}; ${JSON.stringify(object)}. This may indicate a faulty database adapter implementation.`,
+      );
+      const objectList = objectMap.get(objectMapKeyForObject);
+      invariant(
+        objectList !== undefined,
+        `Unexpected object field value during database result transformation: ${objectMapKeyForObject.debugString()}. This should never happen.`,
+      );
+      objectList.push(object);
     });
 
     return objectMap;
@@ -168,8 +186,8 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
   protected abstract fetchManyWhereInternalAsync(
     queryInterface: any,
     tableName: string,
-    tableField: string,
-    tableValues: readonly any[],
+    tableColumns: readonly string[],
+    tableValueValues: (readonly any[])[],
   ): Promise<object[]>;
 
   /**

@@ -2,6 +2,8 @@ import {
   CacheAdapterFlavor,
   CacheAdapterFlavorDefinition,
   CacheStatus,
+  SingleFieldHolder,
+  SingleFieldValueHolder,
   ViewerContext,
 } from '@expo/entity';
 import { v4 as uuidv4 } from 'uuid';
@@ -48,9 +50,11 @@ describe(GenericLocalMemoryCacher, () => {
         .entityCompanionDefinition.entityConfiguration.tableName,
     )!['genericCacher'];
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
-      cacheKeyMaker('id', entity1.getID()),
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
     ]);
-    const cachedValue = cachedResult.get(cacheKeyMaker('id', entity1.getID()))!;
+    const cachedValue = cachedResult.get(
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
+    )!;
     expect(cachedValue).toMatchObject({
       status: CacheStatus.HIT,
       item: {
@@ -70,9 +74,13 @@ describe(GenericLocalMemoryCacher, () => {
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedResult = await entitySpecificGenericCacher.loadManyAsync([
-      cacheKeyMaker('id', nonExistentId),
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(nonExistentId)),
     ]);
-    expect(nonExistentCachedResult.get(cacheKeyMaker('id', nonExistentId))).toMatchObject({
+    expect(
+      nonExistentCachedResult.get(
+        cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(nonExistentId)),
+      ),
+    ).toMatchObject({
       status: CacheStatus.NEGATIVE,
     });
 
@@ -88,9 +96,11 @@ describe(GenericLocalMemoryCacher, () => {
       entity1.getAllFields(),
     );
     const cachedResultMiss = await entitySpecificGenericCacher.loadManyAsync([
-      cacheKeyMaker('id', entity1.getID()),
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
     ]);
-    const cachedValueMiss = cachedResultMiss.get(cacheKeyMaker('id', entity1.getID()));
+    const cachedValueMiss = cachedResultMiss.get(
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
+    );
     expect(cachedValueMiss).toMatchObject({ status: CacheStatus.MISS });
   });
 
@@ -127,9 +137,11 @@ describe(GenericLocalMemoryCacher, () => {
         .entityCompanionDefinition.entityConfiguration.tableName,
     )!['genericCacher'];
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
-      cacheKeyMaker('id', entity1.getID()),
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
     ]);
-    const cachedValue = cachedResult.get(cacheKeyMaker('id', entity1.getID()))!;
+    const cachedValue = cachedResult.get(
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
+    )!;
     expect(cachedValue).toMatchObject({
       status: CacheStatus.MISS,
     });
@@ -144,9 +156,13 @@ describe(GenericLocalMemoryCacher, () => {
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedResult = await entitySpecificGenericCacher.loadManyAsync([
-      cacheKeyMaker('id', nonExistentId),
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(nonExistentId)),
     ]);
-    expect(nonExistentCachedResult.get(cacheKeyMaker('id', nonExistentId))).toMatchObject({
+    expect(
+      nonExistentCachedResult.get(
+        cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(nonExistentId)),
+      ),
+    ).toMatchObject({
       status: CacheStatus.MISS,
     });
   });

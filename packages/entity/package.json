@@ -37,6 +37,7 @@
   "devDependencies": {
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
+    "@types/lodash": "^4.17.16",
     "@types/node": "^20.14.1",
     "@types/uuid": "^8.3.0",
     "ctix": "^2.7.0",
@@ -44,6 +45,7 @@
     "eslint-config-universe": "^14.0.0",
     "eslint-plugin-tsdoc": "^0.3.0",
     "jest": "^29.7.0",
+    "lodash": "^4.17.21",
     "prettier": "^3.3.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "ts-jest": "^29.2.5",
