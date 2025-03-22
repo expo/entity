@@ -490,7 +490,11 @@ describe(EntityDataManager, () => {
     );
     const queryContext = new StubQueryContextProvider().getQueryContext();
 
-    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'customIdField', ['1']);
+    // make call to loadManyByFieldEqualingAsync to populate cache and dataloader, ensure metrics are recorded
+    // for dataloader, cache, and database
+    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
+      'unique1',
+    ]);
     verify(
       metricsAdapterMock.logDataManagerLoadEvent(
         objectContaining({
@@ -500,27 +504,7 @@ describe(EntityDataManager, () => {
         }),
       ),
     ).once();
-
-    await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
-      queryContext,
-      [
-        {
-          fieldName: 'customIdField',
-          fieldValue: '1',
-        },
-      ],
-      {},
-    );
-    verify(
-      metricsAdapterMock.logDataManagerLoadEvent(
-        objectContaining({
-          type: EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
-          entityClassName: TestEntity.name,
-          count: 1,
-        }),
-      ),
-    ).once();
-
+    verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).thrice();
     verify(
       metricsAdapterMock.incrementDataManagerLoadCount(
         deepEqual({
@@ -545,6 +529,91 @@ describe(EntityDataManager, () => {
           type: IncrementLoadCountEventType.DATABASE,
           fieldValueCount: 1,
           entityClassName: TestEntity.name,
+        }),
+      ),
+    ).once();
+
+    resetCalls(metricsAdapterMock);
+
+    // make second call to loadManyByFieldEqualingAsync, ensure metrics are only recorded for dataloader since
+    // entity is in local dataloader
+    await entityDataManager.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
+      'unique1',
+    ]);
+    verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).once();
+    verify(
+      metricsAdapterMock.incrementDataManagerLoadCount(
+        deepEqual({
+          type: IncrementLoadCountEventType.DATALOADER,
+          fieldValueCount: 1,
+          entityClassName: TestEntity.name,
+        }),
+      ),
+    ).once();
+
+    resetCalls(metricsAdapterMock);
+
+    // make third call in new data manager but query two keys, ensure only one of the keys is fetched
+    // from the database and the other is fetched from the cache
+    const entityCache2 = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager2 = new EntityDataManager(
+      databaseAdapter,
+      entityCache2,
+      new StubQueryContextProvider(),
+      metricsAdapter,
+      TestEntity.name,
+    );
+    await entityDataManager2.loadManyByFieldEqualingAsync(queryContext, 'testIndexedField', [
+      'unique1',
+      'unique2',
+    ]);
+    verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).thrice();
+    verify(
+      metricsAdapterMock.incrementDataManagerLoadCount(
+        deepEqual({
+          type: IncrementLoadCountEventType.DATALOADER,
+          fieldValueCount: 2,
+          entityClassName: TestEntity.name,
+        }),
+      ),
+    ).once();
+    verify(
+      metricsAdapterMock.incrementDataManagerLoadCount(
+        deepEqual({
+          type: IncrementLoadCountEventType.CACHE,
+          fieldValueCount: 2,
+          entityClassName: TestEntity.name,
+        }),
+      ),
+    ).once();
+    verify(
+      metricsAdapterMock.incrementDataManagerLoadCount(
+        deepEqual({
+          type: IncrementLoadCountEventType.DATABASE,
+          fieldValueCount: 1,
+          entityClassName: TestEntity.name,
+        }),
+      ),
+    ).once();
+
+    resetCalls(metricsAdapterMock);
+
+    await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
+      queryContext,
+      [
+        {
+          fieldName: 'testIndexedField',
+          fieldValue: 'unique1',
+        },
+      ],
+      {},
+    );
+    verify(
+      metricsAdapterMock.logDataManagerLoadEvent(
+        objectContaining({
+          type: EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
+          entityClassName: TestEntity.name,
+          count: 1,
         }),
       ),
     ).once();
