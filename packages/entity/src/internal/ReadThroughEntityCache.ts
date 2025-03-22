@@ -111,9 +111,9 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
           // TODO(wschurman): emit or throw here since console may not be available
           // eslint-disable-next-line no-console
           console.warn(
-            `unique key ${key.debugString()} in table ${
+            `unique key ${key} in table ${
               this.entityConfiguration.tableName
-            } returned multiple rows for ${value.debugString()}`,
+            } returned multiple rows for ${value}`,
           );
           continue;
         }

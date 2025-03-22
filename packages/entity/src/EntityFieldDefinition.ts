@@ -144,7 +144,7 @@ export interface EntityFieldDefinitionOptions {
   /**
    * Whether or not to cache loaded instances of the entity by this field. The column name is
    * used to derive a cache key for the cache entry. If true, this column must be able uniquely
-   * identify the entity.
+   * identify the entity and the database must have a unique constraint on the column.
    */
   cache?: boolean;
 

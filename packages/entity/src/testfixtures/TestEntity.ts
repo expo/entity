@@ -43,6 +43,11 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields>({
   },
   databaseAdapterFlavor: 'postgres',
   cacheAdapterFlavor: 'redis',
+  compositeFieldDefinitions: [
+    { compositeField: ['stringField', 'intField'] },
+    { compositeField: ['stringField', 'testIndexedField'], cache: true },
+    { compositeField: ['nullableField', 'testIndexedField'], cache: true },
+  ],
 });
 
 export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<

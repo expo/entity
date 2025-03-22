@@ -157,4 +157,5 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<PostgresT
   },
   databaseAdapterFlavor: 'postgres',
   cacheAdapterFlavor: 'redis',
+  compositeFieldDefinitions: [{ compositeField: ['hasACat', 'hasADog'] }],
 });

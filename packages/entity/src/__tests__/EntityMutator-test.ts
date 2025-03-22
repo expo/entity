@@ -1084,11 +1084,21 @@ describe(EntityMutatorFactory, () => {
         .loadManyByFieldEqualingAsync('stringField', 'huh'),
     );
     expect(entites1).toHaveLength(1);
+    const entitiesLoadedByComposite1 = await enforceResultsAsync(
+      entityLoaderFactory
+        .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .loadManyByCompositeFieldEqualingAsync(['stringField', 'intField'], {
+          stringField: 'huh',
+          intField: 3,
+        }),
+    );
+    expect(entitiesLoadedByComposite1).toHaveLength(1);
 
     await enforceAsyncResult(
       entityMutatorFactory
         .forCreate(viewerContext, queryContext)
         .setField('stringField', 'huh')
+        .setField('intField', 3)
         .createAsync(),
     );
 
@@ -1098,6 +1108,15 @@ describe(EntityMutatorFactory, () => {
         .loadManyByFieldEqualingAsync('stringField', 'huh'),
     );
     expect(entities2).toHaveLength(2);
+    const entitiesLoadedByComposite2 = await enforceResultsAsync(
+      entityLoaderFactory
+        .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+        .loadManyByCompositeFieldEqualingAsync(['stringField', 'intField'], {
+          stringField: 'huh',
+          intField: 3,
+        }),
+    );
+    expect(entitiesLoadedByComposite2).toHaveLength(2);
   });
 
   it('throws error when field not valid', async () => {

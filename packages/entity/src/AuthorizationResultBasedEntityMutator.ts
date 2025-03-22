@@ -88,7 +88,15 @@ abstract class AuthorizationResultBasedBaseMutator<
       invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
       const isInputValid = fieldDefinition.validateInputValue(fieldValue);
       if (!isInputValid) {
-        throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
+        throw new EntityInvalidFieldValueError<
+          TFields,
+          TID,
+          TViewerContext,
+          TEntity,
+          TPrivacyPolicy,
+          keyof TFields,
+          TSelectedFields
+        >(this.entityClass, fieldName, fieldValue);
       }
     }
   }

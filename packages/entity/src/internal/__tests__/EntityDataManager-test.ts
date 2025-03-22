@@ -24,6 +24,7 @@ import {
 } from '../../utils/testing/StubCacheAdapter';
 import StubDatabaseAdapter from '../../utils/testing/StubDatabaseAdapter';
 import StubQueryContextProvider from '../../utils/testing/StubQueryContextProvider';
+import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder';
 import EntityDataManager from '../EntityDataManager';
 import { EntityLoadMethodType } from '../EntityLoadInterfaces';
 import ReadThroughEntityCache from '../ReadThroughEntityCache';
@@ -320,7 +321,12 @@ describe(EntityDataManager, () => {
       new SingleFieldHolder('testIndexedField'),
       [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
     );
-    await entityDataManager.invalidateObjectFieldsAsync(objectInQuestion);
+    await entityDataManager.invalidateKeyValuePairsAsync([
+      [
+        new SingleFieldHolder('testIndexedField'),
+        new SingleFieldValueHolder(objectInQuestion['testIndexedField']),
+      ],
+    ]);
     await entityDataManager.loadManyEqualingAsync(
       queryContext,
       new SingleFieldHolder('testIndexedField'),
@@ -363,7 +369,12 @@ describe(EntityDataManager, () => {
       new SingleFieldHolder('testIndexedField'),
       [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
     );
-    await entityDataManager.invalidateObjectFieldsAsync(objectInQuestion);
+    await entityDataManager.invalidateKeyValuePairsAsync([
+      [
+        new SingleFieldHolder('testIndexedField'),
+        new SingleFieldValueHolder(objectInQuestion['testIndexedField']),
+      ],
+    ]);
     await entityDataManager.loadManyEqualingAsync(
       queryContext,
       new SingleFieldHolder('customIdField'),
@@ -679,7 +690,7 @@ describe(EntityDataManager, () => {
     verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).never();
   });
 
-  it('throws when a load-by value is null or undefined', async () => {
+  it('throws when a single value load-by value is null or undefined', async () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
@@ -713,5 +724,55 @@ describe(EntityDataManager, () => {
         [new SingleFieldValueHolder(undefined as any)],
       ),
     ).rejects.toThrowError('Invalid load: TestEntity (nullableField = undefined)');
+  });
+
+  it('throws when a composite value load-by value is null or undefined', async () => {
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects,
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      new StubQueryContextProvider(),
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name,
+    );
+    const queryContext = new StubQueryContextProvider().getQueryContext();
+
+    await expect(
+      entityDataManager.loadManyEqualingAsync(
+        queryContext,
+        new CompositeFieldHolder<TestFields>(['nullableField', 'testIndexedField']),
+        [
+          new CompositeFieldValueHolder({
+            nullableField: null as any,
+            testIndexedField: 'unique1',
+          }),
+        ],
+      ),
+    ).rejects.toThrowError(
+      'Invalid load: TestEntity (nullableField,testIndexedField = CompositeFieldValue(nullableField=null,testIndexedField=unique1))',
+    );
+
+    await expect(
+      entityDataManager.loadManyEqualingAsync(
+        queryContext,
+        new CompositeFieldHolder<TestFields>(['nullableField', 'testIndexedField']),
+        [
+          new CompositeFieldValueHolder({
+            nullableField: undefined as any,
+            testIndexedField: 'unique1',
+          }),
+        ],
+      ),
+    ).rejects.toThrowError(
+      'Invalid load: TestEntity (nullableField,testIndexedField = CompositeFieldValue(nullableField=undefined,testIndexedField=unique1))',
+    );
   });
 });

@@ -10,7 +10,7 @@ import { mapMap } from './utils/collections/maps';
  * An interface that knows how to load many objects from a cache by load params and invalidate
  * those same load params.
  */
-export interface ISecondaryEntityCache<TFields, TLoadParams> {
+export interface ISecondaryEntityCache<TFields extends Record<string, any>, TLoadParams> {
   /**
    * Read-through cache function.
    * @param loadParamsArray - array of loadParams to load from the cache

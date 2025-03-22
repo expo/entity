@@ -2,6 +2,7 @@ import isEqualWith from 'lodash/isEqualWith';
 import { Matcher } from 'ts-mockito/lib/matcher/type/Matcher';
 
 import { SerializableKeyMap } from '../../utils/collections/SerializableKeyMap';
+import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../SingleFieldHolder';
 
 export function isEqualWithEntityAware(expected: any, actual: any): boolean {
@@ -16,6 +17,17 @@ export function isEqualWithEntityAware(expected: any, actual: any): boolean {
 
     if (expected instanceof SingleFieldValueHolder && actual instanceof SingleFieldValueHolder) {
       return expected.fieldValue === actual.fieldValue;
+    }
+
+    if (expected instanceof CompositeFieldHolder && actual instanceof CompositeFieldHolder) {
+      return expected.serialize() === actual.serialize();
+    }
+
+    if (
+      expected instanceof CompositeFieldValueHolder &&
+      actual instanceof CompositeFieldValueHolder
+    ) {
+      return expected.serialize() === actual.serialize();
     }
 
     if (expected instanceof SerializableKeyMap && actual instanceof SerializableKeyMap) {

@@ -2,6 +2,10 @@ import { instance, mock } from 'ts-mockito';
 
 import { OrderByOrdering } from '../../../EntityDatabaseAdapter';
 import { EntityQueryContext } from '../../../EntityQueryContext';
+import {
+  CompositeFieldHolder,
+  CompositeFieldValueHolder,
+} from '../../../internal/CompositeFieldHolder';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../../../internal/SingleFieldHolder';
 import {
   DateIDTestFields,
@@ -20,7 +24,7 @@ import StubDatabaseAdapter from '../StubDatabaseAdapter';
 
 describe(StubDatabaseAdapter, () => {
   describe('fetchManyWhereAsync', () => {
-    it('fetches many where', async () => {
+    it('fetches many where single', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields>(
         testEntityConfiguration,
@@ -58,6 +62,57 @@ describe(StubDatabaseAdapter, () => {
         [new SingleFieldValueHolder('huh')],
       );
       expect(results.get(new SingleFieldValueHolder('huh'))).toHaveLength(1);
+    });
+
+    it('fetches many where composite', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+        testEntityConfiguration,
+        StubDatabaseAdapter.convertFieldObjectsToDataStore(
+          testEntityConfiguration,
+          new Map([
+            [
+              testEntityConfiguration.tableName,
+              [
+                {
+                  customIdField: 'hello',
+                  testIndexedField: 'h1',
+                  intField: 5,
+                  stringField: 'huh',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+                {
+                  customIdField: 'world',
+                  testIndexedField: 'h2',
+                  intField: 3,
+                  stringField: 'wat',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+              ],
+            ],
+          ]),
+        ),
+      );
+
+      const results = await databaseAdapter.fetchManyWhereAsync(
+        queryContext,
+        new CompositeFieldHolder<TestFields>(['stringField', 'intField']),
+        [new CompositeFieldValueHolder({ stringField: 'huh', intField: 5 })],
+      );
+      expect(
+        results.get(new CompositeFieldValueHolder({ stringField: 'huh', intField: 5 })),
+      ).toHaveLength(1);
+
+      const results2 = await databaseAdapter.fetchManyWhereAsync(
+        queryContext,
+        new CompositeFieldHolder<TestFields>(['stringField', 'intField']),
+        [new CompositeFieldValueHolder({ stringField: 'not-in-db', intField: 5 })],
+      );
+      expect(
+        results2.get(new CompositeFieldValueHolder({ stringField: 'not-in-db', intField: 5 })),
+      ).toHaveLength(0);
     });
   });
 

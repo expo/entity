@@ -5,7 +5,7 @@ import { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
 /**
  * A ISecondaryEntityCache that composes other ISecondaryEntityCache instances.
  */
-export default class ComposedSecondaryEntityCache<TLoadParams, TFields>
+export default class ComposedSecondaryEntityCache<TLoadParams, TFields extends Record<string, any>>
   implements ISecondaryEntityCache<TFields, TLoadParams>
 {
   /**
@@ -30,7 +30,10 @@ export default class ComposedSecondaryEntityCache<TLoadParams, TFields>
     );
   }
 
-  private static async loadManyThroughRecursivelyAsync<TLoadParams, TFields>(
+  private static async loadManyThroughRecursivelyAsync<
+    TLoadParams,
+    TFields extends Record<string, any>,
+  >(
     secondaryEntityCaches: ISecondaryEntityCache<TFields, TLoadParams>[],
     loadParamsArray: readonly Readonly<TLoadParams>[],
     fetcher: (

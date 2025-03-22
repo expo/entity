@@ -9,6 +9,11 @@ export enum EntityLoadMethodType {
    * Load method type for loading entities by single fieldName and fieldValue(s).
    */
   SINGLE = 'single',
+
+  /**
+   * Load method type for loading entities by composite field.
+   */
+  COMPOSITE = 'composite',
 }
 
 /**
@@ -20,10 +25,7 @@ export interface IEntityLoadKey<
   TSerializedLoadValue,
   TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
 > {
-  /**
-   * Debug string representation of the load key. Printed in console logs and error messages.
-   */
-  debugString(): string;
+  toString(): string;
 
   /**
    * Vends a new empty load value map with a key type corresponding to the load value type of this load key.
@@ -114,10 +116,7 @@ export interface IEntityLoadKey<
  * Interface for a load value corresponding to a load key.
  */
 export interface IEntityLoadValue<TSerialized> extends ISerializable<TSerialized> {
-  /**
-   * Debug string representation of the load value. Printed in console logs and error messages.
-   */
-  debugString(): string;
+  toString(): string;
 }
 
 /**
@@ -128,3 +127,13 @@ export abstract class LoadValueMap<
   TLoadValue extends IEntityLoadValue<TSerialized>,
   V,
 > extends SerializableKeyMap<TSerialized, TLoadValue, V> {}
+
+/**
+ * Load pair type for a load key and load value.
+ */
+export type LoadPair<
+  TFields extends Record<string, any>,
+  TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+  TSerializedLoadValue,
+  TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+> = readonly [TLoadKey, TLoadValue];

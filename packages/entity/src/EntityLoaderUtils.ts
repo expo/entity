@@ -9,6 +9,7 @@ import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import { pick } from './entityUtils';
 import EntityDataManager from './internal/EntityDataManager';
+import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
 
@@ -60,7 +61,35 @@ export default class EntityLoaderUtils<
    * @param objectFields - entity data object to be invalidated
    */
   async invalidateFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
-    await this.dataManager.invalidateObjectFieldsAsync(objectFields);
+    const keys = Object.keys(objectFields) as (keyof TFields)[];
+    const singleFieldKeyValues = keys
+      .map((fieldName: keyof TFields) => {
+        const value = objectFields[fieldName];
+        if (value === undefined || value === null) {
+          return null;
+        }
+        return [
+          new SingleFieldHolder<TFields, typeof fieldName>(fieldName),
+          new SingleFieldValueHolder(value),
+        ] as const;
+      })
+      .filter((kv) => kv !== null);
+
+    const compositeFieldKeyValues = this.entityConfiguration.compositeFieldInfo
+      .getAllCompositeFieldHolders()
+      .map((compositeFieldHolder) => {
+        const compositeFieldValueHolder =
+          compositeFieldHolder.extractCompositeFieldValueHolderFromObjectFields(objectFields);
+        return compositeFieldValueHolder
+          ? ([compositeFieldHolder, compositeFieldValueHolder] as const)
+          : null;
+      })
+      .filter((kv) => kv !== null);
+
+    await this.dataManager.invalidateKeyValuePairsAsync([
+      ...singleFieldKeyValues,
+      ...compositeFieldKeyValues,
+    ]);
   }
 
   /**
