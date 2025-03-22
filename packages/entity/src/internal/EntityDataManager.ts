@@ -72,7 +72,7 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
       async (fetcherValues) => {
         this.metricsAdapter.incrementDataManagerLoadCount({
           type: IncrementLoadCountEventType.DATABASE,
-          fieldValueCount: fieldValues.length,
+          fieldValueCount: fetcherValues.length,
           entityClassName: this.entityClassName,
         });
         return await this.databaseAdapter.fetchManyWhereAsync(
