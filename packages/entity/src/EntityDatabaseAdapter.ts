@@ -11,7 +11,7 @@ import {
  * Equality operand that is used for selecting entities with a field with a single value.
  */
 export interface SingleValueFieldEqualityCondition<
-  TFields,
+  TFields extends Record<string, any>,
   N extends keyof TFields = keyof TFields,
 > {
   fieldName: N;
@@ -22,7 +22,7 @@ export interface SingleValueFieldEqualityCondition<
  * Equality operand that is used for selecting entities with a field matching one of multiple values.
  */
 export interface MultiValueFieldEqualityCondition<
-  TFields,
+  TFields extends Record<string, any>,
   N extends keyof TFields = keyof TFields,
 > {
   fieldName: N;
@@ -33,12 +33,13 @@ export interface MultiValueFieldEqualityCondition<
  * A single equality operand for use in a selection clause.
  * See EntityLoader.loadManyByFieldEqualityConjunctionAsync documentation for examples.
  */
-export type FieldEqualityCondition<TFields, N extends keyof TFields = keyof TFields> =
-  | SingleValueFieldEqualityCondition<TFields, N>
-  | MultiValueFieldEqualityCondition<TFields, N>;
+export type FieldEqualityCondition<
+  TFields extends Record<string, any>,
+  N extends keyof TFields = keyof TFields,
+> = SingleValueFieldEqualityCondition<TFields, N> | MultiValueFieldEqualityCondition<TFields, N>;
 
 export function isSingleValueFieldEqualityCondition<
-  TFields,
+  TFields extends Record<string, any>,
   N extends keyof TFields = keyof TFields,
 >(
   condition: FieldEqualityCondition<TFields, N>,
@@ -64,7 +65,7 @@ export enum OrderByOrdering {
 /**
  * SQL modifiers that only affect the selection but not the projection.
  */
-export interface QuerySelectionModifiers<TFields> {
+export interface QuerySelectionModifiers<TFields extends Record<string, any>> {
   /**
    * Order the entities by specified columns and orders.
    */
@@ -84,7 +85,7 @@ export interface QuerySelectionModifiers<TFields> {
   limit?: number;
 }
 
-export interface QuerySelectionModifiersWithOrderByRaw<TFields>
+export interface QuerySelectionModifiersWithOrderByRaw<TFields extends Record<string, any>>
   extends QuerySelectionModifiers<TFields> {
   /**
    * Order the entities by a raw SQL `ORDER BY` clause.

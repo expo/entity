@@ -10,7 +10,7 @@ import ViewerContext from './ViewerContext';
  * The primary interface for updating entities.
  */
 export default class EntityUpdater<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

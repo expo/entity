@@ -4,7 +4,7 @@ import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
 
 export default class EntityNotAuthorizedError<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

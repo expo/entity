@@ -296,7 +296,7 @@ type TestEntityThrowOtherErrorFields = {
 };
 
 class DenyUpdateEntityPrivacyPolicy<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -317,7 +317,7 @@ class DenyUpdateEntityPrivacyPolicy<
 }
 
 class DenyDeleteEntityPrivacyPolicy<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -338,7 +338,7 @@ class DenyDeleteEntityPrivacyPolicy<
 }
 
 class ThrowOtherErrorEntityPrivacyPolicy<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -386,7 +386,7 @@ class ThrowOtherErrorEntityPrivacyPolicy<
 }
 
 class DenyReadEntityPrivacyPolicy<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

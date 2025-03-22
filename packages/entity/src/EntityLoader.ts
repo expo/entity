@@ -12,7 +12,7 @@ import ViewerContext from './ViewerContext';
  * cached, and authorized against the entity's EntityPrivacyPolicy.
  */
 export default class EntityLoader<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TViewerContext2 extends TViewerContext,

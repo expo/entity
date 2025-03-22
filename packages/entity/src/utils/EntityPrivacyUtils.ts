@@ -43,7 +43,7 @@ export type EntityPrivacyEvaluationResult =
  * @param queryContext - query context in which to perform the check
  */
 export async function canViewerUpdateAsync<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -83,7 +83,7 @@ export async function canViewerUpdateAsync<
  * @param queryContext - query context in which to perform the check
  */
 export async function getCanViewerUpdateResultAsync<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -113,7 +113,7 @@ export async function getCanViewerUpdateResultAsync<
 }
 
 async function canViewerUpdateInternalAsync<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -165,7 +165,7 @@ async function canViewerUpdateInternalAsync<
  * @param queryContext - query context in which to perform the check
  */
 export async function canViewerDeleteAsync<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -205,7 +205,7 @@ export async function canViewerDeleteAsync<
  * @param queryContext - query context in which to perform the check
  */
 export async function getCanViewerDeleteResultAsync<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -235,7 +235,7 @@ export async function getCanViewerDeleteResultAsync<
 }
 
 async function canViewerDeleteInternalAsync<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,

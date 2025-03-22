@@ -4,7 +4,7 @@ import { CacheLoadResult } from './internal/ReadThroughEntityCache';
  * A generic cacher stores and loads key-value pairs. It also supports negative caching - it stores the absence
  * of keys that don't exist in the backing datastore. It is also responsible for cache key creation.
  */
-export default interface IEntityGenericCacher<TFields> {
+export default interface IEntityGenericCacher<TFields extends Record<string, any>> {
   /**
    * Load many keys from the cache. Return info in a format that is useful for read-through caching and
    * negative caching.

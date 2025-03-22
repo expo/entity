@@ -21,7 +21,9 @@ const entityConfiguration = new EntityConfiguration<BlahFields>({
 });
 
 export const DOES_NOT_EXIST_LOCAL_MEMORY_CACHE = Symbol('doesNotExist');
-type LocalMemoryCacheValue<TFields> = Readonly<TFields> | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
+type LocalMemoryCacheValue<TFields extends Record<string, any>> =
+  | Readonly<TFields>
+  | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
 
 class TestLocalCacheAdapter<TFields extends Record<string, any>>
   implements IEntityCacheAdapter<TFields>

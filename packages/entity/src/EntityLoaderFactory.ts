@@ -12,7 +12,7 @@ import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
  * The primary entry point for loading entities.
  */
 export default class EntityLoaderFactory<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

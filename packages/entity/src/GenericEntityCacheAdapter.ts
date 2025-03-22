@@ -8,7 +8,9 @@ import { mapKeys } from './utils/collections/maps';
 /**
  * A standard IEntityCacheAdapter that coordinates caching through an IEntityGenericCacher.
  */
-export default class GenericEntityCacheAdapter<TFields> implements IEntityCacheAdapter<TFields> {
+export default class GenericEntityCacheAdapter<TFields extends Record<string, any>>
+  implements IEntityCacheAdapter<TFields>
+{
   constructor(private readonly genericCacher: IEntityGenericCacher<TFields>) {}
 
   public async loadManyAsync<N extends keyof TFields>(

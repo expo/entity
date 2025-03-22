@@ -9,7 +9,7 @@ import ViewerContext from './ViewerContext';
  * Provides a cleaner API for loading entities by passing through the ViewerContext.
  */
 export default class ViewerScopedEntityLoaderFactory<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

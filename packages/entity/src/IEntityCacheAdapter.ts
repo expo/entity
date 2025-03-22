@@ -4,7 +4,7 @@ import { CacheLoadResult } from './internal/ReadThroughEntityCache';
  * A cache adapter is an interface by which objects can be
  * cached, fetched from cache, and removed from cache (invalidated).
  */
-export default interface IEntityCacheAdapter<TFields> {
+export default interface IEntityCacheAdapter<TFields extends Record<string, any>> {
   /**
    * Load many objects from cache.
    * @param fieldName - object field being queried
