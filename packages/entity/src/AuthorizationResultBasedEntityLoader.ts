@@ -65,9 +65,7 @@ export default class AuthorizationResultBasedEntityLoader<
   ) {}
 
   /**
-   * Load many entities where fieldName is one of fieldValues.
-   * @param fieldName - entity field being queried
-   * @param fieldValues - fieldName field values being queried
+   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns map from fieldValue to entity results that match the query for that fieldValue,
    *          where result errors can be UnauthorizedError
    */
@@ -87,9 +85,7 @@ export default class AuthorizationResultBasedEntityLoader<
   }
 
   /**
-   * Load many entities where fieldName equals fieldValue.
-   * @param fieldName - entity field being queried
-   * @param fieldValue - fieldName field value being queried
+   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns array of entity results that match the query for fieldValue, where result error can be UnauthorizedError
    */
   async loadManyByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
@@ -106,9 +102,7 @@ export default class AuthorizationResultBasedEntityLoader<
   }
 
   /**
-   * Load an entity where fieldName equals fieldValue, or null if no entity exists.
-   * @param uniqueFieldName - entity field being queried
-   * @param fieldValue - uniqueFieldName field value being queried
+   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns entity result where uniqueFieldName equals fieldValue, or null if no entity matches the condition.
    * @throws when multiple entities match the condition
    */
@@ -127,8 +121,7 @@ export default class AuthorizationResultBasedEntityLoader<
   }
 
   /**
-   * Loads an entity by a specified ID.
-   * @param id - ID of the entity
+   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns entity result for matching ID, where result error can be UnauthorizedError or EntityNotFoundError.
    */
   async loadByIDAsync(id: TID): Promise<Result<TEntity>> {
@@ -138,8 +131,7 @@ export default class AuthorizationResultBasedEntityLoader<
   }
 
   /**
-   * Load an entity by a specified ID, or return null if non-existent.
-   * @param id - ID of the entity
+   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns entity result for matching ID, or null if no entity exists for ID.
    */
   async loadByIDNullableAsync(id: TID): Promise<Result<TEntity> | null> {
@@ -150,8 +142,7 @@ export default class AuthorizationResultBasedEntityLoader<
   }
 
   /**
-   * Loads many entities for a list of IDs.
-   * @param ids - IDs of the entities to load
+   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns map from ID to corresponding entity result, where result error can be UnauthorizedError or EntityNotFoundError.
    */
   async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, Result<TEntity>>> {
@@ -169,9 +160,8 @@ export default class AuthorizationResultBasedEntityLoader<
   }
 
   /**
-   * Loads many entities for a list of IDs, returning null for any IDs that are non-existent.
-   * @param ids - IDs of the entities to load
-   * @returns map from ID to nullable corresponding entity result, where result error can be UnauthorizedError or EntityNotFoundError.
+   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
+   * @returns map from ID to nullable corresponding entity result, where result error can be UnauthorizedError.
    */
   async loadManyByIDsNullableAsync(
     ids: readonly TID[],
@@ -186,16 +176,7 @@ export default class AuthorizationResultBasedEntityLoader<
   }
 
   /**
-   * Loads the first entity matching the selection constructed from the conjunction of specified
-   * operands, or null if no matching entity exists. Entities loaded using this method are not
-   * batched or cached.
-   *
-   * This is a convenience method for {@link loadManyByFieldEqualityConjunctionAsync}. However, the
-   * `orderBy` option must be specified to define what "first" means. If ordering doesn't matter,
-   * explicitly pass in an empty array.
-   *
-   * @param fieldEqualityOperands - list of field equality selection operand specifications
-   * @param querySelectionModifiers - orderBy and optional offset for the query
+   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns the first entity results that matches the query, where result error can be
    *  UnauthorizedError
    */
@@ -212,17 +193,7 @@ export default class AuthorizationResultBasedEntityLoader<
   }
 
   /**
-   * Loads many entities matching the selection constructed from the conjunction of specified operands.
-   * Entities loaded using this method are not batched or cached.
-   *
-   * @example
-   * fieldEqualityOperands:
-   * `[{fieldName: 'hello', fieldValue: 1}, {fieldName: 'world', fieldValues: [2, 3]}]`
-   * Entities returned with a SQL EntityDatabaseAdapter:
-   * `WHERE hello = 1 AND world = ANY({2, 3})`
-   *
-   * @param fieldEqualityOperands - list of field equality selection operand specifications
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query
+   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
@@ -245,25 +216,7 @@ export default class AuthorizationResultBasedEntityLoader<
   }
 
   /**
-   * Loads many entities matching the raw WHERE clause. Corresponds to the knex `whereRaw` argument format.
-   *
-   * @remarks
-   * Important notes:
-   * - Fields in clause are database column names instead of transformed entity field names.
-   * - Entities loaded using this method are not batched or cached.
-   * - Not all database adapters implement the ability to execute this method of fetching entities.
-   *
-   * @example
-   * rawWhereClause: `id = ?`
-   * bindings: `[1]`
-   * Entites returned `WHERE id = 1`
-   *
-   * http://knexjs.org/#Builder-whereRaw
-   * http://knexjs.org/#Raw-Bindings
-   *
-   * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
-   * @param bindings - array of positional bindings or object of named bindings
-   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
+   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    * @throws Error when rawWhereClause or bindings are invalid
    */
