@@ -19,7 +19,7 @@ import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
  * The primary interface for creating, mutating, and deleting entities.
  */
 export default class EntityMutatorFactory<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,

@@ -34,7 +34,7 @@ import ViewerContext from './ViewerContext';
  * own EntityCompanionDefinition.
  */
 export default abstract class Entity<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TSelectedFields extends keyof TFields = keyof TFields,
@@ -314,7 +314,7 @@ export default abstract class Entity<
  * An interface to pass in constructor (class) of an Entity as a function argument.
  */
 export interface IEntityClass<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

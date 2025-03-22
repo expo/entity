@@ -21,7 +21,7 @@ export default class ViewerScopedEntityCompanionProvider {
    * @param entityClass - entity class to load
    */
   getViewerScopedCompanionForEntity<
-    TFields extends object,
+    TFields extends Record<string, any>,
     TID extends NonNullable<TFields[TSelectedFields]>,
     TViewerContext extends ViewerContext,
     TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

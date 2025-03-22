@@ -10,10 +10,13 @@ import LRUCache from 'lru-cache';
 // Sentinel value we store in local memory to negatively cache a database miss.
 // The sentinel value is distinct from any (positively) cached value.
 export const DOES_NOT_EXIST_LOCAL_MEMORY_CACHE = Symbol('doesNotExist');
-export type LocalMemoryCacheValue<TFields> =
+export type LocalMemoryCacheValue<TFields extends Record<string, any>> =
   | Readonly<TFields>
   | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
-export type LocalMemoryCache<TFields> = LRUCache<string, LocalMemoryCacheValue<TFields>>;
+export type LocalMemoryCache<TFields extends Record<string, any>> = LRUCache<
+  string,
+  LocalMemoryCacheValue<TFields>
+>;
 
 export default class GenericLocalMemoryCacher<TFields extends Record<string, any>>
   implements IEntityGenericCacher<TFields>
@@ -23,7 +26,7 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
     private readonly localMemoryCache: LocalMemoryCache<TFields>,
   ) {}
 
-  static createLRUCache<TFields>(
+  static createLRUCache<TFields extends Record<string, any>>(
     options: { maxSize?: number; ttlSeconds?: number } = {},
   ): LocalMemoryCache<TFields> {
     const DEFAULT_LRU_CACHE_MAX_AGE_SECONDS = 10;
@@ -36,7 +39,7 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
     });
   }
 
-  static createNoOpCache<TFields>(): LocalMemoryCache<TFields> {
+  static createNoOpCache<TFields extends Record<string, any>>(): LocalMemoryCache<TFields> {
     return new LRUCache<string, LocalMemoryCacheValue<TFields>>({
       max: 0,
       maxAge: -1,

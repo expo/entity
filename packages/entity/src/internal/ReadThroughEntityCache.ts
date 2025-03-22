@@ -10,7 +10,7 @@ export enum CacheStatus {
   NEGATIVE,
 }
 
-export type CacheLoadResult<TFields> =
+export type CacheLoadResult<TFields extends Record<string, any>> =
   | {
       status: CacheStatus.HIT;
       item: Readonly<TFields>;

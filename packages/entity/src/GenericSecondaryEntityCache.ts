@@ -10,8 +10,10 @@ import { filterMap, zipToMap } from './utils/collections/maps';
  * single entity load. One common way this may be used is to add a second layer of caching in a hot path that makes
  * a call to EntityLoader.loadManyByFieldEqualityConjunctionAsync is guaranteed to return at most one entity.
  */
-export default abstract class GenericSecondaryEntityCache<TFields, TLoadParams>
-  implements ISecondaryEntityCache<TFields, TLoadParams>
+export default abstract class GenericSecondaryEntityCache<
+  TFields extends Record<string, any>,
+  TLoadParams,
+> implements ISecondaryEntityCache<TFields, TLoadParams>
 {
   constructor(
     protected readonly cacher: IEntityGenericCacher<TFields>,

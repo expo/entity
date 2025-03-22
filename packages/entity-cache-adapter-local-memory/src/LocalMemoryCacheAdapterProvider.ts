@@ -17,7 +17,7 @@ export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdap
    * @returns a no-op local memory cache adapter provider, or one that doesn't cache locally.
    */
   static createNoOpProvider(): IEntityCacheAdapterProvider {
-    return new LocalMemoryCacheAdapterProvider(<TFields>() =>
+    return new LocalMemoryCacheAdapterProvider(<TFields extends Record<string, any>>() =>
       GenericLocalMemoryCacher.createNoOpCache<TFields>(),
     );
   }
@@ -28,7 +28,7 @@ export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdap
   static createProviderWithOptions(
     options: { maxSize?: number; ttlSeconds?: number } = {},
   ): IEntityCacheAdapterProvider {
-    return new LocalMemoryCacheAdapterProvider(<TFields>() =>
+    return new LocalMemoryCacheAdapterProvider(<TFields extends Record<string, any>>() =>
       GenericLocalMemoryCacher.createLRUCache<TFields>(options),
     );
   }
@@ -36,7 +36,9 @@ export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdap
   private readonly localMemoryCacheAdapterMap = new Map<string, GenericEntityCacheAdapter<any>>();
 
   private constructor(
-    private readonly localMemoryCacheCreator: <TFields>() => LocalMemoryCache<TFields>,
+    private readonly localMemoryCacheCreator: <
+      TFields extends Record<string, any>,
+    >() => LocalMemoryCache<TFields>,
   ) {}
 
   public getCacheAdapter<TFields extends Record<string, any>>(

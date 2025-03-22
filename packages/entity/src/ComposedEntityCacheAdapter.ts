@@ -6,7 +6,9 @@ import { CacheStatus, CacheLoadResult } from './internal/ReadThroughEntityCache'
 /**
  * A IEntityCacheAdapter that composes other IEntityCacheAdapter instances.
  */
-export default class ComposedEntityCacheAdapter<TFields> implements IEntityCacheAdapter<TFields> {
+export default class ComposedEntityCacheAdapter<TFields extends Record<string, any>>
+  implements IEntityCacheAdapter<TFields>
+{
   /**
    * @param cacheAdapters - list of cache adapters to compose in order of precedence.
    *                        Earlier cache adapters are read from first and written to (including invalidations) last.

@@ -10,7 +10,7 @@ import ViewerContext from './ViewerContext';
  * The primary interface for deleting entities.
  */
 export default class EntityDeleter<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

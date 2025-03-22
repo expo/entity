@@ -12,7 +12,7 @@ import PrivacyPolicyRule, { RuleEvaluationResult } from './rules/PrivacyPolicyRu
  * Information about the reason this privacy policy is being evaluated.
  */
 export type EntityPrivacyPolicyEvaluationContext<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -53,7 +53,7 @@ export enum EntityPrivacyPolicyEvaluationMode {
 }
 
 export type EntityPrivacyPolicyEvaluator<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -104,7 +104,7 @@ export enum EntityAuthorizationAction {
  * ```
  */
 export default abstract class EntityPrivacyPolicy<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

@@ -28,7 +28,7 @@ import IEntityMetricsAdapter, { EntityMetricsMutationType } from './metrics/IEnt
 import { mapMapAsync } from './utils/collections/maps';
 
 abstract class AuthorizationResultBasedBaseMutator<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -156,7 +156,7 @@ abstract class AuthorizationResultBasedBaseMutator<
  * Mutator for creating a new entity.
  */
 export class AuthorizationResultBasedCreateMutator<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -295,7 +295,7 @@ export class AuthorizationResultBasedCreateMutator<
  * Mutator for updating an existing entity.
  */
 export class AuthorizationResultBasedUpdateMutator<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -529,7 +529,7 @@ export class AuthorizationResultBasedUpdateMutator<
  * Mutator for deleting an existing entity.
  */
 export class AuthorizationResultBasedDeleteMutator<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,

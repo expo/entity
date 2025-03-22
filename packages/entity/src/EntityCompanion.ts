@@ -17,7 +17,7 @@ export interface IPrivacyPolicyClass<TPrivacyPolicy> {
  * Composition root responsible for orchestrating setup of Entity mutators and loaders.
  */
 export default class EntityCompanion<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

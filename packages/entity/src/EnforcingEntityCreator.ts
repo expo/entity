@@ -10,7 +10,7 @@ import ViewerContext from './ViewerContext';
  * through this creator will throw if authorization is not successful.
  */
 export default class EnforcingEntityCreator<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

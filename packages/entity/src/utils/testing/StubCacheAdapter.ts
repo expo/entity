@@ -13,7 +13,9 @@ export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvi
   }
 }
 
-export class NoCacheStubCacheAdapter<TFields> implements IEntityCacheAdapter<TFields> {
+export class NoCacheStubCacheAdapter<TFields extends Record<string, any>>
+  implements IEntityCacheAdapter<TFields>
+{
   public async loadManyAsync<N extends keyof TFields>(
     _fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[],

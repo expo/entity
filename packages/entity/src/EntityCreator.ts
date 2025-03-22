@@ -10,7 +10,7 @@ import ViewerContext from './ViewerContext';
  * The primary interface for creating entities.
  */
 export default class EntityCreator<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TViewerContext2 extends TViewerContext,

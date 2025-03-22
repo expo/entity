@@ -50,7 +50,7 @@ export interface CacheAdapterFlavorDefinition {
  * used to power the entity framework for a particular type of entity.
  */
 export interface EntityCompanionDefinition<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
@@ -167,7 +167,7 @@ export default class EntityCompanionProvider {
    * @param entityClass - entity class to load
    */
   getCompanionForEntity<
-    TFields extends object,
+    TFields extends Record<string, any>,
     TID extends NonNullable<TFields[TSelectedFields]>,
     TViewerContext extends ViewerContext,
     TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

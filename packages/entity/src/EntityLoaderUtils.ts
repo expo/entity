@@ -17,7 +17,7 @@ import { mapMapAsync } from './utils/collections/maps';
  * Methods are exposed publicly since in rare cases they may need to be called manually.
  */
 export default class EntityLoaderUtils<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,

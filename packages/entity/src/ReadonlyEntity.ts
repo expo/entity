@@ -21,7 +21,7 @@ import ViewerContext from './ViewerContext';
  * - Entities representing immutable tables.
  */
 export default abstract class ReadonlyEntity<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TSelectedFields extends keyof TFields = keyof TFields,

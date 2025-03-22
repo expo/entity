@@ -28,7 +28,7 @@ import { mapMap } from './utils/collections/maps';
  * means an authorization error or entity construction error occurred. Other errors are thrown.
  */
 export default class AuthorizationResultBasedEntityLoader<
-  TFields extends object,
+  TFields extends Record<string, any>,
   TID extends NonNullable<TFields[TSelectedFields]>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
