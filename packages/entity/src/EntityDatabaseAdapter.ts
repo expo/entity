@@ -157,6 +157,7 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
       keyDatabaseColumns,
       valueDatabaseValues,
     );
+
     const objects = results.map((result) =>
       transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
     );
@@ -170,12 +171,12 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
       const objectMapKeyForObject = key.getLoadValueForObject(object);
       invariant(
         objectMapKeyForObject !== null,
-        `One or more fields from the object is invalid for key ${key.debugString()}; ${JSON.stringify(object)}. This may indicate a faulty database adapter implementation.`,
+        `One or more fields from the object is invalid for key ${key}; ${JSON.stringify(object)}. This may indicate a faulty database adapter implementation.`,
       );
       const objectList = objectMap.get(objectMapKeyForObject);
       invariant(
         objectList !== undefined,
-        `Unexpected object field value during database result transformation: ${objectMapKeyForObject.debugString()}. This should never happen.`,
+        `Unexpected object field value during database result transformation: ${objectMapKeyForObject}. This should never happen.`,
       );
       objectList.push(object);
     });
@@ -186,8 +187,8 @@ export default abstract class EntityDatabaseAdapter<TFields extends Record<strin
   protected abstract fetchManyWhereInternalAsync(
     queryInterface: any,
     tableName: string,
-    tableColumns: readonly string[],
-    tableValueValues: (readonly any[])[],
+    tableColumnTuple: readonly string[],
+    tableValueTuples: (readonly any[])[],
   ): Promise<object[]>;
 
   /**

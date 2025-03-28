@@ -17,8 +17,8 @@ export class SingleFieldHolder<TFields extends Record<string, any>, N extends ke
 {
   constructor(public readonly fieldName: N) {}
 
-  debugString(): string {
-    return `SingleFieldHolder[${String(this.fieldName)}]`;
+  toString(): string {
+    return `SingleField(${String(this.fieldName)})`;
   }
 
   public isCacheable(entityConfiguration: EntityConfiguration<TFields>): boolean {
@@ -99,8 +99,8 @@ export class SingleFieldValueHolder<TFields extends Record<string, any>, N exten
 {
   constructor(public readonly fieldValue: NonNullable<TFields[N]>) {}
 
-  debugString(): string {
-    return `SingleFieldValueHolder[${String(this.fieldValue)}]`;
+  toString(): string {
+    return `SingleFieldValue(${String(this.fieldValue)})`;
   }
 
   serialize(): NonNullable<TFields[N]> {

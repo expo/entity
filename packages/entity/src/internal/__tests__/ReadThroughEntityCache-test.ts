@@ -439,10 +439,10 @@ describe(ReadThroughEntityCache, () => {
       expect(result).toEqual(new SingleFieldValueHolderMap(new Map()));
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        'unique key SingleFieldHolder[id] in table blah returned multiple rows for SingleFieldValueHolder[wat]',
+        'unique key SingleField(id) in table blah returned multiple rows for SingleFieldValue(wat)',
       );
       expect(consoleSpy).toHaveBeenCalledWith(
-        'unique key SingleFieldHolder[id] in table blah returned multiple rows for SingleFieldValueHolder[who]',
+        'unique key SingleField(id) in table blah returned multiple rows for SingleFieldValue(who)',
       );
     });
   });

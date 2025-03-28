@@ -48,15 +48,15 @@ export default class StubDatabaseAdapter<
   protected async fetchManyWhereInternalAsync(
     _queryInterface: any,
     tableName: string,
-    tableColumns: readonly string[],
-    tableValueValues: (readonly any[])[],
+    tableColumnTuple: readonly string[],
+    tableValueTuples: (readonly any[])[],
   ): Promise<object[]> {
     const objectCollection = this.getObjectCollectionForTable(tableName);
-    const results = tableValueValues.reduce(
+    const results = tableValueTuples.reduce(
       (acc, fieldValues) => {
         return acc.concat(
           objectCollection.filter((obj) => {
-            return tableColumns.every((field, index) => {
+            return tableColumnTuple.every((field, index) => {
               return obj[field] === fieldValues[index];
             });
           }),
