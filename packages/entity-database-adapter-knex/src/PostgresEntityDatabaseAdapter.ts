@@ -44,14 +44,16 @@ export default class PostgresEntityDatabaseAdapter<
   protected async fetchManyWhereInternalAsync(
     queryInterface: Knex,
     tableName: string,
-    tableField: string,
-    tableValues: readonly any[],
+    tableColumns: readonly string[],
+    tableValueValues: (readonly any[])[],
   ): Promise<object[]> {
+    const rawPlaceholders = tableColumns.map(() => '??').join(', ');
     return await wrapNativePostgresCallAsync(() =>
+      // queryInterface.select().from(tableName).whereIn(tableFields, tableFieldsValues),
       queryInterface
         .select()
         .from(tableName)
-        .whereRaw('?? = ANY(?)', [tableField, tableValues as any[]]),
+        .whereRaw(`(${rawPlaceholders}) = ANY(?)`, [...tableColumns, tableValueValues]),
     );
   }
 

@@ -1,9 +1,15 @@
-import { verify, deepEqual, mock, instance, when, anything } from 'ts-mockito';
+import { verify, mock, instance, when, anything } from 'ts-mockito';
 
 import EntityConfiguration from '../../EntityConfiguration';
 import { UUIDField } from '../../EntityFields';
 import IEntityCacheAdapter from '../../IEntityCacheAdapter';
 import ReadThroughEntityCache, { CacheStatus } from '../ReadThroughEntityCache';
+import {
+  SingleFieldHolder,
+  SingleFieldValueHolder,
+  SingleFieldValueHolderMap,
+} from '../SingleFieldHolder';
+import { deepEqualEntityAware, isEqualWithEntityAware } from './TSMockitoExtensions';
 
 type BlahFields = {
   id: string;
@@ -23,12 +29,14 @@ const makeEntityConfiguration = (cacheIdField: boolean): EntityConfiguration<Bla
 const createIdFetcher =
   (ids: string[]) =>
   async <N extends keyof BlahFields>(
-    fetcherFieldValues: readonly NonNullable<BlahFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<BlahFields[N]>, readonly Readonly<BlahFields>[]>> => {
-    const results = new Map();
+    fetcherFieldValues: readonly SingleFieldValueHolder<BlahFields, N>[],
+  ): Promise<
+    ReadonlyMap<SingleFieldValueHolder<BlahFields, N>, readonly Readonly<BlahFields>[]>
+  > => {
+    const results = new SingleFieldValueHolderMap<BlahFields, N, readonly Readonly<BlahFields>[]>();
     fetcherFieldValues.forEach((v) => {
-      if (ids.includes(v)) {
-        results.set(v, [{ id: v }]);
+      if (ids.includes(v.fieldValue)) {
+        results.set(v, [{ id: v.fieldValue }]);
       } else {
         results.set(v, []);
       }
@@ -39,12 +47,14 @@ const createIdFetcher =
 const createFetcherNonUnique =
   (ids: string[]) =>
   async <N extends keyof BlahFields>(
-    fetcherFieldValues: readonly NonNullable<BlahFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<BlahFields[N]>, readonly Readonly<BlahFields>[]>> => {
-    const results = new Map();
+    fetcherFieldValues: readonly SingleFieldValueHolder<BlahFields, N>[],
+  ): Promise<
+    ReadonlyMap<SingleFieldValueHolder<BlahFields, N>, readonly Readonly<BlahFields>[]>
+  > => {
+    const results = new SingleFieldValueHolderMap<BlahFields, N, readonly Readonly<BlahFields>[]>();
     fetcherFieldValues.forEach((v) => {
-      if (ids.includes(v)) {
-        results.set(v, [{ id: v }, { id: v + '2' }]);
+      if (ids.includes(v.fieldValue)) {
+        results.set(v, [{ id: v.fieldValue }, { id: v.fieldValue + '2' }]);
       } else {
         results.set(v, []);
       }
@@ -60,33 +70,67 @@ describe(ReadThroughEntityCache, () => {
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher(['wat', 'who']);
 
-      when(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who']))).thenResolve(
-        new Map([
-          ['wat', { status: CacheStatus.MISS }],
-          ['who', { status: CacheStatus.MISS }],
-        ]),
+      when(
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([
+            new SingleFieldValueHolder('wat'),
+            new SingleFieldValueHolder('who'),
+          ]),
+        ),
+      ).thenResolve(
+        new SingleFieldValueHolderMap(
+          new Map([
+            [new SingleFieldValueHolder('wat'), { status: CacheStatus.MISS }],
+            [new SingleFieldValueHolder('who'), { status: CacheStatus.MISS }],
+          ]),
+        ),
       );
 
-      const result = await entityCache.readManyThroughAsync('id', ['wat', 'who'], fetcher);
+      const result = await entityCache.readManyThroughAsync(
+        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        [
+          new SingleFieldValueHolder<BlahFields, 'id'>('wat'),
+          new SingleFieldValueHolder<BlahFields, 'id'>('who'),
+        ],
+        fetcher,
+      );
 
-      verify(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who']))).once();
+      verify(
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([
+            new SingleFieldValueHolder('wat'),
+            new SingleFieldValueHolder('who'),
+          ]),
+        ),
+      ).once();
       verify(
         cacheAdapterMock.cacheManyAsync(
-          'id',
-          deepEqual(
-            new Map([
-              ['wat', { id: 'wat' }],
-              ['who', { id: 'who' }],
-            ]),
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware(
+            new SingleFieldValueHolderMap(
+              new Map([
+                [new SingleFieldValueHolder('wat'), { id: 'wat' }],
+                [new SingleFieldValueHolder('who'), { id: 'who' }],
+              ]),
+            ),
           ),
         ),
       ).once();
-      verify(cacheAdapterMock.cacheDBMissesAsync('id', deepEqual([]))).once();
+      verify(
+        cacheAdapterMock.cacheDBMissesAsync(
+          deepEqualEntityAware(new SingleFieldHolder<BlahFields, 'id'>('id')),
+          deepEqualEntityAware([] as SingleFieldValueHolder<BlahFields, 'id'>[]),
+        ),
+      ).once();
       expect(result).toEqual(
-        new Map([
-          ['wat', [{ id: 'wat' }]],
-          ['who', [{ id: 'who' }]],
-        ]),
+        new SingleFieldValueHolderMap(
+          new Map([
+            [new SingleFieldValueHolder('wat'), [{ id: 'wat' }]],
+            [new SingleFieldValueHolder('who'), [{ id: 'who' }]],
+          ]),
+        ),
       );
     });
 
@@ -96,33 +140,65 @@ describe(ReadThroughEntityCache, () => {
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher(['wat', 'who']);
 
-      when(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who']))).thenResolve(
+      when(
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([
+            new SingleFieldValueHolder('wat'),
+            new SingleFieldValueHolder('who'),
+          ]),
+        ),
+      ).thenResolve(
         new Map([
-          ['wat', { status: CacheStatus.HIT, item: { id: 'wat' } }],
-          ['who', { status: CacheStatus.HIT, item: { id: 'who' } }],
+          [new SingleFieldValueHolder('wat'), { status: CacheStatus.HIT, item: { id: 'wat' } }],
+          [new SingleFieldValueHolder('who'), { status: CacheStatus.HIT, item: { id: 'who' } }],
         ]),
       );
 
-      const result = await entityCache.readManyThroughAsync('id', ['wat', 'who'], fetcher);
+      const result = await entityCache.readManyThroughAsync(
+        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        [
+          new SingleFieldValueHolder<BlahFields, 'id'>('wat'),
+          new SingleFieldValueHolder<BlahFields, 'id'>('who'),
+        ],
+        fetcher,
+      );
 
-      verify(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who']))).once();
+      verify(
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([
+            new SingleFieldValueHolder('wat'),
+            new SingleFieldValueHolder('who'),
+          ]),
+        ),
+      ).once();
       verify(
         cacheAdapterMock.cacheManyAsync(
-          'id',
-          deepEqual(
-            new Map([
-              ['wat', { id: 'wat' }],
-              ['who', { id: 'who' }],
-            ]),
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware(
+            new SingleFieldValueHolderMap(
+              new Map([
+                [new SingleFieldValueHolder('wat'), { id: 'wat' }],
+                [new SingleFieldValueHolder('who'), { id: 'who' }],
+              ]),
+            ),
           ),
         ),
       ).never();
-      verify(cacheAdapterMock.cacheDBMissesAsync('id', deepEqual([]))).never();
+      verify(
+        cacheAdapterMock.cacheDBMissesAsync(
+          deepEqualEntityAware(new SingleFieldHolder<BlahFields, 'id'>('id')),
+          deepEqualEntityAware([] as SingleFieldValueHolder<BlahFields, 'id'>[]),
+        ),
+      ).never();
       expect(result).toEqual(
-        new Map([
-          ['wat', [{ id: 'wat' }]],
-          ['who', [{ id: 'who' }]],
-        ]),
+        new SingleFieldValueHolderMap(
+          new Map([
+            [new SingleFieldValueHolder('wat'), [{ id: 'wat' }]],
+            [new SingleFieldValueHolder('who'), [{ id: 'who' }]],
+          ]),
+        ),
       );
     });
 
@@ -134,16 +210,42 @@ describe(ReadThroughEntityCache, () => {
       // simulate db miss
       const fetcher = createIdFetcher(['wat', 'who']);
 
-      when(cacheAdapterMock.loadManyAsync('id', deepEqual(['why']))).thenResolve(
-        new Map([['why', { status: CacheStatus.MISS }]]),
+      when(
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([new SingleFieldValueHolder('why')]),
+        ),
+      ).thenResolve(
+        new SingleFieldValueHolderMap(
+          new Map([[new SingleFieldValueHolder('why'), { status: CacheStatus.MISS }]]),
+        ),
       );
 
-      const result = await entityCache.readManyThroughAsync('id', ['why'], fetcher);
+      const result = await entityCache.readManyThroughAsync(
+        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        [new SingleFieldValueHolder<BlahFields, 'id'>('why')],
+        fetcher,
+      );
 
-      verify(cacheAdapterMock.loadManyAsync('id', deepEqual(['why']))).once();
-      verify(cacheAdapterMock.cacheManyAsync('id', deepEqual(new Map()))).once();
-      verify(cacheAdapterMock.cacheDBMissesAsync('id', deepEqual(['why']))).once();
-      expect(result).toEqual(new Map());
+      verify(
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([new SingleFieldValueHolder('why')]),
+        ),
+      ).once();
+      verify(
+        cacheAdapterMock.cacheManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware(new SingleFieldValueHolderMap(new Map())),
+        ),
+      ).once();
+      verify(
+        cacheAdapterMock.cacheDBMissesAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([new SingleFieldValueHolder('why')]),
+        ),
+      ).once();
+      expect(result).toEqual(new SingleFieldValueHolderMap(new Map()));
     });
 
     it('does not return or fetch negatively cached results from DB', async () => {
@@ -152,15 +254,31 @@ describe(ReadThroughEntityCache, () => {
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createIdFetcher([]);
 
-      when(cacheAdapterMock.loadManyAsync('id', deepEqual(['why']))).thenResolve(
-        new Map([['why', { status: CacheStatus.NEGATIVE }]]),
+      when(
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([new SingleFieldValueHolder('why')]),
+        ),
+      ).thenResolve(
+        new SingleFieldValueHolderMap(
+          new Map([[new SingleFieldValueHolder('why'), { status: CacheStatus.NEGATIVE }]]),
+        ),
       );
 
-      const result = await entityCache.readManyThroughAsync('id', ['why'], fetcher);
-      verify(cacheAdapterMock.loadManyAsync('id', deepEqual(['why']))).once();
-      verify(cacheAdapterMock.cacheManyAsync('id', anything())).never();
-      verify(cacheAdapterMock.cacheDBMissesAsync('id', anything())).never();
-      expect(result).toEqual(new Map());
+      const result = await entityCache.readManyThroughAsync(
+        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        [new SingleFieldValueHolder<BlahFields, 'id'>('why')],
+        fetcher,
+      );
+      verify(
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([new SingleFieldValueHolder('why')]),
+        ),
+      ).once();
+      verify(cacheAdapterMock.cacheManyAsync(new SingleFieldHolder('id'), anything())).never();
+      verify(cacheAdapterMock.cacheDBMissesAsync(new SingleFieldHolder('id'), anything())).never();
+      expect(result).toEqual(new SingleFieldValueHolderMap(new Map()));
     });
 
     it('does a mix and match of hit, miss, and negative', async () => {
@@ -170,32 +288,74 @@ describe(ReadThroughEntityCache, () => {
       const fetcher = createIdFetcher(['wat', 'who', 'why']);
 
       when(
-        cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who', 'why', 'how'])),
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([
+            new SingleFieldValueHolder('wat'),
+            new SingleFieldValueHolder('who'),
+            new SingleFieldValueHolder('why'),
+            new SingleFieldValueHolder('how'),
+          ]),
+        ),
       ).thenResolve(
-        new Map([
-          ['wat', { status: CacheStatus.MISS }],
-          ['who', { status: CacheStatus.NEGATIVE }],
-          ['why', { status: CacheStatus.HIT, item: { id: 'why' } }],
-          ['how', { status: CacheStatus.MISS }],
-        ]),
+        new SingleFieldValueHolderMap(
+          new Map([
+            [new SingleFieldValueHolder('wat'), { status: CacheStatus.MISS }],
+            [new SingleFieldValueHolder('who'), { status: CacheStatus.NEGATIVE }],
+            [new SingleFieldValueHolder('why'), { status: CacheStatus.HIT, item: { id: 'why' } }],
+            [new SingleFieldValueHolder('how'), { status: CacheStatus.MISS }],
+          ]),
+        ),
       );
 
       const result = await entityCache.readManyThroughAsync(
-        'id',
-        ['wat', 'who', 'why', 'how'],
+        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        [
+          new SingleFieldValueHolder<BlahFields, 'id'>('wat'),
+          new SingleFieldValueHolder<BlahFields, 'id'>('who'),
+          new SingleFieldValueHolder<BlahFields, 'id'>('why'),
+          new SingleFieldValueHolder<BlahFields, 'id'>('how'),
+        ],
         fetcher,
       );
-      verify(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who', 'why', 'how']))).once();
       verify(
-        cacheAdapterMock.cacheManyAsync('id', deepEqual(new Map([['wat', { id: 'wat' }]]))),
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([
+            new SingleFieldValueHolder('wat'),
+            new SingleFieldValueHolder('who'),
+            new SingleFieldValueHolder('why'),
+            new SingleFieldValueHolder('how'),
+          ]),
+        ),
       ).once();
-      verify(cacheAdapterMock.cacheDBMissesAsync('id', deepEqual(['how']))).once();
-      expect(result).toEqual(
-        new Map([
-          ['wat', [{ id: 'wat' }]],
-          ['why', [{ id: 'why' }]],
-        ]),
-      );
+      verify(
+        cacheAdapterMock.cacheManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware(
+            new SingleFieldValueHolderMap(
+              new Map([[new SingleFieldValueHolder('wat'), { id: 'wat' }]]),
+            ),
+          ),
+        ),
+      ).once();
+      verify(
+        cacheAdapterMock.cacheDBMissesAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([new SingleFieldValueHolder('how')]),
+        ),
+      ).once();
+      expect(
+        isEqualWithEntityAware(
+          result,
+          new SingleFieldValueHolderMap(
+            new Map([
+              [new SingleFieldValueHolder('wat'), [{ id: 'wat' }]],
+              [new SingleFieldValueHolder('why'), [{ id: 'why' }]],
+            ]),
+          ),
+        ),
+      ).toBe(true);
     });
 
     it('does not call into cache for field that is not cacheable', async () => {
@@ -203,9 +363,17 @@ describe(ReadThroughEntityCache, () => {
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(false), cacheAdapter);
       const fetcher = createIdFetcher(['wat']);
-      const result = await entityCache.readManyThroughAsync('id', ['wat'], fetcher);
-      verify(cacheAdapterMock.loadManyAsync('id', anything())).never();
-      expect(result).toEqual(new Map([['wat', [{ id: 'wat' }]]]));
+      const result = await entityCache.readManyThroughAsync(
+        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        [new SingleFieldValueHolder<BlahFields, 'id'>('wat')],
+        fetcher,
+      );
+      verify(cacheAdapterMock.loadManyAsync(new SingleFieldHolder('id'), anything())).never();
+      expect(result).toEqual(
+        new SingleFieldValueHolderMap(
+          new Map([[new SingleFieldValueHolder('wat'), [{ id: 'wat' }]]]),
+        ),
+      );
     });
 
     it('does not cache when DB returns multiple objects for what is supposed to be unique and returns empty', async () => {
@@ -216,35 +384,65 @@ describe(ReadThroughEntityCache, () => {
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
       const fetcher = createFetcherNonUnique(['wat', 'who']);
 
-      when(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who']))).thenResolve(
-        new Map([
-          ['wat', { status: CacheStatus.MISS }],
-          ['who', { status: CacheStatus.MISS }],
-        ]),
+      when(
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([
+            new SingleFieldValueHolder('wat'),
+            new SingleFieldValueHolder('who'),
+          ]),
+        ),
+      ).thenResolve(
+        new SingleFieldValueHolderMap(
+          new Map([
+            [new SingleFieldValueHolder('wat'), { status: CacheStatus.MISS }],
+            [new SingleFieldValueHolder('who'), { status: CacheStatus.MISS }],
+          ]),
+        ),
       );
 
-      const result = await entityCache.readManyThroughAsync('id', ['wat', 'who'], fetcher);
+      const result = await entityCache.readManyThroughAsync(
+        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        [
+          new SingleFieldValueHolder<BlahFields, 'id'>('wat'),
+          new SingleFieldValueHolder<BlahFields, 'id'>('who'),
+        ],
+        fetcher,
+      );
 
-      verify(cacheAdapterMock.loadManyAsync('id', deepEqual(['wat', 'who']))).once();
+      verify(
+        cacheAdapterMock.loadManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([
+            new SingleFieldValueHolder('wat'),
+            new SingleFieldValueHolder('who'),
+          ]),
+        ),
+      ).once();
       verify(
         cacheAdapterMock.cacheManyAsync(
-          'id',
-          deepEqual(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware(
             new Map([
-              ['wat', { id: 'wat' }],
-              ['who', { id: 'who' }],
+              [new SingleFieldValueHolder('wat'), { id: 'wat' }],
+              [new SingleFieldValueHolder('who'), { id: 'who' }],
             ]),
           ),
         ),
       ).never();
-      verify(cacheAdapterMock.cacheDBMissesAsync('id', deepEqual([]))).once();
-      expect(result).toEqual(new Map());
+      verify(
+        cacheAdapterMock.cacheDBMissesAsync(
+          deepEqualEntityAware(new SingleFieldHolder<BlahFields, 'id'>('id')),
+          deepEqualEntityAware([] as SingleFieldValueHolder<BlahFields, 'id'>[]),
+        ),
+      ).once();
+      expect(result).toEqual(new SingleFieldValueHolderMap(new Map()));
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        'unique key id in blah returned multiple rows for wat',
+        'unique key SingleFieldHolder[id] in table blah returned multiple rows for SingleFieldValueHolder[wat]',
       );
       expect(consoleSpy).toHaveBeenCalledWith(
-        'unique key id in blah returned multiple rows for who',
+        'unique key SingleFieldHolder[id] in table blah returned multiple rows for SingleFieldValueHolder[who]',
       );
     });
   });
@@ -254,8 +452,15 @@ describe(ReadThroughEntityCache, () => {
       const cacheAdapterMock = mock<IEntityCacheAdapter<BlahFields>>();
       const cacheAdapter = instance(cacheAdapterMock);
       const entityCache = new ReadThroughEntityCache(makeEntityConfiguration(true), cacheAdapter);
-      await entityCache.invalidateManyAsync('id', ['wat']);
-      verify(cacheAdapterMock.invalidateManyAsync('id', deepEqual(['wat']))).once();
+      await entityCache.invalidateManyAsync(new SingleFieldHolder('id'), [
+        new SingleFieldValueHolder('wat'),
+      ]);
+      verify(
+        cacheAdapterMock.invalidateManyAsync(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          deepEqualEntityAware([new SingleFieldValueHolder('wat')]),
+        ),
+      ).once();
     });
   });
 });

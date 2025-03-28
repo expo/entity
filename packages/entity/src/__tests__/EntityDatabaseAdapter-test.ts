@@ -6,6 +6,7 @@ import EntityDatabaseAdapter, {
 } from '../EntityDatabaseAdapter';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils';
+import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
 import { TestFields, testEntityConfiguration } from '../testfixtures/TestEntity';
 
 class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
@@ -47,8 +48,8 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
   protected async fetchManyWhereInternalAsync(
     _queryInterface: any,
     _tableName: string,
-    _tableField: string,
-    _tableValues: readonly any[],
+    _tableColumns: readonly string[],
+    _tableValueValues: (readonly any[])[],
   ): Promise<object[]> {
     return this.fetchResults;
   }
@@ -104,8 +105,12 @@ describe(EntityDatabaseAdapter, () => {
     it('transforms object', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({ fetchResults: [{ string_field: 'hello' }] });
-      const result = await adapter.fetchManyWhereAsync(queryContext, 'stringField', ['hello']);
-      expect(result.get('hello')).toEqual([{ stringField: 'hello' }]);
+      const result = await adapter.fetchManyWhereAsync(
+        queryContext,
+        new SingleFieldHolder('stringField'),
+        [new SingleFieldValueHolder('hello')],
+      );
+      expect(result.get(new SingleFieldValueHolder('hello'))).toEqual([{ stringField: 'hello' }]);
     });
 
     it('returns objects keyed by queried values', async () => {
@@ -113,22 +118,38 @@ describe(EntityDatabaseAdapter, () => {
       const adapter = new TestEntityDatabaseAdapter({
         fetchResults: [{ string_field: 'hello' }, { string_field: 'wat' }],
       });
-      const result = await adapter.fetchManyWhereAsync(queryContext, 'stringField', [
-        'hello',
-        'wat',
-      ]);
-      expect(result.get('hello')).toEqual([{ stringField: 'hello' }]);
-      expect(result.get('wat')).toEqual([{ stringField: 'wat' }]);
+      const result = await adapter.fetchManyWhereAsync(
+        queryContext,
+        new SingleFieldHolder('stringField'),
+        [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('wat')],
+      );
+      expect(result.get(new SingleFieldValueHolder('hello'))).toEqual([{ stringField: 'hello' }]);
+      expect(result.get(new SingleFieldValueHolder('wat'))).toEqual([{ stringField: 'wat' }]);
     });
 
     it('returns map with all keys even when no results are returned', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({});
-      const result = await adapter.fetchManyWhereAsync(queryContext, 'stringField', [
-        'what',
-        'who',
-      ]);
-      expect(Array.from(result.keys())).toEqual(['what', 'who']);
+      const result = await adapter.fetchManyWhereAsync(
+        queryContext,
+        new SingleFieldHolder('stringField'),
+        [new SingleFieldValueHolder('what'), new SingleFieldValueHolder('who')],
+      );
+      expect(Array.from(result.keys()).map((v) => v.fieldValue)).toEqual(['what', 'who']);
+    });
+
+    it('throws when result contains invalid (null) value for key', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({
+        fetchResults: [{ string_field: null }],
+      });
+      await expect(
+        adapter.fetchManyWhereAsync(queryContext, new SingleFieldHolder('stringField'), [
+          new SingleFieldValueHolder('hello'),
+        ]),
+      ).rejects.toThrow(
+        'One or more fields from the object is invalid for key SingleFieldHolder[stringField]; {"stringField":null}. This may indicate a faulty database adapter implementation.',
+      );
     });
   });
 

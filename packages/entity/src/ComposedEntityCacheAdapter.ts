@@ -1,6 +1,7 @@
 import nullthrows from 'nullthrows';
 
 import IEntityCacheAdapter from './IEntityCacheAdapter';
+import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
 import { CacheStatus, CacheLoadResult } from './internal/ReadThroughEntityCache';
 
 /**
@@ -17,35 +18,36 @@ export default class ComposedEntityCacheAdapter<TFields extends Record<string, a
    */
   constructor(private readonly cacheAdapters: IEntityCacheAdapter<TFields>[]) {}
 
-  public async loadManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, CacheLoadResult<TFields>>> {
-    const retMap = new Map<NonNullable<TFields[N]>, CacheLoadResult<TFields>>();
-    const fulfilledFieldValuesByCacheIndex: NonNullable<TFields[N]>[][] = Array.from(
+  public async loadManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    values: readonly TLoadValue[],
+  ): Promise<ReadonlyMap<TLoadValue, CacheLoadResult<TFields>>> {
+    const retMap = key.vendNewLoadValueMap<CacheLoadResult<TFields>>();
+    const fulfilledValuesByCacheIndex: TLoadValue[][] = Array.from(
       { length: this.cacheAdapters.length },
       () => [],
     );
 
-    let unfulfilledFieldValues = fieldValues;
+    let unfulfilledValues = values;
     for (let i = 0; i < this.cacheAdapters.length; i++) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      const cacheResultsFromAdapter = await cacheAdapter.loadManyAsync(
-        fieldName,
-        unfulfilledFieldValues,
-      );
+      const cacheResultsFromAdapter = await cacheAdapter.loadManyAsync(key, unfulfilledValues);
 
-      const newUnfulfilledFieldValues = [];
-      for (const [fieldValue, cacheResult] of cacheResultsFromAdapter) {
+      const newUnfulfilledValues = [];
+      for (const [value, cacheResult] of cacheResultsFromAdapter) {
         if (cacheResult.status === CacheStatus.MISS) {
-          newUnfulfilledFieldValues.push(fieldValue);
+          newUnfulfilledValues.push(value);
         } else {
-          retMap.set(fieldValue, cacheResult);
-          nullthrows(fulfilledFieldValuesByCacheIndex[i]).push(fieldValue);
+          retMap.set(value, cacheResult);
+          nullthrows(fulfilledValuesByCacheIndex[i]).push(value);
         }
       }
-      unfulfilledFieldValues = newUnfulfilledFieldValues;
-      if (unfulfilledFieldValues.length === 0) {
+      unfulfilledValues = newUnfulfilledValues;
+      if (unfulfilledValues.length === 0) {
         break;
       }
     }
@@ -54,69 +56,72 @@ export default class ComposedEntityCacheAdapter<TFields extends Record<string, a
     // Write to lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      const hitsToCache = new Map<NonNullable<TFields[N]>, Readonly<TFields>>();
-      const negativesToCache: NonNullable<TFields[N]>[] = [];
+      const hitsToCache = key.vendNewLoadValueMap<Readonly<TFields>>();
+      const negativesToCache: TLoadValue[] = [];
 
       // Loop over all lower layer caches to collect hits and misses
       for (let j = i + 1; j < this.cacheAdapters.length; j++) {
-        const fulfilledFieldValues = nullthrows(fulfilledFieldValuesByCacheIndex[j]);
-        fulfilledFieldValues.forEach((fieldValue) => {
-          const cacheResult = nullthrows(retMap.get(fieldValue));
+        const fulfilledValues = nullthrows(fulfilledValuesByCacheIndex[j]);
+        fulfilledValues.forEach((value) => {
+          const cacheResult = nullthrows(retMap.get(value));
           if (cacheResult.status === CacheStatus.HIT) {
-            hitsToCache.set(fieldValue, cacheResult.item);
+            hitsToCache.set(value, cacheResult.item);
           } else if (cacheResult.status === CacheStatus.NEGATIVE) {
-            negativesToCache.push(fieldValue);
+            negativesToCache.push(value);
           }
         });
       }
 
       const promises = [];
       if (hitsToCache.size > 0) {
-        promises.push(cacheAdapter.cacheManyAsync(fieldName, hitsToCache));
+        promises.push(cacheAdapter.cacheManyAsync(key, hitsToCache));
       }
       if (negativesToCache.length > 0) {
-        promises.push(cacheAdapter.cacheDBMissesAsync(fieldName, negativesToCache));
+        promises.push(cacheAdapter.cacheDBMissesAsync(key, negativesToCache));
       }
       await Promise.all(promises);
     }
 
-    for (const fieldValue of unfulfilledFieldValues) {
-      retMap.set(fieldValue, { status: CacheStatus.MISS });
+    for (const value of unfulfilledValues) {
+      retMap.set(value, { status: CacheStatus.MISS });
     }
 
     return retMap;
   }
 
-  public async cacheManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    objectMap: ReadonlyMap<NonNullable<TFields[N]>, Readonly<TFields>>,
-  ): Promise<void> {
+  public async cacheManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, objectMap: ReadonlyMap<TLoadValue, Readonly<TFields>>): Promise<void> {
     // write to lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      await cacheAdapter.cacheManyAsync(fieldName, objectMap);
+      await cacheAdapter.cacheManyAsync(key, objectMap);
     }
   }
 
-  public async cacheDBMissesAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<void> {
+  public async cacheDBMissesAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
     // write to lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      await cacheAdapter.cacheDBMissesAsync(fieldName, fieldValues);
+      await cacheAdapter.cacheDBMissesAsync(key, values);
     }
   }
 
-  public async invalidateManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<void> {
+  public async invalidateManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
     // delete from lower layers first
     for (let i = this.cacheAdapters.length - 1; i >= 0; i--) {
       const cacheAdapter = nullthrows(this.cacheAdapters[i]);
-      await cacheAdapter.invalidateManyAsync(fieldName, fieldValues);
+      await cacheAdapter.invalidateManyAsync(key, values);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { ViewerContext } from '@expo/entity';
+import { SingleFieldHolder, SingleFieldValueHolder, ViewerContext } from '@expo/entity';
 import { enforceAsyncResult } from '@expo/results';
 import Redis from 'ioredis';
 import { URL } from 'url';
@@ -56,7 +56,7 @@ describe(GenericRedisCacher, () => {
     );
 
     const cachedJSON = await (genericRedisCacheContext.redisClient as Redis).get(
-      cacheKeyMaker('id', entity1.getID()),
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
     );
     const cachedValue = JSON.parse(cachedJSON!);
     expect(cachedValue).toMatchObject({
@@ -74,7 +74,7 @@ describe(GenericRedisCacher, () => {
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedValue = await (genericRedisCacheContext.redisClient as Redis).get(
-      cacheKeyMaker('id', nonExistentId),
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(nonExistentId)),
     );
     expect(nonExistentCachedValue).toEqual('');
 
@@ -88,7 +88,7 @@ describe(GenericRedisCacher, () => {
     // invalidate from cache to ensure it invalidates correctly
     await RedisTestEntity.loaderUtils(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
     const cachedValueNull = await (genericRedisCacheContext.redisClient as Redis).get(
-      cacheKeyMaker('id', entity1.getID()),
+      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
     );
     expect(cachedValueNull).toBe(null);
   });

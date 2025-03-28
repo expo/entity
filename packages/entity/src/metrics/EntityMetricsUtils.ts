@@ -2,6 +2,7 @@ import IEntityMetricsAdapter, {
   EntityMetricsLoadType,
   EntityMetricsMutationType,
 } from './IEntityMetricsAdapter';
+import { IEntityLoadValue } from '../internal/EntityLoadInterfaces';
 import { reduceMap } from '../utils/collections/maps';
 
 export const timeAndLogLoadEventAsync =
@@ -31,8 +32,12 @@ export const timeAndLogLoadMapEventAsync =
     loadType: EntityMetricsLoadType,
     entityClassName: string,
   ) =>
-  async <TFields, N extends keyof TFields>(
-    promise: Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>>,
+  async <
+    TFields extends Record<string, any>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    promise: Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>>,
   ) => {
     const startTime = Date.now();
     const result = await promise;

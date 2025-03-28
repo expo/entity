@@ -68,9 +68,11 @@ export { default as EntityNotAuthorizedError } from './errors/EntityNotAuthorize
 export { default as EntityNotFoundError } from './errors/EntityNotFoundError';
 export { default as EntityDataManager } from './internal/EntityDataManager';
 export * from './internal/EntityFieldTransformationUtils';
+export * from './internal/EntityLoadInterfaces';
 export { default as EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
 export { default as ReadThroughEntityCache } from './internal/ReadThroughEntityCache';
 export * from './internal/ReadThroughEntityCache';
+export * from './internal/SingleFieldHolder';
 export * from './metrics/EntityMetricsUtils';
 export { type default as IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 export * from './metrics/IEntityMetricsAdapter';

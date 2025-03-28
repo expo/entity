@@ -5,8 +5,9 @@ import {
   transformCacheObjectToFields,
   transformFieldsToCacheObject,
   IEntityGenericCacher,
+  IEntityLoadKey,
+  IEntityLoadValue,
 } from '@expo/entity';
-import invariant from 'invariant';
 
 import { redisTransformerMap } from './RedisCommon';
 import wrapNativeRedisCallAsync from './errors/wrapNativeRedisCallAsync';
@@ -147,18 +148,19 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
     await wrapNativeRedisCallAsync(() => this.context.redisClient.del(...keys));
   }
 
-  public makeCacheKey<N extends keyof TFields>(
-    fieldName: N,
-    fieldValue: NonNullable<TFields[N]>,
-  ): string {
-    const columnName = this.entityConfiguration.entityToDBFieldsKeyMapping.get(fieldName);
-    invariant(columnName, `database field mapping missing for ${String(fieldName)}`);
+  public makeCacheKey<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, value: TLoadValue): string {
+    const cacheKeyType = key.getLoadMethodType();
+    const parts = key.createCacheKeyPartsForLoadValue(this.entityConfiguration, value);
     return this.context.makeKeyFn(
       this.context.cacheKeyPrefix,
+      cacheKeyType,
       this.entityConfiguration.tableName,
       `v2.${this.entityConfiguration.cacheKeyVersion}`,
-      columnName,
-      String(fieldValue),
+      ...parts,
     );
   }
 }

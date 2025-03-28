@@ -1,4 +1,5 @@
 import DataLoader from 'dataloader';
+import invariant from 'invariant';
 
 import ReadThroughEntityCache from './ReadThroughEntityCache';
 import EntityDatabaseAdapter, {
@@ -9,6 +10,8 @@ import EntityDatabaseAdapter, {
 import { EntityQueryContext } from '../EntityQueryContext';
 import EntityQueryContextProvider from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
+import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
+import { SingleFieldHolder, SingleFieldValueHolder } from './SingleFieldHolder';
 import {
   timeAndLogLoadEventAsync,
   timeAndLogLoadMapEventAsync,
@@ -17,7 +20,7 @@ import IEntityMetricsAdapter, {
   EntityMetricsLoadType,
   IncrementLoadCountEventType,
 } from '../metrics/IEntityMetricsAdapter';
-import { computeIfAbsent, zipToMap } from '../utils/collections/maps';
+import { computeIfAbsent } from '../utils/collections/maps';
 
 /**
  * A data manager is responsible for orchestrating multiple sources of entity
@@ -26,10 +29,8 @@ import { computeIfAbsent, zipToMap } from '../utils/collections/maps';
  * It is also responsible for invalidating all sources of data when mutated using EntityMutator.
  */
 export default class EntityDataManager<TFields extends Record<string, any>> {
-  private readonly fieldDataLoaders: Map<
-    keyof TFields,
-    DataLoader<NonNullable<TFields[keyof TFields]>, readonly Readonly<TFields>[]>
-  > = new Map();
+  private readonly dataloaders: Map<string, DataLoader<unknown, readonly Readonly<TFields>[]>> =
+    new Map();
 
   constructor(
     private readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
@@ -39,106 +40,123 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
     private readonly entityClassName: string,
   ) {}
 
-  private getFieldDataLoaderForFieldName<N extends keyof TFields>(
-    fieldName: N,
-  ): DataLoader<NonNullable<TFields[N]>, readonly Readonly<TFields>[]> {
-    return computeIfAbsent(this.fieldDataLoaders, fieldName, () => {
-      return new DataLoader(
-        async (
-          fieldValues: readonly NonNullable<TFields[N]>[],
-        ): Promise<readonly (readonly TFields[])[]> => {
-          const objectMap = await this.loadManyForDataLoaderByFieldEqualingAsync(
-            fieldName,
-            fieldValues,
-          );
-          return fieldValues.map((fv) => objectMap.get(fv) ?? []);
-        },
-      );
-    });
-  }
-
-  private async loadManyForDataLoaderByFieldEqualingAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
-    this.metricsAdapter.incrementDataManagerLoadCount({
-      type: IncrementLoadCountEventType.CACHE,
-      fieldValueCount: fieldValues.length,
-      entityClassName: this.entityClassName,
-    });
-    return await this.entityCache.readManyThroughAsync(
-      fieldName,
-      fieldValues,
-      async (fetcherValues) => {
-        this.metricsAdapter.incrementDataManagerLoadCount({
-          type: IncrementLoadCountEventType.DATABASE,
-          fieldValueCount: fetcherValues.length,
-          entityClassName: this.entityClassName,
-        });
-        return await this.databaseAdapter.fetchManyWhereAsync(
-          this.queryContextProvider.getQueryContext(),
-          fieldName,
-          fetcherValues,
+  private getDataLoaderForLoadKey<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey): DataLoader<TSerializedLoadValue, readonly Readonly<TFields>[]> {
+    return computeIfAbsent(
+      this.dataloaders,
+      key.getLoadMethodType() + key.getDataManagerDataLoaderKey(),
+      () => {
+        return new DataLoader(
+          async (
+            serializedLoadValues: readonly TSerializedLoadValue[],
+          ): Promise<readonly (readonly TFields[])[]> => {
+            const values = serializedLoadValues.map((serializedLoadValue) =>
+              key.deserializeLoadValue(serializedLoadValue),
+            );
+            const objectMap = await this.loadManyForDataLoaderAsync(key, values);
+            return values.map((value) => objectMap.get(value) ?? []);
+          },
         );
       },
     );
   }
 
+  private async loadManyForDataLoaderAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    values: readonly TLoadValue[],
+  ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
+    this.metricsAdapter.incrementDataManagerLoadCount({
+      type: IncrementLoadCountEventType.CACHE,
+      fieldValueCount: values.length,
+      entityClassName: this.entityClassName,
+      loadType: key.getLoadMethodType(),
+    });
+
+    return await this.entityCache.readManyThroughAsync(key, values, async (fetcherValues) => {
+      this.metricsAdapter.incrementDataManagerLoadCount({
+        type: IncrementLoadCountEventType.DATABASE,
+        fieldValueCount: fetcherValues.length,
+        entityClassName: this.entityClassName,
+        loadType: key.getLoadMethodType(),
+      });
+      return await this.databaseAdapter.fetchManyWhereAsync(
+        this.queryContextProvider.getQueryContext(),
+        key,
+        fetcherValues,
+      );
+    });
+  }
+
   /**
-   * Load many objects where fieldName is one of fieldValues.
+   * Load many objects through read-through dataloader (batcher) and cache (optional).
    *
    * @param queryContext - query context in which to perform the load
-   * @param fieldName - object field being queried
-   * @param fieldValues - fieldName field values being queried
-   * @returns map from fieldValue to objects that match the query for that fieldValue
+   * @param key - load key being queried
+   * @param values - load values being queried for the key
+   * @returns map from load value to objects that match the query for that load value
    */
-  async loadManyByFieldEqualingAsync<N extends keyof TFields>(
+  async loadManyEqualingAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
     queryContext: EntityQueryContext,
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
+    key: TLoadKey,
+    values: readonly TLoadValue[],
+  ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
     return await timeAndLogLoadMapEventAsync(
       this.metricsAdapter,
       EntityMetricsLoadType.LOAD_MANY,
       this.entityClassName,
-    )(this.loadManyByFieldEqualingInternalAsync(queryContext, fieldName, fieldValues));
+    )(this.loadManyEqualingInternalAsync(queryContext, key, values));
   }
 
-  private async loadManyByFieldEqualingInternalAsync<N extends keyof TFields>(
+  private async loadManyEqualingInternalAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
     queryContext: EntityQueryContext,
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
-    const nullOrUndefinedValueIndex = fieldValues.findIndex(
-      (value) => value === null || value === undefined,
-    );
-    if (nullOrUndefinedValueIndex >= 0) {
-      throw new Error(
-        `Invalid load: ${this.entityClassName} (${String(fieldName)} = ${
-          fieldValues[nullOrUndefinedValueIndex]
-        })`,
-      );
-    }
+    key: TLoadKey,
+    values: readonly TLoadValue[],
+  ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
+    key.validateRuntimeLoadValuesForDataManagerDataLoader(values, this.entityClassName);
 
     // don't cache when in transaction, as rollbacks complicate things significantly
     if (queryContext.isInTransaction()) {
-      return await this.databaseAdapter.fetchManyWhereAsync(queryContext, fieldName, fieldValues);
+      return await this.databaseAdapter.fetchManyWhereAsync(queryContext, key, values);
     }
 
     this.metricsAdapter.incrementDataManagerLoadCount({
       type: IncrementLoadCountEventType.DATALOADER,
-      fieldValueCount: fieldValues.length,
+      fieldValueCount: values.length,
       entityClassName: this.entityClassName,
+      loadType: key.getLoadMethodType(),
     });
-    const dataLoader = this.getFieldDataLoaderForFieldName(fieldName);
-    const results = await dataLoader.loadMany(fieldValues);
-    const [values, errors] = partitionErrors(results);
+    const dataLoader = this.getDataLoaderForLoadKey(key);
+    const results = await dataLoader.loadMany(values.map((v) => key.serializeLoadValue(v)));
+    const [successfulValues, errors] = partitionErrors(results);
     if (errors.length > 0) {
       const error = errors[0]!;
       throw error;
     }
 
-    return zipToMap(fieldValues, values);
+    invariant(
+      values.length === successfulValues.length,
+      `length mismatch between values (${values.length}) and successful values (${successfulValues.length})`,
+    );
+    const mapToReturn = key.vendNewLoadValueMap<readonly Readonly<TFields>[]>();
+    for (let i = 0; i < successfulValues.length; i++) {
+      mapToReturn.set(values[i]!, successfulValues[i]!);
+    }
+    return mapToReturn;
   }
 
   /**
@@ -197,13 +215,14 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
     );
   }
 
-  private async invalidateManyByFieldEqualingAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<void> {
-    await this.entityCache.invalidateManyAsync(fieldName, fieldValues);
-    const dataLoader = this.getFieldDataLoaderForFieldName(fieldName);
-    fieldValues.forEach((fieldValue) => dataLoader.clear(fieldValue));
+  private async invalidateManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
+    await this.entityCache.invalidateManyAsync(key, values);
+    const dataLoader = this.getDataLoaderForLoadKey(key);
+    values.forEach((value) => dataLoader.clear(key.serializeLoadValue(value)));
   }
 
   /**
@@ -214,15 +233,16 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
   async invalidateObjectFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
     // TODO(wschurman): check for races with load
     const keys = Object.keys(objectFields) as (keyof TFields)[];
-    await Promise.all(
-      keys.map(async (fieldName: keyof TFields) => {
+    await Promise.all([
+      ...keys.map(async (fieldName: keyof TFields) => {
         const value = objectFields[fieldName];
-        if (value !== undefined) {
-          await this.invalidateManyByFieldEqualingAsync(fieldName, [
-            value as NonNullable<TFields[keyof TFields]>,
-          ]);
+        if (value !== undefined && value !== null) {
+          await this.invalidateManyAsync(
+            new SingleFieldHolder<TFields, typeof fieldName>(fieldName),
+            [new SingleFieldValueHolder(value)],
+          );
         }
       }),
-    );
+    ]);
   }
 }

@@ -1,4 +1,10 @@
-import { CacheStatus, UUIDField, EntityConfiguration } from '@expo/entity';
+import {
+  CacheStatus,
+  UUIDField,
+  EntityConfiguration,
+  SingleFieldHolder,
+  SingleFieldValueHolder,
+} from '@expo/entity';
 import { Redis, Pipeline } from 'ioredis';
 import { mock, when, instance, anything, verify } from 'ts-mockito';
 
@@ -41,9 +47,18 @@ describe(GenericRedisCacher, () => {
         entityConfiguration,
       );
 
-      const cacheKeyWat = genericCacher['makeCacheKey']('id', 'wat');
-      const cacheKeyWho = genericCacher['makeCacheKey']('id', 'who');
-      const cacheKeyWhy = genericCacher['makeCacheKey']('id', 'why');
+      const cacheKeyWat = genericCacher['makeCacheKey'](
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder('wat'),
+      );
+      const cacheKeyWho = genericCacher['makeCacheKey'](
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder('who'),
+      );
+      const cacheKeyWhy = genericCacher['makeCacheKey'](
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder('why'),
+      );
 
       redisResults.set(cacheKeyWat, JSON.stringify({ id: 'wat' }));
       redisResults.set(cacheKeyWho, '');
@@ -103,7 +118,10 @@ describe(GenericRedisCacher, () => {
         entityConfiguration,
       );
 
-      const cacheKey = genericCacher['makeCacheKey']('id', 'wat');
+      const cacheKey = genericCacher['makeCacheKey'](
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder('wat'),
+      );
 
       await genericCacher.cacheManyAsync(new Map([[cacheKey, { id: 'wat' }]]));
 
@@ -142,7 +160,10 @@ describe(GenericRedisCacher, () => {
         entityConfiguration,
       );
 
-      const cacheKey = genericCacher['makeCacheKey']('id', 'wat');
+      const cacheKey = genericCacher['makeCacheKey'](
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder('wat'),
+      );
 
       await genericCacher.cacheDBMissesAsync([cacheKey]);
 
@@ -169,7 +190,10 @@ describe(GenericRedisCacher, () => {
         },
         entityConfiguration,
       );
-      const cacheKey = genericCacher['makeCacheKey']('id', 'wat');
+      const cacheKey = genericCacher['makeCacheKey'](
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder('wat'),
+      );
 
       await genericCacher.invalidateManyAsync([cacheKey]);
 

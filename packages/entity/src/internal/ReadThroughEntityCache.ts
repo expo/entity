@@ -2,6 +2,7 @@ import invariant from 'invariant';
 
 import EntityConfiguration from '../EntityConfiguration';
 import IEntityCacheAdapter from '../IEntityCacheAdapter';
+import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
 import { filterMap } from '../utils/collections/maps';
 
 export enum CacheStatus {
@@ -32,46 +33,54 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
     private readonly entityCacheAdapter: IEntityCacheAdapter<TFields>,
   ) {}
 
-  private isFieldCacheable<N extends keyof TFields>(fieldName: N): boolean {
-    return this.entityConfiguration.cacheableKeys.has(fieldName);
+  private isLoadKeyCacheable<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey): boolean {
+    return key.isCacheable(this.entityConfiguration);
   }
 
   /**
    * Read-through cache function. Steps:
    *
-   * 1. Check for cached (fieldName, fieldValue) objects
-   * 2. Query the fetcher for fieldValues not in the cache
+   * 1. Check for cached (key, value) objects
+   * 2. Query the fetcher for values not in the cache
    * 3. Cache the results from the fetcher
    * 4. Negatively cache anything missing from the fetcher
    * 5. Return the full set of data for the query.
    *
-   * If cache is not applicable for fieldName, return results from fetcher.
+   * If cache is not applicable for key, return results from fetcher.
    *
-   * @param fieldName - object field being queried
-   * @param fieldValues - fieldName field values being queried
-   * @param fetcher - closure used to provide underlying data source objects for fieldName and fetcherFieldValues
-   * @returns map from fieldValue to objects that match the query for that fieldValue
+   * @param key - load key being queried
+   * @param values - load values being queried
+   * @param fetcher - closure used to provide underlying data source objects for key and fetcherValues
+   * @returns map from value to objects that match the query for that value
    */
-  public async readManyThroughAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
+  public async readManyThroughAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    values: readonly TLoadValue[],
     fetcher: (
-      fetcherFieldValues: readonly NonNullable<TFields[N]>[],
-    ) => Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>>,
-  ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Readonly<TFields>[]>> {
-    // return normal fetch when cache by fieldName not supported
-    if (!this.isFieldCacheable(fieldName)) {
-      return await fetcher(fieldValues);
+      fetcherValues: readonly TLoadValue[],
+    ) => Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>>,
+  ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
+    // return normal fetch when cache by key not supported
+    if (!this.isLoadKeyCacheable(key)) {
+      return await fetcher(values);
     }
 
-    const cacheLoadResults = await this.entityCacheAdapter.loadManyAsync(fieldName, fieldValues);
+    const cacheLoadResults = await this.entityCacheAdapter.loadManyAsync(key, values);
 
     invariant(
-      cacheLoadResults.size === fieldValues.length,
-      `${this.constructor.name} loadMany should return a result for each fieldValue`,
+      cacheLoadResults.size === values.length,
+      `${this.constructor.name} loadMany should return a result for each value`,
     );
 
-    const fieldValuesToFetchFromDB = Array.from(
+    const valuesToFetchFromDB = Array.from(
       filterMap(
         cacheLoadResults,
         (cacheLoadResult) => cacheLoadResult.status === CacheStatus.MISS,
@@ -79,45 +88,45 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
     );
 
     // put transformed cache hits in result map
-    const results: Map<NonNullable<TFields[N]>, readonly Readonly<TFields>[]> = new Map();
-    cacheLoadResults.forEach((cacheLoadResult, fieldValue) => {
+    const results = key.vendNewLoadValueMap<readonly Readonly<TFields>[]>();
+    cacheLoadResults.forEach((cacheLoadResult, value) => {
       if (cacheLoadResult.status === CacheStatus.HIT) {
-        results.set(fieldValue, [cacheLoadResult.item]);
+        results.set(value, [cacheLoadResult.item]);
       }
     });
 
     // fetch any misses from DB, add DB objects to results, cache DB results, inform cache of any missing DB results
-    if (fieldValuesToFetchFromDB.length > 0) {
-      const dbFetchResults = await fetcher(fieldValuesToFetchFromDB);
+    if (valuesToFetchFromDB.length > 0) {
+      const dbFetchResults = await fetcher(valuesToFetchFromDB);
 
-      const fieldValueDBMisses = fieldValuesToFetchFromDB.filter((fv) => {
+      const valueDBMisses = valuesToFetchFromDB.filter((fv) => {
         const objectsFromFulfillerForFv = dbFetchResults.get(fv);
         return !objectsFromFulfillerForFv || objectsFromFulfillerForFv.length === 0;
       });
 
-      const objectsToCache: Map<NonNullable<TFields[N]>, Readonly<TFields>> = new Map();
-      for (const [fieldValue, objects] of dbFetchResults.entries()) {
+      const objectsToCache = key.vendNewLoadValueMap<Readonly<TFields>>();
+      for (const [value, objects] of dbFetchResults.entries()) {
         if (objects.length > 1) {
           // multiple objects received for what was supposed to be a unique query, don't add to return map nor cache
           // TODO(wschurman): emit or throw here since console may not be available
           // eslint-disable-next-line no-console
           console.warn(
-            `unique key ${String(fieldName)} in ${
+            `unique key ${key.debugString()} in table ${
               this.entityConfiguration.tableName
-            } returned multiple rows for ${fieldValue}`,
+            } returned multiple rows for ${value.debugString()}`,
           );
           continue;
         }
         const uniqueObject = objects[0];
         if (uniqueObject) {
-          objectsToCache.set(fieldValue, uniqueObject);
-          results.set(fieldValue, [uniqueObject]);
+          objectsToCache.set(value, uniqueObject);
+          results.set(value, [uniqueObject]);
         }
       }
 
       await Promise.all([
-        this.entityCacheAdapter.cacheManyAsync(fieldName, objectsToCache),
-        this.entityCacheAdapter.cacheDBMissesAsync(fieldName, fieldValueDBMisses),
+        this.entityCacheAdapter.cacheManyAsync(key, objectsToCache),
+        this.entityCacheAdapter.cacheDBMissesAsync(key, valueDBMisses),
       ]);
     }
 
@@ -125,20 +134,21 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
   }
 
   /**
-   * Invalidate the cache for objects cached by (fieldName, fieldValue).
+   * Invalidate the cache for objects cached by (key, value).
    *
-   * @param fieldName - object field being queried
-   * @param fieldValues - fieldName field values to be invalidated
+   * @param key - load key to be invalidated
+   * @param values - load values to be invalidated for key
    */
-  public async invalidateManyAsync<N extends keyof TFields>(
-    fieldName: N,
-    fieldValues: readonly NonNullable<TFields[N]>[],
-  ): Promise<void> {
-    // no-op when cache by fieldName not supported
-    if (!this.isFieldCacheable(fieldName)) {
+  public async invalidateManyAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
+    // no-op when cache by key not supported
+    if (!this.isLoadKeyCacheable(key)) {
       return;
     }
 
-    await this.entityCacheAdapter.invalidateManyAsync(fieldName, fieldValues);
+    await this.entityCacheAdapter.invalidateManyAsync(key, values);
   }
 }

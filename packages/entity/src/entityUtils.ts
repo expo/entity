@@ -109,7 +109,10 @@ const isError = <T>(value: T | Error): value is Error => {
   return value instanceof Error;
 };
 
-export const pick = <T extends object, U extends keyof T>(object: T, props: U[]): Pick<T, U> => {
+export const pick = <T extends object, U extends keyof T>(
+  object: T,
+  props: readonly U[],
+): Pick<T, U> => {
   const propsSet = new Set(props);
   return Object.fromEntries(
     Object.entries(object).filter((entry) => propsSet.has(entry[0] as any)),

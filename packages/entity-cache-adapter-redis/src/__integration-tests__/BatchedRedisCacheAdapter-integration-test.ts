@@ -1,5 +1,5 @@
 import { Batcher } from '@expo/batcher';
-import { ViewerContext, zipToMap } from '@expo/entity';
+import { SingleFieldHolder, SingleFieldValueHolder, ViewerContext, zipToMap } from '@expo/entity';
 import invariant from 'invariant';
 import Redis from 'ioredis';
 import nullthrows from 'nullthrows';
@@ -132,7 +132,10 @@ describe(GenericRedisCacher, () => {
     expect(entity1.getID()).toEqual(entity2.getID());
     expect(entity2.getID()).toEqual(nullthrows(entity3).getID());
 
-    const cacheKeyEntity1 = cacheKeyMaker('id', entity1Created.getID());
+    const cacheKeyEntity1 = cacheKeyMaker(
+      new SingleFieldHolder('id'),
+      new SingleFieldValueHolder(entity1Created.getID()),
+    );
     const cachedJSON = await redis.get(cacheKeyEntity1);
     const cachedValue = JSON.parse(cachedJSON!);
     expect(cachedValue).toMatchObject({
@@ -140,7 +143,10 @@ describe(GenericRedisCacher, () => {
       name: 'blah',
     });
 
-    const cacheKeyEntity1NameField = cacheKeyMaker('name', entity1Created.getField('name'));
+    const cacheKeyEntity1NameField = cacheKeyMaker(
+      new SingleFieldHolder('name'),
+      new SingleFieldValueHolder(entity1Created.getField('name')),
+    );
     await RedisTestEntity.loader(viewerContext).loadByFieldEqualingAsync(
       'name',
       entity1Created.getField('name'),
@@ -154,7 +160,10 @@ describe(GenericRedisCacher, () => {
         nonExistentId,
       );
     expect(entityNonExistentResult.ok).toBe(false);
-    const cacheKeyNonExistent = cacheKeyMaker('id', nonExistentId);
+    const cacheKeyNonExistent = cacheKeyMaker(
+      new SingleFieldHolder('id'),
+      new SingleFieldValueHolder(nonExistentId),
+    );
     const nonExistentCachedValue = await redis.get(cacheKeyNonExistent);
     expect(nonExistentCachedValue).toEqual('');
     // load again through entities framework to ensure it reads negative result
