@@ -1,6 +1,6 @@
 import { IEntityClass } from './Entity';
 import { DatabaseAdapterFlavor, CacheAdapterFlavor } from './EntityCompanionProvider';
-import { EntityFieldDefinition } from './EntityFieldDefinition';
+import { EntityFieldDefinition, EntityFieldDefinitionOptions } from './EntityFieldDefinition';
 import { mapMap, invertMap, reduceMap } from './utils/collections/maps';
 
 /**
@@ -76,7 +76,27 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups
     EntityConfiguration.validateSchema(schema);
-    this.schema = new Map(Object.entries(schema));
+
+    const mutableSchema = new Map(Object.entries(schema));
+
+    // Default to caching by the ID field if it's not explicitly specified
+    const idFieldDefinition = mutableSchema.get(idField as string);
+    if (idFieldDefinition && !idFieldDefinition.hasExplicitCacheOption) {
+      const IDFieldDefinition = idFieldDefinition.constructor as new (
+        options: EntityFieldDefinitionOptions,
+      ) => EntityFieldDefinition<any>;
+
+      mutableSchema.set(
+        idField as string,
+        new IDFieldDefinition({
+          columnName: idFieldDefinition.columnName,
+          cache: true,
+          ...(idFieldDefinition.association ? { association: idFieldDefinition.association } : {}),
+        }),
+      );
+    }
+
+    this.schema = mutableSchema;
 
     this.cacheableKeys = EntityConfiguration.computeCacheableKeys(this.schema);
     this.entityToDBFieldsKeyMapping = EntityConfiguration.computeEntityToDBFieldsKeyMapping(
