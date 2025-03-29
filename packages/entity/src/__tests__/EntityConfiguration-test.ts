@@ -40,7 +40,38 @@ describe(EntityConfiguration, () => {
     });
 
     it('filters cacheable fields', () => {
-      expect(blahEntityConfiguration.cacheableKeys).toEqual(new Set(['cacheable']));
+      expect(blahEntityConfiguration.cacheableKeys).toEqual(new Set(['id', 'cacheable']));
+    });
+
+    it('makes the ID field cacheable by default', () => {
+      const entityConfiguration = new EntityConfiguration<Blah2T>({
+        idField: 'id',
+        tableName: 'blah',
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+          }),
+        },
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
+      });
+      expect(entityConfiguration.cacheableKeys).toEqual(new Set(['id']));
+    });
+
+    it('makes the ID field non-cacheable when the cache option is set to false', () => {
+      const entityConfiguration = new EntityConfiguration<Blah2T>({
+        idField: 'id',
+        tableName: 'blah',
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+            cache: false,
+          }),
+        },
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
+      });
+      expect(entityConfiguration.cacheableKeys).toEqual(new Set([]));
     });
 
     describe('cache key version', () => {
