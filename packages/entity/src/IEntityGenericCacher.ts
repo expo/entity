@@ -37,12 +37,12 @@ export default interface IEntityGenericCacher<TFields extends Record<string, any
   invalidateManyAsync(keys: readonly string[]): Promise<void>;
 
   /**
-   * Create a cache key for a load key and load value of a object being cached or invalidated.
+   * Create a cache key for a load key and load value of an object being cached (or negatively cached).
    *
    * @param key - load key of the cache key
    * @param value - load value of the cache key
    */
-  makeCacheKey<
+  makeCacheKeyForStorage<
     TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
@@ -50,4 +50,21 @@ export default interface IEntityGenericCacher<TFields extends Record<string, any
     key: TLoadKey,
     value: TLoadValue,
   ): string;
+
+  /**
+   * Create a cache key for a load key and load values of an object being invalidated. This is separate
+   * from makeCacheKeyForStorage because invalidation can optionally be configured to invalidate a larger set of keys than
+   * the one for just the current cache version, which can be useful for things like push safety.
+   *
+   * @param key - load key of the cache key
+   * @param values - load values of the cache key
+   */
+  makeCacheKeysForInvalidation<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    key: TLoadKey,
+    value: TLoadValue,
+  ): readonly string[];
 }

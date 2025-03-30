@@ -8,7 +8,7 @@ import {
 import { Redis, Pipeline } from 'ioredis';
 import { mock, when, instance, anything, verify } from 'ts-mockito';
 
-import GenericRedisCacher from '../GenericRedisCacher';
+import GenericRedisCacher, { RedisCacheInvalidationStrategy } from '../GenericRedisCacher';
 
 type BlahFields = {
   id: string;
@@ -17,6 +17,7 @@ type BlahFields = {
 const entityConfiguration = new EntityConfiguration<BlahFields>({
   idField: 'id',
   tableName: 'blah',
+  cacheKeyVersion: 2,
   schema: {
     id: new UUIDField({ columnName: 'id', cache: true }),
   },
@@ -43,19 +44,20 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
+          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
         },
         entityConfiguration,
       );
 
-      const cacheKeyWat = genericCacher['makeCacheKey'](
+      const cacheKeyWat = genericCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('wat'),
       );
-      const cacheKeyWho = genericCacher['makeCacheKey'](
+      const cacheKeyWho = genericCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('who'),
       );
-      const cacheKeyWhy = genericCacher['makeCacheKey'](
+      const cacheKeyWhy = genericCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('why'),
       );
@@ -82,6 +84,7 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
+          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
         },
         entityConfiguration,
       );
@@ -114,11 +117,12 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
+          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
         },
         entityConfiguration,
       );
 
-      const cacheKey = genericCacher['makeCacheKey'](
+      const cacheKey = genericCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('wat'),
       );
@@ -156,11 +160,12 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
+          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
         },
         entityConfiguration,
       );
 
-      const cacheKey = genericCacher['makeCacheKey'](
+      const cacheKey = genericCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('wat'),
       );
@@ -176,7 +181,7 @@ describe(GenericRedisCacher, () => {
   });
 
   describe('invalidateManyAsync', () => {
-    it('invalidates correctly', async () => {
+    it('invalidates correctly with RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION', async () => {
       const mockRedisClient = mock<Redis>();
       when(mockRedisClient.del()).thenResolve(1);
 
@@ -187,17 +192,43 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
+          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
         },
         entityConfiguration,
       );
-      const cacheKey = genericCacher['makeCacheKey'](
+      const cacheKeys = genericCacher['makeCacheKeysForInvalidation'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('wat'),
       );
+      expect(cacheKeys).toHaveLength(1);
 
-      await genericCacher.invalidateManyAsync([cacheKey]);
+      await genericCacher.invalidateManyAsync(cacheKeys);
+      verify(mockRedisClient.del(...cacheKeys)).once();
+    });
 
-      verify(mockRedisClient.del(cacheKey)).once();
+    it('invalidates correctly with RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS', async () => {
+      const mockRedisClient = mock<Redis>();
+      when(mockRedisClient.del()).thenResolve(1);
+
+      const genericCacher = new GenericRedisCacher(
+        {
+          redisClient: instance(mockRedisClient),
+          makeKeyFn: (...parts) => parts.join(':'),
+          cacheKeyPrefix: 'hello-',
+          ttlSecondsPositive: 1,
+          ttlSecondsNegative: 2,
+          invalidationStrategy: RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS,
+        },
+        entityConfiguration,
+      );
+      const cacheKeys = genericCacher['makeCacheKeysForInvalidation'](
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder('wat'),
+      );
+      expect(cacheKeys).toHaveLength(3);
+
+      await genericCacher.invalidateManyAsync(cacheKeys);
+      verify(mockRedisClient.del(...cacheKeys)).once();
     });
 
     it('returns when passed empty array of fieldValues', async () => {
@@ -208,6 +239,7 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
+          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
         },
         entityConfiguration,
       );

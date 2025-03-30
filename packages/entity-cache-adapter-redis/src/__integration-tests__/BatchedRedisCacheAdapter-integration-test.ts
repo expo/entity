@@ -1,5 +1,11 @@
 import { Batcher } from '@expo/batcher';
-import { SingleFieldHolder, SingleFieldValueHolder, ViewerContext, zipToMap } from '@expo/entity';
+import {
+  IEntityGenericCacher,
+  SingleFieldHolder,
+  SingleFieldValueHolder,
+  ViewerContext,
+  zipToMap,
+} from '@expo/entity';
 import invariant from 'invariant';
 import Redis from 'ioredis';
 import nullthrows from 'nullthrows';
@@ -10,8 +16,9 @@ import GenericRedisCacher, {
   IRedis,
   IRedisTransaction,
   GenericRedisCacheContext,
+  RedisCacheInvalidationStrategy,
 } from '../GenericRedisCacher';
-import RedisTestEntity from '../testfixtures/RedisTestEntity';
+import RedisTestEntity, { RedisTestEntityFields } from '../testfixtures/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtures/createRedisIntegrationTestEntityCompanionProvider';
 
 class BatchedRedis implements IRedis {
@@ -78,6 +85,7 @@ describe(GenericRedisCacher, () => {
       cacheKeyPrefix: 'test-',
       ttlSecondsPositive: 86400, // 1 day
       ttlSecondsNegative: 600, // 10 minutes
+      invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
     };
   });
 
@@ -97,11 +105,11 @@ describe(GenericRedisCacher, () => {
 
     const mgetSpy = jest.spyOn(redis, 'mget');
 
-    const genericCacher =
-      viewerContext.entityCompanionProvider.getCompanionForEntity(RedisTestEntity)[
-        'tableDataCoordinator'
-      ]['cacheAdapter']['genericCacher'];
-    const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
+    const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
+      RedisTestEntity,
+    )['tableDataCoordinator']['cacheAdapter'][
+      'genericCacher'
+    ] as IEntityGenericCacher<RedisTestEntityFields>;
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')
@@ -132,7 +140,7 @@ describe(GenericRedisCacher, () => {
     expect(entity1.getID()).toEqual(entity2.getID());
     expect(entity2.getID()).toEqual(nullthrows(entity3).getID());
 
-    const cacheKeyEntity1 = cacheKeyMaker(
+    const cacheKeyEntity1 = genericCacher.makeCacheKeyForStorage(
       new SingleFieldHolder('id'),
       new SingleFieldValueHolder(entity1Created.getID()),
     );
@@ -143,7 +151,7 @@ describe(GenericRedisCacher, () => {
       name: 'blah',
     });
 
-    const cacheKeyEntity1NameField = cacheKeyMaker(
+    const cacheKeyEntity1NameField = genericCacher.makeCacheKeyForStorage(
       new SingleFieldHolder('name'),
       new SingleFieldValueHolder(entity1Created.getField('name')),
     );
@@ -160,7 +168,7 @@ describe(GenericRedisCacher, () => {
         nonExistentId,
       );
     expect(entityNonExistentResult.ok).toBe(false);
-    const cacheKeyNonExistent = cacheKeyMaker(
+    const cacheKeyNonExistent = genericCacher.makeCacheKeyForStorage(
       new SingleFieldHolder('id'),
       new SingleFieldValueHolder(nonExistentId),
     );
