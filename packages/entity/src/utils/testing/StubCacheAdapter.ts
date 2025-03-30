@@ -54,10 +54,10 @@ export class NoCacheStubCacheAdapter<TFields extends Record<string, any>>
 
 // Sentinel value we store in the in-memory cache to negatively cache a database miss.
 // The sentinel value is distinct from any (positively) cached value.
-const DOES_NOT_EXIST = Symbol('inMemoryCacheDoesNotExistValue');
+export const DOES_NOT_EXIST = Symbol('inMemoryCacheDoesNotExistValue');
 
 export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
-  cache: Map<string, Readonly<object> | typeof DOES_NOT_EXIST> = new Map();
+  private readonly cache: Map<string, Readonly<object> | typeof DOES_NOT_EXIST> = new Map();
 
   getCacheAdapter<TFields extends Record<string, any>>(
     entityConfiguration: EntityConfiguration<TFields>,
@@ -74,7 +74,7 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
 {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
-    readonly cache: Map<string, Readonly<TFields> | typeof DOES_NOT_EXIST>,
+    private readonly cache: Map<string, Readonly<TFields> | typeof DOES_NOT_EXIST>,
   ) {}
 
   public async loadManyAsync<

@@ -41,7 +41,10 @@ export type EntityCompositeFieldValue<
   TCompositeField extends EntityCompositeField<TFields>,
 > = Record<TCompositeField[number], NonNullable<TFields[TCompositeField[number]]>>;
 
-class CompositeFieldInfo<TFields extends Record<string, any>> {
+/**
+ * Helper class to validate and store composite field information.
+ */
+export class CompositeFieldInfo<TFields extends Record<string, any>> {
   private readonly compositeFieldInfoMap: ReadonlyMap<
     SerializedCompositeFieldHolder,
     {

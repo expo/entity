@@ -16,9 +16,9 @@
     "typedoc": "yarn tsc && typedoc"
   },
   "devDependencies": {
-    "lerna": "^8.2.0",
-    "typedoc": "^0.27.7",
-    "typescript": "^5.7.3"
+    "lerna": "^8.2.1",
+    "typedoc": "^0.28.1",
+    "typescript": "^5.8.2"
   },
   "volta": {
     "node": "20.14.0"
