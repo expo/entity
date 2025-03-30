@@ -17,6 +17,7 @@ type BlahFields = {
 const entityConfiguration = new EntityConfiguration<BlahFields>({
   idField: 'id',
   tableName: 'blah',
+  cacheKeyVersion: 2,
   schema: {
     id: new UUIDField({ columnName: 'id', cache: true }),
   },
@@ -47,15 +48,15 @@ describe(GenericRedisCacher, () => {
         entityConfiguration,
       );
 
-      const cacheKeyWat = genericCacher['makeCacheKey'](
+      const cacheKeyWat = genericCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('wat'),
       );
-      const cacheKeyWho = genericCacher['makeCacheKey'](
+      const cacheKeyWho = genericCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('who'),
       );
-      const cacheKeyWhy = genericCacher['makeCacheKey'](
+      const cacheKeyWhy = genericCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('why'),
       );
@@ -118,7 +119,7 @@ describe(GenericRedisCacher, () => {
         entityConfiguration,
       );
 
-      const cacheKey = genericCacher['makeCacheKey'](
+      const cacheKey = genericCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('wat'),
       );
@@ -160,7 +161,7 @@ describe(GenericRedisCacher, () => {
         entityConfiguration,
       );
 
-      const cacheKey = genericCacher['makeCacheKey'](
+      const cacheKey = genericCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('wat'),
       );
@@ -190,14 +191,14 @@ describe(GenericRedisCacher, () => {
         },
         entityConfiguration,
       );
-      const cacheKey = genericCacher['makeCacheKey'](
+      const cacheKeys = genericCacher['makeCacheKeysForInvalidation'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('wat'),
       );
+      expect(cacheKeys).toHaveLength(3);
 
-      await genericCacher.invalidateManyAsync([cacheKey]);
-
-      verify(mockRedisClient.del(cacheKey)).once();
+      await genericCacher.invalidateManyAsync(cacheKeys);
+      verify(mockRedisClient.del(...cacheKeys)).once();
     });
 
     it('returns when passed empty array of fieldValues', async () => {

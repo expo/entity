@@ -1,6 +1,7 @@
 import {
   CompositeFieldHolder,
   CompositeFieldValueHolder,
+  IEntityGenericCacher,
   SingleFieldHolder,
   SingleFieldValueHolder,
   ViewerContext,
@@ -11,7 +12,7 @@ import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
 import GenericRedisCacher, { GenericRedisCacheContext } from '../GenericRedisCacher';
-import RedisTestEntity from '../testfixtures/RedisTestEntity';
+import RedisTestEntity, { RedisTestEntityFields } from '../testfixtures/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtures/createRedisIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}
@@ -46,11 +47,14 @@ describe(GenericRedisCacher, () => {
     const viewerContext = new TestViewerContext(
       createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
-    const genericCacher =
-      viewerContext.entityCompanionProvider.getCompanionForEntity(RedisTestEntity)[
-        'tableDataCoordinator'
-      ]['cacheAdapter']['genericCacher'];
-    const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
+    const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
+      RedisTestEntity,
+    )['tableDataCoordinator']['cacheAdapter'][
+      'genericCacher'
+    ] as IEntityGenericCacher<RedisTestEntityFields>;
+    const storageCacheKeyMaker = genericCacher['makeCacheKeyForStorage'].bind(genericCacher);
+    const invalidationCacheKeyMaker =
+      genericCacher['makeCacheKeysForInvalidation'].bind(genericCacher);
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')
@@ -62,7 +66,10 @@ describe(GenericRedisCacher, () => {
     );
 
     const cachedSingleJSON = await (genericRedisCacheContext.redisClient as Redis).get(
-      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
+      storageCacheKeyMaker(
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder(entity1.getID()),
+      ),
     );
     const cachedSingleValue = JSON.parse(cachedSingleJSON!);
     expect(cachedSingleValue).toMatchObject({
@@ -76,8 +83,8 @@ describe(GenericRedisCacher, () => {
       { name: 'blah', id: entity1.getID() },
     );
     const cachedCompositeJSON = await (genericRedisCacheContext.redisClient as Redis).get(
-      cacheKeyMaker(
-        new CompositeFieldHolder(['id', 'name']),
+      storageCacheKeyMaker(
+        new CompositeFieldHolder<RedisTestEntityFields>(['id', 'name']),
         new CompositeFieldValueHolder({ id: entity2!.getID(), name: 'blah' }),
       ),
     );
@@ -96,7 +103,7 @@ describe(GenericRedisCacher, () => {
       );
     expect(entityNonExistentResult.ok).toBe(false);
     const nonExistentCachedValue = await (genericRedisCacheContext.redisClient as Redis).get(
-      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(nonExistentId)),
+      storageCacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(nonExistentId)),
     );
     expect(nonExistentCachedValue).toEqual('');
 
@@ -107,8 +114,8 @@ describe(GenericRedisCacher, () => {
     const nonExistentCompositeCachedValue = await (
       genericRedisCacheContext.redisClient as Redis
     ).get(
-      cacheKeyMaker(
-        new CompositeFieldHolder(['id', 'name']),
+      storageCacheKeyMaker(
+        new CompositeFieldHolder<RedisTestEntityFields>(['id', 'name']),
         new CompositeFieldValueHolder({ id: nonExistentId, name: 'blah' }),
       ),
     );
@@ -127,17 +134,23 @@ describe(GenericRedisCacher, () => {
 
     // invalidate from cache to ensure it invalidates correctly
     await RedisTestEntity.loaderUtils(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
-    const cachedValueNull = await (genericRedisCacheContext.redisClient as Redis).get(
-      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
+    const cachedValueNullKeys = invalidationCacheKeyMaker(
+      new SingleFieldHolder('id'),
+      new SingleFieldValueHolder(entity1.getID()),
     );
-    expect(cachedValueNull).toBe(null);
-    const cachedValueNullComposite = await (genericRedisCacheContext.redisClient as Redis).get(
-      cacheKeyMaker(
-        new CompositeFieldHolder(['id', 'name']),
-        new CompositeFieldValueHolder({ id: entity1.getID(), name: 'blah' }),
-      ),
+    const cachedValueNull = await (genericRedisCacheContext.redisClient as Redis).mget(
+      ...cachedValueNullKeys,
     );
-    expect(cachedValueNullComposite).toBe(null);
+    expect(cachedValueNull.every((c) => c === null)).toBe(true);
+
+    const cachedValueNullCompositeKeys = invalidationCacheKeyMaker(
+      new CompositeFieldHolder<RedisTestEntityFields>(['id', 'name']),
+      new CompositeFieldValueHolder({ id: entity1.getID(), name: 'blah' }),
+    );
+    const cachedValueNullComposite = await (genericRedisCacheContext.redisClient as Redis).mget(
+      ...cachedValueNullCompositeKeys,
+    );
+    expect(cachedValueNullComposite.every((c) => c === null)).toBe(true);
   });
 
   it('caches and restores date fields', async () => {

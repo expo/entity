@@ -11,6 +11,7 @@ import {
 
 import { redisTransformerMap } from './RedisCommon';
 import wrapNativeRedisCallAsync from './errors/wrapNativeRedisCallAsync';
+import { getCacheKeyVersionsToInvalidate } from './utils/getCacheKeyVersionsToInvalidate';
 
 // Sentinel value we store in Redis to negatively cache a database miss.
 // The sentinel value is distinct from any (positively) cached value.
@@ -148,19 +149,41 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
     await wrapNativeRedisCallAsync(() => this.context.redisClient.del(...keys));
   }
 
-  public makeCacheKey<
+  private makeCacheKeyForCacheKeyVersion<
     TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
-  >(key: TLoadKey, value: TLoadValue): string {
+  >(key: TLoadKey, value: TLoadValue, cacheKeyVersion: number): string {
     const cacheKeyType = key.getLoadMethodType();
     const parts = key.createCacheKeyPartsForLoadValue(this.entityConfiguration, value);
     return this.context.makeKeyFn(
       this.context.cacheKeyPrefix,
       cacheKeyType,
       this.entityConfiguration.tableName,
-      `v2.${this.entityConfiguration.cacheKeyVersion}`,
+      `v2.${cacheKeyVersion}`,
       ...parts,
+    );
+  }
+
+  public makeCacheKeyForStorage<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, value: TLoadValue): string {
+    return this.makeCacheKeyForCacheKeyVersion(
+      key,
+      value,
+      this.entityConfiguration.cacheKeyVersion,
+    );
+  }
+
+  public makeCacheKeysForInvalidation<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, value: TLoadValue): readonly string[] {
+    return getCacheKeyVersionsToInvalidate(this.entityConfiguration.cacheKeyVersion).map(
+      (cacheKeyVersion) => this.makeCacheKeyForCacheKeyVersion(key, value, cacheKeyVersion),
     );
   }
 }

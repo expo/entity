@@ -81,7 +81,7 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
 async function createOrTruncatePostgresTablesAsync(knex: Knex): Promise<void> {
   await knex.schema.createTable('testentities', (table) => {
     table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
-    table.string('other_string').notNullable();
+    table.string('other_string').notNullable().unique();
     table.string('third_string').notNullable();
   });
   await knex.into('testentities').truncate();

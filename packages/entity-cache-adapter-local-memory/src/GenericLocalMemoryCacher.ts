@@ -89,7 +89,7 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
     }
   }
 
-  public makeCacheKey<
+  public makeCacheKeyForStorage<
     TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
@@ -108,5 +108,15 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
       part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
     );
     return escapedParts.join(delimiter);
+  }
+
+  public makeCacheKeysForInvalidation<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, value: TLoadValue): readonly string[] {
+    // for local memory caches, we don't need to invalidate old versions of the cache keys
+    // since they are not persisted across deploys
+    return [this.makeCacheKeyForStorage(key, value)];
   }
 }

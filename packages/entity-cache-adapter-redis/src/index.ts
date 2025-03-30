@@ -9,3 +9,4 @@ export * from './GenericRedisCacher';
 export { default as RedisCacheAdapterProvider } from './RedisCacheAdapterProvider';
 export * from './RedisCommon';
 export { default as wrapNativeRedisCallAsync } from './errors/wrapNativeRedisCallAsync';
+export * from './utils/getCacheKeyVersionsToInvalidate';

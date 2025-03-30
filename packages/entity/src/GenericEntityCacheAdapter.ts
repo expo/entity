@@ -23,7 +23,7 @@ export default class GenericEntityCacheAdapter<TFields extends Record<string, an
     values: readonly TLoadValue[],
   ): Promise<ReadonlyMap<TLoadValue, CacheLoadResult<TFields>>> {
     const redisCacheKeyToFieldValueMapping = new Map(
-      values.map((value) => [this.genericCacher.makeCacheKey(key, value), value]),
+      values.map((value) => [this.genericCacher.makeCacheKeyForStorage(key, value), value]),
     );
     const cacheResults = await this.genericCacher.loadManyAsync(
       Array.from(redisCacheKeyToFieldValueMapping.keys()),
@@ -48,7 +48,7 @@ export default class GenericEntityCacheAdapter<TFields extends Record<string, an
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, objectMap: ReadonlyMap<TLoadValue, Readonly<TFields>>): Promise<void> {
     await this.genericCacher.cacheManyAsync(
-      mapKeys(objectMap, (value) => this.genericCacher.makeCacheKey(key, value)),
+      mapKeys(objectMap, (value) => this.genericCacher.makeCacheKeyForStorage(key, value)),
     );
   }
 
@@ -58,7 +58,7 @@ export default class GenericEntityCacheAdapter<TFields extends Record<string, an
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
     await this.genericCacher.cacheDBMissesAsync(
-      values.map((value) => this.genericCacher.makeCacheKey(key, value)),
+      values.map((value) => this.genericCacher.makeCacheKeyForStorage(key, value)),
     );
   }
 
@@ -68,7 +68,7 @@ export default class GenericEntityCacheAdapter<TFields extends Record<string, an
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
     await this.genericCacher.invalidateManyAsync(
-      values.map((value) => this.genericCacher.makeCacheKey(key, value)),
+      values.flatMap((value) => this.genericCacher.makeCacheKeysForInvalidation(key, value)),
     );
   }
 }

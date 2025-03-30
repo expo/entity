@@ -116,7 +116,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
         new Map([[new SingleFieldValueHolder('test-id-1'), { id: 'test-id-1' }]]),
       );
 
-      const cacheKey = localMemoryCacher['makeCacheKey'](
+      const cacheKey = localMemoryCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('test-id-1'),
       );
@@ -136,7 +136,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
         new SingleFieldValueHolder('test-id-1'),
       ]);
 
-      const cacheKey = localMemoryCacher['makeCacheKey'](
+      const cacheKey = localMemoryCacher['makeCacheKeyForStorage'](
         new SingleFieldHolder('id'),
         new SingleFieldValueHolder('test-id-1'),
       );

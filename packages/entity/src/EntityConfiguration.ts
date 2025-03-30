@@ -106,6 +106,7 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
   readonly cacheableKeys: ReadonlySet<keyof TFields>;
   readonly compositeFieldInfo: CompositeFieldInfo<TFields>;
   readonly cacheKeyVersion: number;
+  readonly otherCacheKeyVersionsToInvalidate: ReadonlySet<number> = new Set();
 
   readonly inboundEdges: IEntityClass<any, any, any, any, any, any>[];
   readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>;

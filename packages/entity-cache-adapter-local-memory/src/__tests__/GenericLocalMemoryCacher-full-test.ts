@@ -2,6 +2,7 @@ import {
   CacheAdapterFlavor,
   CacheAdapterFlavorDefinition,
   CacheStatus,
+  IEntityGenericCacher,
   SingleFieldHolder,
   SingleFieldValueHolder,
   ViewerContext,
@@ -10,7 +11,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import GenericLocalMemoryCacher from '../GenericLocalMemoryCacher';
 import LocalMemoryCacheAdapterProvider from '../LocalMemoryCacheAdapterProvider';
-import LocalMemoryTestEntity from '../testfixtures/LocalMemoryTestEntity';
+import LocalMemoryTestEntity, {
+  LocalMemoryTestEntityFields,
+} from '../testfixtures/LocalMemoryTestEntity';
 import {
   createLocalMemoryTestEntityCompanionProvider,
   createNoOpLocalMemoryIntegrationTestEntityCompanionProvider,
@@ -20,11 +23,14 @@ describe(GenericLocalMemoryCacher, () => {
   it('has correct caching behavior', async () => {
     const entityCompanionProvider = createLocalMemoryTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(entityCompanionProvider);
-    const genericCacher =
-      viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)[
-        'tableDataCoordinator'
-      ]['cacheAdapter']['genericCacher'];
-    const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
+    const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
+      LocalMemoryTestEntity,
+    )['tableDataCoordinator']['cacheAdapter'][
+      'genericCacher'
+    ] as IEntityGenericCacher<LocalMemoryTestEntityFields>;
+    const storageCacheKeyMaker = genericCacher['makeCacheKeyForStorage'].bind(genericCacher);
+    const invalidationCacheKeyMaker =
+      genericCacher['makeCacheKeysForInvalidation'].bind(genericCacher);
 
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
@@ -48,12 +54,18 @@ describe(GenericLocalMemoryCacher, () => {
     ].get(
       viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)
         .entityCompanionDefinition.entityConfiguration.tableName,
-    )!['genericCacher'];
+    )!['genericCacher'] as IEntityGenericCacher<LocalMemoryTestEntityFields>;
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
-      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
+      storageCacheKeyMaker(
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder(entity1.getID()),
+      ),
     ]);
     const cachedValue = cachedResult.get(
-      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
+      storageCacheKeyMaker(
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder(entity1.getID()),
+      ),
     )!;
     expect(cachedValue).toMatchObject({
       status: CacheStatus.HIT,
@@ -74,11 +86,14 @@ describe(GenericLocalMemoryCacher, () => {
     expect(entityNonExistentResult.ok).toBe(false);
 
     const nonExistentCachedResult = await entitySpecificGenericCacher.loadManyAsync([
-      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(nonExistentId)),
+      storageCacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(nonExistentId)),
     ]);
     expect(
       nonExistentCachedResult.get(
-        cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(nonExistentId)),
+        storageCacheKeyMaker(
+          new SingleFieldHolder('id'),
+          new SingleFieldValueHolder(nonExistentId),
+        ),
       ),
     ).toMatchObject({
       status: CacheStatus.NEGATIVE,
@@ -95,23 +110,25 @@ describe(GenericLocalMemoryCacher, () => {
     await LocalMemoryTestEntity.loaderUtils(viewerContext).invalidateFieldsAsync(
       entity1.getAllFields(),
     );
-    const cachedResultMiss = await entitySpecificGenericCacher.loadManyAsync([
-      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
-    ]);
-    const cachedValueMiss = cachedResultMiss.get(
-      cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
+    const keys = invalidationCacheKeyMaker(
+      new SingleFieldHolder('id'),
+      new SingleFieldValueHolder(entity1.getID()),
     );
-    expect(cachedValueMiss).toMatchObject({ status: CacheStatus.MISS });
+    const cachedResultMiss = await entitySpecificGenericCacher.loadManyAsync(keys);
+    expect(Array.from(cachedResultMiss.values()).every((v) => v.status === CacheStatus.MISS)).toBe(
+      true,
+    );
   });
 
   it('respects the parameters of a noop cache', async () => {
     const entityCompanionProvider = createNoOpLocalMemoryIntegrationTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(entityCompanionProvider);
-    const genericCacher =
-      viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)[
-        'tableDataCoordinator'
-      ]['cacheAdapter']['genericCacher'];
-    const cacheKeyMaker = genericCacher['makeCacheKey'].bind(genericCacher);
+    const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
+      LocalMemoryTestEntity,
+    )['tableDataCoordinator']['cacheAdapter'][
+      'genericCacher'
+    ] as IEntityGenericCacher<LocalMemoryTestEntityFields>;
+    const cacheKeyMaker = genericCacher['makeCacheKeyForStorage'].bind(genericCacher);
 
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
@@ -135,7 +152,7 @@ describe(GenericLocalMemoryCacher, () => {
     ].get(
       viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)
         .entityCompanionDefinition.entityConfiguration.tableName,
-    )!['genericCacher'];
+    )!['genericCacher'] as IEntityGenericCacher<LocalMemoryTestEntityFields>;
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
     ]);
