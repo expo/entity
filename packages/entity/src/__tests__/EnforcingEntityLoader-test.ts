@@ -3,6 +3,8 @@ import { mock, instance, when, anything } from 'ts-mockito';
 
 import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
 import EnforcingEntityLoader from '../EnforcingEntityLoader';
+import { CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
+import { CompositeFieldValueMap } from '../internal/CompositeFieldValueMap';
 
 describe(EnforcingEntityLoader, () => {
   describe('loadManyByFieldEqualingManyAsync', () => {
@@ -52,6 +54,133 @@ describe(EnforcingEntityLoader, () => {
           }),
         ),
       );
+    });
+  });
+
+  describe('loadManyByCompositeFieldEqualingManyAsync', () => {
+    it('throws when result is unsuccessful', async () => {
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
+      const rejection = new Error();
+      when(
+        nonEnforcingEntityLoaderMock.loadManyByCompositeFieldEqualingManyAsync(
+          anything(),
+          anything(),
+        ),
+      ).thenResolve(
+        new CompositeFieldValueMap([
+          [new CompositeFieldValueHolder({ wat: 'hello' }), [result(rejection)]],
+        ]),
+      );
+      const nonEnforcingEntityLoader = instance(nonEnforcingEntityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(nonEnforcingEntityLoader);
+      await expect(
+        enforcingEntityLoader.loadManyByCompositeFieldEqualingManyAsync(anything(), anything()),
+      ).rejects.toThrow(rejection);
+    });
+
+    it('returns value when result is successful', async () => {
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
+
+      const resolved = {};
+      when(
+        nonEnforcingEntityLoaderMock.loadManyByCompositeFieldEqualingManyAsync(
+          anything(),
+          anything(),
+        ),
+      ).thenResolve(
+        new CompositeFieldValueMap([
+          [new CompositeFieldValueHolder({ wat: 'hello' }), [result(resolved)]],
+        ]),
+      );
+
+      const nonEnforcingEntityLoader = instance(nonEnforcingEntityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(nonEnforcingEntityLoader);
+
+      await expect(
+        enforcingEntityLoader.loadManyByCompositeFieldEqualingManyAsync(anything(), anything()),
+      ).resolves.toEqual(
+        new CompositeFieldValueMap([[new CompositeFieldValueHolder({ wat: 'hello' }), [resolved]]]),
+      );
+    });
+  });
+
+  describe('loadManyByCompositeFieldEqualingAsync', () => {
+    it('throws when result is unsuccessful', async () => {
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
+
+      const rejection = new Error();
+      when(
+        nonEnforcingEntityLoaderMock.loadManyByCompositeFieldEqualingAsync(anything(), anything()),
+      ).thenResolve([result(rejection)]);
+
+      const nonEnforcingEntityLoader = instance(nonEnforcingEntityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(nonEnforcingEntityLoader);
+
+      await expect(
+        enforcingEntityLoader.loadManyByCompositeFieldEqualingAsync(anything(), anything()),
+      ).rejects.toThrow(rejection);
+    });
+
+    it('returns value when result is successful', async () => {
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
+
+      const resolved = {};
+      when(
+        nonEnforcingEntityLoaderMock.loadManyByCompositeFieldEqualingAsync(anything(), anything()),
+      ).thenResolve([result(resolved)]);
+
+      const nonEnforcingEntityLoader = instance(nonEnforcingEntityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(nonEnforcingEntityLoader);
+
+      await expect(
+        enforcingEntityLoader.loadManyByCompositeFieldEqualingAsync(anything(), anything()),
+      ).resolves.toEqual([resolved]);
+    });
+  });
+
+  describe('loadByCompositeFieldEqualingAsync', () => {
+    it('throws when result is unsuccessful', async () => {
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
+
+      const rejection = new Error();
+      when(
+        nonEnforcingEntityLoaderMock.loadByCompositeFieldEqualingAsync(anything(), anything()),
+      ).thenResolve(result(rejection));
+
+      const nonEnforcingEntityLoader = instance(nonEnforcingEntityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(nonEnforcingEntityLoader);
+
+      await expect(
+        enforcingEntityLoader.loadByCompositeFieldEqualingAsync(anything(), anything()),
+      ).rejects.toThrow(rejection);
+    });
+
+    it('returns value when result is successful', async () => {
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
+
+      const resolved = {};
+      when(
+        nonEnforcingEntityLoaderMock.loadByCompositeFieldEqualingAsync(anything(), anything()),
+      ).thenResolve(result(resolved));
+
+      const nonEnforcingEntityLoader = instance(nonEnforcingEntityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(nonEnforcingEntityLoader);
+
+      await expect(
+        enforcingEntityLoader.loadByCompositeFieldEqualingAsync(anything(), anything()),
+      ).resolves.toEqual(resolved);
     });
   });
 
@@ -452,6 +581,8 @@ describe(EnforcingEntityLoader, () => {
     const knownLoaderOnlyDifferences = [
       'validateFieldAndValues',
       'validateFieldAndValuesAndConvertToHolders',
+      'validateCompositeFieldAndValuesAndConvertToHolders',
+      'constructAndAuthorizeEntitiesFromCompositeFieldValueHolderMapAsync',
     ];
     expect(nonEnforcingLoaderProperties).toEqual(
       expect.arrayContaining(knownLoaderOnlyDifferences),

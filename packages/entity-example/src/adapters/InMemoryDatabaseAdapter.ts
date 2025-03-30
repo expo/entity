@@ -35,13 +35,13 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
     _queryInterface: any,
     _tableName: string,
     tableColumns: readonly string[],
-    tableValueValues: (readonly any[])[],
+    tableTuples: (readonly any[])[],
   ): Promise<object[]> {
-    const results = tableValueValues.reduce((acc, tableValues) => {
+    const results = tableTuples.reduce((acc, tableTuple) => {
       return acc.concat(
         dbObjects.filter((obj) => {
           return tableColumns.every((tableColumn, index) => {
-            return obj[tableColumn] === tableValues[index];
+            return obj[tableColumn] === tableTuple[index];
           });
         }),
       );

@@ -1,7 +1,97 @@
+import invariant from 'invariant';
+
 import { IEntityClass } from './Entity';
 import { DatabaseAdapterFlavor, CacheAdapterFlavor } from './EntityCompanionProvider';
 import { EntityFieldDefinition } from './EntityFieldDefinition';
+import {
+  CompositeFieldHolder,
+  SerializedCompositeFieldHolder,
+} from './internal/CompositeFieldHolder';
 import { mapMap, invertMap, reduceMap } from './utils/collections/maps';
+
+/**
+ * A composite field is an unordered set of fields by which entities can be loaded in a batched
+ * and (optionally) cached manner akin to how normal fieldName loads are batched and (optionally) cached.
+ */
+export type EntityCompositeField<TFields extends Record<string, any>> = readonly (keyof TFields)[];
+
+/**
+ * Specification of composite field for an entity and whether it can be cached.
+ */
+export type EntityCompositeFieldDefinition<TFields extends Record<string, any>> = {
+  /**
+   * The composite field.
+   */
+  compositeField: EntityCompositeField<TFields>;
+
+  /**
+   * Whether or not to cache loaded instances of the entity by this composite field. The column names in
+   * the composite field are used to derive a cache key for the cache entry. If true, the set of columns
+   * must be able uniquely identify the entity and the database must have a unique constraint on the
+   * set of columns.
+   */
+  cache?: boolean;
+};
+
+/**
+ * A composite field value is a mapping of fields to values for a composite field.
+ */
+export type EntityCompositeFieldValue<
+  TFields extends Record<string, any>,
+  TCompositeField extends EntityCompositeField<TFields>,
+> = Record<TCompositeField[number], NonNullable<TFields[TCompositeField[number]]>>;
+
+class CompositeFieldInfo<TFields extends Record<string, any>> {
+  private readonly compositeFieldInfoMap: ReadonlyMap<
+    SerializedCompositeFieldHolder,
+    {
+      compositeFieldHolder: CompositeFieldHolder<TFields>;
+      cache: boolean;
+    }
+  >;
+
+  constructor(compositeFieldsDefinitions: EntityCompositeFieldDefinition<TFields>[]) {
+    this.compositeFieldInfoMap = new Map(
+      compositeFieldsDefinitions.map((keyDefinition) => {
+        invariant(
+          keyDefinition.compositeField.length >= 2,
+          'Composite field must have at least two sub-fields',
+        );
+        invariant(
+          keyDefinition.compositeField.length === new Set(keyDefinition.compositeField).size,
+          'Composite field must have unique sub-fields',
+        );
+        const compositeFieldHolder = new CompositeFieldHolder(keyDefinition.compositeField);
+        return [
+          compositeFieldHolder.serialize(),
+          { compositeFieldHolder, cache: keyDefinition.cache ?? false },
+        ];
+      }),
+    );
+  }
+
+  public getCompositeFieldHolderForCompositeField(
+    compositeField: EntityCompositeField<TFields>,
+  ): CompositeFieldHolder<TFields> | undefined {
+    return this.compositeFieldInfoMap.get(new CompositeFieldHolder(compositeField).serialize())
+      ?.compositeFieldHolder;
+  }
+
+  public getAllCompositeFieldHolders(): readonly CompositeFieldHolder<TFields>[] {
+    return Array.from(this.compositeFieldInfoMap.values()).map((v) => v.compositeFieldHolder);
+  }
+
+  public canCacheCompositeField(compositeField: EntityCompositeField<TFields>): boolean {
+    const compositeFieldInfo = this.compositeFieldInfoMap.get(
+      new CompositeFieldHolder(compositeField).serialize(),
+    );
+    invariant(
+      compositeFieldInfo,
+      `Composite field (${compositeField.join(',')}) not found in entity configuration`,
+    );
+    return compositeFieldInfo.cache;
+  }
+}
 
 /**
  * The data storage configuration for a type of Entity. Contains information relating to IDs,
@@ -11,6 +101,7 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
   readonly idField: keyof TFields;
   readonly tableName: string;
   readonly cacheableKeys: ReadonlySet<keyof TFields>;
+  readonly compositeFieldInfo: CompositeFieldInfo<TFields>;
   readonly cacheKeyVersion: number;
 
   readonly inboundEdges: IEntityClass<any, any, any, any, any, any>[];
@@ -27,6 +118,7 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
     schema,
     inboundEdges = [],
     cacheKeyVersion = 0,
+    compositeFieldDefinitions,
     databaseAdapterFlavor,
     cacheAdapterFlavor,
   }: {
@@ -57,6 +149,11 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
     cacheKeyVersion?: number;
 
     /**
+     * Composite field definitions for this entity.
+     */
+    compositeFieldDefinitions?: EntityCompositeFieldDefinition<TFields>[];
+
+    /**
      * Backing database and transaction type for this entity.
      */
     databaseAdapterFlavor: DatabaseAdapterFlavor;
@@ -79,6 +176,7 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
     this.schema = new Map(Object.entries(schema));
 
     this.cacheableKeys = EntityConfiguration.computeCacheableKeys(this.schema);
+    this.compositeFieldInfo = new CompositeFieldInfo(compositeFieldDefinitions ?? []);
     this.entityToDBFieldsKeyMapping = EntityConfiguration.computeEntityToDBFieldsKeyMapping(
       this.schema,
     );

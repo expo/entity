@@ -52,8 +52,12 @@ export class NoCacheStubCacheAdapter<TFields extends Record<string, any>>
   >(_key: TLoadKey, _values: readonly TLoadValue[]): Promise<void> {}
 }
 
+// Sentinel value we store in the in-memory cache to negatively cache a database miss.
+// The sentinel value is distinct from any (positively) cached value.
+const DOES_NOT_EXIST = Symbol('inMemoryCacheDoesNotExistValue');
+
 export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
-  cache: Map<string, Readonly<object>> = new Map();
+  cache: Map<string, Readonly<object> | typeof DOES_NOT_EXIST> = new Map();
 
   getCacheAdapter<TFields extends Record<string, any>>(
     entityConfiguration: EntityConfiguration<TFields>,
@@ -70,7 +74,7 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
 {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields>,
-    readonly cache: Map<string, Readonly<TFields>>,
+    readonly cache: Map<string, Readonly<TFields> | typeof DOES_NOT_EXIST>,
   ) {}
 
   public async loadManyAsync<
@@ -91,10 +95,16 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
       } else {
         const objectForFieldValue = this.cache.get(cacheKey);
         invariant(objectForFieldValue !== undefined, 'should have set value for key');
-        results.set(value, {
-          status: CacheStatus.HIT,
-          item: objectForFieldValue,
-        });
+        if (objectForFieldValue === DOES_NOT_EXIST) {
+          results.set(value, {
+            status: CacheStatus.NEGATIVE,
+          });
+        } else {
+          results.set(value, {
+            status: CacheStatus.HIT,
+            item: objectForFieldValue,
+          });
+        }
       }
     });
     return results;
@@ -115,7 +125,12 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
     TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
-  >(_key: TLoadKey, _values: readonly TLoadValue[]): Promise<void> {}
+  >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
+    values.forEach((value) => {
+      const cacheKey = this.createCacheKey(key, value);
+      this.cache.set(cacheKey, DOES_NOT_EXIST);
+    });
+  }
 
   public async invalidateManyAsync<
     TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,

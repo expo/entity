@@ -1,5 +1,6 @@
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField, StringField } from '../EntityFields';
+import { CompositeFieldHolder } from '../internal/CompositeFieldHolder';
 
 describe(EntityConfiguration, () => {
   describe('when valid', () => {
@@ -30,6 +31,10 @@ describe(EntityConfiguration, () => {
       },
       databaseAdapterFlavor: 'postgres',
       cacheAdapterFlavor: 'redis',
+      compositeFieldDefinitions: [
+        { compositeField: ['id', 'cacheable'], cache: true },
+        { compositeField: ['id', 'uniqueButNotCacheable'] },
+      ],
     });
 
     it('returns correct fields', () => {
@@ -37,10 +42,78 @@ describe(EntityConfiguration, () => {
       expect(blahEntityConfiguration.tableName).toEqual('blah_table');
       expect(blahEntityConfiguration.databaseAdapterFlavor).toEqual('postgres');
       expect(blahEntityConfiguration.cacheAdapterFlavor).toEqual('redis');
+      expect(blahEntityConfiguration.compositeFieldInfo.getAllCompositeFieldHolders()).toEqual([
+        new CompositeFieldHolder(['id', 'cacheable']),
+        new CompositeFieldHolder(['id', 'uniqueButNotCacheable']),
+      ]);
     });
 
     it('filters cacheable fields', () => {
       expect(blahEntityConfiguration.cacheableKeys).toEqual(new Set(['cacheable']));
+    });
+
+    it('correctly returns cacheable composite fields', () => {
+      expect(
+        blahEntityConfiguration.compositeFieldInfo.canCacheCompositeField(['id', 'cacheable']),
+      ).toBe(true);
+      expect(
+        blahEntityConfiguration.compositeFieldInfo.canCacheCompositeField([
+          'id',
+          'uniqueButNotCacheable',
+        ]),
+      ).toBe(false);
+
+      expect(() =>
+        blahEntityConfiguration.compositeFieldInfo.canCacheCompositeField(['id']),
+      ).toThrow('Composite field (id) not found in entity configuration');
+    });
+
+    it('validates composite fields', () => {
+      expect(
+        () =>
+          new EntityConfiguration<BlahT>({
+            idField: 'id',
+            tableName: 'blah_table',
+            schema: {
+              id: new UUIDField({
+                columnName: 'id',
+              }),
+              cacheable: new StringField({
+                columnName: 'cacheable',
+                cache: true,
+              }),
+              uniqueButNotCacheable: new StringField({
+                columnName: 'unique_but_not_cacheable',
+              }),
+            },
+            databaseAdapterFlavor: 'postgres',
+            cacheAdapterFlavor: 'redis',
+            compositeFieldDefinitions: [{ compositeField: ['id', 'id'], cache: true }],
+          }),
+      ).toThrow('Composite field must have unique sub-fields');
+
+      expect(
+        () =>
+          new EntityConfiguration<BlahT>({
+            idField: 'id',
+            tableName: 'blah_table',
+            schema: {
+              id: new UUIDField({
+                columnName: 'id',
+              }),
+              cacheable: new StringField({
+                columnName: 'cacheable',
+                cache: true,
+              }),
+              uniqueButNotCacheable: new StringField({
+                columnName: 'unique_but_not_cacheable',
+              }),
+            },
+            databaseAdapterFlavor: 'postgres',
+            cacheAdapterFlavor: 'redis',
+            compositeFieldDefinitions: [{ compositeField: ['id'], cache: true }],
+          }),
+      ).toThrow('Composite field must have at least two sub-fields');
     });
 
     describe('cache key version', () => {

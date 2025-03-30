@@ -10,8 +10,7 @@ import EntityDatabaseAdapter, {
 import { EntityQueryContext } from '../EntityQueryContext';
 import EntityQueryContextProvider from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
-import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
-import { SingleFieldHolder, SingleFieldValueHolder } from './SingleFieldHolder';
+import { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces';
 import {
   timeAndLogLoadEventAsync,
   timeAndLogLoadMapEventAsync,
@@ -215,34 +214,23 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
     );
   }
 
-  private async invalidateManyAsync<
+  private async invalidateOneAsync<
     TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
-  >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
-    await this.entityCache.invalidateManyAsync(key, values);
-    const dataLoader = this.getDataLoaderForLoadKey(key);
-    values.forEach((value) => dataLoader.clear(key.serializeLoadValue(value)));
+  >(key: TLoadKey, value: TLoadValue): Promise<void> {
+    await this.entityCache.invalidateManyAsync(key, [value]);
+    this.getDataLoaderForLoadKey(key).clear(key.serializeLoadValue(value));
   }
 
   /**
-   * Invalidate all caches, in-memory or otherwise, for an object.
-   *
-   * @param objectFields - object to invalidate from all applicable caches
+   * Invalidate all caches, in-memory or otherwise, for sets of key-value pairs.
+   * @param pairs - key-value pairs to invalidate
    */
-  async invalidateObjectFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
+  public async invalidateKeyValuePairsAsync(
+    pairs: readonly LoadPair<TFields, any, any, any>[],
+  ): Promise<void> {
     // TODO(wschurman): check for races with load
-    const keys = Object.keys(objectFields) as (keyof TFields)[];
-    await Promise.all([
-      ...keys.map(async (fieldName: keyof TFields) => {
-        const value = objectFields[fieldName];
-        if (value !== undefined && value !== null) {
-          await this.invalidateManyAsync(
-            new SingleFieldHolder<TFields, typeof fieldName>(fieldName),
-            [new SingleFieldValueHolder(value)],
-          );
-        }
-      }),
-    ]);
+    await Promise.all(pairs.map(([key, value]) => this.invalidateOneAsync(key, value)));
   }
 }

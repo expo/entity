@@ -259,6 +259,63 @@ describe('postgres entity integration', () => {
     });
   });
 
+  it('supports single field and composite field equality loading', async () => {
+    const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+    const e1 = await enforceAsyncResult(
+      PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+        .setField('name', 'hello')
+        .setField('hasACat', false)
+        .setField('hasADog', true)
+        .createAsync(),
+    );
+
+    await enforceAsyncResult(
+      PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+        .setField('name', 'world')
+        .setField('hasACat', false)
+        .setField('hasADog', true)
+        .createAsync(),
+    );
+
+    await enforceAsyncResult(
+      PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+        .setField('name', 'wat')
+        .setField('hasACat', false)
+        .setField('hasADog', false)
+        .createAsync(),
+    );
+
+    const e1Loaded = await PostgresTestEntity.loader(vc1).loadByIDAsync(e1.getID());
+    expect(e1Loaded).not.toBeNull();
+
+    const results = await PostgresTestEntity.loader(vc1).loadManyByFieldEqualingAsync(
+      'hasACat',
+      false,
+    );
+    expect(results).toHaveLength(3);
+
+    const compositeResults = await PostgresTestEntity.loader(
+      vc1,
+    ).loadManyByCompositeFieldEqualingManyAsync(
+      ['hasACat', 'hasADog'],
+      [
+        { hasACat: false, hasADog: true },
+        { hasACat: false, hasADog: false },
+      ],
+    );
+    expect(compositeResults.size).toBe(2);
+    expect(compositeResults.get({ hasACat: false, hasADog: true })).toHaveLength(2);
+    expect(compositeResults.get({ hasACat: false, hasADog: false })).toHaveLength(1);
+
+    const results2 = await PostgresTestEntity.loader(vc1).loadManyByFieldEqualingManyAsync(
+      'hasADog',
+      [true, false],
+    );
+    expect(results2.get(true)).toHaveLength(2);
+    expect(results2.get(false)).toHaveLength(1);
+  });
+
   describe('conjunction field equality loading', () => {
     it('supports single fieldValue and multiple fieldValues', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));

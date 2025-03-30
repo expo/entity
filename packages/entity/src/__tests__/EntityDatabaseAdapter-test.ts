@@ -5,6 +5,7 @@ import EntityDatabaseAdapter, {
   TableFieldMultiValueEqualityCondition,
 } from '../EntityDatabaseAdapter';
 import { EntityQueryContext } from '../EntityQueryContext';
+import { CompositeFieldHolder, CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
 import { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
 import { TestFields, testEntityConfiguration } from '../testfixtures/TestEntity';
@@ -49,7 +50,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
     _queryInterface: any,
     _tableName: string,
     _tableColumns: readonly string[],
-    _tableValueValues: (readonly any[])[],
+    _tableTuples: (readonly any[])[],
   ): Promise<object[]> {
     return this.fetchResults;
   }
@@ -127,6 +128,34 @@ describe(EntityDatabaseAdapter, () => {
       expect(result.get(new SingleFieldValueHolder('wat'))).toEqual([{ stringField: 'wat' }]);
     });
 
+    it('returns objects keyed by composite queried values', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({
+        fetchResults: [
+          { string_field: 'hello', number_field: 1 },
+          { string_field: 'wat', number_field: 2 },
+        ],
+      });
+      const result = await adapter.fetchManyWhereAsync(
+        queryContext,
+        new CompositeFieldHolder<TestFields>(['intField', 'stringField']),
+        [
+          new CompositeFieldValueHolder({ intField: 1, stringField: 'hello' }),
+          new CompositeFieldValueHolder({ intField: 2, stringField: 'wat' }),
+          new CompositeFieldValueHolder({ intField: 4, stringField: 'no' }),
+        ],
+      );
+      expect(
+        result.get(new CompositeFieldValueHolder({ intField: 1, stringField: 'hello' })),
+      ).toEqual([{ stringField: 'hello', intField: 1 }]);
+      expect(
+        result.get(new CompositeFieldValueHolder({ intField: 2, stringField: 'wat' })),
+      ).toEqual([{ stringField: 'wat', intField: 2 }]);
+      expect(result.get(new CompositeFieldValueHolder({ intField: 4, stringField: 'no' }))).toEqual(
+        [],
+      );
+    });
+
     it('returns map with all keys even when no results are returned', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({});
@@ -148,7 +177,53 @@ describe(EntityDatabaseAdapter, () => {
           new SingleFieldValueHolder('hello'),
         ]),
       ).rejects.toThrow(
-        'One or more fields from the object is invalid for key SingleFieldHolder[stringField]; {"stringField":null}. This may indicate a faulty database adapter implementation.',
+        'One or more fields from the object is invalid for key SingleField(stringField); {"stringField":null}. This may indicate a faulty database adapter implementation.',
+      );
+    });
+
+    it('throws when result contains invalid (undefined) value for key', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({
+        fetchResults: [{ string_field: undefined }],
+      });
+      await expect(
+        adapter.fetchManyWhereAsync(queryContext, new SingleFieldHolder('stringField'), [
+          new SingleFieldValueHolder('hello'),
+        ]),
+      ).rejects.toThrow(
+        'One or more fields from the object is invalid for key SingleField(stringField); {}. This may indicate a faulty database adapter implementation.',
+      );
+    });
+
+    it('throws when result contains invalid (null) value for composite key', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({
+        fetchResults: [{ string_field: 'hello', number_field: null }],
+      });
+      await expect(
+        adapter.fetchManyWhereAsync(
+          queryContext,
+          new CompositeFieldHolder<TestFields>(['intField', 'stringField']),
+          [new CompositeFieldValueHolder({ intField: 1, stringField: 'hello' })],
+        ),
+      ).rejects.toThrow(
+        'One or more fields from the object is invalid for key CompositeField(intField,stringField); {"stringField":"hello","intField":null}. This may indicate a faulty database adapter implementation.',
+      );
+    });
+
+    it('throws when result contains invalid (undefined) value for composite key', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({
+        fetchResults: [{ string_field: 'hello', number_field: undefined }],
+      });
+      await expect(
+        adapter.fetchManyWhereAsync(
+          queryContext,
+          new CompositeFieldHolder<TestFields>(['intField', 'stringField']),
+          [new CompositeFieldValueHolder({ intField: 1, stringField: 'hello' })],
+        ),
+      ).rejects.toThrow(
+        'One or more fields from the object is invalid for key CompositeField(intField,stringField); {"stringField":"hello"}. This may indicate a faulty database adapter implementation.',
       );
     });
   });
