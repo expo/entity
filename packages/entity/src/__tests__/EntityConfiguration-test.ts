@@ -20,6 +20,7 @@ describe(EntityConfiguration, () => {
       schema: {
         id: new UUIDField({
           columnName: 'id',
+          cache: false,
         }),
         cacheable: new StringField({
           columnName: 'cacheable',
@@ -33,7 +34,7 @@ describe(EntityConfiguration, () => {
       cacheAdapterFlavor: 'redis',
       compositeFieldDefinitions: [
         { compositeField: ['id', 'cacheable'], cache: true },
-        { compositeField: ['id', 'uniqueButNotCacheable'] },
+        { compositeField: ['id', 'uniqueButNotCacheable'], cache: false },
       ],
     });
 
@@ -77,6 +78,7 @@ describe(EntityConfiguration, () => {
             schema: {
               id: new UUIDField({
                 columnName: 'id',
+                cache: false,
               }),
               cacheable: new StringField({
                 columnName: 'cacheable',
@@ -100,6 +102,7 @@ describe(EntityConfiguration, () => {
             schema: {
               id: new UUIDField({
                 columnName: 'id',
+                cache: false,
               }),
               cacheable: new StringField({
                 columnName: 'cacheable',
@@ -124,6 +127,7 @@ describe(EntityConfiguration, () => {
           schema: {
             id: new UUIDField({
               columnName: 'id',
+              cache: false,
             }),
           },
           databaseAdapterFlavor: 'postgres',
@@ -139,6 +143,7 @@ describe(EntityConfiguration, () => {
           schema: {
             id: new UUIDField({
               columnName: 'id',
+              cache: false,
             }),
           },
           databaseAdapterFlavor: 'postgres',
@@ -174,11 +179,12 @@ describe(EntityConfiguration, () => {
               schema: {
                 id: new UUIDField({
                   columnName: 'id',
+                  cache: false,
                 }),
                 [keyName]: new StringField({
                   columnName: 'any',
                 }),
-              },
+              } as any,
               databaseAdapterFlavor: 'postgres',
               cacheAdapterFlavor: 'redis',
             }),

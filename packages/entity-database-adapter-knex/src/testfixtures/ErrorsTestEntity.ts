@@ -145,6 +145,7 @@ export const ErrorsTestEntityConfiguration = new EntityConfiguration<ErrorsTestE
   schema: {
     id: new IntField({
       columnName: 'id',
+      cache: false,
     }),
     fieldNonNull: new StringField({
       columnName: 'field_non_null',

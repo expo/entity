@@ -135,18 +135,11 @@ export interface EntityAssociationDefinition<
 /**
  * Options for EntityFieldDefinition
  */
-export interface EntityFieldDefinitionOptions {
+export interface EntityFieldDefinitionOptionsBase {
   /**
    * Column name in the database.
    */
   columnName: string;
-
-  /**
-   * Whether or not to cache loaded instances of the entity by this field. The column name is
-   * used to derive a cache key for the cache entry. If true, this column must be able uniquely
-   * identify the entity and the database must have a unique constraint on the column.
-   */
-  cache?: boolean;
 
   /**
    * Defines the association behavior for an entity that this column references.
@@ -154,19 +147,46 @@ export interface EntityFieldDefinitionOptions {
   association?: EntityAssociationDefinition<any, any, any, any, any, any>;
 }
 
+export interface EntityFieldDefinitionOptionsExplicitCache
+  extends EntityFieldDefinitionOptionsBase {
+  /**
+   * Whether or not to cache loaded instances of the entity by this field. The column name is
+   * used to derive a cache key for the cache entry. If true, this column must be able uniquely
+   * identify the entity and the database must have a unique constraint on the column.
+   */
+  cache: boolean;
+}
+
+export interface EntityFieldDefinitionOptions extends EntityFieldDefinitionOptionsBase {
+  /**
+   * Whether or not to cache loaded instances of the entity by this field. The column name is
+   * used to derive a cache key for the cache entry. If true, this column must be able uniquely
+   * identify the entity and the database must have a unique constraint on the column.
+   */
+  cache?: boolean;
+}
+
 /**
  * Definition for a field referencing a column in the underlying database. Specifies things like
  * cache behavior and associations, and handles input validation.
  */
-export abstract class EntityFieldDefinition<T> {
+export abstract class EntityFieldDefinition<T, TRequireExplicitCache extends boolean> {
   readonly columnName: string;
   readonly cache: boolean;
   readonly association: EntityAssociationDefinition<any, any, any, any, any, any> | undefined;
+
+  // @ts-expect-error this is to ensure that different constructor requirements produce incompatible
+  // objects in the eyes of the type system
+  private readonly cacheRawSentinel: TRequireExplicitCache;
+
   /**
-   *
    * @param options - options for this field definition
    */
-  constructor(options: EntityFieldDefinitionOptions) {
+  constructor(
+    options: TRequireExplicitCache extends true
+      ? EntityFieldDefinitionOptionsExplicitCache
+      : EntityFieldDefinitionOptions,
+  ) {
     this.columnName = options.columnName;
     this.cache = options.cache ?? false;
     this.association = options.association;

@@ -104,6 +104,7 @@ export const invalidTestEntityConfiguration = new EntityConfiguration<
   schema: {
     id: new IntField({
       columnName: 'id',
+      cache: false,
     }),
     name: new StringField({
       columnName: 'name',

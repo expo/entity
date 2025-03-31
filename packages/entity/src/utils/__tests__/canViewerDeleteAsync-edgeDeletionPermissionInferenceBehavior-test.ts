@@ -134,6 +134,7 @@ class TestEntity extends Entity<TestEntityFields, 'id', ViewerContext> {
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
+            cache: false,
           }),
         },
         databaseAdapterFlavor: 'postgres',
@@ -160,6 +161,7 @@ class TestLeafEntity extends Entity<TestLeafEntityFields, 'id', ViewerContext> {
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
+            cache: false,
           }),
           test_entity_id: new UUIDField({
             columnName: 'test_entity_id',

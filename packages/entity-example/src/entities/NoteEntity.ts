@@ -40,6 +40,7 @@ export default class NoteEntity extends Entity<NoteFields, 'id', ExampleViewerCo
         schema: {
           id: new UUIDField({
             columnName: 'id',
+            cache: true,
           }),
           userID: new UUIDField({
             columnName: 'user_id',

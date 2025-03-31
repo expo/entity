@@ -447,6 +447,7 @@ class LeafDenyUpdateEntity extends Entity<TestLeafDenyUpdateFields, 'id', Viewer
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
+            cache: false,
           }),
           // to ensure edge traversal doesn't process other edges
           unused_other_association: new UUIDField({
@@ -502,6 +503,7 @@ class LeafDenyDeleteEntity extends Entity<TestLeafDenyDeleteFields, 'id', Viewer
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
+            cache: false,
           }),
           // deletion behavior should fail since this entity can't be deleted
           simple_test_deny_update_cascade_delete_id: new UUIDField({
@@ -545,6 +547,7 @@ class LeafDenyReadEntity extends Entity<TestLeafDenyReadFields, 'id', ViewerCont
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
+            cache: false,
           }),
           simple_test_id: new UUIDField({
             columnName: 'simple_test_id',
@@ -585,6 +588,7 @@ class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, 'id', ViewerCo
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
+            cache: false,
           }),
         },
         databaseAdapterFlavor: 'postgres',
@@ -617,6 +621,7 @@ class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, 'id', ViewerCo
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
+            cache: false,
           }),
         },
         databaseAdapterFlavor: 'postgres',
@@ -653,6 +658,7 @@ class SimpleTestThrowOtherErrorEntity extends Entity<
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
+            cache: false,
           }),
           simple_test_id: new UUIDField({
             columnName: 'simple_test_id',

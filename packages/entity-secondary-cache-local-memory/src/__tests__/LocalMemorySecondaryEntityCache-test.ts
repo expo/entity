@@ -97,6 +97,7 @@ export const localMemoryTestEntityConfiguration = new EntityConfiguration<
   schema: {
     id: new UUIDField({
       columnName: 'id',
+      cache: false,
     }),
     name: new StringField({
       columnName: 'name',
