@@ -22,12 +22,13 @@ export type TestFields = {
 
 export type TestFieldSelection = keyof TestFields;
 
-export const testEntityConfiguration = new EntityConfiguration<TestFields>({
+export const testEntityConfiguration = new EntityConfiguration<TestFields, 'id'>({
   idField: 'id',
   tableName: 'test_entity_should_not_write_to_db',
   schema: {
     id: new StringField({
       columnName: 'id',
+      cache: false,
     }),
   },
   databaseAdapterFlavor: 'postgres',
@@ -36,7 +37,7 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields>({
 
 export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   TestFields,
-  string,
+  'id',
   ViewerContext,
   TestEntity,
   TestFieldSelection
@@ -44,7 +45,7 @@ export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestFields,
-      string,
+      'id',
       ViewerContext,
       TestEntity,
       TestFieldSelection
@@ -53,7 +54,7 @@ export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestFields,
-      string,
+      'id',
       ViewerContext,
       TestEntity,
       TestFieldSelection
@@ -62,7 +63,7 @@ export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestFields,
-      string,
+      'id',
       ViewerContext,
       TestEntity,
       TestFieldSelection
@@ -71,7 +72,7 @@ export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestFields,
-      string,
+      'id',
       ViewerContext,
       TestEntity,
       TestFieldSelection
@@ -84,7 +85,7 @@ const ID_SENTINEL_THROW_ERROR = 'throw_error';
 
 export default class TestEntity extends Entity<
   TestFields,
-  string,
+  'id',
   ViewerContext,
   TestFieldSelection
 > {
@@ -105,7 +106,7 @@ export default class TestEntity extends Entity<
 
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
-    string,
+    'id',
     ViewerContext,
     TestEntity,
     TestEntityPrivacyPolicy,
@@ -127,7 +128,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         mock<
           EntityPrivacyPolicyEvaluationContext<
             TestFields,
-            string,
+            'id',
             ViewerContext,
             TestEntity,
             TestFieldSelection
@@ -137,7 +138,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = new StubQueryContextProvider().getQueryContext();
 
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'id'>(
       testEntityConfiguration,
       StubDatabaseAdapter.convertFieldObjectsToDataStore(
         testEntityConfiguration,

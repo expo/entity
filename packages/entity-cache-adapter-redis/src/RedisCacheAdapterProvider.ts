@@ -10,9 +10,9 @@ import GenericRedisCacher, { GenericRedisCacheContext } from './GenericRedisCach
 export default class RedisCacheAdapterProvider implements IEntityCacheAdapterProvider {
   constructor(private readonly context: GenericRedisCacheContext) {}
 
-  getCacheAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>,
-  ): IEntityCacheAdapter<TFields> {
+  getCacheAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+  ): IEntityCacheAdapter<TFields, TIDField> {
     return new GenericEntityCacheAdapter(new GenericRedisCacher(this.context, entityConfiguration));
   }
 }

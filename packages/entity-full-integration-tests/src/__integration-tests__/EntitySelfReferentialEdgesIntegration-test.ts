@@ -27,18 +27,18 @@ interface OtherFields {
   parent_category_id: string;
 }
 
-class PrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any> {
+class PrivacyPolicy extends EntityPrivacyPolicy<any, 'id', ViewerContext, any> {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any>(),
   ];
 }
 
@@ -47,10 +47,10 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
   const categoriesTableName = uuidv4();
   const othersTableName = uuidv4();
 
-  class CategoryEntity extends Entity<CategoryFields, string, ViewerContext> {
+  class CategoryEntity extends Entity<CategoryFields, 'id', ViewerContext> {
     static defineCompanionDefinition(): EntityCompanionDefinition<
       CategoryFields,
-      string,
+      'id',
       ViewerContext,
       CategoryEntity,
       PrivacyPolicy
@@ -63,10 +63,10 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
     }
   }
 
-  class OtherEntity extends Entity<OtherFields, string, ViewerContext> {
+  class OtherEntity extends Entity<OtherFields, 'id', ViewerContext> {
     static defineCompanionDefinition(): EntityCompanionDefinition<
       OtherFields,
-      string,
+      'id',
       ViewerContext,
       OtherEntity,
       PrivacyPolicy
@@ -79,7 +79,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
     }
   }
 
-  const categoryEntityConfiguration = new EntityConfiguration<CategoryFields>({
+  const categoryEntityConfiguration = new EntityConfiguration<CategoryFields, 'id'>({
     idField: 'id',
     tableName: categoriesTableName,
     inboundEdges: [OtherEntity],
@@ -101,7 +101,7 @@ const makeEntityClasses = async (knex: Knex, edgeDeletionBehavior: EntityEdgeDel
     cacheAdapterFlavor: 'redis',
   });
 
-  const otherEntityConfiguration = new EntityConfiguration<OtherFields>({
+  const otherEntityConfiguration = new EntityConfiguration<OtherFields, 'id'>({
     idField: 'id',
     tableName: othersTableName,
     inboundEdges: [CategoryEntity],

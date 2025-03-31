@@ -25,17 +25,17 @@ type BlahFields = {
   id: string;
 };
 
-class BlahEntity extends Entity<BlahFields, string, ViewerContext> {
+class BlahEntity extends Entity<BlahFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
-    string,
+    'id',
     ViewerContext,
     BlahEntity,
     any
   > {
     return {
       entityClass: BlahEntity,
-      entityConfiguration: new EntityConfiguration<BlahFields>({
+      entityConfiguration: new EntityConfiguration<BlahFields, 'id'>({
         idField: 'id',
         tableName: 'blah_table',
         schema: {
@@ -51,30 +51,30 @@ class BlahEntity extends Entity<BlahFields, string, ViewerContext> {
   }
 }
 
-class AlwaysDenyPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
+class AlwaysDenyPolicy extends EntityPrivacyPolicy<BlahFields, 'id', ViewerContext, BlahEntity> {
   protected override readonly createRules = [
-    new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysDenyPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly readRules = [
-    new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysDenyPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysDenyPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysDenyPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
 }
 
 class DryRunAlwaysDenyPolicy extends AlwaysDenyPolicy {
   // public method for test spying
   public denyHandler(
-    _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>,
+    _error: EntityNotAuthorizedError<BlahFields, 'id', ViewerContext, BlahEntity>,
   ): void {}
 
   protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
-    string,
+    'id',
     ViewerContext,
     BlahEntity
   > {
@@ -88,12 +88,12 @@ class DryRunAlwaysDenyPolicy extends AlwaysDenyPolicy {
 class LoggingEnforceAlwaysDenyPolicy extends AlwaysDenyPolicy {
   // public method for test spying
   public denyHandler(
-    _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>,
+    _error: EntityNotAuthorizedError<BlahFields, 'id', ViewerContext, BlahEntity>,
   ): void {}
 
   protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
-    string,
+    'id',
     ViewerContext,
     BlahEntity
   > {
@@ -104,30 +104,30 @@ class LoggingEnforceAlwaysDenyPolicy extends AlwaysDenyPolicy {
   }
 }
 
-class AlwaysAllowPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
+class AlwaysAllowPolicy extends EntityPrivacyPolicy<BlahFields, 'id', ViewerContext, BlahEntity> {
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
 }
 
 class DryRunAlwaysAllowPolicy extends AlwaysAllowPolicy {
   // public method for test spying
   public denyHandler(
-    _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>,
+    _error: EntityNotAuthorizedError<BlahFields, 'id', ViewerContext, BlahEntity>,
   ): void {}
 
   protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
-    string,
+    'id',
     ViewerContext,
     BlahEntity
   > {
@@ -141,12 +141,12 @@ class DryRunAlwaysAllowPolicy extends AlwaysAllowPolicy {
 class LoggingEnforceAlwaysAllowPolicy extends AlwaysAllowPolicy {
   // public method for test spying
   public denyHandler(
-    _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>,
+    _error: EntityNotAuthorizedError<BlahFields, 'id', ViewerContext, BlahEntity>,
   ): void {}
 
   protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
-    string,
+    'id',
     ViewerContext,
     BlahEntity
   > {
@@ -157,24 +157,24 @@ class LoggingEnforceAlwaysAllowPolicy extends AlwaysAllowPolicy {
   }
 }
 
-class SkipAllPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
+class SkipAllPolicy extends EntityPrivacyPolicy<BlahFields, 'id', ViewerContext, BlahEntity> {
   protected override readonly createRules = [
-    new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly readRules = [
-    new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
 }
 
 class InvalidCreateRuleResultPolicy extends EntityPrivacyPolicy<
   BlahFields,
-  string,
+  'id',
   ViewerContext,
   BlahEntity
 > {
@@ -186,19 +186,19 @@ class InvalidCreateRuleResultPolicy extends EntityPrivacyPolicy<
     },
   ];
   protected override readonly readRules = [
-    new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysSkipPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
 }
 
 class AlwaysThrowPrivacyPolicyRule extends PrivacyPolicyRule<
   BlahFields,
-  string,
+  'id',
   ViewerContext,
   BlahEntity
 > {
@@ -207,7 +207,7 @@ class AlwaysThrowPrivacyPolicyRule extends PrivacyPolicyRule<
     _queryContext: EntityQueryContext,
     _evaluationContext: EntityPrivacyPolicyEvaluationContext<
       BlahFields,
-      string,
+      'id',
       ViewerContext,
       BlahEntity
     >,
@@ -217,7 +217,7 @@ class AlwaysThrowPrivacyPolicyRule extends PrivacyPolicyRule<
   }
 }
 
-class ThrowAllPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
+class ThrowAllPolicy extends EntityPrivacyPolicy<BlahFields, 'id', ViewerContext, BlahEntity> {
   protected override readonly createRules = [new AlwaysThrowPrivacyPolicyRule()];
   protected override readonly readRules = [new AlwaysThrowPrivacyPolicyRule()];
   protected override readonly updateRules = [new AlwaysThrowPrivacyPolicyRule()];
@@ -227,12 +227,12 @@ class ThrowAllPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerConte
 class DryRunThrowAllPolicy extends ThrowAllPolicy {
   // public method for test spying
   public denyHandler(
-    _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>,
+    _error: EntityNotAuthorizedError<BlahFields, 'id', ViewerContext, BlahEntity>,
   ): void {}
 
   protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
-    string,
+    'id',
     ViewerContext,
     BlahEntity
   > {
@@ -246,12 +246,12 @@ class DryRunThrowAllPolicy extends ThrowAllPolicy {
 class LoggingEnforceThrowAllPolicy extends ThrowAllPolicy {
   // public method for test spying
   public denyHandler(
-    _error: EntityNotAuthorizedError<BlahFields, string, ViewerContext, BlahEntity>,
+    _error: EntityNotAuthorizedError<BlahFields, 'id', ViewerContext, BlahEntity>,
   ): void {}
 
   protected override getPrivacyPolicyEvaluator(): EntityPrivacyPolicyEvaluator<
     BlahFields,
-    string,
+    'id',
     ViewerContext,
     BlahEntity
   > {
@@ -262,7 +262,7 @@ class LoggingEnforceThrowAllPolicy extends ThrowAllPolicy {
   }
 }
 
-class EmptyPolicy extends EntityPrivacyPolicy<BlahFields, string, ViewerContext, BlahEntity> {
+class EmptyPolicy extends EntityPrivacyPolicy<BlahFields, 'id', ViewerContext, BlahEntity> {
   protected override readonly createRules = [];
   protected override readonly readRules = [];
   protected override readonly updateRules = [];
@@ -276,9 +276,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -315,9 +313,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -353,9 +349,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -392,9 +386,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -421,9 +413,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -460,9 +450,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -492,9 +480,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -536,9 +522,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -580,9 +564,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -618,9 +600,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -663,9 +643,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
@@ -707,9 +685,7 @@ describe(EntityPrivacyPolicy, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const privacyPolicyEvaluationContext =
         instance(
-          mock<
-            EntityPrivacyPolicyEvaluationContext<BlahFields, string, ViewerContext, BlahEntity>
-          >(),
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
         );
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);

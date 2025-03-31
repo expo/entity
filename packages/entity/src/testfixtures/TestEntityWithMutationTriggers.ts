@@ -17,7 +17,7 @@ export type TestMTFields = {
   stringField: string;
 };
 
-export const testEntityMTConfiguration = new EntityConfiguration<TestMTFields>({
+export const testEntityMTConfiguration = new EntityConfiguration<TestMTFields, 'id'>({
   idField: 'id',
   tableName: 'test_entity_should_not_write_to_db_3',
   schema: {
@@ -34,14 +34,14 @@ export const testEntityMTConfiguration = new EntityConfiguration<TestMTFields>({
 
 export class TestEntityMTPrivacyPolicy extends EntityPrivacyPolicy<
   TestMTFields,
-  string,
+  'id',
   ViewerContext,
   TestEntityWithMutationTriggers
 > {
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestMTFields,
-      string,
+      'id',
       ViewerContext,
       TestEntityWithMutationTriggers
     >(),
@@ -49,7 +49,7 @@ export class TestEntityMTPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestMTFields,
-      string,
+      'id',
       ViewerContext,
       TestEntityWithMutationTriggers
     >(),
@@ -57,7 +57,7 @@ export class TestEntityMTPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestMTFields,
-      string,
+      'id',
       ViewerContext,
       TestEntityWithMutationTriggers
     >(),
@@ -65,7 +65,7 @@ export class TestEntityMTPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       TestMTFields,
-      string,
+      'id',
       ViewerContext,
       TestEntityWithMutationTriggers
     >(),
@@ -74,7 +74,7 @@ export class TestEntityMTPrivacyPolicy extends EntityPrivacyPolicy<
 
 export class TestMutationTrigger extends EntityMutationTrigger<
   TestMTFields,
-  string,
+  'id',
   ViewerContext,
   TestEntityWithMutationTriggers,
   keyof TestMTFields
@@ -92,7 +92,7 @@ export class TestMutationTrigger extends EntityMutationTrigger<
     _entity: TestEntityWithMutationTriggers,
     _mutationInfo: EntityTriggerMutationInfo<
       TestMTFields,
-      string,
+      'id',
       ViewerContext,
       TestEntityWithMutationTriggers,
       keyof TestMTFields
@@ -102,7 +102,7 @@ export class TestMutationTrigger extends EntityMutationTrigger<
 
 export class NonTransactionalTestMutationTrigger extends EntityNonTransactionalMutationTrigger<
   TestMTFields,
-  string,
+  'id',
   ViewerContext,
   TestEntityWithMutationTriggers,
   keyof TestMTFields
@@ -119,7 +119,7 @@ export class NonTransactionalTestMutationTrigger extends EntityNonTransactionalM
     _entity: TestEntityWithMutationTriggers,
     _mutationInfo: EntityTriggerMutationInfo<
       TestMTFields,
-      string,
+      'id',
       ViewerContext,
       TestEntityWithMutationTriggers,
       keyof TestMTFields
@@ -132,12 +132,12 @@ export class NonTransactionalTestMutationTrigger extends EntityNonTransactionalM
  */
 export default class TestEntityWithMutationTriggers extends Entity<
   TestMTFields,
-  string,
+  'id',
   ViewerContext
 > {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestMTFields,
-    string,
+    'id',
     ViewerContext,
     TestEntityWithMutationTriggers,
     TestEntityMTPrivacyPolicy

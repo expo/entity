@@ -14,7 +14,8 @@ import wrapNativePostgresCallAsync from './errors/wrapNativePostgresCallAsync';
 
 export default class PostgresEntityDatabaseAdapter<
   TFields extends Record<string, any>,
-> extends EntityDatabaseAdapter<TFields> {
+  TIDField extends keyof TFields,
+> extends EntityDatabaseAdapter<TFields, TIDField> {
   protected getFieldTransformerMap(): FieldTransformerMap {
     return new Map<string, FieldTransformer<any>>([
       [

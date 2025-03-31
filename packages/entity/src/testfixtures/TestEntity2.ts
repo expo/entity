@@ -11,7 +11,7 @@ export type Test2Fields = {
   foreignKey: string;
 };
 
-export const testEntity2Configuration = new EntityConfiguration<Test2Fields>({
+export const testEntity2Configuration = new EntityConfiguration<Test2Fields, 'id'>({
   idField: 'id',
   tableName: 'test_entity_should_not_write_to_db_2',
   schema: {
@@ -28,28 +28,28 @@ export const testEntity2Configuration = new EntityConfiguration<Test2Fields>({
 
 export class TestEntity2PrivacyPolicy extends EntityPrivacyPolicy<
   Test2Fields,
-  string,
+  'id',
   ViewerContext,
   TestEntity2
 > {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
+    new AlwaysAllowPrivacyPolicyRule<Test2Fields, 'id', ViewerContext, TestEntity2>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
+    new AlwaysAllowPrivacyPolicyRule<Test2Fields, 'id', ViewerContext, TestEntity2>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
+    new AlwaysAllowPrivacyPolicyRule<Test2Fields, 'id', ViewerContext, TestEntity2>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<Test2Fields, string, ViewerContext, TestEntity2>(),
+    new AlwaysAllowPrivacyPolicyRule<Test2Fields, 'id', ViewerContext, TestEntity2>(),
   ];
 }
 
-export default class TestEntity2 extends Entity<Test2Fields, string, ViewerContext> {
+export default class TestEntity2 extends Entity<Test2Fields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     Test2Fields,
-    string,
+    'id',
     ViewerContext,
     TestEntity2,
     TestEntity2PrivacyPolicy

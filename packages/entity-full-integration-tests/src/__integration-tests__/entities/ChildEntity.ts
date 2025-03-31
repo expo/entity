@@ -16,32 +16,32 @@ interface ChildFields {
   parent_id: string;
 }
 
-class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {
+class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, 'id', ViewerContext, any, any> {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any, any>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any, any>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any, any>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any, any>(),
   ];
 }
 
-export default class ChildEntity extends Entity<ChildFields, string, ViewerContext> {
+export default class ChildEntity extends Entity<ChildFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     ChildFields,
-    string,
+    'id',
     ViewerContext,
     ChildEntity,
     TestEntityPrivacyPolicy
   > {
     return {
       entityClass: ChildEntity,
-      entityConfiguration: new EntityConfiguration<ChildFields>({
+      entityConfiguration: new EntityConfiguration<ChildFields, 'id'>({
         idField: 'id',
         tableName: 'children',
         schema: {

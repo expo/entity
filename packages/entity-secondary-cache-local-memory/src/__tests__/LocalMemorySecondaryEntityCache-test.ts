@@ -9,11 +9,11 @@ import {
   StubDatabaseAdapterProvider,
   AlwaysAllowPrivacyPolicyRule,
   EntityPrivacyPolicy,
-  UUIDField,
   StringField,
   EntityConfiguration,
   EntityCompanionDefinition,
   Entity,
+  UUIDField,
 } from '@expo/entity';
 import {
   GenericLocalMemoryCacher,
@@ -30,12 +30,12 @@ export type LocalMemoryTestEntityFields = {
 
 export default class LocalMemoryTestEntity extends Entity<
   LocalMemoryTestEntityFields,
-  string,
+  'id',
   ViewerContext
 > {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     LocalMemoryTestEntityFields,
-    string,
+    'id',
     ViewerContext,
     LocalMemoryTestEntity,
     LocalMemoryTestEntityPrivacyPolicy
@@ -50,14 +50,14 @@ export default class LocalMemoryTestEntity extends Entity<
 
 export class LocalMemoryTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   LocalMemoryTestEntityFields,
-  string,
+  'id',
   ViewerContext,
   LocalMemoryTestEntity
 > {
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       LocalMemoryTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       LocalMemoryTestEntity
     >(),
@@ -65,7 +65,7 @@ export class LocalMemoryTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       LocalMemoryTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       LocalMemoryTestEntity
     >(),
@@ -73,7 +73,7 @@ export class LocalMemoryTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       LocalMemoryTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       LocalMemoryTestEntity
     >(),
@@ -81,28 +81,30 @@ export class LocalMemoryTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       LocalMemoryTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       LocalMemoryTestEntity
     >(),
   ];
 }
 
-export const localMemoryTestEntityConfiguration =
-  new EntityConfiguration<LocalMemoryTestEntityFields>({
-    idField: 'id',
-    tableName: 'local_memory_test_entities',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-      }),
-      name: new StringField({
-        columnName: 'name',
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'local-memory',
-  });
+export const localMemoryTestEntityConfiguration = new EntityConfiguration<
+  LocalMemoryTestEntityFields,
+  'id'
+>({
+  idField: 'id',
+  tableName: 'local_memory_test_entities',
+  schema: {
+    id: new UUIDField({
+      columnName: 'id',
+    }),
+    name: new StringField({
+      columnName: 'name',
+    }),
+  },
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'local-memory',
+});
 
 const queryContextProvider = new StubQueryContextProvider();
 
@@ -140,7 +142,7 @@ const FAKE_ID = 'fake';
 class TestSecondaryLocalMemoryCacheLoader extends EntitySecondaryCacheLoader<
   TestLoadParams,
   LocalMemoryTestEntityFields,
-  string,
+  'id',
   TestViewerContext,
   LocalMemoryTestEntity,
   LocalMemoryTestEntityPrivacyPolicy

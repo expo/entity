@@ -2,7 +2,6 @@ import {
   AlwaysAllowPrivacyPolicyRule,
   EntityPrivacyPolicy,
   ViewerContext,
-  UUIDField,
   StringField,
   EntityConfiguration,
   EntityCompanionDefinition,
@@ -10,6 +9,7 @@ import {
   EntityMutationTrigger,
   EntityQueryContext,
   EntityValidatorMutationInfo,
+  UUIDField,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -20,12 +20,12 @@ type PostgresValidatorTestEntityFields = {
 
 export default class PostgresValidatorTestEntity extends Entity<
   PostgresValidatorTestEntityFields,
-  string,
+  'id',
   ViewerContext
 > {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     PostgresValidatorTestEntityFields,
-    string,
+    'id',
     ViewerContext,
     PostgresValidatorTestEntity,
     PostgresValidatorTestEntityPrivacyPolicy
@@ -61,14 +61,14 @@ export default class PostgresValidatorTestEntity extends Entity<
 
 class PostgresValidatorTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   PostgresValidatorTestEntityFields,
-  string,
+  'id',
   ViewerContext,
   PostgresValidatorTestEntity
 > {
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresValidatorTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresValidatorTestEntity
     >(),
@@ -76,7 +76,7 @@ class PostgresValidatorTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresValidatorTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresValidatorTestEntity
     >(),
@@ -84,7 +84,7 @@ class PostgresValidatorTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresValidatorTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresValidatorTestEntity
     >(),
@@ -92,7 +92,7 @@ class PostgresValidatorTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresValidatorTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresValidatorTestEntity
     >(),
@@ -101,7 +101,7 @@ class PostgresValidatorTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
 
 class ThrowConditionallyTrigger extends EntityMutationTrigger<
   PostgresValidatorTestEntityFields,
-  string,
+  'id',
   ViewerContext,
   PostgresValidatorTestEntity
 > {
@@ -118,7 +118,7 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
     entity: PostgresValidatorTestEntity,
     _mutationInfo: EntityValidatorMutationInfo<
       PostgresValidatorTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresValidatorTestEntity
     >,
@@ -129,19 +129,21 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
   }
 }
 
-export const postgresTestEntityConfiguration =
-  new EntityConfiguration<PostgresValidatorTestEntityFields>({
-    idField: 'id',
-    tableName: 'postgres_test_entities',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-        cache: true,
-      }),
-      name: new StringField({
-        columnName: 'name',
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'redis',
-  });
+export const postgresTestEntityConfiguration = new EntityConfiguration<
+  PostgresValidatorTestEntityFields,
+  'id'
+>({
+  idField: 'id',
+  tableName: 'postgres_test_entities',
+  schema: {
+    id: new UUIDField({
+      columnName: 'id',
+      cache: true,
+    }),
+    name: new StringField({
+      columnName: 'name',
+    }),
+  },
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
+});

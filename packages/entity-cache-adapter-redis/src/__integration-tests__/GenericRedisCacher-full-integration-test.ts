@@ -49,9 +49,10 @@ describe(GenericRedisCacher, () => {
     );
     const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
       RedisTestEntity,
-    )['tableDataCoordinator']['cacheAdapter'][
-      'genericCacher'
-    ] as IEntityGenericCacher<RedisTestEntityFields>;
+    )['tableDataCoordinator']['cacheAdapter']['genericCacher'] as IEntityGenericCacher<
+      RedisTestEntityFields,
+      'id'
+    >;
     const storageCacheKeyMaker = genericCacher['makeCacheKeyForStorage'].bind(genericCacher);
     const invalidationCacheKeyMaker =
       genericCacher['makeCacheKeysForInvalidation'].bind(genericCacher);
@@ -84,7 +85,7 @@ describe(GenericRedisCacher, () => {
     );
     const cachedCompositeJSON = await (genericRedisCacheContext.redisClient as Redis).get(
       storageCacheKeyMaker(
-        new CompositeFieldHolder<RedisTestEntityFields>(['id', 'name']),
+        new CompositeFieldHolder<RedisTestEntityFields, 'id'>(['id', 'name']),
         new CompositeFieldValueHolder({ id: entity2!.getID(), name: 'blah' }),
       ),
     );
@@ -115,7 +116,7 @@ describe(GenericRedisCacher, () => {
       genericRedisCacheContext.redisClient as Redis
     ).get(
       storageCacheKeyMaker(
-        new CompositeFieldHolder<RedisTestEntityFields>(['id', 'name']),
+        new CompositeFieldHolder<RedisTestEntityFields, 'id'>(['id', 'name']),
         new CompositeFieldValueHolder({ id: nonExistentId, name: 'blah' }),
       ),
     );
@@ -144,7 +145,7 @@ describe(GenericRedisCacher, () => {
     expect(cachedValueNull.every((c) => c === null)).toBe(true);
 
     const cachedValueNullCompositeKeys = invalidationCacheKeyMaker(
-      new CompositeFieldHolder<RedisTestEntityFields>(['id', 'name']),
+      new CompositeFieldHolder<RedisTestEntityFields, 'id'>(['id', 'name']),
       new CompositeFieldValueHolder({ id: entity1.getID(), name: 'blah' }),
     );
     const cachedValueNullComposite = await (genericRedisCacheContext.redisClient as Redis).mget(

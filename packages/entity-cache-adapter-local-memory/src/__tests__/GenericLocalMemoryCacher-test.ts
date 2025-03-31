@@ -1,11 +1,11 @@
 import {
   CacheStatus,
-  UUIDField,
   EntityConfiguration,
   GenericEntityCacheAdapter,
   SingleFieldHolder,
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
+  UUIDField,
 } from '@expo/entity';
 
 import GenericLocalMemoryCacher, {
@@ -16,7 +16,7 @@ type BlahFields = {
   id: string;
 };
 
-const entityConfiguration = new EntityConfiguration<BlahFields>({
+const entityConfiguration = new EntityConfiguration<BlahFields, 'id'>({
   idField: 'id',
   tableName: 'blah',
   schema: {
@@ -66,7 +66,10 @@ describe('Use within GenericEntityCacheAdapter', () => {
       const cacheHits = new Map<SingleFieldValueHolder<BlahFields, 'id'>, Readonly<BlahFields>>([
         [new SingleFieldValueHolder('test-id-1'), { id: 'test-id-1' }],
       ]);
-      await cacheAdapter.cacheManyAsync(new SingleFieldHolder<BlahFields, 'id'>('id'), cacheHits);
+      await cacheAdapter.cacheManyAsync(
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
+        cacheHits,
+      );
       await cacheAdapter.cacheDBMissesAsync(new SingleFieldHolder('id'), [
         new SingleFieldValueHolder('test-id-2'),
       ]);
@@ -98,7 +101,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
         ),
       );
       const results = await cacheAdapter.loadManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [] as SingleFieldValueHolder<BlahFields, 'id'>[],
       );
       expect(results).toEqual(new SingleFieldValueHolderMap(new Map()));
@@ -183,7 +186,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
         ),
       );
       await cacheAdapter.invalidateManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [] as SingleFieldValueHolder<BlahFields, 'id'>[],
       );
     });

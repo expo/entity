@@ -10,7 +10,7 @@ export type NumberKeyFields = {
   id: number;
 };
 
-export const numberKeyEntityConfiguration = new EntityConfiguration<NumberKeyFields>({
+export const numberKeyEntityConfiguration = new EntityConfiguration<NumberKeyFields, 'id'>({
   idField: 'id',
   tableName: 'simple_test_entity_should_not_write_to_db',
   schema: {
@@ -24,28 +24,28 @@ export const numberKeyEntityConfiguration = new EntityConfiguration<NumberKeyFie
 
 export class NumberKeyPrivacyPolicy extends EntityPrivacyPolicy<
   NumberKeyFields,
-  number,
+  'id',
   ViewerContext,
   NumberKeyEntity
 > {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, 'id', ViewerContext, NumberKeyEntity>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, 'id', ViewerContext, NumberKeyEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, 'id', ViewerContext, NumberKeyEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, number, ViewerContext, NumberKeyEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<NumberKeyFields, 'id', ViewerContext, NumberKeyEntity>(),
   ];
 }
 
-export default class NumberKeyEntity extends Entity<NumberKeyFields, number, ViewerContext> {
+export default class NumberKeyEntity extends Entity<NumberKeyFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     NumberKeyFields,
-    number,
+    'id',
     ViewerContext,
     NumberKeyEntity,
     NumberKeyPrivacyPolicy

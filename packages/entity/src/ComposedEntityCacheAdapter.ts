@@ -7,8 +7,10 @@ import { CacheStatus, CacheLoadResult } from './internal/ReadThroughEntityCache'
 /**
  * A IEntityCacheAdapter that composes other IEntityCacheAdapter instances.
  */
-export default class ComposedEntityCacheAdapter<TFields extends Record<string, any>>
-  implements IEntityCacheAdapter<TFields>
+export default class ComposedEntityCacheAdapter<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> implements IEntityCacheAdapter<TFields, TIDField>
 {
   /**
    * @param cacheAdapters - list of cache adapters to compose in order of precedence.
@@ -16,10 +18,10 @@ export default class ComposedEntityCacheAdapter<TFields extends Record<string, a
    *                        Typically, caches closer to the application should be ordered before caches closer to the database.
    *                        A lower layer cache is closer to the database, while a higher layer cache is closer to the application.
    */
-  constructor(private readonly cacheAdapters: IEntityCacheAdapter<TFields>[]) {}
+  constructor(private readonly cacheAdapters: IEntityCacheAdapter<TFields, TIDField>[]) {}
 
   public async loadManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -90,7 +92,7 @@ export default class ComposedEntityCacheAdapter<TFields extends Record<string, a
   }
 
   public async cacheManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, objectMap: ReadonlyMap<TLoadValue, Readonly<TFields>>): Promise<void> {
@@ -102,7 +104,7 @@ export default class ComposedEntityCacheAdapter<TFields extends Record<string, a
   }
 
   public async cacheDBMissesAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
@@ -114,7 +116,7 @@ export default class ComposedEntityCacheAdapter<TFields extends Record<string, a
   }
 
   public async invalidateManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {

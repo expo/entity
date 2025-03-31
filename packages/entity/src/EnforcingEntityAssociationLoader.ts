@@ -16,15 +16,15 @@ import { enforceResultsAsync } from './entityUtils';
  */
 export default class EnforcingEntityAssociationLoader<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields,
 > {
   constructor(
     private readonly authorizationResultBasedEntityAssociationLoader: AuthorizationResultBasedEntityAssociationLoader<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
@@ -40,16 +40,18 @@ export default class EnforcingEntityAssociationLoader<
   async loadAssociatedEntityAsync<
     TIdentifyingField extends keyof Pick<TFields, TSelectedFields>,
     TAssociatedFields extends object,
-    TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
+    TAssociatedIDField extends keyof NonNullable<
+      Pick<TAssociatedFields, TAssociatedSelectedFields>
+    >,
     TAssociatedEntity extends ReadonlyEntity<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedSelectedFields
     >,
     TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedEntity,
       TAssociatedSelectedFields
@@ -59,7 +61,7 @@ export default class EnforcingEntityAssociationLoader<
     fieldIdentifyingAssociatedEntity: TIdentifyingField,
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedEntity,
       TAssociatedPrivacyPolicy,
@@ -86,16 +88,18 @@ export default class EnforcingEntityAssociationLoader<
    */
   async loadManyAssociatedEntitiesAsync<
     TAssociatedFields extends object,
-    TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
+    TAssociatedIDField extends keyof NonNullable<
+      Pick<TAssociatedFields, TAssociatedSelectedFields>
+    >,
     TAssociatedEntity extends ReadonlyEntity<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedSelectedFields
     >,
     TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedEntity,
       TAssociatedSelectedFields
@@ -104,7 +108,7 @@ export default class EnforcingEntityAssociationLoader<
   >(
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedEntity,
       TAssociatedPrivacyPolicy,
@@ -129,16 +133,18 @@ export default class EnforcingEntityAssociationLoader<
    */
   async loadAssociatedEntityByFieldEqualingAsync<
     TAssociatedFields extends object,
-    TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
+    TAssociatedIDField extends keyof NonNullable<
+      Pick<TAssociatedFields, TAssociatedSelectedFields>
+    >,
     TAssociatedEntity extends ReadonlyEntity<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedSelectedFields
     >,
     TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedEntity,
       TAssociatedSelectedFields
@@ -148,7 +154,7 @@ export default class EnforcingEntityAssociationLoader<
     fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedEntity,
       TAssociatedPrivacyPolicy,
@@ -174,16 +180,18 @@ export default class EnforcingEntityAssociationLoader<
    */
   async loadManyAssociatedEntitiesByFieldEqualingAsync<
     TAssociatedFields extends object,
-    TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
+    TAssociatedIDField extends keyof NonNullable<
+      Pick<TAssociatedFields, TAssociatedSelectedFields>
+    >,
     TAssociatedEntity extends ReadonlyEntity<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedSelectedFields
     >,
     TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedEntity,
       TAssociatedSelectedFields
@@ -193,7 +201,7 @@ export default class EnforcingEntityAssociationLoader<
     fieldIdentifyingAssociatedEntity: keyof Pick<TFields, TSelectedFields>,
     associatedEntityClass: IEntityClass<
       TAssociatedFields,
-      TAssociatedID,
+      TAssociatedIDField,
       TViewerContext,
       TAssociatedEntity,
       TAssociatedPrivacyPolicy,
@@ -217,11 +225,11 @@ export default class EnforcingEntityAssociationLoader<
    */
   async loadAssociatedEntityThroughAsync<
     TFields2 extends object,
-    TID2 extends NonNullable<TFields2[TSelectedFields2]>,
-    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
+    TIDField2 extends keyof NonNullable<Pick<TFields2, TSelectedFields2>>,
+    TEntity2 extends ReadonlyEntity<TFields2, TIDField2, TViewerContext, TSelectedFields2>,
     TPrivacyPolicy2 extends EntityPrivacyPolicy<
       TFields2,
-      TID2,
+      TIDField2,
       TViewerContext,
       TEntity2,
       TSelectedFields2
@@ -233,7 +241,7 @@ export default class EnforcingEntityAssociationLoader<
         TViewerContext,
         TFields,
         TFields2,
-        TID2,
+        TIDField2,
         TEntity2,
         TPrivacyPolicy2,
         TSelectedFields,
@@ -249,21 +257,21 @@ export default class EnforcingEntityAssociationLoader<
    */
   async loadAssociatedEntityThroughAsync<
     TFields2 extends object,
-    TID2 extends NonNullable<TFields2[TSelectedFields2]>,
-    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
+    TIDField2 extends keyof NonNullable<Pick<TFields2, TSelectedFields2>>,
+    TEntity2 extends ReadonlyEntity<TFields2, TIDField2, TViewerContext, TSelectedFields2>,
     TPrivacyPolicy2 extends EntityPrivacyPolicy<
       TFields2,
-      TID2,
+      TIDField2,
       TViewerContext,
       TEntity2,
       TSelectedFields2
     >,
     TFields3 extends object,
-    TID3 extends NonNullable<TFields3[TSelectedFields3]>,
-    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TSelectedFields3>,
+    TIDField3 extends keyof NonNullable<Pick<TFields3, TSelectedFields3>>,
+    TEntity3 extends ReadonlyEntity<TFields3, TIDField3, TViewerContext, TSelectedFields3>,
     TPrivacyPolicy3 extends EntityPrivacyPolicy<
       TFields3,
-      TID3,
+      TIDField3,
       TViewerContext,
       TEntity3,
       TSelectedFields3
@@ -276,7 +284,7 @@ export default class EnforcingEntityAssociationLoader<
         TViewerContext,
         TFields,
         TFields2,
-        TID2,
+        TIDField2,
         TEntity2,
         TPrivacyPolicy2,
         TSelectedFields,
@@ -286,7 +294,7 @@ export default class EnforcingEntityAssociationLoader<
         TViewerContext,
         TFields2,
         TFields3,
-        TID3,
+        TIDField3,
         TEntity3,
         TPrivacyPolicy3,
         TSelectedFields2,
@@ -302,31 +310,31 @@ export default class EnforcingEntityAssociationLoader<
    */
   async loadAssociatedEntityThroughAsync<
     TFields2 extends object,
-    TID2 extends NonNullable<TFields2[TSelectedFields2]>,
-    TEntity2 extends ReadonlyEntity<TFields2, TID2, TViewerContext, TSelectedFields2>,
+    TIDField2 extends keyof NonNullable<Pick<TFields2, TSelectedFields2>>,
+    TEntity2 extends ReadonlyEntity<TFields2, TIDField2, TViewerContext, TSelectedFields2>,
     TPrivacyPolicy2 extends EntityPrivacyPolicy<
       TFields2,
-      TID2,
+      TIDField2,
       TViewerContext,
       TEntity2,
       TSelectedFields2
     >,
     TFields3 extends object,
-    TID3 extends NonNullable<TFields3[TSelectedFields3]>,
-    TEntity3 extends ReadonlyEntity<TFields3, TID3, TViewerContext, TSelectedFields3>,
+    TIDField3 extends keyof NonNullable<Pick<TFields3, TSelectedFields3>>,
+    TEntity3 extends ReadonlyEntity<TFields3, TIDField3, TViewerContext, TSelectedFields3>,
     TPrivacyPolicy3 extends EntityPrivacyPolicy<
       TFields3,
-      TID3,
+      TIDField3,
       TViewerContext,
       TEntity3,
       TSelectedFields3
     >,
     TFields4 extends object,
-    TID4 extends NonNullable<TFields4[TSelectedFields4]>,
-    TEntity4 extends ReadonlyEntity<TFields4, TID4, TViewerContext, TSelectedFields4>,
+    TIDField4 extends keyof NonNullable<Pick<TFields4, TSelectedFields4>>,
+    TEntity4 extends ReadonlyEntity<TFields4, TIDField4, TViewerContext, TSelectedFields4>,
     TPrivacyPolicy4 extends EntityPrivacyPolicy<
       TFields4,
-      TID4,
+      TIDField4,
       TViewerContext,
       TEntity4,
       TSelectedFields4
@@ -340,7 +348,7 @@ export default class EnforcingEntityAssociationLoader<
         TViewerContext,
         TFields,
         TFields2,
-        TID2,
+        TIDField2,
         TEntity2,
         TPrivacyPolicy2,
         TSelectedFields,
@@ -350,7 +358,7 @@ export default class EnforcingEntityAssociationLoader<
         TViewerContext,
         TFields2,
         TFields3,
-        TID3,
+        TIDField3,
         TEntity3,
         TPrivacyPolicy3,
         TSelectedFields2,
@@ -360,7 +368,7 @@ export default class EnforcingEntityAssociationLoader<
         TViewerContext,
         TFields3,
         TFields4,
-        TID4,
+        TIDField4,
         TEntity4,
         TPrivacyPolicy4,
         TSelectedFields3,

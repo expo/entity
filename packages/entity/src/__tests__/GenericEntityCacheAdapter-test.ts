@@ -17,7 +17,7 @@ type BlahFields = {
 describe(GenericEntityCacheAdapter, () => {
   describe('loadManyAsync', () => {
     it('returns appropriate cache results', async () => {
-      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields>>();
+      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields, 'id'>>();
       when(
         mockGenericCacher.makeCacheKeyForStorage(
           deepEqualEntityAware(new SingleFieldHolder('id')),
@@ -57,12 +57,12 @@ describe(GenericEntityCacheAdapter, () => {
     });
 
     it('returns empty map when passed empty array of load values', async () => {
-      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields>>();
+      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields, 'id'>>();
       when(mockGenericCacher.loadManyAsync(deepEqual([]))).thenResolve(new Map([]));
 
       const cacheAdapter = new GenericEntityCacheAdapter(instance(mockGenericCacher));
       const results = await cacheAdapter.loadManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [] as SingleFieldValueHolder<BlahFields, 'id'>[],
       );
       expect(results).toEqual(new SingleFieldValueHolderMap(new Map()));
@@ -71,7 +71,7 @@ describe(GenericEntityCacheAdapter, () => {
 
   describe('cacheManyAsync', () => {
     it('correctly caches all objects', async () => {
-      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields>>();
+      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields, 'id'>>();
       when(
         mockGenericCacher.makeCacheKeyForStorage(
           deepEqualEntityAware(new SingleFieldHolder('id')),
@@ -95,7 +95,7 @@ describe(GenericEntityCacheAdapter, () => {
 
   describe('cacheDBMissesAsync', () => {
     it('correctly caches misses', async () => {
-      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields>>();
+      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields, 'id'>>();
       when(
         mockGenericCacher.makeCacheKeyForStorage(
           deepEqualEntityAware(new SingleFieldHolder('id')),
@@ -116,7 +116,7 @@ describe(GenericEntityCacheAdapter, () => {
 
   describe('invalidateManyAsync', () => {
     it('invalidates correctly', async () => {
-      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields>>();
+      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields, 'id'>>();
       when(
         mockGenericCacher.makeCacheKeysForInvalidation(
           deepEqualEntityAware(new SingleFieldHolder('id')),
@@ -135,7 +135,7 @@ describe(GenericEntityCacheAdapter, () => {
     });
 
     it('returns when passed empty array of fieldValues', async () => {
-      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields>>();
+      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields, 'id'>>();
       when(
         mockGenericCacher.makeCacheKeysForInvalidation(
           deepEqualEntityAware(new SingleFieldHolder('id')),
@@ -147,7 +147,7 @@ describe(GenericEntityCacheAdapter, () => {
 
       const cacheAdapter = new GenericEntityCacheAdapter(instance(mockGenericCacher));
       await cacheAdapter.invalidateManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [] as SingleFieldValueHolder<BlahFields, 'id'>[],
       );
 

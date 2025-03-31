@@ -44,19 +44,26 @@ export type EntityPrivacyEvaluationResult =
  */
 export async function canViewerUpdateAsync<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields = keyof TFields,
 >(
-  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
+  entityClass: IEntityClass<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >,
   sourceEntity: TEntity,
   queryContext: EntityQueryContext = sourceEntity
     .getViewerContext()
@@ -84,19 +91,26 @@ export async function canViewerUpdateAsync<
  */
 export async function getCanViewerUpdateResultAsync<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields = keyof TFields,
 >(
-  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
+  entityClass: IEntityClass<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >,
   sourceEntity: TEntity,
   queryContext: EntityQueryContext = sourceEntity
     .getViewerContext()
@@ -114,19 +128,26 @@ export async function getCanViewerUpdateResultAsync<
 
 async function canViewerUpdateInternalAsync<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields = keyof TFields,
 >(
-  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
+  entityClass: IEntityClass<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >,
   sourceEntity: TEntity,
   cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   queryContext: EntityQueryContext,
@@ -166,19 +187,26 @@ async function canViewerUpdateInternalAsync<
  */
 export async function canViewerDeleteAsync<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields = keyof TFields,
 >(
-  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
+  entityClass: IEntityClass<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >,
   sourceEntity: TEntity,
   queryContext: EntityQueryContext = sourceEntity
     .getViewerContext()
@@ -206,19 +234,26 @@ export async function canViewerDeleteAsync<
  */
 export async function getCanViewerDeleteResultAsync<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields = keyof TFields,
 >(
-  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
+  entityClass: IEntityClass<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >,
   sourceEntity: TEntity,
   queryContext: EntityQueryContext = sourceEntity
     .getViewerContext()
@@ -236,19 +271,26 @@ export async function getCanViewerDeleteResultAsync<
 
 async function canViewerDeleteInternalAsync<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields = keyof TFields,
 >(
-  entityClass: IEntityClass<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields>,
+  entityClass: IEntityClass<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >,
   sourceEntity: TEntity,
   cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   queryContext: EntityQueryContext,

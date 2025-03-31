@@ -13,9 +13,9 @@ import PrivacyPolicyRule, { RuleEvaluationResult } from './rules/PrivacyPolicyRu
  */
 export type EntityPrivacyPolicyEvaluationContext<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > = {
   /**
@@ -54,9 +54,9 @@ export enum EntityPrivacyPolicyEvaluationMode {
 
 export type EntityPrivacyPolicyEvaluator<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > =
   | {
@@ -65,13 +65,25 @@ export type EntityPrivacyPolicyEvaluator<
   | {
       mode: EntityPrivacyPolicyEvaluationMode.DRY_RUN;
       denyHandler: (
-        error: EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
+        error: EntityNotAuthorizedError<
+          TFields,
+          TIDField,
+          TViewerContext,
+          TEntity,
+          TSelectedFields
+        >,
       ) => void;
     }
   | {
       mode: EntityPrivacyPolicyEvaluationMode.ENFORCE_AND_LOG;
       denyHandler: (
-        error: EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
+        error: EntityNotAuthorizedError<
+          TFields,
+          TIDField,
+          TViewerContext,
+          TEntity,
+          TSelectedFields
+        >,
       ) => void;
     };
 
@@ -105,35 +117,35 @@ export enum EntityAuthorizationAction {
  */
 export default abstract class EntityPrivacyPolicy<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > {
   protected readonly createRules: readonly PrivacyPolicyRule<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
   >[] = [];
   protected readonly readRules: readonly PrivacyPolicyRule<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
   >[] = [];
   protected readonly updateRules: readonly PrivacyPolicyRule<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
   >[] = [];
   protected readonly deleteRules: readonly PrivacyPolicyRule<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -149,7 +161,7 @@ export default abstract class EntityPrivacyPolicy<
    */
   protected getPrivacyPolicyEvaluator(
     _viewerContext: TViewerContext,
-  ): EntityPrivacyPolicyEvaluator<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+  ): EntityPrivacyPolicyEvaluator<TFields, TIDField, TViewerContext, TEntity, TSelectedFields> {
     return {
       mode: EntityPrivacyPolicyEvaluationMode.ENFORCE,
     };
@@ -168,7 +180,7 @@ export default abstract class EntityPrivacyPolicy<
     queryContext: EntityQueryContext,
     evaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
@@ -200,7 +212,7 @@ export default abstract class EntityPrivacyPolicy<
     queryContext: EntityQueryContext,
     evaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
@@ -232,7 +244,7 @@ export default abstract class EntityPrivacyPolicy<
     queryContext: EntityQueryContext,
     evaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
@@ -264,7 +276,7 @@ export default abstract class EntityPrivacyPolicy<
     queryContext: EntityQueryContext,
     evaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
@@ -284,12 +296,18 @@ export default abstract class EntityPrivacyPolicy<
   }
 
   private async authorizeForRulesetAsync(
-    ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
+    ruleset: readonly PrivacyPolicyRule<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >[],
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     evaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
@@ -393,12 +411,18 @@ export default abstract class EntityPrivacyPolicy<
   }
 
   private async authorizeForRulesetInnerAsync(
-    ruleset: readonly PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
+    ruleset: readonly PrivacyPolicyRule<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >[],
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
     evaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
@@ -418,7 +442,7 @@ export default abstract class EntityPrivacyPolicy<
         case RuleEvaluationResult.DENY:
           throw new EntityNotAuthorizedError<
             TFields,
-            TID,
+            TIDField,
             TViewerContext,
             TEntity,
             TSelectedFields
@@ -434,7 +458,7 @@ export default abstract class EntityPrivacyPolicy<
       }
     }
 
-    throw new EntityNotAuthorizedError<TFields, TID, TViewerContext, TEntity, TSelectedFields>(
+    throw new EntityNotAuthorizedError<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(
       entity,
       viewerContext,
       action,

@@ -1,9 +1,9 @@
 import {
   CacheStatus,
-  UUIDField,
   EntityConfiguration,
   SingleFieldHolder,
   SingleFieldValueHolder,
+  UUIDField,
 } from '@expo/entity';
 import { Redis, Pipeline } from 'ioredis';
 import { mock, when, instance, anything, verify } from 'ts-mockito';
@@ -14,7 +14,7 @@ type BlahFields = {
   id: string;
 };
 
-const entityConfiguration = new EntityConfiguration<BlahFields>({
+const entityConfiguration = new EntityConfiguration<BlahFields, 'id'>({
   idField: 'id',
   tableName: 'blah',
   cacheKeyVersion: 2,

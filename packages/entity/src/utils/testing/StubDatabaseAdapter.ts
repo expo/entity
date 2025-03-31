@@ -17,18 +17,22 @@ import {
 import { computeIfAbsent, mapMap } from '../collections/maps';
 
 export default class StubDatabaseAdapter<
-  T extends Record<string, any>,
-> extends EntityDatabaseAdapter<T> {
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> extends EntityDatabaseAdapter<TFields, TIDField> {
   constructor(
-    private readonly entityConfiguration2: EntityConfiguration<T>,
+    private readonly entityConfiguration2: EntityConfiguration<TFields, TIDField>,
     private readonly dataStore: Map<string, Readonly<{ [key: string]: any }>[]>,
   ) {
     super(entityConfiguration2);
   }
 
-  public static convertFieldObjectsToDataStore<T extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<T>,
-    dataStore: Map<string, Readonly<T>[]>,
+  public static convertFieldObjectsToDataStore<
+    TFields extends Record<string, any>,
+    TIDField extends keyof TFields,
+  >(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+    dataStore: Map<string, Readonly<TFields>[]>,
   ): Map<string, Readonly<{ [key: string]: any }>[]> {
     return mapMap(dataStore, (objectsForTable) =>
       objectsForTable.map((objectForTable) =>

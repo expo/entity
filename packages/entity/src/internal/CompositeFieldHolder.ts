@@ -22,10 +22,13 @@ export type SerializedCompositeFieldHolder = string & {
  * A load key that represents a composite field (set of fieldName) on an entity.
  * Must be defined in the entity configuration composite field definition.
  */
-export class CompositeFieldHolder<TFields extends Record<string, any>>
-  implements
+export class CompositeFieldHolder<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> implements
     IEntityLoadKey<
       TFields,
+      TIDField,
       SerializedCompositeFieldValueHolder,
       CompositeFieldValueHolder<TFields, EntityCompositeField<TFields>>
     >
@@ -58,11 +61,13 @@ export class CompositeFieldHolder<TFields extends Record<string, any>>
     return JSON.stringify(this.compositeField) as SerializedCompositeFieldHolder;
   }
 
-  isCacheable(entityConfiguration: EntityConfiguration<TFields>): boolean {
+  isCacheable(entityConfiguration: EntityConfiguration<TFields, TIDField>): boolean {
     return entityConfiguration.compositeFieldInfo.canCacheCompositeField(this.compositeField);
   }
 
-  getDatabaseColumns(entityConfiguration: EntityConfiguration<TFields>): readonly string[] {
+  getDatabaseColumns(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+  ): readonly string[] {
     return this.compositeField.map((fieldName) =>
       getDatabaseFieldForEntityField(entityConfiguration, fieldName),
     );
@@ -81,7 +86,7 @@ export class CompositeFieldHolder<TFields extends Record<string, any>>
   }
 
   createCacheKeyPartsForLoadValue(
-    entityConfiguration: EntityConfiguration<TFields>,
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
     value: CompositeFieldValueHolder<TFields, EntityCompositeField<TFields>>,
   ): readonly string[] {
     const columnNames = this.compositeField.map((fieldName) => {

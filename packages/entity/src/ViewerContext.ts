@@ -32,12 +32,12 @@ export default class ViewerContext {
 
   getViewerScopedEntityCompanionForClass<
     TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends ReadonlyEntity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMSelectedFields
@@ -46,7 +46,7 @@ export default class ViewerContext {
   >(
     entityClass: IEntityClass<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
@@ -54,7 +54,7 @@ export default class ViewerContext {
     >,
   ): ViewerScopedEntityCompanion<
     TMFields,
-    TMID,
+    TMIDField,
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,

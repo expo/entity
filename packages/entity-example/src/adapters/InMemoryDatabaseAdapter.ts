@@ -15,9 +15,9 @@ import { v4 as uuidv4 } from 'uuid';
 const dbObjects: Readonly<{ [key: string]: any }>[] = [];
 
 export class InMemoryDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
-  getDatabaseAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>,
-  ): EntityDatabaseAdapter<TFields> {
+  getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+  ): EntityDatabaseAdapter<TFields, TIDField> {
     return new InMemoryDatabaseAdapter(entityConfiguration);
   }
 }
@@ -26,7 +26,10 @@ export class InMemoryDatabaseAdapterProvider implements IEntityDatabaseAdapterPr
  * In-memory database adapter for entity for the purposes of this example. Normally `@expo/entity-database-adapter-knex`
  * or another production adapter would be used. Very similar to StubDatabaseAdapter but shared in a way more akin to a normal database.
  */
-class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatabaseAdapter<T> {
+class InMemoryDatabaseAdapter<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> extends EntityDatabaseAdapter<TFields, TIDField> {
   protected getFieldTransformerMap(): FieldTransformerMap {
     return new Map();
   }
@@ -131,7 +134,7 @@ class InMemoryDatabaseAdapter<T extends Record<string, any>> extends EntityDatab
     _tableName: string,
     object: object,
   ): Promise<object[]> {
-    const configurationPrivate = this['entityConfiguration'] as EntityConfiguration<T>;
+    const configurationPrivate = this['entityConfiguration'];
     const idField = getDatabaseFieldForEntityField(
       configurationPrivate,
       configurationPrivate.idField,

@@ -22,14 +22,10 @@ type ErrorsTestEntityFields = {
 
 const foreignTableName = 'foreign_table';
 
-export default class ErrorsTestEntity extends Entity<
-  ErrorsTestEntityFields,
-  number,
-  ViewerContext
-> {
+export default class ErrorsTestEntity extends Entity<ErrorsTestEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     ErrorsTestEntityFields,
-    number,
+    'id',
     ViewerContext,
     ErrorsTestEntity,
     ErrorsTestEntityPrivacyPolicy
@@ -105,14 +101,14 @@ export default class ErrorsTestEntity extends Entity<
 
 class ErrorsTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ErrorsTestEntityFields,
-  number,
+  'id',
   ViewerContext,
   ErrorsTestEntity
 > {
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       ErrorsTestEntityFields,
-      number,
+      'id',
       ViewerContext,
       ErrorsTestEntity
     >(),
@@ -120,7 +116,7 @@ class ErrorsTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       ErrorsTestEntityFields,
-      number,
+      'id',
       ViewerContext,
       ErrorsTestEntity
     >(),
@@ -128,7 +124,7 @@ class ErrorsTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       ErrorsTestEntityFields,
-      number,
+      'id',
       ViewerContext,
       ErrorsTestEntity
     >(),
@@ -136,14 +132,14 @@ class ErrorsTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       ErrorsTestEntityFields,
-      number,
+      'id',
       ViewerContext,
       ErrorsTestEntity
     >(),
   ];
 }
 
-export const ErrorsTestEntityConfiguration = new EntityConfiguration<ErrorsTestEntityFields>({
+export const ErrorsTestEntityConfiguration = new EntityConfiguration<ErrorsTestEntityFields, 'id'>({
   idField: 'id',
   tableName: 'postgres_test_entities',
   schema: {

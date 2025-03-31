@@ -12,13 +12,19 @@ describe(ViewerScopedEntityMutatorFactory, () => {
     const queryContext = instance(mock(EntityQueryContext));
     const baseMutatorFactory =
       mock<
-        EntityMutatorFactory<TestFields, string, ViewerContext, TestEntity, TestEntityPrivacyPolicy>
+        EntityMutatorFactory<
+          TestFields,
+          'customIdField',
+          ViewerContext,
+          TestEntity,
+          TestEntityPrivacyPolicy
+        >
       >(EntityMutatorFactory);
     const baseMutatorFactoryInstance = instance(baseMutatorFactory);
 
     const viewerScopedEntityLoader = new ViewerScopedEntityMutatorFactory<
       TestFields,
-      string,
+      'customIdField',
       ViewerContext,
       TestEntity,
       TestEntityPrivacyPolicy,

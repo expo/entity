@@ -5,7 +5,10 @@ import { CacheLoadResult } from './internal/ReadThroughEntityCache';
  * A cache adapter is an interface by which objects can be
  * cached, fetched from cache, and removed from cache (invalidated).
  */
-export default interface IEntityCacheAdapter<TFields extends Record<string, any>> {
+export default interface IEntityCacheAdapter<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> {
   /**
    * Load many objects from cache.
    * @param key - load key to load
@@ -13,7 +16,7 @@ export default interface IEntityCacheAdapter<TFields extends Record<string, any>
    * @returns map from all load values to a CacheLoadResult for that value
    */
   loadManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -27,7 +30,7 @@ export default interface IEntityCacheAdapter<TFields extends Record<string, any>
    * @param objectMap - map from load value to object to cache for the key
    */
   cacheManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -42,7 +45,7 @@ export default interface IEntityCacheAdapter<TFields extends Record<string, any>
    *                 in the cache and not found in the DB.
    */
   cacheDBMissesAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -56,7 +59,7 @@ export default interface IEntityCacheAdapter<TFields extends Record<string, any>
    * @param values - load values to be invalidated for the key
    */
   invalidateManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(

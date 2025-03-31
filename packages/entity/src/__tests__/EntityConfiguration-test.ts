@@ -1,5 +1,5 @@
 import EntityConfiguration from '../EntityConfiguration';
-import { UUIDField, StringField } from '../EntityFields';
+import { StringField, UUIDField } from '../EntityFields';
 import { CompositeFieldHolder } from '../internal/CompositeFieldHolder';
 
 describe(EntityConfiguration, () => {
@@ -14,7 +14,7 @@ describe(EntityConfiguration, () => {
       id: string;
     };
 
-    const blahEntityConfiguration = new EntityConfiguration<BlahT>({
+    const blahEntityConfiguration = new EntityConfiguration<BlahT, 'id'>({
       idField: 'id',
       tableName: 'blah_table',
       schema: {
@@ -71,7 +71,7 @@ describe(EntityConfiguration, () => {
     it('validates composite fields', () => {
       expect(
         () =>
-          new EntityConfiguration<BlahT>({
+          new EntityConfiguration<BlahT, 'id'>({
             idField: 'id',
             tableName: 'blah_table',
             schema: {
@@ -94,7 +94,7 @@ describe(EntityConfiguration, () => {
 
       expect(
         () =>
-          new EntityConfiguration<BlahT>({
+          new EntityConfiguration<BlahT, 'id'>({
             idField: 'id',
             tableName: 'blah_table',
             schema: {
@@ -118,7 +118,7 @@ describe(EntityConfiguration, () => {
 
     describe('cache key version', () => {
       it('defaults to 0', () => {
-        const entityConfiguration = new EntityConfiguration<Blah2T>({
+        const entityConfiguration = new EntityConfiguration<Blah2T, 'id'>({
           idField: 'id',
           tableName: 'blah',
           schema: {
@@ -133,7 +133,7 @@ describe(EntityConfiguration, () => {
       });
 
       it('sets to custom version', () => {
-        const entityConfiguration = new EntityConfiguration<Blah2T>({
+        const entityConfiguration = new EntityConfiguration<Blah2T, 'id'>({
           idField: 'id',
           tableName: 'blah',
           schema: {
@@ -168,7 +168,7 @@ describe(EntityConfiguration, () => {
       ])('disallows %p as field key', (keyName) => {
         expect(
           () =>
-            new EntityConfiguration<any>({
+            new EntityConfiguration<any, 'id'>({
               idField: 'id',
               tableName: 'blah_table',
               schema: {

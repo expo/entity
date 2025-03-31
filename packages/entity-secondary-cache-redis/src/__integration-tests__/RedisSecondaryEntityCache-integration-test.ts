@@ -21,7 +21,7 @@ const FAKE_ID = 'fake';
 class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
   TestLoadParams,
   RedisTestEntityFields,
-  string,
+  'id',
   TestViewerContext,
   RedisTestEntity,
   RedisTestEntityPrivacyPolicy

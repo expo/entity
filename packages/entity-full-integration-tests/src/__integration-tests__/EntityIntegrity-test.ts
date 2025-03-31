@@ -22,28 +22,28 @@ interface TestFields {
 
 class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   TestFields,
-  string,
+  'id',
   ViewerContext,
   TestEntity
 > {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, 'id', ViewerContext, TestEntity>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, 'id', ViewerContext, TestEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, 'id', ViewerContext, TestEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, 'id', ViewerContext, TestEntity>(),
   ];
 }
 
-class TestEntity extends Entity<TestFields, string, ViewerContext> {
+class TestEntity extends Entity<TestFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
-    string,
+    'id',
     ViewerContext,
     TestEntity,
     TestEntityPrivacyPolicy
@@ -56,7 +56,7 @@ class TestEntity extends Entity<TestFields, string, ViewerContext> {
   }
 }
 
-const testEntityConfiguration = new EntityConfiguration<TestFields>({
+const testEntityConfiguration = new EntityConfiguration<TestFields, 'id'>({
   idField: 'id',
   tableName: 'testentities',
   schema: {

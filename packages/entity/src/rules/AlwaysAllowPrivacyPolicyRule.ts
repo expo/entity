@@ -9,17 +9,17 @@ import ViewerContext from '../ViewerContext';
  */
 export default class AlwaysAllowPrivacyPolicyRule<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
-> extends PrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+> extends PrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields> {
   async evaluateAsync(
     _viewerContext: TViewerContext,
     _queryContext: EntityQueryContext,
     _evaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields

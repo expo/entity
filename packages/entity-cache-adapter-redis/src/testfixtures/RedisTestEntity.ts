@@ -2,12 +2,12 @@ import {
   AlwaysAllowPrivacyPolicyRule,
   EntityPrivacyPolicy,
   ViewerContext,
-  UUIDField,
   DateField,
   StringField,
   EntityConfiguration,
   EntityCompanionDefinition,
   Entity,
+  UUIDField,
 } from '@expo/entity';
 
 export type RedisTestEntityFields = {
@@ -16,10 +16,10 @@ export type RedisTestEntityFields = {
   dateField: Date | null;
 };
 
-export default class RedisTestEntity extends Entity<RedisTestEntityFields, string, ViewerContext> {
+export default class RedisTestEntity extends Entity<RedisTestEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     RedisTestEntityFields,
-    string,
+    'id',
     ViewerContext,
     RedisTestEntity,
     RedisTestEntityPrivacyPolicy
@@ -34,45 +34,25 @@ export default class RedisTestEntity extends Entity<RedisTestEntityFields, strin
 
 export class RedisTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   RedisTestEntityFields,
-  string,
+  'id',
   ViewerContext,
   RedisTestEntity
 > {
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<
-      RedisTestEntityFields,
-      string,
-      ViewerContext,
-      RedisTestEntity
-    >(),
+    new AlwaysAllowPrivacyPolicyRule<RedisTestEntityFields, 'id', ViewerContext, RedisTestEntity>(),
   ];
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<
-      RedisTestEntityFields,
-      string,
-      ViewerContext,
-      RedisTestEntity
-    >(),
+    new AlwaysAllowPrivacyPolicyRule<RedisTestEntityFields, 'id', ViewerContext, RedisTestEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<
-      RedisTestEntityFields,
-      string,
-      ViewerContext,
-      RedisTestEntity
-    >(),
+    new AlwaysAllowPrivacyPolicyRule<RedisTestEntityFields, 'id', ViewerContext, RedisTestEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<
-      RedisTestEntityFields,
-      string,
-      ViewerContext,
-      RedisTestEntity
-    >(),
+    new AlwaysAllowPrivacyPolicyRule<RedisTestEntityFields, 'id', ViewerContext, RedisTestEntity>(),
   ];
 }
 
-export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEntityFields>({
+export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEntityFields, 'id'>({
   idField: 'id',
   tableName: 'redis_test_entities',
   schema: {

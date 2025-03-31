@@ -105,9 +105,10 @@ describe(GenericRedisCacher, () => {
 
     const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
       RedisTestEntity,
-    )['tableDataCoordinator']['cacheAdapter'][
-      'genericCacher'
-    ] as IEntityGenericCacher<RedisTestEntityFields>;
+    )['tableDataCoordinator']['cacheAdapter']['genericCacher'] as IEntityGenericCacher<
+      RedisTestEntityFields,
+      'id'
+    >;
     const storageCacheKeyMaker = genericCacher['makeCacheKeyForStorage'].bind(genericCacher);
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)

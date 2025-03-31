@@ -44,11 +44,14 @@ export type EntityCompositeFieldValue<
 /**
  * Helper class to validate and store composite field information.
  */
-export class CompositeFieldInfo<TFields extends Record<string, any>> {
+export class CompositeFieldInfo<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> {
   private readonly compositeFieldInfoMap: ReadonlyMap<
     SerializedCompositeFieldHolder,
     {
-      compositeFieldHolder: CompositeFieldHolder<TFields>;
+      compositeFieldHolder: CompositeFieldHolder<TFields, TIDField>;
       cache: boolean;
     }
   >;
@@ -75,12 +78,12 @@ export class CompositeFieldInfo<TFields extends Record<string, any>> {
 
   public getCompositeFieldHolderForCompositeField(
     compositeField: EntityCompositeField<TFields>,
-  ): CompositeFieldHolder<TFields> | undefined {
+  ): CompositeFieldHolder<TFields, TIDField> | undefined {
     return this.compositeFieldInfoMap.get(new CompositeFieldHolder(compositeField).serialize())
       ?.compositeFieldHolder;
   }
 
-  public getAllCompositeFieldHolders(): readonly CompositeFieldHolder<TFields>[] {
+  public getAllCompositeFieldHolders(): readonly CompositeFieldHolder<TFields, TIDField>[] {
     return Array.from(this.compositeFieldInfoMap.values()).map((v) => v.compositeFieldHolder);
   }
 
@@ -100,11 +103,14 @@ export class CompositeFieldInfo<TFields extends Record<string, any>> {
  * The data storage configuration for a type of Entity. Contains information relating to IDs,
  * cachable fields, field mappings, and types of cache and database adapter.
  */
-export default class EntityConfiguration<TFields extends Record<string, any>> {
+export default class EntityConfiguration<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> {
   readonly idField: keyof TFields;
   readonly tableName: string;
   readonly cacheableKeys: ReadonlySet<keyof TFields>;
-  readonly compositeFieldInfo: CompositeFieldInfo<TFields>;
+  readonly compositeFieldInfo: CompositeFieldInfo<TFields, TIDField>;
   readonly cacheKeyVersion: number;
   readonly otherCacheKeyVersionsToInvalidate: ReadonlySet<number> = new Set();
 
@@ -129,7 +135,7 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
     /**
      * The field used to identify this entity. Must be a unique field in the table.
      */
-    idField: keyof TFields;
+    idField: TIDField;
 
     /**
      * The name of the table where entities of this type are stored.
@@ -176,7 +182,7 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
 
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups
-    EntityConfiguration.validateSchema(schema);
+    EntityConfiguration.validateSchema<TFields>(schema);
     this.schema = new Map(Object.entries(schema));
 
     this.cacheableKeys = EntityConfiguration.computeCacheableKeys(this.schema);
@@ -187,7 +193,9 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
     this.dbToEntityFieldsKeyMapping = invertMap(this.entityToDBFieldsKeyMapping);
   }
 
-  private static validateSchema<TFields extends Record<string, any>>(schema: TFields): void {
+  private static validateSchema<TFields extends Record<string, any>>(
+    schema: Record<keyof TFields, EntityFieldDefinition<any>>,
+  ): void {
     const disallowedFieldsKeys = Object.getOwnPropertyNames(Object.prototype);
     for (const disallowedFieldsKey of disallowedFieldsKeys) {
       if (Object.hasOwn(schema, disallowedFieldsKey)) {

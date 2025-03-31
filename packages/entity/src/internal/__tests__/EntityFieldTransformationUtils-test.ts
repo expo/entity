@@ -1,5 +1,5 @@
 import EntityConfiguration from '../../EntityConfiguration';
-import { UUIDField, StringField } from '../../EntityFields';
+import { StringField, UUIDField } from '../../EntityFields';
 import {
   getDatabaseFieldForEntityField,
   transformDatabaseObjectToFields,
@@ -16,7 +16,7 @@ type BlahT = {
   transformWrite: string;
 };
 
-const blahEntityConfiguration = new EntityConfiguration<BlahT>({
+const blahEntityConfiguration = new EntityConfiguration<BlahT, 'id'>({
   idField: 'id',
   tableName: 'blah_table',
   schema: {

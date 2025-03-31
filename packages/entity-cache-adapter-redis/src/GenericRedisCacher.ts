@@ -59,12 +59,14 @@ export interface GenericRedisCacheContext {
   ttlSecondsNegative: number;
 }
 
-export default class GenericRedisCacher<TFields extends Record<string, any>>
-  implements IEntityGenericCacher<TFields>
+export default class GenericRedisCacher<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> implements IEntityGenericCacher<TFields, TIDField>
 {
   constructor(
     private readonly context: GenericRedisCacheContext,
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
   ) {}
 
   public async loadManyAsync(
@@ -150,7 +152,7 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
   }
 
   private makeCacheKeyForCacheKeyVersion<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue, cacheKeyVersion: number): string {
@@ -166,7 +168,7 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
   }
 
   public makeCacheKeyForStorage<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue): string {
@@ -178,7 +180,7 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
   }
 
   public makeCacheKeysForInvalidation<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue): readonly string[] {

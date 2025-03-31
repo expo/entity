@@ -19,12 +19,12 @@ import { mapMapAsync } from './utils/collections/maps';
  */
 export default class EntityLoaderUtils<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -36,15 +36,15 @@ export default class EntityLoaderUtils<
     private readonly queryContext: EntityQueryContext,
     private readonly privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >,
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     private readonly entityClass: IEntityClass<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -52,7 +52,7 @@ export default class EntityLoaderUtils<
     >,
     private readonly entitySelectedFields: TSelectedFields[] | undefined,
     private readonly privacyPolicy: TPrivacyPolicy,
-    private readonly dataManager: EntityDataManager<TFields>,
+    private readonly dataManager: EntityDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
@@ -69,7 +69,7 @@ export default class EntityLoaderUtils<
           return null;
         }
         return [
-          new SingleFieldHolder<TFields, typeof fieldName>(fieldName),
+          new SingleFieldHolder<TFields, TIDField, typeof fieldName>(fieldName),
           new SingleFieldValueHolder(value),
         ] as const;
       })
@@ -115,7 +115,7 @@ export default class EntityLoaderUtils<
     const selectedFields = pick(fieldsObject, entitySelectedFields);
     return new this.entityClass({
       viewerContext: this.viewerContext,
-      id: id as TID,
+      id: id as TFields[TIDField],
       databaseFields: fieldsObject,
       selectedFields,
     });

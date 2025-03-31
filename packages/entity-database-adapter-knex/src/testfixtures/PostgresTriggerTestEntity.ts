@@ -2,7 +2,6 @@ import {
   AlwaysAllowPrivacyPolicyRule,
   EntityPrivacyPolicy,
   ViewerContext,
-  UUIDField,
   StringField,
   EntityConfiguration,
   EntityCompanionDefinition,
@@ -11,6 +10,7 @@ import {
   EntityQueryContext,
   EntityNonTransactionalMutationTrigger,
   EntityTriggerMutationInfo,
+  UUIDField,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -21,12 +21,12 @@ type PostgresTriggerTestEntityFields = {
 
 export default class PostgresTriggerTestEntity extends Entity<
   PostgresTriggerTestEntityFields,
-  string,
+  'id',
   ViewerContext
 > {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     PostgresTriggerTestEntityFields,
-    string,
+    'id',
     ViewerContext,
     PostgresTriggerTestEntity,
     PostgresTriggerTestEntityPrivacyPolicy
@@ -72,14 +72,14 @@ export default class PostgresTriggerTestEntity extends Entity<
 
 class PostgresTriggerTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   PostgresTriggerTestEntityFields,
-  string,
+  'id',
   ViewerContext,
   PostgresTriggerTestEntity
 > {
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTriggerTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresTriggerTestEntity
     >(),
@@ -87,7 +87,7 @@ class PostgresTriggerTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTriggerTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresTriggerTestEntity
     >(),
@@ -95,7 +95,7 @@ class PostgresTriggerTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTriggerTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresTriggerTestEntity
     >(),
@@ -103,7 +103,7 @@ class PostgresTriggerTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTriggerTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresTriggerTestEntity
     >(),
@@ -112,7 +112,7 @@ class PostgresTriggerTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
 
 class ThrowConditionallyTrigger extends EntityMutationTrigger<
   PostgresTriggerTestEntityFields,
-  string,
+  'id',
   ViewerContext,
   PostgresTriggerTestEntity
 > {
@@ -129,7 +129,7 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
     entity: PostgresTriggerTestEntity,
     _mutationInfo: EntityTriggerMutationInfo<
       PostgresTriggerTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresTriggerTestEntity
     >,
@@ -142,7 +142,7 @@ class ThrowConditionallyTrigger extends EntityMutationTrigger<
 
 class ThrowConditionallyNonTransactionalTrigger extends EntityNonTransactionalMutationTrigger<
   PostgresTriggerTestEntityFields,
-  string,
+  'id',
   ViewerContext,
   PostgresTriggerTestEntity
 > {
@@ -163,19 +163,21 @@ class ThrowConditionallyNonTransactionalTrigger extends EntityNonTransactionalMu
   }
 }
 
-export const postgresTestEntityConfiguration =
-  new EntityConfiguration<PostgresTriggerTestEntityFields>({
-    idField: 'id',
-    tableName: 'postgres_test_entities',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-        cache: true,
-      }),
-      name: new StringField({
-        columnName: 'name',
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'redis',
-  });
+export const postgresTestEntityConfiguration = new EntityConfiguration<
+  PostgresTriggerTestEntityFields,
+  'id'
+>({
+  idField: 'id',
+  tableName: 'postgres_test_entities',
+  schema: {
+    id: new UUIDField({
+      columnName: 'id',
+      cache: true,
+    }),
+    name: new StringField({
+      columnName: 'name',
+    }),
+  },
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
+});

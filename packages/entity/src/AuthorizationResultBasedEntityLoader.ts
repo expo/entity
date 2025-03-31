@@ -36,12 +36,12 @@ import { areSetsEqual } from './utils/collections/sets';
  */
 export default class AuthorizationResultBasedEntityLoader<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -50,20 +50,20 @@ export default class AuthorizationResultBasedEntityLoader<
 > {
   constructor(
     private readonly queryContext: EntityQueryContext,
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     private readonly entityClass: IEntityClass<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly dataManager: EntityDataManager<TFields>,
+    private readonly dataManager: EntityDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
     public readonly utils: EntityLoaderUtils<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -205,7 +205,7 @@ export default class AuthorizationResultBasedEntityLoader<
    * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns entity result for matching ID, where result error can be UnauthorizedError or EntityNotFoundError.
    */
-  async loadByIDAsync(id: TID): Promise<Result<TEntity>> {
+  async loadByIDAsync(id: TFields[TIDField]): Promise<Result<TEntity>> {
     const entityResults = await this.loadManyByIDsAsync([id]);
     // loadManyByIDsAsync is always populated for each id supplied
     return nullthrows(entityResults.get(id));
@@ -215,7 +215,7 @@ export default class AuthorizationResultBasedEntityLoader<
    * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns entity result for matching ID, or null if no entity exists for ID.
    */
-  async loadByIDNullableAsync(id: TID): Promise<Result<TEntity> | null> {
+  async loadByIDNullableAsync(id: TFields[TIDField]): Promise<Result<TEntity> | null> {
     return await this.loadByFieldEqualingAsync(
       this.entityConfiguration.idField as TSelectedFields,
       id,
@@ -226,11 +226,13 @@ export default class AuthorizationResultBasedEntityLoader<
    * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns map from ID to corresponding entity result, where result error can be UnauthorizedError or EntityNotFoundError.
    */
-  async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, Result<TEntity>>> {
+  async loadManyByIDsAsync(
+    ids: readonly TFields[TIDField][],
+  ): Promise<ReadonlyMap<TFields[TIDField], Result<TEntity>>> {
     const entityResults = (await this.loadManyByFieldEqualingManyAsync(
       this.entityConfiguration.idField as TSelectedFields,
       ids,
-    )) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
+    )) as ReadonlyMap<TFields[TIDField], readonly Result<TEntity>[]>;
     return mapMap(entityResults, (entityResultsForId, id) => {
       const entityResult = entityResultsForId[0];
       return (
@@ -245,12 +247,12 @@ export default class AuthorizationResultBasedEntityLoader<
    * @returns map from ID to nullable corresponding entity result, where result error can be UnauthorizedError.
    */
   async loadManyByIDsNullableAsync(
-    ids: readonly TID[],
-  ): Promise<ReadonlyMap<TID, Result<TEntity> | null>> {
+    ids: readonly TFields[TIDField][],
+  ): Promise<ReadonlyMap<TFields[TIDField], Result<TEntity> | null>> {
     const entityResults = (await this.loadManyByFieldEqualingManyAsync(
       this.entityConfiguration.idField as TSelectedFields,
       ids,
-    )) as ReadonlyMap<TID, readonly Result<TEntity>[]>;
+    )) as ReadonlyMap<TFields[TIDField], readonly Result<TEntity>[]>;
     return mapMap(entityResults, (entityResultsForId) => {
       return entityResultsForId[0] ?? null;
     });
@@ -333,13 +335,13 @@ export default class AuthorizationResultBasedEntityLoader<
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[],
   ): {
-    loadKey: SingleFieldHolder<TFields, N>;
+    loadKey: SingleFieldHolder<TFields, TIDField, N>;
     loadValues: readonly SingleFieldValueHolder<TFields, N>[];
   } {
     this.validateFieldAndValues(fieldName, fieldValues);
 
     return {
-      loadKey: new SingleFieldHolder<TFields, N>(fieldName),
+      loadKey: new SingleFieldHolder<TFields, TIDField, N>(fieldName),
       loadValues: fieldValues.map(
         (fieldValue) => new SingleFieldValueHolder<TFields, N>(fieldValue),
       ),
@@ -352,7 +354,7 @@ export default class AuthorizationResultBasedEntityLoader<
     compositeField: N,
     compositeFieldValues: readonly EntityCompositeFieldValue<TFields, N>[],
   ): {
-    compositeFieldHolder: CompositeFieldHolder<TFields>;
+    compositeFieldHolder: CompositeFieldHolder<TFields, TIDField>;
     compositeFieldValueHolders: readonly CompositeFieldValueHolder<TFields, N>[];
   } {
     // validate that the composite field input is defined in the entity configuration

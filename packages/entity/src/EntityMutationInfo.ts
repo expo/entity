@@ -9,9 +9,9 @@ export enum EntityMutationType {
 
 export type EntityValidatorMutationInfo<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > =
   | {
@@ -40,9 +40,9 @@ export type EntityCascadingDeletionInfo = {
 
 export type EntityTriggerMutationInfo<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > =
   | {
