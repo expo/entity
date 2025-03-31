@@ -176,7 +176,7 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
 
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups
-    EntityConfiguration.validateSchema(schema);
+    EntityConfiguration.validateSchema<TFields>(schema, idField);
     this.schema = new Map(Object.entries(schema));
 
     this.cacheableKeys = EntityConfiguration.computeCacheableKeys(this.schema);
@@ -187,7 +187,10 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
     this.dbToEntityFieldsKeyMapping = invertMap(this.entityToDBFieldsKeyMapping);
   }
 
-  private static validateSchema<TFields extends Record<string, any>>(schema: TFields): void {
+  private static validateSchema<TFields extends Record<string, any>>(
+    schema: Record<keyof TFields, EntityFieldDefinition<any>>,
+    idField: keyof TFields,
+  ): void {
     const disallowedFieldsKeys = Object.getOwnPropertyNames(Object.prototype);
     for (const disallowedFieldsKey of disallowedFieldsKeys) {
       if (Object.hasOwn(schema, disallowedFieldsKey)) {
@@ -195,6 +198,13 @@ export default class EntityConfiguration<TFields extends Record<string, any>> {
           `Entity field name not allowed to prevent conflicts with standard Object prototype fields: ${disallowedFieldsKey}`,
         );
       }
+    }
+
+    const idFieldDefinition = schema[idField];
+    if (!idFieldDefinition.hasExplicitCacheOption) {
+      throw new Error(
+        `ID field ${String(idField)} must explicitly set cache option to true or false`,
+      );
     }
   }
 

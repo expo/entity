@@ -161,6 +161,7 @@ export interface EntityFieldDefinitionOptions {
 export abstract class EntityFieldDefinition<T> {
   readonly columnName: string;
   readonly cache: boolean;
+  readonly hasExplicitCacheOption: boolean;
   readonly association: EntityAssociationDefinition<any, any, any, any, any, any> | undefined;
   /**
    *
@@ -169,6 +170,7 @@ export abstract class EntityFieldDefinition<T> {
   constructor(options: EntityFieldDefinitionOptions) {
     this.columnName = options.columnName;
     this.cache = options.cache ?? false;
+    this.hasExplicitCacheOption = 'cache' in options;
     this.association = options.association;
   }
 
