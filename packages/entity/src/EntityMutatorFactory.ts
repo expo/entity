@@ -20,12 +20,12 @@ import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
  */
 export default class EntityMutatorFactory<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -34,10 +34,10 @@ export default class EntityMutatorFactory<
 > {
   constructor(
     private readonly entityCompanionProvider: EntityCompanionProvider,
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     private readonly entityClass: IEntityClass<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -46,27 +46,27 @@ export default class EntityMutatorFactory<
     private readonly privacyPolicy: TPrivacyPolicy,
     private readonly mutationValidators: EntityMutationValidator<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >[],
     private readonly mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >,
     private readonly entityLoaderFactory: EntityLoaderFactory<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
+    private readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
     private readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
@@ -81,7 +81,7 @@ export default class EntityMutatorFactory<
     queryContext: EntityQueryContext,
   ): AuthorizationResultBasedCreateMutator<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
@@ -113,7 +113,7 @@ export default class EntityMutatorFactory<
     queryContext: EntityQueryContext,
   ): AuthorizationResultBasedUpdateMutator<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
@@ -145,7 +145,7 @@ export default class EntityMutatorFactory<
     queryContext: EntityQueryContext,
   ): AuthorizationResultBasedDeleteMutator<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,

@@ -2,8 +2,8 @@ import {
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
-  UUIDField,
   StringField,
+  UUIDField,
 } from '@expo/entity';
 
 import NotePrivacyPolicy from './NotePrivacyPolicy';
@@ -19,7 +19,7 @@ export interface NoteFields {
 /**
  * A simple entity representing a "notes" table/collection. Each note has an owner, title, and body.
  */
-export default class NoteEntity extends Entity<NoteFields, string, ExampleViewerContext> {
+export default class NoteEntity extends Entity<NoteFields, 'id', ExampleViewerContext> {
   /**
    * The companion provides configuration instructions to the Entity framework for this type
    * of entity. In some languages, this would be representable as "abstract" static members
@@ -27,14 +27,14 @@ export default class NoteEntity extends Entity<NoteFields, string, ExampleViewer
    */
   static defineCompanionDefinition(): EntityCompanionDefinition<
     NoteFields,
-    string,
+    'id',
     ExampleViewerContext,
     NoteEntity,
     NotePrivacyPolicy
   > {
     return {
       entityClass: NoteEntity,
-      entityConfiguration: new EntityConfiguration<NoteFields>({
+      entityConfiguration: new EntityConfiguration<NoteFields, 'id'>({
         idField: 'id',
         tableName: 'notes',
         schema: {

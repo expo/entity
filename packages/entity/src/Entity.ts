@@ -35,10 +35,10 @@ import ViewerContext from './ViewerContext';
  */
 export default abstract class Entity<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
   TSelectedFields extends keyof TFields = keyof TFields,
-> extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields> {
+> extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields> {
   /**
    * Vend mutator for creating a new entity in given query context.
    * @param viewerContext - viewer context of creating user
@@ -47,13 +47,13 @@ export default abstract class Entity<
    */
   static creator<
     TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMSelectedFields
@@ -62,7 +62,7 @@ export default abstract class Entity<
   >(
     this: IEntityClass<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
@@ -75,7 +75,7 @@ export default abstract class Entity<
       .getQueryContext(),
   ): EnforcingEntityCreator<
     TMFields,
-    TMID,
+    TMIDField,
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,
@@ -92,13 +92,13 @@ export default abstract class Entity<
    */
   static creatorWithAuthorizationResults<
     TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMSelectedFields
@@ -107,7 +107,7 @@ export default abstract class Entity<
   >(
     this: IEntityClass<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
@@ -120,7 +120,7 @@ export default abstract class Entity<
       .getQueryContext(),
   ): AuthorizationResultBasedCreateMutator<
     TMFields,
-    TMID,
+    TMIDField,
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,
@@ -137,12 +137,12 @@ export default abstract class Entity<
    */
   static updater<
     TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMSelectedFields
@@ -151,7 +151,7 @@ export default abstract class Entity<
   >(
     this: IEntityClass<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
@@ -165,7 +165,7 @@ export default abstract class Entity<
       .getQueryContext(),
   ): EnforcingEntityUpdater<
     TMFields,
-    TMID,
+    TMIDField,
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,
@@ -182,12 +182,12 @@ export default abstract class Entity<
    */
   static updaterWithAuthorizationResults<
     TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMSelectedFields
@@ -196,7 +196,7 @@ export default abstract class Entity<
   >(
     this: IEntityClass<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
@@ -210,7 +210,7 @@ export default abstract class Entity<
       .getQueryContext(),
   ): AuthorizationResultBasedUpdateMutator<
     TMFields,
-    TMID,
+    TMIDField,
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,
@@ -227,12 +227,12 @@ export default abstract class Entity<
    */
   static deleter<
     TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMSelectedFields
@@ -241,7 +241,7 @@ export default abstract class Entity<
   >(
     this: IEntityClass<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
@@ -255,7 +255,7 @@ export default abstract class Entity<
       .getQueryContext(),
   ): EnforcingEntityDeleter<
     TMFields,
-    TMID,
+    TMIDField,
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,
@@ -272,12 +272,12 @@ export default abstract class Entity<
    */
   static deleterWithAuthorizationResults<
     TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
-    TMEntity extends Entity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMSelectedFields
@@ -286,7 +286,7 @@ export default abstract class Entity<
   >(
     this: IEntityClass<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
@@ -300,7 +300,7 @@ export default abstract class Entity<
       .getQueryContext(),
   ): AuthorizationResultBasedDeleteMutator<
     TMFields,
-    TMID,
+    TMIDField,
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,
@@ -315,12 +315,12 @@ export default abstract class Entity<
  */
 export interface IEntityClass<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -329,7 +329,7 @@ export interface IEntityClass<
 > {
   new (constructorParam: {
     viewerContext: TViewerContext;
-    id: TID;
+    id: TFields[TIDField];
     databaseFields: Readonly<TFields>;
     selectedFields: Readonly<Pick<TFields, TSelectedFields>>;
   }): TEntity;
@@ -341,7 +341,7 @@ export interface IEntityClass<
    */
   defineCompanionDefinition(): EntityCompanionDefinition<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,

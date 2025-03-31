@@ -25,9 +25,10 @@ describe(GenericLocalMemoryCacher, () => {
     const viewerContext = new ViewerContext(entityCompanionProvider);
     const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
       LocalMemoryTestEntity,
-    )['tableDataCoordinator']['cacheAdapter'][
-      'genericCacher'
-    ] as IEntityGenericCacher<LocalMemoryTestEntityFields>;
+    )['tableDataCoordinator']['cacheAdapter']['genericCacher'] as IEntityGenericCacher<
+      LocalMemoryTestEntityFields,
+      'id'
+    >;
 
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
@@ -51,7 +52,7 @@ describe(GenericLocalMemoryCacher, () => {
     ].get(
       viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)
         .entityCompanionDefinition.entityConfiguration.tableName,
-    )!['genericCacher'] as GenericLocalMemoryCacher<LocalMemoryTestEntityFields>;
+    )!['genericCacher'] as IEntityGenericCacher<LocalMemoryTestEntityFields, 'id'>;
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
       genericCacher.makeCacheKeyForStorage(
         new SingleFieldHolder('id'),
@@ -125,9 +126,10 @@ describe(GenericLocalMemoryCacher, () => {
     const viewerContext = new ViewerContext(entityCompanionProvider);
     const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
       LocalMemoryTestEntity,
-    )['tableDataCoordinator']['cacheAdapter'][
-      'genericCacher'
-    ] as IEntityGenericCacher<LocalMemoryTestEntityFields>;
+    )['tableDataCoordinator']['cacheAdapter']['genericCacher'] as IEntityGenericCacher<
+      LocalMemoryTestEntityFields,
+      'id'
+    >;
     const cacheKeyMaker = genericCacher['makeCacheKeyForStorage'].bind(genericCacher);
 
     const date = new Date();
@@ -152,7 +154,7 @@ describe(GenericLocalMemoryCacher, () => {
     ].get(
       viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)
         .entityCompanionDefinition.entityConfiguration.tableName,
-    )!['genericCacher'];
+    )!['genericCacher'] as IEntityGenericCacher<LocalMemoryTestEntityFields, 'id'>;
     const cachedResult = await entitySpecificGenericCacher.loadManyAsync([
       cacheKeyMaker(new SingleFieldHolder('id'), new SingleFieldValueHolder(entity1.getID())),
     ]);

@@ -70,7 +70,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -118,7 +121,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -166,7 +172,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -214,7 +223,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -254,7 +266,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -298,7 +313,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -346,7 +364,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -394,7 +415,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -435,7 +459,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -476,7 +503,7 @@ describe(EntityDataManager, () => {
   });
 
   it('handles DB errors as expected', async () => {
-    const databaseAdapterMock = mock<EntityDatabaseAdapter<TestFields>>();
+    const databaseAdapterMock = mock<EntityDatabaseAdapter<TestFields, 'customIdField'>>();
     when(databaseAdapterMock.fetchManyWhereAsync(anything(), anything(), anything())).thenReject(
       new Error('DB query failed'),
     );
@@ -512,7 +539,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -696,7 +726,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -732,7 +765,10 @@ describe(EntityDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields>(testEntityConfiguration, dataStore);
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
     const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
@@ -748,7 +784,10 @@ describe(EntityDataManager, () => {
     await expect(
       entityDataManager.loadManyEqualingAsync(
         queryContext,
-        new CompositeFieldHolder<TestFields>(['nullableField', 'testIndexedField']),
+        new CompositeFieldHolder<TestFields, 'customIdField'>([
+          'nullableField',
+          'testIndexedField',
+        ]),
         [
           new CompositeFieldValueHolder({
             nullableField: null as any,
@@ -763,7 +802,10 @@ describe(EntityDataManager, () => {
     await expect(
       entityDataManager.loadManyEqualingAsync(
         queryContext,
-        new CompositeFieldHolder<TestFields>(['nullableField', 'testIndexedField']),
+        new CompositeFieldHolder<TestFields, 'customIdField'>([
+          'nullableField',
+          'testIndexedField',
+        ]),
         [
           new CompositeFieldValueHolder({
             nullableField: undefined as any,

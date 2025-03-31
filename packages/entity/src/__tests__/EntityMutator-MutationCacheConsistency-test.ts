@@ -16,35 +16,35 @@ type BlahFields = {
 
 class BlahEntityPrivacyPolicy extends EntityPrivacyPolicy<
   BlahFields,
-  string,
+  'id',
   ViewerContext,
   BlahEntity
 > {
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
 }
 
-class BlahEntity extends Entity<BlahFields, string, ViewerContext> {
+class BlahEntity extends Entity<BlahFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
-    string,
+    'id',
     ViewerContext,
     BlahEntity,
     BlahEntityPrivacyPolicy
   > {
     return {
       entityClass: BlahEntity,
-      entityConfiguration: new EntityConfiguration<BlahFields>({
+      entityConfiguration: new EntityConfiguration<BlahFields, 'id'>({
         idField: 'id',
         tableName: 'blah_table',
         schema: {
@@ -66,14 +66,14 @@ class BlahEntity extends Entity<BlahFields, string, ViewerContext> {
 
 class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutationTrigger<
   BlahFields,
-  string,
+  'id',
   ViewerContext,
   BlahEntity
 > {
   async executeAsync(
     viewerContext: ViewerContext,
     entity: BlahEntity,
-    mutationInfo: EntityTriggerMutationInfo<BlahFields, string, ViewerContext, BlahEntity>,
+    mutationInfo: EntityTriggerMutationInfo<BlahFields, 'id', ViewerContext, BlahEntity>,
   ): Promise<void> {
     if (mutationInfo.type === EntityMutationType.DELETE) {
       const entityLoaded = await BlahEntity.loader(viewerContext).loadByIDNullableAsync(

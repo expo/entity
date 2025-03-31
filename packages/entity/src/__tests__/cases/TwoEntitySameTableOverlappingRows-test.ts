@@ -1,7 +1,7 @@
 import Entity from '../../Entity';
 import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import EntityConfiguration from '../../EntityConfiguration';
-import { UUIDField, StringField } from '../../EntityFields';
+import { StringField, UUIDField } from '../../EntityFields';
 import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
 import ViewerContext from '../../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
@@ -90,7 +90,7 @@ interface TestFields {
 type OneTestFields = 'id' | 'fake_field';
 type TwoTestFields = 'id' | 'other_field' | 'fake_field';
 
-const testEntityConfiguration = new EntityConfiguration<TestFields>({
+const testEntityConfiguration = new EntityConfiguration<TestFields, 'id'>({
   idField: 'id',
   tableName: 'entities',
   schema: {
@@ -111,25 +111,25 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
   cacheAdapterFlavor: 'redis',
 });
 
-class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, string, ViewerContext, any, any> {
+class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<any, 'id', ViewerContext, any, any> {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any, any>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any, any>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any, any>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<any, string, ViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<any, 'id', ViewerContext, any, any>(),
   ];
 }
 
-class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFields> {
+class OneTestEntity extends Entity<TestFields, 'id', ViewerContext, OneTestFields> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
-    string,
+    'id',
     ViewerContext,
     OneTestEntity,
     TestEntityPrivacyPolicy,
@@ -144,10 +144,10 @@ class OneTestEntity extends Entity<TestFields, string, ViewerContext, OneTestFie
   }
 }
 
-class TwoTestEntity extends Entity<TestFields, string, ViewerContext, TwoTestFields> {
+class TwoTestEntity extends Entity<TestFields, 'id', ViewerContext, TwoTestFields> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
-    string,
+    'id',
     ViewerContext,
     TwoTestEntity,
     TestEntityPrivacyPolicy,

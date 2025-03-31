@@ -18,31 +18,31 @@ interface CategoryFields {
 
 class CategoryPrivacyPolicy extends EntityPrivacyPolicy<
   CategoryFields,
-  string,
+  'id',
   TestViewerContext,
   any,
   any
 > {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<CategoryFields, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<CategoryFields, 'id', TestViewerContext, any, any>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<CategoryFields, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<CategoryFields, 'id', TestViewerContext, any, any>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<CategoryFields, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<CategoryFields, 'id', TestViewerContext, any, any>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<CategoryFields, string, TestViewerContext, any, any>(),
+    new AlwaysAllowPrivacyPolicyRule<CategoryFields, 'id', TestViewerContext, any, any>(),
   ];
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const makeEntityClass = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
-  class CategoryEntity extends Entity<CategoryFields, string, TestViewerContext> {
+  class CategoryEntity extends Entity<CategoryFields, 'id', TestViewerContext> {
     static defineCompanionDefinition(): EntityCompanionDefinition<
       CategoryFields,
-      string,
+      'id',
       TestViewerContext,
       CategoryEntity,
       CategoryPrivacyPolicy
@@ -55,7 +55,7 @@ const makeEntityClass = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => {
     }
   }
 
-  const categoryEntityConfiguration = new EntityConfiguration<CategoryFields>({
+  const categoryEntityConfiguration = new EntityConfiguration<CategoryFields, 'id'>({
     idField: 'id',
     tableName: 'categories',
     inboundEdges: [CategoryEntity],
@@ -246,7 +246,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
       CategoryEntity,
     )['entityCompanion']['tableDataCoordinator'][
       'cacheAdapter'
-    ] as InMemoryFullCacheStubCacheAdapter<CategoryFields>;
+    ] as InMemoryFullCacheStubCacheAdapter<CategoryFields, 'id'>;
     const subCategoryCachedBefore = await categoryCacheAdapter.loadManyAsync(
       new SingleFieldHolder('parent_category_id'),
       [new SingleFieldValueHolder(parentCategory.getID())],
@@ -325,7 +325,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
       CategoryEntity,
     )['entityCompanion']['tableDataCoordinator'][
       'cacheAdapter'
-    ] as InMemoryFullCacheStubCacheAdapter<CategoryFields>;
+    ] as InMemoryFullCacheStubCacheAdapter<CategoryFields, 'id'>;
     const categoriesCachedBefore = await categoryCacheAdapter.loadManyAsync(
       new SingleFieldHolder('parent_category_id'),
       [

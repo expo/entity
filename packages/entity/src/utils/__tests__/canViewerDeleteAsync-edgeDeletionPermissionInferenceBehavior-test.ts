@@ -98,36 +98,36 @@ type TestLeafEntityFields = {
 
 class AlwaysAllowEntityPrivacyPolicy<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
-> extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+> extends EntityPrivacyPolicy<TFields, TIDField, TViewerContext, TEntity, TSelectedFields> {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysDenyPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysDenyPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
 }
 
-class TestEntity extends Entity<TestEntityFields, string, ViewerContext> {
+class TestEntity extends Entity<TestEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestEntityFields,
-    string,
+    'id',
     ViewerContext,
     TestEntity,
-    AlwaysAllowEntityPrivacyPolicy<TestEntityFields, string, ViewerContext, TestEntity>
+    AlwaysAllowEntityPrivacyPolicy<TestEntityFields, 'id', ViewerContext, TestEntity>
   > {
     return {
       entityClass: TestEntity,
-      entityConfiguration: new EntityConfiguration<TestEntityFields>({
+      entityConfiguration: new EntityConfiguration<TestEntityFields, 'id'>({
         idField: 'id',
         tableName: 'blah',
         inboundEdges: [TestLeafEntity, TestLeafLookupByFieldEntity, TestLeafNoInferenceEntity],
@@ -144,17 +144,17 @@ class TestEntity extends Entity<TestEntityFields, string, ViewerContext> {
   }
 }
 
-class TestLeafEntity extends Entity<TestLeafEntityFields, string, ViewerContext> {
+class TestLeafEntity extends Entity<TestLeafEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestLeafEntityFields,
-    string,
+    'id',
     ViewerContext,
     TestLeafEntity,
-    AlwaysAllowEntityPrivacyPolicy<TestLeafEntityFields, string, ViewerContext, TestLeafEntity>
+    AlwaysAllowEntityPrivacyPolicy<TestLeafEntityFields, 'id', ViewerContext, TestLeafEntity>
   > {
     return {
       entityClass: TestLeafEntity,
-      entityConfiguration: new EntityConfiguration<TestLeafEntityFields>({
+      entityConfiguration: new EntityConfiguration<TestLeafEntityFields, 'id'>({
         idField: 'id',
         tableName: 'blah_2',
         schema: {
@@ -179,22 +179,23 @@ class TestLeafEntity extends Entity<TestLeafEntityFields, string, ViewerContext>
   }
 }
 
-class TestLeafLookupByFieldEntity extends Entity<TestLeafEntityFields, string, ViewerContext> {
+class TestLeafLookupByFieldEntity extends Entity<TestLeafEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestLeafEntityFields,
-    string,
+    'id',
     ViewerContext,
     TestLeafEntity,
-    AlwaysAllowEntityPrivacyPolicy<TestLeafEntityFields, string, ViewerContext, TestLeafEntity>
+    AlwaysAllowEntityPrivacyPolicy<TestLeafEntityFields, 'id', ViewerContext, TestLeafEntity>
   > {
     return {
       entityClass: TestLeafEntity,
-      entityConfiguration: new EntityConfiguration<TestLeafEntityFields>({
+      entityConfiguration: new EntityConfiguration<TestLeafEntityFields, 'id'>({
         idField: 'id',
         tableName: 'blah_4',
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
+            cache: false,
           }),
           test_entity_id: new UUIDField({
             columnName: 'test_entity_id',
@@ -215,27 +216,28 @@ class TestLeafLookupByFieldEntity extends Entity<TestLeafEntityFields, string, V
   }
 }
 
-class TestLeafNoInferenceEntity extends Entity<TestLeafEntityFields, string, ViewerContext> {
+class TestLeafNoInferenceEntity extends Entity<TestLeafEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestLeafEntityFields,
-    string,
+    'id',
     ViewerContext,
     TestLeafNoInferenceEntity,
     AlwaysAllowEntityPrivacyPolicy<
       TestLeafEntityFields,
-      string,
+      'id',
       ViewerContext,
       TestLeafNoInferenceEntity
     >
   > {
     return {
       entityClass: TestLeafNoInferenceEntity,
-      entityConfiguration: new EntityConfiguration<TestLeafEntityFields>({
+      entityConfiguration: new EntityConfiguration<TestLeafEntityFields, 'id'>({
         idField: 'id',
         tableName: 'blah_3',
         schema: {
           id: new UUIDField({
             columnName: 'custom_id',
+            cache: false,
           }),
           test_entity_id: new UUIDField({
             columnName: 'test_entity_id',

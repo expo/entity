@@ -3,7 +3,7 @@ import { result, Result } from '@expo/results';
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';
-import { UUIDField, StringField, DateField, IntField } from '../EntityFields';
+import { StringField, DateField, IntField, UUIDField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
@@ -17,7 +17,7 @@ export type TestFields = {
   nullableField: string | null;
 };
 
-export const testEntityConfiguration = new EntityConfiguration<TestFields>({
+export const testEntityConfiguration = new EntityConfiguration<TestFields, 'customIdField'>({
   idField: 'customIdField',
   tableName: 'test_entity_should_not_write_to_db',
   schema: {
@@ -44,7 +44,7 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields>({
   databaseAdapterFlavor: 'postgres',
   cacheAdapterFlavor: 'redis',
   compositeFieldDefinitions: [
-    { compositeField: ['stringField', 'intField'] },
+    { compositeField: ['stringField', 'intField'], cache: false },
     { compositeField: ['stringField', 'testIndexedField'], cache: true },
     { compositeField: ['nullableField', 'testIndexedField'], cache: true },
   ],
@@ -52,28 +52,28 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields>({
 
 export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   TestFields,
-  string,
+  'customIdField',
   ViewerContext,
   TestEntity
 > {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, 'customIdField', ViewerContext, TestEntity>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, 'customIdField', ViewerContext, TestEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, 'customIdField', ViewerContext, TestEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<TestFields, string, ViewerContext, TestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<TestFields, 'customIdField', ViewerContext, TestEntity>(),
   ];
 }
 
-export default class TestEntity extends Entity<TestFields, string, ViewerContext> {
+export default class TestEntity extends Entity<TestFields, 'customIdField', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     TestEntityPrivacyPolicy

@@ -10,12 +10,12 @@ import ViewerContext from './ViewerContext';
  */
 export default class ViewerScopedEntityLoaderFactory<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -25,7 +25,7 @@ export default class ViewerScopedEntityLoaderFactory<
   constructor(
     private readonly entityLoaderFactory: EntityLoaderFactory<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -38,14 +38,14 @@ export default class ViewerScopedEntityLoaderFactory<
     queryContext: EntityQueryContext,
     privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >,
   ): AuthorizationResultBasedEntityLoader<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,

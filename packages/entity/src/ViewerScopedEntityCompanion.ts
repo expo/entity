@@ -13,12 +13,12 @@ import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
  */
 export default class ViewerScopedEntityCompanion<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -28,7 +28,7 @@ export default class ViewerScopedEntityCompanion<
   constructor(
     public readonly entityCompanion: EntityCompanion<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -42,7 +42,7 @@ export default class ViewerScopedEntityCompanion<
    */
   getLoaderFactory(): ViewerScopedEntityLoaderFactory<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
@@ -59,7 +59,7 @@ export default class ViewerScopedEntityCompanion<
    */
   getMutatorFactory(): ViewerScopedEntityMutatorFactory<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,

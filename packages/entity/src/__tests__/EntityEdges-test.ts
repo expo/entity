@@ -74,7 +74,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
 
   class AlwaysAllowPrivacyPolicyRuleThatRecords extends PrivacyPolicyRule<
     any,
-    string,
+    'id',
     TestViewerContext,
     any,
     any
@@ -88,7 +88,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _queryContext: EntityQueryContext,
       evaluationContext: EntityPrivacyPolicyEvaluationContext<
         any,
-        string,
+        'id',
         TestViewerContext,
         any,
         any
@@ -106,7 +106,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
 
   class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
     any,
-    string,
+    'id',
     TestViewerContext,
     any,
     any
@@ -127,7 +127,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
 
   class ParentCheckInfoDeletionTrigger extends EntityMutationTrigger<
     ParentFields,
-    string,
+    'id',
     TestViewerContext,
     ParentEntity
   > {
@@ -135,12 +135,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _viewerContext: TestViewerContext,
       _queryContext: EntityTransactionalQueryContext,
       _entity: ParentEntity,
-      mutationInfo: EntityTriggerMutationInfo<
-        ParentFields,
-        string,
-        TestViewerContext,
-        ParentEntity
-      >,
+      mutationInfo: EntityTriggerMutationInfo<ParentFields, 'id', TestViewerContext, ParentEntity>,
     ): Promise<void> {
       invariant(mutationInfo.type === EntityMutationType.DELETE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause !== null) {
@@ -153,7 +148,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
 
   class ParentCheckInfoUpdateTrigger extends EntityMutationTrigger<
     ParentFields,
-    string,
+    'id',
     TestViewerContext,
     ParentEntity
   > {
@@ -161,12 +156,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _viewerContext: TestViewerContext,
       _queryContext: EntityTransactionalQueryContext,
       _entity: ParentEntity,
-      mutationInfo: EntityTriggerMutationInfo<
-        ParentFields,
-        string,
-        TestViewerContext,
-        ParentEntity
-      >,
+      mutationInfo: EntityTriggerMutationInfo<ParentFields, 'id', TestViewerContext, ParentEntity>,
     ): Promise<void> {
       invariant(mutationInfo.type === EntityMutationType.UPDATE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause !== null) {
@@ -179,7 +169,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
 
   class ChildCheckInfoDeletionTrigger extends EntityMutationTrigger<
     ChildFields,
-    string,
+    'id',
     TestViewerContext,
     ChildEntity
   > {
@@ -187,7 +177,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _viewerContext: TestViewerContext,
       _queryContext: EntityTransactionalQueryContext,
       _entity: ChildEntity,
-      mutationInfo: EntityTriggerMutationInfo<ChildFields, string, TestViewerContext, ChildEntity>,
+      mutationInfo: EntityTriggerMutationInfo<ChildFields, 'id', TestViewerContext, ChildEntity>,
     ): Promise<void> {
       invariant(mutationInfo.type === EntityMutationType.DELETE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause === null) {
@@ -211,7 +201,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
 
   class ChildCheckInfoUpdateTrigger extends EntityMutationTrigger<
     ChildFields,
-    string,
+    'id',
     TestViewerContext,
     ChildEntity
   > {
@@ -219,7 +209,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _viewerContext: TestViewerContext,
       _queryContext: EntityTransactionalQueryContext,
       _entity: ChildEntity,
-      mutationInfo: EntityTriggerMutationInfo<ChildFields, string, TestViewerContext, ChildEntity>,
+      mutationInfo: EntityTriggerMutationInfo<ChildFields, 'id', TestViewerContext, ChildEntity>,
     ): Promise<void> {
       invariant(mutationInfo.type === EntityMutationType.UPDATE, 'invalid EntityMutationType');
       if (mutationInfo.cascadingDeleteCause === null) {
@@ -243,7 +233,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
 
   class GrandChildCheckInfoDeletionTrigger extends EntityMutationTrigger<
     GrandChildFields,
-    string,
+    'id',
     TestViewerContext,
     GrandChildEntity
   > {
@@ -253,7 +243,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _entity: GrandChildEntity,
       mutationInfo: EntityTriggerMutationInfo<
         GrandChildFields,
-        string,
+        'id',
         TestViewerContext,
         GrandChildEntity
       >,
@@ -294,7 +284,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
 
   class GrandChildCheckInfoUpdateTrigger extends EntityMutationTrigger<
     GrandChildFields,
-    string,
+    'id',
     TestViewerContext,
     GrandChildEntity
   > {
@@ -304,7 +294,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
       _entity: GrandChildEntity,
       mutationInfo: EntityTriggerMutationInfo<
         GrandChildFields,
-        string,
+        'id',
         TestViewerContext,
         GrandChildEntity
       >,
@@ -343,10 +333,10 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     }
   }
 
-  class OtherEntity extends Entity<OtherFields, string, TestViewerContext> {
+  class OtherEntity extends Entity<OtherFields, 'id', TestViewerContext> {
     static defineCompanionDefinition(): EntityCompanionDefinition<
       OtherFields,
-      string,
+      'id',
       TestViewerContext,
       OtherEntity,
       TestEntityPrivacyPolicy
@@ -359,10 +349,10 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     }
   }
 
-  class ParentEntity extends Entity<ParentFields, string, TestViewerContext> {
+  class ParentEntity extends Entity<ParentFields, 'id', TestViewerContext> {
     static defineCompanionDefinition(): EntityCompanionDefinition<
       ParentFields,
-      string,
+      'id',
       TestViewerContext,
       ParentEntity,
       TestEntityPrivacyPolicy
@@ -382,10 +372,10 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     }
   }
 
-  class ChildEntity extends Entity<ChildFields, string, TestViewerContext> {
+  class ChildEntity extends Entity<ChildFields, 'id', TestViewerContext> {
     static defineCompanionDefinition(): EntityCompanionDefinition<
       ChildFields,
-      string,
+      'id',
       TestViewerContext,
       ChildEntity,
       TestEntityPrivacyPolicy
@@ -405,10 +395,10 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     }
   }
 
-  class GrandChildEntity extends Entity<GrandChildFields, string, TestViewerContext> {
+  class GrandChildEntity extends Entity<GrandChildFields, 'id', TestViewerContext> {
     static defineCompanionDefinition(): EntityCompanionDefinition<
       GrandChildFields,
-      string,
+      'id',
       TestViewerContext,
       GrandChildEntity,
       TestEntityPrivacyPolicy
@@ -428,7 +418,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     }
   }
 
-  const otherEntityConfiguration = new EntityConfiguration<OtherFields>({
+  const otherEntityConfiguration = new EntityConfiguration<OtherFields, 'id'>({
     idField: 'id',
     tableName: 'others',
     schema: {
@@ -441,7 +431,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     cacheAdapterFlavor: 'redis',
   });
 
-  const parentEntityConfiguration = new EntityConfiguration<ParentFields>({
+  const parentEntityConfiguration = new EntityConfiguration<ParentFields, 'id'>({
     idField: 'id',
     tableName: 'parents',
     inboundEdges: [ChildEntity],
@@ -455,7 +445,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     cacheAdapterFlavor: 'redis',
   });
 
-  const childEntityConfiguration = new EntityConfiguration<ChildFields>({
+  const childEntityConfiguration = new EntityConfiguration<ChildFields, 'id'>({
     idField: 'id',
     tableName: 'children',
     inboundEdges: [GrandChildEntity],
@@ -485,7 +475,7 @@ const makeEntityClasses = (edgeDeletionBehavior: EntityEdgeDeletionBehavior) => 
     cacheAdapterFlavor: 'redis',
   });
 
-  const grandChildEntityConfiguration = new EntityConfiguration<GrandChildFields>({
+  const grandChildEntityConfiguration = new EntityConfiguration<GrandChildFields, 'id'>({
     idField: 'id',
     tableName: 'grandchildren',
     schema: {
@@ -775,7 +765,10 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
       const childCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(ChildEntity)[
         'entityCompanion'
-      ]['tableDataCoordinator']['cacheAdapter'] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
+      ]['tableDataCoordinator']['cacheAdapter'] as InMemoryFullCacheStubCacheAdapter<
+        ChildFields,
+        'id'
+      >;
       const childCachedBefore = await childCacheAdapter.loadManyAsync(
         new SingleFieldHolder('parent_id'),
         [new SingleFieldValueHolder(parent.getID())],
@@ -788,7 +781,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         GrandChildEntity,
       )['entityCompanion']['tableDataCoordinator'][
         'cacheAdapter'
-      ] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
+      ] as InMemoryFullCacheStubCacheAdapter<ChildFields, 'id'>;
       const grandChildCachedBefore = await grandChildCacheAdapter.loadManyAsync(
         new SingleFieldHolder('parent_id'),
         [new SingleFieldValueHolder(child.getID())],
@@ -922,7 +915,10 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
 
       const childCacheAdapter = viewerContext.getViewerScopedEntityCompanionForClass(ChildEntity)[
         'entityCompanion'
-      ]['tableDataCoordinator']['cacheAdapter'] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
+      ]['tableDataCoordinator']['cacheAdapter'] as InMemoryFullCacheStubCacheAdapter<
+        ChildFields,
+        'id'
+      >;
       const childCachedBefore = await childCacheAdapter.loadManyAsync(
         new SingleFieldHolder('parent_id'),
         [new SingleFieldValueHolder(parent.getID())],
@@ -935,7 +931,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         GrandChildEntity,
       )['entityCompanion']['tableDataCoordinator'][
         'cacheAdapter'
-      ] as InMemoryFullCacheStubCacheAdapter<ChildFields>;
+      ] as InMemoryFullCacheStubCacheAdapter<ChildFields, 'id'>;
       const grandChildCachedBefore = await grandChildCacheAdapter.loadManyAsync(
         new SingleFieldHolder('parent_id'),
         [new SingleFieldValueHolder(child.getID())],

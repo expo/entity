@@ -38,9 +38,9 @@ export enum RuleEvaluationResult {
  */
 export default abstract class PrivacyPolicyRule<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > {
   abstract evaluateAsync(
@@ -48,7 +48,7 @@ export default abstract class PrivacyPolicyRule<
     queryContext: EntityQueryContext,
     evaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields

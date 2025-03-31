@@ -10,7 +10,7 @@ type BlahFields = {
   hello: string;
 };
 
-const blahConfiguration = new EntityConfiguration<BlahFields>({
+const blahConfiguration = new EntityConfiguration<BlahFields, 'hello'>({
   idField: 'hello',
   tableName: 'wat',
   schema: {
@@ -22,10 +22,10 @@ const blahConfiguration = new EntityConfiguration<BlahFields>({
   cacheAdapterFlavor: 'redis',
 });
 
-class Blah1Entity extends Entity<BlahFields, string, ViewerContext> {
+class Blah1Entity extends Entity<BlahFields, 'hello', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
-    string,
+    'hello',
     ViewerContext,
     Blah1Entity,
     NoOpTest1PrivacyPolicy
@@ -38,10 +38,10 @@ class Blah1Entity extends Entity<BlahFields, string, ViewerContext> {
   }
 }
 
-class Blah2Entity extends Entity<BlahFields, string, ViewerContext> {
+class Blah2Entity extends Entity<BlahFields, 'hello', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
-    string,
+    'hello',
     ViewerContext,
     Blah2Entity,
     NoOpTest2PrivacyPolicy
@@ -56,13 +56,13 @@ class Blah2Entity extends Entity<BlahFields, string, ViewerContext> {
 
 class NoOpTest1PrivacyPolicy extends EntityPrivacyPolicy<
   BlahFields,
-  string,
+  'hello',
   ViewerContext,
   Blah1Entity
 > {}
 class NoOpTest2PrivacyPolicy extends EntityPrivacyPolicy<
   BlahFields,
-  string,
+  'hello',
   ViewerContext,
   Blah2Entity
 > {}

@@ -71,16 +71,16 @@ export enum EntityEdgeDeletionAuthorizationInferenceBehavior {
 export interface EntityAssociationDefinition<
   TViewerContext extends ViewerContext,
   TAssociatedFields extends object,
-  TAssociatedID extends NonNullable<TAssociatedFields[TAssociatedSelectedFields]>,
+  TAssociatedIDField extends keyof NonNullable<Pick<TAssociatedFields, TAssociatedSelectedFields>>,
   TAssociatedEntity extends ReadonlyEntity<
     TAssociatedFields,
-    TAssociatedID,
+    TAssociatedIDField,
     TViewerContext,
     TAssociatedSelectedFields
   >,
   TAssociatedPrivacyPolicy extends EntityPrivacyPolicy<
     TAssociatedFields,
-    TAssociatedID,
+    TAssociatedIDField,
     TViewerContext,
     TAssociatedEntity,
     TAssociatedSelectedFields
@@ -92,7 +92,7 @@ export interface EntityAssociationDefinition<
    */
   associatedEntityClass: IEntityClass<
     TAssociatedFields,
-    TAssociatedID,
+    TAssociatedIDField,
     TViewerContext,
     TAssociatedEntity,
     TAssociatedPrivacyPolicy,

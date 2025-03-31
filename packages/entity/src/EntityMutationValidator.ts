@@ -9,9 +9,9 @@ import ViewerContext from './ViewerContext';
  */
 export default abstract class EntityMutationValidator<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > {
   abstract executeAsync(
@@ -20,7 +20,7 @@ export default abstract class EntityMutationValidator<
     entity: TEntity,
     mutationInfo: EntityValidatorMutationInfo<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields

@@ -22,6 +22,7 @@ export enum EntityLoadMethodType {
  */
 export interface IEntityLoadKey<
   TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
   TSerializedLoadValue,
   TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
 > {
@@ -40,7 +41,7 @@ export interface IEntityLoadKey<
    * @param entityConfiguration - The entity configuration to check.
    * @returns Boolean indicating whether this key is cacheable.
    */
-  isCacheable(entityConfiguration: EntityConfiguration<TFields>): boolean;
+  isCacheable(entityConfiguration: EntityConfiguration<TFields, TIDField>): boolean;
 
   /**
    * Creates cache key parts for this key and a load value given an entity configuration.
@@ -51,7 +52,7 @@ export interface IEntityLoadKey<
    * @returns An object containing the cache key type and parts.
    */
   createCacheKeyPartsForLoadValue(
-    entityConfiguration: EntityConfiguration<TFields>,
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
     value: TLoadValue,
   ): readonly string[];
 
@@ -93,7 +94,9 @@ export interface IEntityLoadKey<
    * @param entityConfiguration - The entity configuration.
    * @returns An array of database column names.
    */
-  getDatabaseColumns(entityConfiguration: EntityConfiguration<TFields>): readonly string[];
+  getDatabaseColumns(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+  ): readonly string[];
 
   /**
    * Get the database values corresponding to the database columns for this key for a load value.
@@ -133,7 +136,8 @@ export abstract class LoadValueMap<
  */
 export type LoadPair<
   TFields extends Record<string, any>,
-  TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+  TIDField extends keyof TFields,
+  TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
   TSerializedLoadValue,
   TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
 > = readonly [TLoadKey, TLoadValue];

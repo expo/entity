@@ -2,11 +2,11 @@ import {
   AlwaysAllowPrivacyPolicyRule,
   EntityPrivacyPolicy,
   ViewerContext,
-  UUIDField,
   StringField,
   EntityConfiguration,
   EntityCompanionDefinition,
   Entity,
+  UUIDField,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -17,12 +17,12 @@ type PostgresUniqueTestEntityFields = {
 
 export default class PostgresUniqueTestEntity extends Entity<
   PostgresUniqueTestEntityFields,
-  string,
+  'id',
   ViewerContext
 > {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     PostgresUniqueTestEntityFields,
-    string,
+    'id',
     ViewerContext,
     PostgresUniqueTestEntity,
     PostgresUniqueTestEntityPrivacyPolicy
@@ -57,14 +57,14 @@ export default class PostgresUniqueTestEntity extends Entity<
 
 class PostgresUniqueTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   PostgresUniqueTestEntityFields,
-  string,
+  'id',
   ViewerContext,
   PostgresUniqueTestEntity
 > {
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresUniqueTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresUniqueTestEntity
     >(),
@@ -72,7 +72,7 @@ class PostgresUniqueTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresUniqueTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresUniqueTestEntity
     >(),
@@ -80,7 +80,7 @@ class PostgresUniqueTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresUniqueTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresUniqueTestEntity
     >(),
@@ -88,26 +88,28 @@ class PostgresUniqueTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresUniqueTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresUniqueTestEntity
     >(),
   ];
 }
 
-export const postgresTestEntityConfiguration =
-  new EntityConfiguration<PostgresUniqueTestEntityFields>({
-    idField: 'id',
-    tableName: 'postgres_test_entities',
-    schema: {
-      id: new UUIDField({
-        columnName: 'id',
-        cache: true,
-      }),
-      name: new StringField({
-        columnName: 'name',
-      }),
-    },
-    databaseAdapterFlavor: 'postgres',
-    cacheAdapterFlavor: 'redis',
-  });
+export const postgresTestEntityConfiguration = new EntityConfiguration<
+  PostgresUniqueTestEntityFields,
+  'id'
+>({
+  idField: 'id',
+  tableName: 'postgres_test_entities',
+  schema: {
+    id: new UUIDField({
+      columnName: 'id',
+      cache: true,
+    }),
+    name: new StringField({
+      columnName: 'name',
+    }),
+  },
+  databaseAdapterFlavor: 'postgres',
+  cacheAdapterFlavor: 'redis',
+});

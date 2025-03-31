@@ -27,14 +27,17 @@ export type CacheLoadResult<TFields extends Record<string, any>> =
  * A read-through entity cache is responsible for coordinating EntityDatabaseAdapter and
  * EntityCacheAdapter within the EntityDataManager.
  */
-export default class ReadThroughEntityCache<TFields extends Record<string, any>> {
+export default class ReadThroughEntityCache<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> {
   constructor(
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
-    private readonly entityCacheAdapter: IEntityCacheAdapter<TFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
+    private readonly entityCacheAdapter: IEntityCacheAdapter<TFields, TIDField>,
   ) {}
 
   private isLoadKeyCacheable<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey): boolean {
@@ -58,7 +61,7 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
    * @returns map from value to objects that match the query for that value
    */
   public async readManyThroughAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -140,7 +143,7 @@ export default class ReadThroughEntityCache<TFields extends Record<string, any>>
    * @param values - load values to be invalidated for key
    */
   public async invalidateManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {

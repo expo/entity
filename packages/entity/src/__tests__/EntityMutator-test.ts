@@ -54,7 +54,7 @@ import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider'
 
 class TestMutationTrigger extends EntityMutationTrigger<
   TestFields,
-  string,
+  'customIdField',
   ViewerContext,
   TestEntity,
   keyof TestFields
@@ -65,7 +65,7 @@ class TestMutationTrigger extends EntityMutationTrigger<
     _entity: TestEntity,
     _mutationInfo: EntityTriggerMutationInfo<
       TestFields,
-      string,
+      'customIdField',
       ViewerContext,
       TestEntity,
       keyof TestFields
@@ -75,7 +75,7 @@ class TestMutationTrigger extends EntityMutationTrigger<
 
 class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutationTrigger<
   TestFields,
-  string,
+  'customIdField',
   ViewerContext,
   TestEntity,
   keyof TestFields
@@ -86,12 +86,18 @@ class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutation
 const setUpMutationValidatorSpies = (
   mutationValidators: EntityMutationValidator<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
   >[],
-): EntityMutationValidator<TestFields, string, ViewerContext, TestEntity, keyof TestFields>[] => {
+): EntityMutationValidator<
+  TestFields,
+  'customIdField',
+  ViewerContext,
+  TestEntity,
+  keyof TestFields
+>[] => {
   return mutationValidators.map((validator) => spy(validator));
 };
 
@@ -99,7 +105,7 @@ const verifyValidatorCounts = (
   viewerContext: ViewerContext,
   mutationValidatorSpies: EntityMutationValidator<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
@@ -107,7 +113,7 @@ const verifyValidatorCounts = (
   expectedCalls: number,
   mutationInfo: EntityValidatorMutationInfo<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
@@ -128,14 +134,14 @@ const verifyValidatorCounts = (
 const setUpMutationTriggerSpies = (
   mutationTriggers: EntityMutationTriggerConfiguration<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
   >,
 ): EntityMutationTriggerConfiguration<
   TestFields,
-  string,
+  'customIdField',
   ViewerContext,
   TestEntity,
   keyof TestFields
@@ -157,7 +163,7 @@ const verifyTriggerCounts = (
   viewerContext: ViewerContext,
   mutationTriggerSpies: EntityMutationTriggerConfiguration<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
@@ -166,7 +172,7 @@ const verifyTriggerCounts = (
     keyof Pick<
       EntityMutationTriggerConfiguration<
         TestFields,
-        string,
+        'customIdField',
         ViewerContext,
         TestEntity,
         keyof TestFields
@@ -182,7 +188,7 @@ const verifyTriggerCounts = (
   >,
   mutationInfo: EntityTriggerMutationInfo<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
@@ -243,7 +249,7 @@ const createEntityMutatorFactory = (
   privacyPolicy: TestEntityPrivacyPolicy;
   entityLoaderFactory: EntityLoaderFactory<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     TestEntityPrivacyPolicy,
@@ -251,7 +257,7 @@ const createEntityMutatorFactory = (
   >;
   entityMutatorFactory: EntityMutatorFactory<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     TestEntityPrivacyPolicy
@@ -259,14 +265,14 @@ const createEntityMutatorFactory = (
   metricsAdapter: IEntityMetricsAdapter;
   mutationValidators: EntityMutationValidator<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
   >[];
   mutationTriggers: EntityMutationTriggerConfiguration<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
@@ -274,14 +280,14 @@ const createEntityMutatorFactory = (
 } => {
   const mutationValidators: EntityMutationValidator<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
   >[] = [new TestMutationTrigger()];
   const mutationTriggers: EntityMutationTriggerConfiguration<
     TestFields,
-    string,
+    'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
@@ -296,7 +302,7 @@ const createEntityMutatorFactory = (
     afterAll: [new TestMutationTrigger()],
     afterCommit: [new TestNonTransactionalMutationTrigger()],
   };
-  const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+  const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
     testEntityConfiguration,
     StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
@@ -304,16 +310,19 @@ const createEntityMutatorFactory = (
     ),
   );
   const customStubDatabaseAdapterProvider: IEntityDatabaseAdapterProvider = {
-    getDatabaseAdapter<TFields extends Record<string, any>>(
-      _entityConfiguration: EntityConfiguration<TFields>,
-    ): EntityDatabaseAdapter<TFields> {
-      return databaseAdapter as any as EntityDatabaseAdapter<TFields>;
+    getDatabaseAdapter<TFields extends Record<'customIdField', any>>(
+      _entityConfiguration: EntityConfiguration<TFields, 'customIdField'>,
+    ): EntityDatabaseAdapter<TFields, 'customIdField'> {
+      return databaseAdapter as any as EntityDatabaseAdapter<TFields, 'customIdField'>;
     },
   };
   const metricsAdapter = new NoOpEntityMetricsAdapter();
   const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
   const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
-  const entityCache = new ReadThroughEntityCache<TestFields>(testEntityConfiguration, cacheAdapter);
+  const entityCache = new ReadThroughEntityCache<TestFields, 'customIdField'>(
+    testEntityConfiguration,
+    cacheAdapter,
+  );
 
   const queryContextProvider = new StubQueryContextProvider();
   const companionProvider = new EntityCompanionProvider(
@@ -545,7 +554,7 @@ describe(EntityMutatorFactory, () => {
           mock<
             EntityPrivacyPolicyEvaluationContext<
               TestFields,
-              string,
+              'customIdField',
               ViewerContext,
               TestEntity,
               keyof TestFields
@@ -669,7 +678,7 @@ describe(EntityMutatorFactory, () => {
           mock<
             EntityPrivacyPolicyEvaluationContext<
               TestFields,
-              string,
+              'customIdField',
               ViewerContext,
               TestEntity,
               keyof TestFields
@@ -741,7 +750,7 @@ describe(EntityMutatorFactory, () => {
           mock<
             EntityPrivacyPolicyEvaluationContext<
               TestFields,
-              string,
+              'customIdField',
               ViewerContext,
               TestEntity,
               keyof TestFields
@@ -801,7 +810,7 @@ describe(EntityMutatorFactory, () => {
           mock<
             EntityPrivacyPolicyEvaluationContext<
               TestFields,
-              string,
+              'customIdField',
               ViewerContext,
               TestEntity,
               keyof TestFields
@@ -854,7 +863,7 @@ describe(EntityMutatorFactory, () => {
           mock<
             EntityPrivacyPolicyEvaluationContext<
               TestFields,
-              string,
+              'customIdField',
               ViewerContext,
               TestEntity,
               keyof TestFields
@@ -902,7 +911,7 @@ describe(EntityMutatorFactory, () => {
           mock<
             EntityPrivacyPolicyEvaluationContext<
               TestFields,
-              string,
+              'customIdField',
               ViewerContext,
               TestEntity,
               keyof TestFields
@@ -954,7 +963,7 @@ describe(EntityMutatorFactory, () => {
           mock<
             EntityPrivacyPolicyEvaluationContext<
               TestFields,
-              string,
+              'customIdField',
               ViewerContext,
               TestEntity,
               keyof TestFields
@@ -1010,7 +1019,7 @@ describe(EntityMutatorFactory, () => {
           mock<
             EntityPrivacyPolicyEvaluationContext<
               TestFields,
-              string,
+              'customIdField',
               ViewerContext,
               TestEntity,
               keyof TestFields
@@ -1057,7 +1066,7 @@ describe(EntityMutatorFactory, () => {
         mock<
           EntityPrivacyPolicyEvaluationContext<
             TestFields,
-            string,
+            'customIdField',
             ViewerContext,
             TestEntity,
             keyof TestFields
@@ -1161,7 +1170,7 @@ describe(EntityMutatorFactory, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = new StubQueryContextProvider().getQueryContext();
     const privacyPolicyMock = mock(SimpleTestEntityPrivacyPolicy);
-    const databaseAdapter = instance(mock<EntityDatabaseAdapter<SimpleTestFields>>());
+    const databaseAdapter = instance(mock<EntityDatabaseAdapter<SimpleTestFields, 'id'>>());
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
 
     const id1 = uuidv4();
@@ -1179,7 +1188,7 @@ describe(EntityMutatorFactory, () => {
     const entityLoaderMock = mock<
       AuthorizationResultBasedEntityLoader<
         SimpleTestFields,
-        string,
+        'id',
         ViewerContext,
         SimpleTestEntity,
         SimpleTestEntityPrivacyPolicy,
@@ -1190,7 +1199,7 @@ describe(EntityMutatorFactory, () => {
       mock<
         EntityLoaderUtils<
           SimpleTestFields,
-          string,
+          'id',
           ViewerContext,
           SimpleTestEntity,
           SimpleTestEntityPrivacyPolicy,
@@ -1205,7 +1214,7 @@ describe(EntityMutatorFactory, () => {
       mock<
         EntityLoaderFactory<
           SimpleTestFields,
-          string,
+          'id',
           ViewerContext,
           SimpleTestEntity,
           SimpleTestEntityPrivacyPolicy,
@@ -1296,7 +1305,7 @@ describe(EntityMutatorFactory, () => {
     const viewerContext = instance(mock(ViewerContext));
     const queryContext = new StubQueryContextProvider().getQueryContext();
     const privacyPolicy = instance(mock(SimpleTestEntityPrivacyPolicy));
-    const databaseAdapterMock = mock<EntityDatabaseAdapter<SimpleTestFields>>();
+    const databaseAdapterMock = mock<EntityDatabaseAdapter<SimpleTestFields, 'id'>>();
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
 
     const id1 = uuidv4();
@@ -1314,7 +1323,7 @@ describe(EntityMutatorFactory, () => {
     const entityLoaderMock = mock<
       AuthorizationResultBasedEntityLoader<
         SimpleTestFields,
-        string,
+        'id',
         ViewerContext,
         SimpleTestEntity,
         SimpleTestEntityPrivacyPolicy,
@@ -1325,7 +1334,7 @@ describe(EntityMutatorFactory, () => {
       mock<
         EntityLoaderUtils<
           SimpleTestFields,
-          string,
+          'id',
           ViewerContext,
           SimpleTestEntity,
           SimpleTestEntityPrivacyPolicy,
@@ -1340,7 +1349,7 @@ describe(EntityMutatorFactory, () => {
       mock<
         EntityLoaderFactory<
           SimpleTestFields,
-          string,
+          'id',
           ViewerContext,
           SimpleTestEntity,
           SimpleTestEntityPrivacyPolicy,

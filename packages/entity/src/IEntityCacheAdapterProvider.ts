@@ -9,7 +9,7 @@ export default interface IEntityCacheAdapterProvider {
   /**
    * Vend a cache adapter for an entity configuration.
    */
-  getCacheAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>,
-  ): IEntityCacheAdapter<TFields>;
+  getCacheAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+  ): IEntityCacheAdapter<TFields, TIDField>;
 }

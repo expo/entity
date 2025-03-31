@@ -24,10 +24,10 @@ import { ExampleViewerContext } from '../viewerContexts';
  */
 export default class AllowIfUserOwnerPrivacyRule<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
-  TEntity extends ReadonlyEntity<TFields, TID, ExampleViewerContext>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, ExampleViewerContext>,
   TSelectedFields extends keyof TFields = keyof TFields,
-> extends PrivacyPolicyRule<TFields, TID, ExampleViewerContext, TEntity> {
+> extends PrivacyPolicyRule<TFields, TIDField, ExampleViewerContext, TEntity> {
   constructor(private readonly entityOwnerField: keyof TFields) {
     super();
   }
@@ -37,7 +37,7 @@ export default class AllowIfUserOwnerPrivacyRule<
     _queryContext: EntityQueryContext,
     _evaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       ExampleViewerContext,
       TEntity,
       TSelectedFields
