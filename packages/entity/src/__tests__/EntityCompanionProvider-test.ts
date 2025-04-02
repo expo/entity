@@ -16,6 +16,7 @@ const blahConfiguration = new EntityConfiguration<BlahFields, 'hello'>({
   schema: {
     hello: new StringField({
       columnName: 'hello',
+      cache: false,
     }),
   },
   databaseAdapterFlavor: 'postgres',

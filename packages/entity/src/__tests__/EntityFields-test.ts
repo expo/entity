@@ -15,7 +15,7 @@ import {
 } from '../EntityFields';
 import describeFieldTestCase from '../utils/testing/describeFieldTestCase';
 
-class TestFieldDefinition extends EntityFieldDefinition<string> {
+class TestFieldDefinition extends EntityFieldDefinition<string, false> {
   protected validateInputValueInternal(value: string): boolean {
     return value === 'helloworld';
   }

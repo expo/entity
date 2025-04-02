@@ -30,7 +30,7 @@ export type EntityCompositeFieldDefinition<TFields extends Record<string, any>> 
    * must be able uniquely identify the entity and the database must have a unique constraint on the
    * set of columns.
    */
-  cache?: boolean;
+  cache: boolean;
 };
 
 /**
@@ -114,7 +114,7 @@ export default class EntityConfiguration<
   readonly cacheKeyVersion: number;
 
   readonly inboundEdges: IEntityClass<any, any, any, any, any, any>[];
-  readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>;
+  readonly schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any, any>>;
   readonly entityToDBFieldsKeyMapping: ReadonlyMap<keyof TFields, string>;
   readonly dbToEntityFieldsKeyMapping: ReadonlyMap<string, keyof TFields>;
 
@@ -144,7 +144,8 @@ export default class EntityConfiguration<
     /**
      * Map from each entity field to an EntityFieldDefinition specifying information about the field.
      */
-    schema: Record<keyof TFields, EntityFieldDefinition<any>>;
+    schema: Omit<Record<keyof TFields, EntityFieldDefinition<any, false>>, TIDField> &
+      Record<TIDField, EntityFieldDefinition<any, true>>;
 
     /**
      * List of other entity types that reference this type in EntityFieldDefinition associations.
@@ -181,7 +182,7 @@ export default class EntityConfiguration<
 
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups
-    EntityConfiguration.validateSchema<TFields>(schema);
+    EntityConfiguration.validateSchema<TFields, TIDField>(schema);
     this.schema = new Map(Object.entries(schema));
 
     this.cacheableKeys = EntityConfiguration.computeCacheableKeys(this.schema);
@@ -192,8 +193,12 @@ export default class EntityConfiguration<
     this.dbToEntityFieldsKeyMapping = invertMap(this.entityToDBFieldsKeyMapping);
   }
 
-  private static validateSchema<TFields extends Record<string, any>>(
-    schema: Record<keyof TFields, EntityFieldDefinition<any>>,
+  private static validateSchema<
+    TFields extends Record<string, any>,
+    TIDField extends keyof TFields,
+  >(
+    schema: Omit<Record<keyof TFields, EntityFieldDefinition<any, false>>, TIDField> &
+      Record<TIDField, EntityFieldDefinition<any, true>>,
   ): void {
     const disallowedFieldsKeys = Object.getOwnPropertyNames(Object.prototype);
     for (const disallowedFieldsKey of disallowedFieldsKeys) {
@@ -206,7 +211,7 @@ export default class EntityConfiguration<
   }
 
   private static computeCacheableKeys<TFields extends Record<string, any>>(
-    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>,
+    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any, any>>,
   ): ReadonlySet<keyof TFields> {
     return reduceMap(
       schema,
@@ -221,7 +226,7 @@ export default class EntityConfiguration<
   }
 
   private static computeEntityToDBFieldsKeyMapping<TFields>(
-    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any>>,
+    schema: ReadonlyMap<keyof TFields, EntityFieldDefinition<any, any>>,
   ): ReadonlyMap<keyof TFields, string> {
     return mapMap(schema, (v) => v.columnName);
   }

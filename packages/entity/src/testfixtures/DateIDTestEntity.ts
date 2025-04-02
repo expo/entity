@@ -16,6 +16,7 @@ export const dateIDTestEntityConfiguration = new EntityConfiguration<DateIDTestF
   schema: {
     id: new DateField({
       columnName: 'custom_id',
+      cache: true,
     }),
   },
   databaseAdapterFlavor: 'postgres',

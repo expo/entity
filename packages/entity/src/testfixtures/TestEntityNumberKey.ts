@@ -16,6 +16,7 @@ export const numberKeyEntityConfiguration = new EntityConfiguration<NumberKeyFie
   schema: {
     id: new IntField({
       columnName: 'custom_id',
+      cache: false,
     }),
   },
   databaseAdapterFlavor: 'postgres',

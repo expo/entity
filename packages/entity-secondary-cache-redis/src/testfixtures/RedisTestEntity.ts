@@ -56,6 +56,7 @@ export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEnt
   schema: {
     id: new UUIDField({
       columnName: 'id',
+      cache: false,
     }),
     name: new StringField({
       columnName: 'name',
