@@ -8,7 +8,10 @@ import {
   UUIDField,
   StringField,
 } from '@expo/entity';
-import { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis';
+import {
+  GenericRedisCacheContext,
+  RedisCacheInvalidationStrategy,
+} from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
@@ -81,7 +84,7 @@ const testEntityConfiguration = new EntityConfiguration<TestFields>({
 async function createOrTruncatePostgresTablesAsync(knex: Knex): Promise<void> {
   await knex.schema.createTable('testentities', (table) => {
     table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
-    table.string('other_string').notNullable();
+    table.string('other_string').notNullable().unique();
     table.string('third_string').notNullable();
   });
   await knex.into('testentities').truncate();
@@ -121,6 +124,7 @@ describe('Entity cache inconsistency', () => {
       cacheKeyPrefix: 'test-',
       ttlSecondsPositive: 86400, // 1 day
       ttlSecondsNegative: 600, // 10 minutes
+      invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
     };
   });
 

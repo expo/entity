@@ -11,6 +11,7 @@ import {
 
 import { redisTransformerMap } from './RedisCommon';
 import wrapNativeRedisCallAsync from './errors/wrapNativeRedisCallAsync';
+import { getSurroundingCacheKeyVersionsForInvalidation } from './utils/getSurroundingCacheKeyVersionsForInvalidation';
 
 // Sentinel value we store in Redis to negatively cache a database miss.
 // The sentinel value is distinct from any (positively) cached value.
@@ -25,6 +26,24 @@ export interface IRedis {
   mget(...args: [...keys: string[]]): Promise<(string | null)[]>;
   multi(): IRedisTransaction;
   del(...args: [...keys: string[]]): Promise<any>;
+}
+
+/**
+ * The strategy for generating the set of cache keys to invalidate in the Redis cache after entity mutation.
+ */
+export enum RedisCacheInvalidationStrategy {
+  /**
+   * Invalidate just the cache key(s) for the current cacheKeyVersion of the entity.
+   */
+  CURRENT_CACHE_KEY_VERSION = 'current-cache-key-version',
+
+  /**
+   * Invalidate the cache key(s) for the current cacheKeyVersion and the surrounding cache key versions
+   * (e.g. `1`, `2` and `3` if the current version is `2`). This can be useful for deployment safety, where
+   * some machines may be operating on an old version of the code and thus an old cacheKeyVersion, and some the new version.
+   * This strategy generates cache keys for both old and potential future new versions.
+   */
+  SURROUNDING_CACHE_KEY_VERSIONS = 'surrounding-cache-key-versions',
 }
 
 export interface GenericRedisCacheContext {
@@ -56,6 +75,11 @@ export interface GenericRedisCacheContext {
    * this TTL will be assumed not present in the database (unless invalidated).
    */
   ttlSecondsNegative: number;
+
+  /**
+   * Invalidation strategy for the cache.
+   */
+  invalidationStrategy: RedisCacheInvalidationStrategy;
 }
 
 export default class GenericRedisCacher<TFields extends Record<string, any>>
@@ -148,19 +172,50 @@ export default class GenericRedisCacher<TFields extends Record<string, any>>
     await wrapNativeRedisCallAsync(() => this.context.redisClient.del(...keys));
   }
 
-  public makeCacheKey<
+  private makeCacheKeyForCacheKeyVersion<
     TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
-  >(key: TLoadKey, value: TLoadValue): string {
+  >(key: TLoadKey, value: TLoadValue, cacheKeyVersion: number): string {
     const cacheKeyType = key.getLoadMethodType();
     const parts = key.createCacheKeyPartsForLoadValue(this.entityConfiguration, value);
     return this.context.makeKeyFn(
       this.context.cacheKeyPrefix,
       cacheKeyType,
       this.entityConfiguration.tableName,
-      `v2.${this.entityConfiguration.cacheKeyVersion}`,
+      `v2.${cacheKeyVersion}`,
       ...parts,
     );
+  }
+
+  public makeCacheKeyForStorage<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, value: TLoadValue): string {
+    return this.makeCacheKeyForCacheKeyVersion(
+      key,
+      value,
+      this.entityConfiguration.cacheKeyVersion,
+    );
+  }
+
+  public makeCacheKeysForInvalidation<
+    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(key: TLoadKey, value: TLoadValue): readonly string[] {
+    switch (this.context.invalidationStrategy) {
+      case RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION:
+        return [
+          this.makeCacheKeyForCacheKeyVersion(key, value, this.entityConfiguration.cacheKeyVersion),
+        ];
+      case RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS:
+        return getSurroundingCacheKeyVersionsForInvalidation(
+          this.entityConfiguration.cacheKeyVersion,
+        ).map((cacheKeyVersion) =>
+          this.makeCacheKeyForCacheKeyVersion(key, value, cacheKeyVersion),
+        );
+    }
   }
 }

@@ -1,5 +1,8 @@
 import { EntitySecondaryCacheLoader, mapMapAsync, ViewerContext } from '@expo/entity';
-import { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis';
+import {
+  GenericRedisCacheContext,
+  RedisCacheInvalidationStrategy,
+} from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
 import nullthrows from 'nullthrows';
 import { URL } from 'url';
@@ -64,6 +67,7 @@ describe(RedisSecondaryEntityCache, () => {
       cacheKeyPrefix: 'test-',
       ttlSecondsPositive: 86400, // 1 day
       ttlSecondsNegative: 600, // 10 minutes
+      invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
     };
   });
 

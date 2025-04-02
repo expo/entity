@@ -2,7 +2,10 @@ import { CacheStatus, ViewerContext } from '@expo/entity';
 import Redis from 'ioredis';
 import { URL } from 'url';
 
-import GenericRedisCacher, { GenericRedisCacheContext } from '../GenericRedisCacher';
+import GenericRedisCacher, {
+  GenericRedisCacheContext,
+  RedisCacheInvalidationStrategy,
+} from '../GenericRedisCacher';
 import RedisTestEntity, {
   redisTestEntityConfiguration,
   RedisTestEntityFields,
@@ -27,6 +30,7 @@ describe(GenericRedisCacher, () => {
       cacheKeyPrefix: 'test-',
       ttlSecondsPositive: 86400, // 1 day
       ttlSecondsNegative: 600, // 10 minutes
+      invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
     };
   });
 

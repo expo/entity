@@ -7,7 +7,10 @@ import {
   EntityConfiguration,
   UUIDField,
 } from '@expo/entity';
-import { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis';
+import {
+  GenericRedisCacheContext,
+  RedisCacheInvalidationStrategy,
+} from '@expo/entity-cache-adapter-redis';
 import Redis from 'ioredis';
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
@@ -110,6 +113,7 @@ describe('Entity integrity', () => {
       cacheKeyPrefix: 'test-',
       ttlSecondsPositive: 86400, // 1 day
       ttlSecondsNegative: 600, // 10 minutes
+      invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
     };
   });
 
