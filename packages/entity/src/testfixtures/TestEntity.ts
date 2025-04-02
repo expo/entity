@@ -23,6 +23,7 @@ export const testEntityConfiguration = new EntityConfiguration<TestFields, 'cust
   schema: {
     customIdField: new UUIDField({
       columnName: 'custom_id',
+      cache: true,
     }),
     testIndexedField: new StringField({
       columnName: 'test_index',

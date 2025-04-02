@@ -145,6 +145,8 @@ export interface EntityFieldDefinitionOptions {
    * Whether or not to cache loaded instances of the entity by this field. The column name is
    * used to derive a cache key for the cache entry. If true, this column must be able uniquely
    * identify the entity and the database must have a unique constraint on the column.
+   *
+   * NOTE: For ID fields, you should explicitly set this to either true or false.
    */
   cache?: boolean;
 
@@ -158,7 +160,9 @@ export interface EntityFieldDefinitionOptions {
  * Definition for a field referencing a column in the underlying database. Specifies things like
  * cache behavior and associations, and handles input validation.
  */
-export abstract class EntityFieldDefinition<T> {
+export abstract class EntityFieldDefinition<T, TExplicitCache extends boolean = any> {
+  // Compile-time marker for whether the cache option is explicitly specified
+  declare hasExplicitCacheOption: TExplicitCache;
   readonly columnName: string;
   readonly cache: boolean;
   readonly association: EntityAssociationDefinition<any, any, any, any, any, any> | undefined;
@@ -166,7 +170,10 @@ export abstract class EntityFieldDefinition<T> {
    *
    * @param options - options for this field definition
    */
-  constructor(options: EntityFieldDefinitionOptions) {
+  constructor(
+    options: EntityFieldDefinitionOptions &
+      (TExplicitCache extends true ? { cache: boolean } : { cache?: boolean }),
+  ) {
     this.columnName = options.columnName;
     this.cache = options.cache ?? false;
     this.association = options.association;

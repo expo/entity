@@ -17,6 +17,7 @@ export const testEntity2Configuration = new EntityConfiguration<Test2Fields, 'id
   schema: {
     id: new UUIDField({
       columnName: 'id',
+      cache: true,
     }),
     foreignKey: new UUIDField({
       columnName: 'foreign_key',

@@ -22,6 +22,7 @@ const blahEntityConfiguration = new EntityConfiguration<BlahT, 'id'>({
   schema: {
     id: new UUIDField({
       columnName: 'id',
+      cache: true,
     }),
     cacheable: new StringField({
       columnName: 'cacheable',
