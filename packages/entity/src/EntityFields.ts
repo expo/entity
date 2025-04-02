@@ -7,7 +7,10 @@ const UUID_REGEX =
 /**
  * EntityFieldDefinition for a column with a JS string type.
  */
-export class StringField extends EntityFieldDefinition<string> {
+export class StringField<TExplicitCache extends boolean = any> extends EntityFieldDefinition<
+  string,
+  TExplicitCache
+> {
   protected validateInputValueInternal(value: string): boolean {
     return typeof value === 'string';
   }
@@ -17,7 +20,7 @@ export class StringField extends EntityFieldDefinition<string> {
  * EntityFieldDefinition for a column with a JS string type.
  * Enforces that the string is a valid UUID.
  */
-export class UUIDField extends StringField {
+export class UUIDField<TExplicitCache extends boolean = any> extends StringField<TExplicitCache> {
   protected override validateInputValueInternal(value: string): boolean {
     return super.validateInputValueInternal(value) && UUID_REGEX.test(value);
   }
@@ -26,7 +29,10 @@ export class UUIDField extends StringField {
 /**
  * EntityFieldDefinition for a column with a JS Date type.
  */
-export class DateField extends EntityFieldDefinition<Date> {
+export class DateField<TExplicitCache extends boolean = any> extends EntityFieldDefinition<
+  Date,
+  TExplicitCache
+> {
   protected validateInputValueInternal(value: Date): boolean {
     return value instanceof Date;
   }
@@ -35,7 +41,10 @@ export class DateField extends EntityFieldDefinition<Date> {
 /**
  * EntityFieldDefinition for a column with a JS boolean type.
  */
-export class BooleanField extends EntityFieldDefinition<boolean> {
+export class BooleanField<TExplicitCache extends boolean = any> extends EntityFieldDefinition<
+  boolean,
+  TExplicitCache
+> {
   protected validateInputValueInternal(value: boolean): boolean {
     return typeof value === 'boolean';
   }
@@ -45,7 +54,10 @@ export class BooleanField extends EntityFieldDefinition<boolean> {
  * EntityFieldDefinition for a column with a JS number type.
  * Enforces that the number is an integer.
  */
-export class IntField extends EntityFieldDefinition<number> {
+export class IntField<TExplicitCache extends boolean = any> extends EntityFieldDefinition<
+  number,
+  TExplicitCache
+> {
   protected validateInputValueInternal(value: number): boolean {
     return typeof value === 'number' && Number.isInteger(value);
   }
@@ -55,7 +67,10 @@ export class IntField extends EntityFieldDefinition<number> {
  * EntityFieldDefinition for a column with a JS number type.
  * Enforces that the number is a float (which includes integers in JS).
  */
-export class FloatField extends EntityFieldDefinition<number> {
+export class FloatField<TExplicitCache extends boolean = any> extends EntityFieldDefinition<
+  number,
+  TExplicitCache
+> {
   protected validateInputValueInternal(value: number): boolean {
     return typeof value === 'number';
   }
@@ -65,7 +80,10 @@ export class FloatField extends EntityFieldDefinition<number> {
  * EntityFieldDefinition for a column with a JS string array type.
  * Enforces that every member of the string array is a string.
  */
-export class StringArrayField extends EntityFieldDefinition<string[]> {
+export class StringArrayField<TExplicitCache extends boolean = any> extends EntityFieldDefinition<
+  string[],
+  TExplicitCache
+> {
   protected validateInputValueInternal(value: string[]): boolean {
     return Array.isArray(value) && value.every((subValue) => typeof subValue === 'string');
   }
@@ -74,7 +92,10 @@ export class StringArrayField extends EntityFieldDefinition<string[]> {
 /**
  * EntityFieldDefinition for a column with a JS JSON object type.
  */
-export class JSONObjectField extends EntityFieldDefinition<object> {
+export class JSONObjectField<TExplicitCache extends boolean = any> extends EntityFieldDefinition<
+  object,
+  TExplicitCache
+> {
   protected validateInputValueInternal(value: object): boolean {
     return typeof value === 'object' && !Array.isArray(value);
   }
@@ -83,7 +104,10 @@ export class JSONObjectField extends EntityFieldDefinition<object> {
 /**
  * EntityFieldDefinition for a enum column with a JS string or number type.
  */
-export class EnumField extends EntityFieldDefinition<string | number> {
+export class EnumField<TExplicitCache extends boolean = any> extends EntityFieldDefinition<
+  string | number,
+  TExplicitCache
+> {
   protected validateInputValueInternal(value: string | number): boolean {
     return typeof value === 'number' || typeof value === 'string';
   }
@@ -92,9 +116,16 @@ export class EnumField extends EntityFieldDefinition<string | number> {
 /**
  * EntityFieldDefinition for a enum column with a strict typescript enum type.
  */
-export class StrictEnumField<T extends object> extends EnumField {
+export class StrictEnumField<
+  T extends object,
+  TExplicitCache extends boolean = any,
+> extends EnumField<TExplicitCache> {
   private readonly enum: T;
-  constructor(options: ConstructorParameters<typeof EnumField>[0] & { enum: T }) {
+  constructor(
+    options: ConstructorParameters<
+      typeof EntityFieldDefinition<string | number, TExplicitCache>
+    >[0] & { enum: T },
+  ) {
     super(options);
     this.enum = options.enum;
   }

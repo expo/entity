@@ -18,6 +18,7 @@ export const simpleTestEntityConfiguration = new EntityConfiguration<SimpleTestF
   schema: {
     id: new UUIDField({
       columnName: 'custom_id',
+      cache: true,
     }),
   },
   databaseAdapterFlavor: 'postgres',

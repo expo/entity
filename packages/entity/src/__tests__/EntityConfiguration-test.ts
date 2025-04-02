@@ -20,6 +20,7 @@ describe(EntityConfiguration, () => {
       schema: {
         id: new UUIDField({
           columnName: 'id',
+          cache: true,
         }),
         cacheable: new StringField({
           columnName: 'cacheable',
@@ -49,7 +50,7 @@ describe(EntityConfiguration, () => {
     });
 
     it('filters cacheable fields', () => {
-      expect(blahEntityConfiguration.cacheableKeys).toEqual(new Set(['cacheable']));
+      expect(blahEntityConfiguration.cacheableKeys).toEqual(new Set(['id', 'cacheable']));
     });
 
     it('correctly returns cacheable composite fields', () => {
@@ -77,6 +78,7 @@ describe(EntityConfiguration, () => {
             schema: {
               id: new UUIDField({
                 columnName: 'id',
+                cache: false,
               }),
               cacheable: new StringField({
                 columnName: 'cacheable',
@@ -100,6 +102,7 @@ describe(EntityConfiguration, () => {
             schema: {
               id: new UUIDField({
                 columnName: 'id',
+                cache: true,
               }),
               cacheable: new StringField({
                 columnName: 'cacheable',
@@ -124,6 +127,7 @@ describe(EntityConfiguration, () => {
           schema: {
             id: new UUIDField({
               columnName: 'id',
+              cache: true,
             }),
           },
           databaseAdapterFlavor: 'postgres',
@@ -139,6 +143,7 @@ describe(EntityConfiguration, () => {
           schema: {
             id: new UUIDField({
               columnName: 'id',
+              cache: true,
             }),
           },
           databaseAdapterFlavor: 'postgres',
@@ -174,6 +179,7 @@ describe(EntityConfiguration, () => {
               schema: {
                 id: new UUIDField({
                   columnName: 'id',
+                  cache: false,
                 }),
                 [keyName]: new StringField({
                   columnName: 'any',

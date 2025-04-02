@@ -23,6 +23,7 @@ export const testEntityMTConfiguration = new EntityConfiguration<TestMTFields, '
   schema: {
     id: new UUIDField({
       columnName: 'id',
+      cache: true,
     }),
     stringField: new StringField({
       columnName: 'string_field',

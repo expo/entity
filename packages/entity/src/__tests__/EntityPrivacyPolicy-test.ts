@@ -41,6 +41,7 @@ class BlahEntity extends Entity<BlahFields, 'id', ViewerContext> {
         schema: {
           id: new UUIDField({
             columnName: 'id',
+            cache: true,
           }),
         },
         databaseAdapterFlavor: 'postgres',

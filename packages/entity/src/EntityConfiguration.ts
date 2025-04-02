@@ -143,9 +143,14 @@ export default class EntityConfiguration<
     tableName: string;
 
     /**
-     * Map from each entity field to an EntityFieldDefinition specifying information about the field.
+     * Map from each entity field to an EntityFieldDefinition specifying information about the
+     * field. The ID field must explicitly set the `cache` option.
      */
-    schema: Record<keyof TFields, EntityFieldDefinition<any>>;
+    schema: {
+      [K in keyof TFields]: K extends TIDField
+        ? EntityFieldDefinition<any, /* TExplicitCache */ true>
+        : EntityFieldDefinition<any>;
+    };
 
     /**
      * List of other entity types that reference this type in EntityFieldDefinition associations.
