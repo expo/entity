@@ -11,12 +11,12 @@ import ViewerContext from './ViewerContext';
  */
 export default class EntityUpdater<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -28,7 +28,7 @@ export default class EntityUpdater<
     private readonly queryContext: EntityQueryContext,
     private readonly entityClass: IEntityClass<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -42,7 +42,7 @@ export default class EntityUpdater<
    */
   enforcing(): EnforcingEntityUpdater<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
@@ -58,7 +58,7 @@ export default class EntityUpdater<
    */
   withAuthorizationResults(): AuthorizationResultBasedUpdateMutator<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,

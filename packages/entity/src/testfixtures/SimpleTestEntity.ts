@@ -12,7 +12,7 @@ export type SimpleTestFields = {
 
 export type SimpleTestFieldSelection = keyof SimpleTestFields;
 
-export const simpleTestEntityConfiguration = new EntityConfiguration<SimpleTestFields>({
+export const simpleTestEntityConfiguration = new EntityConfiguration<SimpleTestFields, 'id'>({
   idField: 'id',
   tableName: 'simple_test_entity_should_not_write_to_db',
   schema: {
@@ -26,7 +26,7 @@ export const simpleTestEntityConfiguration = new EntityConfiguration<SimpleTestF
 
 export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   SimpleTestFields,
-  string,
+  'id',
   ViewerContext,
   SimpleTestEntity,
   SimpleTestFieldSelection
@@ -34,7 +34,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
-      string,
+      'id',
       ViewerContext,
       SimpleTestEntity,
       SimpleTestFieldSelection
@@ -43,7 +43,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
-      string,
+      'id',
       ViewerContext,
       SimpleTestEntity,
       SimpleTestFieldSelection
@@ -52,7 +52,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
-      string,
+      'id',
       ViewerContext,
       SimpleTestEntity,
       SimpleTestFieldSelection
@@ -61,7 +61,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       SimpleTestFields,
-      string,
+      'id',
       ViewerContext,
       SimpleTestEntity,
       SimpleTestFieldSelection
@@ -71,13 +71,13 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
 
 export default class SimpleTestEntity extends Entity<
   SimpleTestFields,
-  string,
+  'id',
   ViewerContext,
   SimpleTestFieldSelection
 > {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     SimpleTestFields,
-    string,
+    'id',
     ViewerContext,
     SimpleTestEntity,
     SimpleTestEntityPrivacyPolicy,

@@ -14,7 +14,7 @@ describe(ViewerScopedEntityCompanion, () => {
       mock<
         EntityCompanion<
           TestFields,
-          string,
+          'customIdField',
           ViewerContext,
           TestEntity,
           TestEntityPrivacyPolicy,

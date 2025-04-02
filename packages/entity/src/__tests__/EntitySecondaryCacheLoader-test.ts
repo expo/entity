@@ -14,7 +14,7 @@ type TestLoadParams = { id: string };
 class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
   TestLoadParams,
   SimpleTestFields,
-  string,
+  'id',
   ViewerContext,
   SimpleTestEntity,
   SimpleTestEntityPrivacyPolicy

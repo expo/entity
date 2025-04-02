@@ -14,12 +14,12 @@ import ViewerContext from './ViewerContext';
  */
 export default class ViewerScopedEntityMutatorFactory<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -29,7 +29,7 @@ export default class ViewerScopedEntityMutatorFactory<
   constructor(
     private readonly entityMutatorFactory: EntityMutatorFactory<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -42,7 +42,7 @@ export default class ViewerScopedEntityMutatorFactory<
     queryContext: EntityQueryContext,
   ): AuthorizationResultBasedCreateMutator<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
@@ -56,7 +56,7 @@ export default class ViewerScopedEntityMutatorFactory<
     queryContext: EntityQueryContext,
   ): AuthorizationResultBasedUpdateMutator<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
@@ -70,7 +70,7 @@ export default class ViewerScopedEntityMutatorFactory<
     queryContext: EntityQueryContext,
   ): AuthorizationResultBasedDeleteMutator<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,

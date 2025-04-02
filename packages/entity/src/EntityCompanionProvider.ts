@@ -51,12 +51,12 @@ export interface CacheAdapterFlavorDefinition {
  */
 export interface EntityCompanionDefinition<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -68,7 +68,7 @@ export interface EntityCompanionDefinition<
    */
   readonly entityClass: IEntityClass<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
@@ -78,7 +78,7 @@ export interface EntityCompanionDefinition<
   /**
    * The EntityConfiguration for this entity.
    */
-  readonly entityConfiguration: EntityConfiguration<TFields>;
+  readonly entityConfiguration: EntityConfiguration<TFields, TIDField>;
 
   /**
    * The EntityPrivacyPolicy class for this entity.
@@ -90,7 +90,7 @@ export interface EntityCompanionDefinition<
    */
   readonly mutationValidators?: EntityMutationValidator<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -101,7 +101,7 @@ export interface EntityCompanionDefinition<
    */
   readonly mutationTriggers?: EntityMutationTriggerConfiguration<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -131,7 +131,7 @@ export default class EntityCompanionProvider {
   > = new Map();
   private readonly companionMap: Map<string, EntityCompanion<any, any, any, any, any, any>> =
     new Map();
-  private readonly tableDataCoordinatorMap: Map<string, EntityTableDataCoordinator<any>> =
+  private readonly tableDataCoordinatorMap: Map<string, EntityTableDataCoordinator<any, any>> =
     new Map();
 
   /**
@@ -168,12 +168,12 @@ export default class EntityCompanionProvider {
    */
   getCompanionForEntity<
     TFields extends Record<string, any>,
-    TID extends NonNullable<TFields[TSelectedFields]>,
+    TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
     TViewerContext extends ViewerContext,
-    TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+    TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
     TPrivacyPolicy extends EntityPrivacyPolicy<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
@@ -182,13 +182,13 @@ export default class EntityCompanionProvider {
   >(
     entityClass: IEntityClass<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
     >,
-  ): EntityCompanion<TFields, TID, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
+  ): EntityCompanion<TFields, TIDField, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     const entityCompanionDefinition = computeIfAbsent(
       this.companionDefinitionMap,
       entityClass.name,
@@ -220,10 +220,13 @@ export default class EntityCompanionProvider {
     return entityDatabaseAdapterFlavor.queryContextProvider;
   }
 
-  private getTableDataCoordinatorForEntity<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>,
+  private getTableDataCoordinatorForEntity<
+    TFields extends Record<string, any>,
+    TIDField extends keyof TFields,
+  >(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
     entityClassName: string,
-  ): EntityTableDataCoordinator<TFields> {
+  ): EntityTableDataCoordinator<TFields, TIDField> {
     return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration.tableName, () => {
       const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors.get(
         entityConfiguration.databaseAdapterFlavor,

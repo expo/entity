@@ -33,17 +33,17 @@ type BlahFields = {
   ownerID: string;
 };
 
-class BlahEntity extends Entity<BlahFields, string, TestUserViewerContext> {
+class BlahEntity extends Entity<BlahFields, 'id', TestUserViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     BlahFields,
-    string,
+    'id',
     TestUserViewerContext,
     BlahEntity,
     BlahEntityPrivacyPolicy
   > {
     return {
       entityClass: BlahEntity,
-      entityConfiguration: new EntityConfiguration<BlahFields>({
+      entityConfiguration: new EntityConfiguration<BlahFields, 'id'>({
         idField: 'id',
         tableName: 'blah_table',
         schema: {
@@ -65,7 +65,7 @@ class BlahEntity extends Entity<BlahFields, string, TestUserViewerContext> {
 
 class DenyIfNotOwnerPrivacyPolicyRule extends PrivacyPolicyRule<
   BlahFields,
-  string,
+  'id',
   TestUserViewerContext,
   BlahEntity
 > {
@@ -74,7 +74,7 @@ class DenyIfNotOwnerPrivacyPolicyRule extends PrivacyPolicyRule<
     _queryContext: EntityQueryContext,
     _evaluationContext: EntityPrivacyPolicyEvaluationContext<
       BlahFields,
-      string,
+      'id',
       TestUserViewerContext,
       BlahEntity
     >,
@@ -89,24 +89,24 @@ class DenyIfNotOwnerPrivacyPolicyRule extends PrivacyPolicyRule<
 
 class BlahEntityPrivacyPolicy extends EntityPrivacyPolicy<
   BlahFields,
-  string,
+  'id',
   ViewerContext,
   BlahEntity
 > {
   protected override readonly createRules = [
     new DenyIfNotOwnerPrivacyPolicyRule(),
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly readRules = [
     new DenyIfNotOwnerPrivacyPolicyRule(),
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly updateRules = [
     new DenyIfNotOwnerPrivacyPolicyRule(),
-    new AlwaysAllowPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysDenyPrivacyPolicyRule<BlahFields, string, ViewerContext, BlahEntity>(),
+    new AlwaysDenyPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
   ];
 }
 

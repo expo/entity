@@ -13,13 +13,16 @@ import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
  * table. Note that one instance is shared amongst all entities that read from
  * the table to ensure cross-entity data consistency.
  */
-export default class EntityTableDataCoordinator<TFields extends Record<string, any>> {
-  readonly databaseAdapter: EntityDatabaseAdapter<TFields>;
-  readonly cacheAdapter: IEntityCacheAdapter<TFields>;
-  readonly dataManager: EntityDataManager<TFields>;
+export default class EntityTableDataCoordinator<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> {
+  readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>;
+  readonly cacheAdapter: IEntityCacheAdapter<TFields, TIDField>;
+  readonly dataManager: EntityDataManager<TFields, TIDField>;
 
   constructor(
-    readonly entityConfiguration: EntityConfiguration<TFields>,
+    readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     databaseAdapterProvider: IEntityDatabaseAdapterProvider,
     cacheAdapterProvider: IEntityCacheAdapterProvider,
     private readonly queryContextProvider: EntityQueryContextProvider,

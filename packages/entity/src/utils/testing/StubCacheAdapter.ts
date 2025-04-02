@@ -7,18 +7,20 @@ import { IEntityLoadKey, IEntityLoadValue } from '../../internal/EntityLoadInter
 import { CacheStatus, CacheLoadResult } from '../../internal/ReadThroughEntityCache';
 
 export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
-  getCacheAdapter<TFields extends Record<string, any>>(
-    _entityConfiguration: EntityConfiguration<TFields>,
-  ): IEntityCacheAdapter<TFields> {
+  getCacheAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
+    _entityConfiguration: EntityConfiguration<TFields, TIDField>,
+  ): IEntityCacheAdapter<TFields, TIDField> {
     return new NoCacheStubCacheAdapter();
   }
 }
 
-export class NoCacheStubCacheAdapter<TFields extends Record<string, any>>
-  implements IEntityCacheAdapter<TFields>
+export class NoCacheStubCacheAdapter<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> implements IEntityCacheAdapter<TFields, TIDField>
 {
   public async loadManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -34,19 +36,19 @@ export class NoCacheStubCacheAdapter<TFields extends Record<string, any>>
   }
 
   public async cacheManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(_key: TLoadKey, _objectMap: ReadonlyMap<TLoadValue, Readonly<TFields>>): Promise<void> {}
 
   public async cacheDBMissesAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(_key: TLoadKey, _values: readonly TLoadValue[]): Promise<void> {}
 
   public async invalidateManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(_key: TLoadKey, _values: readonly TLoadValue[]): Promise<void> {}
@@ -59,9 +61,9 @@ export const DOES_NOT_EXIST = Symbol('inMemoryCacheDoesNotExistValue');
 export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
   private readonly cache: Map<string, Readonly<object> | typeof DOES_NOT_EXIST> = new Map();
 
-  getCacheAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>,
-  ): IEntityCacheAdapter<TFields> {
+  getCacheAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+  ): IEntityCacheAdapter<TFields, TIDField> {
     return new InMemoryFullCacheStubCacheAdapter(
       entityConfiguration,
       this.cache as Map<string, Readonly<TFields>>,
@@ -69,16 +71,18 @@ export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAd
   }
 }
 
-export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, any>>
-  implements IEntityCacheAdapter<TFields>
+export class InMemoryFullCacheStubCacheAdapter<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> implements IEntityCacheAdapter<TFields, TIDField>
 {
   constructor(
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     private readonly cache: Map<string, Readonly<TFields> | typeof DOES_NOT_EXIST>,
   ) {}
 
   public async loadManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -111,7 +115,7 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
   }
 
   public async cacheManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, objectMap: ReadonlyMap<TLoadValue, Readonly<TFields>>): Promise<void> {
@@ -122,7 +126,7 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
   }
 
   public async cacheDBMissesAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
@@ -133,7 +137,7 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
   }
 
   public async invalidateManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
@@ -144,7 +148,7 @@ export class InMemoryFullCacheStubCacheAdapter<TFields extends Record<string, an
   }
 
   private createCacheKey<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue): string {

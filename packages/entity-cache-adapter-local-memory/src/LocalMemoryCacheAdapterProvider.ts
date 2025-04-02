@@ -33,7 +33,10 @@ export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdap
     );
   }
 
-  private readonly localMemoryCacheAdapterMap = new Map<string, GenericEntityCacheAdapter<any>>();
+  private readonly localMemoryCacheAdapterMap = new Map<
+    string,
+    GenericEntityCacheAdapter<any, any>
+  >();
 
   private constructor(
     private readonly localMemoryCacheCreator: <
@@ -41,9 +44,9 @@ export default class LocalMemoryCacheAdapterProvider implements IEntityCacheAdap
     >() => LocalMemoryCache<TFields>,
   ) {}
 
-  public getCacheAdapter<TFields extends Record<string, any>>(
-    entityConfiguration: EntityConfiguration<TFields>,
-  ): IEntityCacheAdapter<TFields> {
+  public getCacheAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+  ): IEntityCacheAdapter<TFields, TIDField> {
     return computeIfAbsent(this.localMemoryCacheAdapterMap, entityConfiguration.tableName, () => {
       const localMemoryCache = this.localMemoryCacheCreator<TFields>();
       return new GenericEntityCacheAdapter(

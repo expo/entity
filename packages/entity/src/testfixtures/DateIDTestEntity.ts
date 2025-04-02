@@ -10,7 +10,7 @@ export type DateIDTestFields = {
   id: Date;
 };
 
-export const dateIDTestEntityConfiguration = new EntityConfiguration<DateIDTestFields>({
+export const dateIDTestEntityConfiguration = new EntityConfiguration<DateIDTestFields, 'id'>({
   idField: 'id',
   tableName: 'simple_test_entity_should_not_write_to_db',
   schema: {
@@ -24,28 +24,28 @@ export const dateIDTestEntityConfiguration = new EntityConfiguration<DateIDTestF
 
 export class DateIDTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   DateIDTestFields,
-  Date,
+  'id',
   ViewerContext,
   DateIDTestEntity
 > {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, Date, ViewerContext, DateIDTestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, 'id', ViewerContext, DateIDTestEntity>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, Date, ViewerContext, DateIDTestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, 'id', ViewerContext, DateIDTestEntity>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, Date, ViewerContext, DateIDTestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, 'id', ViewerContext, DateIDTestEntity>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, Date, ViewerContext, DateIDTestEntity>(),
+    new AlwaysAllowPrivacyPolicyRule<DateIDTestFields, 'id', ViewerContext, DateIDTestEntity>(),
   ];
 }
 
-export default class DateIDTestEntity extends Entity<DateIDTestFields, Date, ViewerContext> {
+export default class DateIDTestEntity extends Entity<DateIDTestFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     DateIDTestFields,
-    Date,
+    'id',
     ViewerContext,
     DateIDTestEntity,
     DateIDTestEntityPrivacyPolicy

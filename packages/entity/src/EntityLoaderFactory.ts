@@ -13,12 +13,12 @@ import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
  */
 export default class EntityLoaderFactory<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -28,13 +28,13 @@ export default class EntityLoaderFactory<
   constructor(
     private readonly entityCompanion: EntityCompanion<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly dataManager: EntityDataManager<TFields>,
+    private readonly dataManager: EntityDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
@@ -48,14 +48,14 @@ export default class EntityLoaderFactory<
     queryContext: EntityQueryContext,
     privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >,
   ): AuthorizationResultBasedEntityLoader<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,

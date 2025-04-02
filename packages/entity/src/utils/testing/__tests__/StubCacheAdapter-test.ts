@@ -19,7 +19,7 @@ import {
 describe(NoCacheStubCacheAdapter, () => {
   describe('loadManyAsync', () => {
     it('should return a map of CacheLoadResult with status CacheStatus.MISS for all single values', async () => {
-      const adapter = new NoCacheStubCacheAdapter<TestFields>();
+      const adapter = new NoCacheStubCacheAdapter<TestFields, 'customIdField'>();
       const result = await adapter.loadManyAsync(new SingleFieldHolder('stringField'), [
         new SingleFieldValueHolder('huh'),
       ]);
@@ -31,9 +31,9 @@ describe(NoCacheStubCacheAdapter, () => {
     });
 
     it('should return a map of CacheLoadResult with status CacheStatus.MISS for all composite values', async () => {
-      const adapter = new NoCacheStubCacheAdapter<TestFields>();
+      const adapter = new NoCacheStubCacheAdapter<TestFields, 'customIdField'>();
       const result = await adapter.loadManyAsync(
-        new CompositeFieldHolder<TestFields>(['stringField', 'intField']),
+        new CompositeFieldHolder<TestFields, 'customIdField'>(['stringField', 'intField']),
         [new CompositeFieldValueHolder({ stringField: 'huh', intField: 42 })],
       );
       expect(result).toEqual(

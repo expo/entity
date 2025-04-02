@@ -296,54 +296,54 @@ type TestEntityThrowOtherErrorFields = {
 };
 
 class DenyUpdateEntityPrivacyPolicy<
-  TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TFields extends Record<'id', any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
-> extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+> extends EntityPrivacyPolicy<TFields, TIDField, TViewerContext, TEntity, TSelectedFields> {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysDenyPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysDenyPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
 }
 
 class DenyDeleteEntityPrivacyPolicy<
-  TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TFields extends Record<'id', any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
-> extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+> extends EntityPrivacyPolicy<TFields, TIDField, TViewerContext, TEntity, TSelectedFields> {
   protected override readonly readRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysDenyPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysDenyPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
 }
 
 class ThrowOtherErrorEntityPrivacyPolicy<
-  TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TFields extends Record<'id', any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
-> extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+> extends EntityPrivacyPolicy<TFields, TIDField, TViewerContext, TEntity, TSelectedFields> {
   protected override readonly readRules = [
     {
       async evaluateAsync(
@@ -351,7 +351,7 @@ class ThrowOtherErrorEntityPrivacyPolicy<
         _queryContext: EntityQueryContext,
         evaluationContext: EntityPrivacyPolicyEvaluationContext<
           TFields,
-          TID,
+          TIDField,
           TViewerContext,
           TEntity,
           TSelectedFields
@@ -364,10 +364,10 @@ class ThrowOtherErrorEntityPrivacyPolicy<
         return RuleEvaluationResult.SKIP;
       },
     },
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly updateRules = [
     {
@@ -386,12 +386,12 @@ class ThrowOtherErrorEntityPrivacyPolicy<
 }
 
 class DenyReadEntityPrivacyPolicy<
-  TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TFields extends Record<'id', any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
-> extends EntityPrivacyPolicy<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+> extends EntityPrivacyPolicy<TFields, TIDField, TViewerContext, TEntity, TSelectedFields> {
   protected override readonly readRules = [
     {
       async evaluateAsync(
@@ -399,7 +399,7 @@ class DenyReadEntityPrivacyPolicy<
         queryContext: EntityQueryContext,
         evaluationContext: EntityPrivacyPolicyEvaluationContext<
           TFields,
-          TID,
+          TIDField,
           TViewerContext,
           TEntity,
           TSelectedFields
@@ -416,32 +416,32 @@ class DenyReadEntityPrivacyPolicy<
     },
   ];
   protected override readonly createRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly updateRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
   protected override readonly deleteRules = [
-    new AlwaysAllowPrivacyPolicyRule<TFields, TID, TViewerContext, TEntity, TSelectedFields>(),
+    new AlwaysAllowPrivacyPolicyRule<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(),
   ];
 }
 
-class LeafDenyUpdateEntity extends Entity<TestLeafDenyUpdateFields, string, ViewerContext> {
+class LeafDenyUpdateEntity extends Entity<TestLeafDenyUpdateFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestLeafDenyUpdateFields,
-    string,
+    'id',
     ViewerContext,
     LeafDenyUpdateEntity,
     DenyUpdateEntityPrivacyPolicy<
       TestLeafDenyUpdateFields,
-      string,
+      'id',
       ViewerContext,
       LeafDenyUpdateEntity
     >
   > {
     return {
       entityClass: LeafDenyUpdateEntity,
-      entityConfiguration: new EntityConfiguration<TestLeafDenyUpdateFields>({
+      entityConfiguration: new EntityConfiguration<TestLeafDenyUpdateFields, 'id'>({
         idField: 'id',
         tableName: 'leaf_1',
         schema: {
@@ -481,22 +481,22 @@ class LeafDenyUpdateEntity extends Entity<TestLeafDenyUpdateFields, string, View
   }
 }
 
-class LeafDenyDeleteEntity extends Entity<TestLeafDenyDeleteFields, string, ViewerContext> {
+class LeafDenyDeleteEntity extends Entity<TestLeafDenyDeleteFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestLeafDenyDeleteFields,
-    string,
+    'id',
     ViewerContext,
     LeafDenyDeleteEntity,
     DenyDeleteEntityPrivacyPolicy<
       TestLeafDenyDeleteFields,
-      string,
+      'id',
       ViewerContext,
       LeafDenyDeleteEntity
     >
   > {
     return {
       entityClass: LeafDenyDeleteEntity,
-      entityConfiguration: new EntityConfiguration<TestLeafDenyDeleteFields>({
+      entityConfiguration: new EntityConfiguration<TestLeafDenyDeleteFields, 'id'>({
         idField: 'id',
         tableName: 'leaf_2',
         schema: {
@@ -528,17 +528,17 @@ class LeafDenyDeleteEntity extends Entity<TestLeafDenyDeleteFields, string, View
   }
 }
 
-class LeafDenyReadEntity extends Entity<TestLeafDenyReadFields, string, ViewerContext> {
+class LeafDenyReadEntity extends Entity<TestLeafDenyReadFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestLeafDenyReadFields,
-    string,
+    'id',
     ViewerContext,
     LeafDenyReadEntity,
-    DenyReadEntityPrivacyPolicy<TestLeafDenyReadFields, string, ViewerContext, LeafDenyReadEntity>
+    DenyReadEntityPrivacyPolicy<TestLeafDenyReadFields, 'id', ViewerContext, LeafDenyReadEntity>
   > {
     return {
       entityClass: LeafDenyReadEntity,
-      entityConfiguration: new EntityConfiguration<TestLeafDenyReadFields>({
+      entityConfiguration: new EntityConfiguration<TestLeafDenyReadFields, 'id'>({
         idField: 'id',
         tableName: 'leaf_4',
         inboundEdges: [],
@@ -563,22 +563,17 @@ class LeafDenyReadEntity extends Entity<TestLeafDenyReadFields, string, ViewerCo
   }
 }
 
-class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, string, ViewerContext> {
+class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestEntityFields,
-    string,
+    'id',
     ViewerContext,
     SimpleTestDenyUpdateEntity,
-    DenyUpdateEntityPrivacyPolicy<
-      TestEntityFields,
-      string,
-      ViewerContext,
-      SimpleTestDenyUpdateEntity
-    >
+    DenyUpdateEntityPrivacyPolicy<TestEntityFields, 'id', ViewerContext, SimpleTestDenyUpdateEntity>
   > {
     return {
       entityClass: SimpleTestDenyUpdateEntity,
-      entityConfiguration: new EntityConfiguration<TestEntityFields>({
+      entityConfiguration: new EntityConfiguration<TestEntityFields, 'id'>({
         idField: 'id',
         tableName: 'blah',
         inboundEdges: [
@@ -600,22 +595,17 @@ class SimpleTestDenyUpdateEntity extends Entity<TestEntityFields, string, Viewer
   }
 }
 
-class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, string, ViewerContext> {
+class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestEntityFields,
-    string,
+    'id',
     ViewerContext,
     SimpleTestDenyDeleteEntity,
-    DenyDeleteEntityPrivacyPolicy<
-      TestEntityFields,
-      string,
-      ViewerContext,
-      SimpleTestDenyDeleteEntity
-    >
+    DenyDeleteEntityPrivacyPolicy<TestEntityFields, 'id', ViewerContext, SimpleTestDenyDeleteEntity>
   > {
     return {
       entityClass: SimpleTestDenyDeleteEntity,
-      entityConfiguration: new EntityConfiguration<TestEntityFields>({
+      entityConfiguration: new EntityConfiguration<TestEntityFields, 'id'>({
         idField: 'id',
         tableName: 'blah_2',
         inboundEdges: [
@@ -639,24 +629,24 @@ class SimpleTestDenyDeleteEntity extends Entity<TestEntityFields, string, Viewer
 
 class SimpleTestThrowOtherErrorEntity extends Entity<
   TestEntityThrowOtherErrorFields,
-  string,
+  'id',
   ViewerContext
 > {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestEntityThrowOtherErrorFields,
-    string,
+    'id',
     ViewerContext,
     SimpleTestThrowOtherErrorEntity,
     ThrowOtherErrorEntityPrivacyPolicy<
       TestEntityThrowOtherErrorFields,
-      string,
+      'id',
       ViewerContext,
       SimpleTestThrowOtherErrorEntity
     >
   > {
     return {
       entityClass: SimpleTestThrowOtherErrorEntity,
-      entityConfiguration: new EntityConfiguration<TestEntityThrowOtherErrorFields>({
+      entityConfiguration: new EntityConfiguration<TestEntityThrowOtherErrorFields, 'id'>({
         idField: 'id',
         tableName: 'blah_3',
         inboundEdges: [],

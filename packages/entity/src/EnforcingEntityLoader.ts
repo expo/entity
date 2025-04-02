@@ -19,12 +19,12 @@ import { mapMap } from './utils/collections/maps';
  */
 export default class EnforcingEntityLoader<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -34,7 +34,7 @@ export default class EnforcingEntityLoader<
   constructor(
     private readonly entityLoader: AuthorizationResultBasedEntityLoader<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -176,7 +176,7 @@ export default class EnforcingEntityLoader<
    * @throws EntityNotAuthorizedError when viewer is not authorized to view the returned entity
    * @throws EntityNotFoundError when no entity exists for ID
    */
-  async loadByIDAsync(id: TID): Promise<TEntity> {
+  async loadByIDAsync(id: TFields[TIDField]): Promise<TEntity> {
     const entityResult = await this.entityLoader.loadByIDAsync(id);
     return entityResult.enforceValue();
   }
@@ -188,7 +188,7 @@ export default class EnforcingEntityLoader<
    * @throws EntityNotAuthorizedError when viewer is not authorized to view the returned entity
    * @throws when multiple entities are found matching the condition
    */
-  async loadByIDNullableAsync(id: TID): Promise<TEntity | null> {
+  async loadByIDNullableAsync(id: TFields[TIDField]): Promise<TEntity | null> {
     const entityResult = await this.entityLoader.loadByIDNullableAsync(id);
     return entityResult ? entityResult.enforceValue() : null;
   }
@@ -200,7 +200,9 @@ export default class EnforcingEntityLoader<
    * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
    * @throws EntityNotFoundError when no entity exists for one or more of the IDs
    */
-  async loadManyByIDsAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, TEntity>> {
+  async loadManyByIDsAsync(
+    ids: readonly TFields[TIDField][],
+  ): Promise<ReadonlyMap<TFields[TIDField], TEntity>> {
     const entityResults = await this.entityLoader.loadManyByIDsAsync(ids);
     return mapMap(entityResults, (result) => result.enforceValue());
   }
@@ -211,7 +213,9 @@ export default class EnforcingEntityLoader<
    * @returns map from ID to nullable corresponding entity
    * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
    */
-  async loadManyByIDsNullableAsync(ids: readonly TID[]): Promise<ReadonlyMap<TID, TEntity | null>> {
+  async loadManyByIDsNullableAsync(
+    ids: readonly TFields[TIDField][],
+  ): Promise<ReadonlyMap<TFields[TIDField], TEntity | null>> {
     const entityResults = await this.entityLoader.loadManyByIDsNullableAsync(ids);
     return mapMap(entityResults, (result) => result?.enforceValue() ?? null);
   }

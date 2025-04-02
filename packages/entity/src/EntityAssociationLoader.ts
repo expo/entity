@@ -12,9 +12,9 @@ import ViewerContext from './ViewerContext';
  */
 export default class EntityAssociationLoader<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields,
 > {
   constructor(
@@ -24,7 +24,7 @@ export default class EntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(
         entity.constructor as IEntityClass<
           TFields,
-          TID,
+          TIDField,
           TViewerContext,
           TEntity,
           any,
@@ -42,7 +42,7 @@ export default class EntityAssociationLoader<
    */
   enforcing(): EnforcingEntityAssociationLoader<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -57,7 +57,7 @@ export default class EntityAssociationLoader<
    */
   withAuthorizationResults(): AuthorizationResultBasedEntityAssociationLoader<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields

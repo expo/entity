@@ -10,7 +10,7 @@ import { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils'
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
 import { TestFields, testEntityConfiguration } from '../testfixtures/TestEntity';
 
-class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields> {
+class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'customIdField'> {
   private readonly fetchResults: object[];
   private readonly insertResults: object[];
   private readonly updateResults: object[];
@@ -138,7 +138,7 @@ describe(EntityDatabaseAdapter, () => {
       });
       const result = await adapter.fetchManyWhereAsync(
         queryContext,
-        new CompositeFieldHolder<TestFields>(['intField', 'stringField']),
+        new CompositeFieldHolder<TestFields, 'customIdField'>(['intField', 'stringField']),
         [
           new CompositeFieldValueHolder({ intField: 1, stringField: 'hello' }),
           new CompositeFieldValueHolder({ intField: 2, stringField: 'wat' }),
@@ -203,7 +203,7 @@ describe(EntityDatabaseAdapter, () => {
       await expect(
         adapter.fetchManyWhereAsync(
           queryContext,
-          new CompositeFieldHolder<TestFields>(['intField', 'stringField']),
+          new CompositeFieldHolder<TestFields, 'customIdField'>(['intField', 'stringField']),
           [new CompositeFieldValueHolder({ intField: 1, stringField: 'hello' })],
         ),
       ).rejects.toThrow(
@@ -219,7 +219,7 @@ describe(EntityDatabaseAdapter, () => {
       await expect(
         adapter.fetchManyWhereAsync(
           queryContext,
-          new CompositeFieldHolder<TestFields>(['intField', 'stringField']),
+          new CompositeFieldHolder<TestFields, 'customIdField'>(['intField', 'stringField']),
           [new CompositeFieldValueHolder({ intField: 1, stringField: 'hello' })],
         ),
       ).rejects.toThrow(

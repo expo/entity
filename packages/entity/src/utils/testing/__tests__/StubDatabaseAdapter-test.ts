@@ -26,7 +26,7 @@ describe(StubDatabaseAdapter, () => {
   describe('fetchManyWhereAsync', () => {
     it('fetches many where single', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
           testEntityConfiguration,
@@ -66,7 +66,7 @@ describe(StubDatabaseAdapter, () => {
 
     it('fetches many where composite', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
           testEntityConfiguration,
@@ -98,7 +98,7 @@ describe(StubDatabaseAdapter, () => {
 
       const results = await databaseAdapter.fetchManyWhereAsync(
         queryContext,
-        new CompositeFieldHolder<TestFields>(['stringField', 'intField']),
+        new CompositeFieldHolder<TestFields, 'customIdField'>(['stringField', 'intField']),
         [new CompositeFieldValueHolder({ stringField: 'huh', intField: 5 })],
       );
       expect(
@@ -107,7 +107,7 @@ describe(StubDatabaseAdapter, () => {
 
       const results2 = await databaseAdapter.fetchManyWhereAsync(
         queryContext,
-        new CompositeFieldHolder<TestFields>(['stringField', 'intField']),
+        new CompositeFieldHolder<TestFields, 'customIdField'>(['stringField', 'intField']),
         [new CompositeFieldValueHolder({ stringField: 'not-in-db', intField: 5 })],
       );
       expect(
@@ -119,7 +119,7 @@ describe(StubDatabaseAdapter, () => {
   describe('fetchManyByFieldEqualityConjunctionAsync', () => {
     it('supports conjuntions and query modifiers', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
           testEntityConfiguration,
@@ -187,7 +187,7 @@ describe(StubDatabaseAdapter, () => {
 
     it('supports multiple order bys', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
           testEntityConfiguration,
@@ -253,7 +253,7 @@ describe(StubDatabaseAdapter, () => {
 
     it('supports null field values', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
           testEntityConfiguration,
@@ -330,7 +330,7 @@ describe(StubDatabaseAdapter, () => {
   describe('fetchManyByRawWhereClauseAsync', () => {
     it('throws because it is unsupported', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         new Map(),
       );
@@ -343,7 +343,7 @@ describe(StubDatabaseAdapter, () => {
   describe('insertAsync', () => {
     it('inserts a record', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         new Map(),
       );
@@ -367,7 +367,7 @@ describe(StubDatabaseAdapter, () => {
       });
 
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         new Map(),
       );
@@ -383,7 +383,7 @@ describe(StubDatabaseAdapter, () => {
   describe('updateAsync', () => {
     it('updates a record', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
           testEntityConfiguration,
@@ -415,7 +415,7 @@ describe(StubDatabaseAdapter, () => {
 
     it('throws error when empty update to match common DBMS behavior', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
           testEntityConfiguration,
@@ -445,7 +445,7 @@ describe(StubDatabaseAdapter, () => {
   describe('deleteAsync', () => {
     it('deletes an object', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubDatabaseAdapter<TestFields>(
+      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         StubDatabaseAdapter.convertFieldObjectsToDataStore(
           testEntityConfiguration,
@@ -477,21 +477,21 @@ describe(StubDatabaseAdapter, () => {
 
   it('supports string and number IDs', async () => {
     const queryContext = instance(mock(EntityQueryContext));
-    const databaseAdapter1 = new StubDatabaseAdapter<SimpleTestFields>(
+    const databaseAdapter1 = new StubDatabaseAdapter<SimpleTestFields, 'id'>(
       simpleTestEntityConfiguration,
       new Map(),
     );
     const insertedObject1 = await databaseAdapter1.insertAsync(queryContext, {});
     expect(typeof insertedObject1.id).toBe('string');
 
-    const databaseAdapter2 = new StubDatabaseAdapter<NumberKeyFields>(
+    const databaseAdapter2 = new StubDatabaseAdapter<NumberKeyFields, 'id'>(
       numberKeyEntityConfiguration,
       new Map(),
     );
     const insertedObject2 = await databaseAdapter2.insertAsync(queryContext, {});
     expect(typeof insertedObject2.id).toBe('number');
 
-    const databaseAdapter3 = new StubDatabaseAdapter<DateIDTestFields>(
+    const databaseAdapter3 = new StubDatabaseAdapter<DateIDTestFields, 'id'>(
       dateIDTestEntityConfiguration,
       new Map(),
     );

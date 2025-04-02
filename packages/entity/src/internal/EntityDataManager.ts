@@ -27,20 +27,23 @@ import { computeIfAbsent } from '../utils/collections/maps';
  *
  * It is also responsible for invalidating all sources of data when mutated using EntityMutator.
  */
-export default class EntityDataManager<TFields extends Record<string, any>> {
+export default class EntityDataManager<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> {
   private readonly dataloaders: Map<string, DataLoader<unknown, readonly Readonly<TFields>[]>> =
     new Map();
 
   constructor(
-    private readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
-    private readonly entityCache: ReadThroughEntityCache<TFields>,
+    private readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
+    private readonly entityCache: ReadThroughEntityCache<TFields, TIDField>,
     private readonly queryContextProvider: EntityQueryContextProvider,
     private readonly metricsAdapter: IEntityMetricsAdapter,
     private readonly entityClassName: string,
   ) {}
 
   private getDataLoaderForLoadKey<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey): DataLoader<TSerializedLoadValue, readonly Readonly<TFields>[]> {
@@ -64,7 +67,7 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
   }
 
   private async loadManyForDataLoaderAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -102,7 +105,7 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
    * @returns map from load value to objects that match the query for that load value
    */
   async loadManyEqualingAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -118,7 +121,7 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
   }
 
   private async loadManyEqualingInternalAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -215,7 +218,7 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
   }
 
   private async invalidateOneAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue): Promise<void> {
@@ -228,7 +231,7 @@ export default class EntityDataManager<TFields extends Record<string, any>> {
    * @param pairs - key-value pairs to invalidate
    */
   public async invalidateKeyValuePairsAsync(
-    pairs: readonly LoadPair<TFields, any, any, any>[],
+    pairs: readonly LoadPair<TFields, TIDField, any, any, any>[],
   ): Promise<void> {
     // TODO(wschurman): check for races with load
     await Promise.all(pairs.map(([key, value]) => this.invalidateOneAsync(key, value)));

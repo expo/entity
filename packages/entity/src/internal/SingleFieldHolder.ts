@@ -12,8 +12,12 @@ import {
 /**
  * A load key that represents a single field (fieldName) on an entity.
  */
-export class SingleFieldHolder<TFields extends Record<string, any>, N extends keyof TFields>
-  implements IEntityLoadKey<TFields, NonNullable<TFields[N]>, SingleFieldValueHolder<TFields, N>>
+export class SingleFieldHolder<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+  N extends keyof TFields,
+> implements
+    IEntityLoadKey<TFields, TIDField, NonNullable<TFields[N]>, SingleFieldValueHolder<TFields, N>>
 {
   constructor(public readonly fieldName: N) {}
 
@@ -21,11 +25,11 @@ export class SingleFieldHolder<TFields extends Record<string, any>, N extends ke
     return `SingleField(${String(this.fieldName)})`;
   }
 
-  public isCacheable(entityConfiguration: EntityConfiguration<TFields>): boolean {
+  public isCacheable(entityConfiguration: EntityConfiguration<TFields, TIDField>): boolean {
     return entityConfiguration.cacheableKeys.has(this.fieldName);
   }
 
-  public getDatabaseColumns(entityConfiguration: EntityConfiguration<TFields>): string[] {
+  public getDatabaseColumns(entityConfiguration: EntityConfiguration<TFields, TIDField>): string[] {
     return [getDatabaseFieldForEntityField(entityConfiguration, this.fieldName)];
   }
 
@@ -42,7 +46,7 @@ export class SingleFieldHolder<TFields extends Record<string, any>, N extends ke
   }
 
   createCacheKeyPartsForLoadValue(
-    entityConfiguration: EntityConfiguration<TFields>,
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
     value: SingleFieldValueHolder<TFields, N>,
   ): readonly string[] {
     const columnName = entityConfiguration.entityToDBFieldsKeyMapping.get(this.fieldName);

@@ -17,12 +17,12 @@ type InvalidTestEntityFields = {
 
 export default class InvalidTestEntity extends Entity<
   InvalidTestEntityFields,
-  number,
+  'id',
   ViewerContext
 > {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     InvalidTestEntityFields,
-    number,
+    'id',
     ViewerContext,
     InvalidTestEntity,
     InvalidTestEntityPrivacyPolicy
@@ -57,14 +57,14 @@ export default class InvalidTestEntity extends Entity<
 
 class InvalidTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   InvalidTestEntityFields,
-  number,
+  'id',
   ViewerContext,
   InvalidTestEntity
 > {
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       InvalidTestEntityFields,
-      number,
+      'id',
       ViewerContext,
       InvalidTestEntity
     >(),
@@ -72,7 +72,7 @@ class InvalidTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       InvalidTestEntityFields,
-      number,
+      'id',
       ViewerContext,
       InvalidTestEntity
     >(),
@@ -80,7 +80,7 @@ class InvalidTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       InvalidTestEntityFields,
-      number,
+      'id',
       ViewerContext,
       InvalidTestEntity
     >(),
@@ -88,14 +88,17 @@ class InvalidTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       InvalidTestEntityFields,
-      number,
+      'id',
       ViewerContext,
       InvalidTestEntity
     >(),
   ];
 }
 
-export const invalidTestEntityConfiguration = new EntityConfiguration<InvalidTestEntityFields>({
+export const invalidTestEntityConfiguration = new EntityConfiguration<
+  InvalidTestEntityFields,
+  'id'
+>({
   idField: 'id',
   tableName: 'postgres_test_entities',
   schema: {

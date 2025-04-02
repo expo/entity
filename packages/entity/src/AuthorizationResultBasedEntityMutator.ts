@@ -29,12 +29,12 @@ import { mapMapAsync } from './utils/collections/maps';
 
 abstract class AuthorizationResultBasedBaseMutator<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -45,10 +45,10 @@ abstract class AuthorizationResultBasedBaseMutator<
     protected readonly companionProvider: EntityCompanionProvider,
     protected readonly viewerContext: TViewerContext,
     protected readonly queryContext: EntityQueryContext,
-    protected readonly entityConfiguration: EntityConfiguration<TFields>,
+    protected readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     protected readonly entityClass: IEntityClass<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -57,27 +57,27 @@ abstract class AuthorizationResultBasedBaseMutator<
     protected readonly privacyPolicy: TPrivacyPolicy,
     protected readonly mutationValidators: EntityMutationValidator<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >[],
     protected readonly mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >,
     protected readonly entityLoaderFactory: EntityLoaderFactory<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
     >,
-    protected readonly databaseAdapter: EntityDatabaseAdapter<TFields>,
+    protected readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
@@ -90,7 +90,7 @@ abstract class AuthorizationResultBasedBaseMutator<
       if (!isInputValid) {
         throw new EntityInvalidFieldValueError<
           TFields,
-          TID,
+          TIDField,
           TViewerContext,
           TEntity,
           TPrivacyPolicy,
@@ -102,12 +102,18 @@ abstract class AuthorizationResultBasedBaseMutator<
   }
 
   protected async executeMutationValidatorsAsync(
-    validators: EntityMutationValidator<TFields, TID, TViewerContext, TEntity, TSelectedFields>[],
+    validators: EntityMutationValidator<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >[],
     queryContext: EntityTransactionalQueryContext,
     entity: TEntity,
     mutationInfo: EntityValidatorMutationInfo<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
@@ -122,11 +128,17 @@ abstract class AuthorizationResultBasedBaseMutator<
 
   protected async executeMutationTriggersAsync(
     triggers:
-      | EntityMutationTrigger<TFields, TID, TViewerContext, TEntity, TSelectedFields>[]
+      | EntityMutationTrigger<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>[]
       | undefined,
     queryContext: EntityTransactionalQueryContext,
     entity: TEntity,
-    mutationInfo: EntityTriggerMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
+    mutationInfo: EntityTriggerMutationInfo<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
   ): Promise<void> {
     if (!triggers) {
       return;
@@ -142,14 +154,20 @@ abstract class AuthorizationResultBasedBaseMutator<
     triggers:
       | EntityNonTransactionalMutationTrigger<
           TFields,
-          TID,
+          TIDField,
           TViewerContext,
           TEntity,
           TSelectedFields
         >[]
       | undefined,
     entity: TEntity,
-    mutationInfo: EntityTriggerMutationInfo<TFields, TID, TViewerContext, TEntity, TSelectedFields>,
+    mutationInfo: EntityTriggerMutationInfo<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
   ): Promise<void> {
     if (!triggers) {
       return;
@@ -165,12 +183,12 @@ abstract class AuthorizationResultBasedBaseMutator<
  */
 export class AuthorizationResultBasedCreateMutator<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -178,7 +196,7 @@ export class AuthorizationResultBasedCreateMutator<
   TSelectedFields extends keyof TFields,
 > extends AuthorizationResultBasedBaseMutator<
   TFields,
-  TID,
+  TIDField,
   TViewerContext,
   TEntity,
   TPrivacyPolicy,
@@ -304,12 +322,12 @@ export class AuthorizationResultBasedCreateMutator<
  */
 export class AuthorizationResultBasedUpdateMutator<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -317,7 +335,7 @@ export class AuthorizationResultBasedUpdateMutator<
   TSelectedFields extends keyof TFields,
 > extends AuthorizationResultBasedBaseMutator<
   TFields,
-  TID,
+  TIDField,
   TViewerContext,
   TEntity,
   TPrivacyPolicy,
@@ -331,10 +349,10 @@ export class AuthorizationResultBasedUpdateMutator<
     companionProvider: EntityCompanionProvider,
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    entityConfiguration: EntityConfiguration<TFields>,
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
     entityClass: IEntityClass<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -343,27 +361,27 @@ export class AuthorizationResultBasedUpdateMutator<
     privacyPolicy: TPrivacyPolicy,
     mutationValidators: EntityMutationValidator<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >[],
     mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >,
     entityLoaderFactory: EntityLoaderFactory<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
     >,
-    databaseAdapter: EntityDatabaseAdapter<TFields>,
+    databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
     metricsAdapter: IEntityMetricsAdapter,
     originalEntity: TEntity,
   ) {
@@ -538,12 +556,12 @@ export class AuthorizationResultBasedUpdateMutator<
  */
 export class AuthorizationResultBasedDeleteMutator<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -551,7 +569,7 @@ export class AuthorizationResultBasedDeleteMutator<
   TSelectedFields extends keyof TFields,
 > extends AuthorizationResultBasedBaseMutator<
   TFields,
-  TID,
+  TIDField,
   TViewerContext,
   TEntity,
   TPrivacyPolicy,
@@ -561,10 +579,10 @@ export class AuthorizationResultBasedDeleteMutator<
     companionProvider: EntityCompanionProvider,
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    entityConfiguration: EntityConfiguration<TFields>,
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
     entityClass: IEntityClass<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -573,27 +591,27 @@ export class AuthorizationResultBasedDeleteMutator<
     privacyPolicy: TPrivacyPolicy,
     mutationValidators: EntityMutationValidator<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >[],
     mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
     >,
     entityLoaderFactory: EntityLoaderFactory<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
     >,
-    databaseAdapter: EntityDatabaseAdapter<TFields>,
+    databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
     metricsAdapter: IEntityMetricsAdapter,
     private readonly entity: TEntity,
   ) {
@@ -751,7 +769,7 @@ export class AuthorizationResultBasedDeleteMutator<
     const companionDefinition = this.companionProvider.getCompanionForEntity(
       entity.constructor as IEntityClass<
         TFields,
-        TID,
+        TIDField,
         TViewerContext,
         TEntity,
         TPrivacyPolicy,

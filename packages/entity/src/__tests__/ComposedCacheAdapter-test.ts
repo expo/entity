@@ -10,7 +10,7 @@ type BlahFields = {
   id: string;
 };
 
-const entityConfiguration = new EntityConfiguration<BlahFields>({
+const entityConfiguration = new EntityConfiguration<BlahFields, 'id'>({
   idField: 'id',
   tableName: 'blah',
   schema: {
@@ -25,16 +25,16 @@ type LocalMemoryCacheValue<TFields extends Record<string, any>> =
   | Readonly<TFields>
   | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
 
-class TestLocalCacheAdapter<TFields extends Record<string, any>>
-  implements IEntityCacheAdapter<TFields>
+class TestLocalCacheAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>
+  implements IEntityCacheAdapter<TFields, TIDField>
 {
   constructor(
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     private readonly cache: Map<string, LocalMemoryCacheValue<TFields>>,
   ) {}
 
   public async loadManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -67,7 +67,7 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
   }
 
   public async cacheManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, objectMap: ReadonlyMap<TLoadValue, Readonly<TFields>>): Promise<void> {
@@ -78,7 +78,7 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
   }
 
   public async cacheDBMissesAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
@@ -89,7 +89,7 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
   }
 
   public async invalidateManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
@@ -100,7 +100,7 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
   }
 
   private makeCacheKey<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue): string {
@@ -119,10 +119,10 @@ class TestLocalCacheAdapter<TFields extends Record<string, any>>
 
 function makeTestCacheAdapters(): {
   primaryCache: Map<string, LocalMemoryCacheValue<BlahFields>>;
-  primaryCacheAdapter: TestLocalCacheAdapter<BlahFields>;
+  primaryCacheAdapter: TestLocalCacheAdapter<BlahFields, 'id'>;
   fallbackCache: Map<string, LocalMemoryCacheValue<BlahFields>>;
-  fallbackCacheAdapter: TestLocalCacheAdapter<BlahFields>;
-  cacheAdapter: ComposedEntityCacheAdapter<BlahFields>;
+  fallbackCacheAdapter: TestLocalCacheAdapter<BlahFields, 'id'>;
+  cacheAdapter: ComposedEntityCacheAdapter<BlahFields, 'id'>;
 } {
   const primaryCache = new Map();
   const primaryCacheAdapter = new TestLocalCacheAdapter(entityConfiguration, primaryCache);
@@ -150,15 +150,16 @@ describe(ComposedEntityCacheAdapter, () => {
         [new SingleFieldValueHolder('test-id-1'), { id: 'test-id-1' }],
       ]);
       await primaryCacheAdapter.cacheManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         cacheHits,
       );
-      await primaryCacheAdapter.cacheDBMissesAsync(new SingleFieldHolder<BlahFields, 'id'>('id'), [
-        new SingleFieldValueHolder('test-id-2'),
-      ]);
+      await primaryCacheAdapter.cacheDBMissesAsync(
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
+        [new SingleFieldValueHolder('test-id-2')],
+      );
 
       const results = await cacheAdapter.loadManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [
           new SingleFieldValueHolder('test-id-1'),
           new SingleFieldValueHolder('test-id-2'),
@@ -186,15 +187,16 @@ describe(ComposedEntityCacheAdapter, () => {
         [new SingleFieldValueHolder('test-id-1'), { id: 'test-id-1' }],
       ]);
       await fallbackCacheAdapter.cacheManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         cacheHits,
       );
-      await fallbackCacheAdapter.cacheDBMissesAsync(new SingleFieldHolder<BlahFields, 'id'>('id'), [
-        new SingleFieldValueHolder('test-id-2'),
-      ]);
+      await fallbackCacheAdapter.cacheDBMissesAsync(
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
+        [new SingleFieldValueHolder('test-id-2')],
+      );
 
       const results = await cacheAdapter.loadManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [
           new SingleFieldValueHolder('test-id-1'),
           new SingleFieldValueHolder('test-id-2'),
@@ -222,22 +224,23 @@ describe(ComposedEntityCacheAdapter, () => {
         [new SingleFieldValueHolder('test-id-1'), { id: 'test-id-1' }],
       ]);
       await fallbackCacheAdapter.cacheManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         cacheHits,
       );
-      await fallbackCacheAdapter.cacheDBMissesAsync(new SingleFieldHolder<BlahFields, 'id'>('id'), [
-        new SingleFieldValueHolder('test-id-2'),
-      ]);
+      await fallbackCacheAdapter.cacheDBMissesAsync(
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
+        [new SingleFieldValueHolder('test-id-2')],
+      );
 
       // should populate primary cache with fallback cache results
-      await cacheAdapter.loadManyAsync(new SingleFieldHolder<BlahFields, 'id'>('id'), [
+      await cacheAdapter.loadManyAsync(new SingleFieldHolder<BlahFields, 'id', 'id'>('id'), [
         new SingleFieldValueHolder('test-id-1'),
         new SingleFieldValueHolder('test-id-2'),
         new SingleFieldValueHolder('test-id-3'),
       ]);
 
       const primaryResults = await primaryCacheAdapter.loadManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [
           new SingleFieldValueHolder('test-id-1'),
           new SingleFieldValueHolder('test-id-2'),
@@ -259,7 +262,7 @@ describe(ComposedEntityCacheAdapter, () => {
 
       // ensure that populating the primary cache doesn't change the output
       const composedResults = await cacheAdapter.loadManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [
           new SingleFieldValueHolder('test-id-1'),
           new SingleFieldValueHolder('test-id-2'),
@@ -282,16 +285,16 @@ describe(ComposedEntityCacheAdapter, () => {
     it('returns empty map when passed empty array of values', async () => {
       const { cacheAdapter } = makeTestCacheAdapters();
       const results = await cacheAdapter.loadManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [] as any,
       );
       expect(results.size).toBe(0);
     });
 
     it('handles 0 cache adapter compose case', async () => {
-      const cacheAdapter = new ComposedEntityCacheAdapter<BlahFields>([]);
+      const cacheAdapter = new ComposedEntityCacheAdapter<BlahFields, 'id'>([]);
       const results = await cacheAdapter.loadManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [] as any,
       );
       expect(results.size).toBe(0);
@@ -309,12 +312,12 @@ describe(ComposedEntityCacheAdapter, () => {
       } = makeTestCacheAdapters();
 
       await cacheAdapter.cacheManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         new Map([[new SingleFieldValueHolder('test-id-1'), { id: 'test-id-1' }]]),
       );
 
       const primaryLocalMemoryCacheKey = primaryCacheAdapter['makeCacheKey'](
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         new SingleFieldValueHolder('test-id-1'),
       );
       expect(primaryCache.get(primaryLocalMemoryCacheKey)).toMatchObject({
@@ -322,7 +325,7 @@ describe(ComposedEntityCacheAdapter, () => {
       });
 
       const fallbackLocalMemoryCacheKey = fallbackCacheAdapter['makeCacheKey'](
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         new SingleFieldValueHolder('test-id-1'),
       );
       expect(fallbackCache.get(fallbackLocalMemoryCacheKey)).toMatchObject({
@@ -341,18 +344,18 @@ describe(ComposedEntityCacheAdapter, () => {
         cacheAdapter,
       } = makeTestCacheAdapters();
 
-      await cacheAdapter.cacheDBMissesAsync(new SingleFieldHolder<BlahFields, 'id'>('id'), [
+      await cacheAdapter.cacheDBMissesAsync(new SingleFieldHolder<BlahFields, 'id', 'id'>('id'), [
         new SingleFieldValueHolder('test-id-1'),
       ]);
 
       const primaryLocalMemoryCacheKey = primaryCacheAdapter['makeCacheKey'](
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         new SingleFieldValueHolder('test-id-1'),
       );
       expect(primaryCache.get(primaryLocalMemoryCacheKey)).toBe(DOES_NOT_EXIST_LOCAL_MEMORY_CACHE);
 
       const fallbackLocalMemoryCacheKey = fallbackCacheAdapter['makeCacheKey'](
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         new SingleFieldValueHolder('test-id-1'),
       );
       expect(fallbackCache.get(fallbackLocalMemoryCacheKey)).toBe(
@@ -375,43 +378,45 @@ describe(ComposedEntityCacheAdapter, () => {
         [new SingleFieldValueHolder('test-id-1'), { id: 'test-id-1' }],
       ]);
       await primaryCacheAdapter.cacheManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         cacheHits,
       );
-      await primaryCacheAdapter.cacheDBMissesAsync(new SingleFieldHolder<BlahFields, 'id'>('id'), [
-        new SingleFieldValueHolder('test-id-2'),
-      ]);
+      await primaryCacheAdapter.cacheDBMissesAsync(
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
+        [new SingleFieldValueHolder('test-id-2')],
+      );
       await fallbackCacheAdapter.cacheManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         cacheHits,
       );
-      await fallbackCacheAdapter.cacheDBMissesAsync(new SingleFieldHolder<BlahFields, 'id'>('id'), [
-        new SingleFieldValueHolder('test-id-2'),
-      ]);
+      await fallbackCacheAdapter.cacheDBMissesAsync(
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
+        [new SingleFieldValueHolder('test-id-2')],
+      );
 
-      await cacheAdapter.invalidateManyAsync(new SingleFieldHolder<BlahFields, 'id'>('id'), [
+      await cacheAdapter.invalidateManyAsync(new SingleFieldHolder<BlahFields, 'id', 'id'>('id'), [
         new SingleFieldValueHolder('test-id-1'),
         new SingleFieldValueHolder('test-id-2'),
       ]);
 
       const primaryLocalMemoryCacheKey1 = primaryCacheAdapter['makeCacheKey'](
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         new SingleFieldValueHolder('test-id-1'),
       );
       expect(primaryCache.get(primaryLocalMemoryCacheKey1)).toBe(undefined);
       const primaryLocalMemoryCacheKey2 = primaryCacheAdapter['makeCacheKey'](
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         new SingleFieldValueHolder('test-id-1'),
       );
       expect(primaryCache.get(primaryLocalMemoryCacheKey2)).toBe(undefined);
 
       const fallbackLocalMemoryCacheKey1 = fallbackCacheAdapter['makeCacheKey'](
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         new SingleFieldValueHolder('test-id-1'),
       );
       expect(fallbackCache.get(fallbackLocalMemoryCacheKey1)).toBe(undefined);
       const fallbackLocalMemoryCacheKey2 = fallbackCacheAdapter['makeCacheKey'](
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         new SingleFieldValueHolder('test-id-1'),
       );
       expect(fallbackCache.get(fallbackLocalMemoryCacheKey2)).toBe(undefined);
@@ -421,7 +426,7 @@ describe(ComposedEntityCacheAdapter, () => {
       const { cacheAdapter } = makeTestCacheAdapters();
 
       await cacheAdapter.invalidateManyAsync(
-        new SingleFieldHolder<BlahFields, 'id'>('id'),
+        new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
         [] as any,
       );
     });

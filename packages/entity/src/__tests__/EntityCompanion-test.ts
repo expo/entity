@@ -19,7 +19,7 @@ describe(EntityCompanion, () => {
   it('correctly instantiates mutator and loader factories', () => {
     const entityCompanionProvider = instance(mock<EntityCompanionProvider>());
 
-    const tableDataCoordinatorMock = mock<EntityTableDataCoordinator<TestMTFields>>();
+    const tableDataCoordinatorMock = mock<EntityTableDataCoordinator<TestMTFields, 'id'>>();
     when(tableDataCoordinatorMock.entityConfiguration).thenReturn(testEntityMTConfiguration);
 
     const companion = new EntityCompanion(
@@ -35,7 +35,7 @@ describe(EntityCompanion, () => {
   it('correctly merges local and global mutation triggers', () => {
     const globalMutationTriggers: EntityMutationTriggerConfiguration<
       TestMTFields,
-      string,
+      'id',
       ViewerContext,
       TestEntityWithMutationTriggers,
       keyof TestMTFields
@@ -53,7 +53,7 @@ describe(EntityCompanion, () => {
       globalMutationTriggers,
     );
 
-    const tableDataCoordinatorMock = mock<EntityTableDataCoordinator<TestMTFields>>();
+    const tableDataCoordinatorMock = mock<EntityTableDataCoordinator<TestMTFields, 'id'>>();
     when(tableDataCoordinatorMock.entityConfiguration).thenReturn(testEntityMTConfiguration);
 
     const companion = new EntityCompanion(

@@ -22,12 +22,12 @@ import ViewerContext from './ViewerContext';
  */
 export default abstract class ReadonlyEntity<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
   TSelectedFields extends keyof TFields = keyof TFields,
 > {
   private readonly viewerContext: TViewerContext;
-  private readonly id: TID;
+  private readonly id: TFields[TIDField];
   private readonly databaseFields: Readonly<TFields>;
   private readonly selectedFields: Readonly<Pick<TFields, TSelectedFields>>;
 
@@ -52,7 +52,7 @@ export default abstract class ReadonlyEntity<
     selectedFields,
   }: {
     viewerContext: TViewerContext;
-    id: TID;
+    id: TFields[TIDField];
     databaseFields: Readonly<TFields>;
     selectedFields: Readonly<Pick<TFields, TSelectedFields>>;
   }) {
@@ -82,7 +82,7 @@ export default abstract class ReadonlyEntity<
   /**
    * @returns the ID of this entity
    */
-  getID(): TID {
+  getID(): TFields[TIDField] {
     return this.id;
   }
 
@@ -91,8 +91,8 @@ export default abstract class ReadonlyEntity<
    */
   associationLoader(
     queryContext?: EntityQueryContext,
-  ): EnforcingEntityAssociationLoader<TFields, TID, TViewerContext, this, TSelectedFields> {
-    return new EntityAssociationLoader<TFields, TID, TViewerContext, this, TSelectedFields>(
+  ): EnforcingEntityAssociationLoader<TFields, TIDField, TViewerContext, this, TSelectedFields> {
+    return new EntityAssociationLoader<TFields, TIDField, TViewerContext, this, TSelectedFields>(
       this,
       queryContext,
     ).enforcing();
@@ -105,12 +105,12 @@ export default abstract class ReadonlyEntity<
     queryContext?: EntityQueryContext,
   ): AuthorizationResultBasedEntityAssociationLoader<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     this,
     TSelectedFields
   > {
-    return new EntityAssociationLoader<TFields, TID, TViewerContext, this, TSelectedFields>(
+    return new EntityAssociationLoader<TFields, TIDField, TViewerContext, this, TSelectedFields>(
       this,
       queryContext,
     ).withAuthorizationResults();
@@ -148,13 +148,13 @@ export default abstract class ReadonlyEntity<
    */
   static loader<
     TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends ReadonlyEntity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMSelectedFields
@@ -163,7 +163,7 @@ export default abstract class ReadonlyEntity<
   >(
     this: IEntityClass<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
@@ -176,7 +176,7 @@ export default abstract class ReadonlyEntity<
       .getQueryContext(),
   ): EnforcingEntityLoader<
     TMFields,
-    TMID,
+    TMIDField,
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,
@@ -192,13 +192,13 @@ export default abstract class ReadonlyEntity<
    */
   static loaderWithAuthorizationResults<
     TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends ReadonlyEntity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMSelectedFields
@@ -207,7 +207,7 @@ export default abstract class ReadonlyEntity<
   >(
     this: IEntityClass<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
@@ -220,7 +220,7 @@ export default abstract class ReadonlyEntity<
       .getQueryContext(),
   ): AuthorizationResultBasedEntityLoader<
     TMFields,
-    TMID,
+    TMIDField,
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,
@@ -236,13 +236,13 @@ export default abstract class ReadonlyEntity<
    */
   static loaderUtils<
     TMFields extends object,
-    TMID extends NonNullable<TMFields[TMSelectedFields]>,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
     TMViewerContext2 extends TMViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMID, TMViewerContext, TMSelectedFields>,
+    TMEntity extends ReadonlyEntity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMSelectedFields
@@ -251,7 +251,7 @@ export default abstract class ReadonlyEntity<
   >(
     this: IEntityClass<
       TMFields,
-      TMID,
+      TMIDField,
       TMViewerContext,
       TMEntity,
       TMPrivacyPolicy,
@@ -264,7 +264,7 @@ export default abstract class ReadonlyEntity<
       .getQueryContext(),
   ): EntityLoaderUtils<
     TMFields,
-    TMID,
+    TMIDField,
     TMViewerContext,
     TMEntity,
     TMPrivacyPolicy,

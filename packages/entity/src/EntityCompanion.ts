@@ -18,12 +18,12 @@ export interface IPrivacyPolicyClass<TPrivacyPolicy> {
  */
 export default class EntityCompanion<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
@@ -34,7 +34,7 @@ export default class EntityCompanion<
 
   private readonly entityLoaderFactory: EntityLoaderFactory<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
@@ -42,7 +42,7 @@ export default class EntityCompanion<
   >;
   private readonly entityMutatorFactory: EntityMutatorFactory<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
@@ -53,19 +53,19 @@ export default class EntityCompanion<
     public readonly entityCompanionProvider: EntityCompanionProvider,
     public readonly entityCompanionDefinition: EntityCompanionDefinition<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly tableDataCoordinator: EntityTableDataCoordinator<TFields>,
+    private readonly tableDataCoordinator: EntityTableDataCoordinator<TFields, TIDField>,
     private readonly metricsAdapter: IEntityMetricsAdapter,
   ) {
     this.privacyPolicy = new entityCompanionDefinition.privacyPolicyClass();
     this.entityLoaderFactory = new EntityLoaderFactory<
       TFields,
-      TID,
+      TIDField,
       TViewerContext,
       TEntity,
       TPrivacyPolicy,
@@ -89,7 +89,7 @@ export default class EntityCompanion<
 
   getLoaderFactory(): EntityLoaderFactory<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,
@@ -100,7 +100,7 @@ export default class EntityCompanion<
 
   getMutatorFactory(): EntityMutatorFactory<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TPrivacyPolicy,

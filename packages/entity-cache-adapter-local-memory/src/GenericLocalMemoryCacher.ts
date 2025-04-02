@@ -19,11 +19,13 @@ export type LocalMemoryCache<TFields extends Record<string, any>> = LRUCache<
   LocalMemoryCacheValue<TFields>
 >;
 
-export default class GenericLocalMemoryCacher<TFields extends Record<string, any>>
-  implements IEntityGenericCacher<TFields>
+export default class GenericLocalMemoryCacher<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> implements IEntityGenericCacher<TFields, TIDField>
 {
   constructor(
-    private readonly entityConfiguration: EntityConfiguration<TFields>,
+    private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     private readonly localMemoryCache: LocalMemoryCache<TFields>,
   ) {}
 
@@ -90,7 +92,7 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
   }
 
   public makeCacheKeyForStorage<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue): string {
@@ -111,7 +113,7 @@ export default class GenericLocalMemoryCacher<TFields extends Record<string, any
   }
 
   public makeCacheKeysForInvalidation<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue): readonly string[] {

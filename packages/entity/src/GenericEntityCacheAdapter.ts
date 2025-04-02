@@ -9,13 +9,15 @@ import { mapKeys } from './utils/collections/maps';
 /**
  * A standard IEntityCacheAdapter that coordinates caching through an IEntityGenericCacher.
  */
-export default class GenericEntityCacheAdapter<TFields extends Record<string, any>>
-  implements IEntityCacheAdapter<TFields>
+export default class GenericEntityCacheAdapter<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> implements IEntityCacheAdapter<TFields, TIDField>
 {
-  constructor(private readonly genericCacher: IEntityGenericCacher<TFields>) {}
+  constructor(private readonly genericCacher: IEntityGenericCacher<TFields, TIDField>) {}
 
   public async loadManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
@@ -43,7 +45,7 @@ export default class GenericEntityCacheAdapter<TFields extends Record<string, an
   }
 
   public async cacheManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, objectMap: ReadonlyMap<TLoadValue, Readonly<TFields>>): Promise<void> {
@@ -53,7 +55,7 @@ export default class GenericEntityCacheAdapter<TFields extends Record<string, an
   }
 
   public async cacheDBMissesAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {
@@ -63,7 +65,7 @@ export default class GenericEntityCacheAdapter<TFields extends Record<string, an
   }
 
   public async invalidateManyAsync<
-    TLoadKey extends IEntityLoadKey<TFields, TSerializedLoadValue, TLoadValue>,
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, values: readonly TLoadValue[]): Promise<void> {

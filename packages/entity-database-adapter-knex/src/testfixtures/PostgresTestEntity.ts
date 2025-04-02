@@ -2,7 +2,6 @@ import {
   AlwaysAllowPrivacyPolicyRule,
   EntityPrivacyPolicy,
   ViewerContext,
-  UUIDField,
   StringField,
   BooleanField,
   StringArrayField,
@@ -11,6 +10,7 @@ import {
   EntityConfiguration,
   EntityCompanionDefinition,
   Entity,
+  UUIDField,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -33,12 +33,12 @@ type PostgresTestEntityFields = {
 
 export default class PostgresTestEntity extends Entity<
   PostgresTestEntityFields,
-  string,
+  'id',
   ViewerContext
 > {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     PostgresTestEntityFields,
-    string,
+    'id',
     ViewerContext,
     PostgresTestEntity,
     PostgresTestEntityPrivacyPolicy
@@ -81,14 +81,14 @@ export default class PostgresTestEntity extends Entity<
 
 class PostgresTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   PostgresTestEntityFields,
-  string,
+  'id',
   ViewerContext,
   PostgresTestEntity
 > {
   protected override readonly createRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresTestEntity
     >(),
@@ -96,7 +96,7 @@ class PostgresTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly readRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresTestEntity
     >(),
@@ -104,7 +104,7 @@ class PostgresTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly updateRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresTestEntity
     >(),
@@ -112,14 +112,17 @@ class PostgresTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [
     new AlwaysAllowPrivacyPolicyRule<
       PostgresTestEntityFields,
-      string,
+      'id',
       ViewerContext,
       PostgresTestEntity
     >(),
   ];
 }
 
-export const postgresTestEntityConfiguration = new EntityConfiguration<PostgresTestEntityFields>({
+export const postgresTestEntityConfiguration = new EntityConfiguration<
+  PostgresTestEntityFields,
+  'id'
+>({
   idField: 'id',
   tableName: 'postgres_test_entities',
   schema: {

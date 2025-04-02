@@ -8,19 +8,19 @@ function nonNullish<TValue>(value: TValue | null | undefined): value is NonNulla
 
 export function mergeEntityMutationTriggerConfigurations<
   TFields extends Record<string, any>,
-  TID extends NonNullable<TFields[TSelectedFields]>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
-  TEntity extends ReadonlyEntity<TFields, TID, TViewerContext, TSelectedFields>,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields,
 >(
   ...mutationTriggerConfigurations: EntityMutationTriggerConfiguration<
     TFields,
-    TID,
+    TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
   >[]
-): EntityMutationTriggerConfiguration<TFields, TID, TViewerContext, TEntity, TSelectedFields> {
+): EntityMutationTriggerConfiguration<TFields, TIDField, TViewerContext, TEntity, TSelectedFields> {
   const merged = {
     beforeCreate: mutationTriggerConfigurations.flatMap((c) => c.beforeCreate).filter(nonNullish),
     afterCreate: mutationTriggerConfigurations.flatMap((c) => c.afterCreate).filter(nonNullish),
