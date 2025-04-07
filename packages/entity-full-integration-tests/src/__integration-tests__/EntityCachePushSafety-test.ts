@@ -17,7 +17,7 @@ import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 import { URL } from 'url';
 
-import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
+import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createTestEntityDefinitonWithCacheKeyVersion(cacheKeyVersion: number) {

@@ -1,26 +1,27 @@
-import { instance, mock } from 'ts-mockito';
-
-import { OrderByOrdering } from '../../../EntityDatabaseAdapter';
-import { EntityQueryContext } from '../../../EntityQueryContext';
 import {
+  OrderByOrdering,
+  EntityQueryContext,
   CompositeFieldHolder,
   CompositeFieldValueHolder,
-} from '../../../internal/CompositeFieldHolder';
-import { SingleFieldHolder, SingleFieldValueHolder } from '../../../internal/SingleFieldHolder';
+  SingleFieldHolder,
+  SingleFieldValueHolder,
+} from '@expo/entity';
+import { instance, mock } from 'ts-mockito';
+
+import StubDatabaseAdapter from '../StubDatabaseAdapter';
 import {
   DateIDTestFields,
   dateIDTestEntityConfiguration,
-} from '../../../testfixtures/DateIDTestEntity';
+} from '../__testfixtures__/DateIDTestEntity';
 import {
   SimpleTestFields,
   simpleTestEntityConfiguration,
-} from '../../../testfixtures/SimpleTestEntity';
-import { TestFields, testEntityConfiguration } from '../../../testfixtures/TestEntity';
+} from '../__testfixtures__/SimpleTestEntity';
+import { TestFields, testEntityConfiguration } from '../__testfixtures__/TestEntity';
 import {
   NumberKeyFields,
   numberKeyEntityConfiguration,
-} from '../../../testfixtures/TestEntityNumberKey';
-import StubDatabaseAdapter from '../StubDatabaseAdapter';
+} from '../__testfixtures__/TestEntityNumberKey';
 
 describe(StubDatabaseAdapter, () => {
   describe('fetchManyWhereAsync', () => {

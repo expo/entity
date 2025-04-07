@@ -5,8 +5,6 @@ import {
   NoOpEntityMetricsAdapter,
   IEntityMetricsAdapter,
   EntityCompanionProvider,
-  StubQueryContextProvider,
-  StubDatabaseAdapterProvider,
   AlwaysAllowPrivacyPolicyRule,
   EntityPrivacyPolicy,
   StringField,
@@ -19,6 +17,7 @@ import {
   GenericLocalMemoryCacher,
   LocalMemoryCacheAdapterProvider,
 } from '@expo/entity-cache-adapter-local-memory';
+import { StubQueryContextProvider, StubDatabaseAdapterProvider } from '@expo/entity-testing-utils';
 import nullthrows from 'nullthrows';
 
 import LocalMemorySecondaryEntityCache from '../LocalMemorySecondaryEntityCache';

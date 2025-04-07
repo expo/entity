@@ -3,10 +3,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 import AuthorizationResultBasedEntityAssociationLoader from '../AuthorizationResultBasedEntityAssociationLoader';
 import { enforceResultsAsync } from '../entityUtils';
-import TestEntity from '../testfixtures/TestEntity';
-import TestEntity2 from '../testfixtures/TestEntity2';
-import TestViewerContext from '../testfixtures/TestViewerContext';
-import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
+import TestEntity from '../utils/__testfixtures__/TestEntity';
+import TestEntity2 from '../utils/__testfixtures__/TestEntity2';
+import TestViewerContext from '../utils/__testfixtures__/TestViewerContext';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(AuthorizationResultBasedEntityAssociationLoader, () => {
   describe('loadAssociatedEntityAsync', () => {

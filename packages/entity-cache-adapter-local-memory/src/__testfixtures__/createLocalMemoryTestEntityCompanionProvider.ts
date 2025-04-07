@@ -2,9 +2,8 @@ import {
   NoOpEntityMetricsAdapter,
   IEntityMetricsAdapter,
   EntityCompanionProvider,
-  StubQueryContextProvider,
-  StubDatabaseAdapterProvider,
 } from '@expo/entity';
+import { StubDatabaseAdapterProvider, StubQueryContextProvider } from '@expo/entity-testing-utils';
 
 import LocalMemoryCacheAdapterProvider from '../LocalMemoryCacheAdapterProvider';
 

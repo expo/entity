@@ -29,6 +29,7 @@
     "ip-address": "^8.1.0"
   },
   "devDependencies": {
+    "@expo/entity-testing-utils": "workspace:^",
     "@types/jest": "^29.5.12",
     "@types/jsbn": "^1.2.29",
     "@types/node": "^20.14.1",

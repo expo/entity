@@ -17,7 +17,7 @@ import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 import { URL } from 'url';
 
-import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
+import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider';
 
 interface TestFields {
   id: string;

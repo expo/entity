@@ -3,8 +3,8 @@ import { enforceAsyncResult } from '@expo/results';
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 
-import InvalidTestEntity from '../testfixtures/InvalidTestEntity';
-import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
+import InvalidTestEntity from '../__testfixtures__/InvalidTestEntity';
+import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe('postgres entity integration', () => {
   let knexInstance: Knex;

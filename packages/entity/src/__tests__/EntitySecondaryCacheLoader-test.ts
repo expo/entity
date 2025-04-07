@@ -6,8 +6,8 @@ import ViewerContext from '../ViewerContext';
 import SimpleTestEntity, {
   SimpleTestEntityPrivacyPolicy,
   SimpleTestFields,
-} from '../testfixtures/SimpleTestEntity';
-import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
+} from '../utils/__testfixtures__/SimpleTestEntity';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 type TestLoadParams = { id: string };
 

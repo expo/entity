@@ -8,7 +8,7 @@ import { EntityQueryContext } from '../EntityQueryContext';
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
 import { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
-import { TestFields, testEntityConfiguration } from '../testfixtures/TestEntity';
+import { TestFields, testEntityConfiguration } from '../utils/__testfixtures__/TestEntity';
 
 class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'customIdField'> {
   private readonly fetchResults: object[];

@@ -12,9 +12,9 @@ import EntityDataManager from '../internal/EntityDataManager';
 import ReadThroughEntityCache from '../internal/ReadThroughEntityCache';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
 import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
-import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapter';
-import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
-import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider';
+import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
+import StubDatabaseAdapter from '../utils/__testfixtures__/StubDatabaseAdapter';
+import StubQueryContextProvider from '../utils/__testfixtures__/StubQueryContextProvider';
 
 export type TestFields = {
   id: string;

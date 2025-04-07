@@ -6,7 +6,7 @@ import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
 import ViewerContext from '../../ViewerContext';
 import { successfulResults, failedResults } from '../../entityUtils';
 import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
-import { createUnitTestEntityCompanionProvider } from '../../utils/testing/createUnitTestEntityCompanionProvider';
+import { createUnitTestEntityCompanionProvider } from '../../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe('Two entities backed by the same table', () => {
   test('load by different types', async () => {

@@ -1,4 +1,4 @@
-import { describeFieldTestCase } from '@expo/entity';
+import { describeFieldTestCase } from '@expo/entity-testing-utils';
 
 import { BigIntField, JSONArrayField, MaybeJSONArrayField } from '../EntityFields';
 

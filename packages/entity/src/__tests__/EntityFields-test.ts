@@ -13,7 +13,7 @@ import {
   EnumField,
   StrictEnumField,
 } from '../EntityFields';
-import describeFieldTestCase from '../utils/testing/describeFieldTestCase';
+import describeFieldTestCase from '../utils/__testfixtures__/describeFieldTestCase';
 
 class TestFieldDefinition extends EntityFieldDefinition<string, false> {
   protected validateInputValueInternal(value: string): boolean {

@@ -1,4 +1,4 @@
-import { TestMutationTrigger } from '../../testfixtures/TestEntityWithMutationTriggers';
+import { TestMutationTrigger } from '../__testfixtures__/TestEntityWithMutationTriggers';
 import { mergeEntityMutationTriggerConfigurations } from '../mergeEntityMutationTriggerConfigurations';
 
 describe(mergeEntityMutationTriggerConfigurations, () => {

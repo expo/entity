@@ -4,7 +4,7 @@ import EntityCompanionProvider from '../EntityCompanionProvider';
 import ViewerContext from '../ViewerContext';
 import ViewerScopedEntityCompanion from '../ViewerScopedEntityCompanion';
 import ViewerScopedEntityCompanionProvider from '../ViewerScopedEntityCompanionProvider';
-import TestEntity from '../testfixtures/TestEntity';
+import TestEntity from '../utils/__testfixtures__/TestEntity';
 
 describe(ViewerScopedEntityCompanionProvider, () => {
   it('returns viewer scoped entity companion', () => {

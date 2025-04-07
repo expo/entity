@@ -8,8 +8,8 @@ import EnforcingEntityDeleter from '../EnforcingEntityDeleter';
 import EnforcingEntityUpdater from '../EnforcingEntityUpdater';
 import Entity from '../Entity';
 import ViewerContext from '../ViewerContext';
-import SimpleTestEntity from '../testfixtures/SimpleTestEntity';
-import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
+import SimpleTestEntity from '../utils/__testfixtures__/SimpleTestEntity';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(Entity, () => {
   describe('creator', () => {

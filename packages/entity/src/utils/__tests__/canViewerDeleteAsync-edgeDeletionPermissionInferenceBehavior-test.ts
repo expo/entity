@@ -12,7 +12,7 @@ import ViewerContext from '../../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
 import AlwaysDenyPrivacyPolicyRule from '../../rules/AlwaysDenyPrivacyPolicyRule';
 import { canViewerDeleteAsync } from '../EntityPrivacyUtils';
-import { createUnitTestEntityCompanionProvider } from '../testing/createUnitTestEntityCompanionProvider';
+import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(canViewerDeleteAsync, () => {
   describe('edgeDeletionPermissionInferenceBehavior', () => {

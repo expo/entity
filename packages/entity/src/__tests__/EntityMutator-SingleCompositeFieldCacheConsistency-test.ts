@@ -1,7 +1,7 @@
 import EntityMutatorFactory from '../EntityMutatorFactory';
 import ViewerContext from '../ViewerContext';
-import TestEntity from '../testfixtures/TestEntity';
-import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
+import TestEntity from '../utils/__testfixtures__/TestEntity';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(EntityMutatorFactory, () => {
   test('cache consistency across single and composite field mutations', async () => {

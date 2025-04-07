@@ -1,13 +1,10 @@
-import {
-  SingleFieldHolder,
-  SingleFieldValueHolder,
-  SingleFieldValueHolderMap,
-} from '../SingleFieldHolder';
+import { SingleFieldHolder, SingleFieldValueHolder, SingleFieldValueHolderMap } from '@expo/entity';
+
 import {
   deepEqualEntityAware,
   DeepEqualEntityAwareMatcher,
   isEqualWithEntityAware,
-} from './TSMockitoExtensions';
+} from '../TSMockitoExtensions';
 
 describe(deepEqualEntityAware, () => {
   it('should return a DeepEqualEntityAwareMatcher', () => {

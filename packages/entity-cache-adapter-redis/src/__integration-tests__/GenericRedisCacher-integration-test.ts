@@ -9,8 +9,8 @@ import GenericRedisCacher, {
 import RedisTestEntity, {
   redisTestEntityConfiguration,
   RedisTestEntityFields,
-} from '../testfixtures/RedisTestEntity';
-import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtures/createRedisIntegrationTestEntityCompanionProvider';
+} from '../__testfixtures__/RedisTestEntity';
+import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}
 

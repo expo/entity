@@ -10,7 +10,7 @@ import { URL } from 'url';
 
 import ChildEntity from './entities/ChildEntity';
 import ParentEntity from './entities/ParentEntity';
-import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
+import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider';
 
 async function createOrTruncatePostgresTablesAsync(knex: Knex): Promise<void> {
   await knex.schema.createTable('parents', (table) => {

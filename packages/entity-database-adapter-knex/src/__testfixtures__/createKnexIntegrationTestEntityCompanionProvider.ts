@@ -2,8 +2,8 @@ import {
   NoOpEntityMetricsAdapter,
   IEntityMetricsAdapter,
   EntityCompanionProvider,
-  InMemoryFullCacheStubCacheAdapterProvider,
 } from '@expo/entity';
+import { InMemoryFullCacheStubCacheAdapterProvider } from '@expo/entity-testing-utils';
 import { Knex } from 'knex';
 
 import PostgresEntityDatabaseAdapterProvider from '../PostgresEntityDatabaseAdapterProvider';

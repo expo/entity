@@ -23,7 +23,7 @@ import {
   getCanViewerDeleteResultAsync,
   getCanViewerUpdateResultAsync,
 } from '../EntityPrivacyUtils';
-import { createUnitTestEntityCompanionProvider } from '../testing/createUnitTestEntityCompanionProvider';
+import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider';
 
 function assertEntityPrivacyEvaluationResultFailure(
   evaluationResult: EntityPrivacyEvaluationResult,

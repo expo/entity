@@ -1,10 +1,12 @@
-import Entity from '../Entity';
-import { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import EntityConfiguration from '../EntityConfiguration';
-import { IntField } from '../EntityFields';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
-import ViewerContext from '../ViewerContext';
-import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
+import {
+  Entity,
+  EntityCompanionDefinition,
+  EntityConfiguration,
+  IntField,
+  EntityPrivacyPolicy,
+  ViewerContext,
+  AlwaysAllowPrivacyPolicyRule,
+} from '@expo/entity';
 
 export type NumberKeyFields = {
   id: number;
