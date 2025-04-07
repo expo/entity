@@ -17,11 +17,11 @@ import {
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
 } from '../internal/SingleFieldHolder';
-import { deepEqualEntityAware } from '../internal/__tests__/TSMockitoExtensions';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
 import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
 import StubDatabaseAdapter from '../utils/__testfixtures__/StubDatabaseAdapter';
 import StubQueryContextProvider from '../utils/__testfixtures__/StubQueryContextProvider';
+import { deepEqualEntityAware } from '../utils/__testfixtures__/TSMockitoExtensions';
 import TestEntity, {
   TestFields,
   TestEntityPrivacyPolicy,

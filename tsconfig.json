@@ -7,6 +7,7 @@
     "moduleResolution": "node",
     "declaration": true,
     "strict": true,
+    "outDir": "${configDir}/build",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitAny": true,
@@ -19,5 +20,5 @@
     "noImplicitOverride": true,
     "esModuleInterop": true,
     "types": ["jest", "node"]
-  }
+  },
 }

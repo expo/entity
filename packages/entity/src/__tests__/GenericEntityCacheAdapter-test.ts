@@ -8,7 +8,7 @@ import {
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
 } from '../internal/SingleFieldHolder';
-import { deepEqualEntityAware } from '../internal/__tests__/TSMockitoExtensions';
+import { deepEqualEntityAware } from '../utils/__testfixtures__/TSMockitoExtensions';
 
 type BlahFields = {
   id: string;

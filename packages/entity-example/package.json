@@ -5,6 +5,7 @@
   "description": "An example integration of the @expo/entity framework",
   "scripts": {
     "tsc": "tsc",
+    "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf build coverage coverage-integration",
     "lint": "eslint src",
     "lint-fix": "eslint src --fix",
