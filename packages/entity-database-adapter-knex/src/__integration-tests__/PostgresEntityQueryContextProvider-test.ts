@@ -3,8 +3,8 @@ import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 
 import PostgresEntityQueryContextProvider from '../PostgresEntityQueryContextProvider';
-import PostgresUniqueTestEntity from '../testfixtures/PostgresUniqueTestEntity';
-import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
+import PostgresUniqueTestEntity from '../__testfixtures__/PostgresUniqueTestEntity';
+import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe(PostgresEntityQueryContextProvider, () => {
   let knexInstance: Knex;

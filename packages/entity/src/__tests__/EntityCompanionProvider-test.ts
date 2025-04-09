@@ -4,7 +4,7 @@ import EntityConfiguration from '../EntityConfiguration';
 import { StringField } from '../EntityFields';
 import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
 import ViewerContext from '../ViewerContext';
-import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 type BlahFields = {
   hello: string;

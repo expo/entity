@@ -4,7 +4,10 @@ import EntityMutatorFactory from '../EntityMutatorFactory';
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import ViewerScopedEntityMutatorFactory from '../ViewerScopedEntityMutatorFactory';
-import TestEntity, { TestFields, TestEntityPrivacyPolicy } from '../testfixtures/TestEntity';
+import TestEntity, {
+  TestFields,
+  TestEntityPrivacyPolicy,
+} from '../utils/__testfixtures__/TestEntity';
 
 describe(ViewerScopedEntityMutatorFactory, () => {
   it('correctly scopes viewer to entity mutations', async () => {

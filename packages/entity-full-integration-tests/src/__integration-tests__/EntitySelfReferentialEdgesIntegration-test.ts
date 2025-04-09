@@ -18,7 +18,7 @@ import nullthrows from 'nullthrows';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import { createFullIntegrationTestEntityCompanionProvider } from '../testfixtures/createFullIntegrationTestEntityCompanionProvider';
+import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider';
 
 interface CategoryFields {
   id: string;

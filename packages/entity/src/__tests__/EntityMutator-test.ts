@@ -42,15 +42,15 @@ import SimpleTestEntity, {
   simpleTestEntityConfiguration,
   SimpleTestEntityPrivacyPolicy,
   SimpleTestFields,
-} from '../testfixtures/SimpleTestEntity';
+} from '../utils/__testfixtures__/SimpleTestEntity';
+import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
+import StubDatabaseAdapter from '../utils/__testfixtures__/StubDatabaseAdapter';
+import StubQueryContextProvider from '../utils/__testfixtures__/StubQueryContextProvider';
 import TestEntity, {
   TestFields,
   TestEntityPrivacyPolicy,
   testEntityConfiguration,
-} from '../testfixtures/TestEntity';
-import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapter';
-import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
-import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider';
+} from '../utils/__testfixtures__/TestEntity';
 
 class TestMutationTrigger extends EntityMutationTrigger<
   TestFields,

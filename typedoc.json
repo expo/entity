@@ -10,7 +10,7 @@
   "exclude": [
     "**/__tests__/**/*.ts",
     "**/__integration-tests__/**/*.ts",
-    "**/testfixtures/**/*.ts",
+    "**/__testfixtures__/**/*.ts",
     "packages/entity-example",
     "packages/entity-full-integration-tests",
   ],

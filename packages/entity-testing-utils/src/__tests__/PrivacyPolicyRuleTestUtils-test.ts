@@ -1,10 +1,12 @@
+import {
+  EntityPrivacyPolicyEvaluationContext,
+  EntityQueryContext,
+  ViewerContext,
+  AlwaysAllowPrivacyPolicyRule,
+  AlwaysDenyPrivacyPolicyRule,
+} from '@expo/entity';
 import { anything, instance, mock } from 'ts-mockito';
 
-import { EntityPrivacyPolicyEvaluationContext } from '../../../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../../../EntityQueryContext';
-import ViewerContext from '../../../ViewerContext';
-import AlwaysAllowPrivacyPolicyRule from '../../../rules/AlwaysAllowPrivacyPolicyRule';
-import AlwaysDenyPrivacyPolicyRule from '../../../rules/AlwaysDenyPrivacyPolicyRule';
 import { describePrivacyPolicyRuleWithAsyncTestCase } from '../PrivacyPolicyRuleTestUtils';
 
 describe(describePrivacyPolicyRuleWithAsyncTestCase, () => {

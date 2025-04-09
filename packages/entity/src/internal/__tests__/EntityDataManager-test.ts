@@ -17,13 +17,16 @@ import IEntityMetricsAdapter, {
   IncrementLoadCountEventType,
 } from '../../metrics/IEntityMetricsAdapter';
 import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
-import TestEntity, { testEntityConfiguration, TestFields } from '../../testfixtures/TestEntity';
 import {
   NoCacheStubCacheAdapterProvider,
   InMemoryFullCacheStubCacheAdapterProvider,
-} from '../../utils/testing/StubCacheAdapter';
-import StubDatabaseAdapter from '../../utils/testing/StubDatabaseAdapter';
-import StubQueryContextProvider from '../../utils/testing/StubQueryContextProvider';
+} from '../../utils/__testfixtures__/StubCacheAdapter';
+import StubDatabaseAdapter from '../../utils/__testfixtures__/StubDatabaseAdapter';
+import StubQueryContextProvider from '../../utils/__testfixtures__/StubQueryContextProvider';
+import TestEntity, {
+  testEntityConfiguration,
+  TestFields,
+} from '../../utils/__testfixtures__/TestEntity';
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder';
 import EntityDataManager from '../EntityDataManager';
 import { EntityLoadMethodType } from '../EntityLoadInterfaces';

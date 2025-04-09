@@ -11,8 +11,8 @@ import {
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 
-import ErrorsTestEntity from '../testfixtures/ErrorsTestEntity';
-import { createKnexIntegrationTestEntityCompanionProvider } from '../testfixtures/createKnexIntegrationTestEntityCompanionProvider';
+import ErrorsTestEntity from '../__testfixtures__/ErrorsTestEntity';
+import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe('postgres errors', () => {
   let knexInstance: Knex;

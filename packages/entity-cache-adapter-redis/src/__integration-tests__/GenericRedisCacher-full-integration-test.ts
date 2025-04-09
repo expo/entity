@@ -15,8 +15,8 @@ import GenericRedisCacher, {
   GenericRedisCacheContext,
   RedisCacheInvalidationStrategy,
 } from '../GenericRedisCacher';
-import RedisTestEntity, { RedisTestEntityFields } from '../testfixtures/RedisTestEntity';
-import { createRedisIntegrationTestEntityCompanionProvider } from '../testfixtures/createRedisIntegrationTestEntityCompanionProvider';
+import RedisTestEntity, { RedisTestEntityFields } from '../__testfixtures__/RedisTestEntity';
+import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}
 

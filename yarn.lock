@@ -1577,6 +1577,7 @@ __metadata:
   resolution: "@expo/entity-cache-adapter-local-memory@workspace:packages/entity-cache-adapter-local-memory"
   dependencies:
     "@expo/entity": "workspace:^"
+    "@expo/entity-testing-utils": "workspace:^"
     "@types/jest": "npm:^29.5.12"
     "@types/lru-cache": "npm:^5.1.1"
     "@types/node": "npm:^20.14.1"
@@ -1600,6 +1601,7 @@ __metadata:
   dependencies:
     "@expo/batcher": "npm:^1.0.0"
     "@expo/entity": "workspace:^"
+    "@expo/entity-testing-utils": "workspace:^"
     "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^20.14.1"
     ctix: "npm:^2.7.0"
@@ -1642,6 +1644,7 @@ __metadata:
   resolution: "@expo/entity-database-adapter-knex@workspace:packages/entity-database-adapter-knex"
   dependencies:
     "@expo/entity": "workspace:^"
+    "@expo/entity-testing-utils": "workspace:^"
     "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^20.14.1"
     ctix: "npm:^2.7.0"
@@ -1666,6 +1669,7 @@ __metadata:
     "@apollo/server": "npm:^4.7.3"
     "@as-integrations/koa": "npm:^1.1.1"
     "@expo/entity": "workspace:^"
+    "@expo/entity-testing-utils": "workspace:^"
     "@koa/cors": "npm:^4.0.0"
     "@koa/router": "npm:^12.0.0"
     "@types/jest": "npm:^29.5.12"
@@ -1716,6 +1720,7 @@ __metadata:
   resolution: "@expo/entity-ip-address-field@workspace:packages/entity-ip-address-field"
   dependencies:
     "@expo/entity": "workspace:^"
+    "@expo/entity-testing-utils": "workspace:^"
     "@types/jest": "npm:^29.5.12"
     "@types/jsbn": "npm:^1.2.29"
     "@types/node": "npm:^20.14.1"
@@ -1770,6 +1775,28 @@ __metadata:
     ioredis: "npm:^5.4.1"
     jest: "npm:^29.7.0"
     nullthrows: "npm:^1.1.1"
+    prettier: "npm:^3.3.3"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
+    ts-jest: "npm:^29.2.5"
+    ts-mockito: "npm:^2.6.1"
+    typescript: "npm:^5.8.2"
+  languageName: unknown
+  linkType: soft
+
+"@expo/entity-testing-utils@workspace:^, @expo/entity-testing-utils@workspace:packages/entity-testing-utils":
+  version: 0.0.0-use.local
+  resolution: "@expo/entity-testing-utils@workspace:packages/entity-testing-utils"
+  dependencies:
+    "@expo/entity": "workspace:^"
+    "@types/jest": "npm:^29.5.12"
+    "@types/lodash": "npm:^4.17.16"
+    "@types/node": "npm:^20.14.1"
+    ctix: "npm:^2.7.0"
+    eslint: "npm:^8.57.1"
+    eslint-config-universe: "npm:^14.0.0"
+    eslint-plugin-tsdoc: "npm:^0.3.0"
+    jest: "npm:^29.7.0"
+    lodash: "npm:^4.17.21"
     prettier: "npm:^3.3.3"
     prettier-plugin-organize-imports: "npm:^4.1.0"
     ts-jest: "npm:^29.2.5"

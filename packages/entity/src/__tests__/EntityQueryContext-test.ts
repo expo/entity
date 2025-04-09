@@ -2,7 +2,7 @@ import invariant from 'invariant';
 
 import { EntityQueryContext, TransactionIsolationLevel } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
-import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(EntityQueryContext, () => {
   describe('callbacks', () => {

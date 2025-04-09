@@ -13,11 +13,11 @@ import GenericLocalMemoryCacher from '../GenericLocalMemoryCacher';
 import LocalMemoryCacheAdapterProvider from '../LocalMemoryCacheAdapterProvider';
 import LocalMemoryTestEntity, {
   LocalMemoryTestEntityFields,
-} from '../testfixtures/LocalMemoryTestEntity';
+} from '../__testfixtures__/LocalMemoryTestEntity';
 import {
   createLocalMemoryTestEntityCompanionProvider,
   createNoOpLocalMemoryIntegrationTestEntityCompanionProvider,
-} from '../testfixtures/createLocalMemoryTestEntityCompanionProvider';
+} from '../__testfixtures__/createLocalMemoryTestEntityCompanionProvider';
 
 describe(GenericLocalMemoryCacher, () => {
   it('has correct caching behavior', async () => {

@@ -2,8 +2,8 @@ import AuthorizationResultBasedEntityAssociationLoader from '../AuthorizationRes
 import EnforcingEntityAssociationLoader from '../EnforcingEntityAssociationLoader';
 import EntityAssociationLoader from '../EntityAssociationLoader';
 import ViewerContext from '../ViewerContext';
-import SimpleTestEntity from '../testfixtures/SimpleTestEntity';
-import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
+import SimpleTestEntity from '../utils/__testfixtures__/SimpleTestEntity';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(EntityAssociationLoader, () => {
   describe('enforcing', () => {

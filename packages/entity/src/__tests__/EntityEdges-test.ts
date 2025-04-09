@@ -15,9 +15,9 @@ import { EntityTransactionalQueryContext, EntityQueryContext } from '../EntityQu
 import { CacheStatus } from '../internal/ReadThroughEntityCache';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
 import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
-import TestViewerContext from '../testfixtures/TestViewerContext';
-import { InMemoryFullCacheStubCacheAdapter } from '../utils/testing/StubCacheAdapter';
-import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
+import { InMemoryFullCacheStubCacheAdapter } from '../utils/__testfixtures__/StubCacheAdapter';
+import TestViewerContext from '../utils/__testfixtures__/TestViewerContext';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 interface OtherFields {
   id: string;

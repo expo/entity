@@ -1,16 +1,16 @@
-import Entity from '../Entity';
-import { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import EntityConfiguration from '../EntityConfiguration';
-import { StringField, UUIDField } from '../EntityFields';
-import { EntityTriggerMutationInfo } from '../EntityMutationInfo';
+import Entity from '../../Entity';
+import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
+import EntityConfiguration from '../../EntityConfiguration';
+import { StringField, UUIDField } from '../../EntityFields';
+import { EntityTriggerMutationInfo } from '../../EntityMutationInfo';
 import {
   EntityMutationTrigger,
   EntityNonTransactionalMutationTrigger,
-} from '../EntityMutationTriggerConfiguration';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../EntityQueryContext';
-import ViewerContext from '../ViewerContext';
-import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
+} from '../../EntityMutationTriggerConfiguration';
+import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
+import { EntityQueryContext } from '../../EntityQueryContext';
+import ViewerContext from '../../ViewerContext';
+import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type TestMTFields = {
   id: string;

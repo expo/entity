@@ -5,7 +5,7 @@ import { StringField, UUIDField } from '../../EntityFields';
 import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
 import ViewerContext from '../../ViewerContext';
 import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
-import { createUnitTestEntityCompanionProvider } from '../../utils/testing/createUnitTestEntityCompanionProvider';
+import { createUnitTestEntityCompanionProvider } from '../../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe('Two entities backed by the same table', () => {
   test('mutate through different types and keep consistent cache and dataloader', async () => {

@@ -19,14 +19,14 @@ import {
 } from '../internal/SingleFieldHolder';
 import { deepEqualEntityAware } from '../internal/__tests__/TSMockitoExtensions';
 import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
+import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
+import StubDatabaseAdapter from '../utils/__testfixtures__/StubDatabaseAdapter';
+import StubQueryContextProvider from '../utils/__testfixtures__/StubQueryContextProvider';
 import TestEntity, {
   TestFields,
   TestEntityPrivacyPolicy,
   testEntityConfiguration,
-} from '../testfixtures/TestEntity';
-import { NoCacheStubCacheAdapterProvider } from '../utils/testing/StubCacheAdapter';
-import StubDatabaseAdapter from '../utils/testing/StubDatabaseAdapter';
-import StubQueryContextProvider from '../utils/testing/StubQueryContextProvider';
+} from '../utils/__testfixtures__/TestEntity';
 
 describe(AuthorizationResultBasedEntityLoader, () => {
   it('loads entities', async () => {

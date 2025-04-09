@@ -2,8 +2,8 @@ import {
   IEntityMetricsAdapter,
   NoOpEntityMetricsAdapter,
   EntityCompanionProvider,
-  InMemoryFullCacheStubCacheAdapterProvider,
 } from '@expo/entity';
+import { InMemoryFullCacheStubCacheAdapterProvider } from '@expo/entity-testing-utils';
 
 import { InMemoryDatabaseAdapterProvider } from './adapters/InMemoryDatabaseAdapter';
 import InMemoryQueryContextProvider from './adapters/InMemoryQueryContextProvider';

@@ -7,9 +7,9 @@ import EnforcingEntityLoader from '../EnforcingEntityLoader';
 import EntityLoaderUtils from '../EntityLoaderUtils';
 import ReadonlyEntity from '../ReadonlyEntity';
 import ViewerContext from '../ViewerContext';
-import SimpleTestEntity from '../testfixtures/SimpleTestEntity';
-import TestEntity from '../testfixtures/TestEntity';
-import { createUnitTestEntityCompanionProvider } from '../utils/testing/createUnitTestEntityCompanionProvider';
+import SimpleTestEntity from '../utils/__testfixtures__/SimpleTestEntity';
+import TestEntity from '../utils/__testfixtures__/TestEntity';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(ReadonlyEntity, () => {
   describe('getID', () => {

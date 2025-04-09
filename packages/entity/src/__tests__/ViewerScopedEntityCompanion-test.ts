@@ -5,7 +5,10 @@ import ViewerContext from '../ViewerContext';
 import ViewerScopedEntityCompanion from '../ViewerScopedEntityCompanion';
 import ViewerScopedEntityLoaderFactory from '../ViewerScopedEntityLoaderFactory';
 import ViewerScopedEntityMutatorFactory from '../ViewerScopedEntityMutatorFactory';
-import TestEntity, { TestFields, TestEntityPrivacyPolicy } from '../testfixtures/TestEntity';
+import TestEntity, {
+  TestFields,
+  TestEntityPrivacyPolicy,
+} from '../utils/__testfixtures__/TestEntity';
 
 describe(ViewerScopedEntityCompanion, () => {
   it('returns viewer scoped loader and mutator factory', () => {

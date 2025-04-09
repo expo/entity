@@ -2,19 +2,18 @@ import {
   CompositeFieldHolder,
   CompositeFieldValueHolder,
   CompositeFieldValueHolderMap,
-} from '../../../internal/CompositeFieldHolder';
-import { CacheStatus } from '../../../internal/ReadThroughEntityCache';
-import {
   SingleFieldHolder,
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
-} from '../../../internal/SingleFieldHolder';
-import { testEntityConfiguration, TestFields } from '../../../testfixtures/TestEntity';
+  CacheStatus,
+} from '@expo/entity';
+
 import {
   InMemoryFullCacheStubCacheAdapterProvider,
   InMemoryFullCacheStubCacheAdapter,
   NoCacheStubCacheAdapter,
 } from '../StubCacheAdapter';
+import { testEntityConfiguration, TestFields } from '../__testfixtures__/TestEntity';
 
 describe(NoCacheStubCacheAdapter, () => {
   describe('loadManyAsync', () => {

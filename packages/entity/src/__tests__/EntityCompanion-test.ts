@@ -13,7 +13,7 @@ import TestEntityWithMutationTriggers, {
   TestMTFields,
   testEntityMTConfiguration,
   TestMutationTrigger,
-} from '../testfixtures/TestEntityWithMutationTriggers';
+} from '../utils/__testfixtures__/TestEntityWithMutationTriggers';
 
 describe(EntityCompanion, () => {
   it('correctly instantiates mutator and loader factories', () => {

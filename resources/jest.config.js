@@ -1,7 +1,7 @@
 module.exports = {
   preset: 'ts-jest',
   testMatch: ['**/__tests__/**/*-test.ts'],
-  coveragePathIgnorePatterns: ['testfixtures'],
+  coveragePathIgnorePatterns: ['__testfixtures__'],
   globals: {
     'ts-jest': {
       diagnostics: {
