@@ -6,14 +6,15 @@
   ],
   "scripts": {
     "tsc": "lerna run tsc",
+    "build": "lerna run build",
     "clean": "lerna run clean",
     "lint": "lerna run lint",
     "lint-fix": "lerna run lint-fix",
     "test": "lerna run test",
     "integration": "./resources/run-with-docker lerna run integration-no-setup",
-    "prepack": "lerna run tsc",
+    "prepack": "lerna run build",
     "ctix": "lerna run ctix",
-    "typedoc": "yarn tsc && typedoc"
+    "typedoc": "yarn build && typedoc"
   },
   "devDependencies": {
     "lerna": "^8.2.1",

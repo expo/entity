@@ -5,6 +5,7 @@
   "description": "Full redis and knex integration tests for the entity framework",
   "scripts": {
     "tsc": "tsc",
+    "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf build coverage coverage-integration",
     "lint": "eslint src",
     "lint-fix": "eslint src --fix",

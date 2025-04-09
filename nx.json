@@ -3,6 +3,9 @@
     "tsc": {
       "dependsOn": ["^clean", "clean", "^tsc"]
     },
+    "build": {
+      "dependsOn": ["^clean", "clean", "^build"]
+    },
     "test": {
       "dependsOn": ["^tsc"]
     },
