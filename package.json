@@ -17,9 +17,9 @@
     "typedoc": "yarn build && typedoc"
   },
   "devDependencies": {
-    "lerna": "^8.2.1",
-    "typedoc": "^0.28.1",
-    "typescript": "^5.8.2"
+    "lerna": "^8.2.2",
+    "typedoc": "^0.28.2",
+    "typescript": "^5.8.3"
   },
   "volta": {
     "node": "20.14.0"
