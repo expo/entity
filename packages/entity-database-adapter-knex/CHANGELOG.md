@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.42.0](https://github.com/expo/entity/compare/v0.41.0...v0.42.0) (2025-04-10)
+
+
+### Features
+
+* add @expo/entity-testing-utils package ([#280](https://github.com/expo/entity/issues/280)) ([485894a](https://github.com/expo/entity/commit/485894af16e233d533a9480285bbda56812cbe0b))
+* add composite field loading and caching ([#272](https://github.com/expo/entity/issues/272)) ([f0aa0da](https://github.com/expo/entity/commit/f0aa0dafebdb56418cbd22dda437233d850db3e7))
+* change entity id field generic to field name and derive type where necessary ([#278](https://github.com/expo/entity/issues/278)) ([b7e524c](https://github.com/expo/entity/commit/b7e524c41892797608d0b884410b8d520a80a9ef))
+* convert batched/cached loader interface to holder pattern ([#271](https://github.com/expo/entity/issues/271)) ([06b3cb7](https://github.com/expo/entity/commit/06b3cb7f8076ef9e5b83cdf154da159801bd14cc)), closes [#201](https://github.com/expo/entity/issues/201)
+* enforce explicit id field cache property ([#276](https://github.com/expo/entity/issues/276)) ([1da5cc0](https://github.com/expo/entity/commit/1da5cc01e1affc3b3338a0ab2050504b5853ac6f))
+
+
+
+
+
 # [0.41.0](https://github.com/expo/entity/compare/v0.40.0...v0.41.0) (2025-03-07)
 
 

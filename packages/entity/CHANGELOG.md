@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.42.0](https://github.com/expo/entity/compare/v0.41.0...v0.42.0) (2025-04-10)
+
+
+### Bug Fixes
+
+* fix metrics for dataloader waterfall logging ([#267](https://github.com/expo/entity/issues/267)) ([1d95eba](https://github.com/expo/entity/commit/1d95eba1f9efb67164c3affc917c9b2514e1529f))
+* move source of truth of loader docblocks to enforcing loader since it is not the default loader ([#264](https://github.com/expo/entity/issues/264)) ([aa56b70](https://github.com/expo/entity/commit/aa56b705db115cf760125208eb2d3585a3794e58))
+
+
+### Features
+
+* add @expo/entity-testing-utils package ([#280](https://github.com/expo/entity/issues/280)) ([485894a](https://github.com/expo/entity/commit/485894af16e233d533a9480285bbda56812cbe0b))
+* add composite field loading and caching ([#272](https://github.com/expo/entity/issues/272)) ([f0aa0da](https://github.com/expo/entity/commit/f0aa0dafebdb56418cbd22dda437233d850db3e7))
+* add some utility classes and methods in preparation for composite keys ([#269](https://github.com/expo/entity/issues/269)) ([ad41af1](https://github.com/expo/entity/commit/ad41af1c826fb267f5e463771107c85802578a19)), closes [#201](https://github.com/expo/entity/issues/201)
+* change entity id field generic to field name and derive type where necessary ([#278](https://github.com/expo/entity/issues/278)) ([b7e524c](https://github.com/expo/entity/commit/b7e524c41892797608d0b884410b8d520a80a9ef))
+* convert batched/cached loader interface to holder pattern ([#271](https://github.com/expo/entity/issues/271)) ([06b3cb7](https://github.com/expo/entity/commit/06b3cb7f8076ef9e5b83cdf154da159801bd14cc)), closes [#201](https://github.com/expo/entity/issues/201)
+* enforce explicit id field cache property ([#276](https://github.com/expo/entity/issues/276)) ([1da5cc0](https://github.com/expo/entity/commit/1da5cc01e1affc3b3338a0ab2050504b5853ac6f))
+* invalidate n+/-1 cacheKeyVersion for entities for push safety ([#275](https://github.com/expo/entity/issues/275)) ([d9c1852](https://github.com/expo/entity/commit/d9c1852706f98f0761ff24ddd244e4ed2beca580))
+
+
+
+
+
 # [0.41.0](https://github.com/expo/entity/compare/v0.40.0...v0.41.0) (2025-03-07)
 
 

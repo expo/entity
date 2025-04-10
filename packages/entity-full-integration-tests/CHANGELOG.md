@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.42.0](https://github.com/expo/entity/compare/v0.41.0...v0.42.0) (2025-04-10)
+
+
+### Features
+
+* add @expo/entity-testing-utils package ([#280](https://github.com/expo/entity/issues/280)) ([485894a](https://github.com/expo/entity/commit/485894af16e233d533a9480285bbda56812cbe0b))
+* change entity id field generic to field name and derive type where necessary ([#278](https://github.com/expo/entity/issues/278)) ([b7e524c](https://github.com/expo/entity/commit/b7e524c41892797608d0b884410b8d520a80a9ef))
+* invalidate n+/-1 cacheKeyVersion for entities for push safety ([#275](https://github.com/expo/entity/issues/275)) ([d9c1852](https://github.com/expo/entity/commit/d9c1852706f98f0761ff24ddd244e4ed2beca580))
+
+
+
+
+
 # [0.41.0](https://github.com/expo/entity/compare/v0.40.0...v0.41.0) (2025-03-07)
 
 
