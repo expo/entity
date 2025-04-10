@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-ip-address-field",
-  "version": "0.42.0",
+  "version": "0.43.0",
   "description": "IP address EntityField definitions for @expo/entity",
   "files": [
     "build",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.43.0](https://github.com/expo/entity/compare/v0.42.0...v0.43.0) (2025-04-10)
+
+
+### Bug Fixes
+
+* fix generated tsc definition sentinel type visibility ([#283](https://github.com/expo/entity/issues/283)) ([9758fd5](https://github.com/expo/entity/commit/9758fd5df8695a8121258cd988c0c79ce8a3e4b6))
+
+
+
+
+
 # [0.42.0](https://github.com/expo/entity/compare/v0.41.0...v0.42.0) (2025-04-10)
 
 
