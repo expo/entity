@@ -177,7 +177,7 @@ export abstract class EntityFieldDefinition<T, TRequireExplicitCache extends boo
 
   // @ts-expect-error this is to ensure that different constructor requirements produce incompatible
   // objects in the eyes of the type system
-  private readonly cacheRawSentinel: TRequireExplicitCache;
+  protected readonly _cacheRawSentinel: TRequireExplicitCache;
 
   /**
    * @param options - options for this field definition
