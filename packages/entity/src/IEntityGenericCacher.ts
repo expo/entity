@@ -59,8 +59,8 @@ export default interface IEntityGenericCacher<
    * from makeCacheKeyForStorage because invalidation can optionally be configured to invalidate a larger set of keys than
    * the one for just the current cache version, which can be useful for things like push safety.
    *
-   * @param key - load key of the cache key
-   * @param values - load values of the cache key
+   * @param key - load key for the cache keys
+   * @param value - load value for the cache keys
    */
   makeCacheKeysForInvalidation<
     TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,

@@ -5,12 +5,18 @@ import IEntityCacheAdapter from '../IEntityCacheAdapter';
 import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
 import { filterMap } from '../utils/collections/maps';
 
+/**
+ * @internal
+ */
 export enum CacheStatus {
   HIT,
   MISS,
   NEGATIVE,
 }
 
+/**
+ * @internal
+ */
 export type CacheLoadResult<TFields extends Record<string, any>> =
   | {
       status: CacheStatus.HIT;
@@ -26,6 +32,8 @@ export type CacheLoadResult<TFields extends Record<string, any>> =
 /**
  * A read-through entity cache is responsible for coordinating EntityDatabaseAdapter and
  * EntityCacheAdapter within the EntityDataManager.
+ *
+ * @internal
  */
 export default class ReadThroughEntityCache<
   TFields extends Record<string, any>,
