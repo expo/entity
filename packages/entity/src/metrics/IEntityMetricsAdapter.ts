@@ -20,6 +20,11 @@ export interface EntityMetricsLoadEvent {
   type: EntityMetricsLoadType;
 
   /**
+   * Whether this load is within a transaction.
+   */
+  isInTransaction: boolean;
+
+  /**
    * Class name of the Entity being loaded.
    */
   entityClassName: string;
@@ -46,6 +51,11 @@ export interface EntityMetricsMutationEvent {
    * EntityMetricsMutationType for this mutation.
    */
   type: EntityMetricsMutationType;
+
+  /**
+   * Whether this mutation is within a transaction.
+   */
+  isInTransaction: boolean;
 
   /**
    * Class name of the Entity being mutated.
@@ -86,6 +96,11 @@ export interface IncrementLoadCountEvent {
   type: IncrementLoadCountEventType;
 
   /**
+   * Whether this load is within a transaction.
+   */
+  isInTransaction: boolean;
+
+  /**
    * Load method type for this event.
    */
   loadType: EntityLoadMethodType;
@@ -114,8 +129,20 @@ export interface EntityMetricsAuthorizationEvent {
    * Class name of the Entity being authorized.
    */
   entityClassName: string;
+
+  /**
+   * The action being authorized.
+   */
   action: EntityAuthorizationAction;
+
+  /**
+   * The result of the authorization.
+   */
   evaluationResult: EntityMetricsAuthorizationResult;
+
+  /**
+   * The evaluation mode of the privacy policy.
+   */
   privacyPolicyEvaluationMode: EntityPrivacyPolicyEvaluationMode;
 }
 

@@ -4,11 +4,12 @@ import nullthrows from 'nullthrows';
 import { IEntityClass } from './Entity';
 import EntityConfiguration from './EntityConfiguration';
 import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
+import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
 import ReadonlyEntity from './ReadonlyEntity';
 import ViewerContext from './ViewerContext';
 import { pick } from './entityUtils';
 import EntityDataManager from './internal/EntityDataManager';
+import { LoadPair } from './internal/EntityLoadInterfaces';
 import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
 import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
@@ -56,11 +57,9 @@ export default class EntityLoaderUtils<
     protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
-  /**
-   * Invalidate all caches for an entity's fields. Exposed primarily for internal use by EntityMutator.
-   * @param objectFields - entity data object to be invalidated
-   */
-  async invalidateFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
+  private getKeyValuePairsFromObjectFields(
+    objectFields: Readonly<TFields>,
+  ): readonly LoadPair<TFields, TIDField, any, any, any>[] {
     const keys = Object.keys(objectFields) as (keyof TFields)[];
     const singleFieldKeyValues = keys
       .map((fieldName: keyof TFields) => {
@@ -85,20 +84,52 @@ export default class EntityLoaderUtils<
           : null;
       })
       .filter((kv) => kv !== null);
-
-    await this.dataManager.invalidateKeyValuePairsAsync([
-      ...singleFieldKeyValues,
-      ...compositeFieldKeyValues,
-    ]);
+    return [...singleFieldKeyValues, ...compositeFieldKeyValues];
   }
 
   /**
-   * Invalidate all caches for an entity. One potential use case would be to keep the entity
+   * Invalidate all caches and local dataloaders for an entity's fields. Exposed primarily for internal use by EntityMutator.
+   * @param objectFields - entity data object to be invalidated
+   */
+  public async invalidateFieldsAsync(objectFields: Readonly<TFields>): Promise<void> {
+    await this.dataManager.invalidateKeyValuePairsAsync(
+      this.getKeyValuePairsFromObjectFields(objectFields),
+    );
+  }
+
+  /**
+   * Invalidate all local dataloaders specific to a transaction for an entity's fields. Exposed primarily for internal use by EntityMutator.
+   * @param objectFields - entity data object to be invalidated
+   */
+  public invalidateFieldsForTransaction(
+    queryContext: EntityTransactionalQueryContext,
+    objectFields: Readonly<TFields>,
+  ): void {
+    this.dataManager.invalidateKeyValuePairsForTransaction(
+      queryContext,
+      this.getKeyValuePairsFromObjectFields(objectFields),
+    );
+  }
+
+  /**
+   * Invalidate all caches and local dataloaders for an entity. One potential use case would be to keep the entity
    * framework in sync with changes made to data outside of the framework.
    * @param entity - entity to be invalidated
    */
-  async invalidateEntityAsync(entity: TEntity): Promise<void> {
+  public async invalidateEntityAsync(entity: TEntity): Promise<void> {
     await this.invalidateFieldsAsync(entity.getAllDatabaseFields());
+  }
+
+  /**
+   * Invalidate all local dataloaders specific to a transaction for an entity. One potential use case would be to keep the entity
+   * framework in sync with changes made to data outside of the framework.
+   * @param entity - entity to be invalidated
+   */
+  public invalidateEntityForTransaction(
+    queryContext: EntityTransactionalQueryContext,
+    entity: TEntity,
+  ): void {
+    this.invalidateFieldsForTransaction(queryContext, entity.getAllDatabaseFields());
   }
 
   /**

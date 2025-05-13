@@ -27,7 +27,93 @@ import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
 import IEntityMetricsAdapter, { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
 
-abstract class AuthorizationResultBasedBaseMutator<
+/**
+ * Base class for entity mutators. Mutators are builder-like class instances that are
+ * responsible for creating, updating, and deleting entities, and for calling out to
+ * the loader at appropriate times to invalidate the cache(s). The loader is responsible
+ * for deciding which cache entries to invalidate for the entity being mutated.
+ *
+ * ## Notes on invalidation
+ *
+ * The primary goal of invalidation is to ensure that at any point in time, a load
+ * for an entity through a cache or layers of caches will return the most up-to-date
+ * value for that entity according to the source of truth stored in the database, and thus
+ * the read-through cache must be kept consistent (only current values are stored, others are invalidated).
+ *
+ * This is done by invalidating the cache for the entity being mutated at the end of the transaction
+ * in which the mutation is performed. This ensures that the cache is invalidated as close as possible
+ * to when the source-of-truth is updated in the database, as to reduce the likelihood of
+ * collisions with loads done at the same time on other machines.
+ *
+ * <blockquote>
+ *    The easiest way to demonstrate this reasoning is via some counter-examples.
+ *    For sake of demonstration, let's say we did invalidation immediately after the mutation instead of
+ *    at the end of the transaction.
+ *
+ *    Example 1:
+ *    - t=0. A transaction is started on machine A and within this transaction a new entity is created.
+ *           The cache for the entity is invalidated.
+ *    - t=1. Machine B tries to load the same entity outside of a transaction. It does not yet exist
+ *           so it negatively caches the entity.
+ *    - t=2. Machine A commits the transaction.
+ *    - t=3. Machine C tries to load the same entity outside of a transaction. It is negatively cached
+ *           so it returns null, even though it exists in the database.
+ *
+ *    One can see that it's strictly better to invalidate the transaction at t=2 as it would remove the
+ *    negative cache entry for the entity, thus leaving the cache consistent with the database.
+ *
+ *    Example 2:
+ *    - t=0. Entity A is created and read into the cache (everthing is consistent at this point in time).
+ *    - t=1. Machine A starts a transaction, reads entity A, updates it, and invalidates the cache.
+ *    - t=2. Machine B reads entity A outside of a transaction. Since the transaction from the step above
+ *           has not yet been committed, the changes within that transaction are not yet visible. It stores
+ *           the entity in the cache.
+ *    - t=3. Machine A commits the transaction.
+ *    - t=4. Machine C reads entity A outside of a transaction. It returns the entity from the cache which
+ *           is now inconsistent with the database.
+ *
+ *    Again, one can see that it's strictly better to invalidate the transaction at t=3 as it would remove the
+ *    stale cache entry for the entity, thus leaving the cache consistent with the database.
+ *
+ *    For deletions, one can imagine a similar series of events occurring.
+ * </blockquote>
+ *
+ * #### Invalidation as it pertains to transactions and nested transactions
+ *
+ * Invalidation becomes slightly more complex when nested transactions are considered. The general
+ * guiding principle here is that over-invalidation is strictly better than under-invalidation
+ * as far as consistency goes. This is because the database is the source of truth.
+ *
+ * For the visible-to-the-outside-world caches (cache adapters), the invalidations are done at the
+ * end of the outermost transaction (as discussed above), plus at the end of each nested transaction.
+ * While only the outermost transaction is strictly necessary for these cache adapter invalidations,
+ * the mental model of doing it at the end of each transaction, nested or otherwise, is easier to reason about.
+ *
+ * For the dataloader caches (per-transaction local caches), the invalidation is done multiple times
+ * (over-invalidation) to better ensure that the caches are always consistent with the database as read within
+ * the transaction or nested transaction.
+ * 1. Immediately after the mutation is performed (but before the transaction or nested transaction is committed).
+ * 2. At the end of the transaction (or nested transaction) itself.
+ * 3. At the end of the outermost transaction (if this is a nested transaction) and all of that transactions's nested transactions recursively.
+ *
+ * This over-invalidation is done because transaction isolation semantics are not consistent across all
+ * databases (some databases don't even have true nested transactions at all), meaning that whether
+ * a change made in a nested transaction is visible to the parent transaction(s) is not necessarily known.
+ * This means that the only way to ensure that the dataloader caches are consistent
+ * with the database is to invalidate them often, thus delegating consistency to the database. Invalidation
+ * of local caches is synchronous and immediate, so the performance impact of over-invalidation is negligible.
+ *
+ * #### Invalidation pitfalls
+ *
+ * One may have noticed that the above invalidation strategy still isn't perfect. Cache invalidation is hard.
+ * There still exists a very short moment in time between when invalidation occurs and when the transaction is committed,
+ * so dirty cache writes are still possible, especially in systems reading an object frequently and writing to the same object.
+ * For now, the entity framework does not attempt to provide a further solution to this problem since it is likely
+ * solutions will be case-specific. Some fun reads on the topic:
+ * - https://engineering.fb.com/2013/06/25/core-infra/tao-the-power-of-the-graph/
+ * - https://hazelcast.com/blog/a-hitchhikers-guide-to-caching-patterns/
+ */
+export abstract class AuthorizationResultBasedBaseMutator<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
@@ -224,6 +310,7 @@ export class AuthorizationResultBasedCreateMutator<
       this.metricsAdapter,
       EntityMetricsMutationType.CREATE,
       this.entityClass.name,
+      this.queryContext,
     )(this.createInTransactionAsync());
   }
 
@@ -282,9 +369,14 @@ export class AuthorizationResultBasedCreateMutator<
 
     const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
 
-    queryContext.appendPostCommitInvalidationCallback(
-      entityLoader.utils.invalidateFieldsAsync.bind(entityLoader, insertResult),
-    );
+    // Invalidate all caches for the new entity so that any previously-negatively-cached loads
+    // are removed from the caches.
+    queryContext.appendPostCommitInvalidationCallback(async () => {
+      entityLoader.utils.invalidateFieldsForTransaction(queryContext, insertResult);
+      await entityLoader.utils.invalidateFieldsAsync(insertResult);
+    });
+
+    entityLoader.utils.invalidateFieldsForTransaction(queryContext, insertResult);
 
     const unauthorizedEntityAfterInsert = entityLoader.utils.constructEntity(insertResult);
     const newEntity = await enforceAsyncResult(
@@ -423,6 +515,7 @@ export class AuthorizationResultBasedUpdateMutator<
       this.metricsAdapter,
       EntityMetricsMutationType.UPDATE,
       this.entityClass.name,
+      this.queryContext,
     )(this.updateInTransactionAsync(false, null));
   }
 
@@ -499,15 +592,31 @@ export class AuthorizationResultBasedUpdateMutator<
       );
     }
 
-    queryContext.appendPostCommitInvalidationCallback(
-      entityLoader.utils.invalidateFieldsAsync.bind(
-        entityLoader,
+    // Invalidate all caches for the entity being updated so that any previously-cached loads
+    // are consistent. This means:
+    // - any query that returned this entity (pre-update) in the past should no longer have that entity in cache for that query.
+    // - any query that will return this entity (post-update) that would not have returned the entity in the past should not
+    //   be negatively cached for the entity.
+    // To do this we simply invalidate all of the entity's caches for both the previous version of the entity and the upcoming
+    // version of the entity.
+
+    queryContext.appendPostCommitInvalidationCallback(async () => {
+      entityLoader.utils.invalidateFieldsForTransaction(
+        queryContext,
         this.originalEntity.getAllDatabaseFields(),
-      ),
+      );
+      entityLoader.utils.invalidateFieldsForTransaction(queryContext, this.fieldsForEntity);
+      await Promise.all([
+        entityLoader.utils.invalidateFieldsAsync(this.originalEntity.getAllDatabaseFields()),
+        entityLoader.utils.invalidateFieldsAsync(this.fieldsForEntity),
+      ]);
+    });
+
+    entityLoader.utils.invalidateFieldsForTransaction(
+      queryContext,
+      this.originalEntity.getAllDatabaseFields(),
     );
-    queryContext.appendPostCommitInvalidationCallback(
-      entityLoader.utils.invalidateFieldsAsync.bind(entityLoader, this.fieldsForEntity),
-    );
+    entityLoader.utils.invalidateFieldsForTransaction(queryContext, this.fieldsForEntity);
 
     const updatedEntity = await enforceAsyncResult(
       entityLoader.loadByIDAsync(entityAboutToBeUpdated.getID()),
@@ -639,6 +748,7 @@ export class AuthorizationResultBasedDeleteMutator<
       this.metricsAdapter,
       EntityMetricsMutationType.DELETE,
       this.entityClass.name,
+      this.queryContext,
     )(this.deleteInTransactionAsync(new Set(), false, null));
   }
 
@@ -708,11 +818,19 @@ export class AuthorizationResultBasedDeleteMutator<
       previousValue: null,
       cascadingDeleteCause,
     });
-    queryContext.appendPostCommitInvalidationCallback(
-      entityLoader.utils.invalidateFieldsAsync.bind(
-        entityLoader,
+
+    // Invalidate all caches for the entity so that any previously-cached loads
+    // are removed from the caches.
+    queryContext.appendPostCommitInvalidationCallback(async () => {
+      entityLoader.utils.invalidateFieldsForTransaction(
+        queryContext,
         this.entity.getAllDatabaseFields(),
-      ),
+      );
+      await entityLoader.utils.invalidateFieldsAsync(this.entity.getAllDatabaseFields());
+    });
+    entityLoader.utils.invalidateFieldsForTransaction(
+      queryContext,
+      this.entity.getAllDatabaseFields(),
     );
 
     await this.executeMutationTriggersAsync(

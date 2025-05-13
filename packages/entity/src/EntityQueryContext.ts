@@ -16,6 +16,7 @@ export enum TransactionIsolationLevel {
 
 export type TransactionConfig = {
   isolationLevel?: TransactionIsolationLevel;
+  disableTransactionalDataloader?: boolean;
 };
 
 /**
@@ -28,7 +29,7 @@ export type TransactionConfig = {
 export abstract class EntityQueryContext {
   constructor(private readonly queryInterface: any) {}
 
-  abstract isInTransaction(): boolean;
+  abstract isInTransaction(): this is EntityTransactionalQueryContext;
 
   getQueryInterface(): any {
     return this.queryInterface;
@@ -54,7 +55,7 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
     super(queryInterface);
   }
 
-  isInTransaction(): boolean {
+  override isInTransaction(): this is EntityTransactionalQueryContext {
     return false;
   }
 
@@ -75,6 +76,11 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
  * dependent triggers and validators will run within the transaction.
  */
 export class EntityTransactionalQueryContext extends EntityQueryContext {
+  /**
+   * @internal
+   */
+  public readonly childQueryContexts: EntityNestedTransactionalQueryContext[] = [];
+
   private readonly postCommitInvalidationCallbacks: PostCommitCallback[] = [];
   private readonly postCommitCallbacks: PostCommitCallback[] = [];
 
@@ -83,6 +89,11 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
   constructor(
     queryInterface: any,
     private readonly entityQueryContextProvider: EntityQueryContextProvider,
+    /**
+     * @internal
+     */
+    readonly transactionId: string,
+    public readonly shouldDisableTransactionalDataloader: boolean,
   ) {
     super(queryInterface);
   }
@@ -121,6 +132,9 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
     this.postCommitCallbacks.push(callback);
   }
 
+  /**
+   * @internal
+   */
   public async runPreCommitCallbacksAsync(): Promise<void> {
     const callbacks = [...this.preCommitCallbacks]
       .sort((a, b) => a.order - b.order)
@@ -132,6 +146,9 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
     }
   }
 
+  /**
+   * @internal
+   */
   public async runPostCommitCallbacksAsync(): Promise<void> {
     const invalidationCallbacks = [...this.postCommitInvalidationCallbacks];
     this.postCommitInvalidationCallbacks.length = 0;
@@ -142,8 +159,12 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
     await Promise.all(callbacks.map((callback) => callback()));
   }
 
-  isInTransaction(): boolean {
+  override isInTransaction(): this is EntityTransactionalQueryContext {
     return true;
+  }
+
+  isInNestedTransaction(): this is EntityNestedTransactionalQueryContext {
+    return false;
   }
 
   async runInTransactionIfNotInTransactionAsync<T>(
@@ -181,31 +202,64 @@ export class EntityNestedTransactionalQueryContext extends EntityTransactionalQu
 
   constructor(
     queryInterface: any,
-    private readonly parentQueryContext: EntityTransactionalQueryContext,
+    /**
+     * @internal
+     */
+    readonly parentQueryContext: EntityTransactionalQueryContext,
     entityQueryContextProvider: EntityQueryContextProvider,
+    transactionId: string,
+    shouldDisableTransactionalDataloader: boolean,
   ) {
-    super(queryInterface, entityQueryContextProvider);
+    super(
+      queryInterface,
+      entityQueryContextProvider,
+      transactionId,
+      shouldDisableTransactionalDataloader,
+    );
+    parentQueryContext.childQueryContexts.push(this);
+  }
+
+  override isInNestedTransaction(): this is EntityNestedTransactionalQueryContext {
+    return true;
   }
 
   public override appendPostCommitCallback(callback: PostCommitCallback): void {
-    this.postCommitInvalidationCallbacksToTransfer.push(callback);
-  }
-
-  public override appendPostCommitInvalidationCallback(callback: PostCommitCallback): void {
+    // explicitly do not add to the super-class's post-commit callbacks
+    // instead, we will add them to the parent transaction's post-commit callbacks
+    // after the nested transaction has been committed
     this.postCommitCallbacksToTransfer.push(callback);
   }
 
-  public override runPostCommitCallbacksAsync(): Promise<void> {
-    throw new Error(
-      'Must not call runPostCommitCallbacksAsync on EntityNestedTransactionalQueryContext',
-    );
+  public override appendPostCommitInvalidationCallback(callback: PostCommitCallback): void {
+    super.appendPostCommitInvalidationCallback(callback);
+    this.postCommitInvalidationCallbacksToTransfer.push(callback);
   }
 
-  public transferPostCommitCallbacksToParent(): void {
+  /**
+   * The behavior of callbacks for nested transactions are a bit different than for normal
+   * transactions.
+   * - Post-commit (non-invalidation) callbacks are run at the end of the outermost transaction
+   *   since they often contain side-effects that only should run if the transaction doesn't roll back.
+   *   The outermost transaction has the final say on the commit state of itself and all sub-transactions.
+   * - Invalidation callbacks are run at the end of both the nested transaction iteself but also transferred
+   *   to the parent transaction to be run at the end of it (and recurse upwards, accumulating invalations).
+   *   This is to ensure the dataloader cache is never stale no matter the DBMS transaction isolation
+   *   semantics. See the note in `AuthorizationResultBasedBaseMutator` for more details.
+   *
+   * @internal
+   */
+  public override async runPostCommitCallbacksAsync(): Promise<void> {
+    // run the post-commit callbacks for the nested transaction now
+    // (this technically also would run regular post-commit callbacks, but they are empty)
+    await super.runPostCommitCallbacksAsync();
+
+    // transfer a copy of the post-commit invalidation callbacks to the parent transaction
+    // to also be run at the end of it (or recurse in the case of the parent transaction being nested as well)
     for (const callback of this.postCommitInvalidationCallbacksToTransfer) {
       this.parentQueryContext.appendPostCommitInvalidationCallback(callback);
     }
 
+    // transfer post-commit callbacks to patent
     for (const callback of this.postCommitCallbacksToTransfer) {
       this.parentQueryContext.appendPostCommitCallback(callback);
     }
