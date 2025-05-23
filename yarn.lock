@@ -1877,7 +1877,7 @@ __metadata:
     "@types/node": "npm:^20.14.1"
     "@types/uuid": "npm:^8.3.0"
     ctix: "npm:^2.7.1"
-    dataloader: "npm:^2.0.0"
+    dataloader: "npm:^2.2.3"
     es6-error: "npm:^4.1.1"
     eslint: "npm:^9.26.0"
     eslint-config-universe: "npm:^15.0.3"
@@ -5826,10 +5826,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dataloader@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "dataloader@npm:2.1.0"
-  checksum: 10c0/91749b97c6cf218874aecc57116defbe28eb5dd102a2a6e292e084939f725d123dd49c186796069492a77eb105ff2aabae9c8b144cf82f92c1f673eb1abff7da
+"dataloader@npm:^2.2.3":
+  version: 2.2.3
+  resolution: "dataloader@npm:2.2.3"
+  checksum: 10c0/9b9a056fbc863ca86da87d59e053e871e263b4966aa4d55e40d61a65e96815fae5530ca220629064ca5f8e3000c0c4ec93292e170c38ff393fb34256b4d7c1aa
   languageName: node
   linkType: hard
 
