@@ -3,6 +3,9 @@ import nullthrows from 'nullthrows';
 
 import EntityConfiguration from '../EntityConfiguration';
 
+/**
+ * @internal
+ */
 export interface FieldTransformer<T> {
   /**
    * Transformation to apply when a value is read from an adapter.
@@ -17,9 +20,14 @@ export interface FieldTransformer<T> {
 
 /**
  * Map from concrete EntityFieldDefinition implementation class name to field transformer.
+ *
+ * @internal
  */
 export type FieldTransformerMap = Map<string, FieldTransformer<any>>;
 
+/**
+ * @internal
+ */
 export const getDatabaseFieldForEntityField = <
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
@@ -32,6 +40,9 @@ export const getDatabaseFieldForEntityField = <
   return databaseField;
 };
 
+/**
+ * @internal
+ */
 export const transformDatabaseObjectToFields = <
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
@@ -56,6 +67,9 @@ export const transformDatabaseObjectToFields = <
   return fields;
 };
 
+/**
+ * @internal
+ */
 export const transformFieldsToDatabaseObject = <
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
@@ -79,6 +93,9 @@ export const transformFieldsToDatabaseObject = <
   return databaseObject;
 };
 
+/**
+ * @internal
+ */
 export const transformCacheObjectToFields = <
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
@@ -100,6 +117,9 @@ export const transformCacheObjectToFields = <
   return fields;
 };
 
+/**
+ * @internal
+ */
 export const transformFieldsToCacheObject = <
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,

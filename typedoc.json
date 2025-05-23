@@ -4,6 +4,7 @@
   "includeVersion": false,
   "packageOptions": {
     "includeVersion": false,
+    "excludeInternal": true,
     "entryPoints": ["src/index.ts"],
   },
   "out": "doc",

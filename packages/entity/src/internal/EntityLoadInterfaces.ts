@@ -19,6 +19,8 @@ export enum EntityLoadMethodType {
 /**
  * Interface responsible for defining how the key and corresponding load values behave in the data manager, cache adapter,
  * and database adapter during entity field loading.
+ *
+ * @internal
  */
 export interface IEntityLoadKey<
   TFields extends Record<string, any>,
@@ -117,6 +119,8 @@ export interface IEntityLoadKey<
 
 /**
  * Interface for a load value corresponding to a load key.
+ *
+ * @internal
  */
 export interface IEntityLoadValue<TSerialized> extends ISerializable<TSerialized> {
   toString(): string;
@@ -124,6 +128,8 @@ export interface IEntityLoadValue<TSerialized> extends ISerializable<TSerialized
 
 /**
  * Map from load value interface to value.
+ *
+ * @internal
  */
 export abstract class LoadValueMap<
   TSerialized,
@@ -133,6 +139,8 @@ export abstract class LoadValueMap<
 
 /**
  * Load pair type for a load key and load value.
+ *
+ * @internal
  */
 export type LoadPair<
   TFields extends Record<string, any>,

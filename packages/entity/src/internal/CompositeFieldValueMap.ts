@@ -4,6 +4,9 @@ import {
   CompositeFieldValueHolder,
 } from './CompositeFieldHolder';
 
+/**
+ * @internal
+ */
 export class CompositeFieldValueMap<
   TFields extends Record<string, any>,
   N extends EntityCompositeField<TFields>,

@@ -14,6 +14,10 @@ import {
 } from '../internal/EntityLoadInterfaces';
 
 declare const CompositeFieldHolderSerializedBrand: unique symbol;
+
+/**
+ * @internal
+ */
 export type SerializedCompositeFieldHolder = string & {
   readonly [CompositeFieldHolderSerializedBrand]: true;
 };
@@ -21,6 +25,8 @@ export type SerializedCompositeFieldHolder = string & {
 /**
  * A load key that represents a composite field (set of fieldName) on an entity.
  * Must be defined in the entity configuration composite field definition.
+ *
+ * @internal
  */
 export class CompositeFieldHolder<
   TFields extends Record<string, any>,
@@ -151,12 +157,18 @@ export class CompositeFieldHolder<
 }
 
 declare const CompositeFieldValueHolderSerializedBrand: unique symbol;
+
+/**
+ * @internal
+ */
 export type SerializedCompositeFieldValueHolder = string & {
   readonly [CompositeFieldValueHolderSerializedBrand]: true;
 };
 
 /**
  * A load value for a CompositeFieldHolder.
+ *
+ * @internal
  */
 export class CompositeFieldValueHolder<
   TFields extends Record<string, any>,
@@ -201,6 +213,9 @@ export class CompositeFieldValueHolder<
   }
 }
 
+/**
+ * @internal
+ */
 export class CompositeFieldValueHolderMap<
   TFields extends Record<string, any>,
   N extends EntityCompositeField<TFields>,

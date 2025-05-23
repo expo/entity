@@ -31,6 +31,8 @@ type DataLoaderMap<TFields extends Record<string, any>> = Map<
  * data including local caches, EntityCacheAdapter, and EntityDatabaseAdapter.
  *
  * It is also responsible for invalidating all sources of data when mutated using EntityMutator.
+ *
+ * @internal
  */
 export default class EntityDataManager<
   TFields extends Record<string, any>,

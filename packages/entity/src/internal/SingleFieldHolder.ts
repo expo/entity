@@ -11,6 +11,8 @@ import {
 
 /**
  * A load key that represents a single field (fieldName) on an entity.
+ *
+ * @internal
  */
 export class SingleFieldHolder<
   TFields extends Record<string, any>,
@@ -97,6 +99,8 @@ export class SingleFieldHolder<
 
 /**
  * A load value for a SingleFieldHolder.
+ *
+ * @internal
  */
 export class SingleFieldValueHolder<TFields extends Record<string, any>, N extends keyof TFields>
   implements IEntityLoadValue<NonNullable<TFields[N]>>
@@ -118,6 +122,9 @@ export class SingleFieldValueHolder<TFields extends Record<string, any>, N exten
   }
 }
 
+/**
+ * @internal
+ */
 export class SingleFieldValueHolderMap<
   TFields extends Record<string, any>,
   N extends keyof TFields,

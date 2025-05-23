@@ -12,6 +12,8 @@ import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
  * Responsible for orchestrating fetching and caching of entity data from a
  * table. Note that one instance is shared amongst all entities that read from
  * the table to ensure cross-entity data consistency.
+ *
+ * @internal
  */
 export default class EntityTableDataCoordinator<
   TFields extends Record<string, any>,
