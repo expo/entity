@@ -890,6 +890,104 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     ).once();
   });
 
+  it('invalidates upon invalidate by entity within transaction', async () => {
+    const viewerContext = instance(mock(ViewerContext));
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            'customIdField',
+            ViewerContext,
+            TestEntity
+          >
+        >(),
+      );
+    const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+
+    const privacyPolicy = instance(mock(TestEntityPrivacyPolicy));
+    const dataManagerMock = mock<EntityDataManager<TestFields, 'customIdField'>>();
+    const dataManagerInstance = instance(dataManagerMock);
+
+    const id1 = uuidv4();
+    const entityMock = mock(TestEntity);
+    const date = new Date();
+
+    when(entityMock.getAllDatabaseFields()).thenReturn({
+      customIdField: id1,
+      testIndexedField: 'h1',
+      intField: 5,
+      stringField: 'huh',
+      dateField: date,
+      nullableField: null,
+    });
+    const entityInstance = instance(entityMock);
+
+    await new StubQueryContextProvider().runInTransactionAsync(async (queryContext) => {
+      const utils = new EntityLoaderUtils(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        testEntityConfiguration,
+        TestEntity,
+        /* entitySelectedFields */ undefined,
+        privacyPolicy,
+        dataManagerInstance,
+        metricsAdapter,
+      );
+      const entityLoader = new AuthorizationResultBasedEntityLoader(
+        queryContext,
+        testEntityConfiguration,
+        TestEntity,
+        dataManagerInstance,
+        metricsAdapter,
+        utils,
+      );
+      entityLoader.utils.invalidateEntityForTransaction(queryContext, entityInstance);
+
+      verify(
+        dataManagerMock.invalidateKeyValuePairsForTransaction(queryContext, anything()),
+      ).once();
+      verify(
+        dataManagerMock.invalidateKeyValuePairsForTransaction(
+          queryContext,
+          deepEqualEntityAware([
+            [
+              new SingleFieldHolder<TestFields, 'customIdField', 'customIdField'>('customIdField'),
+              new SingleFieldValueHolder<TestFields, 'customIdField'>(id1),
+            ],
+            [
+              new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>(
+                'testIndexedField',
+              ),
+              new SingleFieldValueHolder<TestFields, 'testIndexedField'>('h1'),
+            ],
+            [
+              new SingleFieldHolder<TestFields, 'customIdField', 'intField'>('intField'),
+              new SingleFieldValueHolder<TestFields, 'intField'>(5),
+            ],
+            [
+              new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
+              new SingleFieldValueHolder<TestFields, 'stringField'>('huh'),
+            ],
+            [
+              new SingleFieldHolder<TestFields, 'customIdField', 'dateField'>('dateField'),
+              new SingleFieldValueHolder<TestFields, 'dateField'>(date),
+            ],
+            [
+              new CompositeFieldHolder(['stringField', 'intField']),
+              new CompositeFieldValueHolder({ stringField: 'huh', intField: 5 }),
+            ],
+            [
+              new CompositeFieldHolder(['stringField', 'testIndexedField']),
+              new CompositeFieldValueHolder({ stringField: 'huh', testIndexedField: 'h1' }),
+            ],
+          ]),
+        ),
+      ).once();
+    });
+  });
+
   it('returns error result when not allowed', async () => {
     const viewerContext = instance(mock(ViewerContext));
     const privacyPolicyEvaluationContext =

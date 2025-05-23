@@ -1,7 +1,17 @@
+import assert from 'assert';
 import invariant from 'invariant';
 
-import { EntityQueryContext, TransactionIsolationLevel } from '../EntityQueryContext';
+import EntityCompanionProvider from '../EntityCompanionProvider';
+import {
+  EntityQueryContext,
+  TransactionConfig,
+  TransactionIsolationLevel,
+} from '../EntityQueryContext';
+import EntityQueryContextProvider from '../EntityQueryContextProvider';
 import ViewerContext from '../ViewerContext';
+import NoOpEntityMetricsAdapter from '../metrics/NoOpEntityMetricsAdapter';
+import { InMemoryFullCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
+import StubDatabaseAdapterProvider from '../utils/__testfixtures__/StubDatabaseAdapterProvider';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(EntityQueryContext, () => {
@@ -89,7 +99,9 @@ describe(EntityQueryContext, () => {
         throw new Error('wat');
       });
       const postCommitInvalidationCallback = jest.fn(async (): Promise<void> => {});
+      const postCommitNestedInvalidationCallback = jest.fn(async (): Promise<void> => {});
       const postCommitCallback = jest.fn(async (): Promise<void> => {});
+      const postCommitNestedCallback = jest.fn(async (): Promise<void> => {});
 
       await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
         'postgres',
@@ -100,19 +112,19 @@ describe(EntityQueryContext, () => {
 
           await Promise.all([
             queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
-              innerQueryContext.appendPostCommitCallback(postCommitCallback);
+              innerQueryContext.appendPostCommitCallback(postCommitNestedCallback);
               innerQueryContext.appendPostCommitInvalidationCallback(
-                postCommitInvalidationCallback,
+                postCommitNestedInvalidationCallback,
               );
               innerQueryContext.appendPreCommitCallback(preCommitNestedCallback, 0);
             }),
             (async () => {
               try {
                 await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
-                  // these two shouldn't be called
-                  innerQueryContext.appendPostCommitCallback(postCommitCallback);
+                  // these two shouldn't be called due to throwing pre-commit callback
+                  innerQueryContext.appendPostCommitCallback(postCommitNestedCallback);
                   innerQueryContext.appendPostCommitInvalidationCallback(
-                    postCommitInvalidationCallback,
+                    postCommitNestedInvalidationCallback,
                   );
                   innerQueryContext.appendPreCommitCallback(preCommitNestedCallbackThrow, 0);
                 });
@@ -125,26 +137,10 @@ describe(EntityQueryContext, () => {
       expect(preCommitCallback).toHaveBeenCalledTimes(1);
       expect(preCommitNestedCallback).toHaveBeenCalledTimes(1);
       expect(preCommitNestedCallbackThrow).toHaveBeenCalledTimes(1);
-      expect(postCommitCallback).toHaveBeenCalledTimes(2);
-      expect(postCommitInvalidationCallback).toHaveBeenCalledTimes(2);
-    });
-
-    it('does not support calling runPostCommitCallbacksAsync on nested transaction', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
-
-      await expect(
-        viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
-          'postgres',
-          async (queryContext) => {
-            await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
-              await innerQueryContext.runPostCommitCallbacksAsync();
-            });
-          },
-        ),
-      ).rejects.toThrowError(
-        'Must not call runPostCommitCallbacksAsync on EntityNestedTransactionalQueryContext',
-      );
+      expect(postCommitCallback).toHaveBeenCalledTimes(1);
+      expect(postCommitInvalidationCallback).toHaveBeenCalledTimes(1);
+      expect(postCommitNestedInvalidationCallback).toHaveBeenCalledTimes(2);
+      expect(postCommitNestedCallback).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -167,6 +163,112 @@ describe(EntityQueryContext, () => {
       );
 
       expect(queryContextProviderSpy).toHaveBeenCalledWith(transactionScopeFn, transactionConfig);
+    });
+
+    it('makes the result query context enable/disable transactional dataloaders', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+
+      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.shouldDisableTransactionalDataloader).toBe(true);
+        },
+        { disableTransactionalDataloader: true },
+      );
+
+      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.shouldDisableTransactionalDataloader).toBe(false);
+        },
+        { disableTransactionalDataloader: false },
+      );
+
+      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.shouldDisableTransactionalDataloader).toBe(false);
+        },
+      );
+    });
+  });
+
+  describe('global shouldDisableTransactionalDataloaderForAllTransactions', () => {
+    class StubQueryContextProviderWithDisabledTransactionalDataLoaders extends EntityQueryContextProvider {
+      protected getQueryInterface(): any {
+        return {};
+      }
+
+      protected override shouldDisableTransactionalDataloaderForAllTransactions(): boolean {
+        return true;
+      }
+
+      protected createTransactionRunner<T>(
+        _transactionConfig?: TransactionConfig,
+      ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
+        return (transactionScope) => Promise.resolve(transactionScope({}));
+      }
+
+      protected createNestedTransactionRunner<T>(
+        _outerQueryInterface: any,
+      ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
+        return (transactionScope) => Promise.resolve(transactionScope({}));
+      }
+    }
+
+    it('respects the global setting but allows overriding by transaction config', async () => {
+      const companionProvider = new EntityCompanionProvider(
+        new NoOpEntityMetricsAdapter(),
+        new Map([
+          [
+            'postgres',
+            {
+              adapterProvider: new StubDatabaseAdapterProvider(),
+              queryContextProvider:
+                new StubQueryContextProviderWithDisabledTransactionalDataLoaders(),
+            },
+          ],
+        ]),
+        new Map([
+          [
+            'redis',
+            {
+              cacheAdapterProvider: new InMemoryFullCacheStubCacheAdapterProvider(),
+            },
+          ],
+        ]),
+      );
+      const viewerContext = new ViewerContext(companionProvider);
+
+      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.shouldDisableTransactionalDataloader).toBe(true);
+        },
+        { disableTransactionalDataloader: true },
+      );
+
+      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.shouldDisableTransactionalDataloader).toBe(false);
+        },
+        { disableTransactionalDataloader: false },
+      );
+
+      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.shouldDisableTransactionalDataloader).toBe(true);
+        },
+      );
     });
   });
 });

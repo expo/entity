@@ -2,6 +2,7 @@ import IEntityMetricsAdapter, {
   EntityMetricsLoadType,
   EntityMetricsMutationType,
 } from './IEntityMetricsAdapter';
+import { EntityQueryContext } from '../EntityQueryContext';
 import { IEntityLoadValue } from '../internal/EntityLoadInterfaces';
 import { reduceMap } from '../utils/collections/maps';
 
@@ -10,6 +11,7 @@ export const timeAndLogLoadEventAsync =
     metricsAdapter: IEntityMetricsAdapter,
     loadType: EntityMetricsLoadType,
     entityClassName: string,
+    queryContext: EntityQueryContext,
   ) =>
   async <TFields>(promise: Promise<readonly Readonly<TFields>[]>) => {
     const startTime = Date.now();
@@ -18,6 +20,7 @@ export const timeAndLogLoadEventAsync =
 
     metricsAdapter.logDataManagerLoadEvent({
       type: loadType,
+      isInTransaction: queryContext.isInTransaction(),
       entityClassName,
       duration: endTime - startTime,
       count: result.length,
@@ -31,6 +34,7 @@ export const timeAndLogLoadMapEventAsync =
     metricsAdapter: IEntityMetricsAdapter,
     loadType: EntityMetricsLoadType,
     entityClassName: string,
+    queryContext: EntityQueryContext,
   ) =>
   async <
     TFields extends Record<string, any>,
@@ -47,6 +51,7 @@ export const timeAndLogLoadMapEventAsync =
 
     metricsAdapter.logDataManagerLoadEvent({
       type: loadType,
+      isInTransaction: queryContext.isInTransaction(),
       entityClassName,
       duration: endTime - startTime,
       count,
@@ -60,6 +65,7 @@ export const timeAndLogMutationEventAsync =
     metricsAdapter: IEntityMetricsAdapter,
     mutationType: EntityMetricsMutationType,
     entityClassName: string,
+    queryContext: EntityQueryContext,
   ) =>
   async <T>(promise: Promise<T>) => {
     const startTime = Date.now();
@@ -68,6 +74,7 @@ export const timeAndLogMutationEventAsync =
 
     metricsAdapter.logMutatorMutationEvent({
       type: mutationType,
+      isInTransaction: queryContext.isInTransaction(),
       entityClassName,
       duration: endTime - startTime,
     });

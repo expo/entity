@@ -9,6 +9,8 @@ import {
  * A query context provider vends transactional and non-transactional query contexts.
  */
 export default abstract class EntityQueryContextProvider {
+  private queryContextCounter: number = 1;
+
   /**
    * Vend a regular (non-transactional) entity query context.
    */
@@ -20,6 +22,13 @@ export default abstract class EntityQueryContextProvider {
    * Get the query interface for constructing a query context.
    */
   protected abstract getQueryInterface(): any;
+
+  /**
+   * @returns true if the transactional dataloader should be disabled for all transactions.
+   */
+  protected shouldDisableTransactionalDataloaderForAllTransactions(): boolean {
+    return false;
+  }
 
   /**
    * Vend a transaction runner for use in runInTransactionAsync.
@@ -43,7 +52,13 @@ export default abstract class EntityQueryContextProvider {
     const [returnedValue, queryContext] = await this.createTransactionRunner<
       [T, EntityTransactionalQueryContext]
     >(transactionConfig)(async (queryInterface) => {
-      const queryContext = new EntityTransactionalQueryContext(queryInterface, this);
+      const queryContext = new EntityTransactionalQueryContext(
+        queryInterface,
+        this,
+        String(this.queryContextCounter++),
+        transactionConfig?.disableTransactionalDataloader ??
+          this.shouldDisableTransactionalDataloaderForAllTransactions(),
+      );
       const result = await transactionScope(queryContext);
       await queryContext.runPreCommitCallbacksAsync();
       return [result, queryContext];
@@ -69,13 +84,15 @@ export default abstract class EntityQueryContextProvider {
         innerQueryInterface,
         outerQueryContext,
         this,
+        String(this.queryContextCounter++),
+        outerQueryContext.shouldDisableTransactionalDataloader,
       );
       const result = await transactionScope(innerQueryContext);
       await innerQueryContext.runPreCommitCallbacksAsync();
       return [result, innerQueryContext];
     });
-    // post-commit callbacks are appended to parent transaction instead of run, but only after the transaction has succeeded
-    innerQueryContext.transferPostCommitCallbacksToParent();
+    // behavior of this call differs for nested transaction query contexts from regular transaction query contexts
+    await innerQueryContext.runPostCommitCallbacksAsync();
     return returnedValue;
   }
 }

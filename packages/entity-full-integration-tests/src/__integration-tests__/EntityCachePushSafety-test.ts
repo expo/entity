@@ -163,7 +163,7 @@ describe('Lack of entity cache push safety with RedisCacheInvalidationStrategy.C
       await TestEntityPreDeploy.loader(viewerContextRequest1).loadByIDAsync(entityId);
     expect(entityReq1Loaded).not.toBeNull();
 
-    // request 2 loads the entity in the new code version (caching it in cache key version 2), updates it (invalidating in both 1 and 2), and loads it again (caching it in cache key version 2)
+    // request 2 loads the entity in the new code version (caching it in cache key version 2), updates it (invalidating in 2), and loads it again (caching it in cache key version 2)
     const viewerContextRequest2 = new ViewerContext(
       createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
     );
@@ -174,7 +174,7 @@ describe('Lack of entity cache push safety with RedisCacheInvalidationStrategy.C
       await TestEntityNew.loader(viewerContextRequest2).loadByIDAsync(entityId);
     expect(entityReq2UpdatedLoaded).not.toBeNull();
 
-    // request 3 loads the entity in the old code version (caching it in cache key version 1), updates it (invalidating in both 1 and 2), and loads it again (caching it in cache key version 1)
+    // request 3 loads the entity in the old code version (loading it from cache key version 1)
     const viewerContextRequest3 = new ViewerContext(
       createFullIntegrationTestEntityCompanionProvider(knexInstance, genericRedisCacheContext),
     );
