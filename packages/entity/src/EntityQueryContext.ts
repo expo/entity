@@ -3,8 +3,11 @@ import assert from 'assert';
 import EntityQueryContextProvider from './EntityQueryContextProvider';
 
 export type PostCommitCallback = (...args: any) => Promise<any>;
-export type PreCommitCallback = (
-  queryContext: EntityTransactionalQueryContext,
+export type PreCommitCallback<
+  TQueryInterface = any,
+  TTransactionalQueryInterface extends TQueryInterface = any,
+> = (
+  queryContext: EntityTransactionalQueryContext<TQueryInterface, TTransactionalQueryInterface>,
   ...args: any
 ) => Promise<any>;
 
@@ -26,17 +29,25 @@ export type TransactionConfig = {
  * The behavior of EntityMutator and EntityLoader
  * differs when in a transactional context.
  */
-export abstract class EntityQueryContext {
-  constructor(private readonly queryInterface: any) {}
+export abstract class EntityQueryContext<
+  TQueryInterface = any,
+  TTransactionalQueryInterface extends TQueryInterface = any,
+> {
+  constructor(private readonly queryInterface: TQueryInterface | TTransactionalQueryInterface) {}
 
-  abstract isInTransaction(): this is EntityTransactionalQueryContext;
+  abstract isInTransaction(): this is EntityTransactionalQueryContext<
+    TQueryInterface,
+    TTransactionalQueryInterface
+  >;
 
-  getQueryInterface(): any {
+  getQueryInterface(): TQueryInterface | TTransactionalQueryInterface {
     return this.queryInterface;
   }
 
   abstract runInTransactionIfNotInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
+    transactionScope: (
+      queryContext: EntityTransactionalQueryContext<TQueryInterface, TTransactionalQueryInterface>,
+    ) => Promise<T>,
     transactionConfig?: TransactionConfig,
   ): Promise<T>;
 }
@@ -47,20 +58,31 @@ export abstract class EntityQueryContext {
  * run independently of any running transaction (though mutations start their own
  * independent transactions internally when not being run in a transaction).
  */
-export class EntityNonTransactionalQueryContext extends EntityQueryContext {
+export class EntityNonTransactionalQueryContext<
+  TQueryInterface = any,
+  TTransactionalQueryInterface extends TQueryInterface = any,
+> extends EntityQueryContext<TQueryInterface, TTransactionalQueryInterface> {
   constructor(
-    queryInterface: any,
-    private readonly entityQueryContextProvider: EntityQueryContextProvider,
+    queryInterface: TQueryInterface,
+    private readonly entityQueryContextProvider: EntityQueryContextProvider<
+      TQueryInterface,
+      TTransactionalQueryInterface
+    >,
   ) {
     super(queryInterface);
   }
 
-  override isInTransaction(): this is EntityTransactionalQueryContext {
+  override isInTransaction(): this is EntityTransactionalQueryContext<
+    TQueryInterface,
+    TTransactionalQueryInterface
+  > {
     return false;
   }
 
   async runInTransactionIfNotInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
+    transactionScope: (
+      queryContext: EntityTransactionalQueryContext<TQueryInterface, TTransactionalQueryInterface>,
+    ) => Promise<T>,
     transactionConfig?: TransactionConfig,
   ): Promise<T> {
     return await this.entityQueryContextProvider.runInTransactionAsync(
@@ -75,20 +97,32 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
  * to EntityMutator and EntityLoader methods, those methods and their
  * dependent triggers and validators will run within the transaction.
  */
-export class EntityTransactionalQueryContext extends EntityQueryContext {
+export class EntityTransactionalQueryContext<
+  TQueryInterface = any,
+  TTransactionalQueryInterface extends TQueryInterface = any,
+> extends EntityQueryContext<TQueryInterface, TTransactionalQueryInterface> {
   /**
    * @internal
    */
-  public readonly childQueryContexts: EntityNestedTransactionalQueryContext[] = [];
+  public readonly childQueryContexts: EntityNestedTransactionalQueryContext<
+    TQueryInterface,
+    TTransactionalQueryInterface
+  >[] = [];
 
   private readonly postCommitInvalidationCallbacks: PostCommitCallback[] = [];
   private readonly postCommitCallbacks: PostCommitCallback[] = [];
 
-  private readonly preCommitCallbacks: { callback: PreCommitCallback; order: number }[] = [];
+  private readonly preCommitCallbacks: {
+    callback: PreCommitCallback<TQueryInterface, TTransactionalQueryInterface>;
+    order: number;
+  }[] = [];
 
   constructor(
-    queryInterface: any,
-    private readonly entityQueryContextProvider: EntityQueryContextProvider,
+    queryInterface: TTransactionalQueryInterface,
+    private readonly entityQueryContextProvider: EntityQueryContextProvider<
+      TQueryInterface,
+      TTransactionalQueryInterface
+    >,
     /**
      * @internal
      */
@@ -96,6 +130,16 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
     public readonly shouldDisableTransactionalDataloader: boolean,
   ) {
     super(queryInterface);
+  }
+
+  override getQueryInterface(): TTransactionalQueryInterface {
+    return super.getQueryInterface() as TTransactionalQueryInterface;
+  }
+
+  isCompleted(): boolean {
+    return this.entityQueryContextProvider.isQueryInterfaceTransactionAndCompleted(
+      this.getQueryInterface(),
+    );
   }
 
   /**
@@ -106,7 +150,10 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
    * @param order - order in which this should be run relative to other scheduled pre-commit callbacks,
    *                with higher numbers running later than lower numbers.
    */
-  public appendPreCommitCallback(callback: PreCommitCallback, order: number): void {
+  public appendPreCommitCallback(
+    callback: PreCommitCallback<TQueryInterface, TTransactionalQueryInterface>,
+    order: number,
+  ): void {
     assert(
       order >= Number.MIN_SAFE_INTEGER && order <= Number.MAX_SAFE_INTEGER,
       `Invalid order specified: ${order}`,
@@ -159,16 +206,24 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
     await Promise.all(callbacks.map((callback) => callback()));
   }
 
-  override isInTransaction(): this is EntityTransactionalQueryContext {
+  override isInTransaction(): this is EntityTransactionalQueryContext<
+    TQueryInterface,
+    TTransactionalQueryInterface
+  > {
     return true;
   }
 
-  isInNestedTransaction(): this is EntityNestedTransactionalQueryContext {
+  isInNestedTransaction(): this is EntityNestedTransactionalQueryContext<
+    TQueryInterface,
+    TTransactionalQueryInterface
+  > {
     return false;
   }
 
   async runInTransactionIfNotInTransactionAsync<T>(
-    transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
+    transactionScope: (
+      queryContext: EntityTransactionalQueryContext<TQueryInterface, TTransactionalQueryInterface>,
+    ) => Promise<T>,
     transactionConfig?: TransactionConfig,
   ): Promise<T> {
     assert(
@@ -179,7 +234,12 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
   }
 
   async runInNestedTransactionAsync<T>(
-    transactionScope: (innerQueryContext: EntityTransactionalQueryContext) => Promise<T>,
+    transactionScope: (
+      innerQueryContext: EntityTransactionalQueryContext<
+        TQueryInterface,
+        TTransactionalQueryInterface
+      >,
+    ) => Promise<T>,
   ): Promise<T> {
     return await this.entityQueryContextProvider.runInNestedTransactionAsync(
       this,
@@ -196,17 +256,26 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
  * This exists to forward post-commit callbacks to the parent query context but only after
  * successful commit of the nested transaction.
  */
-export class EntityNestedTransactionalQueryContext extends EntityTransactionalQueryContext {
+export class EntityNestedTransactionalQueryContext<
+  TQueryInterface = any,
+  TTransactionalQueryInterface extends TQueryInterface = any,
+> extends EntityTransactionalQueryContext<TQueryInterface, TTransactionalQueryInterface> {
   private readonly postCommitInvalidationCallbacksToTransfer: PostCommitCallback[] = [];
   private readonly postCommitCallbacksToTransfer: PostCommitCallback[] = [];
 
   constructor(
-    queryInterface: any,
+    queryInterface: TTransactionalQueryInterface,
     /**
      * @internal
      */
-    readonly parentQueryContext: EntityTransactionalQueryContext,
-    entityQueryContextProvider: EntityQueryContextProvider,
+    readonly parentQueryContext: EntityTransactionalQueryContext<
+      TQueryInterface,
+      TTransactionalQueryInterface
+    >,
+    entityQueryContextProvider: EntityQueryContextProvider<
+      TQueryInterface,
+      TTransactionalQueryInterface
+    >,
     transactionId: string,
     shouldDisableTransactionalDataloader: boolean,
   ) {
@@ -219,7 +288,10 @@ export class EntityNestedTransactionalQueryContext extends EntityTransactionalQu
     parentQueryContext.childQueryContexts.push(this);
   }
 
-  override isInNestedTransaction(): this is EntityNestedTransactionalQueryContext {
+  override isInNestedTransaction(): this is EntityNestedTransactionalQueryContext<
+    TQueryInterface,
+    TTransactionalQueryInterface
+  > {
     return true;
   }
 

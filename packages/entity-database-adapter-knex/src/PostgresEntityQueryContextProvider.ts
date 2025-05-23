@@ -8,18 +8,27 @@ import { Knex } from 'knex';
 /**
  * Query context provider for knex (postgres).
  */
-export default class PostgresEntityQueryContextProvider extends EntityQueryContextProvider {
+export default class PostgresEntityQueryContextProvider extends EntityQueryContextProvider<
+  Knex,
+  Knex.Transaction
+> {
   constructor(private readonly knexInstance: Knex) {
     super();
   }
 
-  protected getQueryInterface(): any {
+  protected getQueryInterface(): Knex {
     return this.knexInstance;
+  }
+
+  public isQueryInterfaceTransactionAndCompleted(queryInterface: Knex): boolean {
+    return (
+      (queryInterface.isTransaction && (queryInterface as Knex.Transaction).isCompleted()) ?? false
+    );
   }
 
   protected createTransactionRunner<T>(
     transactionConfig?: TransactionConfig,
-  ): (transactionScope: (trx: any) => Promise<T>) => Promise<T> {
+  ): (transactionScope: (trx: Knex.Transaction) => Promise<T>) => Promise<T> {
     return (transactionScope) =>
       this.knexInstance.transaction(
         transactionScope,
@@ -30,9 +39,9 @@ export default class PostgresEntityQueryContextProvider extends EntityQueryConte
   }
 
   protected createNestedTransactionRunner<T>(
-    outerQueryInterface: any,
-  ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
-    return (transactionScope) => (outerQueryInterface as Knex).transaction(transactionScope);
+    outerQueryInterface: Knex.Transaction,
+  ): (transactionScope: (queryInterface: Knex.Transaction) => Promise<T>) => Promise<T> {
+    return (transactionScope) => outerQueryInterface.transaction(transactionScope);
   }
 
   private static convertTransactionConfig(

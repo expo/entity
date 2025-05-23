@@ -132,6 +132,11 @@ export default class EntityDataManager<
             const values = serializedLoadValues.map((serializedLoadValue) =>
               key.deserializeLoadValue(serializedLoadValue),
             );
+            if (queryContext.isCompleted()) {
+              // return empty array if the transaction is completed
+              return values.map(() => []);
+            }
+
             const objectMap = await this.loadManyForTransactionalDataLoaderAsync(
               queryContext,
               key,
