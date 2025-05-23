@@ -203,6 +203,10 @@ describe(EntityQueryContext, () => {
         return {};
       }
 
+      public isQueryInterfaceTransactionAndCompleted(_queryInterface: any): boolean {
+        return false;
+      }
+
       protected override shouldDisableTransactionalDataloaderForAllTransactions(): boolean {
         return true;
       }

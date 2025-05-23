@@ -6,6 +6,10 @@ export default class StubQueryContextProvider extends EntityQueryContextProvider
     return {};
   }
 
+  public isQueryInterfaceTransactionAndCompleted(_queryInterface: any): boolean {
+    return false;
+  }
+
   protected createTransactionRunner<T>(
     _transactionConfig?: TransactionConfig,
   ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T> {
