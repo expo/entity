@@ -7,7 +7,11 @@ import EntityDatabaseAdapter, {
   QuerySelectionModifiers,
   QuerySelectionModifiersWithOrderByRaw,
 } from '../EntityDatabaseAdapter';
-import { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
+import {
+  EntityQueryContext,
+  EntityTransactionalQueryContext,
+  TransactionalDataLoaderMode,
+} from '../EntityQueryContext';
 import EntityQueryContextProvider from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
 import { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces';
@@ -139,6 +143,10 @@ export default class EntityDataManager<
             );
             return values.map((value) => objectMap.get(value) ?? []);
           },
+          {
+            // only cache if transactional dataloader caching is enabled for the transactional query context
+            cache: queryContext.transactionalDataLoaderMode === TransactionalDataLoaderMode.ENABLED,
+          },
         );
       },
     );
@@ -199,8 +207,10 @@ export default class EntityDataManager<
   ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
     key.validateRuntimeLoadValuesForDataManagerDataLoader(values, this.entityClassName);
 
-    // don't cache when in transaction, as rollbacks complicate things significantly
-    if (queryContext.isInTransaction() && queryContext.shouldDisableTransactionalDataloader) {
+    if (
+      queryContext.isInTransaction() &&
+      queryContext.transactionalDataLoaderMode === TransactionalDataLoaderMode.DISABLED
+    ) {
       this.metricsAdapter.incrementDataManagerLoadCount({
         type: IncrementLoadCountEventType.DATABASE,
         isInTransaction: true,
@@ -334,7 +344,7 @@ export default class EntityDataManager<
     queryContext: EntityTransactionalQueryContext,
     pairs: readonly LoadPair<TFields, TIDField, any, any, any>[],
   ): void {
-    if (queryContext.shouldDisableTransactionalDataloader) {
+    if (queryContext.transactionalDataLoaderMode === TransactionalDataLoaderMode.DISABLED) {
       return;
     }
 

@@ -14,9 +14,15 @@ export enum TransactionIsolationLevel {
   SERIALIZABLE = 'SERIALIZABLE',
 }
 
+export enum TransactionalDataLoaderMode {
+  ENABLED = 'ENABLED',
+  ENABLED_BATCH_ONLY = 'ENABLED_BATCH_ONLY',
+  DISABLED = 'DISABLED',
+}
+
 export type TransactionConfig = {
   isolationLevel?: TransactionIsolationLevel;
-  disableTransactionalDataloader?: boolean;
+  transactionalDataLoaderMode?: TransactionalDataLoaderMode;
 };
 
 /**
@@ -93,7 +99,7 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
      * @internal
      */
     readonly transactionId: string,
-    public readonly shouldDisableTransactionalDataloader: boolean,
+    public readonly transactionalDataLoaderMode: TransactionalDataLoaderMode,
   ) {
     super(queryInterface);
   }
@@ -208,14 +214,9 @@ export class EntityNestedTransactionalQueryContext extends EntityTransactionalQu
     readonly parentQueryContext: EntityTransactionalQueryContext,
     entityQueryContextProvider: EntityQueryContextProvider,
     transactionId: string,
-    shouldDisableTransactionalDataloader: boolean,
+    transactionalDataLoaderMode: TransactionalDataLoaderMode,
   ) {
-    super(
-      queryInterface,
-      entityQueryContextProvider,
-      transactionId,
-      shouldDisableTransactionalDataloader,
-    );
+    super(queryInterface, entityQueryContextProvider, transactionId, transactionalDataLoaderMode);
     parentQueryContext.childQueryContexts.push(this);
   }
 

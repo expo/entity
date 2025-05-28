@@ -49,6 +49,18 @@ export default class StubDatabaseAdapter<
     return new Map();
   }
 
+  private static uniqBy<T>(a: T[], keyExtractor: (k: T) => string): T[] {
+    const seen = new Set();
+    return a.filter((item) => {
+      const k = keyExtractor(item);
+      if (seen.has(k)) {
+        return false;
+      }
+      seen.add(k);
+      return true;
+    });
+  }
+
   protected async fetchManyWhereInternalAsync(
     _queryInterface: any,
     tableName: string,
@@ -56,7 +68,7 @@ export default class StubDatabaseAdapter<
     tableTuples: (readonly any[])[],
   ): Promise<object[]> {
     const objectCollection = this.getObjectCollectionForTable(tableName);
-    const results = tableTuples.reduce(
+    const results = StubDatabaseAdapter.uniqBy(tableTuples, (tuple) => tuple.join(':')).reduce(
       (acc, tableTuple) => {
         return acc.concat(
           objectCollection.filter((obj) => {
