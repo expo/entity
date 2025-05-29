@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.44.0](https://github.com/expo/entity/compare/v0.43.0...v0.44.0) (2025-05-29)
+
+
+### Features
+
+* add transaction-scoped dataloaders ([#284](https://github.com/expo/entity/issues/284)) ([e054a0d](https://github.com/expo/entity/commit/e054a0d74b3a39158ca7d73d05f59d3633113400)), closes [#98](https://github.com/expo/entity/issues/98) [#194](https://github.com/expo/entity/issues/194)
+
+
+
+
+
 # [0.43.0](https://github.com/expo/entity/compare/v0.42.0...v0.43.0) (2025-04-10)
 
 **Note:** Version bump only for package @expo/entity-full-integration-tests
