@@ -12,6 +12,7 @@ import {
 } from 'ts-mockito';
 
 import EntityDatabaseAdapter from '../../EntityDatabaseAdapter';
+import { TransactionalDataLoaderMode } from '../../EntityQueryContext';
 import IEntityMetricsAdapter, {
   EntityMetricsLoadType,
   IncrementLoadCountEventType,
@@ -310,7 +311,84 @@ describe(EntityDataManager, () => {
     cacheSpy.mockReset();
   });
 
-  it('loads and in-memory caches (dataloader) loads in transaction when enabled and does not read from cache for transactions and nested transactions', async () => {
+  it('loads and in-memory batches (dataloader) loads in transaction when enabled with TransactionalDataLoaderMode.ENABLED_BATCH_ONLY and does not read from cache for transactions and nested transactions', async () => {
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects,
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      new StubQueryContextProvider(),
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name,
+    );
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+
+    const [entityData, entityData2, entityData3, entityData4] =
+      await new StubQueryContextProvider().runInTransactionAsync(async (queryContext) => {
+        const [entityData, entityData2] = await Promise.all([
+          entityDataManager.loadManyEqualingAsync(
+            queryContext,
+            new SingleFieldHolder('stringField'),
+            [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
+          ),
+          entityDataManager.loadManyEqualingAsync(
+            queryContext,
+            new SingleFieldHolder('stringField'),
+            [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
+          ),
+        ]);
+        const [entityData3, entityData4] = await queryContext.runInNestedTransactionAsync(
+          async (innerQueryContext) => {
+            const entityData3 = await entityDataManager.loadManyEqualingAsync(
+              innerQueryContext,
+              new SingleFieldHolder('stringField'),
+              [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
+            );
+
+            const entityData4 = await queryContext.runInNestedTransactionAsync(
+              async (innerInnerQueryContext) => {
+                return await entityDataManager.loadManyEqualingAsync(
+                  innerInnerQueryContext,
+                  new SingleFieldHolder('stringField'),
+                  [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
+                );
+              },
+            );
+
+            return [entityData3, entityData4];
+          },
+        );
+        return [entityData, entityData2, entityData3, entityData4];
+      });
+
+    // entityData, entityData3 (new nested transaction), and entityData4 (new nested transaction) loads should all need to call the database
+    // entityData and entityData2 should be batched to one db load call
+    expect(dbSpy).toHaveBeenCalledTimes(3);
+    expect(cacheSpy).toHaveBeenCalledTimes(0);
+
+    expect(entityData).toMatchObject(entityData2);
+    expect(entityData2).toMatchObject(entityData3);
+    expect(entityData3).toMatchObject(entityData4);
+    expect(entityData.get(new SingleFieldValueHolder('hello'))).toHaveLength(2);
+    expect(entityData.get(new SingleFieldValueHolder('world'))).toHaveLength(1);
+
+    dbSpy.mockReset();
+    cacheSpy.mockReset();
+  });
+
+  it('loads and in-memory caches (dataloader) loads in transaction when enabled with TransactionalDataLoaderMode.ENABLED and does not read from cache for transactions and nested transactions', async () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,
@@ -371,6 +449,7 @@ describe(EntityDataManager, () => {
       });
 
     // entityData, entityData3 (new nested transaction), and entityData4 (new nested transaction) loads should all need to call the database
+    // entityData2 load should be cached in the dataloader
     expect(dbSpy).toHaveBeenCalledTimes(3);
     expect(cacheSpy).toHaveBeenCalledTimes(0);
 
@@ -445,7 +524,7 @@ describe(EntityDataManager, () => {
           return [entityData, entityData2, entityData3, entityData4];
         },
         {
-          disableTransactionalDataloader: true,
+          transactionalDataLoaderMode: TransactionalDataLoaderMode.DISABLED,
         },
       );
 
@@ -693,7 +772,7 @@ describe(EntityDataManager, () => {
         dbSpy.mockClear();
         cacheSpy.mockClear();
       },
-      { disableTransactionalDataloader: true },
+      { transactionalDataLoaderMode: TransactionalDataLoaderMode.DISABLED },
     );
 
     expect(entityDataManager['transactionalDataLoaders'].size).toBe(0);

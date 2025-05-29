@@ -1,4 +1,4 @@
-import { ViewerContext } from '@expo/entity';
+import { TransactionalDataLoaderMode, ViewerContext } from '@expo/entity';
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 
@@ -230,7 +230,9 @@ describe(PostgresEntityQueryContextProvider, () => {
     // This test tests the same behavior exists whether there is a dataloader or not in transactions, thus indicating that
     // the dataloader invalidation is not the issue.
 
-    const runTest = async (shouldDisableTransactionalDataloader: boolean): Promise<void> => {
+    const runTest = async (
+      transactionalDataLoaderMode: TransactionalDataLoaderMode,
+    ): Promise<void> => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
         'postgres',
@@ -308,19 +310,28 @@ describe(PostgresEntityQueryContextProvider, () => {
             throw new Error('entity loaded wrong value after transaction');
           }
         },
-        { disableTransactionalDataloader: shouldDisableTransactionalDataloader },
+        { transactionalDataLoaderMode },
       );
     };
 
-    await expect(runTest(true)).rejects.toThrow('outer transaction read wrong value');
-    await expect(runTest(false)).rejects.toThrow('outer transaction read wrong value');
+    await expect(runTest(TransactionalDataLoaderMode.DISABLED)).rejects.toThrow(
+      'outer transaction read wrong value',
+    );
+    await expect(runTest(TransactionalDataLoaderMode.ENABLED)).rejects.toThrow(
+      'outer transaction read wrong value',
+    );
+    await expect(runTest(TransactionalDataLoaderMode.ENABLED_BATCH_ONLY)).rejects.toThrow(
+      'outer transaction read wrong value',
+    );
   });
 
   test('consistent behavior with and without transactional dataloader for concurrent mutations outside of nested transaction that reads', async () => {
     // this test has a similar issue to the one above: absence of real nested transactions in postgres
     // this should have the same behavior no matter if there is a dataloader or not in transactions
 
-    const runTest = async (shouldDisableTransactionalDataloader: boolean): Promise<void> => {
+    const runTest = async (
+      transactionalDataLoaderMode: TransactionalDataLoaderMode,
+    ): Promise<void> => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
         'postgres',
@@ -398,12 +409,19 @@ describe(PostgresEntityQueryContextProvider, () => {
             throw new Error('entity loaded wrong value after transaction');
           }
         },
-        { disableTransactionalDataloader: shouldDisableTransactionalDataloader },
+        { transactionalDataLoaderMode },
       );
     };
 
-    await expect(runTest(true)).rejects.toThrow('entity loaded inner wrong value 2');
-    await expect(runTest(false)).rejects.toThrow('entity loaded inner wrong value 2');
+    await expect(runTest(TransactionalDataLoaderMode.DISABLED)).rejects.toThrow(
+      'entity loaded inner wrong value 2',
+    );
+    await expect(runTest(TransactionalDataLoaderMode.ENABLED)).rejects.toThrow(
+      'entity loaded inner wrong value 2',
+    );
+    await expect(runTest(TransactionalDataLoaderMode.ENABLED_BATCH_ONLY)).rejects.toThrow(
+      'entity loaded inner wrong value 2',
+    );
   });
 
   it('supports multi-nested transactions', async () => {

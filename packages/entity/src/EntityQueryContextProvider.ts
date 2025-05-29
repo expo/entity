@@ -1,16 +1,17 @@
+import { randomUUID } from 'node:crypto';
+
 import {
   EntityTransactionalQueryContext,
   EntityNonTransactionalQueryContext,
   EntityNestedTransactionalQueryContext,
   TransactionConfig,
+  TransactionalDataLoaderMode,
 } from './EntityQueryContext';
 
 /**
  * A query context provider vends transactional and non-transactional query contexts.
  */
 export default abstract class EntityQueryContextProvider {
-  private queryContextCounter: number = 1;
-
   /**
    * Vend a regular (non-transactional) entity query context.
    */
@@ -26,8 +27,8 @@ export default abstract class EntityQueryContextProvider {
   /**
    * @returns true if the transactional dataloader should be disabled for all transactions.
    */
-  protected shouldDisableTransactionalDataloaderForAllTransactions(): boolean {
-    return false;
+  protected defaultTransactionalDataLoaderMode(): TransactionalDataLoaderMode {
+    return TransactionalDataLoaderMode.ENABLED;
   }
 
   /**
@@ -55,9 +56,8 @@ export default abstract class EntityQueryContextProvider {
       const queryContext = new EntityTransactionalQueryContext(
         queryInterface,
         this,
-        String(this.queryContextCounter++),
-        transactionConfig?.disableTransactionalDataloader ??
-          this.shouldDisableTransactionalDataloaderForAllTransactions(),
+        randomUUID(),
+        transactionConfig?.transactionalDataLoaderMode ?? this.defaultTransactionalDataLoaderMode(),
       );
       const result = await transactionScope(queryContext);
       await queryContext.runPreCommitCallbacksAsync();
@@ -84,8 +84,8 @@ export default abstract class EntityQueryContextProvider {
         innerQueryInterface,
         outerQueryContext,
         this,
-        String(this.queryContextCounter++),
-        outerQueryContext.shouldDisableTransactionalDataloader,
+        randomUUID(),
+        outerQueryContext.transactionalDataLoaderMode,
       );
       const result = await transactionScope(innerQueryContext);
       await innerQueryContext.runPreCommitCallbacksAsync();

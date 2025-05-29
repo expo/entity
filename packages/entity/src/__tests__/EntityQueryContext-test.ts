@@ -4,6 +4,7 @@ import invariant from 'invariant';
 import EntityCompanionProvider from '../EntityCompanionProvider';
 import {
   EntityQueryContext,
+  TransactionalDataLoaderMode,
   TransactionConfig,
   TransactionIsolationLevel,
 } from '../EntityQueryContext';
@@ -173,38 +174,44 @@ describe(EntityQueryContext, () => {
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
-          expect(queryContext.shouldDisableTransactionalDataloader).toBe(true);
+          expect(queryContext.transactionalDataLoaderMode).toBe(
+            TransactionalDataLoaderMode.DISABLED,
+          );
         },
-        { disableTransactionalDataloader: true },
+        { transactionalDataLoaderMode: TransactionalDataLoaderMode.DISABLED },
       );
 
       await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
-          expect(queryContext.shouldDisableTransactionalDataloader).toBe(false);
+          expect(queryContext.transactionalDataLoaderMode).toBe(
+            TransactionalDataLoaderMode.ENABLED_BATCH_ONLY,
+          );
         },
-        { disableTransactionalDataloader: false },
+        { transactionalDataLoaderMode: TransactionalDataLoaderMode.ENABLED_BATCH_ONLY },
       );
 
       await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
-          expect(queryContext.shouldDisableTransactionalDataloader).toBe(false);
+          expect(queryContext.transactionalDataLoaderMode).toBe(
+            TransactionalDataLoaderMode.ENABLED,
+          );
         },
       );
     });
   });
 
-  describe('global shouldDisableTransactionalDataloaderForAllTransactions', () => {
+  describe('global defaultTransactionalDataLoaderMode', () => {
     class StubQueryContextProviderWithDisabledTransactionalDataLoaders extends EntityQueryContextProvider {
       protected getQueryInterface(): any {
         return {};
       }
 
-      protected override shouldDisableTransactionalDataloaderForAllTransactions(): boolean {
-        return true;
+      protected override defaultTransactionalDataLoaderMode(): TransactionalDataLoaderMode {
+        return TransactionalDataLoaderMode.DISABLED;
       }
 
       protected createTransactionRunner<T>(
@@ -248,25 +255,31 @@ describe(EntityQueryContext, () => {
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
-          expect(queryContext.shouldDisableTransactionalDataloader).toBe(true);
+          expect(queryContext.transactionalDataLoaderMode).toBe(
+            TransactionalDataLoaderMode.DISABLED,
+          );
         },
-        { disableTransactionalDataloader: true },
+        { transactionalDataLoaderMode: TransactionalDataLoaderMode.DISABLED },
       );
 
       await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
-          expect(queryContext.shouldDisableTransactionalDataloader).toBe(false);
+          expect(queryContext.transactionalDataLoaderMode).toBe(
+            TransactionalDataLoaderMode.ENABLED_BATCH_ONLY,
+          );
         },
-        { disableTransactionalDataloader: false },
+        { transactionalDataLoaderMode: TransactionalDataLoaderMode.ENABLED_BATCH_ONLY },
       );
 
       await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
-          expect(queryContext.shouldDisableTransactionalDataloader).toBe(true);
+          expect(queryContext.transactionalDataLoaderMode).toBe(
+            TransactionalDataLoaderMode.DISABLED,
+          );
         },
       );
     });
