@@ -44,7 +44,9 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
-          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          invalidationConfig: {
+            invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          },
         },
         entityConfiguration,
       );
@@ -84,7 +86,9 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
-          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          invalidationConfig: {
+            invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          },
         },
         entityConfiguration,
       );
@@ -117,7 +121,9 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
-          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          invalidationConfig: {
+            invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          },
         },
         entityConfiguration,
       );
@@ -160,7 +166,9 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
-          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          invalidationConfig: {
+            invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          },
         },
         entityConfiguration,
       );
@@ -192,7 +200,9 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
-          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          invalidationConfig: {
+            invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          },
         },
         entityConfiguration,
       );
@@ -201,6 +211,7 @@ describe(GenericRedisCacher, () => {
         new SingleFieldValueHolder('wat'),
       );
       expect(cacheKeys).toHaveLength(1);
+      expect(cacheKeys[0]).toBe('hello-:single:blah:v2.2:id:wat');
 
       await genericCacher.invalidateManyAsync(cacheKeys);
       verify(mockRedisClient.del(...cacheKeys)).once();
@@ -217,7 +228,9 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
-          invalidationStrategy: RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS,
+          invalidationConfig: {
+            invalidationStrategy: RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS,
+          },
         },
         entityConfiguration,
       );
@@ -226,6 +239,48 @@ describe(GenericRedisCacher, () => {
         new SingleFieldValueHolder('wat'),
       );
       expect(cacheKeys).toHaveLength(3);
+      expect(cacheKeys[0]).toBe('hello-:single:blah:v2.1:id:wat');
+      expect(cacheKeys[1]).toBe('hello-:single:blah:v2.2:id:wat');
+      expect(cacheKeys[2]).toBe('hello-:single:blah:v2.3:id:wat');
+
+      await genericCacher.invalidateManyAsync(cacheKeys);
+      verify(mockRedisClient.del(...cacheKeys)).once();
+    });
+
+    it('invalidates correctly with RedisCacheInvalidationStrategy.CUSTOM', async () => {
+      const mockRedisClient = mock<Redis>();
+      when(mockRedisClient.del()).thenResolve(1);
+
+      const genericCacher = new GenericRedisCacher(
+        {
+          redisClient: instance(mockRedisClient),
+          makeKeyFn: (...parts) => parts.join(':'),
+          cacheKeyPrefix: 'hello-',
+          ttlSecondsPositive: 1,
+          ttlSecondsNegative: 2,
+          invalidationConfig: {
+            invalidationStrategy: RedisCacheInvalidationStrategy.CUSTOM,
+            cacheKeyVersionsToInvalidateFn(cacheKeyVersion) {
+              return [
+                cacheKeyVersion,
+                cacheKeyVersion + 1,
+                cacheKeyVersion + 2,
+                cacheKeyVersion + 3,
+              ];
+            },
+          },
+        },
+        entityConfiguration,
+      );
+      const cacheKeys = genericCacher['makeCacheKeysForInvalidation'](
+        new SingleFieldHolder('id'),
+        new SingleFieldValueHolder('wat'),
+      );
+      expect(cacheKeys).toHaveLength(4);
+      expect(cacheKeys[0]).toBe('hello-:single:blah:v2.2:id:wat');
+      expect(cacheKeys[1]).toBe('hello-:single:blah:v2.3:id:wat');
+      expect(cacheKeys[2]).toBe('hello-:single:blah:v2.4:id:wat');
+      expect(cacheKeys[3]).toBe('hello-:single:blah:v2.5:id:wat');
 
       await genericCacher.invalidateManyAsync(cacheKeys);
       verify(mockRedisClient.del(...cacheKeys)).once();
@@ -239,7 +294,9 @@ describe(GenericRedisCacher, () => {
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
-          invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          invalidationConfig: {
+            invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          },
         },
         entityConfiguration,
       );
