@@ -237,7 +237,13 @@ export default class AuthorizationResultBasedEntityLoader<
       const entityResult = entityResultsForId[0];
       return (
         entityResult ??
-        result(new EntityNotFoundError(this.entityClass, this.entityConfiguration.idField, id))
+        result(
+          new EntityNotFoundError({
+            entityClass: this.entityClass,
+            fieldName: this.entityConfiguration.idField,
+            fieldValue: id,
+          }),
+        )
       );
     });
   }
