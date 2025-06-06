@@ -44,7 +44,38 @@ export enum RedisCacheInvalidationStrategy {
    * This strategy generates cache keys for both old and potential future new versions.
    */
   SURROUNDING_CACHE_KEY_VERSIONS = 'surrounding-cache-key-versions',
+
+  /**
+   * Invalidate cache keys based on user-specified function from the current cacheKeyVersion to a list of cache key
+   * versions to invalidate.
+   */
+  CUSTOM = 'custom',
 }
+
+export type GenericRedisCacheInvalidationConfig =
+  | {
+      /**
+       * Invalidation strategy for the cache.
+       */
+      invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION;
+    }
+  | {
+      /**
+       * Invalidation strategy for the cache.
+       */
+      invalidationStrategy: RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS;
+    }
+  | {
+      /**
+       * Invalidation strategy for the cache.
+       */
+      invalidationStrategy: RedisCacheInvalidationStrategy.CUSTOM;
+
+      /**
+       * Function that takes the current cache key version and returns the cache key versions to invalidate.
+       */
+      cacheKeyVersionsToInvalidateFn: (cacheKeyVersion: number) => readonly number[];
+    };
 
 export interface GenericRedisCacheContext {
   /**
@@ -77,9 +108,9 @@ export interface GenericRedisCacheContext {
   ttlSecondsNegative: number;
 
   /**
-   * Invalidation strategy for the cache.
+   * Configuration for cache invalidation strategy.
    */
-  invalidationStrategy: RedisCacheInvalidationStrategy;
+  invalidationConfig: GenericRedisCacheInvalidationConfig;
 }
 
 export default class GenericRedisCacher<
@@ -207,7 +238,7 @@ export default class GenericRedisCacher<
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue): readonly string[] {
-    switch (this.context.invalidationStrategy) {
+    switch (this.context.invalidationConfig.invalidationStrategy) {
       case RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION:
         return [
           this.makeCacheKeyForCacheKeyVersion(key, value, this.entityConfiguration.cacheKeyVersion),
@@ -218,6 +249,12 @@ export default class GenericRedisCacher<
         ).map((cacheKeyVersion) =>
           this.makeCacheKeyForCacheKeyVersion(key, value, cacheKeyVersion),
         );
+      case RedisCacheInvalidationStrategy.CUSTOM:
+        return this.context.invalidationConfig
+          .cacheKeyVersionsToInvalidateFn(this.entityConfiguration.cacheKeyVersion)
+          .map((cacheKeyVersion) =>
+            this.makeCacheKeyForCacheKeyVersion(key, value, cacheKeyVersion),
+          );
     }
   }
 }

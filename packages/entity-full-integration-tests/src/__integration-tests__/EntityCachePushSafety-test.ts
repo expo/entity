@@ -124,7 +124,9 @@ describe('Lack of entity cache push safety with RedisCacheInvalidationStrategy.C
       cacheKeyPrefix: 'test-',
       ttlSecondsPositive: 86400, // 1 day
       ttlSecondsNegative: 600, // 10 minutes
-      invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+      invalidationConfig: {
+        invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+      },
     };
   });
 
@@ -214,7 +216,9 @@ describe('Entity cache push safety with RedisCacheInvalidationStrategy.SURROUNDI
       cacheKeyPrefix: 'test-',
       ttlSecondsPositive: 86400, // 1 day
       ttlSecondsNegative: 600, // 10 minutes
-      invalidationStrategy: RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS,
+      invalidationConfig: {
+        invalidationStrategy: RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS,
+      },
     };
   });
 
