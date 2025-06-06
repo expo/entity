@@ -7,6 +7,7 @@ import {
   EntityCompanionDefinition,
   Entity,
   UUIDField,
+  EntityTransactionalQueryContext,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -52,6 +53,27 @@ export default class PostgresUniqueTestEntity extends Entity<
     if (hasTable) {
       await knex.schema.dropTable(tableName);
     }
+  }
+
+  public static async getByNameAsync(
+    viewerContext: ViewerContext,
+    args: { name: string },
+    queryContext?: EntityTransactionalQueryContext,
+  ): Promise<PostgresUniqueTestEntity | null> {
+    return await PostgresUniqueTestEntity.loader(
+      viewerContext,
+      queryContext,
+    ).loadByFieldEqualingAsync('name', args.name);
+  }
+
+  public static async createWithNameAsync(
+    viewerContext: ViewerContext,
+    args: { name: string },
+    queryContext?: EntityTransactionalQueryContext,
+  ): Promise<PostgresUniqueTestEntity> {
+    return await PostgresUniqueTestEntity.creator(viewerContext, queryContext)
+      .setField('name', args.name)
+      .createAsync();
   }
 }
 
@@ -108,6 +130,7 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<
     }),
     name: new StringField({
       columnName: 'name',
+      cache: true,
     }),
   },
   databaseAdapterFlavor: 'postgres',

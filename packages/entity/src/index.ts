@@ -85,6 +85,7 @@ export { default as AlwaysDenyPrivacyPolicyRule } from './rules/AlwaysDenyPrivac
 export { default as AlwaysSkipPrivacyPolicyRule } from './rules/AlwaysSkipPrivacyPolicyRule';
 export { default as PrivacyPolicyRule } from './rules/PrivacyPolicyRule';
 export * from './rules/PrivacyPolicyRule';
+export * from './utils/EntityCreationUtils';
 export * from './utils/EntityPrivacyUtils';
 export * from './utils/mergeEntityMutationTriggerConfigurations';
 export * from './utils/collections/maps';
