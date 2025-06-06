@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.45.0](https://github.com/expo/entity/compare/v0.44.0...v0.45.0) (2025-06-06)
+
+
+### Features
+
+* add ability to define a custom cache key invalidation version supplier ([#290](https://github.com/expo/entity/issues/290)) ([a3ab61b](https://github.com/expo/entity/commit/a3ab61bfa8d2eab3bbd9c703c5e483184bb67f13))
+* add createOrGetExistingAsync and createWithUniqueConstraintRecoveryAsync utility methods ([#291](https://github.com/expo/entity/issues/291)) ([78bc264](https://github.com/expo/entity/commit/78bc264b3328692b4b6722388a57d298f02e65c5))
+
+
+
+
+
 # [0.44.0](https://github.com/expo/entity/compare/v0.43.0...v0.44.0) (2025-05-29)
 
 
