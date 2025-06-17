@@ -10,11 +10,12 @@ Entity is a privacy-aware data layer for defining, caching, and authorizing acce
 
 ## Core Features
 
-- Declarative actor authorization using Privacy Policies
-- Configurable data storage using Database Adapters
-- Configurable, optional full-object caching using Cache Adapters
-- [Dataloader](https://github.com/graphql/dataloader) in-memory caching
-- Well-typed model declaration
+- Typescript ORM.
+- Declarative actor pre-authorization of all CRUD operations using Privacy Policies.
+- Configurable data storage using Database Adapters.
+- Configurable, optional, full-object read-through caching using Cache Adapters.
+- [Dataloader](https://github.com/graphql/dataloader) in-memory batching and read-through caching.
+
 
 ## Getting Started
 
