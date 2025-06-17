@@ -262,7 +262,7 @@ describe(EntityDatabaseAdapter, () => {
     it('throws when insert result count zero', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({ insertResults: [] });
-      await expect(adapter.insertAsync(queryContext, {} as any)).rejects.toThrowError(
+      await expect(adapter.insertAsync(queryContext, {} as any)).rejects.toThrow(
         'Empty results from database adapter insert',
       );
     });
@@ -272,7 +272,7 @@ describe(EntityDatabaseAdapter, () => {
       const adapter = new TestEntityDatabaseAdapter({
         insertResults: [{ string_field: 'hello' }, { string_field: 'hello2' }],
       });
-      await expect(adapter.insertAsync(queryContext, {} as any)).rejects.toThrowError(
+      await expect(adapter.insertAsync(queryContext, {} as any)).rejects.toThrow(
         'Excessive results from database adapter insert',
       );
     });
@@ -291,7 +291,7 @@ describe(EntityDatabaseAdapter, () => {
       const adapter = new TestEntityDatabaseAdapter({ updateResults: [] });
       await expect(
         adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any),
-      ).rejects.toThrowError('Empty results from database adapter update');
+      ).rejects.toThrow('Empty results from database adapter update');
     });
 
     it('throws when update result count greater than 1', async () => {
@@ -301,7 +301,7 @@ describe(EntityDatabaseAdapter, () => {
       });
       await expect(
         adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any),
-      ).rejects.toThrowError('Excessive results from database adapter update');
+      ).rejects.toThrow('Excessive results from database adapter update');
     });
   });
 
@@ -309,7 +309,7 @@ describe(EntityDatabaseAdapter, () => {
     it('throws when update result count greater than 1', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({ deleteCount: 2 });
-      await expect(adapter.deleteAsync(queryContext, 'customIdField', 'wat')).rejects.toThrowError(
+      await expect(adapter.deleteAsync(queryContext, 'customIdField', 'wat')).rejects.toThrow(
         'Excessive deletions from database adapter delet',
       );
     });

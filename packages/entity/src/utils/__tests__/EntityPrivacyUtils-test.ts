@@ -186,12 +186,12 @@ describe(canViewerDeleteAsync, () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestThrowOtherErrorEntity.creator(viewerContext).createAsync();
-    await expect(
-      canViewerDeleteAsync(SimpleTestThrowOtherErrorEntity, testEntity),
-    ).rejects.toThrowError('delete error');
+    await expect(canViewerDeleteAsync(SimpleTestThrowOtherErrorEntity, testEntity)).rejects.toThrow(
+      'delete error',
+    );
     await expect(
       getCanViewerDeleteResultAsync(SimpleTestThrowOtherErrorEntity, testEntity),
-    ).rejects.toThrowError('delete error');
+    ).rejects.toThrow('delete error');
   });
 
   it('returns false when edge cannot be read', async () => {
@@ -220,12 +220,12 @@ describe(canViewerDeleteAsync, () => {
     await SimpleTestThrowOtherErrorEntity.creator(viewerContext)
       .setField('simple_test_id', testEntity.getID())
       .createAsync();
-    await expect(canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity)).rejects.toThrowError(
+    await expect(canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity)).rejects.toThrow(
       'read in cascading delete error',
     );
     await expect(
       getCanViewerDeleteResultAsync(SimpleTestDenyUpdateEntity, testEntity),
-    ).rejects.toThrowError('read in cascading delete error');
+    ).rejects.toThrow('read in cascading delete error');
   });
 
   it('supports running within a transaction', async () => {

@@ -48,7 +48,7 @@ describe('postgres entity integration', () => {
           .createAsync(),
       );
 
-      await expect(InvalidTestEntity.deleter(entity1).deleteAsync()).rejects.toThrowError(
+      await expect(InvalidTestEntity.deleter(entity1).deleteAsync()).rejects.toThrow(
         'Excessive deletions from database adapter delete',
       );
     });
@@ -70,7 +70,7 @@ describe('postgres entity integration', () => {
 
       await expect(
         InvalidTestEntity.updater(entity1).setField('name', 'blah').updateAsync(),
-      ).rejects.toThrowError('Excessive results from database adapter update');
+      ).rejects.toThrow('Excessive results from database adapter update');
     });
 
     it('throws after update of no rows', async () => {
@@ -85,7 +85,7 @@ describe('postgres entity integration', () => {
 
       await expect(
         InvalidTestEntity.updater(entity1).setField('name', 'blah').updateAsync(),
-      ).rejects.toThrowError('Empty results from database adapter update');
+      ).rejects.toThrow('Empty results from database adapter update');
     });
   });
 });

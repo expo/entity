@@ -135,7 +135,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       id2,
     ]);
 
-    await expect(entityLoader.loadByFieldEqualingAsync('stringField', 'huh')).rejects.toThrowError(
+    await expect(entityLoader.loadByFieldEqualingAsync('stringField', 'huh')).rejects.toThrow(
       'loadByFieldEqualing: Multiple entities of type TestEntity found for stringField=huh',
     );
 
@@ -151,7 +151,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       EntityNotFoundError,
     );
 
-    await expect(entityLoader.loadByIDAsync('not-a-uuid')).rejects.toThrowError(
+    await expect(entityLoader.loadByIDAsync('not-a-uuid')).rejects.toThrow(
       'Entity field not valid: TestEntity (customIdField = not-a-uuid)',
     );
   });
@@ -296,7 +296,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         stringField: 'huh',
         intField: 5,
       }),
-    ).rejects.toThrowError(
+    ).rejects.toThrow(
       'loadByCompositeFieldEqualing: Multiple entities of type TestEntity found for composite field (stringField,intField)={"stringField":"huh","intField":5}',
     );
 
@@ -435,7 +435,7 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       entityLoader.loadManyByFieldEqualityConjunctionAsync([
         { fieldName: 'customIdField', fieldValue: 'not-a-uuid' },
       ]),
-    ).rejects.toThrowError('Entity field not valid: TestEntity (customIdField = not-a-uuid)');
+    ).rejects.toThrow('Entity field not valid: TestEntity (customIdField = not-a-uuid)');
   });
 
   it('loads entities with loadFirstByFieldEqualityConjunction', async () => {

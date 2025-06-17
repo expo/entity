@@ -440,7 +440,7 @@ describe(StubDatabaseAdapter, () => {
       );
       await expect(
         databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {}),
-      ).rejects.toThrowError(`Empty update (custom_id = hello)`);
+      ).rejects.toThrow(`Empty update (custom_id = hello)`);
     });
   });
 
@@ -497,7 +497,7 @@ describe(StubDatabaseAdapter, () => {
       dateIDTestEntityConfiguration,
       new Map(),
     );
-    await expect(databaseAdapter3.insertAsync(queryContext, {})).rejects.toThrowError(
+    await expect(databaseAdapter3.insertAsync(queryContext, {})).rejects.toThrow(
       'Unsupported ID type for StubDatabaseAdapter: DateField',
     );
   });

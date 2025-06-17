@@ -29,13 +29,13 @@ describe('Two entities backed by the same table', () => {
     expect(one).toBeInstanceOf(OneTestEntity);
     expect(two).toBeInstanceOf(TwoTestEntity);
 
-    await expect(
-      TwoTestEntity.loader(viewerContext).loadByIDAsync(one.getID()),
-    ).rejects.toThrowError('TwoTestEntity must be instantiated with two data');
+    await expect(TwoTestEntity.loader(viewerContext).loadByIDAsync(one.getID())).rejects.toThrow(
+      'TwoTestEntity must be instantiated with two data',
+    );
 
-    await expect(
-      OneTestEntity.loader(viewerContext).loadByIDAsync(two.getID()),
-    ).rejects.toThrowError('OneTestEntity must be instantiated with one data');
+    await expect(OneTestEntity.loader(viewerContext).loadByIDAsync(two.getID())).rejects.toThrow(
+      'OneTestEntity must be instantiated with one data',
+    );
 
     const manyResults = await OneTestEntity.loaderWithAuthorizationResults(
       viewerContext,

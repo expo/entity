@@ -471,7 +471,7 @@ describe(EntityPrivacyPolicy, () => {
           entity,
           metricsAdapter,
         ),
-      ).rejects.toThrowError('WooHoo!');
+      ).rejects.toThrow('WooHoo!');
       verify(metricsAdapterMock.logAuthorizationEvent(anything())).never();
     });
   });
@@ -588,7 +588,7 @@ describe(EntityPrivacyPolicy, () => {
           entity,
           metricsAdapter,
         ),
-      ).rejects.toThrowError('WooHoo!');
+      ).rejects.toThrow('WooHoo!');
 
       verify(policySpy.denyHandler(anyOfClass(EntityNotAuthorizedError))).never();
 
@@ -709,7 +709,7 @@ describe(EntityPrivacyPolicy, () => {
           entity,
           metricsAdapter,
         ),
-      ).rejects.toThrowError('WooHoo!');
+      ).rejects.toThrow('WooHoo!');
 
       verify(policySpy.denyHandler(anyOfClass(EntityNotAuthorizedError))).never();
 
