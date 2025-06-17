@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { mock, instance, spy, verify, anyOfClass, anything, objectContaining } from 'ts-mockito';
 
 import Entity from '../Entity';

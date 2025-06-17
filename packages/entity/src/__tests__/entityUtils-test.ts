@@ -1,4 +1,5 @@
 import { result } from '@expo/results';
+import { describe, expect, it } from '@jest/globals';
 
 import {
   enforceResultsAsync,
@@ -105,7 +106,7 @@ describe(partitionArray, () => {
     type B = false;
     const arr: (A | B)[] = [true, false, true, true, false];
     const [as, bs] = partitionArray<A, B>(arr, (val: A | B): val is A => val === true);
-    expect(as).toMatchObject([true, true, true]);
-    expect(bs).toMatchObject([false, false]);
+    expect(as).toStrictEqual([true, true, true]);
+    expect(bs).toStrictEqual([false, false]);
   });
 });

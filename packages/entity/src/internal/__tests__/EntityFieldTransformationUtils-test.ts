@@ -1,3 +1,5 @@
+import { describe, expect, it } from '@jest/globals';
+
 import EntityConfiguration from '../../EntityConfiguration';
 import { StringField, UUIDField } from '../../EntityFields';
 import {

@@ -1,3 +1,5 @@
+import { describe, expect, it } from '@jest/globals';
+
 import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
 import EnforcingEntityLoader from '../EnforcingEntityLoader';
 import EntityLoader from '../EntityLoader';

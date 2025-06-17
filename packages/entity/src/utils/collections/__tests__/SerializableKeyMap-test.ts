@@ -1,3 +1,5 @@
+import { describe, expect, it } from '@jest/globals';
+
 import { ISerializable, SerializableKeyMap } from '../SerializableKeyMap';
 
 describe(SerializableKeyMap, () => {

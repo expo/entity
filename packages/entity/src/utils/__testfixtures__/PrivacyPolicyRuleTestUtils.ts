@@ -1,3 +1,5 @@
+import { describe, expect, test } from '@jest/globals';
+
 import { EntityPrivacyPolicyEvaluationContext } from '../../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../../EntityQueryContext';
 import ReadonlyEntity from '../../ReadonlyEntity';

@@ -36,7 +36,6 @@
   "devDependencies": {
     "@expo/batcher": "^1.0.0",
     "@expo/entity-testing-utils": "workspace:^",
-    "@types/jest": "^29.5.14",
     "@types/node": "^20.14.1",
     "ctix": "^2.7.0",
     "eslint": "^9.26.0",

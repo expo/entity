@@ -1,3 +1,4 @@
+import { describe, it } from '@jest/globals';
 import { mock, verify, instance } from 'ts-mockito';
 
 import EntityLoaderFactory from '../EntityLoaderFactory';

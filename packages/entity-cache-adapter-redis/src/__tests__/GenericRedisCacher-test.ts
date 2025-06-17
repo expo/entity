@@ -5,6 +5,7 @@ import {
   SingleFieldValueHolder,
   UUIDField,
 } from '@expo/entity';
+import { describe, expect, it } from '@jest/globals';
 import { Redis, Pipeline } from 'ioredis';
 import { mock, when, instance, anything, verify } from 'ts-mockito';
 

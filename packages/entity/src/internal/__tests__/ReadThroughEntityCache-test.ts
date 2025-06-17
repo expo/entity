@@ -1,3 +1,4 @@
+import { describe, expect, it, jest } from '@jest/globals';
 import { verify, mock, instance, when, anything } from 'ts-mockito';
 
 import EntityConfiguration from '../../EntityConfiguration';

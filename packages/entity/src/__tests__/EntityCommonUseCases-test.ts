@@ -1,4 +1,5 @@
 import { enforceAsyncResult } from '@expo/results';
+import { expect, it } from '@jest/globals';
 import { v4 as uuidv4 } from 'uuid';
 
 import Entity from '../Entity';

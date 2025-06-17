@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import nullthrows from 'nullthrows';
 
 import Entity from '../../Entity';

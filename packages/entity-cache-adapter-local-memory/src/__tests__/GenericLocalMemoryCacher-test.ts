@@ -7,6 +7,7 @@ import {
   SingleFieldValueHolderMap,
   UUIDField,
 } from '@expo/entity';
+import { describe, expect, it } from '@jest/globals';
 
 import GenericLocalMemoryCacher, {
   DOES_NOT_EXIST_LOCAL_MEMORY_CACHE,

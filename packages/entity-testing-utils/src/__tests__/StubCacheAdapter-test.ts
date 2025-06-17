@@ -7,6 +7,7 @@ import {
   SingleFieldValueHolderMap,
   CacheStatus,
 } from '@expo/entity';
+import { describe, expect, it } from '@jest/globals';
 
 import {
   InMemoryFullCacheStubCacheAdapterProvider,

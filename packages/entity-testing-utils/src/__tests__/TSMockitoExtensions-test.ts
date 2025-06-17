@@ -1,4 +1,5 @@
 import { SingleFieldHolder, SingleFieldValueHolder, SingleFieldValueHolderMap } from '@expo/entity';
+import { describe, expect, it } from '@jest/globals';
 
 import {
   deepEqualEntityAware,

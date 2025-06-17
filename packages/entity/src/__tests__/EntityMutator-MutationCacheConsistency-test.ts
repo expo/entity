@@ -1,3 +1,5 @@
+import { describe, test } from '@jest/globals';
+
 import Entity from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import EntityConfiguration from '../EntityConfiguration';

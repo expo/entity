@@ -1,14 +1,15 @@
+import { describe, expect, it, jest } from '@jest/globals';
 import {
-  mock,
-  instance,
-  when,
-  anything,
-  verify,
-  spy,
-  anyString,
-  resetCalls,
-  deepEqual,
   anyNumber,
+  anyString,
+  anything,
+  deepEqual,
+  instance,
+  mock,
+  resetCalls,
+  spy,
+  verify,
+  when,
 } from 'ts-mockito';
 
 import EntityDatabaseAdapter from '../../EntityDatabaseAdapter';
@@ -19,8 +20,8 @@ import IEntityMetricsAdapter, {
 } from '../../metrics/IEntityMetricsAdapter';
 import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
 import {
-  NoCacheStubCacheAdapterProvider,
   InMemoryFullCacheStubCacheAdapterProvider,
+  NoCacheStubCacheAdapterProvider,
 } from '../../utils/__testfixtures__/StubCacheAdapter';
 import StubDatabaseAdapter from '../../utils/__testfixtures__/StubDatabaseAdapter';
 import StubQueryContextProvider from '../../utils/__testfixtures__/StubQueryContextProvider';
@@ -303,7 +304,7 @@ describe(EntityDataManager, () => {
     expect(dbSpy).toHaveBeenCalledTimes(1);
     expect(cacheSpy).toHaveBeenCalledTimes(1);
 
-    expect(entityData).toMatchObject(entityData2);
+    expect(entityData).toEqual(entityData2);
     expect(entityData.get(new SingleFieldValueHolder('hello'))).toHaveLength(2);
     expect(entityData.get(new SingleFieldValueHolder('world'))).toHaveLength(1);
 
@@ -378,9 +379,9 @@ describe(EntityDataManager, () => {
     expect(dbSpy).toHaveBeenCalledTimes(3);
     expect(cacheSpy).toHaveBeenCalledTimes(0);
 
-    expect(entityData).toMatchObject(entityData2);
-    expect(entityData2).toMatchObject(entityData3);
-    expect(entityData3).toMatchObject(entityData4);
+    expect(entityData).toEqual(entityData2);
+    expect(entityData2).toEqual(entityData3);
+    expect(entityData3).toEqual(entityData4);
     expect(entityData.get(new SingleFieldValueHolder('hello'))).toHaveLength(2);
     expect(entityData.get(new SingleFieldValueHolder('world'))).toHaveLength(1);
 
@@ -453,9 +454,9 @@ describe(EntityDataManager, () => {
     expect(dbSpy).toHaveBeenCalledTimes(3);
     expect(cacheSpy).toHaveBeenCalledTimes(0);
 
-    expect(entityData).toMatchObject(entityData2);
-    expect(entityData2).toMatchObject(entityData3);
-    expect(entityData3).toMatchObject(entityData4);
+    expect(entityData).toEqual(entityData2);
+    expect(entityData2).toEqual(entityData3);
+    expect(entityData3).toEqual(entityData4);
     expect(entityData.get(new SingleFieldValueHolder('hello'))).toHaveLength(2);
     expect(entityData.get(new SingleFieldValueHolder('world'))).toHaveLength(1);
 
@@ -532,9 +533,9 @@ describe(EntityDataManager, () => {
     expect(dbSpy).toHaveBeenCalledTimes(4);
     expect(cacheSpy).toHaveBeenCalledTimes(0);
 
-    expect(entityData).toMatchObject(entityData2);
-    expect(entityData2).toMatchObject(entityData3);
-    expect(entityData3).toMatchObject(entityData4);
+    expect(entityData).toEqual(entityData2);
+    expect(entityData2).toEqual(entityData3);
+    expect(entityData3).toEqual(entityData4);
     expect(entityData.get(new SingleFieldValueHolder('hello'))).toHaveLength(2);
     expect(entityData.get(new SingleFieldValueHolder('world'))).toHaveLength(1);
 

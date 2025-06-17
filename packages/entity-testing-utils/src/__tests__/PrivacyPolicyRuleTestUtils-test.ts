@@ -5,6 +5,7 @@ import {
   AlwaysAllowPrivacyPolicyRule,
   AlwaysDenyPrivacyPolicyRule,
 } from '@expo/entity';
+import { describe } from '@jest/globals';
 import { anything, instance, mock } from 'ts-mockito';
 
 import { describePrivacyPolicyRuleWithAsyncTestCase } from '../PrivacyPolicyRuleTestUtils';
