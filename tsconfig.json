@@ -1,8 +1,16 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node20/tsconfig"],
-  "compilerOptions": {
-    "declaration": true,
-    "outDir": "${configDir}/build",
-    "sourceMap": true
-  }
+  "files": [],
+  "references": [
+    { "path": "./packages/entity" },
+    { "path": "./packages/entity-cache-adapter-local-memory" },
+    { "path": "./packages/entity-cache-adapter-redis" },
+    { "path": "./packages/entity-codemod" },
+    { "path": "./packages/entity-database-adapter-knex" },
+    { "path": "./packages/entity-example" },
+    { "path": "./packages/entity-full-integration-tests" },
+    { "path": "./packages/entity-ip-address-field" },
+    { "path": "./packages/entity-secondary-cache-local-memory" },
+    { "path": "./packages/entity-secondary-cache-redis" },
+    { "path": "./packages/entity-testing-utils" }
+  ]
 }

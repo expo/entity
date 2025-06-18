@@ -1,26 +1,50 @@
 {
+  "mode": "bundle",
+  "overwrite": true,
+  "backup": false,
+  "generationStyle": "default-alias-named-star",
   "options": [
     {
-      "mode": "bundle",
-      "project": "tsconfig.json",
-      "exportFilename": "index.ts",
-      "useSemicolon": true,
-      "useBanner": false,
-      "useTimestamp": false,
-      "quote": "'",
-      "directive": "",
-      "fileExt": "none",
-      "overwrite": true,
-      "backup": false,
-      "generationStyle": "default-alias-named-star",
-      "include": [
-        "src/**"
-      ],
+      "project": "packages/entity/tsconfig.json",
+      "output": "packages/entity/src",
       "exclude": [
-        "**/*tests__/**",
-        "**/__testfixtures__/**"
-      ],
-      "output": "src"
+        "**/__testfixtures__/**",
+        "**/__tests__/**"
+      ]
+    },
+    {
+      "project": "packages/entity-cache-adapter-local-memory/tsconfig.json",
+      "output": "packages/entity-cache-adapter-local-memory/src",
+      "exclude": [ "**/__testfixtures__/**" ]
+    },
+    {
+      "project": "packages/entity-cache-adapter-redis/tsconfig.json",
+      "output": "packages/entity-cache-adapter-redis/src",
+      "exclude": [ "**/__testfixtures__/**" ]
+    },
+    {
+      "project": "packages/entity-database-adapter-knex/tsconfig.json",
+      "output": "packages/entity-database-adapter-knex/src",
+      "exclude": [ "**/__testfixtures__/**" ]
+    },
+    {
+      "project": "packages/entity-ip-address-field/tsconfig.json",
+      "output": "packages/entity-ip-address-field/src",
+    },
+    {
+      "project": "packages/entity-secondary-cache-local-memory/tsconfig.json",
+      "output": "packages/entity-secondary-cache-local-memory/src",
+      "exclude": [ "**/__tests__/**" ]
+    },
+    {
+      "project": "packages/entity-secondary-cache-redis/tsconfig.json",
+      "output": "packages/entity-secondary-cache-redis/src",
+      "exclude": [ "**/__testfixtures__/**" ]
+    },
+    {
+      "project": "packages/entity-testing-utils/tsconfig.json",
+      "output": "packages/entity-testing-utils/src",
+      "exclude": [ "**/__testfixtures__/**" ]
     }
   ]
 }

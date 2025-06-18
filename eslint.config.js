@@ -4,7 +4,13 @@ const universeSharedTypescriptAnalysisConfig = require('eslint-config-universe/f
 const tsdoc = require('eslint-plugin-tsdoc');
 
 module.exports = defineConfig([
-  globalIgnores(['packages/entity-codemod/**/__testfixtures__/**']),
+  globalIgnores([
+    'packages/entity-codemod/**/__testfixtures__/**',
+    'packages/*/build',
+    'coverage',
+    'coverage-integration',
+    'doc',
+  ]),
   universeNodeConfig,
   universeSharedTypescriptAnalysisConfig,
   {
@@ -29,7 +35,8 @@ module.exports = defineConfig([
     files: ['**/*.ts', '**/*.tsx', '**/*.d.ts'],
     languageOptions: {
       parserOptions: {
-        project: './tsconfig.json',
+        projectService: true,
+        tsconfigRootDir: __dirname,
       },
     },
     rules: {
@@ -71,7 +78,8 @@ module.exports = defineConfig([
     files: ['**/__tests__/**/*.ts', '**/__tests__/**/*.tsx', '**/__tests__/**/*.d.ts'],
     languageOptions: {
       parserOptions: {
-        project: './tsconfig.json',
+        projectService: true,
+        tsconfigRootDir: __dirname,
       },
     },
     rules: {
