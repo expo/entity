@@ -1,17 +1,17 @@
-import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
-import EnforcingEntityLoader from './EnforcingEntityLoader';
+import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
+import { EnforcingEntityLoader } from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
-import EntityLoaderUtils from './EntityLoaderUtils';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { EntityLoaderUtils } from './EntityLoaderUtils';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * The primary interface for loading entities. All normal loads are batched,
  * cached, and authorized against the entity's EntityPrivacyPolicy.
  */
-export default class EntityLoader<
+export class EntityLoader<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

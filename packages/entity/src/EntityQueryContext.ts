@@ -1,6 +1,6 @@
 import assert from 'assert';
 
-import EntityQueryContextProvider from './EntityQueryContextProvider';
+import { EntityQueryContextProvider } from './EntityQueryContextProvider';
 
 export type PostCommitCallback = (...args: any) => Promise<any>;
 export type PreCommitCallback = (

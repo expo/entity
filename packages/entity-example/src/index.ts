@@ -1,4 +1,4 @@
-import createAppAsync from './app';
+import { createAppAsync } from './app.ts';
 
 async function mainAsync(): Promise<void> {
   const app = await createAppAsync();

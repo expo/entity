@@ -2,9 +2,9 @@ import { describe, expect, test } from '@jest/globals';
 
 import { EntityPrivacyPolicyEvaluationContext } from '../../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../../EntityQueryContext';
-import ReadonlyEntity from '../../ReadonlyEntity';
-import ViewerContext from '../../ViewerContext';
-import PrivacyPolicyRule, { RuleEvaluationResult } from '../../rules/PrivacyPolicyRule';
+import { ReadonlyEntity } from '../../ReadonlyEntity';
+import { ViewerContext } from '../../ViewerContext';
+import { PrivacyPolicyRule, RuleEvaluationResult } from '../../rules/PrivacyPolicyRule';
 
 export interface Case<
   TFields extends Record<string, any>,

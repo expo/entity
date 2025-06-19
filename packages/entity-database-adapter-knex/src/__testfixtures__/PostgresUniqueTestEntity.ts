@@ -1,13 +1,13 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
-  EntityPrivacyPolicy,
-  ViewerContext,
-  StringField,
-  EntityConfiguration,
-  EntityCompanionDefinition,
   Entity,
-  UUIDField,
+  EntityCompanionDefinition,
+  EntityConfiguration,
+  EntityPrivacyPolicy,
   EntityTransactionalQueryContext,
+  StringField,
+  UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -16,7 +16,7 @@ type PostgresUniqueTestEntityFields = {
   name: string | null;
 };
 
-export default class PostgresUniqueTestEntity extends Entity<
+export class PostgresUniqueTestEntity extends Entity<
   PostgresUniqueTestEntityFields,
   'id',
   ViewerContext

@@ -1,3 +1,3 @@
-import ViewerContext from '../../ViewerContext';
+import { ViewerContext } from '../../ViewerContext';
 
-export default class TestViewerContext extends ViewerContext {}
+export class TestViewerContext extends ViewerContext {}

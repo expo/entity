@@ -1,21 +1,21 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
-import Entity from '../Entity';
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
+import { Entity } from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import EntityConfiguration from '../EntityConfiguration';
+import { EntityConfiguration } from '../EntityConfiguration';
 import { StringField } from '../EntityFields';
-import EntityLoaderUtils from '../EntityLoaderUtils';
-import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import ViewerContext from '../ViewerContext';
-import EntityDataManager from '../internal/EntityDataManager';
-import ReadThroughEntityCache from '../internal/ReadThroughEntityCache';
-import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
-import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
+import { EntityLoaderUtils } from '../EntityLoaderUtils';
+import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import { ViewerContext } from '../ViewerContext';
+import { EntityDataManager } from '../internal/EntityDataManager';
+import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache';
+import { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
 import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
-import StubDatabaseAdapter from '../utils/__testfixtures__/StubDatabaseAdapter';
-import StubQueryContextProvider from '../utils/__testfixtures__/StubQueryContextProvider';
+import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
+import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
 
 export type TestFields = {
   id: string;
@@ -84,12 +84,7 @@ export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
 const ID_SENTINEL_THROW_LITERAL = 'throw_literal';
 const ID_SENTINEL_THROW_ERROR = 'throw_error';
 
-export default class TestEntity extends Entity<
-  TestFields,
-  'id',
-  ViewerContext,
-  TestFieldSelection
-> {
+export class TestEntity extends Entity<TestFields, 'id', ViewerContext, TestFieldSelection> {
   constructor(constructorParams: {
     viewerContext: ViewerContext;
     id: string;

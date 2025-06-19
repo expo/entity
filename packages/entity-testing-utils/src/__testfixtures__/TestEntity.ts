@@ -1,14 +1,14 @@
 import {
+  AlwaysAllowPrivacyPolicyRule,
+  DateField,
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
-  DateField,
   EntityPrivacyPolicy,
-  ViewerContext,
-  AlwaysAllowPrivacyPolicyRule,
-  UUIDField,
-  StringField,
   IntField,
+  StringField,
+  UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 import { result, Result } from '@expo/results';
 
@@ -75,7 +75,7 @@ export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
-export default class TestEntity extends Entity<TestFields, 'customIdField', ViewerContext> {
+export class TestEntity extends Entity<TestFields, 'customIdField', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     'customIdField',

@@ -1,15 +1,15 @@
 import { describe, test } from '@jest/globals';
 
-import Entity from '../Entity';
+import { Entity } from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import EntityConfiguration from '../EntityConfiguration';
+import { EntityConfiguration } from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
 import { EntityMutationType, EntityTriggerMutationInfo } from '../EntityMutationInfo';
 import { EntityNonTransactionalMutationTrigger } from '../EntityMutationTriggerConfiguration';
-import EntityMutatorFactory from '../EntityMutatorFactory';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
-import ViewerContext from '../ViewerContext';
-import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
+import { EntityMutatorFactory } from '../EntityMutatorFactory';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
+import { ViewerContext } from '../ViewerContext';
+import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 type BlahFields = {

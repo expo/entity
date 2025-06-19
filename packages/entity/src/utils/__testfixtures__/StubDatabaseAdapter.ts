@@ -1,22 +1,23 @@
 import invariant from 'invariant';
 import { uuidv7 } from 'uuidv7';
 
-import EntityConfiguration from '../../EntityConfiguration';
-import EntityDatabaseAdapter, {
-  TableFieldSingleValueEqualityCondition,
-  TableFieldMultiValueEqualityCondition,
-  TableQuerySelectionModifiers,
-  OrderByOrdering,
-} from '../../EntityDatabaseAdapter';
-import { StringField, IntField } from '../../EntityFields';
+import { EntityConfiguration } from '../../EntityConfiguration';
 import {
-  getDatabaseFieldForEntityField,
+  EntityDatabaseAdapter,
+  OrderByOrdering,
+  TableFieldMultiValueEqualityCondition,
+  TableFieldSingleValueEqualityCondition,
+  TableQuerySelectionModifiers,
+} from '../../EntityDatabaseAdapter';
+import { IntField, StringField } from '../../EntityFields';
+import {
   FieldTransformerMap,
+  getDatabaseFieldForEntityField,
   transformFieldsToDatabaseObject,
 } from '../../internal/EntityFieldTransformationUtils';
 import { computeIfAbsent, mapMap } from '../collections/maps';
 
-export default class StubDatabaseAdapter<
+export class StubDatabaseAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > extends EntityDatabaseAdapter<TFields, TIDField> {

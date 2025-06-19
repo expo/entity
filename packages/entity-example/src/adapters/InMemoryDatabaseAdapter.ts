@@ -1,13 +1,13 @@
 import {
-  EntityDatabaseAdapter,
-  FieldTransformerMap,
-  OrderByOrdering,
-  TableFieldSingleValueEqualityCondition,
-  TableFieldMultiValueEqualityCondition,
-  TableQuerySelectionModifiers,
-  getDatabaseFieldForEntityField,
   EntityConfiguration,
-  IEntityDatabaseAdapterProvider,
+  EntityDatabaseAdapter,
+  type FieldTransformerMap,
+  type IEntityDatabaseAdapterProvider,
+  OrderByOrdering,
+  type TableFieldMultiValueEqualityCondition,
+  type TableFieldSingleValueEqualityCondition,
+  type TableQuerySelectionModifiers,
+  getDatabaseFieldForEntityField,
 } from '@expo/entity';
 import invariant from 'invariant';
 import { v4 as uuidv4 } from 'uuid';

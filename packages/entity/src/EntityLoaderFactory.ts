@@ -1,17 +1,17 @@
-import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
-import EntityCompanion from './EntityCompanion';
-import EntityLoaderUtils from './EntityLoaderUtils';
-import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
+import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
+import { EntityCompanion } from './EntityCompanion';
+import { EntityLoaderUtils } from './EntityLoaderUtils';
+import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
-import EntityDataManager from './internal/EntityDataManager';
-import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
+import { EntityDataManager } from './internal/EntityDataManager';
+import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
  * The primary entry point for loading entities.
  */
-export default class EntityLoaderFactory<
+export class EntityLoaderFactory<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

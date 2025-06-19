@@ -4,9 +4,9 @@ import {
   IEntityDatabaseAdapterProvider,
 } from '@expo/entity';
 
-import StubDatabaseAdapter from './StubDatabaseAdapter';
+import { StubDatabaseAdapter } from './StubDatabaseAdapter';
 
-export default class StubDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
+export class StubDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
   private readonly objectCollection = new Map();
 
   getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(

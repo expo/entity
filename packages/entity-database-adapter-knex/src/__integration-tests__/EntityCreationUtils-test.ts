@@ -3,7 +3,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/glo
 import knex, { Knex } from 'knex';
 import nullthrows from 'nullthrows';
 
-import PostgresUniqueTestEntity from '../__testfixtures__/PostgresUniqueTestEntity';
+import { PostgresUniqueTestEntity } from '../__testfixtures__/PostgresUniqueTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe(createWithUniqueConstraintRecoveryAsync, () => {

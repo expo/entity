@@ -8,9 +8,10 @@ import {
 import { describe, expect, it } from '@jest/globals';
 import { v4 as uuidv4 } from 'uuid';
 
-import GenericLocalMemoryCacher from '../GenericLocalMemoryCacher';
-import LocalMemoryCacheAdapterProvider from '../LocalMemoryCacheAdapterProvider';
-import LocalMemoryTestEntity, {
+import { GenericLocalMemoryCacher } from '../GenericLocalMemoryCacher';
+import { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider';
+import {
+  LocalMemoryTestEntity,
   LocalMemoryTestEntityFields,
 } from '../__testfixtures__/LocalMemoryTestEntity';
 import {

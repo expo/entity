@@ -1,12 +1,13 @@
 import { EntityCascadingDeletionInfo } from './EntityMutationInfo';
 import { EntityQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
-import EntityNotAuthorizedError from './errors/EntityNotAuthorizedError';
-import IEntityMetricsAdapter, {
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
+import { EntityNotAuthorizedError } from './errors/EntityNotAuthorizedError';
+import {
   EntityMetricsAuthorizationResult,
+  IEntityMetricsAdapter,
 } from './metrics/IEntityMetricsAdapter';
-import PrivacyPolicyRule, { RuleEvaluationResult } from './rules/PrivacyPolicyRule';
+import { PrivacyPolicyRule, RuleEvaluationResult } from './rules/PrivacyPolicyRule';
 
 /**
  * Information about the reason this privacy policy is being evaluated.
@@ -115,7 +116,7 @@ export enum EntityAuthorizationAction {
  * return not authorized if all rules skip
  * ```
  */
-export default abstract class EntityPrivacyPolicy<
+export abstract class EntityPrivacyPolicy<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

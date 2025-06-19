@@ -1,7 +1,7 @@
 import { TransactionConfig } from '../../EntityQueryContext';
-import EntityQueryContextProvider from '../../EntityQueryContextProvider';
+import { EntityQueryContextProvider } from '../../EntityQueryContextProvider';
 
-export default class StubQueryContextProvider extends EntityQueryContextProvider {
+export class StubQueryContextProvider extends EntityQueryContextProvider {
   protected getQueryInterface(): any {
     return {};
   }

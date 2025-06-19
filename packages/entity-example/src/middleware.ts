@@ -1,9 +1,9 @@
 import { NoOpEntityMetricsAdapter } from '@expo/entity';
-import { Next } from 'koa';
+import type { Next } from 'koa';
 
-import { ExampleContext } from './app';
-import { createEntityCompanionProvider } from './data';
-import { UserViewerContext, AnonymousViewerContext } from './viewerContexts';
+import type { ExampleContext } from './app.ts';
+import { createEntityCompanionProvider } from './data.ts';
+import { AnonymousViewerContext, UserViewerContext } from './viewerContexts.ts';
 
 /**
  * The Koa middleware that instantiates the entity framework. A companion provider should

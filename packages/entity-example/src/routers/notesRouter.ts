@@ -1,7 +1,7 @@
 import Router from '@koa/router';
 
-import { ExampleState, ExampleContext } from '../app';
-import NoteEntity from '../entities/NoteEntity';
+import type { ExampleContext, ExampleState } from '../app.ts';
+import { NoteEntity } from '../entities/NoteEntity.ts';
 
 /**
  * A simple REST API for the notes resource:
@@ -121,4 +121,4 @@ router.delete('/:id', async (ctx) => {
   };
 });
 
-export default router;
+export { router as notesRouter };

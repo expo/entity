@@ -1,13 +1,13 @@
-import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
-import ReadonlyEntity from '../ReadonlyEntity';
-import ViewerContext from '../ViewerContext';
+import { ReadonlyEntity } from '../ReadonlyEntity';
+import { ViewerContext } from '../ViewerContext';
+import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule';
 
 /**
  * A no-op policy rule that always skips.
  */
-export default class AlwaysSkipPrivacyPolicyRule<
+export class AlwaysSkipPrivacyPolicyRule<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

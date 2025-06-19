@@ -1,12 +1,12 @@
 import {
-  NoOpEntityMetricsAdapter,
-  IEntityMetricsAdapter,
   EntityCompanionProvider,
+  IEntityMetricsAdapter,
+  NoOpEntityMetricsAdapter,
 } from '@expo/entity';
 import { StubDatabaseAdapterProvider, StubQueryContextProvider } from '@expo/entity-testing-utils';
 
 import { GenericRedisCacheContext } from '../GenericRedisCacher';
-import RedisCacheAdapterProvider from '../RedisCacheAdapterProvider';
+import { RedisCacheAdapterProvider } from '../RedisCacheAdapterProvider';
 
 // share across all in calls in test to simulate postgres
 const adapterProvider = new StubDatabaseAdapterProvider();

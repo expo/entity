@@ -5,7 +5,7 @@ import { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
 /**
  * A ISecondaryEntityCache that composes other ISecondaryEntityCache instances.
  */
-export default class ComposedSecondaryEntityCache<TLoadParams, TFields extends Record<string, any>>
+export class ComposedSecondaryEntityCache<TLoadParams, TFields extends Record<string, any>>
   implements ISecondaryEntityCache<TFields, TLoadParams>
 {
   /**

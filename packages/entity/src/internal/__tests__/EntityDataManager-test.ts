@@ -12,27 +12,29 @@ import {
   when,
 } from 'ts-mockito';
 
-import EntityDatabaseAdapter from '../../EntityDatabaseAdapter';
+import { EntityDatabaseAdapter } from '../../EntityDatabaseAdapter';
 import { TransactionalDataLoaderMode } from '../../EntityQueryContext';
-import IEntityMetricsAdapter, {
+import {
   EntityMetricsLoadType,
+  IEntityMetricsAdapter,
   IncrementLoadCountEventType,
 } from '../../metrics/IEntityMetricsAdapter';
-import NoOpEntityMetricsAdapter from '../../metrics/NoOpEntityMetricsAdapter';
+import { NoOpEntityMetricsAdapter } from '../../metrics/NoOpEntityMetricsAdapter';
 import {
   InMemoryFullCacheStubCacheAdapterProvider,
   NoCacheStubCacheAdapterProvider,
 } from '../../utils/__testfixtures__/StubCacheAdapter';
-import StubDatabaseAdapter from '../../utils/__testfixtures__/StubDatabaseAdapter';
-import StubQueryContextProvider from '../../utils/__testfixtures__/StubQueryContextProvider';
-import TestEntity, {
+import { StubDatabaseAdapter } from '../../utils/__testfixtures__/StubDatabaseAdapter';
+import { StubQueryContextProvider } from '../../utils/__testfixtures__/StubQueryContextProvider';
+import {
+  TestEntity,
   testEntityConfiguration,
   TestFields,
 } from '../../utils/__testfixtures__/TestEntity';
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder';
-import EntityDataManager from '../EntityDataManager';
+import { EntityDataManager } from '../EntityDataManager';
 import { EntityLoadMethodType } from '../EntityLoadInterfaces';
-import ReadThroughEntityCache from '../ReadThroughEntityCache';
+import { ReadThroughEntityCache } from '../ReadThroughEntityCache';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../SingleFieldHolder';
 
 const getObjects = (): Map<string, TestFields[]> =>

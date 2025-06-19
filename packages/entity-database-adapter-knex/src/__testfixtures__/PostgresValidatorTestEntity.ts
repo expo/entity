@@ -1,15 +1,15 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
-  EntityPrivacyPolicy,
-  ViewerContext,
-  StringField,
-  EntityConfiguration,
-  EntityCompanionDefinition,
   Entity,
+  EntityCompanionDefinition,
+  EntityConfiguration,
   EntityMutationTrigger,
+  EntityPrivacyPolicy,
   EntityQueryContext,
   EntityValidatorMutationInfo,
+  StringField,
   UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -18,7 +18,7 @@ type PostgresValidatorTestEntityFields = {
   name: string | null;
 };
 
-export default class PostgresValidatorTestEntity extends Entity<
+export class PostgresValidatorTestEntity extends Entity<
   PostgresValidatorTestEntityFields,
   'id',
   ViewerContext

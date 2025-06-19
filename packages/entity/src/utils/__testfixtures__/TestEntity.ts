@@ -1,12 +1,12 @@
 import { result, Result } from '@expo/results';
 
-import Entity from '../../Entity';
+import { Entity } from '../../Entity';
 import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import EntityConfiguration from '../../EntityConfiguration';
-import { StringField, DateField, IntField, UUIDField } from '../../EntityFields';
-import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
-import ViewerContext from '../../ViewerContext';
-import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
+import { EntityConfiguration } from '../../EntityConfiguration';
+import { DateField, IntField, StringField, UUIDField } from '../../EntityFields';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
+import { ViewerContext } from '../../ViewerContext';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type TestFields = {
   customIdField: string;
@@ -71,7 +71,7 @@ export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
-export default class TestEntity extends Entity<TestFields, 'customIdField', ViewerContext> {
+export class TestEntity extends Entity<TestFields, 'customIdField', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     'customIdField',

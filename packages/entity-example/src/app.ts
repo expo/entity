@@ -6,10 +6,10 @@ import Router from '@koa/router';
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 
-import { entityCompanionMiddleware, viewerContextMiddleware } from './middleware';
-import notesRouter from './routers/notesRouter';
-import { typeDefs, resolvers } from './schema';
-import { ExampleViewerContext } from './viewerContexts';
+import { entityCompanionMiddleware, viewerContextMiddleware } from './middleware.ts';
+import { notesRouter } from './routers/notesRouter.ts';
+import { resolvers, typeDefs } from './schema.ts';
+import { ExampleViewerContext } from './viewerContexts.ts';
 
 export type ExampleContext = Koa.ParameterizedContext<ExampleState>;
 
@@ -23,7 +23,7 @@ export type ExampleState = {
   entityCompanionProvider: EntityCompanionProvider; // entityCompanionMiddleware
 };
 
-export default async function createAppAsync(): Promise<Koa<ExampleState, ExampleContext>> {
+export async function createAppAsync(): Promise<Koa<ExampleState, ExampleContext>> {
   const app = new Koa<ExampleState, ExampleContext>();
 
   // initialze the entity framework for each request
@@ -51,7 +51,8 @@ export default async function createAppAsync(): Promise<Koa<ExampleState, Exampl
   await server.start();
   router.post(
     '/graphql',
-    koaMiddleware(server, {
+    // https://github.com/apollographql/apollo-server/issues/7625
+    koaMiddleware(server as any, {
       context: async ({ ctx }: { ctx: ExampleContext }) => ({
         viewerContext: ctx.state.viewerContext,
       }),

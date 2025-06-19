@@ -1,18 +1,18 @@
 import {
   AuthorizationResultBasedCreateMutator,
-  AuthorizationResultBasedUpdateMutator,
   AuthorizationResultBasedDeleteMutator,
+  AuthorizationResultBasedUpdateMutator,
 } from './AuthorizationResultBasedEntityMutator';
-import EntityMutatorFactory from './EntityMutatorFactory';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { EntityMutatorFactory } from './EntityMutatorFactory';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * Provides a cleaner API for mutating entities by passing through the ViewerContext.
  */
-export default class ViewerScopedEntityMutatorFactory<
+export class ViewerScopedEntityMutatorFactory<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

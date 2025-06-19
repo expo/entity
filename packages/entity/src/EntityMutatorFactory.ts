@@ -1,24 +1,24 @@
 import {
   AuthorizationResultBasedCreateMutator,
-  AuthorizationResultBasedUpdateMutator,
   AuthorizationResultBasedDeleteMutator,
+  AuthorizationResultBasedUpdateMutator,
 } from './AuthorizationResultBasedEntityMutator';
-import Entity, { IEntityClass } from './Entity';
-import EntityCompanionProvider from './EntityCompanionProvider';
-import EntityConfiguration from './EntityConfiguration';
-import EntityDatabaseAdapter from './EntityDatabaseAdapter';
-import EntityLoaderFactory from './EntityLoaderFactory';
-import EntityMutationTriggerConfiguration from './EntityMutationTriggerConfiguration';
-import EntityMutationValidator from './EntityMutationValidator';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { Entity, IEntityClass } from './Entity';
+import { EntityCompanionProvider } from './EntityCompanionProvider';
+import { EntityConfiguration } from './EntityConfiguration';
+import { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
+import { EntityLoaderFactory } from './EntityLoaderFactory';
+import { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
+import { EntityMutationValidator } from './EntityMutationValidator';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import ViewerContext from './ViewerContext';
-import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
+import { ViewerContext } from './ViewerContext';
+import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
  * The primary interface for creating, mutating, and deleting entities.
  */
-export default class EntityMutatorFactory<
+export class EntityMutatorFactory<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

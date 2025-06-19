@@ -2,11 +2,11 @@ import { enforceAsyncResult } from '@expo/results';
 import { describe, expect, it } from '@jest/globals';
 import { v4 as uuidv4 } from 'uuid';
 
-import AuthorizationResultBasedEntityAssociationLoader from '../AuthorizationResultBasedEntityAssociationLoader';
+import { AuthorizationResultBasedEntityAssociationLoader } from '../AuthorizationResultBasedEntityAssociationLoader';
 import { enforceResultsAsync } from '../entityUtils';
-import TestEntity from '../utils/__testfixtures__/TestEntity';
-import TestEntity2 from '../utils/__testfixtures__/TestEntity2';
-import TestViewerContext from '../utils/__testfixtures__/TestViewerContext';
+import { TestEntity } from '../utils/__testfixtures__/TestEntity';
+import { TestEntity2 } from '../utils/__testfixtures__/TestEntity2';
+import { TestViewerContext } from '../utils/__testfixtures__/TestViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(AuthorizationResultBasedEntityAssociationLoader, () => {

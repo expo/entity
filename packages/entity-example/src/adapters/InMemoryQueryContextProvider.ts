@@ -1,6 +1,6 @@
-import { EntityQueryContextProvider, TransactionConfig } from '@expo/entity';
+import { EntityQueryContextProvider, type TransactionConfig } from '@expo/entity';
 
-export default class InMemoryQueryContextProvider extends EntityQueryContextProvider {
+export class InMemoryQueryContextProvider extends EntityQueryContextProvider {
   protected getQueryInterface(): any {
     return {};
   }

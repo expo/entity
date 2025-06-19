@@ -1,8 +1,8 @@
-import EntityError, { EntityErrorCode, EntityErrorState } from './EntityError';
 import { IEntityClass } from '../Entity';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
-import ReadonlyEntity from '../ReadonlyEntity';
-import ViewerContext from '../ViewerContext';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
+import { ReadonlyEntity } from '../ReadonlyEntity';
+import { ViewerContext } from '../ViewerContext';
+import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
 
 type EntityNotFoundOptions<
   TFields extends Record<string, any>,
@@ -31,7 +31,7 @@ type EntityNotFoundOptions<
   fieldValue: TFields[N];
 };
 
-export default class EntityNotFoundError<
+export class EntityNotFoundError<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

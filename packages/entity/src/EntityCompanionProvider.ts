@@ -1,18 +1,18 @@
 import invariant from 'invariant';
 
 import { IEntityClass } from './Entity';
-import EntityCompanion, { IPrivacyPolicyClass } from './EntityCompanion';
-import EntityConfiguration from './EntityConfiguration';
-import EntityMutationTriggerConfiguration from './EntityMutationTriggerConfiguration';
-import EntityMutationValidator from './EntityMutationValidator';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import EntityQueryContextProvider from './EntityQueryContextProvider';
-import IEntityCacheAdapterProvider from './IEntityCacheAdapterProvider';
-import IEntityDatabaseAdapterProvider from './IEntityDatabaseAdapterProvider';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
-import EntityTableDataCoordinator from './internal/EntityTableDataCoordinator';
-import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
+import { EntityCompanion, IPrivacyPolicyClass } from './EntityCompanion';
+import { EntityConfiguration } from './EntityConfiguration';
+import { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
+import { EntityMutationValidator } from './EntityMutationValidator';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import { EntityQueryContextProvider } from './EntityQueryContextProvider';
+import { IEntityCacheAdapterProvider } from './IEntityCacheAdapterProvider';
+import { IEntityDatabaseAdapterProvider } from './IEntityDatabaseAdapterProvider';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
+import { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
+import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { computeIfAbsent } from './utils/collections/maps';
 
 /**
@@ -124,7 +124,7 @@ export interface EntityCompanionDefinition<
  * Internally, this is a lazy entity companion factory that instantiates and caches one
  * EntityCompanion for each type of Entity.
  */
-export default class EntityCompanionProvider {
+export class EntityCompanionProvider {
   private readonly companionDefinitionMap: Map<
     string,
     EntityCompanionDefinition<any, any, any, any, any, any>

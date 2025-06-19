@@ -1,16 +1,16 @@
 import { describe, expect, it } from '@jest/globals';
 
-import Entity from '../Entity';
+import { Entity } from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import EntityConfiguration from '../EntityConfiguration';
+import { EntityConfiguration } from '../EntityConfiguration';
 import { EntityEdgeDeletionBehavior } from '../EntityFieldDefinition';
 import { UUIDField } from '../EntityFields';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
 import { CacheStatus } from '../internal/ReadThroughEntityCache';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
-import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
+import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
 import { InMemoryFullCacheStubCacheAdapter } from '../utils/__testfixtures__/StubCacheAdapter';
-import TestViewerContext from '../utils/__testfixtures__/TestViewerContext';
+import { TestViewerContext } from '../utils/__testfixtures__/TestViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 interface CategoryFields {

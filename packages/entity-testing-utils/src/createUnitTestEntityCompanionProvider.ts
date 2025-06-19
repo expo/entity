@@ -5,8 +5,8 @@ import {
 } from '@expo/entity';
 
 import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter';
-import StubDatabaseAdapterProvider from './StubDatabaseAdapterProvider';
-import StubQueryContextProvider from './StubQueryContextProvider';
+import { StubDatabaseAdapterProvider } from './StubDatabaseAdapterProvider';
+import { StubQueryContextProvider } from './StubQueryContextProvider';
 
 const queryContextProvider = new StubQueryContextProvider();
 

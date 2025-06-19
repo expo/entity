@@ -1,13 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 
-import EntityConfiguration from '../../EntityConfiguration';
+import { EntityConfiguration } from '../../EntityConfiguration';
 import { StringField, UUIDField } from '../../EntityFields';
 import {
   getDatabaseFieldForEntityField,
-  transformDatabaseObjectToFields,
-  transformFieldsToDatabaseObject,
   transformCacheObjectToFields,
+  transformDatabaseObjectToFields,
   transformFieldsToCacheObject,
+  transformFieldsToDatabaseObject,
 } from '../EntityFieldTransformationUtils';
 
 type BlahT = {

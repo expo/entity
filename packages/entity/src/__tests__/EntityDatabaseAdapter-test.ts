@@ -1,9 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import EntityDatabaseAdapter, {
-  TableFieldSingleValueEqualityCondition,
+import {
+  EntityDatabaseAdapter,
   TableFieldMultiValueEqualityCondition,
+  TableFieldSingleValueEqualityCondition,
 } from '../EntityDatabaseAdapter';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';

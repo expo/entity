@@ -1,11 +1,11 @@
 import {
+  AlwaysAllowPrivacyPolicyRule,
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
   EntityPrivacyPolicy,
-  ViewerContext,
-  AlwaysAllowPrivacyPolicyRule,
   UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 
 export type SimpleTestFields = {
@@ -72,7 +72,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
-export default class SimpleTestEntity extends Entity<
+export class SimpleTestEntity extends Entity<
   SimpleTestFields,
   'id',
   ViewerContext,

@@ -1,15 +1,15 @@
 import { AuthorizationResultBasedCreateMutator } from './AuthorizationResultBasedEntityMutator';
-import EnforcingEntityCreator from './EnforcingEntityCreator';
+import { EnforcingEntityCreator } from './EnforcingEntityCreator';
 import { IEntityClass } from './Entity';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * The primary interface for creating entities.
  */
-export default class EntityCreator<
+export class EntityCreator<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

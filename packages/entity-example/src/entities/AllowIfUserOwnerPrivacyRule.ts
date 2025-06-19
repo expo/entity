@@ -1,12 +1,12 @@
 import {
+  type EntityPrivacyPolicyEvaluationContext,
+  EntityQueryContext,
   PrivacyPolicyRule,
   ReadonlyEntity,
-  EntityQueryContext,
   RuleEvaluationResult,
-  EntityPrivacyPolicyEvaluationContext,
 } from '@expo/entity';
 
-import { ExampleViewerContext } from '../viewerContexts';
+import { ExampleViewerContext } from '../viewerContexts.ts';
 
 /**
  * Example privacy rule that makes use of the types of ViewerContexts specific
@@ -22,7 +22,7 @@ import { ExampleViewerContext } from '../viewerContexts';
  * and compares it to the current viewer's user ID. If they're the same, it allows.
  * Otherwise, it defers to the next rule in the policy.
  */
-export default class AllowIfUserOwnerPrivacyRule<
+export class AllowIfUserOwnerPrivacyRule<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TEntity extends ReadonlyEntity<TFields, TIDField, ExampleViewerContext>,

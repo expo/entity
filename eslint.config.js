@@ -14,6 +14,12 @@ module.exports = defineConfig([
   universeNodeConfig,
   universeSharedTypescriptAnalysisConfig,
   {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
     plugins: {
       tsdoc,
     },
@@ -33,12 +39,6 @@ module.exports = defineConfig([
   },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.d.ts'],
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: __dirname,
-      },
-    },
     rules: {
       'no-void': [
         'warn',
@@ -75,13 +75,14 @@ module.exports = defineConfig([
     },
   },
   {
-    files: ['**/__tests__/**/*.ts', '**/__tests__/**/*.tsx', '**/__tests__/**/*.d.ts'],
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: __dirname,
-      },
+    files: ['**/*.ts', '**/*.tsx', '**/*.d.ts'],
+    ignores: ['**/*tests__/**', 'packages/entity-codemod/src/transforms/**'],
+    rules: {
+      'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true } }],
     },
+  },
+  {
+    files: ['**/__tests__/**/*.ts', '**/__tests__/**/*.tsx', '**/__tests__/**/*.d.ts'],
     rules: {
       // ts-mockito verify function needs void functions within verify which is a void function
       '@typescript-eslint/no-confusing-void-expression': 'off',

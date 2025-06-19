@@ -1,13 +1,14 @@
 import { describe, it } from '@jest/globals';
-import { mock, instance, verify } from 'ts-mockito';
+import { instance, mock, verify } from 'ts-mockito';
 
-import EntityMutatorFactory from '../EntityMutatorFactory';
+import { EntityMutatorFactory } from '../EntityMutatorFactory';
 import { EntityQueryContext } from '../EntityQueryContext';
-import ViewerContext from '../ViewerContext';
-import ViewerScopedEntityMutatorFactory from '../ViewerScopedEntityMutatorFactory';
-import TestEntity, {
-  TestFields,
+import { ViewerContext } from '../ViewerContext';
+import { ViewerScopedEntityMutatorFactory } from '../ViewerScopedEntityMutatorFactory';
+import {
+  TestEntity,
   TestEntityPrivacyPolicy,
+  TestFields,
 } from '../utils/__testfixtures__/TestEntity';
 
 describe(ViewerScopedEntityMutatorFactory, () => {

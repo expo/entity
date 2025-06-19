@@ -1,12 +1,12 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
-  EntityPrivacyPolicy,
-  ViewerContext,
-  StringField,
-  EntityConfiguration,
-  EntityCompanionDefinition,
   Entity,
+  EntityCompanionDefinition,
+  EntityConfiguration,
+  EntityPrivacyPolicy,
   IntField,
+  StringField,
+  ViewerContext,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -22,7 +22,7 @@ type ErrorsTestEntityFields = {
 
 const foreignTableName = 'foreign_table';
 
-export default class ErrorsTestEntity extends Entity<ErrorsTestEntityFields, 'id', ViewerContext> {
+export class ErrorsTestEntity extends Entity<ErrorsTestEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     ErrorsTestEntityFields,
     'id',

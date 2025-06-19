@@ -1,56 +1,59 @@
 import { enforceAsyncResult } from '@expo/results';
 import { describe, expect, it } from '@jest/globals';
 import {
+  anyOfClass,
+  anything,
+  deepEqual,
+  instance,
   mock,
+  objectContaining,
   spy,
   verify,
-  anyOfClass,
-  instance,
   when,
-  anything,
-  objectContaining,
-  deepEqual,
 } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
-import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
-import EntityCompanionProvider from '../EntityCompanionProvider';
-import EntityConfiguration from '../EntityConfiguration';
-import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
-import EntityLoaderFactory from '../EntityLoaderFactory';
-import EntityLoaderUtils from '../EntityLoaderUtils';
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
+import { EntityCompanionProvider } from '../EntityCompanionProvider';
+import { EntityConfiguration } from '../EntityConfiguration';
+import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
+import { EntityLoaderFactory } from '../EntityLoaderFactory';
+import { EntityLoaderUtils } from '../EntityLoaderUtils';
 import {
   EntityMutationType,
   EntityTriggerMutationInfo,
   EntityValidatorMutationInfo,
 } from '../EntityMutationInfo';
-import EntityMutationTriggerConfiguration, {
+import {
   EntityMutationTrigger,
+  EntityMutationTriggerConfiguration,
   EntityNonTransactionalMutationTrigger,
 } from '../EntityMutationTriggerConfiguration';
-import EntityMutationValidator from '../EntityMutationValidator';
-import EntityMutatorFactory from '../EntityMutatorFactory';
+import { EntityMutationValidator } from '../EntityMutationValidator';
+import { EntityMutatorFactory } from '../EntityMutatorFactory';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { EntityTransactionalQueryContext, EntityQueryContext } from '../EntityQueryContext';
-import IEntityDatabaseAdapterProvider from '../IEntityDatabaseAdapterProvider';
-import ViewerContext from '../ViewerContext';
+import { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
+import { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider';
+import { ViewerContext } from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
-import EntityDataManager from '../internal/EntityDataManager';
-import ReadThroughEntityCache from '../internal/ReadThroughEntityCache';
-import IEntityMetricsAdapter, { EntityMetricsMutationType } from '../metrics/IEntityMetricsAdapter';
-import NoOpEntityMetricsAdapter from '../metrics/NoOpEntityMetricsAdapter';
-import SimpleTestEntity, {
+import { EntityDataManager } from '../internal/EntityDataManager';
+import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache';
+import { EntityMetricsMutationType, IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter';
+import {
+  SimpleTestEntity,
   simpleTestEntityConfiguration,
   SimpleTestEntityPrivacyPolicy,
   SimpleTestFields,
 } from '../utils/__testfixtures__/SimpleTestEntity';
 import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
-import StubDatabaseAdapter from '../utils/__testfixtures__/StubDatabaseAdapter';
-import StubQueryContextProvider from '../utils/__testfixtures__/StubQueryContextProvider';
-import TestEntity, {
-  TestFields,
-  TestEntityPrivacyPolicy,
+import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
+import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
+import {
+  TestEntity,
   testEntityConfiguration,
+  TestEntityPrivacyPolicy,
+  TestFields,
 } from '../utils/__testfixtures__/TestEntity';
 
 class TestMutationTrigger extends EntityMutationTrigger<

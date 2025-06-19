@@ -1,11 +1,11 @@
 import {
+  AlwaysAllowPrivacyPolicyRule,
+  DateField,
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
-  DateField,
   EntityPrivacyPolicy,
   ViewerContext,
-  AlwaysAllowPrivacyPolicyRule,
 } from '@expo/entity';
 
 export type DateIDTestFields = {
@@ -45,7 +45,7 @@ export class DateIDTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
-export default class DateIDTestEntity extends Entity<DateIDTestFields, 'id', ViewerContext> {
+export class DateIDTestEntity extends Entity<DateIDTestFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     DateIDTestFields,
     'id',

@@ -2,18 +2,18 @@ import { enforceAsyncResult } from '@expo/results';
 import { expect, it } from '@jest/globals';
 import { v4 as uuidv4 } from 'uuid';
 
-import Entity from '../Entity';
-import EntityCompanionProvider, { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import EntityConfiguration from '../EntityConfiguration';
+import { Entity } from '../Entity';
+import { EntityCompanionDefinition, EntityCompanionProvider } from '../EntityCompanionProvider';
+import { EntityConfiguration } from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
-import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
-import ViewerContext from '../ViewerContext';
+import { ViewerContext } from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
-import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
-import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
-import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
-import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
+import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';
+import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
+import { AlwaysDenyPrivacyPolicyRule } from '../rules/AlwaysDenyPrivacyPolicyRule';
+import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 class TestUserViewerContext extends ViewerContext {

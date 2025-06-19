@@ -3,18 +3,18 @@ import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 
 import { EntityFieldDefinition } from '../EntityFieldDefinition';
 import {
+  BooleanField,
+  DateField,
+  EnumField,
+  FloatField,
+  IntField,
+  JSONObjectField,
+  StrictEnumField,
+  StringArrayField,
   StringField,
   UUIDField,
-  DateField,
-  BooleanField,
-  IntField,
-  FloatField,
-  StringArrayField,
-  JSONObjectField,
-  EnumField,
-  StrictEnumField,
 } from '../EntityFields';
-import describeFieldTestCase from '../utils/__testfixtures__/describeFieldTestCase';
+import { describeFieldTestCase } from '../utils/__testfixtures__/describeFieldTestCase';
 
 class TestFieldDefinition extends EntityFieldDefinition<string, false> {
   protected validateInputValueInternal(value: string): boolean {

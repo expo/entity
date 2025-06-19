@@ -1,4 +1,4 @@
-import { OrderByOrdering, ViewerContext, TransactionIsolationLevel } from '@expo/entity';
+import { OrderByOrdering, TransactionIsolationLevel, ViewerContext } from '@expo/entity';
 import { createUnitTestEntityCompanionProvider } from '@expo/entity-testing-utils';
 import { enforceAsyncResult } from '@expo/results';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from '@jest/globals';
@@ -6,9 +6,9 @@ import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 import { setTimeout } from 'timers/promises';
 
-import PostgresTestEntity from '../__testfixtures__/PostgresTestEntity';
-import PostgresTriggerTestEntity from '../__testfixtures__/PostgresTriggerTestEntity';
-import PostgresValidatorTestEntity from '../__testfixtures__/PostgresValidatorTestEntity';
+import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity';
+import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity';
+import { PostgresValidatorTestEntity } from '../__testfixtures__/PostgresValidatorTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe('postgres entity integration', () => {

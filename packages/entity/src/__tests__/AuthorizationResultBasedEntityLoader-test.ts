@@ -1,31 +1,32 @@
 import { enforceAsyncResult } from '@expo/results';
 import { describe, expect, it } from '@jest/globals';
-import { mock, instance, verify, spy, anyOfClass, anything, when } from 'ts-mockito';
+import { anyOfClass, anything, instance, mock, spy, verify, when } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
-import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
 import { OrderByOrdering } from '../EntityDatabaseAdapter';
-import EntityLoaderUtils from '../EntityLoaderUtils';
+import { EntityLoaderUtils } from '../EntityLoaderUtils';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import ViewerContext from '../ViewerContext';
+import { ViewerContext } from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
-import EntityNotFoundError from '../errors/EntityNotFoundError';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError';
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
-import EntityDataManager from '../internal/EntityDataManager';
-import ReadThroughEntityCache from '../internal/ReadThroughEntityCache';
+import { EntityDataManager } from '../internal/EntityDataManager';
+import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache';
 import {
   SingleFieldHolder,
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
 } from '../internal/SingleFieldHolder';
-import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
+import { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
 import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
-import StubDatabaseAdapter from '../utils/__testfixtures__/StubDatabaseAdapter';
-import StubQueryContextProvider from '../utils/__testfixtures__/StubQueryContextProvider';
+import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
+import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
 import { deepEqualEntityAware } from '../utils/__testfixtures__/TSMockitoExtensions';
-import TestEntity, {
-  TestFields,
+import {
+  TestEntity,
   TestEntityPrivacyPolicy,
+  TestFields,
   testEntityConfiguration,
 } from '../utils/__testfixtures__/TestEntity';
 

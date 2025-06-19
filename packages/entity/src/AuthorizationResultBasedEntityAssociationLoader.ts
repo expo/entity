@@ -1,17 +1,17 @@
 import { Result, result } from '@expo/results';
 
 import { IEntityClass } from './Entity';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * An association loader is a set of convenience methods for loading entities
  * associated with an entity. In relational databases, these entities are often referenced
  * by foreign keys.
  */
-export default class AuthorizationResultBasedEntityAssociationLoader<
+export class AuthorizationResultBasedEntityAssociationLoader<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

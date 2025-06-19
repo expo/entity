@@ -1,8 +1,9 @@
 import invariant from 'invariant';
 
-import EntityConfiguration, {
+import {
   EntityCompositeField,
   EntityCompositeFieldValue,
+  EntityConfiguration,
 } from '../EntityConfiguration';
 import { pick } from '../entityUtils';
 import { getDatabaseFieldForEntityField } from './EntityFieldTransformationUtils';

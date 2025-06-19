@@ -1,14 +1,14 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
 import { EntityTransactionalQueryContext } from '../../EntityQueryContext';
-import ViewerContext from '../../ViewerContext';
+import { ViewerContext } from '../../ViewerContext';
 import { EntityDatabaseAdapterUniqueConstraintError } from '../../errors/EntityDatabaseAdapterError';
-import EntityNotFoundError from '../../errors/EntityNotFoundError';
+import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
 import {
   createOrGetExistingAsync,
   createWithUniqueConstraintRecoveryAsync,
 } from '../EntityCreationUtils';
-import SimpleTestEntity from '../__testfixtures__/SimpleTestEntity';
+import { SimpleTestEntity } from '../__testfixtures__/SimpleTestEntity';
 import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider';
 
 type TArgs = object;

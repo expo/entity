@@ -1,7 +1,7 @@
 import invariant from 'invariant';
 
-import IEntityCacheAdapter from './IEntityCacheAdapter';
-import IEntityGenericCacher from './IEntityGenericCacher';
+import { IEntityCacheAdapter } from './IEntityCacheAdapter';
+import { IEntityGenericCacher } from './IEntityGenericCacher';
 import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
 import { CacheLoadResult } from './internal/ReadThroughEntityCache';
 import { mapKeys } from './utils/collections/maps';
@@ -9,7 +9,7 @@ import { mapKeys } from './utils/collections/maps';
 /**
  * A standard IEntityCacheAdapter that coordinates caching through an IEntityGenericCacher.
  */
-export default class GenericEntityCacheAdapter<
+export class GenericEntityCacheAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > implements IEntityCacheAdapter<TFields, TIDField>

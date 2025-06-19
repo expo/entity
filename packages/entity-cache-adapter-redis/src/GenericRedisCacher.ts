@@ -2,15 +2,15 @@ import {
   CacheLoadResult,
   CacheStatus,
   EntityConfiguration,
-  transformCacheObjectToFields,
-  transformFieldsToCacheObject,
   IEntityGenericCacher,
   IEntityLoadKey,
   IEntityLoadValue,
+  transformCacheObjectToFields,
+  transformFieldsToCacheObject,
 } from '@expo/entity';
 
 import { redisTransformerMap } from './RedisCommon';
-import wrapNativeRedisCallAsync from './errors/wrapNativeRedisCallAsync';
+import { wrapNativeRedisCallAsync } from './errors/wrapNativeRedisCallAsync';
 import { getSurroundingCacheKeyVersionsForInvalidation } from './utils/getSurroundingCacheKeyVersionsForInvalidation';
 
 // Sentinel value we store in Redis to negatively cache a database miss.
@@ -113,10 +113,8 @@ export interface GenericRedisCacheContext {
   invalidationConfig: GenericRedisCacheInvalidationConfig;
 }
 
-export default class GenericRedisCacher<
-  TFields extends Record<string, any>,
-  TIDField extends keyof TFields,
-> implements IEntityGenericCacher<TFields, TIDField>
+export class GenericRedisCacher<TFields extends Record<string, any>, TIDField extends keyof TFields>
+  implements IEntityGenericCacher<TFields, TIDField>
 {
   constructor(
     private readonly context: GenericRedisCacheContext,

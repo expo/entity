@@ -1,16 +1,16 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
-  EntityPrivacyPolicy,
-  ViewerContext,
-  StringField,
   BooleanField,
-  StringArrayField,
-  JSONObjectField,
   DateField,
-  EntityConfiguration,
-  EntityCompanionDefinition,
   Entity,
+  EntityCompanionDefinition,
+  EntityConfiguration,
+  EntityPrivacyPolicy,
+  JSONObjectField,
+  StringArrayField,
+  StringField,
   UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -31,11 +31,7 @@ type PostgresTestEntityFields = {
   bigintField: string | null;
 };
 
-export default class PostgresTestEntity extends Entity<
-  PostgresTestEntityFields,
-  'id',
-  ViewerContext
-> {
+export class PostgresTestEntity extends Entity<PostgresTestEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     PostgresTestEntityFields,
     'id',
