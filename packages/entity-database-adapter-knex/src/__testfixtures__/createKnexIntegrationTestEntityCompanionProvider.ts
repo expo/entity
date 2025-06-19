@@ -1,13 +1,13 @@
 import {
-  NoOpEntityMetricsAdapter,
-  IEntityMetricsAdapter,
   EntityCompanionProvider,
+  IEntityMetricsAdapter,
+  NoOpEntityMetricsAdapter,
 } from '@expo/entity';
 import { InMemoryFullCacheStubCacheAdapterProvider } from '@expo/entity-testing-utils';
 import { Knex } from 'knex';
 
-import PostgresEntityDatabaseAdapterProvider from '../PostgresEntityDatabaseAdapterProvider';
-import PostgresEntityQueryContextProvider from '../PostgresEntityQueryContextProvider';
+import { PostgresEntityDatabaseAdapterProvider } from '../PostgresEntityDatabaseAdapterProvider';
+import { PostgresEntityQueryContextProvider } from '../PostgresEntityQueryContextProvider';
 
 export const createKnexIntegrationTestEntityCompanionProvider = (
   knex: Knex,

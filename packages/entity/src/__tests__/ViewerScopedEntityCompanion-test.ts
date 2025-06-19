@@ -1,14 +1,15 @@
 import { describe, expect, it } from '@jest/globals';
-import { mock, instance } from 'ts-mockito';
+import { instance, mock } from 'ts-mockito';
 
-import EntityCompanion from '../EntityCompanion';
-import ViewerContext from '../ViewerContext';
-import ViewerScopedEntityCompanion from '../ViewerScopedEntityCompanion';
-import ViewerScopedEntityLoaderFactory from '../ViewerScopedEntityLoaderFactory';
-import ViewerScopedEntityMutatorFactory from '../ViewerScopedEntityMutatorFactory';
-import TestEntity, {
-  TestFields,
+import { EntityCompanion } from '../EntityCompanion';
+import { ViewerContext } from '../ViewerContext';
+import { ViewerScopedEntityCompanion } from '../ViewerScopedEntityCompanion';
+import { ViewerScopedEntityLoaderFactory } from '../ViewerScopedEntityLoaderFactory';
+import { ViewerScopedEntityMutatorFactory } from '../ViewerScopedEntityMutatorFactory';
+import {
+  TestEntity,
   TestEntityPrivacyPolicy,
+  TestFields,
 } from '../utils/__testfixtures__/TestEntity';
 
 describe(ViewerScopedEntityCompanion, () => {

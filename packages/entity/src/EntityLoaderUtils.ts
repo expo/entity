@@ -2,23 +2,23 @@ import { Result, asyncResult, result } from '@expo/results';
 import nullthrows from 'nullthrows';
 
 import { IEntityClass } from './Entity';
-import EntityConfiguration from './EntityConfiguration';
-import EntityPrivacyPolicy, { EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
+import { EntityConfiguration } from './EntityConfiguration';
+import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 import { pick } from './entityUtils';
-import EntityDataManager from './internal/EntityDataManager';
+import { EntityDataManager } from './internal/EntityDataManager';
 import { LoadPair } from './internal/EntityLoadInterfaces';
 import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
-import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
+import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
 
 /**
  * Entity loader utilities for things like invalidation, entity construction, and authorization.
  * Methods are exposed publicly since in rare cases they may need to be called manually.
  */
-export default class EntityLoaderUtils<
+export class EntityLoaderUtils<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

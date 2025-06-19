@@ -1,13 +1,13 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
-  EntityPrivacyPolicy,
-  ViewerContext,
   DateField,
-  StringField,
-  EntityConfiguration,
-  EntityCompanionDefinition,
   Entity,
+  EntityCompanionDefinition,
+  EntityConfiguration,
+  EntityPrivacyPolicy,
+  StringField,
   UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 
 export type LocalMemoryTestEntityFields = {
@@ -16,7 +16,7 @@ export type LocalMemoryTestEntityFields = {
   dateField: Date | null;
 };
 
-export default class LocalMemoryTestEntity extends Entity<
+export class LocalMemoryTestEntity extends Entity<
   LocalMemoryTestEntityFields,
   'id',
   ViewerContext

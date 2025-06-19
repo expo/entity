@@ -5,7 +5,7 @@
  */
 
 export * from './EntityFields';
-export { default as PostgresEntityDatabaseAdapter } from './PostgresEntityDatabaseAdapter';
-export { default as PostgresEntityDatabaseAdapterProvider } from './PostgresEntityDatabaseAdapterProvider';
-export { default as PostgresEntityQueryContextProvider } from './PostgresEntityQueryContextProvider';
-export { default as wrapNativePostgresCallAsync } from './errors/wrapNativePostgresCallAsync';
+export * from './PostgresEntityDatabaseAdapter';
+export * from './PostgresEntityDatabaseAdapterProvider';
+export * from './PostgresEntityQueryContextProvider';
+export * from './errors/wrapNativePostgresCallAsync';

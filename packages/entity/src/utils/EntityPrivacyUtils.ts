@@ -1,16 +1,16 @@
 import { Result, asyncResult } from '@expo/results';
 
-import Entity, { IEntityClass } from '../Entity';
+import { Entity, IEntityClass } from '../Entity';
 import {
-  EntityEdgeDeletionBehavior,
   EntityEdgeDeletionAuthorizationInferenceBehavior,
+  EntityEdgeDeletionBehavior,
 } from '../EntityFieldDefinition';
 import { EntityCascadingDeletionInfo } from '../EntityMutationInfo';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
-import ViewerContext from '../ViewerContext';
+import { ViewerContext } from '../ViewerContext';
 import { failedResults, partitionArray } from '../entityUtils';
-import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
+import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';
 
 export type EntityPrivacyEvaluationResultSuccess = {
   allowed: true;

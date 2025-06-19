@@ -4,4 +4,4 @@
  * @module @expo/entity-secondary-cache-redis
  */
 
-export { default as RedisSecondaryEntityCache } from './RedisSecondaryEntityCache';
+export * from './RedisSecondaryEntityCache';

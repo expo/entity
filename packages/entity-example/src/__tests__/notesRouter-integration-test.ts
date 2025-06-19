@@ -3,7 +3,7 @@ import http from 'http';
 import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
 
-import createAppAsync from '../app';
+import { createAppAsync } from '../app.ts';
 
 describe('notesRouter', () => {
   it('returns empty array for logged-out', async () => {

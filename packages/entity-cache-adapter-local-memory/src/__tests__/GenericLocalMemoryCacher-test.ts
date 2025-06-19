@@ -9,8 +9,9 @@ import {
 } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 
-import GenericLocalMemoryCacher, {
+import {
   DOES_NOT_EXIST_LOCAL_MEMORY_CACHE,
+  GenericLocalMemoryCacher,
 } from '../GenericLocalMemoryCacher';
 
 type BlahFields = {

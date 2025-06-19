@@ -1,16 +1,16 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
-  EntityPrivacyPolicy,
-  ViewerContext,
-  StringField,
-  EntityConfiguration,
-  EntityCompanionDefinition,
   Entity,
+  EntityCompanionDefinition,
+  EntityConfiguration,
   EntityMutationTrigger,
-  EntityQueryContext,
   EntityNonTransactionalMutationTrigger,
+  EntityPrivacyPolicy,
+  EntityQueryContext,
   EntityTriggerMutationInfo,
+  StringField,
   UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -19,7 +19,7 @@ type PostgresTriggerTestEntityFields = {
   name: string | null;
 };
 
-export default class PostgresTriggerTestEntity extends Entity<
+export class PostgresTriggerTestEntity extends Entity<
   PostgresTriggerTestEntityFields,
   'id',
   ViewerContext

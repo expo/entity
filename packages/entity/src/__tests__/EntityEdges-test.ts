@@ -1,23 +1,24 @@
 import { describe, expect, it } from '@jest/globals';
 import invariant from 'invariant';
 
-import Entity from '../Entity';
+import { Entity } from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import EntityConfiguration from '../EntityConfiguration';
+import { EntityConfiguration } from '../EntityConfiguration';
 import { EntityEdgeDeletionBehavior } from '../EntityFieldDefinition';
 import { UUIDField } from '../EntityFields';
-import { EntityTriggerMutationInfo, EntityMutationType } from '../EntityMutationInfo';
+import { EntityMutationType, EntityTriggerMutationInfo } from '../EntityMutationInfo';
 import { EntityMutationTrigger } from '../EntityMutationTriggerConfiguration';
-import EntityPrivacyPolicy, {
-  EntityPrivacyPolicyEvaluationContext,
+import {
   EntityAuthorizationAction,
+  EntityPrivacyPolicy,
+  EntityPrivacyPolicyEvaluationContext,
 } from '../EntityPrivacyPolicy';
-import { EntityTransactionalQueryContext, EntityQueryContext } from '../EntityQueryContext';
+import { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
 import { CacheStatus } from '../internal/ReadThroughEntityCache';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
-import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
+import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
 import { InMemoryFullCacheStubCacheAdapter } from '../utils/__testfixtures__/StubCacheAdapter';
-import TestViewerContext from '../utils/__testfixtures__/TestViewerContext';
+import { TestViewerContext } from '../utils/__testfixtures__/TestViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 interface OtherFields {

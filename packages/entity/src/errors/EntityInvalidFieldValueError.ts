@@ -1,10 +1,10 @@
-import EntityError, { EntityErrorCode, EntityErrorState } from './EntityError';
 import { IEntityClass } from '../Entity';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
-import ReadonlyEntity from '../ReadonlyEntity';
-import ViewerContext from '../ViewerContext';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
+import { ReadonlyEntity } from '../ReadonlyEntity';
+import { ViewerContext } from '../ViewerContext';
+import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
 
-export default class EntityInvalidFieldValueError<
+export class EntityInvalidFieldValueError<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

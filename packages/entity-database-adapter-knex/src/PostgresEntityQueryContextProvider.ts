@@ -8,7 +8,7 @@ import { Knex } from 'knex';
 /**
  * Query context provider for knex (postgres).
  */
-export default class PostgresEntityQueryContextProvider extends EntityQueryContextProvider {
+export class PostgresEntityQueryContextProvider extends EntityQueryContextProvider {
   constructor(private readonly knexInstance: Knex) {
     super();
   }

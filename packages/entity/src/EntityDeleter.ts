@@ -1,15 +1,15 @@
 import { AuthorizationResultBasedDeleteMutator } from './AuthorizationResultBasedEntityMutator';
-import EnforcingEntityDeleter from './EnforcingEntityDeleter';
+import { EnforcingEntityDeleter } from './EnforcingEntityDeleter';
 import { IEntityClass } from './Entity';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * The primary interface for deleting entities.
  */
-export default class EntityDeleter<
+export class EntityDeleter<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

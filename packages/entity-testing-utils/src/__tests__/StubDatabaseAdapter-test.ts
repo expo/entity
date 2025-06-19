@@ -1,15 +1,15 @@
 import {
-  OrderByOrdering,
-  EntityQueryContext,
   CompositeFieldHolder,
   CompositeFieldValueHolder,
+  EntityQueryContext,
+  OrderByOrdering,
   SingleFieldHolder,
   SingleFieldValueHolder,
 } from '@expo/entity';
 import { describe, expect, it, jest } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import StubDatabaseAdapter from '../StubDatabaseAdapter';
+import { StubDatabaseAdapter } from '../StubDatabaseAdapter';
 import {
   DateIDTestFields,
   dateIDTestEntityConfiguration,

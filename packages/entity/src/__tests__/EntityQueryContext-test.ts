@@ -2,18 +2,18 @@ import { describe, expect, it, jest } from '@jest/globals';
 import assert from 'assert';
 import invariant from 'invariant';
 
-import EntityCompanionProvider from '../EntityCompanionProvider';
+import { EntityCompanionProvider } from '../EntityCompanionProvider';
 import {
   EntityQueryContext,
   TransactionalDataLoaderMode,
   TransactionConfig,
   TransactionIsolationLevel,
 } from '../EntityQueryContext';
-import EntityQueryContextProvider from '../EntityQueryContextProvider';
-import ViewerContext from '../ViewerContext';
-import NoOpEntityMetricsAdapter from '../metrics/NoOpEntityMetricsAdapter';
+import { EntityQueryContextProvider } from '../EntityQueryContextProvider';
+import { ViewerContext } from '../ViewerContext';
+import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter';
 import { InMemoryFullCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
-import StubDatabaseAdapterProvider from '../utils/__testfixtures__/StubDatabaseAdapterProvider';
+import { StubDatabaseAdapterProvider } from '../utils/__testfixtures__/StubDatabaseAdapterProvider';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(EntityQueryContext, () => {

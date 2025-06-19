@@ -1,10 +1,10 @@
-import Entity from '../../Entity';
+import { Entity } from '../../Entity';
 import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import EntityConfiguration from '../../EntityConfiguration';
+import { EntityConfiguration } from '../../EntityConfiguration';
 import { UUIDField } from '../../EntityFields';
-import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
-import ViewerContext from '../../ViewerContext';
-import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
+import { ViewerContext } from '../../ViewerContext';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type Test2Fields = {
   id: string;
@@ -47,7 +47,7 @@ export class TestEntity2PrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
-export default class TestEntity2 extends Entity<Test2Fields, 'id', ViewerContext> {
+export class TestEntity2 extends Entity<Test2Fields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     Test2Fields,
     'id',

@@ -1,6 +1,6 @@
-import EntityError, { EntityErrorCode, EntityErrorState } from './EntityError';
+import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
 
-export default abstract class EntityDatabaseAdapterError extends EntityError {}
+export abstract class EntityDatabaseAdapterError extends EntityError {}
 
 export class EntityDatabaseAdapterTransientError extends EntityDatabaseAdapterError {
   public readonly state = EntityErrorState.TRANSIENT;

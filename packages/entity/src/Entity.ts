@@ -3,17 +3,17 @@ import {
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
 } from './AuthorizationResultBasedEntityMutator';
-import EnforcingEntityCreator from './EnforcingEntityCreator';
-import EnforcingEntityDeleter from './EnforcingEntityDeleter';
-import EnforcingEntityUpdater from './EnforcingEntityUpdater';
+import { EnforcingEntityCreator } from './EnforcingEntityCreator';
+import { EnforcingEntityDeleter } from './EnforcingEntityDeleter';
+import { EnforcingEntityUpdater } from './EnforcingEntityUpdater';
 import { EntityCompanionDefinition } from './EntityCompanionProvider';
-import EntityCreator from './EntityCreator';
-import EntityDeleter from './EntityDeleter';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { EntityCreator } from './EntityCreator';
+import { EntityDeleter } from './EntityDeleter';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import EntityUpdater from './EntityUpdater';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { EntityUpdater } from './EntityUpdater';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * Entity is a privacy-first data model.
@@ -33,7 +33,7 @@ import ViewerContext from './ViewerContext';
  * All concrete entity implementations should extend this class and provide their
  * own EntityCompanionDefinition.
  */
-export default abstract class Entity<
+export abstract class Entity<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

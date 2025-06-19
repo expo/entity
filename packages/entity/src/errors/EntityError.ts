@@ -20,7 +20,7 @@ export enum EntityErrorCode {
   ERR_ENTITY_CACHE_ADAPTER_TRANSIENT = 'ERR_ENTITY_CACHE_ADAPTER_TRANSIENT',
 }
 
-export default abstract class EntityError extends ES6Error {
+export abstract class EntityError extends ES6Error {
   public abstract readonly state: EntityErrorState;
   public abstract readonly code: EntityErrorCode;
 

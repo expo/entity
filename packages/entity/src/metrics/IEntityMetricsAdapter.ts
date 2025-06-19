@@ -150,7 +150,7 @@ export interface EntityMetricsAuthorizationEvent {
  * An interface for gathering metrics about the Entity framework. Information about
  * entity load and mutation operations is piped to an instance of this adapter.
  */
-export default interface IEntityMetricsAdapter {
+export interface IEntityMetricsAdapter {
   /**
    * Called when a EntityPrivacyPolicy authorization succeeds or fails.
    * @param authorizationEvent - info about the authorization event

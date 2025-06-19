@@ -1,12 +1,12 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
-  EntityPrivacyPolicy,
-  ViewerContext,
-  StringField,
-  EntityConfiguration,
-  EntityCompanionDefinition,
   Entity,
+  EntityCompanionDefinition,
+  EntityConfiguration,
+  EntityPrivacyPolicy,
   IntField,
+  StringField,
+  ViewerContext,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -15,11 +15,7 @@ type InvalidTestEntityFields = {
   name: string | null;
 };
 
-export default class InvalidTestEntity extends Entity<
-  InvalidTestEntityFields,
-  'id',
-  ViewerContext
-> {
+export class InvalidTestEntity extends Entity<InvalidTestEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     InvalidTestEntityFields,
     'id',

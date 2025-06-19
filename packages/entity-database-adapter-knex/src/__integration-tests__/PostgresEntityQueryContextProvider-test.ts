@@ -3,8 +3,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from '@je
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 
-import PostgresEntityQueryContextProvider from '../PostgresEntityQueryContextProvider';
-import PostgresUniqueTestEntity from '../__testfixtures__/PostgresUniqueTestEntity';
+import { PostgresEntityQueryContextProvider } from '../PostgresEntityQueryContextProvider';
+import { PostgresUniqueTestEntity } from '../__testfixtures__/PostgresUniqueTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe(PostgresEntityQueryContextProvider, () => {

@@ -1,15 +1,15 @@
 import { AuthorizationResultBasedUpdateMutator } from './AuthorizationResultBasedEntityMutator';
-import EnforcingEntityUpdater from './EnforcingEntityUpdater';
+import { EnforcingEntityUpdater } from './EnforcingEntityUpdater';
 import { IEntityClass } from './Entity';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * The primary interface for updating entities.
  */
-export default class EntityUpdater<
+export class EntityUpdater<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

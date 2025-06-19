@@ -1,15 +1,15 @@
 import { enforceAsyncResult } from '@expo/results';
 
 import { AuthorizationResultBasedDeleteMutator } from './AuthorizationResultBasedEntityMutator';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * Enforcing entity deleter. All deletes
  * through this deleter will throw if authorization is not successful.
  */
-export default class EnforcingEntityDeleter<
+export class EnforcingEntityDeleter<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

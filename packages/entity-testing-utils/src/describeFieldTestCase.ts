@@ -1,7 +1,7 @@
 import { EntityFieldDefinition } from '@expo/entity';
 import { describe, expect, test } from '@jest/globals';
 
-export default function describeFieldTestCase<T>(
+export function describeFieldTestCase<T>(
   fieldDefinition: EntityFieldDefinition<T, any>,
   validValues: T[],
   invalidValues: any[],

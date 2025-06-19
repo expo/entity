@@ -1,14 +1,14 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { verify, mock, instance, when, anything } from 'ts-mockito';
+import { anything, instance, mock, verify, when } from 'ts-mockito';
 
-import EntityConfiguration from '../../EntityConfiguration';
+import { EntityConfiguration } from '../../EntityConfiguration';
 import { UUIDField } from '../../EntityFields';
-import IEntityCacheAdapter from '../../IEntityCacheAdapter';
+import { IEntityCacheAdapter } from '../../IEntityCacheAdapter';
 import {
   deepEqualEntityAware,
   isEqualWithEntityAware,
 } from '../../utils/__testfixtures__/TSMockitoExtensions';
-import ReadThroughEntityCache, { CacheStatus } from '../ReadThroughEntityCache';
+import { CacheStatus, ReadThroughEntityCache } from '../ReadThroughEntityCache';
 import {
   SingleFieldHolder,
   SingleFieldValueHolder,

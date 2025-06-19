@@ -1,10 +1,10 @@
-import Entity from '../../Entity';
+import { Entity } from '../../Entity';
 import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import EntityConfiguration from '../../EntityConfiguration';
+import { EntityConfiguration } from '../../EntityConfiguration';
 import { UUIDField } from '../../EntityFields';
-import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
-import ViewerContext from '../../ViewerContext';
-import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
+import { ViewerContext } from '../../ViewerContext';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type SimpleTestFields = {
   id: string;
@@ -70,7 +70,7 @@ export class SimpleTestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
-export default class SimpleTestEntity extends Entity<
+export class SimpleTestEntity extends Entity<
   SimpleTestFields,
   'id',
   ViewerContext,

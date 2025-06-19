@@ -1,16 +1,16 @@
-import Entity from '../../Entity';
+import { Entity } from '../../Entity';
 import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import EntityConfiguration from '../../EntityConfiguration';
+import { EntityConfiguration } from '../../EntityConfiguration';
 import { StringField, UUIDField } from '../../EntityFields';
 import { EntityTriggerMutationInfo } from '../../EntityMutationInfo';
 import {
   EntityMutationTrigger,
   EntityNonTransactionalMutationTrigger,
 } from '../../EntityMutationTriggerConfiguration';
-import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../../EntityQueryContext';
-import ViewerContext from '../../ViewerContext';
-import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
+import { ViewerContext } from '../../ViewerContext';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type TestMTFields = {
   id: string;
@@ -131,11 +131,7 @@ export class NonTransactionalTestMutationTrigger extends EntityNonTransactionalM
 /**
  * A test Entity that has one afterCreate and one afterAll trigger
  */
-export default class TestEntityWithMutationTriggers extends Entity<
-  TestMTFields,
-  'id',
-  ViewerContext
-> {
+export class TestEntityWithMutationTriggers extends Entity<TestMTFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestMTFields,
     'id',

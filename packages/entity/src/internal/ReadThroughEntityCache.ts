@@ -1,7 +1,7 @@
 import invariant from 'invariant';
 
-import EntityConfiguration from '../EntityConfiguration';
-import IEntityCacheAdapter from '../IEntityCacheAdapter';
+import { EntityConfiguration } from '../EntityConfiguration';
+import { IEntityCacheAdapter } from '../IEntityCacheAdapter';
 import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
 import { filterMap } from '../utils/collections/maps';
 
@@ -35,7 +35,7 @@ export type CacheLoadResult<TFields extends Record<string, any>> =
  *
  * @internal
  */
-export default class ReadThroughEntityCache<
+export class ReadThroughEntityCache<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > {

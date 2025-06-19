@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
 
-import ComposedSecondaryEntityCache from '../ComposedSecondaryEntityCache';
+import { ComposedSecondaryEntityCache } from '../ComposedSecondaryEntityCache';
 import { ISecondaryEntityCache } from '../EntitySecondaryCacheLoader';
 
 type TestFields = { id: string };

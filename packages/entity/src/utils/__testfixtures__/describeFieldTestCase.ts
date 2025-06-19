@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 
 import { EntityFieldDefinition } from '../../EntityFieldDefinition';
 
-export default function describeFieldTestCase<T>(
+export function describeFieldTestCase<T>(
   fieldDefinition: EntityFieldDefinition<T, any>,
   validValues: T[],
   invalidValues: any[],

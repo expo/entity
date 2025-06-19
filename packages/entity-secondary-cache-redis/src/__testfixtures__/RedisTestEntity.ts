@@ -1,12 +1,12 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
-  EntityPrivacyPolicy,
-  ViewerContext,
-  StringField,
-  EntityConfiguration,
-  EntityCompanionDefinition,
   Entity,
+  EntityCompanionDefinition,
+  EntityConfiguration,
+  EntityPrivacyPolicy,
+  StringField,
   UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 
 export type RedisTestEntityFields = {
@@ -14,7 +14,7 @@ export type RedisTestEntityFields = {
   name: string;
 };
 
-export default class RedisTestEntity extends Entity<RedisTestEntityFields, 'id', ViewerContext> {
+export class RedisTestEntity extends Entity<RedisTestEntityFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     RedisTestEntityFields,
     'id',

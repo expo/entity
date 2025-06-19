@@ -1,11 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
 
-import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
-import EnforcingEntityLoader from '../EnforcingEntityLoader';
-import EntityLoader from '../EntityLoader';
-import EntityLoaderUtils from '../EntityLoaderUtils';
-import ViewerContext from '../ViewerContext';
-import SimpleTestEntity from '../utils/__testfixtures__/SimpleTestEntity';
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
+import { EnforcingEntityLoader } from '../EnforcingEntityLoader';
+import { EntityLoader } from '../EntityLoader';
+import { EntityLoaderUtils } from '../EntityLoaderUtils';
+import { ViewerContext } from '../ViewerContext';
+import { SimpleTestEntity } from '../utils/__testfixtures__/SimpleTestEntity';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(EntityLoader, () => {

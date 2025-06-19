@@ -1,12 +1,12 @@
-import EntityDataManager from './EntityDataManager';
-import ReadThroughEntityCache from './ReadThroughEntityCache';
-import EntityConfiguration from '../EntityConfiguration';
-import EntityDatabaseAdapter from '../EntityDatabaseAdapter';
-import EntityQueryContextProvider from '../EntityQueryContextProvider';
-import IEntityCacheAdapter from '../IEntityCacheAdapter';
-import IEntityCacheAdapterProvider from '../IEntityCacheAdapterProvider';
-import IEntityDatabaseAdapterProvider from '../IEntityDatabaseAdapterProvider';
-import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
+import { EntityConfiguration } from '../EntityConfiguration';
+import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
+import { EntityQueryContextProvider } from '../EntityQueryContextProvider';
+import { IEntityCacheAdapter } from '../IEntityCacheAdapter';
+import { IEntityCacheAdapterProvider } from '../IEntityCacheAdapterProvider';
+import { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider';
+import { EntityDataManager } from './EntityDataManager';
+import { ReadThroughEntityCache } from './ReadThroughEntityCache';
+import { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
 
 /**
  * Responsible for orchestrating fetching and caching of entity data from a
@@ -15,7 +15,7 @@ import IEntityMetricsAdapter from '../metrics/IEntityMetricsAdapter';
  *
  * @internal
  */
-export default class EntityTableDataCoordinator<
+export class EntityTableDataCoordinator<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > {

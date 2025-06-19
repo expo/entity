@@ -1,14 +1,14 @@
 import { IEntityClass } from './Entity';
-import EntityCompanionProvider, { DatabaseAdapterFlavor } from './EntityCompanionProvider';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { DatabaseAdapterFlavor, EntityCompanionProvider } from './EntityCompanionProvider';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import {
   EntityQueryContext,
   EntityTransactionalQueryContext,
   TransactionConfig,
 } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerScopedEntityCompanion from './ViewerScopedEntityCompanion';
-import ViewerScopedEntityCompanionProvider from './ViewerScopedEntityCompanionProvider';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';
+import { ViewerScopedEntityCompanionProvider } from './ViewerScopedEntityCompanionProvider';
 
 /**
  * A viewer context encapsulates all information necessary to evaluate an EntityPrivacyPolicy.
@@ -16,7 +16,7 @@ import ViewerScopedEntityCompanionProvider from './ViewerScopedEntityCompanionPr
  * In combination with an EntityCompanionProvider, a viewer context is the
  * entry point into the Entity framework.
  */
-export default class ViewerContext {
+export class ViewerContext {
   private readonly viewerScopedEntityCompanionProvider: ViewerScopedEntityCompanionProvider;
 
   constructor(public readonly entityCompanionProvider: EntityCompanionProvider) {

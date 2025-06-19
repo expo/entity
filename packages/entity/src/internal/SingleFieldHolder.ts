@@ -1,6 +1,6 @@
 import invariant from 'invariant';
 
-import EntityConfiguration from '../EntityConfiguration';
+import { EntityConfiguration } from '../EntityConfiguration';
 import { getDatabaseFieldForEntityField } from './EntityFieldTransformationUtils';
 import {
   EntityLoadMethodType,

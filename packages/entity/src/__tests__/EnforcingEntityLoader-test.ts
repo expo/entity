@@ -1,9 +1,9 @@
 import { result } from '@expo/results';
 import { describe, expect, it } from '@jest/globals';
-import { mock, instance, when, anything } from 'ts-mockito';
+import { anything, instance, mock, when } from 'ts-mockito';
 
-import AuthorizationResultBasedEntityLoader from '../AuthorizationResultBasedEntityLoader';
-import EnforcingEntityLoader from '../EnforcingEntityLoader';
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
+import { EnforcingEntityLoader } from '../EnforcingEntityLoader';
 import { CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
 import { CompositeFieldValueMap } from '../internal/CompositeFieldValueMap';
 

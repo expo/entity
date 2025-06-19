@@ -1,22 +1,22 @@
 import {
   EntityConfiguration,
   EntityDatabaseAdapter,
-  TableFieldSingleValueEqualityCondition,
-  TableFieldMultiValueEqualityCondition,
-  TableQuerySelectionModifiers,
+  FieldTransformerMap,
+  IntField,
   OrderByOrdering,
   StringField,
-  IntField,
-  getDatabaseFieldForEntityField,
-  FieldTransformerMap,
-  transformFieldsToDatabaseObject,
+  TableFieldMultiValueEqualityCondition,
+  TableFieldSingleValueEqualityCondition,
+  TableQuerySelectionModifiers,
   computeIfAbsent,
+  getDatabaseFieldForEntityField,
   mapMap,
+  transformFieldsToDatabaseObject,
 } from '@expo/entity';
 import invariant from 'invariant';
 import { uuidv7 } from 'uuidv7';
 
-export default class StubDatabaseAdapter<
+export class StubDatabaseAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > extends EntityDatabaseAdapter<TFields, TIDField> {

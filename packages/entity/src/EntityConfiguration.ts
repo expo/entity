@@ -1,13 +1,13 @@
 import invariant from 'invariant';
 
 import { IEntityClass } from './Entity';
-import { DatabaseAdapterFlavor, CacheAdapterFlavor } from './EntityCompanionProvider';
+import { CacheAdapterFlavor, DatabaseAdapterFlavor } from './EntityCompanionProvider';
 import { EntityFieldDefinition } from './EntityFieldDefinition';
 import {
   CompositeFieldHolder,
   SerializedCompositeFieldHolder,
 } from './internal/CompositeFieldHolder';
-import { mapMap, invertMap, reduceMap } from './utils/collections/maps';
+import { invertMap, mapMap, reduceMap } from './utils/collections/maps';
 
 /**
  * A composite field is an unordered set of fields by which entities can be loaded in a batched
@@ -103,7 +103,7 @@ export class CompositeFieldInfo<
  * The data storage configuration for a type of Entity. Contains information relating to IDs,
  * cachable fields, field mappings, and types of cache and database adapter.
  */
-export default class EntityConfiguration<
+export class EntityConfiguration<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > {

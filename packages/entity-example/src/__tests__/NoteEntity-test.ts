@@ -2,8 +2,8 @@ import { createUnitTestEntityCompanionProvider } from '@expo/entity-testing-util
 import { describe, expect, test } from '@jest/globals';
 import { v4 as uuidv4 } from 'uuid';
 
-import NoteEntity from '../entities/NoteEntity';
-import { UserViewerContext } from '../viewerContexts';
+import { NoteEntity } from '../entities/NoteEntity.ts';
+import { UserViewerContext } from '../viewerContexts.ts';
 
 describe(NoteEntity, () => {
   test('demonstrate usage of business logic test utilities', async () => {

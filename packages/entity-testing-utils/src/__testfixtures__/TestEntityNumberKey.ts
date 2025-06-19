@@ -1,11 +1,11 @@
 import {
+  AlwaysAllowPrivacyPolicyRule,
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
-  IntField,
   EntityPrivacyPolicy,
+  IntField,
   ViewerContext,
-  AlwaysAllowPrivacyPolicyRule,
 } from '@expo/entity';
 
 export type NumberKeyFields = {
@@ -45,7 +45,7 @@ export class NumberKeyPrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
-export default class NumberKeyEntity extends Entity<NumberKeyFields, 'id', ViewerContext> {
+export class NumberKeyEntity extends Entity<NumberKeyFields, 'id', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     NumberKeyFields,
     'id',

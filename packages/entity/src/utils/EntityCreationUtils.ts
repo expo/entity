@@ -1,10 +1,10 @@
 import { IEntityClass } from '../Entity';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
 import { EntityTransactionalQueryContext } from '../EntityQueryContext';
-import ReadonlyEntity from '../ReadonlyEntity';
-import ViewerContext from '../ViewerContext';
+import { ReadonlyEntity } from '../ReadonlyEntity';
+import { ViewerContext } from '../ViewerContext';
 import { EntityDatabaseAdapterUniqueConstraintError } from '../errors/EntityDatabaseAdapterError';
-import EntityNotFoundError from '../errors/EntityNotFoundError';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError';
 
 /**
  * Create an entity if it doesn't exist, or get the existing entity if it does.

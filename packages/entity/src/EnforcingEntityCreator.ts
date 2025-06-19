@@ -1,15 +1,15 @@
 import { enforceAsyncResult } from '@expo/results';
 
 import { AuthorizationResultBasedCreateMutator } from './AuthorizationResultBasedEntityMutator';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * Enforcing entity creator. All updates
  * through this creator will throw if authorization is not successful.
  */
-export default class EnforcingEntityCreator<
+export class EnforcingEntityCreator<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

@@ -4,7 +4,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/glo
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 
-import InvalidTestEntity from '../__testfixtures__/InvalidTestEntity';
+import { InvalidTestEntity } from '../__testfixtures__/InvalidTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe('postgres entity integration', () => {

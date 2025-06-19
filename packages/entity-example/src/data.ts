@@ -1,12 +1,12 @@
 import {
-  IEntityMetricsAdapter,
-  NoOpEntityMetricsAdapter,
   EntityCompanionProvider,
+  type IEntityMetricsAdapter,
+  NoOpEntityMetricsAdapter,
 } from '@expo/entity';
-import { InMemoryFullCacheStubCacheAdapterProvider } from '@expo/entity-testing-utils';
+import { InMemoryFullCacheStubCacheAdapterProvider } from '@expo/entity-testing-utils/build/src/StubCacheAdapter.js';
 
-import { InMemoryDatabaseAdapterProvider } from './adapters/InMemoryDatabaseAdapter';
-import InMemoryQueryContextProvider from './adapters/InMemoryQueryContextProvider';
+import { InMemoryDatabaseAdapterProvider } from './adapters/InMemoryDatabaseAdapter.ts';
+import { InMemoryQueryContextProvider } from './adapters/InMemoryQueryContextProvider.ts';
 
 /**
  * The EntityCompanionProvider is the root of the Entity framework. The ViewerContext
