@@ -1,9 +1,9 @@
 import { Result } from '@expo/results';
 
-import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 import { mapMap } from './utils/collections/maps';
 
 /**
@@ -43,7 +43,7 @@ export interface ISecondaryEntityCache<TFields extends Record<string, any>, TLoa
  * due to use of a non-unique-field-based EntityLoader method like `loadManyByFieldEqualityConjunctionAsync` or
  * `loadManyByRawWhereClauseAsync`.
  */
-export default abstract class EntitySecondaryCacheLoader<
+export abstract class EntitySecondaryCacheLoader<
   TLoadParams,
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,

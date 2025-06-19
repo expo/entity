@@ -1,9 +1,9 @@
 import { describe, expect, it } from '@jest/globals';
 
-import AuthorizationResultBasedEntityAssociationLoader from '../AuthorizationResultBasedEntityAssociationLoader';
-import EnforcingEntityAssociationLoader from '../EnforcingEntityAssociationLoader';
-import EntityAssociationLoader from '../EntityAssociationLoader';
-import ViewerContext from '../ViewerContext';
+import { AuthorizationResultBasedEntityAssociationLoader } from '../AuthorizationResultBasedEntityAssociationLoader';
+import { EnforcingEntityAssociationLoader } from '../EnforcingEntityAssociationLoader';
+import { EntityAssociationLoader } from '../EntityAssociationLoader';
+import { ViewerContext } from '../ViewerContext';
 import SimpleTestEntity from '../utils/__testfixtures__/SimpleTestEntity';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 

@@ -1,13 +1,13 @@
 import nullthrows from 'nullthrows';
 
-import IEntityCacheAdapter from './IEntityCacheAdapter';
+import { IEntityCacheAdapter } from './IEntityCacheAdapter';
 import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
-import { CacheStatus, CacheLoadResult } from './internal/ReadThroughEntityCache';
+import { CacheLoadResult, CacheStatus } from './internal/ReadThroughEntityCache';
 
 /**
  * A IEntityCacheAdapter that composes other IEntityCacheAdapter instances.
  */
-export default class ComposedEntityCacheAdapter<
+export class ComposedEntityCacheAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > implements IEntityCacheAdapter<TFields, TIDField>

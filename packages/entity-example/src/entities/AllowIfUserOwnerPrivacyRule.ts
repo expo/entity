@@ -1,12 +1,12 @@
 import {
+  type EntityPrivacyPolicyEvaluationContext,
+  EntityQueryContext,
   PrivacyPolicyRule,
   ReadonlyEntity,
-  EntityQueryContext,
   RuleEvaluationResult,
-  EntityPrivacyPolicyEvaluationContext,
 } from '@expo/entity';
 
-import { ExampleViewerContext } from '../viewerContexts';
+import { ExampleViewerContext } from '../viewerContexts.ts';
 
 /**
  * Example privacy rule that makes use of the types of ViewerContexts specific
@@ -28,8 +28,10 @@ export default class AllowIfUserOwnerPrivacyRule<
   TEntity extends ReadonlyEntity<TFields, TIDField, ExampleViewerContext>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > extends PrivacyPolicyRule<TFields, TIDField, ExampleViewerContext, TEntity> {
-  constructor(private readonly entityOwnerField: keyof TFields) {
+  private readonly entityOwnerField: keyof TFields;
+  constructor(entityOwnerField: keyof TFields) {
     super();
+    this.entityOwnerField = entityOwnerField;
   }
 
   async evaluateAsync(

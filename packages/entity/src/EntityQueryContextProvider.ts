@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
 
 import {
-  EntityTransactionalQueryContext,
-  EntityNonTransactionalQueryContext,
   EntityNestedTransactionalQueryContext,
+  EntityNonTransactionalQueryContext,
+  EntityTransactionalQueryContext,
   TransactionConfig,
   TransactionalDataLoaderMode,
 } from './EntityQueryContext';
@@ -11,7 +11,7 @@ import {
 /**
  * A query context provider vends transactional and non-transactional query contexts.
  */
-export default abstract class EntityQueryContextProvider {
+export abstract class EntityQueryContextProvider {
   /**
    * Vend a regular (non-transactional) entity query context.
    */

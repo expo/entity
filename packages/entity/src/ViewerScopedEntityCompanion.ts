@@ -1,17 +1,17 @@
-import EntityCompanion from './EntityCompanion';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import EntityQueryContextProvider from './EntityQueryContextProvider';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
-import ViewerScopedEntityLoaderFactory from './ViewerScopedEntityLoaderFactory';
-import ViewerScopedEntityMutatorFactory from './ViewerScopedEntityMutatorFactory';
-import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
+import { EntityCompanion } from './EntityCompanion';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import { EntityQueryContextProvider } from './EntityQueryContextProvider';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
+import { ViewerScopedEntityLoaderFactory } from './ViewerScopedEntityLoaderFactory';
+import { ViewerScopedEntityMutatorFactory } from './ViewerScopedEntityMutatorFactory';
+import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
  * Provides a simpler API for loading and mutating entities by injecting the ViewerContext
  * from the viewer-scoped entity companion provider.
  */
-export default class ViewerScopedEntityCompanion<
+export class ViewerScopedEntityCompanion<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

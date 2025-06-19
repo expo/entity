@@ -5,11 +5,11 @@ import {
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
 } from '../AuthorizationResultBasedEntityMutator';
-import EnforcingEntityCreator from '../EnforcingEntityCreator';
-import EnforcingEntityDeleter from '../EnforcingEntityDeleter';
-import EnforcingEntityUpdater from '../EnforcingEntityUpdater';
-import Entity from '../Entity';
-import ViewerContext from '../ViewerContext';
+import { EnforcingEntityCreator } from '../EnforcingEntityCreator';
+import { EnforcingEntityDeleter } from '../EnforcingEntityDeleter';
+import { EnforcingEntityUpdater } from '../EnforcingEntityUpdater';
+import { Entity } from '../Entity';
+import { ViewerContext } from '../ViewerContext';
 import SimpleTestEntity from '../utils/__testfixtures__/SimpleTestEntity';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 

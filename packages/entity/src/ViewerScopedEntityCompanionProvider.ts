@@ -1,14 +1,14 @@
 import { IEntityClass } from './Entity';
-import EntityCompanionProvider from './EntityCompanionProvider';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
-import ViewerScopedEntityCompanion from './ViewerScopedEntityCompanion';
+import { EntityCompanionProvider } from './EntityCompanionProvider';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
+import { ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';
 
 /**
  * Provides viewer-scoped entity companions providers for a simpler API.
  */
-export default class ViewerScopedEntityCompanionProvider {
+export class ViewerScopedEntityCompanionProvider {
   constructor(
     private readonly entityCompanionProvider: EntityCompanionProvider,
     private readonly viewerContext: ViewerContext,

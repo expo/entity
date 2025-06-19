@@ -1,12 +1,12 @@
 import { describe, expect, test } from '@jest/globals';
 
-import Entity from '../../Entity';
+import { Entity } from '../../Entity';
 import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import EntityConfiguration from '../../EntityConfiguration';
+import { EntityConfiguration } from '../../EntityConfiguration';
 import { StringField, UUIDField } from '../../EntityFields';
-import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
-import ViewerContext from '../../ViewerContext';
-import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
+import { ViewerContext } from '../../ViewerContext';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
 import { createUnitTestEntityCompanionProvider } from '../../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe('Two entities backed by the same table', () => {

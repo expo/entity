@@ -1,7 +1,7 @@
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
-import ReadonlyEntity from '../ReadonlyEntity';
-import ViewerContext from '../ViewerContext';
+import { ReadonlyEntity } from '../ReadonlyEntity';
+import { ViewerContext } from '../ViewerContext';
 
 export enum RuleEvaluationResult {
   /**
@@ -36,7 +36,7 @@ export enum RuleEvaluationResult {
  * - Blocking. For example, a user blocks another user from seeing their posts, and the rule
  *   would be named something like `DenyIfViewerHasBeenBlockedPrivacyPolicyRule`.
  */
-export default abstract class PrivacyPolicyRule<
+export abstract class PrivacyPolicyRule<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

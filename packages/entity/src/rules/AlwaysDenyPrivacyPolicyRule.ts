@@ -1,13 +1,13 @@
-import PrivacyPolicyRule, { RuleEvaluationResult } from './PrivacyPolicyRule';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
-import ReadonlyEntity from '../ReadonlyEntity';
-import ViewerContext from '../ViewerContext';
+import { ReadonlyEntity } from '../ReadonlyEntity';
+import { ViewerContext } from '../ViewerContext';
+import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule';
 
 /**
  * Privacy policy rule that always denies.
  */
-export default class AlwaysDenyPrivacyPolicyRule<
+export class AlwaysDenyPrivacyPolicyRule<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

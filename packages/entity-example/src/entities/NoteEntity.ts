@@ -1,13 +1,13 @@
 import {
   Entity,
-  EntityCompanionDefinition,
+  type EntityCompanionDefinition,
   EntityConfiguration,
   StringField,
   UUIDField,
 } from '@expo/entity';
 
-import NotePrivacyPolicy from './NotePrivacyPolicy';
-import { ExampleViewerContext } from '../viewerContexts';
+import { ExampleViewerContext } from '../viewerContexts.ts';
+import NotePrivacyPolicy from './NotePrivacyPolicy.ts';
 
 export interface NoteFields {
   id: string;

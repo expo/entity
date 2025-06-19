@@ -1,9 +1,9 @@
 import { describe, expect, it } from '@jest/globals';
 
-import ComposedEntityCacheAdapter from '../ComposedEntityCacheAdapter';
-import EntityConfiguration from '../EntityConfiguration';
+import { ComposedEntityCacheAdapter } from '../ComposedEntityCacheAdapter';
+import { EntityConfiguration } from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
-import IEntityCacheAdapter from '../IEntityCacheAdapter';
+import { IEntityCacheAdapter } from '../IEntityCacheAdapter';
 import { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces';
 import { CacheLoadResult, CacheStatus } from '../internal/ReadThroughEntityCache';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';

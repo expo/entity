@@ -1,18 +1,18 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import Entity from '../../Entity';
+import { Entity } from '../../Entity';
 import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import EntityConfiguration from '../../EntityConfiguration';
+import { EntityConfiguration } from '../../EntityConfiguration';
 import {
-  EntityEdgeDeletionBehavior,
   EntityEdgeDeletionAuthorizationInferenceBehavior,
+  EntityEdgeDeletionBehavior,
 } from '../../EntityFieldDefinition';
 import { UUIDField } from '../../EntityFields';
-import EntityPrivacyPolicy from '../../EntityPrivacyPolicy';
-import ReadonlyEntity from '../../ReadonlyEntity';
-import ViewerContext from '../../ViewerContext';
-import AlwaysAllowPrivacyPolicyRule from '../../rules/AlwaysAllowPrivacyPolicyRule';
-import AlwaysDenyPrivacyPolicyRule from '../../rules/AlwaysDenyPrivacyPolicyRule';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
+import { ReadonlyEntity } from '../../ReadonlyEntity';
+import { ViewerContext } from '../../ViewerContext';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
+import { AlwaysDenyPrivacyPolicyRule } from '../../rules/AlwaysDenyPrivacyPolicyRule';
 import { canViewerDeleteAsync } from '../EntityPrivacyUtils';
 import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider';
 

@@ -1,11 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
 
-import Entity from '../Entity';
-import EntityCompanionProvider, { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import EntityConfiguration from '../EntityConfiguration';
+import { Entity } from '../Entity';
+import { EntityCompanionDefinition, EntityCompanionProvider } from '../EntityCompanionProvider';
+import { EntityConfiguration } from '../EntityConfiguration';
 import { StringField } from '../EntityFields';
-import EntityPrivacyPolicy from '../EntityPrivacyPolicy';
-import ViewerContext from '../ViewerContext';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
+import { ViewerContext } from '../ViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 type BlahFields = {

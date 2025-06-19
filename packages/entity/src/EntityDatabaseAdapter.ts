@@ -1,12 +1,12 @@
 import invariant from 'invariant';
 
-import EntityConfiguration from './EntityConfiguration';
+import { EntityConfiguration } from './EntityConfiguration';
 import { EntityQueryContext } from './EntityQueryContext';
 import {
+  FieldTransformerMap,
   getDatabaseFieldForEntityField,
   transformDatabaseObjectToFields,
   transformFieldsToDatabaseObject,
-  FieldTransformerMap,
 } from './internal/EntityFieldTransformationUtils';
 import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
 
@@ -117,7 +117,7 @@ export interface TableQuerySelectionModifiersWithOrderByRaw extends TableQuerySe
  * handles all entity field transformation. Subclasses are responsible for
  * implementing database-specific logic for a type of database.
  */
-export default abstract class EntityDatabaseAdapter<
+export abstract class EntityDatabaseAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > {

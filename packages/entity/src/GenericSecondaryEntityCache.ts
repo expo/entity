@@ -1,7 +1,7 @@
 import invariant from 'invariant';
 
 import { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
-import IEntityGenericCacher from './IEntityGenericCacher';
+import { IEntityGenericCacher } from './IEntityGenericCacher';
 import { CacheStatus } from './internal/ReadThroughEntityCache';
 import { filterMap, zipToMap } from './utils/collections/maps';
 
@@ -10,7 +10,7 @@ import { filterMap, zipToMap } from './utils/collections/maps';
  * single entity load. One common way this may be used is to add a second layer of caching in a hot path that makes
  * a call to EntityLoader.loadManyByFieldEqualityConjunctionAsync is guaranteed to return at most one entity.
  */
-export default abstract class GenericSecondaryEntityCache<
+export abstract class GenericSecondaryEntityCache<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
   TLoadParams,

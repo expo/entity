@@ -2,8 +2,8 @@ import { describe, expect, it } from '@jest/globals';
 import { anyOfClass, anything, deepEqual, instance, mock, spy, verify, when } from 'ts-mockito';
 
 import { EntityNonTransactionalQueryContext } from '../EntityQueryContext';
-import EntitySecondaryCacheLoader, { ISecondaryEntityCache } from '../EntitySecondaryCacheLoader';
-import ViewerContext from '../ViewerContext';
+import { EntitySecondaryCacheLoader, ISecondaryEntityCache } from '../EntitySecondaryCacheLoader';
+import { ViewerContext } from '../ViewerContext';
 import SimpleTestEntity, {
   SimpleTestEntityPrivacyPolicy,
   SimpleTestFields,

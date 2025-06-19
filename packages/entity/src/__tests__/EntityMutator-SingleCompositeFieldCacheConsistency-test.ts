@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
-import EntityMutatorFactory from '../EntityMutatorFactory';
-import ViewerContext from '../ViewerContext';
+import { EntityMutatorFactory } from '../EntityMutatorFactory';
+import { ViewerContext } from '../ViewerContext';
 import TestEntity from '../utils/__testfixtures__/TestEntity';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 

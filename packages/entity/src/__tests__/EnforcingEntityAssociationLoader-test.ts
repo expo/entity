@@ -1,9 +1,9 @@
 import { result } from '@expo/results';
 import { describe, expect, it } from '@jest/globals';
-import { mock, instance, when, anything } from 'ts-mockito';
+import { anything, instance, mock, when } from 'ts-mockito';
 
-import AuthorizationResultBasedEntityAssociationLoader from '../AuthorizationResultBasedEntityAssociationLoader';
-import EnforcingEntityAssociationLoader from '../EnforcingEntityAssociationLoader';
+import { AuthorizationResultBasedEntityAssociationLoader } from '../AuthorizationResultBasedEntityAssociationLoader';
+import { EnforcingEntityAssociationLoader } from '../EnforcingEntityAssociationLoader';
 
 describe(EnforcingEntityAssociationLoader, () => {
   describe('loadAssociatedEntityAsync', () => {
