@@ -8,6 +8,7 @@ import {
   EntityDatabaseAdapterUniqueConstraintError,
   EntityDatabaseAdapterUnknownError,
 } from '@expo/entity';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 

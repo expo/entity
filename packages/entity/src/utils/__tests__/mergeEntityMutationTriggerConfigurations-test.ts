@@ -1,3 +1,5 @@
+import { describe, expect, it } from '@jest/globals';
+
 import { TestMutationTrigger } from '../__testfixtures__/TestEntityWithMutationTriggers';
 import { mergeEntityMutationTriggerConfigurations } from '../mergeEntityMutationTriggerConfigurations';
 

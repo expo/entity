@@ -25,7 +25,6 @@
   "author": "Expo",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^29.5.14",
     "@types/jscodeshift": "^0.12.0",
     "@types/node": "^20.14.1",
     "eslint": "^9.26.0",

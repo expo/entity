@@ -1,3 +1,5 @@
+import { describe, expect, it } from '@jest/globals';
+
 import AuthorizationResultBasedEntityAssociationLoader from '../AuthorizationResultBasedEntityAssociationLoader';
 import EnforcingEntityAssociationLoader from '../EnforcingEntityAssociationLoader';
 import EntityAssociationLoader from '../EntityAssociationLoader';

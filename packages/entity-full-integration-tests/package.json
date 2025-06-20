@@ -27,7 +27,6 @@
     "@expo/entity-database-adapter-knex": "workspace:^"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.14",
     "@types/node": "^20.14.1",
     "eslint": "^9.26.0",
     "eslint-config-universe": "^15.0.3",

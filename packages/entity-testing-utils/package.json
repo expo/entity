@@ -30,8 +30,10 @@
     "lodash": "^4.17.21",
     "ts-mockito": "^2.6.1"
   },
+  "peerDependencies": {
+    "jest": "*"
+  },
   "devDependencies": {
-    "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.16",
     "@types/node": "^20.14.1",
     "ctix": "^2.7.0",

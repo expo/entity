@@ -1,3 +1,5 @@
+import { describe, expect, it } from '@jest/globals';
+
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder';
 
 describe(CompositeFieldHolder, () => {

@@ -1,3 +1,5 @@
+import { describe, expect, it } from '@jest/globals';
+
 import { EntityQueryContext } from '../EntityQueryContext';
 import ViewerContext from '../ViewerContext';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';

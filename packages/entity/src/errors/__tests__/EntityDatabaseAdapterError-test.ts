@@ -1,11 +1,13 @@
+import { describe, expect, it } from '@jest/globals';
+
 import EntityDatabaseAdapterError, {
-  EntityDatabaseAdapterTransientError,
-  EntityDatabaseAdapterUnknownError,
   EntityDatabaseAdapterCheckConstraintError,
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
   EntityDatabaseAdapterNotNullConstraintError,
+  EntityDatabaseAdapterTransientError,
   EntityDatabaseAdapterUniqueConstraintError,
+  EntityDatabaseAdapterUnknownError,
 } from '../EntityDatabaseAdapterError';
 
 describe(EntityDatabaseAdapterError, () => {

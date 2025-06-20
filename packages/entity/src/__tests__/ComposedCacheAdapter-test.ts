@@ -1,3 +1,5 @@
+import { describe, expect, it } from '@jest/globals';
+
 import ComposedEntityCacheAdapter from '../ComposedEntityCacheAdapter';
 import EntityConfiguration from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';

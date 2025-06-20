@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { mock, when, instance, anything, verify, deepEqual } from 'ts-mockito';
 
 import GenericEntityCacheAdapter from '../GenericEntityCacheAdapter';

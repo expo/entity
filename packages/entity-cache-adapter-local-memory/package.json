@@ -33,7 +33,6 @@
   },
   "devDependencies": {
     "@expo/entity-testing-utils": "workspace:^",
-    "@types/jest": "^29.5.14",
     "@types/lru-cache": "^5.1.1",
     "@types/node": "^20.14.1",
     "ctix": "^2.7.0",
