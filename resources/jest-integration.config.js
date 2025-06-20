@@ -1,13 +1,7 @@
+const unitConfig = require('./jest.config.js');
+
 module.exports = {
-  preset: 'ts-jest',
-  testMatch: ['**/__integration-tests__/**/*-test.ts'],
-  coveragePathIgnorePatterns: ['__testfixtures__'],
+  ...unitConfig,
   coverageDirectory: 'coverage-integration',
-  globals: {
-    'ts-jest': {
-      diagnostics: {
-        warnOnly: true,
-      },
-    },
-  },
+  testMatch: ['**/__integration-tests__/**/*-test.ts'],
 };
