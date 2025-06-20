@@ -1,30 +1,31 @@
-import { Result, asyncResult, result, enforceAsyncResult } from '@expo/results';
+import { Result, asyncResult, enforceAsyncResult, result } from '@expo/results';
 import invariant from 'invariant';
 
-import Entity, { IEntityClass } from './Entity';
-import EntityCompanionProvider from './EntityCompanionProvider';
-import EntityConfiguration from './EntityConfiguration';
-import EntityDatabaseAdapter from './EntityDatabaseAdapter';
+import { Entity, IEntityClass } from './Entity';
+import { EntityCompanionProvider } from './EntityCompanionProvider';
+import { EntityConfiguration } from './EntityConfiguration';
+import { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
 import { EntityEdgeDeletionBehavior } from './EntityFieldDefinition';
-import EntityLoaderFactory from './EntityLoaderFactory';
+import { EntityLoaderFactory } from './EntityLoaderFactory';
 import {
-  EntityValidatorMutationInfo,
+  EntityCascadingDeletionInfo,
   EntityMutationType,
   EntityTriggerMutationInfo,
-  EntityCascadingDeletionInfo,
+  EntityValidatorMutationInfo,
 } from './EntityMutationInfo';
-import EntityMutationTriggerConfiguration, {
+import {
   EntityMutationTrigger,
+  EntityMutationTriggerConfiguration,
   EntityNonTransactionalMutationTrigger,
 } from './EntityMutationTriggerConfiguration';
-import EntityMutationValidator from './EntityMutationValidator';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { EntityMutationValidator } from './EntityMutationValidator';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
-import ViewerContext from './ViewerContext';
+import { ViewerContext } from './ViewerContext';
 import { enforceResultsAsync } from './entityUtils';
-import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError';
+import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError';
 import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
-import IEntityMetricsAdapter, { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter';
+import { EntityMetricsMutationType, IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
 
 /**

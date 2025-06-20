@@ -1,16 +1,16 @@
 import invariant from 'invariant';
 
-import AuthorizationResultBasedEntityAssociationLoader from './AuthorizationResultBasedEntityAssociationLoader';
-import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
-import EnforcingEntityAssociationLoader from './EnforcingEntityAssociationLoader';
-import EnforcingEntityLoader from './EnforcingEntityLoader';
+import { AuthorizationResultBasedEntityAssociationLoader } from './AuthorizationResultBasedEntityAssociationLoader';
+import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
+import { EnforcingEntityAssociationLoader } from './EnforcingEntityAssociationLoader';
+import { EnforcingEntityLoader } from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
-import EntityAssociationLoader from './EntityAssociationLoader';
-import EntityLoader from './EntityLoader';
-import EntityLoaderUtils from './EntityLoaderUtils';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { EntityAssociationLoader } from './EntityAssociationLoader';
+import { EntityLoader } from './EntityLoader';
+import { EntityLoaderUtils } from './EntityLoaderUtils';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import ViewerContext from './ViewerContext';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * A readonly entity exposes only the read functionality of an Entity. Used as the base
@@ -20,7 +20,7 @@ import ViewerContext from './ViewerContext';
  * - Entities representing SQL views.
  * - Entities representing immutable tables.
  */
-export default abstract class ReadonlyEntity<
+export abstract class ReadonlyEntity<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

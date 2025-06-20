@@ -1,12 +1,12 @@
 import { EntityTriggerMutationInfo } from './EntityMutationInfo';
 import { EntityTransactionalQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 
 /**
  * Interface to define trigger behavior for entities.
  */
-export default interface EntityMutationTriggerConfiguration<
+export interface EntityMutationTriggerConfiguration<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

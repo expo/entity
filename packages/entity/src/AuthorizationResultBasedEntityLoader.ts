@@ -3,28 +3,29 @@ import invariant from 'invariant';
 import nullthrows from 'nullthrows';
 
 import { IEntityClass } from './Entity';
-import EntityConfiguration, {
+import {
   EntityCompositeField,
   EntityCompositeFieldValue,
+  EntityConfiguration,
 } from './EntityConfiguration';
 import {
   FieldEqualityCondition,
-  QuerySelectionModifiers,
   isSingleValueFieldEqualityCondition,
+  QuerySelectionModifiers,
   QuerySelectionModifiersWithOrderByRaw,
 } from './EntityDatabaseAdapter';
-import EntityLoaderUtils from './EntityLoaderUtils';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
+import { EntityLoaderUtils } from './EntityLoaderUtils';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
-import EntityInvalidFieldValueError from './errors/EntityInvalidFieldValueError';
-import EntityNotFoundError from './errors/EntityNotFoundError';
-import { CompositeFieldValueHolder, CompositeFieldHolder } from './internal/CompositeFieldHolder';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
+import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError';
+import { EntityNotFoundError } from './errors/EntityNotFoundError';
+import { CompositeFieldHolder, CompositeFieldValueHolder } from './internal/CompositeFieldHolder';
 import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap';
-import EntityDataManager from './internal/EntityDataManager';
+import { EntityDataManager } from './internal/EntityDataManager';
 import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
-import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
+import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { mapKeys, mapMap } from './utils/collections/maps';
 import { areSetsEqual } from './utils/collections/sets';
 
@@ -34,7 +35,7 @@ import { areSetsEqual } from './utils/collections/sets';
  * loader are are results (or null for some loader methods), where an unsuccessful result
  * means an authorization error or entity construction error occurred. Other errors are thrown.
  */
-export default class AuthorizationResultBasedEntityLoader<
+export class AuthorizationResultBasedEntityLoader<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

@@ -1,8 +1,9 @@
-import IEntityMetricsAdapter, {
+import { EntityQueryContext } from '../EntityQueryContext';
+import {
   EntityMetricsLoadType,
   EntityMetricsMutationType,
+  IEntityMetricsAdapter,
 } from './IEntityMetricsAdapter';
-import { EntityQueryContext } from '../EntityQueryContext';
 import { IEntityLoadValue } from '../internal/EntityLoadInterfaces';
 import { reduceMap } from '../utils/collections/maps';
 

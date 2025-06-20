@@ -1,11 +1,11 @@
 import { describe, it } from '@jest/globals';
-import { mock, verify, instance } from 'ts-mockito';
+import { instance, mock, verify } from 'ts-mockito';
 
-import EntityLoaderFactory from '../EntityLoaderFactory';
+import { EntityLoaderFactory } from '../EntityLoaderFactory';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
-import ViewerContext from '../ViewerContext';
-import ViewerScopedEntityLoaderFactory from '../ViewerScopedEntityLoaderFactory';
+import { ViewerContext } from '../ViewerContext';
+import { ViewerScopedEntityLoaderFactory } from '../ViewerScopedEntityLoaderFactory';
 
 describe(ViewerScopedEntityLoaderFactory, () => {
   it('correctly scopes viewer to entity loads', async () => {

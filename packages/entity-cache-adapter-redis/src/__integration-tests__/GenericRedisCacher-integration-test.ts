@@ -3,8 +3,9 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/glo
 import Redis from 'ioredis';
 import { URL } from 'url';
 
-import GenericRedisCacher, {
+import {
   GenericRedisCacheContext,
+  GenericRedisCacher,
   RedisCacheInvalidationStrategy,
 } from '../GenericRedisCacher';
 import RedisTestEntity, {

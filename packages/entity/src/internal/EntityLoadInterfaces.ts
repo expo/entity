@@ -1,4 +1,4 @@
-import EntityConfiguration from '../EntityConfiguration';
+import { EntityConfiguration } from '../EntityConfiguration';
 import { ISerializable, SerializableKeyMap } from '../utils/collections/SerializableKeyMap';
 
 /**

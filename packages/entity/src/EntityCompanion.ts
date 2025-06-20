@@ -1,12 +1,12 @@
-import EntityCompanionProvider, { EntityCompanionDefinition } from './EntityCompanionProvider';
-import EntityLoaderFactory from './EntityLoaderFactory';
-import EntityMutatorFactory from './EntityMutatorFactory';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import EntityQueryContextProvider from './EntityQueryContextProvider';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
-import EntityTableDataCoordinator from './internal/EntityTableDataCoordinator';
-import IEntityMetricsAdapter from './metrics/IEntityMetricsAdapter';
+import { EntityCompanionDefinition, EntityCompanionProvider } from './EntityCompanionProvider';
+import { EntityLoaderFactory } from './EntityLoaderFactory';
+import { EntityMutatorFactory } from './EntityMutatorFactory';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import { EntityQueryContextProvider } from './EntityQueryContextProvider';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
+import { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
+import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { mergeEntityMutationTriggerConfigurations } from './utils/mergeEntityMutationTriggerConfigurations';
 
 export interface IPrivacyPolicyClass<TPrivacyPolicy> {
@@ -16,7 +16,7 @@ export interface IPrivacyPolicyClass<TPrivacyPolicy> {
 /**
  * Composition root responsible for orchestrating setup of Entity mutators and loaders.
  */
-export default class EntityCompanion<
+export class EntityCompanion<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

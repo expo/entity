@@ -3,8 +3,9 @@ import { beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import Redis from 'ioredis';
 import { URL } from 'url';
 
-import GenericRedisCacher, {
+import {
   GenericRedisCacheContext,
+  GenericRedisCacher,
   RedisCacheInvalidationStrategy,
 } from '../GenericRedisCacher';
 import RedisTestEntity from '../__testfixtures__/RedisTestEntity';

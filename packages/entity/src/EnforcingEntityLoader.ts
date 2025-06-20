@@ -1,13 +1,13 @@
-import AuthorizationResultBasedEntityLoader from './AuthorizationResultBasedEntityLoader';
+import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
 import { EntityCompositeField, EntityCompositeFieldValue } from './EntityConfiguration';
 import {
   FieldEqualityCondition,
   QuerySelectionModifiers,
   QuerySelectionModifiersWithOrderByRaw,
 } from './EntityDatabaseAdapter';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 import { CompositeFieldValueHolder } from './internal/CompositeFieldHolder';
 import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap';
 import { mapMap } from './utils/collections/maps';
@@ -17,7 +17,7 @@ import { mapMap } from './utils/collections/maps';
  * cached, and authorized against the entity's EntityPrivacyPolicy. All loads
  * through this loader will throw if the load is not successful.
  */
-export default class EnforcingEntityLoader<
+export class EnforcingEntityLoader<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

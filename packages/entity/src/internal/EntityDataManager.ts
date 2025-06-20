@@ -1,8 +1,8 @@
 import DataLoader from 'dataloader';
 import invariant from 'invariant';
 
-import ReadThroughEntityCache from './ReadThroughEntityCache';
-import EntityDatabaseAdapter, {
+import {
+  EntityDatabaseAdapter,
   FieldEqualityCondition,
   QuerySelectionModifiers,
   QuerySelectionModifiersWithOrderByRaw,
@@ -12,15 +12,17 @@ import {
   EntityTransactionalQueryContext,
   TransactionalDataLoaderMode,
 } from '../EntityQueryContext';
-import EntityQueryContextProvider from '../EntityQueryContextProvider';
+import { EntityQueryContextProvider } from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
 import { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces';
+import { ReadThroughEntityCache } from './ReadThroughEntityCache';
 import {
   timeAndLogLoadEventAsync,
   timeAndLogLoadMapEventAsync,
 } from '../metrics/EntityMetricsUtils';
-import IEntityMetricsAdapter, {
+import {
   EntityMetricsLoadType,
+  IEntityMetricsAdapter,
   IncrementLoadCountEventType,
 } from '../metrics/IEntityMetricsAdapter';
 import { computeIfAbsent } from '../utils/collections/maps';
@@ -38,7 +40,7 @@ type DataLoaderMap<TFields extends Record<string, any>> = Map<
  *
  * @internal
  */
-export default class EntityDataManager<
+export class EntityDataManager<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
-import { mock, when, instance, anything, verify, deepEqual } from 'ts-mockito';
+import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 
-import GenericEntityCacheAdapter from '../GenericEntityCacheAdapter';
-import IEntityGenericCacher from '../IEntityGenericCacher';
+import { GenericEntityCacheAdapter } from '../GenericEntityCacheAdapter';
+import { IEntityGenericCacher } from '../IEntityGenericCacher';
 import { CacheStatus } from '../internal/ReadThroughEntityCache';
 import {
   SingleFieldHolder,

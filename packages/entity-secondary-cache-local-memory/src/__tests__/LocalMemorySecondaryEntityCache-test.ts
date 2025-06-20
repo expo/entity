@@ -1,27 +1,27 @@
 import {
-  EntitySecondaryCacheLoader,
-  mapMapAsync,
-  ViewerContext,
-  NoOpEntityMetricsAdapter,
-  IEntityMetricsAdapter,
-  EntityCompanionProvider,
   AlwaysAllowPrivacyPolicyRule,
-  EntityPrivacyPolicy,
-  StringField,
-  EntityConfiguration,
-  EntityCompanionDefinition,
   Entity,
+  EntityCompanionDefinition,
+  EntityCompanionProvider,
+  EntityConfiguration,
+  EntityPrivacyPolicy,
+  EntitySecondaryCacheLoader,
+  IEntityMetricsAdapter,
+  mapMapAsync,
+  NoOpEntityMetricsAdapter,
+  StringField,
   UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 import {
   GenericLocalMemoryCacher,
   LocalMemoryCacheAdapterProvider,
 } from '@expo/entity-cache-adapter-local-memory';
-import { StubQueryContextProvider, StubDatabaseAdapterProvider } from '@expo/entity-testing-utils';
+import { StubDatabaseAdapterProvider, StubQueryContextProvider } from '@expo/entity-testing-utils';
 import { describe, expect, it } from '@jest/globals';
 import nullthrows from 'nullthrows';
 
-import LocalMemorySecondaryEntityCache from '../LocalMemorySecondaryEntityCache';
+import { LocalMemorySecondaryEntityCache } from '../LocalMemorySecondaryEntityCache';
 
 export type LocalMemoryTestEntityFields = {
   id: string;

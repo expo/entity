@@ -1,10 +1,10 @@
-import { mock, instance, anything } from 'ts-mockito';
+import { anything, instance, mock } from 'ts-mockito';
 
 import { EntityPrivacyPolicyEvaluationContext } from '../../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../../EntityQueryContext';
-import ViewerContext from '../../ViewerContext';
+import { ViewerContext } from '../../ViewerContext';
 import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils';
-import AlwaysAllowPrivacyPolicyRule from '../AlwaysAllowPrivacyPolicyRule';
+import { AlwaysAllowPrivacyPolicyRule } from '../AlwaysAllowPrivacyPolicyRule';
 
 describePrivacyPolicyRule(new AlwaysAllowPrivacyPolicyRule(), {
   allowCases: [

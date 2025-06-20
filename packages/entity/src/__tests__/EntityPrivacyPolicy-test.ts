@@ -1,26 +1,28 @@
 import { describe, expect, it } from '@jest/globals';
-import { mock, instance, spy, verify, anyOfClass, anything, objectContaining } from 'ts-mockito';
+import { anyOfClass, anything, instance, mock, objectContaining, spy, verify } from 'ts-mockito';
 
-import Entity from '../Entity';
+import { Entity } from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import EntityConfiguration from '../EntityConfiguration';
+import { EntityConfiguration } from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
-import EntityPrivacyPolicy, {
-  EntityPrivacyPolicyEvaluator,
+import {
   EntityAuthorizationAction,
-  EntityPrivacyPolicyEvaluationMode,
+  EntityPrivacyPolicy,
   EntityPrivacyPolicyEvaluationContext,
+  EntityPrivacyPolicyEvaluationMode,
+  EntityPrivacyPolicyEvaluator,
 } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
-import ViewerContext from '../ViewerContext';
-import EntityNotAuthorizedError from '../errors/EntityNotAuthorizedError';
-import IEntityMetricsAdapter, {
+import { ViewerContext } from '../ViewerContext';
+import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';
+import {
   EntityMetricsAuthorizationResult,
+  IEntityMetricsAdapter,
 } from '../metrics/IEntityMetricsAdapter';
-import AlwaysAllowPrivacyPolicyRule from '../rules/AlwaysAllowPrivacyPolicyRule';
-import AlwaysDenyPrivacyPolicyRule from '../rules/AlwaysDenyPrivacyPolicyRule';
-import AlwaysSkipPrivacyPolicyRule from '../rules/AlwaysSkipPrivacyPolicyRule';
-import PrivacyPolicyRule, { RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
+import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
+import { AlwaysDenyPrivacyPolicyRule } from '../rules/AlwaysDenyPrivacyPolicyRule';
+import { AlwaysSkipPrivacyPolicyRule } from '../rules/AlwaysSkipPrivacyPolicyRule';
+import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
 
 type BlahFields = {
   id: string;

@@ -1,7 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
 
-import EntityDatabaseAdapterError, {
+import {
   EntityDatabaseAdapterCheckConstraintError,
+  EntityDatabaseAdapterError,
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
   EntityDatabaseAdapterNotNullConstraintError,

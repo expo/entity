@@ -1,5 +1,6 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": ["../../tsconfig.base.json", "@tsconfig/node-ts/tsconfig"],
   "include": ["src/**/*"],
+  "compilerOptions": { "noEmit": true },
   "references": [{ "path": "../entity" }, { "path": "../entity-testing-utils" }]
 }

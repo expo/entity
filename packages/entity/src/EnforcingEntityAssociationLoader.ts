@@ -1,12 +1,13 @@
 import { enforceAsyncResult } from '@expo/results';
 
-import AuthorizationResultBasedEntityAssociationLoader, {
+import {
+  AuthorizationResultBasedEntityAssociationLoader,
   EntityLoadThroughDirective,
 } from './AuthorizationResultBasedEntityAssociationLoader';
 import { IEntityClass } from './Entity';
-import EntityPrivacyPolicy from './EntityPrivacyPolicy';
-import ReadonlyEntity from './ReadonlyEntity';
-import ViewerContext from './ViewerContext';
+import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerContext } from './ViewerContext';
 import { enforceResultsAsync } from './entityUtils';
 
 /**
@@ -14,7 +15,7 @@ import { enforceResultsAsync } from './entityUtils';
  * associated with an entity. In relational databases, these entities are often referenced
  * by foreign keys.
  */
-export default class EnforcingEntityAssociationLoader<
+export class EnforcingEntityAssociationLoader<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,

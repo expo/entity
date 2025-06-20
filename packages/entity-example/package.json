@@ -1,5 +1,6 @@
 {
   "name": "@expo/entity-example",
+  "type": "module",
   "private": true,
   "version": "0.45.0",
   "description": "An example integration of the @expo/entity framework",
@@ -10,10 +11,10 @@
     "lint-fix": "yarn lint --fix",
     "test": "yarn run --top-level test $(pwd)",
     "integration": "yarn run --top-level integration $(pwd)",
-    "start": "tsnd --transpile-only --inspect --respawn --no-notify --async-stack-traces --throw-deprecation -- src/index.ts"
+    "start": "yarn build --noCheck && node --watch --experimental-transform-types --inspect --async-stack-traces --throw-deprecation src/index.ts"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   },
   "keywords": [
     "entity"
@@ -33,13 +34,13 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.0.0",
+    "@tsconfig/node-ts": "^23.6.1",
     "@types/koa": "^2.13.6",
     "@types/koa-bodyparser": "^4.3.10",
     "@types/koa__cors": "^4.0.0",
     "@types/koa__router": "^12.0.0",
     "@types/supertest": "^2.0.10",
     "supertest": "^4.0.2",
-    "ts-node-dev": "^1.0.0-pre.60",
     "typescript": "^5.8.3"
   }
 }

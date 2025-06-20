@@ -1,6 +1,6 @@
 import {
-  EntityDatabaseAdapterError,
   EntityDatabaseAdapterCheckConstraintError,
+  EntityDatabaseAdapterError,
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
   EntityDatabaseAdapterNotNullConstraintError,
@@ -43,7 +43,7 @@ function translatePostgresError(
   }
 }
 
-export default async function wrapNativePostgresCallAsync<T>(fn: () => Promise<T>): Promise<T> {
+export async function wrapNativePostgresCallAsync<T>(fn: () => Promise<T>): Promise<T> {
   try {
     return await fn();
   } catch (e) {

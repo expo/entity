@@ -4,4 +4,4 @@
  * @module @expo/entity-secondary-cache-local-memory
  */
 
-export { default as LocalMemorySecondaryEntityCache } from './LocalMemorySecondaryEntityCache';
+export * from './LocalMemorySecondaryEntityCache';

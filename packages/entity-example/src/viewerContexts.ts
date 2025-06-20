@@ -1,4 +1,4 @@
-import { ViewerContext, EntityCompanionProvider } from '@expo/entity';
+import { EntityCompanionProvider, ViewerContext } from '@expo/entity';
 
 /**
  * A base class for better typing Entities and Privacy Policies specific to this application.
@@ -17,11 +17,10 @@ export abstract class ExampleViewerContext extends ViewerContext {
  * Represents a logged-in user.
  */
 export class UserViewerContext extends ExampleViewerContext {
-  constructor(
-    entityCompanionProvider: EntityCompanionProvider,
-    public userID: string,
-  ) {
+  public userID: string;
+  constructor(entityCompanionProvider: EntityCompanionProvider, userID: string) {
     super(entityCompanionProvider);
+    this.userID = userID;
   }
 }
 
