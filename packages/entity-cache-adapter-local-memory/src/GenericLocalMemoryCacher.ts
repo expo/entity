@@ -19,7 +19,7 @@ export type LocalMemoryCache<TFields extends Record<string, any>> = LRUCache<
   LocalMemoryCacheValue<TFields>
 >;
 
-export default class GenericLocalMemoryCacher<
+export class GenericLocalMemoryCacher<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > implements IEntityGenericCacher<TFields, TIDField>

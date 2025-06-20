@@ -13,10 +13,11 @@ import nullthrows from 'nullthrows';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import GenericRedisCacher, {
+import {
+  GenericRedisCacheContext,
+  GenericRedisCacher,
   IRedis,
   IRedisTransaction,
-  GenericRedisCacheContext,
   RedisCacheInvalidationStrategy,
 } from '../GenericRedisCacher';
 import RedisTestEntity, { RedisTestEntityFields } from '../__testfixtures__/RedisTestEntity';

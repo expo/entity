@@ -1,13 +1,13 @@
 import {
-  IEntityCacheAdapterProvider,
   EntityConfiguration,
-  IEntityCacheAdapter,
   GenericEntityCacheAdapter,
+  IEntityCacheAdapter,
+  IEntityCacheAdapterProvider,
 } from '@expo/entity';
 
-import GenericRedisCacher, { GenericRedisCacheContext } from './GenericRedisCacher';
+import { GenericRedisCacheContext, GenericRedisCacher } from './GenericRedisCacher';
 
-export default class RedisCacheAdapterProvider implements IEntityCacheAdapterProvider {
+export class RedisCacheAdapterProvider implements IEntityCacheAdapterProvider {
   constructor(private readonly context: GenericRedisCacheContext) {}
 
   getCacheAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(

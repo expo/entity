@@ -8,7 +8,7 @@ import Redis from 'ioredis';
 import nullthrows from 'nullthrows';
 import { URL } from 'url';
 
-import RedisSecondaryEntityCache from '../RedisSecondaryEntityCache';
+import { RedisSecondaryEntityCache } from '../RedisSecondaryEntityCache';
 import RedisTestEntity, {
   redisTestEntityConfiguration,
   RedisTestEntityFields,

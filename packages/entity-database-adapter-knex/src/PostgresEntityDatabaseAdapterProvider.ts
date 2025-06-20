@@ -1,14 +1,12 @@
 import {
-  IEntityDatabaseAdapterProvider,
   EntityConfiguration,
   EntityDatabaseAdapter,
+  IEntityDatabaseAdapterProvider,
 } from '@expo/entity';
 
-import PostgresEntityDatabaseAdapter from './PostgresEntityDatabaseAdapter';
+import { PostgresEntityDatabaseAdapter } from './PostgresEntityDatabaseAdapter';
 
-export default class PostgresEntityDatabaseAdapterProvider
-  implements IEntityDatabaseAdapterProvider
-{
+export class PostgresEntityDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
   getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
     entityConfiguration: EntityConfiguration<TFields, TIDField>,
   ): EntityDatabaseAdapter<TFields, TIDField> {

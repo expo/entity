@@ -12,8 +12,9 @@ import Redis from 'ioredis';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import GenericRedisCacher, {
+import {
   GenericRedisCacheContext,
+  GenericRedisCacher,
   RedisCacheInvalidationStrategy,
 } from '../GenericRedisCacher';
 import RedisTestEntity, { RedisTestEntityFields } from '../__testfixtures__/RedisTestEntity';

@@ -4,7 +4,7 @@ import { GenericRedisCacheContext, GenericRedisCacher } from '@expo/entity-cache
 /**
  * A redis GenericSecondaryEntityCache.
  */
-export default class RedisSecondaryEntityCache<
+export class RedisSecondaryEntityCache<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
   TLoadParams,
