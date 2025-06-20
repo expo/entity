@@ -17,6 +17,8 @@
     "typedoc": "yarn build && typedoc"
   },
   "devDependencies": {
+    "@tsconfig/node20": "^20.1.6",
+    "@tsconfig/strictest": "^2.0.5",
     "lerna": "^8.2.2",
     "typedoc": "^0.28.4"
   },

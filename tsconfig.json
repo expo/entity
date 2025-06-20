@@ -1,23 +1,8 @@
 {
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node20/tsconfig"],
   "compilerOptions": {
-    "target": "es2022",
-    "lib": ["es2023"],
-    "module": "commonjs",
-    "sourceMap": true,
-    "moduleResolution": "node",
     "declaration": true,
-    "strict": true,
     "outDir": "${configDir}/build",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitOverride": true,
-    "esModuleInterop": true
+    "sourceMap": true
   }
 }
