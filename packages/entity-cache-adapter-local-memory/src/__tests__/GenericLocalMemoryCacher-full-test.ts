@@ -1,6 +1,4 @@
 import {
-  CacheAdapterFlavor,
-  CacheAdapterFlavorDefinition,
   CacheStatus,
   IEntityGenericCacher,
   SingleFieldHolder,
@@ -42,12 +40,9 @@ describe(GenericLocalMemoryCacher, () => {
       entity1Created.getID(),
     );
 
-    const localMemoryCacheAdapterProvider = (
-      entityCompanionProvider['cacheAdapterFlavors'] as ReadonlyMap<
-        CacheAdapterFlavor,
-        CacheAdapterFlavorDefinition
-      >
-    ).get('local-memory')!.cacheAdapterProvider as LocalMemoryCacheAdapterProvider;
+    const localMemoryCacheAdapterProvider = entityCompanionProvider['cacheAdapterFlavors'].get(
+      'local-memory',
+    )!.cacheAdapterProvider as LocalMemoryCacheAdapterProvider;
     const entitySpecificGenericCacher = localMemoryCacheAdapterProvider[
       'localMemoryCacheAdapterMap'
     ].get(
@@ -144,12 +139,9 @@ describe(GenericLocalMemoryCacher, () => {
       entity1Created.getID(),
     );
 
-    const localMemoryCacheAdapterProvider = (
-      entityCompanionProvider['cacheAdapterFlavors'] as ReadonlyMap<
-        CacheAdapterFlavor,
-        CacheAdapterFlavorDefinition
-      >
-    ).get('local-memory')!.cacheAdapterProvider as LocalMemoryCacheAdapterProvider;
+    const localMemoryCacheAdapterProvider = entityCompanionProvider['cacheAdapterFlavors'].get(
+      'local-memory',
+    )!.cacheAdapterProvider as LocalMemoryCacheAdapterProvider;
     const entitySpecificGenericCacher = localMemoryCacheAdapterProvider[
       'localMemoryCacheAdapterMap'
     ].get(
