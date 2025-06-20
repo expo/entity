@@ -1274,7 +1274,7 @@ describe(EntityDataManager, () => {
         new SingleFieldHolder('nullableField'),
         [new SingleFieldValueHolder(null as any)],
       ),
-    ).rejects.toThrowError('Invalid load: TestEntity (nullableField = null)');
+    ).rejects.toThrow('Invalid load: TestEntity (nullableField = null)');
 
     await expect(
       entityDataManager.loadManyEqualingAsync(
@@ -1282,7 +1282,7 @@ describe(EntityDataManager, () => {
         new SingleFieldHolder('nullableField'),
         [new SingleFieldValueHolder(undefined as any)],
       ),
-    ).rejects.toThrowError('Invalid load: TestEntity (nullableField = undefined)');
+    ).rejects.toThrow('Invalid load: TestEntity (nullableField = undefined)');
   });
 
   it('throws when a composite value load-by value is null or undefined', async () => {
@@ -1321,7 +1321,7 @@ describe(EntityDataManager, () => {
           }),
         ],
       ),
-    ).rejects.toThrowError(
+    ).rejects.toThrow(
       'Invalid load: TestEntity (nullableField,testIndexedField = CompositeFieldValue(nullableField=null,testIndexedField=unique1))',
     );
 
@@ -1339,7 +1339,7 @@ describe(EntityDataManager, () => {
           }),
         ],
       ),
-    ).rejects.toThrowError(
+    ).rejects.toThrow(
       'Invalid load: TestEntity (nullableField,testIndexedField = CompositeFieldValue(nullableField=undefined,testIndexedField=unique1))',
     );
   });

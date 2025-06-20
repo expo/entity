@@ -1149,7 +1149,7 @@ describe(EntityMutatorFactory, () => {
         .forCreate(viewerContext, queryContext)
         .setField('stringField', 10 as any)
         .createAsync(),
-    ).rejects.toThrowError('Entity field not valid: TestEntity (stringField = 10)');
+    ).rejects.toThrow('Entity field not valid: TestEntity (stringField = 10)');
 
     const createdEntity = await enforceAsyncResult(
       entityMutatorFactory
@@ -1163,7 +1163,7 @@ describe(EntityMutatorFactory, () => {
         .forUpdate(createdEntity, queryContext)
         .setField('stringField', 10 as any)
         .updateAsync(),
-    ).rejects.toThrowError('Entity field not valid: TestEntity (stringField = 10)');
+    ).rejects.toThrow('Entity field not valid: TestEntity (stringField = 10)');
   });
 
   it('returns error result when not authorized to create', async () => {

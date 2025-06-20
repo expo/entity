@@ -84,7 +84,7 @@ describe(EntityQueryContext, () => {
             queryContext.appendPreCommitCallback(preCommitCallback, 0);
           },
         ),
-      ).rejects.toThrowError('wat');
+      ).rejects.toThrow('wat');
 
       expect(preCommitCallback).toHaveBeenCalledTimes(1);
       expect(postCommitCallback).toHaveBeenCalledTimes(0);

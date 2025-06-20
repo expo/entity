@@ -562,35 +562,35 @@ describe('postgres entity integration', () => {
 
         await expect(
           PostgresTriggerTestEntity.creator(vc1).setField('name', 'beforeCreate').createAsync(),
-        ).rejects.toThrowError('name cannot have value beforeCreate');
+        ).rejects.toThrow('name cannot have value beforeCreate');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'beforeCreate'),
         ).resolves.toBeNull();
 
         await expect(
           PostgresTriggerTestEntity.creator(vc1).setField('name', 'afterCreate').createAsync(),
-        ).rejects.toThrowError('name cannot have value afterCreate');
+        ).rejects.toThrow('name cannot have value afterCreate');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'afterCreate'),
         ).resolves.toBeNull();
 
         await expect(
           PostgresTriggerTestEntity.creator(vc1).setField('name', 'beforeAll').createAsync(),
-        ).rejects.toThrowError('name cannot have value beforeAll');
+        ).rejects.toThrow('name cannot have value beforeAll');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'beforeAll'),
         ).resolves.toBeNull();
 
         await expect(
           PostgresTriggerTestEntity.creator(vc1).setField('name', 'afterAll').createAsync(),
-        ).rejects.toThrowError('name cannot have value afterAll');
+        ).rejects.toThrow('name cannot have value afterAll');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'afterAll'),
         ).resolves.toBeNull();
 
         await expect(
           PostgresTriggerTestEntity.creator(vc1).setField('name', 'afterCommit').createAsync(),
-        ).rejects.toThrowError('name cannot have value afterCommit');
+        ).rejects.toThrow('name cannot have value afterCommit');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'afterCommit'),
         ).resolves.not.toBeNull();
@@ -609,35 +609,35 @@ describe('postgres entity integration', () => {
 
         await expect(
           PostgresTriggerTestEntity.updater(entity).setField('name', 'beforeUpdate').updateAsync(),
-        ).rejects.toThrowError('name cannot have value beforeUpdate');
+        ).rejects.toThrow('name cannot have value beforeUpdate');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'beforeUpdate'),
         ).resolves.toBeNull();
 
         await expect(
           PostgresTriggerTestEntity.updater(entity).setField('name', 'afterUpdate').updateAsync(),
-        ).rejects.toThrowError('name cannot have value afterUpdate');
+        ).rejects.toThrow('name cannot have value afterUpdate');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'afterUpdate'),
         ).resolves.toBeNull();
 
         await expect(
           PostgresTriggerTestEntity.updater(entity).setField('name', 'beforeAll').updateAsync(),
-        ).rejects.toThrowError('name cannot have value beforeAll');
+        ).rejects.toThrow('name cannot have value beforeAll');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'beforeAll'),
         ).resolves.toBeNull();
 
         await expect(
           PostgresTriggerTestEntity.updater(entity).setField('name', 'afterAll').updateAsync(),
-        ).rejects.toThrowError('name cannot have value afterAll');
+        ).rejects.toThrow('name cannot have value afterAll');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'afterAll'),
         ).resolves.toBeNull();
 
         await expect(
           PostgresTriggerTestEntity.updater(entity).setField('name', 'afterCommit').updateAsync(),
-        ).rejects.toThrowError('name cannot have value afterCommit');
+        ).rejects.toThrow('name cannot have value afterCommit');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'afterCommit'),
         ).resolves.not.toBeNull();
@@ -655,7 +655,7 @@ describe('postgres entity integration', () => {
           .createAsync();
         await expect(
           PostgresTriggerTestEntity.deleter(entityBeforeDelete).deleteAsync(),
-        ).rejects.toThrowError('name cannot have value beforeDelete');
+        ).rejects.toThrow('name cannot have value beforeDelete');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'beforeDelete'),
         ).resolves.not.toBeNull();
@@ -665,7 +665,7 @@ describe('postgres entity integration', () => {
           .createAsync();
         await expect(
           PostgresTriggerTestEntity.deleter(entityAfterDelete).deleteAsync(),
-        ).rejects.toThrowError('name cannot have value afterDelete');
+        ).rejects.toThrow('name cannot have value afterDelete');
         await expect(
           PostgresTriggerTestEntity.loader(vc1).loadByFieldEqualingAsync('name', 'afterDelete'),
         ).resolves.not.toBeNull();
@@ -682,7 +682,7 @@ describe('postgres entity integration', () => {
             PostgresValidatorTestEntity.creator(vc1)
               .setField('name', 'beforeCreateAndBeforeUpdate')
               .createAsync(),
-          ).rejects.toThrowError('name cannot have value beforeCreateAndBeforeUpdate');
+          ).rejects.toThrow('name cannot have value beforeCreateAndBeforeUpdate');
           await expect(
             PostgresValidatorTestEntity.loader(vc1).loadByFieldEqualingAsync(
               'name',
@@ -705,7 +705,7 @@ describe('postgres entity integration', () => {
             PostgresValidatorTestEntity.updater(entity)
               .setField('name', 'beforeCreateAndBeforeUpdate')
               .updateAsync(),
-          ).rejects.toThrowError('name cannot have value beforeCreateAndBeforeUpdate');
+          ).rejects.toThrow('name cannot have value beforeCreateAndBeforeUpdate');
           await expect(
             PostgresValidatorTestEntity.loader(vc1).loadByFieldEqualingAsync(
               'name',
@@ -784,7 +784,7 @@ describe('postgres entity integration', () => {
             throw Error('wat');
           }, 0);
         }),
-      ).rejects.toThrowError('wat');
+      ).rejects.toThrow('wat');
 
       expect(preCommitCallCount).toBe(2);
       expect(preCommitInnerCallCount).toBe(2);

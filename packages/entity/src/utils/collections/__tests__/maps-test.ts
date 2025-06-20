@@ -71,7 +71,7 @@ describe(zipToMap, () => {
   it('throws when input lengths mismatch', () => {
     const keys = [1, 2];
     const values = [1];
-    expect(() => zipToMap(keys, values)).toThrowError(
+    expect(() => zipToMap(keys, values)).toThrow(
       'zipToMap input length mismatch: keys[2], values[1]',
     );
   });
