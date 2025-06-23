@@ -13,7 +13,7 @@
     "clean": "yarn build --clean",
     "lint": "yarn run --top-level eslint src",
     "lint-fix": "yarn run lint --fix",
-    "integration": "yarn integration:all --rootDir $(pwd)"
+    "integration": "yarn test:integration --roots $(pwd)"
   },
   "engines": {
     "node": ">=16"

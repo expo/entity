@@ -1,26 +1,17 @@
 import { ViewerContext } from '@expo/entity';
 import { enforceAsyncResult } from '@expo/results';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import { knex, Knex } from 'knex';
-import nullthrows from 'nullthrows';
 
+import { type Knex, type StartedPostgreSqlContainer, startPostgresAsync } from './testcontainer';
 import { InvalidTestEntity } from '../__testfixtures__/InvalidTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe('postgres entity integration', () => {
+  let container: StartedPostgreSqlContainer;
   let knexInstance: Knex;
 
-  beforeAll(() => {
-    knexInstance = knex({
-      client: 'pg',
-      connection: {
-        user: nullthrows(process.env['PGUSER']),
-        password: nullthrows(process.env['PGPASSWORD']),
-        host: 'localhost',
-        port: parseInt(nullthrows(process.env['PGPORT']), 10),
-        database: nullthrows(process.env['PGDATABASE']),
-      },
-    });
+  beforeAll(async () => {
+    ({ container, knexInstance } = await startPostgresAsync());
   });
 
   beforeEach(async () => {
@@ -28,8 +19,8 @@ describe('postgres entity integration', () => {
   });
 
   afterAll(async () => {
-    await InvalidTestEntity.dropPostgresTableAsync(knexInstance);
     await knexInstance.destroy();
+    await container.stop();
   });
 
   describe('invalid operation result counts', () => {

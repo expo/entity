@@ -1,23 +1,26 @@
 import {
-  EntityPrivacyPolicy,
-  ViewerContext,
   AlwaysAllowPrivacyPolicyRule,
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
+  EntityPrivacyPolicy,
   StringField,
   UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 import {
   GenericRedisCacheContext,
   RedisCacheInvalidationStrategy,
 } from '@expo/entity-cache-adapter-redis';
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
-import Redis from 'ioredis';
-import { knex, Knex } from 'knex';
-import nullthrows from 'nullthrows';
-import { URL } from 'url';
 
+import {
+  type Knex,
+  type Redis,
+  type StartedPostgreSqlContainer,
+  type StartedRedisContainer,
+  startServicesAsync,
+} from './testcontainer';
 import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider';
 
 interface TestFields {
@@ -91,28 +94,15 @@ async function createOrTruncatePostgresTablesAsync(knex: Knex): Promise<void> {
   await knex.into('testentities').truncate();
 }
 
-async function dropPostgresTableAsync(knex: Knex): Promise<void> {
-  if (await knex.schema.hasTable('testentities')) {
-    await knex.schema.dropTable('testentities');
-  }
-}
-
 describe('Entity cache inconsistency', () => {
+  let postgresContainer: StartedPostgreSqlContainer;
+  let redisContainer: StartedRedisContainer;
   let knexInstance: Knex;
-  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
+  let redisClient: Redis;
   let genericRedisCacheContext: GenericRedisCacheContext;
 
-  beforeAll(() => {
-    knexInstance = knex({
-      client: 'pg',
-      connection: {
-        user: nullthrows(process.env['PGUSER']),
-        password: nullthrows(process.env['PGPASSWORD']),
-        host: 'localhost',
-        port: parseInt(nullthrows(process.env['PGPORT']), 10),
-        database: nullthrows(process.env['PGDATABASE']),
-      },
-    });
+  beforeAll(async () => {
+    ({ knexInstance, redisClient, postgresContainer, redisContainer } = await startServicesAsync());
     genericRedisCacheContext = {
       redisClient,
       makeKeyFn(...parts: string[]): string {
@@ -137,9 +127,10 @@ describe('Entity cache inconsistency', () => {
   });
 
   afterAll(async () => {
-    await dropPostgresTableAsync(knexInstance);
     await knexInstance.destroy();
     redisClient.disconnect();
+    await postgresContainer.stop();
+    await redisContainer.stop();
   });
 
   test('lots of updates in long-ish running transactions', async () => {

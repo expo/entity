@@ -10,12 +10,13 @@
     "clean": "yarn build --clean",
     "lint": "eslint .",
     "lint-fix": "yarn lint --fix",
-    "test": "yarn build --noCheck && jest",
-    "test:all": "yarn test",
-    "integration": "./resources/run-with-docker yarn test --config jest-integration.config.js --runInBand",
+    "test": "yarn test:unit",
+    "test:unit": "yarn test:all --selectProjects unit",
+    "test:all": "yarn build --noCheck && DEBUG=testcontainers:pull jest",
+    "integration": "yarn test:all --selectProjects integration",
     "integration:all": "yarn integration",
     "prepack": "yarn build",
-    "ctix": "ctix build && resources/prepend-barrels.sh",
+    "ctix": "ctix build && ./prepend-barrels.sh",
     "typedoc": "yarn build && typedoc"
   },
   "devDependencies": {
@@ -35,6 +36,7 @@
     "lerna": "^8.2.2",
     "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
+    "testcontainers": "^11.0.3",
     "typedoc": "^0.28.4",
     "typescript": "^5.8.3"
   },

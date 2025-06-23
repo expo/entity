@@ -1,26 +1,17 @@
 import { TransactionalDataLoaderMode, ViewerContext } from '@expo/entity';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from '@jest/globals';
-import { knex, Knex } from 'knex';
-import nullthrows from 'nullthrows';
 
 import { PostgresEntityQueryContextProvider } from '../PostgresEntityQueryContextProvider';
+import { type Knex, type StartedPostgreSqlContainer, startPostgresAsync } from './testcontainer';
 import { PostgresUniqueTestEntity } from '../__testfixtures__/PostgresUniqueTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe(PostgresEntityQueryContextProvider, () => {
+  let container: StartedPostgreSqlContainer;
   let knexInstance: Knex;
 
-  beforeAll(() => {
-    knexInstance = knex({
-      client: 'pg',
-      connection: {
-        user: nullthrows(process.env['PGUSER']),
-        password: nullthrows(process.env['PGPASSWORD']),
-        host: 'localhost',
-        port: parseInt(nullthrows(process.env['PGPORT']), 10),
-        database: nullthrows(process.env['PGDATABASE']),
-      },
-    });
+  beforeAll(async () => {
+    ({ container, knexInstance } = await startPostgresAsync());
   });
 
   beforeEach(async () => {
@@ -28,8 +19,8 @@ describe(PostgresEntityQueryContextProvider, () => {
   });
 
   afterAll(async () => {
-    await PostgresUniqueTestEntity.dropPostgresTableAsync(knexInstance);
     await knexInstance.destroy();
+    await container.stop();
   });
 
   it('supports nested transactions', async () => {

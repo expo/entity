@@ -8,7 +8,7 @@
     "clean": "yarn build --clean",
     "lint": "yarn run --top-level eslint src",
     "lint-fix": "yarn lint --fix",
-    "integration": "yarn integration:all --rootDir $(pwd)"
+    "integration": "yarn test:integration --roots $(pwd)"
   },
   "engines": {
     "node": ">=16"
@@ -25,6 +25,8 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.0.0",
+    "@testcontainers/postgresql": "^11.0.3",
+    "@testcontainers/redis": "^11.0.3",
     "typescript": "^5.8.3"
   }
 }

@@ -8,8 +8,6 @@ import {
 } from '@expo/entity';
 import { enforceAsyncResult } from '@expo/results';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import Redis from 'ioredis';
-import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -17,17 +15,21 @@ import {
   GenericRedisCacher,
   RedisCacheInvalidationStrategy,
 } from '../GenericRedisCacher';
+import { Redis, StartedRedisContainer, startRedisAsync } from './testcontainer';
 import { RedisTestEntity, RedisTestEntityFields } from '../__testfixtures__/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}
 
 describe(GenericRedisCacher, () => {
+  let container: StartedRedisContainer;
+  let redisClient: Redis;
   let genericRedisCacheContext: GenericRedisCacheContext;
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ container, redisClient } = await startRedisAsync());
     genericRedisCacheContext = {
-      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
+      redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -45,10 +47,12 @@ describe(GenericRedisCacher, () => {
   });
 
   beforeEach(async () => {
-    await (genericRedisCacheContext.redisClient as Redis).flushdb();
+    await redisClient.flushdb();
   });
+
   afterAll(async () => {
-    (genericRedisCacheContext.redisClient as Redis).disconnect();
+    redisClient.disconnect();
+    await container.stop();
   });
 
   it('has correct caching behavior', async () => {

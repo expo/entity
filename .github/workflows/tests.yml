@@ -20,17 +20,10 @@ jobs:
       - run: yarn lint --max-warnings=0
       - name: Check if barrels are up to date
         run: yarn ctix && [ -z "$(git status --porcelain)" ]
-      - run: yarn test --coverage
-      - run: yarn integration --coverage
+      - uses: SimenB/github-actions-cpu-cores@v2
+        id: cpu-cores
+      - run: yarn test:all ---maxWorkers ${{ steps.cpu-cores.outputs.count }}
       - uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./coverage
-          flags: unittest
-          fail_ci_if_error: true
-      - uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./coverage-integration
-          flags: integration
           fail_ci_if_error: true

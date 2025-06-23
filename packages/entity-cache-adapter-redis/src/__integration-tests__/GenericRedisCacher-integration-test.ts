@@ -1,13 +1,12 @@
 import { CacheStatus, ViewerContext } from '@expo/entity';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import Redis from 'ioredis';
-import { URL } from 'url';
 
 import {
   GenericRedisCacheContext,
   GenericRedisCacher,
   RedisCacheInvalidationStrategy,
 } from '../GenericRedisCacher';
+import { Redis, StartedRedisContainer, startRedisAsync } from './testcontainer';
 import {
   RedisTestEntity,
   redisTestEntityConfiguration,
@@ -19,10 +18,13 @@ class TestViewerContext extends ViewerContext {}
 
 describe(GenericRedisCacher, () => {
   let genericRedisCacheContext: GenericRedisCacheContext;
+  let redisClient: Redis;
+  let container: StartedRedisContainer;
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ redisClient, container } = await startRedisAsync());
     genericRedisCacheContext = {
-      redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
+      redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -40,10 +42,12 @@ describe(GenericRedisCacher, () => {
   });
 
   beforeEach(async () => {
-    await (genericRedisCacheContext.redisClient as Redis).flushdb();
+    await redisClient.flushdb();
   });
+
   afterAll(async () => {
-    (genericRedisCacheContext.redisClient as Redis).disconnect();
+    redisClient.disconnect();
+    await container.stop();
   });
 
   it('has correct caching and loading behavior', async () => {

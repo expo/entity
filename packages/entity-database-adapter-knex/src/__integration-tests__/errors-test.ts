@@ -9,26 +9,22 @@ import {
   ViewerContext,
 } from '@expo/entity';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import { knex, Knex } from 'knex';
-import nullthrows from 'nullthrows';
 
+import {
+  type Knex,
+  type StartedPostgreSqlContainer,
+  containerKnex,
+  startPostgresAsync,
+} from './testcontainer';
 import { ErrorsTestEntity } from '../__testfixtures__/ErrorsTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe('postgres errors', () => {
+  let container: StartedPostgreSqlContainer;
   let knexInstance: Knex;
 
-  beforeAll(() => {
-    knexInstance = knex({
-      client: 'pg',
-      connection: {
-        user: nullthrows(process.env['PGUSER']),
-        password: nullthrows(process.env['PGPASSWORD']),
-        host: 'localhost',
-        port: parseInt(nullthrows(process.env['PGPORT']), 10),
-        database: nullthrows(process.env['PGDATABASE']),
-      },
-    });
+  beforeAll(async () => {
+    ({ container, knexInstance } = await startPostgresAsync());
   });
 
   beforeEach(async () => {
@@ -36,8 +32,8 @@ describe('postgres errors', () => {
   });
 
   afterAll(async () => {
-    await ErrorsTestEntity.dropPostgresTableAsync(knexInstance);
     await knexInstance.destroy();
+    await container.stop();
   });
 
   it('throws EntityDatabaseAdapterTransientError on Knex timeout', async () => {
@@ -47,15 +43,7 @@ describe('postgres errors', () => {
       .setField('fieldNonNull', 'hello')
       .createAsync();
 
-    const shortTimeoutKnexInstance = knex({
-      client: 'pg',
-      connection: {
-        user: nullthrows(process.env['PGUSER']),
-        password: nullthrows(process.env['PGPASSWORD']),
-        host: 'localhost',
-        port: parseInt(nullthrows(process.env['PGPORT']), 10),
-        database: nullthrows(process.env['PGDATABASE']),
-      },
+    const shortTimeoutKnexInstance = containerKnex(container, {
       acquireConnectionTimeout: 1,
     });
     const vc2 = new ViewerContext(

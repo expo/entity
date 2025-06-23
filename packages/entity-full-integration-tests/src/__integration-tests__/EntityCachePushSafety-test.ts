@@ -1,23 +1,26 @@
 import {
-  EntityPrivacyPolicy,
-  ViewerContext,
   AlwaysAllowPrivacyPolicyRule,
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
+  EntityPrivacyPolicy,
   StringField,
   UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 import {
   GenericRedisCacheContext,
   RedisCacheInvalidationStrategy,
 } from '@expo/entity-cache-adapter-redis';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import Redis from 'ioredis';
-import { knex, Knex } from 'knex';
-import nullthrows from 'nullthrows';
-import { URL } from 'url';
+import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 
+import {
+  type Knex,
+  type Redis,
+  type StartedPostgreSqlContainer,
+  type StartedRedisContainer,
+  startServicesAsync,
+} from './testcontainer';
 import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -91,29 +94,25 @@ async function createOrTruncatePostgresTablesAsync(knex: Knex): Promise<void> {
   await knex.into('testentities').truncate();
 }
 
-async function dropPostgresTableAsync(knex: Knex): Promise<void> {
-  if (await knex.schema.hasTable('testentities')) {
-    await knex.schema.dropTable('testentities');
-  }
-}
-
-describe('Lack of entity cache push safety with RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION', () => {
+describe('Entity cache push safety', () => {
+  let postgresContainer: StartedPostgreSqlContainer;
+  let redisContainer: StartedRedisContainer;
   let knexInstance: Knex;
-  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
-  let genericRedisCacheContext: GenericRedisCacheContext;
+  let redisClient: Redis;
+  beforeEach(async () => {
+    ({ knexInstance, redisClient, postgresContainer, redisContainer } = await startServicesAsync());
+    await createOrTruncatePostgresTablesAsync(knexInstance);
+  });
 
-  beforeAll(() => {
-    knexInstance = knex({
-      client: 'pg',
-      connection: {
-        user: nullthrows(process.env['PGUSER']),
-        password: nullthrows(process.env['PGPASSWORD']),
-        host: 'localhost',
-        port: parseInt(nullthrows(process.env['PGPORT']), 10),
-        database: nullthrows(process.env['PGDATABASE']),
-      },
-    });
-    genericRedisCacheContext = {
+  afterEach(async () => {
+    await knexInstance.destroy();
+    redisClient.disconnect();
+    await postgresContainer.stop();
+    await redisContainer.stop();
+  });
+
+  it('is absent with RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION', async () => {
+    const genericRedisCacheContext: GenericRedisCacheContext = {
       redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
@@ -129,20 +128,6 @@ describe('Lack of entity cache push safety with RedisCacheInvalidationStrategy.C
         invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
       },
     };
-  });
-
-  beforeEach(async () => {
-    await createOrTruncatePostgresTablesAsync(knexInstance);
-    await redisClient.flushdb();
-  });
-
-  afterAll(async () => {
-    await dropPostgresTableAsync(knexInstance);
-    await knexInstance.destroy();
-    redisClient.disconnect();
-  });
-
-  it('does not cross-invalidates cache and thus has cache inconsistency', async () => {
     const preDeployCacheKeyVersion = 1;
     const newCacheKeyVersion = 2;
 
@@ -187,25 +172,8 @@ describe('Lack of entity cache push safety with RedisCacheInvalidationStrategy.C
     // in a consistent system this would be req2. This fails due to lack of cross-invalidation since the cache for pre-deploy is stale and wasn't invalidated.
     expect(entityReq3.getField('string_field')).toBe('req1');
   });
-});
-
-describe('Entity cache push safety with RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS', () => {
-  let knexInstance: Knex;
-  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
-  let genericRedisCacheContext: GenericRedisCacheContext;
-
-  beforeAll(() => {
-    knexInstance = knex({
-      client: 'pg',
-      connection: {
-        user: nullthrows(process.env['PGUSER']),
-        password: nullthrows(process.env['PGPASSWORD']),
-        host: 'localhost',
-        port: parseInt(nullthrows(process.env['PGPORT']), 10),
-        database: nullthrows(process.env['PGDATABASE']),
-      },
-    });
-    genericRedisCacheContext = {
+  it('is present with RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSION', async () => {
+    const genericRedisCacheContext: GenericRedisCacheContext = {
       redisClient,
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
@@ -221,20 +189,6 @@ describe('Entity cache push safety with RedisCacheInvalidationStrategy.SURROUNDI
         invalidationStrategy: RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS,
       },
     };
-  });
-
-  beforeEach(async () => {
-    await createOrTruncatePostgresTablesAsync(knexInstance);
-    await redisClient.flushdb();
-  });
-
-  afterAll(async () => {
-    await dropPostgresTableAsync(knexInstance);
-    await knexInstance.destroy();
-    redisClient.disconnect();
-  });
-
-  it('correctly cross-invalidates cache with new and old code (cache key) versions', async () => {
     const preDeployCacheKeyVersion = 1;
     const newCacheKeyVersion = 2;
 

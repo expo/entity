@@ -2,29 +2,20 @@ import { OrderByOrdering, TransactionIsolationLevel, ViewerContext } from '@expo
 import { createUnitTestEntityCompanionProvider } from '@expo/entity-testing-utils';
 import { enforceAsyncResult } from '@expo/results';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from '@jest/globals';
-import { knex, Knex } from 'knex';
-import nullthrows from 'nullthrows';
 import { setTimeout } from 'timers/promises';
 
+import { type Knex, type StartedPostgreSqlContainer, startPostgresAsync } from './testcontainer';
 import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity';
 import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity';
 import { PostgresValidatorTestEntity } from '../__testfixtures__/PostgresValidatorTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
 
 describe('postgres entity integration', () => {
+  let container: StartedPostgreSqlContainer;
   let knexInstance: Knex;
 
-  beforeAll(() => {
-    knexInstance = knex({
-      client: 'pg',
-      connection: {
-        user: nullthrows(process.env['PGUSER']),
-        password: nullthrows(process.env['PGPASSWORD']),
-        host: 'localhost',
-        port: parseInt(nullthrows(process.env['PGPORT']), 10),
-        database: nullthrows(process.env['PGDATABASE']),
-      },
-    });
+  beforeAll(async () => {
+    ({ container, knexInstance } = await startPostgresAsync());
   });
 
   beforeEach(async () => {
@@ -32,8 +23,8 @@ describe('postgres entity integration', () => {
   });
 
   afterAll(async () => {
-    await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
     await knexInstance.destroy();
+    await container.stop();
   });
 
   it('supports parallel partial updates', async () => {
