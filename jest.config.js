@@ -1,5 +1,6 @@
 module.exports = {
   transform: { '\\.[jt]sx?$': ['babel-jest', { rootMode: 'upward' }] },
+  collectCoverage: true,
   collectCoverageFrom: [
     'packages/*/src/**',
     '!packages/*/src/index.ts',
@@ -9,5 +10,15 @@ module.exports = {
     '!**/__*test*__/**',
   ],
   coverageProvider: 'v8',
-  testMatch: ['**/__tests__/**/*-test.ts'],
+  randomize: true,
+  testEnvironmentOptions: { globalsCleanupMode: 'on' },
+  workerThreads: true,
+  projects: [
+    { displayName: 'unit', testMatch: ['**/__tests__/**/*-test.ts'] },
+    {
+      displayName: 'integration',
+      globalSetup: '<rootDir>/setup.mjs',
+      testMatch: ['**/__integration-tests__/**/*-test.ts'],
+    },
+  ],
 };

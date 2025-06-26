@@ -20,12 +20,18 @@
     {
       "project": "packages/entity-cache-adapter-redis/tsconfig.json",
       "output": "packages/entity-cache-adapter-redis/src",
-      "exclude": [ "**/__testfixtures__/**" ]
+      "exclude": [
+        "**/__testfixtures__/**",
+        "**/__integration-tests__/**"
+      ]
     },
     {
       "project": "packages/entity-database-adapter-knex/tsconfig.json",
       "output": "packages/entity-database-adapter-knex/src",
-      "exclude": [ "**/__testfixtures__/**" ]
+      "exclude": [
+        "**/__testfixtures__/**",
+        "**/__integration-tests__/**"
+      ]
     },
     {
       "project": "packages/entity-ip-address-field/tsconfig.json",

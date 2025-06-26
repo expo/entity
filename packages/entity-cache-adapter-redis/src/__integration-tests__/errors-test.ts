@@ -1,23 +1,24 @@
 import { EntityCacheAdapterTransientError, ViewerContext } from '@expo/entity';
-import { beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import Redis from 'ioredis';
-import { URL } from 'url';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 
 import {
   GenericRedisCacheContext,
   GenericRedisCacher,
   RedisCacheInvalidationStrategy,
 } from '../GenericRedisCacher';
+import { Redis, StartedRedisContainer, startRedisAsync } from './testcontainer';
 import { RedisTestEntity } from '../__testfixtures__/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}
 
 describe(GenericRedisCacher, () => {
-  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
+  let container: StartedRedisContainer;
+  let redisClient: Redis;
   let genericRedisCacheContext: GenericRedisCacheContext;
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ container, redisClient } = await startRedisAsync());
     genericRedisCacheContext = {
       redisClient,
       makeKeyFn(...parts: string[]): string {
@@ -38,6 +39,10 @@ describe(GenericRedisCacher, () => {
 
   beforeEach(async () => {
     await redisClient.flushdb();
+  });
+
+  afterAll(async () => {
+    await container.stop();
   });
 
   it('throws when redis is disconnected', async () => {

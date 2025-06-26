@@ -8,9 +8,7 @@ import {
 } from '@expo/entity';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import invariant from 'invariant';
-import Redis from 'ioredis';
 import nullthrows from 'nullthrows';
-import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -20,6 +18,7 @@ import {
   IRedisTransaction,
   RedisCacheInvalidationStrategy,
 } from '../GenericRedisCacher';
+import { Redis, StartedRedisContainer, startRedisAsync } from './testcontainer';
 import { RedisTestEntity, RedisTestEntityFields } from '../__testfixtures__/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
 
@@ -69,14 +68,14 @@ class BatchedRedis implements IRedis {
 }
 
 describe(GenericRedisCacher, () => {
-  const redis = new Redis(new URL(process.env['REDIS_URL']!).toString());
-  const redisClient = new BatchedRedis(redis);
-
+  let container: StartedRedisContainer;
+  let redisClient: Redis;
   let genericRedisCacheContext: GenericRedisCacheContext;
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ container, redisClient } = await startRedisAsync());
     genericRedisCacheContext = {
-      redisClient,
+      redisClient: new BatchedRedis(redisClient),
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
@@ -94,11 +93,12 @@ describe(GenericRedisCacher, () => {
   });
 
   beforeEach(async () => {
-    await redis.flushdb();
+    await redisClient.flushdb();
   });
 
   afterAll(async () => {
-    redis.disconnect();
+    redisClient.disconnect();
+    await container.stop();
   });
 
   it('has correct caching behavior', async () => {
@@ -107,7 +107,7 @@ describe(GenericRedisCacher, () => {
       createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
 
-    const mgetSpy = jest.spyOn(redis, 'mget');
+    const mgetSpy = jest.spyOn(redisClient, 'mget');
 
     const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
       RedisTestEntity,
@@ -149,7 +149,7 @@ describe(GenericRedisCacher, () => {
       new SingleFieldHolder('id'),
       new SingleFieldValueHolder(entity1Created.getID()),
     );
-    const cachedJSON = await redis.get(cacheKeyEntity1);
+    const cachedJSON = await redisClient.get(cacheKeyEntity1);
     const cachedValue = JSON.parse(cachedJSON!);
     expect(cachedValue).toMatchObject({
       id: entity1.getID(),
@@ -164,7 +164,7 @@ describe(GenericRedisCacher, () => {
       'name',
       entity1Created.getField('name'),
     );
-    await expect(redis.get(cacheKeyEntity1NameField)).resolves.toEqual(cachedJSON);
+    await expect(redisClient.get(cacheKeyEntity1NameField)).resolves.toEqual(cachedJSON);
 
     // simulate non existent db fetch, should write negative result ('') to cache
     const nonExistentId = uuidv4();
@@ -177,7 +177,7 @@ describe(GenericRedisCacher, () => {
       new SingleFieldHolder('id'),
       new SingleFieldValueHolder(nonExistentId),
     );
-    const nonExistentCachedValue = await redis.get(cacheKeyNonExistent);
+    const nonExistentCachedValue = await redisClient.get(cacheKeyNonExistent);
     expect(nonExistentCachedValue).toEqual('');
     // load again through entities framework to ensure it reads negative result
     const entityNonExistentResult2 =
@@ -188,7 +188,7 @@ describe(GenericRedisCacher, () => {
 
     // invalidate from cache to ensure it invalidates correctly in both caches
     await RedisTestEntity.loaderUtils(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
-    await expect(redis.get(cacheKeyEntity1)).resolves.toBeNull();
-    await expect(redis.get(cacheKeyEntity1NameField)).resolves.toBeNull();
+    await expect(redisClient.get(cacheKeyEntity1)).resolves.toBeNull();
+    await expect(redisClient.get(cacheKeyEntity1NameField)).resolves.toBeNull();
   });
 });

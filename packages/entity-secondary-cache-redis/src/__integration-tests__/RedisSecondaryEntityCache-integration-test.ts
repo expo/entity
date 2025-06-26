@@ -4,9 +4,9 @@ import {
   RedisCacheInvalidationStrategy,
 } from '@expo/entity-cache-adapter-redis';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import Redis from 'ioredis';
+import { RedisContainer, StartedRedisContainer } from '@testcontainers/redis';
+import { Redis } from 'ioredis';
 import nullthrows from 'nullthrows';
-import { URL } from 'url';
 
 import { RedisSecondaryEntityCache } from '../RedisSecondaryEntityCache';
 import {
@@ -57,10 +57,13 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
 }
 
 describe(RedisSecondaryEntityCache, () => {
-  const redisClient = new Redis(new URL(process.env['REDIS_URL']!).toString());
+  let container: StartedRedisContainer;
+  let redisClient: Redis;
   let genericRedisCacheContext: GenericRedisCacheContext;
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    container = await new RedisContainer('redis').start();
+    redisClient = new Redis(container.getConnectionUrl());
     genericRedisCacheContext = {
       redisClient,
       makeKeyFn(..._parts: string[]): string {
@@ -80,6 +83,7 @@ describe(RedisSecondaryEntityCache, () => {
   });
   afterAll(async () => {
     redisClient.disconnect();
+    await container.stop();
   });
 
   it('Loads through secondary loader, caches, and invalidates', async () => {

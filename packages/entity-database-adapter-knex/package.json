@@ -13,8 +13,8 @@
     "clean": "yarn build --clean",
     "lint": "yarn run --top-level eslint src",
     "lint-fix": "yarn lint --fix",
-    "test": "yarn test:all --rootDir $(pwd)",
-    "integration": "yarn integration:all --rootDir $(pwd)"
+    "test": "yarn test:unit --roots $(pwd)",
+    "integration": "yarn test:integration --roots $(pwd)"
   },
   "engines": {
     "node": ">=16"
@@ -31,6 +31,7 @@
   "devDependencies": {
     "@expo/entity-testing-utils": "workspace:^",
     "@jest/globals": "^30.0.0",
+    "@testcontainers/postgresql": "^11.0.3",
     "pg": "8.14.1",
     "typescript": "^5.8.3"
   }
