@@ -26,18 +26,18 @@
     "@as-integrations/koa": "^1.1.1",
     "@expo/entity": "workspace:^",
     "@expo/entity-testing-utils": "workspace:^",
-    "@koa/cors": "^4.0.0",
-    "@koa/router": "^12.0.0",
-    "graphql": "^16.6.0",
-    "koa": "^2.14.2",
-    "koa-bodyparser": "^4.4.0"
+    "@koa/cors": "^5.0.0",
+    "@koa/router": "^12.0.2",
+    "graphql": "^16.11.0",
+    "koa": "^2.16.1",
+    "koa-bodyparser": "^4.4.1"
   },
   "devDependencies": {
     "@jest/globals": "^30.0.0",
-    "@types/koa": "^2.13.6",
-    "@types/koa-bodyparser": "^4.3.10",
-    "@types/koa__cors": "^4.0.0",
-    "@types/koa__router": "^12.0.0",
+    "@types/koa": "^2.15.0",
+    "@types/koa-bodyparser": "^4.3.12",
+    "@types/koa__cors": "^5.0.0",
+    "@types/koa__router": "^12.0.4",
     "@types/supertest": "^2.0.10",
     "supertest": "^4.0.2",
     "typescript": "^5.8.3"

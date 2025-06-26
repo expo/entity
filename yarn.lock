@@ -2475,16 +2475,16 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
     "@jest/globals": "npm:^30.0.0"
-    "@koa/cors": "npm:^4.0.0"
-    "@koa/router": "npm:^12.0.0"
-    "@types/koa": "npm:^2.13.6"
-    "@types/koa-bodyparser": "npm:^4.3.10"
-    "@types/koa__cors": "npm:^4.0.0"
-    "@types/koa__router": "npm:^12.0.0"
+    "@koa/cors": "npm:^5.0.0"
+    "@koa/router": "npm:^12.0.2"
+    "@types/koa": "npm:^2.15.0"
+    "@types/koa-bodyparser": "npm:^4.3.12"
+    "@types/koa__cors": "npm:^5.0.0"
+    "@types/koa__router": "npm:^12.0.4"
     "@types/supertest": "npm:^2.0.10"
-    graphql: "npm:^16.6.0"
-    koa: "npm:^2.14.2"
-    koa-bodyparser: "npm:^4.4.0"
+    graphql: "npm:^16.11.0"
+    koa: "npm:^2.16.1"
+    koa-bodyparser: "npm:^4.4.1"
     supertest: "npm:^4.0.2"
     typescript: "npm:^5.8.3"
   languageName: unknown
@@ -3244,24 +3244,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@koa/cors@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@koa/cors@npm:4.0.0"
+"@koa/cors@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@koa/cors@npm:5.0.0"
   dependencies:
     vary: "npm:^1.1.2"
-  checksum: 10c0/53caa512e7aacf8d4ad0d9eb427fa84bdfd6fccb9a060b317d77acf352941ad7935bbc0b4569c0c73d9cdef0b3fce83b7e00190548f31076366dd8e60d7e1198
+  checksum: 10c0/49e5f3b861590bd81aa3663a2f0658234a9b378840bb54a2947b3c5f2067f9d966b6fa2e9049fdc7c74c787456d1885bacd0b7ee1f134274d28282c7df99c3fd
   languageName: node
   linkType: hard
 
-"@koa/router@npm:^12.0.0":
-  version: 12.0.0
-  resolution: "@koa/router@npm:12.0.0"
+"@koa/router@npm:^12.0.2":
+  version: 12.0.2
+  resolution: "@koa/router@npm:12.0.2"
   dependencies:
+    debug: "npm:^4.3.4"
     http-errors: "npm:^2.0.0"
     koa-compose: "npm:^4.1.0"
     methods: "npm:^1.1.2"
-    path-to-regexp: "npm:^6.2.1"
-  checksum: 10c0/a9f8277983410568e30ff25cfe549bdd8f7ef59ad8a04c95b18cd1d2a4d727b3dfaeaab860e92816425b19114607feba5cc1a086f9a8c0a4a534bc57d6b089e1
+    path-to-regexp: "npm:^6.3.0"
+  checksum: 10c0/9d33af8b5cb7e80cf2a17e156fe1821ad31ad672ff8e9df62a3af2d2e4a6f49abbbb7038edaea45ef078cabdd8a1ce595ad7da810e96b17c5b954ee46f7e554d
   languageName: node
   linkType: hard
 
@@ -4374,12 +4375,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-bodyparser@npm:^4.3.10":
-  version: 4.3.10
-  resolution: "@types/koa-bodyparser@npm:4.3.10"
+"@types/koa-bodyparser@npm:^4.3.12":
+  version: 4.3.12
+  resolution: "@types/koa-bodyparser@npm:4.3.12"
   dependencies:
     "@types/koa": "npm:*"
-  checksum: 10c0/b236fa446488ba2d73a9bed672d1cc3ececf3dc2e057fc01615251a367f33914b4caba73e56e29ffd670cd528b5d71534c8e126def7bf46fef2002aec6b698f8
+  checksum: 10c0/1484ad4a24feff23e08d39d243ad80321ab0a42aef355ca8bbedecda85f9778b446d75d8e2ff511d8ad08afa3b473f513debc627b4e0053e9abe950c9e42d1e4
   languageName: node
   linkType: hard
 
@@ -4392,7 +4393,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa@npm:*, @types/koa@npm:^2.13.6":
+"@types/koa@npm:*":
   version: 2.13.6
   resolution: "@types/koa@npm:2.13.6"
   dependencies:
@@ -4408,21 +4409,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa__cors@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@types/koa__cors@npm:4.0.0"
+"@types/koa@npm:^2.15.0":
+  version: 2.15.0
+  resolution: "@types/koa@npm:2.15.0"
   dependencies:
-    "@types/koa": "npm:*"
-  checksum: 10c0/ba8379ce6f2484a0b6446d4c3b016951d2ab79ef13b27d0ab41abcfdf60ff72998d0e23722afa85ded9fe28d12ecedfed7b2055d7df72ea7049a613fc61d3acb
+    "@types/accepts": "npm:*"
+    "@types/content-disposition": "npm:*"
+    "@types/cookies": "npm:*"
+    "@types/http-assert": "npm:*"
+    "@types/http-errors": "npm:*"
+    "@types/keygrip": "npm:*"
+    "@types/koa-compose": "npm:*"
+    "@types/node": "npm:*"
+  checksum: 10c0/3fd591e25ecffc32ffa7cb152d2c5caeccefe5a72cb09d187102d8f41101bdaeeb802a07a6672eac58f805fa59892e79c1cc203ca7b27b0de75d7eac508c2b47
   languageName: node
   linkType: hard
 
-"@types/koa__router@npm:^12.0.0":
-  version: 12.0.0
-  resolution: "@types/koa__router@npm:12.0.0"
+"@types/koa__cors@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@types/koa__cors@npm:5.0.0"
   dependencies:
     "@types/koa": "npm:*"
-  checksum: 10c0/e5a924254b0416ec929b148d39505e3084cfedd5043003baaf76db6e3e9a172a3373e0093e4668375c0e59e81dc7686f4abb201160e8614d84ed40c68b9b5c56
+  checksum: 10c0/2392b4ad63b8f730fee49f5c2104602613e77cac8e5aaac42cd74c60107563ad6e1194422b565519462eb5358746f59f19f5e890896494f7e7de1ac71566bbb2
+  languageName: node
+  linkType: hard
+
+"@types/koa__router@npm:^12.0.4":
+  version: 12.0.4
+  resolution: "@types/koa__router@npm:12.0.4"
+  dependencies:
+    "@types/koa": "npm:*"
+  checksum: 10c0/bc783b47d3c2a6bb8171ba3ddffa5781c5ed11e6b716e74281dfb71229ceb3189ddf5ac178e6f9552ca9d43e8370e0bd558054d66439b43a9e500d046a15ffa8
   languageName: node
   linkType: hard
 
@@ -6334,13 +6351,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookies@npm:~0.8.0":
-  version: 0.8.0
-  resolution: "cookies@npm:0.8.0"
+"cookies@npm:~0.9.0":
+  version: 0.9.1
+  resolution: "cookies@npm:0.9.1"
   dependencies:
     depd: "npm:~2.0.0"
     keygrip: "npm:~1.1.0"
-  checksum: 10c0/0af32f30d1ece0596efc05782c66b9d61659e20c6cc5b695452abf5ceb51883ef43c5c73d86badd7d028a0da7d39f864c95f33640aef04f97fad70f35986bea3
+  checksum: 10c0/3ffa1c0e992b62ee119adae4dd2ddd4a89166fa5434cd9bd9ff84ec4d2f14dfe2318a601280abfe32a4f64f884ec9345fb1912e488b002d188d2efa0d3919ba3
   languageName: node
   linkType: hard
 
@@ -8482,10 +8499,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:^16.6.0":
-  version: 16.6.0
-  resolution: "graphql@npm:16.6.0"
-  checksum: 10c0/3a2c15ff58b69d017618d2b224fa6f3c4a7937e1f711c3a5e0948db536b4931e6e649560b53de7cc26735e027ceea6e2d0a6bb7c29fc4639b290313e3aa71618
+"graphql@npm:^16.11.0":
+  version: 16.11.0
+  resolution: "graphql@npm:16.11.0"
+  checksum: 10c0/124da7860a2292e9acf2fed0c71fc0f6a9b9ca865d390d112bdd563c1f474357141501c12891f4164fe984315764736ad67f705219c62f7580681d431a85db88
   languageName: node
   linkType: hard
 
@@ -10428,13 +10445,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-bodyparser@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "koa-bodyparser@npm:4.4.0"
+"koa-bodyparser@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "koa-bodyparser@npm:4.4.1"
   dependencies:
     co-body: "npm:^6.0.0"
     copy-to: "npm:^2.0.1"
-  checksum: 10c0/1eb4f742cb94b2b05432f284a923967a1abb36df5ec41361a60c5b0783e8fbbf035c90c42c8956a5ef9265f019f4d17e260c261e1effdbf96830701ef9f3c40f
+    type-is: "npm:^1.6.18"
+  checksum: 10c0/72abf648bb62649cebfed310ef8fd09db3ca48867e083814b63f799fedadfdc440817507b9edbcd1d8d75282b23ed64812d924d4d5fc12375ae935150b224c1d
   languageName: node
   linkType: hard
 
@@ -10455,15 +10473,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa@npm:^2.14.2":
-  version: 2.14.2
-  resolution: "koa@npm:2.14.2"
+"koa@npm:^2.16.1":
+  version: 2.16.1
+  resolution: "koa@npm:2.16.1"
   dependencies:
     accepts: "npm:^1.3.5"
     cache-content-type: "npm:^1.0.0"
     content-disposition: "npm:~0.5.2"
     content-type: "npm:^1.0.4"
-    cookies: "npm:~0.8.0"
+    cookies: "npm:~0.9.0"
     debug: "npm:^4.3.2"
     delegates: "npm:^1.0.0"
     depd: "npm:^2.0.0"
@@ -10482,7 +10500,7 @@ __metadata:
     statuses: "npm:^1.5.0"
     type-is: "npm:^1.6.16"
     vary: "npm:^1.1.2"
-  checksum: 10c0/f60ae84974d7cb834a5937592e010d97134278527a55a3a38973935db9ea409fecbd824e5ff0fa767077d9a9dc1f1a32881b626ddaad8b5978756c345f520cdd
+  checksum: 10c0/66beb2e4d7968e1081341ea9a9c1f7f3fad4aaa0475c813f1be79ed84c345d9d45de9e34eeee3cdd790fc81ee5efbde2223d49fd5da571e29b0b3bed6baafb8e
   languageName: node
   linkType: hard
 
@@ -12310,10 +12328,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:^6.2.1":
-  version: 6.2.1
-  resolution: "path-to-regexp@npm:6.2.1"
-  checksum: 10c0/7a73811ca703e5c199e5b50b9649ab8f6f7b458a37f7dff9ea338815203f5b1f95fe8cb24d4fdfe2eab5d67ce43562d92534330babca35cdf3231f966adb9360
+"path-to-regexp@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "path-to-regexp@npm:6.3.0"
+  checksum: 10c0/73b67f4638b41cde56254e6354e46ae3a2ebc08279583f6af3d96fe4664fc75788f74ed0d18ca44fa4a98491b69434f9eee73b97bb5314bd1b5adb700f5c18d6
   languageName: node
   linkType: hard
 
@@ -14553,7 +14571,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-is@npm:^1.6.16, type-is@npm:~1.6.18":
+"type-is@npm:^1.6.16, type-is@npm:^1.6.18, type-is@npm:~1.6.18":
   version: 1.6.18
   resolution: "type-is@npm:1.6.18"
   dependencies:
