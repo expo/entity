@@ -6,20 +6,36 @@ on:
   pull_request:
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v4
         with:
           cache: yarn
           node-version-file: package.json
       - run: yarn --immutable
       - run: yarn lint --max-warnings=0
+  ctix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: yarn
+          node-version-file: package.json
+      - run: yarn --immutable
       - name: Check if barrels are up to date
         run: yarn ctix && [ -z "$(git status --porcelain)" ]
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: yarn
+          node-version-file: package.json
+      - run: yarn --immutable
       - uses: SimenB/github-actions-cpu-cores@v2
         id: cpu-cores
       - run: yarn test:all ---maxWorkers ${{ steps.cpu-cores.outputs.count }}
