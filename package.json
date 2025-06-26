@@ -14,8 +14,8 @@
     "test:all": "yarn test",
     "integration": "./resources/run-with-docker yarn test --config jest-integration.config.js --runInBand",
     "integration:all": "yarn integration",
-    "prepack": "yarn build",
     "ctix": "ctix build && resources/prepend-barrels.sh",
+    "package-files": "yarn workspaces foreach --all --no-private --parallel --topological pack --dry-run",
     "typedoc": "yarn build && typedoc"
   },
   "devDependencies": {
