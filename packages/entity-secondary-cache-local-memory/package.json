@@ -4,12 +4,15 @@
   "description": "Local memory secondary cache for @expo/entity",
   "files": [
     "build",
+    "!*.tsbuildinfo",
+    "!__*",
     "src"
   ],
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "scripts": {
     "build": "tsc --build",
+    "prepack": "rm -rf build && yarn build",
     "clean": "yarn build --clean",
     "lint": "yarn run --top-level eslint src",
     "lint-fix": "yarn run lint --fix",
