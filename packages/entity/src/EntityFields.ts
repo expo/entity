@@ -121,6 +121,7 @@ export class EnumField<TRequireExplicitCache extends boolean> extends EntityFiel
 
 /**
  * EntityFieldDefinition for a enum column with a strict typescript enum type.
+ * The strict version checks that the value of the field adheres to a particular typescript enum
  */
 export class StrictEnumField<
   T extends object,
@@ -138,5 +139,17 @@ export class StrictEnumField<
 
   protected override validateInputValueInternal(value: string | number): boolean {
     return super.validateInputValueInternal(value) && Object.values(this.enum).includes(value);
+  }
+}
+
+/**
+ * EntityFieldDefinition for a column with a JS Buffer type.
+ */
+export class BufferField<TRequireExplicitCache extends boolean> extends EntityFieldDefinition<
+  Buffer,
+  TRequireExplicitCache
+> {
+  protected validateInputValueInternal(value: Buffer): boolean {
+    return Buffer.isBuffer(value);
   }
 }

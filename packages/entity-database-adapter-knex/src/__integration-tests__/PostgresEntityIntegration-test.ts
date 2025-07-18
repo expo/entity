@@ -256,6 +256,33 @@ describe('postgres entity integration', () => {
     });
   });
 
+  describe.only('BYTEA fields', () => {
+    it('supports BYTEA fields', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const buffer = Buffer.from('hello world');
+      let entity = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('binaryField', buffer)
+          .createAsync(),
+      );
+      expect(entity.getField('binaryField')).toEqual(buffer);
+
+      // load the entity in a different viewer context to ensure field deserialization works from db
+      const vc2 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entityLoaded = await PostgresTestEntity.loader(vc2).loadByIDAsync(entity.getID());
+      expect(entityLoaded.getField('binaryField')).toEqual(buffer);
+
+      const updatedBuffer = Buffer.from('updated hello world');
+      entity = await enforceAsyncResult(
+        PostgresTestEntity.updaterWithAuthorizationResults(entity)
+          .setField('binaryField', updatedBuffer)
+          .updateAsync(),
+      );
+      expect(entity.getField('binaryField')).toEqual(updatedBuffer);
+    });
+  });
+
   it('supports single field and composite field equality loading', async () => {
     const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 

@@ -4,6 +4,7 @@ import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 import { EntityFieldDefinition } from '../EntityFieldDefinition';
 import {
   BooleanField,
+  BufferField,
   DateField,
   EnumField,
   FloatField,
@@ -87,4 +88,10 @@ describeFieldTestCase(
   new StrictEnumField({ columnName: 'wat', enum: TestEnum }),
   [TestEnum.HELLO, TestEnum.WHO, 'world'],
   ['what', 1, true],
+);
+
+describeFieldTestCase(
+  new BufferField({ columnName: 'wat' }),
+  [Buffer.from('hello')],
+  ['hello', 1, true],
 );
