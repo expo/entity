@@ -55,9 +55,11 @@ describe(GenericRedisCacher, () => {
       redisTestEntityConfiguration,
     );
     const date = new Date();
+    const buffer = Buffer.from('hello world');
     const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')
       .setField('dateField', date)
+      .setField('bufferField', buffer)
       .createAsync();
     const testKey = `test-id-key-${entity1Created.getID()}`;
     const objectMap = new Map<string, Readonly<RedisTestEntityFields>>([
@@ -80,6 +82,7 @@ describe(GenericRedisCacher, () => {
     });
     expect(loadedObjectMap.size).toBe(1);
   });
+
   it('has correct negative caching behaviour', async () => {
     const genericRedisCacher = new GenericRedisCacher(
       genericRedisCacheContext,
@@ -92,6 +95,7 @@ describe(GenericRedisCacher, () => {
     const cacheLoadResult = loadedObjectMap.get(testKey)!;
     expect(cacheLoadResult.status).toBe(CacheStatus.NEGATIVE);
   });
+
   it('has correct invalidation behaviour', async () => {
     const viewerContext = new TestViewerContext(
       createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
@@ -101,9 +105,11 @@ describe(GenericRedisCacher, () => {
       redisTestEntityConfiguration,
     );
     const date = new Date();
+    const buffer = Buffer.from('hello world');
     const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')
       .setField('dateField', date)
+      .setField('bufferField', buffer)
       .createAsync();
     const testKey = `test-id-key-${entity1Created.getID()}`;
     const objectMap = new Map<string, Readonly<RedisTestEntityFields>>([

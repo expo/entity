@@ -1,5 +1,6 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
+  BufferField,
   DateField,
   Entity,
   EntityCompanionDefinition,
@@ -14,6 +15,7 @@ export type RedisTestEntityFields = {
   id: string;
   name: string;
   dateField: Date | null;
+  bufferField: Buffer | null;
 };
 
 export class RedisTestEntity extends Entity<RedisTestEntityFields, 'id', ViewerContext> {
@@ -67,11 +69,16 @@ export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEnt
     dateField: new DateField({
       columnName: 'date_field',
     }),
+    bufferField: new BufferField({
+      columnName: 'buffer_field',
+      cache: true,
+    }),
   },
   databaseAdapterFlavor: 'postgres',
   cacheAdapterFlavor: 'redis',
   compositeFieldDefinitions: [
     { compositeField: ['id', 'name'], cache: true },
     { compositeField: ['id', 'dateField'], cache: true },
+    { compositeField: ['id', 'bufferField'], cache: true },
   ],
 });

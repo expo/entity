@@ -64,6 +64,8 @@ describe(GenericRedisCacher, () => {
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')
+      .setField('dateField', new Date())
+      .setField('bufferField', Buffer.from('hello world'))
       .createAsync();
 
     // loading an entity should put it in cache
@@ -206,5 +208,28 @@ describe(GenericRedisCacher, () => {
     );
     const entity3 = await RedisTestEntity.loader(vc2).loadByFieldEqualingAsync('name', '');
     expect(entity3?.getID()).toEqual(entity1.getID());
+  });
+
+  it('caches and restores buffer fields', async () => {
+    const viewerContext = new TestViewerContext(
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
+    );
+    const buffer = Buffer.from('hello world');
+    const entity1 = await enforceAsyncResult(
+      RedisTestEntity.creatorWithAuthorizationResults(viewerContext)
+        .setField('bufferField', buffer)
+        .createAsync(),
+    );
+    expect(entity1.getField('bufferField')).toEqual(buffer);
+
+    const entity2 = await RedisTestEntity.loader(viewerContext).loadByIDAsync(entity1.getID());
+    expect(entity2.getField('bufferField')).toEqual(buffer);
+
+    // simulate new request
+    const vc2 = new TestViewerContext(
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
+    );
+    const entity3 = await RedisTestEntity.loader(vc2).loadByIDAsync(entity1.getID());
+    expect(entity3.getField('bufferField')).toEqual(buffer);
   });
 });

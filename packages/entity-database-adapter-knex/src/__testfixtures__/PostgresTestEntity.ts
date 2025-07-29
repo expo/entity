@@ -11,6 +11,7 @@ import {
   StringField,
   UUIDField,
   ViewerContext,
+  BufferField,
 } from '@expo/entity';
 import { Knex } from 'knex';
 
@@ -29,6 +30,7 @@ type PostgresTestEntityFields = {
   dateField: Date | null;
   maybeJsonArrayField: string[] | { hello: string } | null;
   bigintField: string | null;
+  binaryField: Buffer | null;
 };
 
 export class PostgresTestEntity extends Entity<PostgresTestEntityFields, 'id', ViewerContext> {
@@ -61,6 +63,7 @@ export class PostgresTestEntity extends Entity<PostgresTestEntityFields, 'id', V
         table.dateTime('date_field', { useTz: true });
         table.jsonb('maybe_json_array_field');
         table.bigint('bigint_field');
+        table.binary('binary_field');
       });
     }
     await knex.into(tableName).truncate();
@@ -152,6 +155,9 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<
     }),
     bigintField: new BigIntField({
       columnName: 'bigint_field',
+    }),
+    binaryField: new BufferField({
+      columnName: 'binary_field',
     }),
   },
   databaseAdapterFlavor: 'postgres',
