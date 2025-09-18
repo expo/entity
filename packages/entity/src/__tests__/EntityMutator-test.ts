@@ -20,6 +20,7 @@ import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
 import { EntityLoaderFactory } from '../EntityLoaderFactory';
 import { EntityLoaderUtils } from '../EntityLoaderUtils';
 import {
+  EntityCascadingDeletionInfo,
   EntityMutationType,
   EntityTriggerMutationInfo,
   EntityValidatorMutationInfo,
@@ -596,7 +597,7 @@ describe(EntityMutatorFactory, () => {
 
       const updatedEntity = await enforceAsyncResult(
         entityMutatorFactory
-          .forUpdate(existingEntity, queryContext)
+          .forUpdate(existingEntity, queryContext, /* cascadingDeleteCause */ null)
           .setField('stringField', 'huh2')
           .updateAsync(),
       );
@@ -649,7 +650,7 @@ describe(EntityMutatorFactory, () => {
 
       await enforceAsyncResult(
         entityMutatorFactory
-          .forUpdate(existingEntity, queryContext)
+          .forUpdate(existingEntity, queryContext, /* cascadingDeleteCause */ null)
           .setField('stringField', 'huh2')
           .updateAsync(),
       );
@@ -723,7 +724,7 @@ describe(EntityMutatorFactory, () => {
 
       await enforceAsyncResult(
         entityMutatorFactory
-          .forUpdate(existingEntity, queryContext)
+          .forUpdate(existingEntity, queryContext, /* cascadingDeleteCause */ null)
           .setField('stringField', 'huh2')
           .updateAsync(),
       );
@@ -795,7 +796,7 @@ describe(EntityMutatorFactory, () => {
 
       await enforceAsyncResult(
         entityMutatorFactory
-          .forUpdate(existingEntity, queryContext)
+          .forUpdate(existingEntity, queryContext, /* cascadingDeleteCause */ null)
           .setField('stringField', 'huh2')
           .updateAsync(),
       );
@@ -805,6 +806,116 @@ describe(EntityMutatorFactory, () => {
         previousValue: existingEntity,
         cascadingDeleteCause: null,
       });
+    });
+
+    it('passes manaully-specified cascading delete cause to privacy policy and validators and triggers', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              'customIdField',
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
+      const queryContext = new StubQueryContextProvider().getQueryContext();
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
+      const {
+        privacyPolicy,
+        mutationTriggers,
+        mutationValidators,
+        entityMutatorFactory,
+        entityLoaderFactory,
+      } = createEntityMutatorFactory([
+        {
+          customIdField: id1,
+          stringField: 'huh',
+          testIndexedField: '3',
+          intField: 3,
+          dateField: new Date(),
+          nullableField: null,
+        },
+        {
+          customIdField: id2,
+          stringField: 'huh',
+          testIndexedField: '4',
+          intField: 3,
+          dateField: new Date(),
+          nullableField: null,
+        },
+      ]);
+
+      const spiedPrivacyPolicy = spy(privacyPolicy);
+      const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
+      const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
+
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory
+          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .loadByIDAsync(id2),
+      );
+
+      const cascadingDeleteCause: EntityCascadingDeletionInfo = {
+        entity: 'blah' as any,
+        cascadingDeleteCause: null,
+      };
+
+      await enforceAsyncResult(
+        entityMutatorFactory
+          .forUpdate(existingEntity, queryContext, cascadingDeleteCause)
+          .setField('stringField', 'huh2')
+          .updateAsync(),
+      );
+
+      verify(
+        spiedPrivacyPolicy.authorizeUpdateAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          deepEqual({ previousValue: existingEntity, cascadingDeleteCause }),
+          anyOfClass(TestEntity),
+          anything(),
+        ),
+      ).once();
+
+      verify(
+        spiedPrivacyPolicy.authorizeReadAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          deepEqual({ previousValue: existingEntity, cascadingDeleteCause }),
+          anyOfClass(TestEntity),
+          anything(),
+        ),
+      ).once();
+
+      verifyValidatorCounts(viewerContext, validatorSpies, 1, {
+        type: EntityMutationType.UPDATE,
+        previousValue: existingEntity,
+        cascadingDeleteCause,
+      });
+
+      verifyTriggerCounts(
+        viewerContext,
+        triggerSpies,
+        {
+          beforeCreate: false,
+          afterCreate: false,
+          beforeUpdate: true,
+          afterUpdate: true,
+          beforeDelete: false,
+          afterDelete: false,
+        },
+        {
+          type: EntityMutationType.UPDATE,
+          previousValue: existingEntity,
+          cascadingDeleteCause,
+        },
+      );
     });
 
     it('throws when id field is updated', async () => {
@@ -844,7 +955,7 @@ describe(EntityMutatorFactory, () => {
       await expect(
         enforceAsyncResult(
           entityMutatorFactory
-            .forUpdate(existingEntity, queryContext)
+            .forUpdate(existingEntity, queryContext, /* cascadingDeleteCause */ null)
             .setField('customIdField', uuidv4())
             .updateAsync(),
         ),
@@ -896,7 +1007,9 @@ describe(EntityMutatorFactory, () => {
       expect(existingEntity).toBeTruthy();
 
       await enforceAsyncResult(
-        entityMutatorFactory.forDelete(existingEntity, queryContext).deleteAsync(),
+        entityMutatorFactory
+          .forDelete(existingEntity, queryContext, /* cascadingDeleteCause */ null)
+          .deleteAsync(),
       );
 
       await expect(
@@ -946,7 +1059,9 @@ describe(EntityMutatorFactory, () => {
       );
 
       await enforceAsyncResult(
-        entityMutatorFactory.forDelete(existingEntity, queryContext).deleteAsync(),
+        entityMutatorFactory
+          .forDelete(existingEntity, queryContext, /* cascadingDeleteCause */ null)
+          .deleteAsync(),
       );
 
       verify(
@@ -998,7 +1113,9 @@ describe(EntityMutatorFactory, () => {
       );
 
       await enforceAsyncResult(
-        entityMutatorFactory.forDelete(existingEntity, queryContext).deleteAsync(),
+        entityMutatorFactory
+          .forDelete(existingEntity, queryContext, /* cascadingDeleteCause */ null)
+          .deleteAsync(),
       );
 
       verifyTriggerCounts(
@@ -1054,12 +1171,88 @@ describe(EntityMutatorFactory, () => {
       );
 
       await enforceAsyncResult(
-        entityMutatorFactory.forDelete(existingEntity, queryContext).deleteAsync(),
+        entityMutatorFactory
+          .forDelete(existingEntity, queryContext, /* cascadingDeleteCause */ null)
+          .deleteAsync(),
       );
 
       verifyValidatorCounts(viewerContext, validatorSpies, 0, {
         type: EntityMutationType.DELETE as any,
       });
+    });
+
+    it('passes manaully-specified cascading delete cause to privacy policy and triggers', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              'customIdField',
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
+      const queryContext = new StubQueryContextProvider().getQueryContext();
+
+      const id1 = uuidv4();
+      const { mutationTriggers, privacyPolicy, entityMutatorFactory, entityLoaderFactory } =
+        createEntityMutatorFactory([
+          {
+            customIdField: id1,
+            stringField: 'huh',
+            testIndexedField: '3',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ]);
+
+      const spiedPrivacyPolicy = spy(privacyPolicy);
+      const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
+
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory
+          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .loadByIDAsync(id1),
+      );
+
+      const cascadingDeleteCause: EntityCascadingDeletionInfo = {
+        entity: 'blah' as any,
+        cascadingDeleteCause: null,
+      };
+
+      await enforceAsyncResult(
+        entityMutatorFactory
+          .forDelete(existingEntity, queryContext, cascadingDeleteCause)
+          .deleteAsync(),
+      );
+
+      verify(
+        spiedPrivacyPolicy.authorizeDeleteAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          deepEqual({ previousValue: null, cascadingDeleteCause }),
+          anyOfClass(TestEntity),
+          anything(),
+        ),
+      ).once();
+
+      verifyTriggerCounts(
+        viewerContext,
+        triggerSpies,
+        {
+          beforeCreate: false,
+          afterCreate: false,
+          beforeUpdate: false,
+          afterUpdate: false,
+          beforeDelete: true,
+          afterDelete: true,
+        },
+        { type: EntityMutationType.DELETE, cascadingDeleteCause },
+      );
     });
   });
 
@@ -1163,7 +1356,7 @@ describe(EntityMutatorFactory, () => {
 
     await expect(
       entityMutatorFactory
-        .forUpdate(createdEntity, queryContext)
+        .forUpdate(createdEntity, queryContext, /* cascadingDeleteCause */ null)
         .setField('stringField', 10 as any)
         .updateAsync(),
     ).rejects.toThrow('Entity field not valid: TestEntity (stringField = 10)');
@@ -1284,14 +1477,14 @@ describe(EntityMutatorFactory, () => {
     expect(entityCreateResult.value).toBe(undefined);
 
     const entityUpdateResult = await entityMutatorFactory
-      .forUpdate(fakeEntity, queryContext)
+      .forUpdate(fakeEntity, queryContext, /* cascadingDeleteCause */ null)
       .updateAsync();
     expect(entityUpdateResult.ok).toBe(false);
     expect(entityUpdateResult.reason).toEqual(rejectionError);
     expect(entityUpdateResult.value).toBe(undefined);
 
     const entityDeleteResult = await entityMutatorFactory
-      .forDelete(fakeEntity, queryContext)
+      .forDelete(fakeEntity, queryContext, /* cascadingDeleteCause */ null)
       .deleteAsync();
     expect(entityDeleteResult.ok).toBe(false);
     expect(entityDeleteResult.reason).toEqual(rejectionError);
@@ -1406,10 +1599,14 @@ describe(EntityMutatorFactory, () => {
       entityMutatorFactory.forCreate(viewerContext, queryContext).createAsync(),
     ).rejects.toEqual(rejectionError);
     await expect(
-      entityMutatorFactory.forUpdate(fakeEntity, queryContext).updateAsync(),
+      entityMutatorFactory
+        .forUpdate(fakeEntity, queryContext, /* cascadingDeleteCause */ null)
+        .updateAsync(),
     ).rejects.toEqual(rejectionError);
     await expect(
-      entityMutatorFactory.forDelete(fakeEntity, queryContext).deleteAsync(),
+      entityMutatorFactory
+        .forDelete(fakeEntity, queryContext, /* cascadingDeleteCause */ null)
+        .deleteAsync(),
     ).rejects.toEqual(rejectionError);
   });
 
@@ -1428,12 +1625,16 @@ describe(EntityMutatorFactory, () => {
 
     await enforceAsyncResult(
       entityMutatorFactory
-        .forUpdate(newEntity, queryContext)
+        .forUpdate(newEntity, queryContext, /* cascadingDeleteCause */ null)
         .setField('stringField', 'wat')
         .updateAsync(),
     );
 
-    await enforceAsyncResult(entityMutatorFactory.forDelete(newEntity, queryContext).deleteAsync());
+    await enforceAsyncResult(
+      entityMutatorFactory
+        .forDelete(newEntity, queryContext, /* cascadingDeleteCause */ null)
+        .deleteAsync(),
+    );
 
     verify(
       spiedMetricsAdapter.logMutatorMutationEvent(

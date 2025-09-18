@@ -68,6 +68,6 @@ export class EntityDeleter<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this.entityClass)
       .getMutatorFactory()
-      .forDelete(this.existingEntity, this.queryContext);
+      .forDelete(this.existingEntity, this.queryContext, /* cascadingDeleteCause */ null);
   }
 }

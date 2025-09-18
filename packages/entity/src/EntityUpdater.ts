@@ -68,6 +68,6 @@ export class EntityUpdater<
       .getViewerContext()
       .getViewerScopedEntityCompanionForClass(this.entityClass)
       .getMutatorFactory()
-      .forUpdate(this.existingEntity, this.queryContext);
+      .forUpdate(this.existingEntity, this.queryContext, /* cascadingDeleteCause */ null);
   }
 }

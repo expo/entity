@@ -8,6 +8,7 @@ import { EntityCompanionProvider } from './EntityCompanionProvider';
 import { EntityConfiguration } from './EntityConfiguration';
 import { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
 import { EntityLoaderFactory } from './EntityLoaderFactory';
+import { EntityCascadingDeletionInfo } from './EntityMutationInfo';
 import { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
 import { EntityMutationValidator } from './EntityMutationValidator';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
@@ -111,6 +112,7 @@ export class EntityMutatorFactory<
   forUpdate(
     existingEntity: TEntity,
     queryContext: EntityQueryContext,
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   ): AuthorizationResultBasedUpdateMutator<
     TFields,
     TIDField,
@@ -132,6 +134,7 @@ export class EntityMutatorFactory<
       this.databaseAdapter,
       this.metricsAdapter,
       existingEntity,
+      cascadingDeleteCause,
     );
   }
 
@@ -143,6 +146,7 @@ export class EntityMutatorFactory<
   forDelete(
     existingEntity: TEntity,
     queryContext: EntityQueryContext,
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   ): AuthorizationResultBasedDeleteMutator<
     TFields,
     TIDField,
@@ -164,6 +168,7 @@ export class EntityMutatorFactory<
       this.databaseAdapter,
       this.metricsAdapter,
       existingEntity,
+      cascadingDeleteCause,
     );
   }
 }
