@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.47.0](https://github.com/expo/entity/compare/v0.46.0...v0.47.0) (2025-09-19)
+
+### Features
+
+- add support for Buffer fields ([#305](https://github.com/expo/entity/issues/305)) ([31b52a5](https://github.com/expo/entity/commit/31b52a5f75842f4810f66c12ad03a10d9192f889))
+
 # [0.46.0](https://github.com/expo/entity/compare/v0.45.0...v0.46.0) (2025-06-26)
 
 **Note:** Version bump only for package @expo/entity-database-adapter-knex
