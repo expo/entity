@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.48.0](https://github.com/expo/entity/compare/v0.47.0...v0.48.0) (2025-09-19)
+
+**Note:** Version bump only for package @expo/entity-cache-adapter-redis
+
 # [0.47.0](https://github.com/expo/entity/compare/v0.46.0...v0.47.0) (2025-09-19)
 
 ### Features
