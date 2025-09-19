@@ -477,6 +477,7 @@ export class AuthorizationResultBasedUpdateMutator<
     databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
     metricsAdapter: IEntityMetricsAdapter,
     originalEntity: TEntity,
+    private readonly cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   ) {
     super(
       companionProvider,
@@ -517,37 +518,25 @@ export class AuthorizationResultBasedUpdateMutator<
       EntityMetricsMutationType.UPDATE,
       this.entityClass.name,
       this.queryContext,
-    )(this.updateInTransactionAsync(false, null));
+    )(this.updateInTransactionAsync(false));
   }
 
-  private async updateInTransactionAsync(
-    skipDatabaseUpdate: true,
-    cascadingDeleteCause: EntityCascadingDeletionInfo,
-  ): Promise<Result<TEntity>>;
-  private async updateInTransactionAsync(
-    skipDatabaseUpdate: false,
-    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
-  ): Promise<Result<TEntity>>;
-  private async updateInTransactionAsync(
-    skipDatabaseUpdate: boolean,
-    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
-  ): Promise<Result<TEntity>> {
+  private async updateInTransactionAsync(skipDatabaseUpdate: boolean): Promise<Result<TEntity>> {
     return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
-      this.updateInternalAsync(innerQueryContext, skipDatabaseUpdate, cascadingDeleteCause),
+      this.updateInternalAsync(innerQueryContext, skipDatabaseUpdate),
     );
   }
 
   private async updateInternalAsync(
     queryContext: EntityTransactionalQueryContext,
     skipDatabaseUpdate: boolean,
-    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   ): Promise<Result<TEntity>> {
     this.validateFields(this.updatedFields);
     this.ensureStableIDField(this.updatedFields);
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
       previousValue: this.originalEntity,
-      cascadingDeleteCause,
+      cascadingDeleteCause: this.cascadingDeleteCause,
     });
 
     const entityAboutToBeUpdated = entityLoader.utils.constructEntity(this.fieldsForEntity);
@@ -555,7 +544,7 @@ export class AuthorizationResultBasedUpdateMutator<
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
         queryContext,
-        { previousValue: this.originalEntity, cascadingDeleteCause },
+        { previousValue: this.originalEntity, cascadingDeleteCause: this.cascadingDeleteCause },
         entityAboutToBeUpdated,
         this.metricsAdapter,
       ),
@@ -568,19 +557,31 @@ export class AuthorizationResultBasedUpdateMutator<
       this.mutationValidators,
       queryContext,
       entityAboutToBeUpdated,
-      { type: EntityMutationType.UPDATE, previousValue: this.originalEntity, cascadingDeleteCause },
+      {
+        type: EntityMutationType.UPDATE,
+        previousValue: this.originalEntity,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
     );
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
       entityAboutToBeUpdated,
-      { type: EntityMutationType.UPDATE, previousValue: this.originalEntity, cascadingDeleteCause },
+      {
+        type: EntityMutationType.UPDATE,
+        previousValue: this.originalEntity,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
     );
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeUpdate,
       queryContext,
       entityAboutToBeUpdated,
-      { type: EntityMutationType.UPDATE, previousValue: this.originalEntity, cascadingDeleteCause },
+      {
+        type: EntityMutationType.UPDATE,
+        previousValue: this.originalEntity,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
     );
 
     // skip the database update when specified
@@ -627,13 +628,21 @@ export class AuthorizationResultBasedUpdateMutator<
       this.mutationTriggers.afterUpdate,
       queryContext,
       updatedEntity,
-      { type: EntityMutationType.UPDATE, previousValue: this.originalEntity, cascadingDeleteCause },
+      {
+        type: EntityMutationType.UPDATE,
+        previousValue: this.originalEntity,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
     );
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterAll,
       queryContext,
       updatedEntity,
-      { type: EntityMutationType.UPDATE, previousValue: this.originalEntity, cascadingDeleteCause },
+      {
+        type: EntityMutationType.UPDATE,
+        previousValue: this.originalEntity,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
     );
 
     queryContext.appendPostCommitCallback(
@@ -644,7 +653,7 @@ export class AuthorizationResultBasedUpdateMutator<
         {
           type: EntityMutationType.UPDATE,
           previousValue: this.originalEntity,
-          cascadingDeleteCause,
+          cascadingDeleteCause: this.cascadingDeleteCause,
         },
       ),
     );
@@ -724,6 +733,7 @@ export class AuthorizationResultBasedDeleteMutator<
     databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
     metricsAdapter: IEntityMetricsAdapter,
     private readonly entity: TEntity,
+    private readonly cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   ) {
     super(
       companionProvider,
@@ -750,20 +760,18 @@ export class AuthorizationResultBasedDeleteMutator<
       EntityMetricsMutationType.DELETE,
       this.entityClass.name,
       this.queryContext,
-    )(this.deleteInTransactionAsync(new Set(), false, null));
+    )(this.deleteInTransactionAsync(new Set(), false));
   }
 
   private async deleteInTransactionAsync(
     processedEntityIdentifiersFromTransitiveDeletions: Set<string>,
     skipDatabaseDeletion: boolean,
-    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   ): Promise<Result<void>> {
     return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
       this.deleteInternalAsync(
         innerQueryContext,
         processedEntityIdentifiersFromTransitiveDeletions,
         skipDatabaseDeletion,
-        cascadingDeleteCause,
       ),
     );
   }
@@ -772,13 +780,12 @@ export class AuthorizationResultBasedDeleteMutator<
     queryContext: EntityTransactionalQueryContext,
     processedEntityIdentifiersFromTransitiveDeletions: Set<string>,
     skipDatabaseDeletion: boolean,
-    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   ): Promise<Result<void>> {
     const authorizeDeleteResult = await asyncResult(
       this.privacyPolicy.authorizeDeleteAsync(
         this.viewerContext,
         queryContext,
-        { previousValue: null, cascadingDeleteCause },
+        { previousValue: null, cascadingDeleteCause: this.cascadingDeleteCause },
         this.entity,
         this.metricsAdapter,
       ),
@@ -791,20 +798,25 @@ export class AuthorizationResultBasedDeleteMutator<
       this.entity,
       queryContext,
       processedEntityIdentifiersFromTransitiveDeletions,
-      cascadingDeleteCause,
     );
 
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
       this.entity,
-      { type: EntityMutationType.DELETE, cascadingDeleteCause },
+      {
+        type: EntityMutationType.DELETE,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
     );
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeDelete,
       queryContext,
       this.entity,
-      { type: EntityMutationType.DELETE, cascadingDeleteCause },
+      {
+        type: EntityMutationType.DELETE,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
     );
 
     if (!skipDatabaseDeletion) {
@@ -817,7 +829,7 @@ export class AuthorizationResultBasedDeleteMutator<
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
       previousValue: null,
-      cascadingDeleteCause,
+      cascadingDeleteCause: this.cascadingDeleteCause,
     });
 
     // Invalidate all caches for the entity so that any previously-cached loads
@@ -838,13 +850,19 @@ export class AuthorizationResultBasedDeleteMutator<
       this.mutationTriggers.afterDelete,
       queryContext,
       this.entity,
-      { type: EntityMutationType.DELETE, cascadingDeleteCause },
+      {
+        type: EntityMutationType.DELETE,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
     );
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.afterAll,
       queryContext,
       this.entity,
-      { type: EntityMutationType.DELETE, cascadingDeleteCause },
+      {
+        type: EntityMutationType.DELETE,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
     );
 
     queryContext.appendPostCommitCallback(
@@ -852,7 +870,10 @@ export class AuthorizationResultBasedDeleteMutator<
         this,
         this.mutationTriggers.afterCommit,
         this.entity,
-        { type: EntityMutationType.DELETE, cascadingDeleteCause },
+        {
+          type: EntityMutationType.DELETE,
+          cascadingDeleteCause: this.cascadingDeleteCause,
+        },
       ),
     );
 
@@ -877,7 +898,6 @@ export class AuthorizationResultBasedDeleteMutator<
     entity: TEntity,
     queryContext: EntityTransactionalQueryContext,
     processedEntityIdentifiers: Set<string>,
-    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   ): Promise<void> {
     // prevent infinite reference cycles by keeping track of entities already processed
     if (processedEntityIdentifiers.has(entity.getUniqueIdentifier())) {
@@ -900,7 +920,7 @@ export class AuthorizationResultBasedDeleteMutator<
 
     const newCascadingDeleteCause = {
       entity,
-      cascadingDeleteCause,
+      cascadingDeleteCause: this.cascadingDeleteCause,
     };
 
     await Promise.all(
@@ -950,11 +970,10 @@ export class AuthorizationResultBasedDeleteMutator<
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     enforceAsyncResult(
                       mutatorFactory
-                        .forDelete(inboundReferenceEntity, queryContext)
+                        .forDelete(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
                         .deleteInTransactionAsync(
                           processedEntityIdentifiers,
                           /* skipDatabaseDeletion */ true, // deletion is handled by DB
-                          newCascadingDeleteCause,
                         ),
                     ),
                   ),
@@ -966,11 +985,9 @@ export class AuthorizationResultBasedDeleteMutator<
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     enforceAsyncResult(
                       mutatorFactory
-                        .forUpdate(inboundReferenceEntity, queryContext)
+                        .forUpdate(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
                         .setField(fieldName, null)
-                        [
-                          'updateInTransactionAsync'
-                        ](/* skipDatabaseUpdate */ true, newCascadingDeleteCause),
+                        ['updateInTransactionAsync'](/* skipDatabaseUpdate */ true),
                     ),
                   ),
                 );
@@ -981,11 +998,9 @@ export class AuthorizationResultBasedDeleteMutator<
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     enforceAsyncResult(
                       mutatorFactory
-                        .forUpdate(inboundReferenceEntity, queryContext)
+                        .forUpdate(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
                         .setField(fieldName, null)
-                        [
-                          'updateInTransactionAsync'
-                        ](/* skipDatabaseUpdate */ false, newCascadingDeleteCause),
+                        ['updateInTransactionAsync'](/* skipDatabaseUpdate */ false),
                     ),
                   ),
                 );
@@ -996,11 +1011,10 @@ export class AuthorizationResultBasedDeleteMutator<
                   inboundReferenceEntities.map((inboundReferenceEntity) =>
                     enforceAsyncResult(
                       mutatorFactory
-                        .forDelete(inboundReferenceEntity, queryContext)
+                        .forDelete(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
                         .deleteInTransactionAsync(
                           processedEntityIdentifiers,
                           /* skipDatabaseDeletion */ false,
-                          newCascadingDeleteCause,
                         ),
                     ),
                   ),

@@ -3,6 +3,7 @@ import {
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
 } from './AuthorizationResultBasedEntityMutator';
+import { EntityCascadingDeletionInfo } from './EntityMutationInfo';
 import { EntityMutatorFactory } from './EntityMutatorFactory';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
@@ -54,6 +55,7 @@ export class ViewerScopedEntityMutatorFactory<
   forUpdate(
     existingEntity: TEntity,
     queryContext: EntityQueryContext,
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   ): AuthorizationResultBasedUpdateMutator<
     TFields,
     TIDField,
@@ -62,12 +64,13 @@ export class ViewerScopedEntityMutatorFactory<
     TPrivacyPolicy,
     TSelectedFields
   > {
-    return this.entityMutatorFactory.forUpdate(existingEntity, queryContext);
+    return this.entityMutatorFactory.forUpdate(existingEntity, queryContext, cascadingDeleteCause);
   }
 
   forDelete(
     existingEntity: TEntity,
     queryContext: EntityQueryContext,
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
   ): AuthorizationResultBasedDeleteMutator<
     TFields,
     TIDField,
@@ -76,6 +79,6 @@ export class ViewerScopedEntityMutatorFactory<
     TPrivacyPolicy,
     TSelectedFields
   > {
-    return this.entityMutatorFactory.forDelete(existingEntity, queryContext);
+    return this.entityMutatorFactory.forDelete(existingEntity, queryContext, cascadingDeleteCause);
   }
 }
