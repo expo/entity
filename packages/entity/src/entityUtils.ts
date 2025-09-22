@@ -79,9 +79,9 @@ export type PartitionArrayPredicate<T, U> = (val: T | U) => val is T;
  * @param predicate - binary predicate to evaluate partition group of each value
  */
 export const partitionArray = <T, U>(
-  values: (T | U)[],
+  values: readonly (T | U)[],
   predicate: PartitionArrayPredicate<T, U>,
-): [T[], U[]] => {
+): readonly [readonly T[], readonly U[]] => {
   const ts: T[] = [];
   const us: U[] = [];
 
@@ -100,7 +100,9 @@ export const partitionArray = <T, U>(
  * Partition array of values and errors into an array of values and an array of errors.
  * @param valuesAndErrors - array of values and errors
  */
-export const partitionErrors = <T>(valuesAndErrors: (T | Error)[]): [T[], Error[]] => {
+export const partitionErrors = <T>(
+  valuesAndErrors: readonly (T | Error)[],
+): readonly [readonly T[], readonly Error[]] => {
   const [errors, values] = partitionArray<Error, T>(valuesAndErrors, isError);
   return [values, errors];
 };
