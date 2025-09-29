@@ -183,6 +183,26 @@ describe('postgres entity integration', () => {
     );
   });
 
+  describe('UUID field normalization', () => {
+    it('normalizes UUID field input correctly', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const uuidAllCaps = '550E8400-E29B-41D4-A716-446655440000';
+
+      const entity = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('id', uuidAllCaps)
+          .createAsync(),
+      );
+
+      expect(entity.getID()).toEqual('550e8400-e29b-41d4-a716-446655440000');
+
+      const vc2 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entityLoaded = await PostgresTestEntity.loader(vc2).loadByIDAsync(uuidAllCaps);
+      expect(entityLoaded.getID()).toEqual('550e8400-e29b-41d4-a716-446655440000');
+    });
+  });
+
   describe('JSON fields', () => {
     it('supports both types of array fields', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));

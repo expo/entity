@@ -81,7 +81,7 @@ export class AuthorizationResultBasedEntityLoader<
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[],
   ): Promise<ReadonlyMap<NonNullable<TFields[N]>, readonly Result<TEntity>[]>> {
-    const { loadKey, loadValues } = this.validateFieldAndValuesAndConvertToHolders(
+    const { loadKey, loadValues } = this.normalizeAndValidateFieldAndValuesAndConvertToHolders(
       fieldName,
       fieldValues,
     );
@@ -290,16 +290,32 @@ export class AuthorizationResultBasedEntityLoader<
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: QuerySelectionModifiers<TFields> = {},
   ): Promise<readonly Result<TEntity>[]> {
-    for (const fieldEqualityOperand of fieldEqualityOperands) {
-      const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
-        ? [fieldEqualityOperand.fieldValue]
-        : fieldEqualityOperand.fieldValues;
-      this.validateFieldAndValues(fieldEqualityOperand.fieldName, fieldValues);
-    }
+    const normalizedValidatedFieldEqualityOperands: FieldEqualityCondition<TFields, N>[] =
+      fieldEqualityOperands.map((fieldEqualityOperand): FieldEqualityCondition<TFields, N> => {
+        if (isSingleValueFieldEqualityCondition(fieldEqualityOperand)) {
+          const normalizedValidatedFieldValue = this.normalizeAndValidateFieldValue(
+            fieldEqualityOperand.fieldName,
+            fieldEqualityOperand.fieldValue,
+          );
+          return {
+            fieldName: fieldEqualityOperand.fieldName,
+            fieldValue: normalizedValidatedFieldValue,
+          };
+        } else {
+          const normalizedValidatedFieldValues = this.normalizeAndValidateFieldValues(
+            fieldEqualityOperand.fieldName,
+            fieldEqualityOperand.fieldValues,
+          );
+          return {
+            fieldName: fieldEqualityOperand.fieldName,
+            fieldValues: normalizedValidatedFieldValues,
+          };
+        }
+      });
 
     const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
       this.queryContext,
-      fieldEqualityOperands,
+      normalizedValidatedFieldEqualityOperands,
       querySelectionModifiers,
     );
     return await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
@@ -324,32 +340,45 @@ export class AuthorizationResultBasedEntityLoader<
     return await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
 
-  private validateFieldAndValues<N extends keyof Pick<TFields, TSelectedFields>>(
+  private normalizeAndValidateFieldValue<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
-    fieldValues: readonly TFields[N][],
-  ): void {
+    fieldValue: TFields[N],
+  ): TFields[N] {
     const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
     invariant(fieldDefinition, `must have field definition for field = ${String(fieldName)}`);
-    for (const fieldValue of fieldValues) {
-      const isInputValid = fieldDefinition.validateInputValue(fieldValue);
-      if (!isInputValid) {
-        throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
-      }
+    const normalizeAndValidateResult = fieldDefinition.normalizeAndValidateInputValue(fieldValue);
+    if (!normalizeAndValidateResult.valid) {
+      throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
     }
+    return normalizeAndValidateResult.normalizedValue;
   }
 
-  private validateFieldAndValuesAndConvertToHolders<N extends keyof Pick<TFields, TSelectedFields>>(
+  private normalizeAndValidateFieldValues<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValues: readonly TFields[N][],
+  ): readonly TFields[N][] {
+    return fieldValues.map((fieldValue) =>
+      this.normalizeAndValidateFieldValue(fieldName, fieldValue),
+    );
+  }
+
+  private normalizeAndValidateFieldAndValuesAndConvertToHolders<
+    N extends keyof Pick<TFields, TSelectedFields>,
+  >(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[],
   ): {
     loadKey: SingleFieldHolder<TFields, TIDField, N>;
     loadValues: readonly SingleFieldValueHolder<TFields, N>[];
   } {
-    this.validateFieldAndValues(fieldName, fieldValues);
+    const normalizedValidatedLoadValues = this.normalizeAndValidateFieldValues(
+      fieldName,
+      fieldValues,
+    );
 
     return {
       loadKey: new SingleFieldHolder<TFields, TIDField, N>(fieldName),
-      loadValues: fieldValues.map(
+      loadValues: normalizedValidatedLoadValues.map(
         (fieldValue) => new SingleFieldValueHolder<TFields, N>(fieldValue),
       ),
     };
@@ -376,25 +405,38 @@ export class AuthorizationResultBasedEntityLoader<
 
     const cacheableCompositeFieldFieldsSet = compositeFieldHolder.getFieldSet();
 
-    const compositeFieldValueHolders = compositeFieldValues.map(
-      (compositeFieldValue) => new CompositeFieldValueHolder(compositeFieldValue),
+    const normalizedValidatedCompositeFieldValues = compositeFieldValues.map(
+      (compositeFieldValue) => {
+        const normalizedValidatedCompositeFieldValue: EntityCompositeFieldValue<TFields, N> =
+          {} as any;
+        for (const field of compositeField) {
+          const fieldValue = compositeFieldValue[field];
+          const normalizedValidatedFieldValue = this.normalizeAndValidateFieldValue(
+            field,
+            fieldValue,
+          );
+          normalizedValidatedCompositeFieldValue[field] = normalizedValidatedFieldValue;
+        }
+        return normalizedValidatedCompositeFieldValue;
+      },
     );
 
-    // validate that the composite field values are valid
-    for (const compositeFieldValueHolder of compositeFieldValueHolders) {
+    const normalizedValidatedCompositeFieldValueHolders =
+      normalizedValidatedCompositeFieldValues.map(
+        (normalizedValidatedCompositeFieldValue) =>
+          new CompositeFieldValueHolder(normalizedValidatedCompositeFieldValue),
+      );
+
+    for (const compositeFieldValueHolder of normalizedValidatedCompositeFieldValueHolders) {
       invariant(
         areSetsEqual(cacheableCompositeFieldFieldsSet, compositeFieldValueHolder.getFieldSet()),
         `composite field values must contain exactly the fields defined in the composite field definition: ${compositeField}`,
       );
-      for (const field of compositeField) {
-        const fieldValue = compositeFieldValueHolder.compositeFieldValue[field];
-        this.validateFieldAndValues(field, [fieldValue]);
-      }
     }
 
     return {
       compositeFieldHolder,
-      compositeFieldValueHolders,
+      compositeFieldValueHolders: normalizedValidatedCompositeFieldValueHolders,
     };
   }
 

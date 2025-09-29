@@ -15,8 +15,12 @@ export class StringField<TRequireExplicitCache extends boolean> extends EntityFi
   string,
   TRequireExplicitCache
 > {
-  protected validateInputValueInternal(value: string): boolean {
+  protected override validateNormalizedInputValueInternal(value: string): boolean {
     return typeof value === 'string';
+  }
+
+  protected override normalizeInputValueInternal(value: string): string {
+    return value;
   }
 }
 
@@ -27,8 +31,13 @@ export class StringField<TRequireExplicitCache extends boolean> extends EntityFi
 export class UUIDField<
   TRequireExplicitCache extends boolean,
 > extends StringField<TRequireExplicitCache> {
-  protected override validateInputValueInternal(value: string): boolean {
-    return super.validateInputValueInternal(value) && UUID_REGEX.test(value);
+  protected override validateNormalizedInputValueInternal(value: string): boolean {
+    return super.validateNormalizedInputValueInternal(value) && UUID_REGEX.test(value);
+  }
+
+  protected override normalizeInputValueInternal(value: string): string {
+    // normalize UUIDs to lowercase as defined by RFC 4122
+    return value.toLowerCase();
   }
 }
 
@@ -39,8 +48,12 @@ export class DateField<TRequireExplicitCache extends boolean> extends EntityFiel
   Date,
   TRequireExplicitCache
 > {
-  protected validateInputValueInternal(value: Date): boolean {
+  protected validateNormalizedInputValueInternal(value: Date): boolean {
     return value instanceof Date;
+  }
+
+  protected normalizeInputValueInternal(value: Date): Date {
+    return value;
   }
 }
 
@@ -51,8 +64,12 @@ export class BooleanField<TRequireExplicitCache extends boolean> extends EntityF
   boolean,
   TRequireExplicitCache
 > {
-  protected validateInputValueInternal(value: boolean): boolean {
+  protected validateNormalizedInputValueInternal(value: boolean): boolean {
     return typeof value === 'boolean';
+  }
+
+  protected override normalizeInputValueInternal(value: boolean): boolean {
+    return value;
   }
 }
 
@@ -64,8 +81,12 @@ export class IntField<TRequireExplicitCache extends boolean> extends EntityField
   number,
   TRequireExplicitCache
 > {
-  protected validateInputValueInternal(value: number): boolean {
+  protected validateNormalizedInputValueInternal(value: number): boolean {
     return typeof value === 'number' && Number.isInteger(value);
+  }
+
+  protected override normalizeInputValueInternal(value: number): number {
+    return value;
   }
 }
 
@@ -77,8 +98,12 @@ export class FloatField<TRequireExplicitCache extends boolean> extends EntityFie
   number,
   TRequireExplicitCache
 > {
-  protected validateInputValueInternal(value: number): boolean {
+  protected validateNormalizedInputValueInternal(value: number): boolean {
     return typeof value === 'number';
+  }
+
+  protected override normalizeInputValueInternal(value: number): number {
+    return value;
   }
 }
 
@@ -90,8 +115,12 @@ export class StringArrayField<TRequireExplicitCache extends boolean> extends Ent
   string[],
   TRequireExplicitCache
 > {
-  protected validateInputValueInternal(value: string[]): boolean {
+  protected validateNormalizedInputValueInternal(value: string[]): boolean {
     return Array.isArray(value) && value.every((subValue) => typeof subValue === 'string');
+  }
+
+  protected override normalizeInputValueInternal(value: string[]): string[] {
+    return value;
   }
 }
 
@@ -102,8 +131,12 @@ export class JSONObjectField<TRequireExplicitCache extends boolean> extends Enti
   object,
   TRequireExplicitCache
 > {
-  protected validateInputValueInternal(value: object): boolean {
+  protected validateNormalizedInputValueInternal(value: object): boolean {
     return typeof value === 'object' && !Array.isArray(value);
+  }
+
+  protected override normalizeInputValueInternal(value: object): object {
+    return value;
   }
 }
 
@@ -114,8 +147,12 @@ export class EnumField<TRequireExplicitCache extends boolean> extends EntityFiel
   string | number,
   TRequireExplicitCache
 > {
-  protected validateInputValueInternal(value: string | number): boolean {
+  protected validateNormalizedInputValueInternal(value: string | number): boolean {
     return typeof value === 'number' || typeof value === 'string';
+  }
+
+  protected override normalizeInputValueInternal(value: string | number): string | number {
+    return value;
   }
 }
 
@@ -137,8 +174,14 @@ export class StrictEnumField<
     this.enum = options.enum;
   }
 
-  protected override validateInputValueInternal(value: string | number): boolean {
-    return super.validateInputValueInternal(value) && Object.values(this.enum).includes(value);
+  protected override validateNormalizedInputValueInternal(value: string | number): boolean {
+    return (
+      super.validateNormalizedInputValueInternal(value) && Object.values(this.enum).includes(value)
+    );
+  }
+
+  protected override normalizeInputValueInternal(value: string | number): string | number {
+    return value;
   }
 }
 
@@ -149,7 +192,11 @@ export class BufferField<TRequireExplicitCache extends boolean> extends EntityFi
   Buffer,
   TRequireExplicitCache
 > {
-  protected validateInputValueInternal(value: Buffer): boolean {
+  protected validateNormalizedInputValueInternal(value: Buffer): boolean {
     return Buffer.isBuffer(value);
+  }
+
+  protected override normalizeInputValueInternal(value: Buffer): Buffer {
+    return value;
   }
 }

@@ -166,6 +166,15 @@ export interface EntityFieldDefinitionOptions extends EntityFieldDefinitionOptio
   cache?: boolean;
 }
 
+export type ValidateAndNormalizeResult<T> =
+  | {
+      valid: true;
+      normalizedValue: T;
+    }
+  | {
+      valid: false;
+    };
+
 /**
  * Definition for a field referencing a column in the underlying database. Specifies things like
  * cache behavior and associations, and handles input validation.
@@ -193,16 +202,22 @@ export abstract class EntityFieldDefinition<T, TRequireExplicitCache extends boo
   }
 
   /**
-   * Validates input value for a field of this type. Null and undefined are considered valid by default. This is used for things like:
-   * - EntityLoader.loadByFieldValue - to ensure the value being loaded by is a valid value
-   * - EntityMutator.setField - to ensure the value being set is a valid value
+   * Normalized and validates input value for a field of this type. Null and undefined are considered valid by default. This is used for things like:
+   * - EntityLoader.loadByFieldValue - to ensure the value being loaded by is a normalized and valid value
+   * - EntityMutator.setField - to ensure the value being set is a normalized and valid value
    */
-  public validateInputValue(value: T | null | undefined): boolean {
+  public normalizeAndValidateInputValue(
+    value: T | null | undefined,
+  ): ValidateAndNormalizeResult<T | null | undefined> {
     if (value === null || value === undefined) {
-      return true;
+      return { valid: true, normalizedValue: value };
     }
 
-    return this.validateInputValueInternal(value);
+    const normalizedValue = this.normalizeInputValueInternal(value);
+    const isValid = this.validateNormalizedInputValueInternal(normalizedValue);
+    return isValid ? { valid: true, normalizedValue } : { valid: false };
   }
-  protected abstract validateInputValueInternal(value: T): boolean;
+
+  protected abstract validateNormalizedInputValueInternal(value: T): boolean;
+  protected abstract normalizeInputValueInternal(value: T): T;
 }

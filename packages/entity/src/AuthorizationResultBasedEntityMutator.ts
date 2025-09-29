@@ -168,24 +168,26 @@ export abstract class AuthorizationResultBasedBaseMutator<
     protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
-  protected validateFields(fields: Partial<TFields>): void {
-    for (const fieldName in fields) {
-      const fieldValue = fields[fieldName];
-      const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
-      invariant(fieldDefinition, `must have field definition for field = ${fieldName}`);
-      const isInputValid = fieldDefinition.validateInputValue(fieldValue);
-      if (!isInputValid) {
-        throw new EntityInvalidFieldValueError<
-          TFields,
-          TIDField,
-          TViewerContext,
-          TEntity,
-          TPrivacyPolicy,
-          keyof TFields,
-          TSelectedFields
-        >(this.entityClass, fieldName, fieldValue);
-      }
+  protected normalizeAndValidateField<K extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: K,
+    fieldValue: TFields[K],
+  ): TFields[K] {
+    const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
+    invariant(fieldDefinition, `must have field definition for field = ${String(fieldName)}`);
+    const normalizationAndValidationResult =
+      fieldDefinition.normalizeAndValidateInputValue(fieldValue);
+    if (!normalizationAndValidationResult.valid) {
+      throw new EntityInvalidFieldValueError<
+        TFields,
+        TIDField,
+        TViewerContext,
+        TEntity,
+        TPrivacyPolicy,
+        keyof TFields,
+        TSelectedFields
+      >(this.entityClass, fieldName, fieldValue);
     }
+    return normalizationAndValidationResult.normalizedValue;
   }
 
   protected async executeMutationValidatorsAsync(
@@ -289,7 +291,7 @@ export class AuthorizationResultBasedCreateMutator<
   TPrivacyPolicy,
   TSelectedFields
 > {
-  private readonly fieldsForEntity: Partial<TFields> = {};
+  private readonly normalizedValidatedFieldsForEntity: Partial<TFields> = {};
 
   /**
    * Set the value for entity field.
@@ -297,7 +299,10 @@ export class AuthorizationResultBasedCreateMutator<
    * @param value - value for entity field
    */
   setField<K extends keyof Pick<TFields, TSelectedFields>>(fieldName: K, value: TFields[K]): this {
-    this.fieldsForEntity[fieldName] = value;
+    this.normalizedValidatedFieldsForEntity[fieldName] = this.normalizeAndValidateField(
+      fieldName,
+      value,
+    );
     return this;
   }
 
@@ -324,8 +329,6 @@ export class AuthorizationResultBasedCreateMutator<
   private async createInternalAsync(
     queryContext: EntityTransactionalQueryContext,
   ): Promise<Result<TEntity>> {
-    this.validateFields(this.fieldsForEntity);
-
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
       previousValue: null,
       cascadingDeleteCause: null,
@@ -333,7 +336,7 @@ export class AuthorizationResultBasedCreateMutator<
 
     const temporaryEntityForPrivacyCheck = entityLoader.utils.constructEntity({
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
-      ...this.fieldsForEntity,
+      ...this.normalizedValidatedFieldsForEntity,
     } as unknown as TFields);
 
     const authorizeCreateResult = await asyncResult(
@@ -368,7 +371,10 @@ export class AuthorizationResultBasedCreateMutator<
       { type: EntityMutationType.CREATE },
     );
 
-    const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
+    const insertResult = await this.databaseAdapter.insertAsync(
+      queryContext,
+      this.normalizedValidatedFieldsForEntity,
+    );
 
     // Invalidate all caches for the new entity so that any previously-negatively-cached loads
     // are removed from the caches.
@@ -435,8 +441,8 @@ export class AuthorizationResultBasedUpdateMutator<
   TSelectedFields
 > {
   private readonly originalEntity: TEntity;
-  private readonly fieldsForEntity: TFields;
-  private readonly updatedFields: Partial<TFields> = {};
+  private readonly normalizedValidatedFieldsForEntity: TFields;
+  private readonly normalizedValidatedUpdatedFields: Partial<TFields> = {};
 
   constructor(
     companionProvider: EntityCompanionProvider,
@@ -493,7 +499,7 @@ export class AuthorizationResultBasedUpdateMutator<
       metricsAdapter,
     );
     this.originalEntity = originalEntity;
-    this.fieldsForEntity = { ...originalEntity.getAllDatabaseFields() };
+    this.normalizedValidatedFieldsForEntity = { ...originalEntity.getAllDatabaseFields() };
   }
 
   /**
@@ -502,8 +508,9 @@ export class AuthorizationResultBasedUpdateMutator<
    * @param value - value for entity field
    */
   setField<K extends keyof Pick<TFields, TSelectedFields>>(fieldName: K, value: TFields[K]): this {
-    this.fieldsForEntity[fieldName] = value;
-    this.updatedFields[fieldName] = value;
+    const normalizedValue = this.normalizeAndValidateField(fieldName, value);
+    this.normalizedValidatedFieldsForEntity[fieldName] = normalizedValue;
+    this.normalizedValidatedUpdatedFields[fieldName] = normalizedValue;
     return this;
   }
 
@@ -531,15 +538,16 @@ export class AuthorizationResultBasedUpdateMutator<
     queryContext: EntityTransactionalQueryContext,
     skipDatabaseUpdate: boolean,
   ): Promise<Result<TEntity>> {
-    this.validateFields(this.updatedFields);
-    this.ensureStableIDField(this.updatedFields);
+    this.ensureStableIDField(this.normalizedValidatedUpdatedFields);
 
     const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
       previousValue: this.originalEntity,
       cascadingDeleteCause: this.cascadingDeleteCause,
     });
 
-    const entityAboutToBeUpdated = entityLoader.utils.constructEntity(this.fieldsForEntity);
+    const entityAboutToBeUpdated = entityLoader.utils.constructEntity(
+      this.normalizedValidatedFieldsForEntity,
+    );
     const authorizeUpdateResult = await asyncResult(
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
@@ -590,7 +598,7 @@ export class AuthorizationResultBasedUpdateMutator<
         queryContext,
         this.entityConfiguration.idField,
         entityAboutToBeUpdated.getID(),
-        this.updatedFields,
+        this.normalizedValidatedUpdatedFields,
       );
     }
 
@@ -607,10 +615,13 @@ export class AuthorizationResultBasedUpdateMutator<
         queryContext,
         this.originalEntity.getAllDatabaseFields(),
       );
-      entityLoader.utils.invalidateFieldsForTransaction(queryContext, this.fieldsForEntity);
+      entityLoader.utils.invalidateFieldsForTransaction(
+        queryContext,
+        this.normalizedValidatedFieldsForEntity,
+      );
       await Promise.all([
         entityLoader.utils.invalidateFieldsAsync(this.originalEntity.getAllDatabaseFields()),
-        entityLoader.utils.invalidateFieldsAsync(this.fieldsForEntity),
+        entityLoader.utils.invalidateFieldsAsync(this.normalizedValidatedFieldsForEntity),
       ]);
     });
 
@@ -618,7 +629,10 @@ export class AuthorizationResultBasedUpdateMutator<
       queryContext,
       this.originalEntity.getAllDatabaseFields(),
     );
-    entityLoader.utils.invalidateFieldsForTransaction(queryContext, this.fieldsForEntity);
+    entityLoader.utils.invalidateFieldsForTransaction(
+      queryContext,
+      this.normalizedValidatedFieldsForEntity,
+    );
 
     const updatedEntity = await enforceAsyncResult(
       entityLoader.loadByIDAsync(entityAboutToBeUpdated.getID()),
