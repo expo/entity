@@ -28,6 +28,24 @@ module.exports = defineConfig([
       'tsdoc/syntax': 'warn',
       'no-console': 'warn',
       'handle-callback-err': 'off',
+      'no-restricted-properties': [
+        'warn',
+        {
+          object: 'it',
+          property: 'only',
+          message: 'it.only should not be committed to main.',
+        },
+        {
+          object: 'test',
+          property: 'only',
+          message: 'test.only should not be committed to main.',
+        },
+        {
+          object: 'describe',
+          property: 'only',
+          message: 'describe.only should not be committed to main.',
+        },
+      ],
     },
   },
   {

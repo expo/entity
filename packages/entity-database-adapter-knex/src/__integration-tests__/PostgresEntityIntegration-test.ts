@@ -256,7 +256,7 @@ describe('postgres entity integration', () => {
     });
   });
 
-  describe.only('BYTEA fields', () => {
+  describe('BYTEA fields', () => {
     it('supports BYTEA fields', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
