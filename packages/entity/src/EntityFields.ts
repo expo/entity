@@ -6,7 +6,7 @@ import {
 
 // Use our own regex since the `uuid` package doesn't support validating UUIDv6/7/8 yet
 const UUID_REGEX =
-  /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/i;
+  /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/;
 
 /**
  * EntityFieldDefinition for a column with a JS string type.
@@ -22,7 +22,9 @@ export class StringField<TRequireExplicitCache extends boolean> extends EntityFi
 
 /**
  * EntityFieldDefinition for a column with a JS string type.
- * Enforces that the string is a valid UUID.
+ * Enforces that the string is a valid UUID and that it is lowercase. Entity requires UUIDs to be lowercase since most
+ * databases (e.g. Postgres) treat UUIDs as case-insensitive, which can lead to unexpected entity load results if mixed-case
+ * UUIDs are used.
  */
 export class UUIDField<
   TRequireExplicitCache extends boolean,
