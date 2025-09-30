@@ -65,7 +65,7 @@ describeFieldTestCase(
     uuidv5('wat', uuidv5.DNS),
     /* UUIDv7 */ '018ebfda-dc80-782d-a891-22a0aa057d52',
   ],
-  [uuidv4().replace('-', ''), '', 'hello'],
+  [uuidv4().replace('-', ''), '', 'hello', uuidv4().toUpperCase()],
 );
 describeFieldTestCase(new DateField({ columnName: 'wat' }), [new Date()], [Date.now()]);
 describeFieldTestCase(new BooleanField({ columnName: 'wat' }), [true, false], [0, 1, '']);
