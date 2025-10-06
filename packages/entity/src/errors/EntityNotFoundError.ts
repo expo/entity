@@ -31,6 +31,9 @@ type EntityNotFoundOptions<
   fieldValue: TFields[N];
 };
 
+/**
+ * Error thrown when an entity is not found during certain load methods.
+ */
 export class EntityNotFoundError<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,

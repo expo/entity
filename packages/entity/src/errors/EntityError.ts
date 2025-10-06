@@ -1,11 +1,17 @@
 import ES6Error from 'es6-error';
 
+/**
+ * The state of an entity error, indicating whether it may be transient/retryable.
+ */
 export enum EntityErrorState {
   UNKNOWN,
   TRANSIENT,
   PERMANENT,
 }
 
+/**
+ * Error code for an entity error. Each error code should map to a specific class of Entity error.
+ */
 export enum EntityErrorCode {
   ERR_ENTITY_NOT_AUTHORIZED = 'ERR_ENTITY_NOT_AUTHORIZED',
   ERR_ENTITY_NOT_FOUND = 'ERR_ENTITY_NOT_FOUND',
@@ -25,6 +31,9 @@ export enum EntityErrorCode {
   ERR_ENTITY_CACHE_ADAPTER_TRANSIENT = 'ERR_ENTITY_CACHE_ADAPTER_TRANSIENT',
 }
 
+/**
+ * Base class for all known errors thrown by the entity system.
+ */
 export abstract class EntityError extends ES6Error {
   public abstract readonly state: EntityErrorState;
   public abstract readonly code: EntityErrorCode;
