@@ -531,6 +531,11 @@ export class AuthorizationResultBasedUpdateMutator<
     queryContext: EntityTransactionalQueryContext,
     skipDatabaseUpdate: boolean,
   ): Promise<Result<TEntity>> {
+    if (Object.keys(this.updatedFields).length === 0) {
+      // nothing to update, return original entity
+      return result(this.originalEntity);
+    }
+
     this.validateFields(this.updatedFields);
     this.ensureStableIDField(this.updatedFields);
 
