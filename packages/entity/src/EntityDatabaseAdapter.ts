@@ -3,6 +3,13 @@ import invariant from 'invariant';
 import { EntityConfiguration } from './EntityConfiguration';
 import { EntityQueryContext } from './EntityQueryContext';
 import {
+  EntityDatabaseAdapterEmptyInsertResultError,
+  EntityDatabaseAdapterEmptyUpdateResultError,
+  EntityDatabaseAdapterExcessiveDeleteResultError,
+  EntityDatabaseAdapterExcessiveInsertResultError,
+  EntityDatabaseAdapterExcessiveUpdateResultError,
+} from './errors/EntityDatabaseAdapterError';
+import {
   FieldTransformerMap,
   getDatabaseFieldForEntityField,
   transformDatabaseObjectToFields,
@@ -303,12 +310,15 @@ export abstract class EntityDatabaseAdapter<
       dbObject,
     );
 
+    // These should never happen with a properly implemented database adapter unless the underlying database has weird triggers
+    // or something.
+    // These errors are exposed to help application developers detect and diagnose such issues.
     if (results.length > 1) {
-      throw new Error(
+      throw new EntityDatabaseAdapterExcessiveInsertResultError(
         `Excessive results from database adapter insert: ${this.entityConfiguration.tableName}`,
       );
     } else if (results.length === 0) {
-      throw new Error(
+      throw new EntityDatabaseAdapterEmptyInsertResultError(
         `Empty results from database adapter insert: ${this.entityConfiguration.tableName}`,
       );
     }
@@ -356,11 +366,14 @@ export abstract class EntityDatabaseAdapter<
     );
 
     if (results.length > 1) {
-      throw new Error(
+      // This should never happen with a properly implemented database adapter unless the underlying table has a non-unique
+      // primary key column.
+      throw new EntityDatabaseAdapterExcessiveUpdateResultError(
         `Excessive results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`,
       );
     } else if (results.length === 0) {
-      throw new Error(
+      // This happens when the object to update does not exist. It may have been deleted by another process.
+      throw new EntityDatabaseAdapterEmptyUpdateResultError(
         `Empty results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`,
       );
     }
@@ -401,7 +414,7 @@ export abstract class EntityDatabaseAdapter<
     );
 
     if (numDeleted > 1) {
-      throw new Error(
+      throw new EntityDatabaseAdapterExcessiveDeleteResultError(
         `Excessive deletions from database adapter delete: ${this.entityConfiguration.tableName}(id = ${id})`,
       );
     }

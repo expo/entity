@@ -1,4 +1,9 @@
-import { OrderByOrdering, TransactionIsolationLevel, ViewerContext } from '@expo/entity';
+import {
+  EntityDatabaseAdapterEmptyUpdateResultError,
+  OrderByOrdering,
+  TransactionIsolationLevel,
+  ViewerContext,
+} from '@expo/entity';
 import { createUnitTestEntityCompanionProvider } from '@expo/entity-testing-utils';
 import { enforceAsyncResult } from '@expo/results';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from '@jest/globals';
@@ -54,6 +59,23 @@ describe('postgres entity integration', () => {
 
     expect(loadedEntity.getField('hasACat')).toBe(true);
     expect(loadedEntity.getField('hasADog')).toBe(false);
+  });
+
+  it('throws an appropriate error when updating a deleted row', async () => {
+    const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+    const vc2 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+    const entity = await PostgresTestEntity.creator(vc)
+      .setField('name', 'hello')
+      .setField('hasACat', false)
+      .createAsync();
+
+    const entityLoadedVC2 = await PostgresTestEntity.loader(vc2).loadByIDAsync(entity.getID());
+    await PostgresTestEntity.deleter(entityLoadedVC2).deleteAsync();
+
+    await expect(
+      PostgresTestEntity.updater(entity).setField('hasACat', true).updateAsync(),
+    ).rejects.toThrow(EntityDatabaseAdapterEmptyUpdateResultError);
   });
 
   describe('empty creates and updates', () => {

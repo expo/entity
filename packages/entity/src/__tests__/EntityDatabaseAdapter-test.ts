@@ -7,6 +7,13 @@ import {
   TableFieldSingleValueEqualityCondition,
 } from '../EntityDatabaseAdapter';
 import { EntityQueryContext } from '../EntityQueryContext';
+import {
+  EntityDatabaseAdapterEmptyInsertResultError,
+  EntityDatabaseAdapterEmptyUpdateResultError,
+  EntityDatabaseAdapterExcessiveDeleteResultError,
+  EntityDatabaseAdapterExcessiveInsertResultError,
+  EntityDatabaseAdapterExcessiveUpdateResultError,
+} from '../errors/EntityDatabaseAdapterError';
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
 import { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
@@ -264,7 +271,7 @@ describe(EntityDatabaseAdapter, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({ insertResults: [] });
       await expect(adapter.insertAsync(queryContext, {} as any)).rejects.toThrow(
-        'Empty results from database adapter insert',
+        EntityDatabaseAdapterEmptyInsertResultError,
       );
     });
 
@@ -274,7 +281,7 @@ describe(EntityDatabaseAdapter, () => {
         insertResults: [{ string_field: 'hello' }, { string_field: 'hello2' }],
       });
       await expect(adapter.insertAsync(queryContext, {} as any)).rejects.toThrow(
-        'Excessive results from database adapter insert',
+        EntityDatabaseAdapterExcessiveInsertResultError,
       );
     });
   });
@@ -292,7 +299,7 @@ describe(EntityDatabaseAdapter, () => {
       const adapter = new TestEntityDatabaseAdapter({ updateResults: [] });
       await expect(
         adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any),
-      ).rejects.toThrow('Empty results from database adapter update');
+      ).rejects.toThrow(EntityDatabaseAdapterEmptyUpdateResultError);
     });
 
     it('throws when update result count greater than 1', async () => {
@@ -302,7 +309,7 @@ describe(EntityDatabaseAdapter, () => {
       });
       await expect(
         adapter.updateAsync(queryContext, 'customIdField', 'wat', {} as any),
-      ).rejects.toThrow('Excessive results from database adapter update');
+      ).rejects.toThrow(EntityDatabaseAdapterExcessiveUpdateResultError);
     });
   });
 
@@ -311,7 +318,7 @@ describe(EntityDatabaseAdapter, () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({ deleteCount: 2 });
       await expect(adapter.deleteAsync(queryContext, 'customIdField', 'wat')).rejects.toThrow(
-        'Excessive deletions from database adapter delet',
+        EntityDatabaseAdapterExcessiveDeleteResultError,
       );
     });
   });
