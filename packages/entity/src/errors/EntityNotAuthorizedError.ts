@@ -3,6 +3,9 @@ import { ReadonlyEntity } from '../ReadonlyEntity';
 import { ViewerContext } from '../ViewerContext';
 import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
 
+/**
+ * Error thrown when viewer context is not authorized to perform an action on an entity.
+ */
 export class EntityNotAuthorizedError<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,

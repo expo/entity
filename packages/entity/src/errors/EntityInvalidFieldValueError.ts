@@ -4,6 +4,9 @@ import { ReadonlyEntity } from '../ReadonlyEntity';
 import { ViewerContext } from '../ViewerContext';
 import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
 
+/**
+ * Error thrown when an entity field has an invalid value, either during load or mutation.
+ */
 export class EntityInvalidFieldValueError<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
