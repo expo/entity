@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.49.0](https://github.com/expo/entity/compare/v0.48.0...v0.49.0) (2025-10-07)
+
+### Bug Fixes
+
+- add readonly modifier to partitionArray utility method ([#307](https://github.com/expo/entity/issues/307)) ([077d53c](https://github.com/expo/entity/commit/077d53cd86d4c54132ea2ebcc59d1d75e2b507d0))
+- validate that UUID field is lower-case ([#310](https://github.com/expo/entity/issues/310)) ([949f00d](https://github.com/expo/entity/commit/949f00d93b52e405188b9b23e23ae59ce1c546de)), closes [/github.com/expo/entity/blob/077d53cd86d4c54132ea2ebcc59d1d75e2b507d0/packages/entity/src/EntityDatabaseAdapter.ts#L182](https://github.com//github.com/expo/entity/blob/077d53cd86d4c54132ea2ebcc59d1d75e2b507d0/packages/entity/src/EntityDatabaseAdapter.ts/issues/L182) [#309](https://github.com/expo/entity/issues/309)
+
+### Features
+
+- add more documentation to entity errors ([#312](https://github.com/expo/entity/issues/312)) ([4c3fd17](https://github.com/expo/entity/commit/4c3fd175a91cf3107b1ac413e39e52e051a9dc4b))
+- throw specific errors for database adapter issues ([#311](https://github.com/expo/entity/issues/311)) ([f6639f9](https://github.com/expo/entity/commit/f6639f9def4ac20b628dd48fdca8d7cf61b6347b))
+
 # [0.48.0](https://github.com/expo/entity/compare/v0.47.0...v0.48.0) (2025-09-19)
 
 **Note:** Version bump only for package root

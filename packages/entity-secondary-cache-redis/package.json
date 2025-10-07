@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-secondary-cache-redis",
-  "version": "0.48.0",
+  "version": "0.49.0",
   "description": "Redis secondary cache for @expo/entity",
   "files": [
     "build",
