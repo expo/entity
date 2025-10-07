@@ -233,7 +233,13 @@ export class StubDatabaseAdapter<
     const objectIndex = objectCollection.findIndex((obj) => {
       return obj[tableIdField] === id;
     });
-    invariant(objectIndex >= 0, 'should exist');
+
+    // SQL updates to a nonexistent row succeed but affect 0 rows,
+    // mirror that behavior here for better test simulation
+    if (objectIndex < 0) {
+      return [];
+    }
+
     objectCollection[objectIndex] = {
       ...objectCollection[objectIndex],
       ...object,
@@ -252,9 +258,13 @@ export class StubDatabaseAdapter<
     const objectIndex = objectCollection.findIndex((obj) => {
       return obj[tableIdField] === id;
     });
+
+    // SQL deletes to a nonexistent row succeed and affect 0 rows,
+    // mirror that behavior here for better test simulation
     if (objectIndex < 0) {
       return 0;
     }
+
     objectCollection.splice(objectIndex, 1);
     return 1;
   }

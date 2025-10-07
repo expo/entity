@@ -9,7 +9,6 @@ import {
   type TableQuerySelectionModifiers,
   getDatabaseFieldForEntityField,
 } from '@expo/entity';
-import invariant from 'invariant';
 import { v4 as uuidv4 } from 'uuid';
 
 const dbObjects: Readonly<{ [key: string]: any }>[] = [];
@@ -162,7 +161,13 @@ class InMemoryDatabaseAdapter<
     const objectIndex = dbObjects.findIndex((obj) => {
       return obj[tableIdField] === id;
     });
-    invariant(objectIndex >= 0, 'should exist');
+
+    // SQL updates to a nonexistent row succeed but affect 0 rows,
+    // mirror that behavior here for better test simulation
+    if (objectIndex < 0) {
+      return [];
+    }
+
     dbObjects[objectIndex] = {
       ...dbObjects[objectIndex],
       ...object,
@@ -179,7 +184,13 @@ class InMemoryDatabaseAdapter<
     const objectIndex = dbObjects.findIndex((obj) => {
       return obj[tableIdField] === id;
     });
-    invariant(objectIndex >= 0, 'should exist');
+
+    // SQL deletes to a nonexistent row succeed and affect 0 rows,
+    // mirror that behavior here for better test simulation
+    if (objectIndex < 0) {
+      return 0;
+    }
+
     dbObjects.splice(objectIndex, 1);
     return 1;
   }
