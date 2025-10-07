@@ -3,6 +3,7 @@ import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 
 import { GenericEntityCacheAdapter } from '../GenericEntityCacheAdapter';
 import { IEntityGenericCacher } from '../IEntityGenericCacher';
+import { EntityCacheAdapterTransientError } from '../errors/EntityCacheAdapterError';
 import { CacheStatus } from '../internal/ReadThroughEntityCache';
 import {
   SingleFieldHolder,
@@ -67,6 +68,29 @@ describe(GenericEntityCacheAdapter, () => {
         [] as SingleFieldValueHolder<BlahFields, 'id'>[],
       );
       expect(results).toEqual(new SingleFieldValueHolderMap(new Map()));
+    });
+
+    it('rethrows EntityCacheAdapterTransientError from underlying cacher', async () => {
+      const mockGenericCacher = mock<IEntityGenericCacher<BlahFields, 'id'>>();
+      when(
+        mockGenericCacher.makeCacheKeyForStorage(
+          deepEqualEntityAware(new SingleFieldHolder('id')),
+          anything(),
+        ),
+      ).thenCall((fieldHolder, fieldValueHolder) => {
+        return `${fieldHolder.fieldName}.${fieldValueHolder.fieldValue}`;
+      });
+      const expectedError = new EntityCacheAdapterTransientError('Transient error');
+      when(mockGenericCacher.loadManyAsync(deepEqual(['id.wat']))).thenReject(expectedError);
+
+      const cacheAdapter = new GenericEntityCacheAdapter(instance(mockGenericCacher));
+      await expect(
+        cacheAdapter.loadManyAsync(new SingleFieldHolder('id'), [
+          new SingleFieldValueHolder('wat'),
+        ]),
+      ).rejects.toThrow(expectedError);
+
+      verify(mockGenericCacher.loadManyAsync(anything())).once();
     });
   });
 
