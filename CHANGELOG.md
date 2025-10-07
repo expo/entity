@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.50.0](https://github.com/expo/entity/compare/v0.49.0...v0.50.0) (2025-10-07)
+
+### Bug Fixes
+
+- make in memory and stub database adapters behave more similarly to sql ([#315](https://github.com/expo/entity/issues/315)) ([0f53c24](https://github.com/expo/entity/commit/0f53c24faff8a994906e630d7f17d67d89ff5b0f)), closes [#311](https://github.com/expo/entity/issues/311)
+
 # [0.49.0](https://github.com/expo/entity/compare/v0.48.0...v0.49.0) (2025-10-07)
 
 ### Bug Fixes

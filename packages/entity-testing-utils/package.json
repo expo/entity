@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-testing-utils",
-  "version": "0.49.0",
+  "version": "0.50.0",
   "description": "A package containing utilities for testing applications that use Entity",
   "files": [
     "build",
