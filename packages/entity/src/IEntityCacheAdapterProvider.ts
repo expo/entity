@@ -1,3 +1,5 @@
+/* c8 ignore start - interface only */
+
 import { EntityConfiguration } from './EntityConfiguration';
 import { IEntityCacheAdapter } from './IEntityCacheAdapter';
 
@@ -13,3 +15,5 @@ export interface IEntityCacheAdapterProvider {
     entityConfiguration: EntityConfiguration<TFields, TIDField>,
   ): IEntityCacheAdapter<TFields, TIDField>;
 }
+
+/* c8 ignore stop - interface only */

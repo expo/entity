@@ -1,3 +1,5 @@
+/* c8 ignore start - abstract class only */
+
 import { EntityValidatorMutationInfo } from './EntityMutationInfo';
 import { EntityTransactionalQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
@@ -27,3 +29,5 @@ export abstract class EntityMutationValidator<
     >,
   ): Promise<void>;
 }
+
+/* c8 ignore stop - abstract class only */

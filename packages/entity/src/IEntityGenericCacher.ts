@@ -1,3 +1,5 @@
+/* c8 ignore start - interface only */
+
 import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
 import { CacheLoadResult } from './internal/ReadThroughEntityCache';
 
@@ -71,3 +73,5 @@ export interface IEntityGenericCacher<
     value: TLoadValue,
   ): readonly string[];
 }
+
+/* c8 ignore stop - interface only */
