@@ -11,7 +11,7 @@ export interface Case<
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   viewerContext: TViewerContext;
   queryContext: EntityQueryContext;
@@ -30,7 +30,7 @@ export type CaseMap<
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > = Map<string, () => Promise<Case<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>>>;
 
 /**
