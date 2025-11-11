@@ -29,7 +29,7 @@ export * from './EntityLoaderFactory';
 export * from './EntityLoaderUtils';
 export * from './EntityMutationInfo';
 export * from './EntityMutationTriggerConfiguration';
-export * from './EntityMutationValidator';
+export * from './EntityMutationValidatorConfiguration';
 export * from './EntityMutatorFactory';
 export * from './EntityPrivacyPolicy';
 export * from './EntityQueryContext';

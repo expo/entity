@@ -76,7 +76,7 @@ export class EntityCompanion<
       tableDataCoordinator.entityConfiguration,
       entityCompanionDefinition.entityClass,
       this.privacyPolicy,
-      entityCompanionDefinition.mutationValidators ?? [],
+      entityCompanionDefinition.mutationValidators ?? {},
       mergeEntityMutationTriggerConfigurations(
         entityCompanionDefinition.mutationTriggers ?? {},
         entityCompanionProvider.globalMutationTriggers ?? {},

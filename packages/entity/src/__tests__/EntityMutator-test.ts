@@ -30,7 +30,10 @@ import {
   EntityMutationTriggerConfiguration,
   EntityNonTransactionalMutationTrigger,
 } from '../EntityMutationTriggerConfiguration';
-import { EntityMutationValidator } from '../EntityMutationValidator';
+import {
+  EntityMutationValidator,
+  EntityMutationValidatorConfiguration,
+} from '../EntityMutationValidatorConfiguration';
 import { EntityMutatorFactory } from '../EntityMutatorFactory';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
@@ -56,6 +59,27 @@ import {
   TestEntityPrivacyPolicy,
   TestFields,
 } from '../utils/__testfixtures__/TestEntity';
+
+class TestMutationValidator extends EntityMutationValidator<
+  TestFields,
+  'customIdField',
+  ViewerContext,
+  TestEntity,
+  keyof TestFields
+> {
+  async executeAsync(
+    _viewerContext: ViewerContext,
+    _queryContext: EntityQueryContext,
+    _entity: TestEntity,
+    _mutationInfo: EntityValidatorMutationInfo<
+      TestFields,
+      'customIdField',
+      ViewerContext,
+      TestEntity,
+      keyof TestFields
+    >,
+  ): Promise<void> {}
+}
 
 class TestMutationTrigger extends EntityMutationTrigger<
   TestFields,
@@ -89,33 +113,48 @@ class TestNonTransactionalMutationTrigger extends EntityNonTransactionalMutation
 }
 
 const setUpMutationValidatorSpies = (
-  mutationValidators: EntityMutationValidator<
+  mutationValidators: EntityMutationValidatorConfiguration<
     TestFields,
     'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
-  >[],
-): EntityMutationValidator<
+  >,
+): EntityMutationValidatorConfiguration<
   TestFields,
   'customIdField',
   ViewerContext,
   TestEntity,
   keyof TestFields
->[] => {
-  return mutationValidators.map((validator) => spy(validator));
+> => {
+  return {
+    beforeCreateAndUpdate: [spy(mutationValidators.beforeCreateAndUpdate![0]!)],
+    beforeDelete: [spy(mutationValidators.beforeDelete![0]!)],
+  };
 };
 
 const verifyValidatorCounts = (
   viewerContext: ViewerContext,
-  mutationValidatorSpies: EntityMutationValidator<
+  mutationValidatorSpies: EntityMutationValidatorConfiguration<
     TestFields,
     'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
-  >[],
-  expectedCalls: number,
+  >,
+  executed: Record<
+    keyof Pick<
+      EntityMutationValidatorConfiguration<
+        TestFields,
+        'customIdField',
+        ViewerContext,
+        TestEntity,
+        keyof TestFields
+      >,
+      'beforeCreateAndUpdate' | 'beforeDelete'
+    >,
+    boolean
+  >,
   mutationInfo: EntityValidatorMutationInfo<
     TestFields,
     'customIdField',
@@ -124,16 +163,28 @@ const verifyValidatorCounts = (
     keyof TestFields
   >,
 ): void => {
-  for (const validator of mutationValidatorSpies) {
-    verify(
-      validator.executeAsync(
-        viewerContext,
-        anyOfClass(EntityTransactionalQueryContext),
-        anyOfClass(TestEntity),
-        deepEqual(mutationInfo),
-      ),
-    ).times(expectedCalls);
-  }
+  Object.keys(executed).forEach((s) => {
+    const sk = s as keyof typeof executed;
+    if (executed[sk]) {
+      verify(
+        mutationValidatorSpies[sk]![0]!.executeAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          anyOfClass(TestEntity),
+          deepEqual(mutationInfo),
+        ),
+      ).once();
+    } else {
+      verify(
+        mutationValidatorSpies[sk]![0]!.executeAsync(
+          viewerContext,
+          anyOfClass(EntityTransactionalQueryContext),
+          anyOfClass(TestEntity),
+          deepEqual(mutationInfo),
+        ),
+      ).never();
+    }
+  });
 };
 
 const setUpMutationTriggerSpies = (
@@ -200,9 +251,10 @@ const verifyTriggerCounts = (
   >,
 ): void => {
   Object.keys(executed).forEach((s) => {
-    if ((executed as any)[s]) {
+    const sk = s as keyof typeof executed;
+    if (executed[sk]) {
       verify(
-        (mutationTriggerSpies as any)[s]![0].executeAsync(
+        mutationTriggerSpies[sk]![0]!.executeAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
           anyOfClass(TestEntity),
@@ -211,7 +263,7 @@ const verifyTriggerCounts = (
       ).once();
     } else {
       verify(
-        (mutationTriggerSpies as any)[s]![0].executeAsync(
+        mutationTriggerSpies[sk]![0]!.executeAsync(
           viewerContext,
           anyOfClass(EntityTransactionalQueryContext),
           anyOfClass(TestEntity),
@@ -268,13 +320,13 @@ const createEntityMutatorFactory = (
     TestEntityPrivacyPolicy
   >;
   metricsAdapter: IEntityMetricsAdapter;
-  mutationValidators: EntityMutationValidator<
+  mutationValidators: EntityMutationValidatorConfiguration<
     TestFields,
     'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
-  >[];
+  >;
   mutationTriggers: EntityMutationTriggerConfiguration<
     TestFields,
     'customIdField',
@@ -283,13 +335,16 @@ const createEntityMutatorFactory = (
     keyof TestFields
   >;
 } => {
-  const mutationValidators: EntityMutationValidator<
+  const mutationValidators: EntityMutationValidatorConfiguration<
     TestFields,
     'customIdField',
     ViewerContext,
     TestEntity,
     keyof TestFields
-  >[] = [new TestMutationTrigger()];
+  > = {
+    beforeCreateAndUpdate: [new TestMutationValidator()],
+    beforeDelete: [new TestMutationValidator()],
+  };
   const mutationTriggers: EntityMutationTriggerConfiguration<
     TestFields,
     'customIdField',
@@ -547,7 +602,15 @@ describe(EntityMutatorFactory, () => {
           .createAsync(),
       );
 
-      verifyValidatorCounts(viewerContext, validatorSpies, 1, { type: EntityMutationType.CREATE });
+      verifyValidatorCounts(
+        viewerContext,
+        validatorSpies,
+        {
+          beforeCreateAndUpdate: true,
+          beforeDelete: false,
+        },
+        { type: EntityMutationType.CREATE },
+      );
     });
   });
 
@@ -801,11 +864,19 @@ describe(EntityMutatorFactory, () => {
           .updateAsync(),
       );
 
-      verifyValidatorCounts(viewerContext, validatorSpies, 1, {
-        type: EntityMutationType.UPDATE,
-        previousValue: existingEntity,
-        cascadingDeleteCause: null,
-      });
+      verifyValidatorCounts(
+        viewerContext,
+        validatorSpies,
+        {
+          beforeCreateAndUpdate: true,
+          beforeDelete: false,
+        },
+        {
+          type: EntityMutationType.UPDATE,
+          previousValue: existingEntity,
+          cascadingDeleteCause: null,
+        },
+      );
     });
 
     it('passes manaully-specified cascading delete cause to privacy policy and validators and triggers', async () => {
@@ -893,11 +964,19 @@ describe(EntityMutatorFactory, () => {
         ),
       ).once();
 
-      verifyValidatorCounts(viewerContext, validatorSpies, 1, {
-        type: EntityMutationType.UPDATE,
-        previousValue: existingEntity,
-        cascadingDeleteCause,
-      });
+      verifyValidatorCounts(
+        viewerContext,
+        validatorSpies,
+        {
+          beforeCreateAndUpdate: true,
+          beforeDelete: false,
+        },
+        {
+          type: EntityMutationType.UPDATE,
+          previousValue: existingEntity,
+          cascadingDeleteCause,
+        },
+      );
 
       verifyTriggerCounts(
         viewerContext,
@@ -1133,7 +1212,7 @@ describe(EntityMutatorFactory, () => {
       );
     });
 
-    it('does not execute validators', async () => {
+    it('executes validators', async () => {
       const viewerContext = mock<ViewerContext>();
       const privacyPolicyEvaluationContext =
         instance(
@@ -1176,9 +1255,18 @@ describe(EntityMutatorFactory, () => {
           .deleteAsync(),
       );
 
-      verifyValidatorCounts(viewerContext, validatorSpies, 0, {
-        type: EntityMutationType.DELETE as any,
-      });
+      verifyValidatorCounts(
+        viewerContext,
+        validatorSpies,
+        {
+          beforeCreateAndUpdate: false,
+          beforeDelete: true,
+        },
+        {
+          type: EntityMutationType.DELETE,
+          cascadingDeleteCause: null,
+        },
+      );
     });
 
     it('passes manaully-specified cascading delete cause to privacy policy and triggers', async () => {
@@ -1198,20 +1286,26 @@ describe(EntityMutatorFactory, () => {
       const queryContext = new StubQueryContextProvider().getQueryContext();
 
       const id1 = uuidv4();
-      const { mutationTriggers, privacyPolicy, entityMutatorFactory, entityLoaderFactory } =
-        createEntityMutatorFactory([
-          {
-            customIdField: id1,
-            stringField: 'huh',
-            testIndexedField: '3',
-            intField: 3,
-            dateField: new Date(),
-            nullableField: null,
-          },
-        ]);
+      const {
+        mutationTriggers,
+        mutationValidators,
+        privacyPolicy,
+        entityMutatorFactory,
+        entityLoaderFactory,
+      } = createEntityMutatorFactory([
+        {
+          customIdField: id1,
+          stringField: 'huh',
+          testIndexedField: '3',
+          intField: 3,
+          dateField: new Date(),
+          nullableField: null,
+        },
+      ]);
 
       const spiedPrivacyPolicy = spy(privacyPolicy);
       const triggerSpies = setUpMutationTriggerSpies(mutationTriggers);
+      const validatorSpies = setUpMutationValidatorSpies(mutationValidators);
 
       const existingEntity = await enforceAsyncResult(
         entityLoaderFactory
@@ -1239,6 +1333,19 @@ describe(EntityMutatorFactory, () => {
           anything(),
         ),
       ).once();
+
+      verifyValidatorCounts(
+        viewerContext,
+        validatorSpies,
+        {
+          beforeCreateAndUpdate: false,
+          beforeDelete: true,
+        },
+        {
+          type: EntityMutationType.DELETE,
+          cascadingDeleteCause,
+        },
+      );
 
       verifyTriggerCounts(
         viewerContext,
@@ -1462,7 +1569,7 @@ describe(EntityMutatorFactory, () => {
       simpleTestEntityConfiguration,
       SimpleTestEntity,
       instance(privacyPolicyMock),
-      [],
+      {},
       {},
       entityLoaderFactory,
       databaseAdapter,
@@ -1588,7 +1695,7 @@ describe(EntityMutatorFactory, () => {
       simpleTestEntityConfiguration,
       SimpleTestEntity,
       privacyPolicy,
-      [],
+      {},
       {},
       entityLoaderFactory,
       instance(databaseAdapterMock),

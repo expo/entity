@@ -4,7 +4,7 @@ import { IEntityClass } from './Entity';
 import { EntityCompanion, IPrivacyPolicyClass } from './EntityCompanion';
 import { EntityConfiguration } from './EntityConfiguration';
 import { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
-import { EntityMutationValidator } from './EntityMutationValidator';
+import { EntityMutationValidatorConfiguration } from './EntityMutationValidatorConfiguration';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContextProvider } from './EntityQueryContextProvider';
 import { IEntityCacheAdapterProvider } from './IEntityCacheAdapterProvider';
@@ -86,18 +86,18 @@ export interface EntityCompanionDefinition<
   readonly privacyPolicyClass: IPrivacyPolicyClass<TPrivacyPolicy>;
 
   /**
-   * An optional list of EntityMutationValidator for this entity.
+   * An optional EntityMutationValidatorConfiguration for this entity.
    */
-  readonly mutationValidators?: EntityMutationValidator<
+  readonly mutationValidators?: EntityMutationValidatorConfiguration<
     TFields,
     TIDField,
     TViewerContext,
     TEntity,
     TSelectedFields
-  >[];
+  >;
 
   /**
-   * An optional list of EntityMutationTrigger for this entity.
+   * An optional EntityMutationTriggerConfiguration for this entity.
    */
   readonly mutationTriggers?: EntityMutationTriggerConfiguration<
     TFields,

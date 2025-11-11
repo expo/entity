@@ -7,22 +7,6 @@ export enum EntityMutationType {
   DELETE,
 }
 
-export type EntityValidatorMutationInfo<
-  TFields extends Record<string, any>,
-  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
-  TViewerContext extends ViewerContext,
-  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields = keyof TFields,
-> =
-  | {
-      type: EntityMutationType.CREATE;
-    }
-  | {
-      type: EntityMutationType.UPDATE;
-      previousValue: TEntity;
-      cascadingDeleteCause: EntityCascadingDeletionInfo | null;
-    };
-
 /**
  * Information about a cascading deletion.
  */
@@ -38,7 +22,7 @@ export type EntityCascadingDeletionInfo = {
   cascadingDeleteCause: EntityCascadingDeletionInfo | null;
 };
 
-export type EntityTriggerMutationInfo<
+type EntityTriggerOrValidatorMutationInfo<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
@@ -57,3 +41,31 @@ export type EntityTriggerMutationInfo<
       type: EntityMutationType.DELETE;
       cascadingDeleteCause: EntityCascadingDeletionInfo | null;
     };
+
+export type EntityValidatorMutationInfo<
+  TFields extends Record<string, any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields = keyof TFields,
+> = EntityTriggerOrValidatorMutationInfo<
+  TFields,
+  TIDField,
+  TViewerContext,
+  TEntity,
+  TSelectedFields
+>;
+
+export type EntityTriggerMutationInfo<
+  TFields extends Record<string, any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields = keyof TFields,
+> = EntityTriggerOrValidatorMutationInfo<
+  TFields,
+  TIDField,
+  TViewerContext,
+  TEntity,
+  TSelectedFields
+>;
