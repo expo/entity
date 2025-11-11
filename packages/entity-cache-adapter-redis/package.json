@@ -36,9 +36,9 @@
   "devDependencies": {
     "@expo/batcher": "^1.0.0",
     "@expo/entity-testing-utils": "workspace:^",
-    "@jest/globals": "^30.0.0",
+    "@jest/globals": "^30.2.0",
     "ioredis": "^5.6.0",
     "ts-mockito": "^2.6.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   }
 }

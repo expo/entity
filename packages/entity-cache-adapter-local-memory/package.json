@@ -33,8 +33,8 @@
   },
   "devDependencies": {
     "@expo/entity-testing-utils": "workspace:^",
-    "@jest/globals": "^30.0.0",
+    "@jest/globals": "^30.2.0",
     "@types/lru-cache": "^5.1.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   }
 }

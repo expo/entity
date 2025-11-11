@@ -33,14 +33,14 @@
     "invariant": "^2.2.4"
   },
   "devDependencies": {
-    "@jest/globals": "^30.0.1",
+    "@jest/globals": "^30.2.0",
     "@types/invariant": "^2.2.37",
-    "@types/lodash": "^4.17.16",
+    "@types/lodash": "^4.17.20",
     "@types/node": "^20.19.1",
     "@types/uuid": "^8.3.0",
     "lodash": "^4.17.21",
     "ts-mockito": "^2.6.1",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.3",
     "uuid": "^8.3.0",
     "uuidv7": "^1.0.0"
   }
