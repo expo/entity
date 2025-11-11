@@ -67,8 +67,20 @@ export interface TableFieldMultiValueEqualityCondition {
   tableValues: readonly any[];
 }
 
+/**
+ * Ordering options for `orderBy` clauses.
+ */
 export enum OrderByOrdering {
+  /**
+   * Ascending order (lowest to highest).
+   * Ascending order puts smaller values first, where "smaller" is defined in terms of the %3C operator.
+   */
   ASCENDING = 'asc',
+
+  /**
+   * Descending order (highest to lowest).
+   * Descending order puts larger values first, where "larger" is defined in terms of the %3E operator.
+   */
   DESCENDING = 'desc',
 }
 
@@ -80,7 +92,14 @@ export interface QuerySelectionModifiers<TFields extends Record<string, any>> {
    * Order the entities by specified columns and orders.
    */
   orderBy?: {
+    /**
+     * The field name to order by.
+     */
     fieldName: keyof TFields;
+
+    /**
+     * The OrderByOrdering to order by.
+     */
     order: OrderByOrdering;
   }[];
 
