@@ -34,7 +34,10 @@ export class PostgresValidatorTestEntity extends Entity<
       entityClass: PostgresValidatorTestEntity,
       entityConfiguration: postgresTestEntityConfiguration,
       privacyPolicyClass: PostgresValidatorTestEntityPrivacyPolicy,
-      mutationValidators: [new ThrowConditionallyTrigger('name', 'beforeCreateAndBeforeUpdate')],
+      mutationValidators: {
+        beforeCreateAndUpdate: [new ThrowConditionallyTrigger('name', 'beforeCreateAndUpdate')],
+        beforeDelete: [new ThrowConditionallyTrigger('name', 'beforeDelete')],
+      },
     };
   }
 

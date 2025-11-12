@@ -10,7 +10,7 @@ import { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
 import { EntityLoaderFactory } from './EntityLoaderFactory';
 import { EntityCascadingDeletionInfo } from './EntityMutationInfo';
 import { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
-import { EntityMutationValidator } from './EntityMutationValidator';
+import { EntityMutationValidatorConfiguration } from './EntityMutationValidatorConfiguration';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import { ViewerContext } from './ViewerContext';
@@ -45,13 +45,13 @@ export class EntityMutatorFactory<
       TSelectedFields
     >,
     private readonly privacyPolicy: TPrivacyPolicy,
-    private readonly mutationValidators: EntityMutationValidator<
+    private readonly mutationValidators: EntityMutationValidatorConfiguration<
       TFields,
       TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
-    >[],
+    >,
     private readonly mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
       TIDField,

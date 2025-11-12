@@ -729,13 +729,13 @@ describe('postgres entity integration', () => {
 
           await expect(
             PostgresValidatorTestEntity.creator(vc1)
-              .setField('name', 'beforeCreateAndBeforeUpdate')
+              .setField('name', 'beforeCreateAndUpdate')
               .createAsync(),
-          ).rejects.toThrow('name cannot have value beforeCreateAndBeforeUpdate');
+          ).rejects.toThrow('name cannot have value beforeCreateAndUpdate');
           await expect(
             PostgresValidatorTestEntity.loader(vc1).loadByFieldEqualingAsync(
               'name',
-              'beforeCreateAndBeforeUpdate',
+              'beforeCreateAndUpdate',
             ),
           ).resolves.toBeNull();
         });
@@ -752,13 +752,13 @@ describe('postgres entity integration', () => {
 
           await expect(
             PostgresValidatorTestEntity.updater(entity)
-              .setField('name', 'beforeCreateAndBeforeUpdate')
+              .setField('name', 'beforeCreateAndUpdate')
               .updateAsync(),
-          ).rejects.toThrow('name cannot have value beforeCreateAndBeforeUpdate');
+          ).rejects.toThrow('name cannot have value beforeCreateAndUpdate');
           await expect(
             PostgresValidatorTestEntity.loader(vc1).loadByFieldEqualingAsync(
               'name',
-              'beforeCreateAndBeforeUpdate',
+              'beforeCreateAndUpdate',
             ),
           ).resolves.toBeNull();
         });

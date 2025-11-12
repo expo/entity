@@ -18,7 +18,10 @@ import {
   EntityMutationTriggerConfiguration,
   EntityNonTransactionalMutationTrigger,
 } from './EntityMutationTriggerConfiguration';
-import { EntityMutationValidator } from './EntityMutationValidator';
+import {
+  EntityMutationValidator,
+  EntityMutationValidatorConfiguration,
+} from './EntityMutationValidatorConfiguration';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
 import { ViewerContext } from './ViewerContext';
@@ -142,13 +145,13 @@ export abstract class AuthorizationResultBasedBaseMutator<
       TSelectedFields
     >,
     protected readonly privacyPolicy: TPrivacyPolicy,
-    protected readonly mutationValidators: EntityMutationValidator<
+    protected readonly mutationValidators: EntityMutationValidatorConfiguration<
       TFields,
       TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
-    >[],
+    >,
     protected readonly mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
       TIDField,
@@ -189,13 +192,9 @@ export abstract class AuthorizationResultBasedBaseMutator<
   }
 
   protected async executeMutationValidatorsAsync(
-    validators: EntityMutationValidator<
-      TFields,
-      TIDField,
-      TViewerContext,
-      TEntity,
-      TSelectedFields
-    >[],
+    validators:
+      | EntityMutationValidator<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>[]
+      | undefined,
     queryContext: EntityTransactionalQueryContext,
     entity: TEntity,
     mutationInfo: EntityValidatorMutationInfo<
@@ -206,6 +205,10 @@ export abstract class AuthorizationResultBasedBaseMutator<
       TSelectedFields
     >,
   ): Promise<void> {
+    if (!validators) {
+      return;
+    }
+
     await Promise.all(
       validators.map((validator) =>
         validator.executeAsync(this.viewerContext, queryContext, entity, mutationInfo),
@@ -350,7 +353,7 @@ export class AuthorizationResultBasedCreateMutator<
     }
 
     await this.executeMutationValidatorsAsync(
-      this.mutationValidators,
+      this.mutationValidators.beforeCreateAndUpdate,
       queryContext,
       temporaryEntityForPrivacyCheck,
       { type: EntityMutationType.CREATE },
@@ -452,13 +455,13 @@ export class AuthorizationResultBasedUpdateMutator<
       TSelectedFields
     >,
     privacyPolicy: TPrivacyPolicy,
-    mutationValidators: EntityMutationValidator<
+    mutationValidators: EntityMutationValidatorConfiguration<
       TFields,
       TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
-    >[],
+    >,
     mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
       TIDField,
@@ -554,7 +557,7 @@ export class AuthorizationResultBasedUpdateMutator<
     }
 
     await this.executeMutationValidatorsAsync(
-      this.mutationValidators,
+      this.mutationValidators.beforeCreateAndUpdate,
       queryContext,
       entityAboutToBeUpdated,
       {
@@ -708,13 +711,13 @@ export class AuthorizationResultBasedDeleteMutator<
       TSelectedFields
     >,
     privacyPolicy: TPrivacyPolicy,
-    mutationValidators: EntityMutationValidator<
+    mutationValidators: EntityMutationValidatorConfiguration<
       TFields,
       TIDField,
       TViewerContext,
       TEntity,
       TSelectedFields
-    >[],
+    >,
     mutationTriggers: EntityMutationTriggerConfiguration<
       TFields,
       TIDField,
@@ -800,6 +803,15 @@ export class AuthorizationResultBasedDeleteMutator<
       processedEntityIdentifiersFromTransitiveDeletions,
     );
 
+    await this.executeMutationValidatorsAsync(
+      this.mutationValidators.beforeDelete,
+      queryContext,
+      this.entity,
+      {
+        type: EntityMutationType.DELETE,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
+    );
     await this.executeMutationTriggersAsync(
       this.mutationTriggers.beforeAll,
       queryContext,
