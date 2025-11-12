@@ -28,7 +28,7 @@
   "license": "MIT",
   "dependencies": {
     "@expo/entity": "workspace:^",
-    "ip-address": "^10.0.1"
+    "ip-address": "^10.1.0"
   },
   "devDependencies": {
     "@expo/entity-testing-utils": "workspace:^",
