@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.51.0](https://github.com/expo/entity/compare/v0.50.0...v0.51.0) (2025-11-21)
+
+### Bug Fixes
+
+- add default for TSelectedFields in PrivacyPolicyTestUtils Case ([#316](https://github.com/expo/entity/issues/316)) ([2f9d487](https://github.com/expo/entity/commit/2f9d4873aaefe891920c25a41088f7c467da6113))
+
 # [0.50.0](https://github.com/expo/entity/compare/v0.49.0...v0.50.0) (2025-10-07)
 
 ### Bug Fixes
