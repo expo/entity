@@ -32,6 +32,7 @@
     "@expo/entity-cache-adapter-local-memory": "workspace:^"
   },
   "devDependencies": {
+    "@isaacs/ttlcache": "^2.1.3",
     "@jest/globals": "^30.0.1",
     "nullthrows": "^1.1.1",
     "typescript": "^5.9.3"

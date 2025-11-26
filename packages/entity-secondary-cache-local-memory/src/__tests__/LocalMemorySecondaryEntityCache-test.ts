@@ -14,10 +14,12 @@ import {
   ViewerContext,
 } from '@expo/entity';
 import {
-  GenericLocalMemoryCacher,
+  ILocalMemoryCache,
   LocalMemoryCacheAdapterProvider,
+  LocalMemoryCacheValue,
 } from '@expo/entity-cache-adapter-local-memory';
 import { StubDatabaseAdapterProvider, StubQueryContextProvider } from '@expo/entity-testing-utils';
+import { TTLCache } from '@isaacs/ttlcache';
 import { describe, expect, it } from '@jest/globals';
 import nullthrows from 'nullthrows';
 
@@ -109,6 +111,14 @@ export const localMemoryTestEntityConfiguration = new EntityConfiguration<
 
 const queryContextProvider = new StubQueryContextProvider();
 
+function createTTLCache<TFields extends Record<string, any>>(): ILocalMemoryCache<TFields> {
+  return new TTLCache<string, LocalMemoryCacheValue<TFields>>({
+    max: 10000,
+    ttl: 10 * 1000, // convert to ms
+    updateAgeOnGet: true,
+  });
+}
+
 export const createTestEntityCompanionProvider = (
   metricsAdapter: IEntityMetricsAdapter = new NoOpEntityMetricsAdapter(),
 ): EntityCompanionProvider => {
@@ -127,7 +137,8 @@ export const createTestEntityCompanionProvider = (
       [
         'local-memory',
         {
-          cacheAdapterProvider: LocalMemoryCacheAdapterProvider.createProviderWithOptions(),
+          cacheAdapterProvider:
+            LocalMemoryCacheAdapterProvider.createProviderWithCacheCreator(createTTLCache),
         },
       ],
     ]),
@@ -184,7 +195,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
     const secondaryCacheLoader = new TestSecondaryLocalMemoryCacheLoader(
       new LocalMemorySecondaryEntityCache(
         localMemoryTestEntityConfiguration,
-        GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({}),
+        createTTLCache<LocalMemoryTestEntityFields>(),
       ),
       LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext),
     );
@@ -220,7 +231,7 @@ describe(LocalMemorySecondaryEntityCache, () => {
     const secondaryCacheLoader = new TestSecondaryLocalMemoryCacheLoader(
       new LocalMemorySecondaryEntityCache(
         localMemoryTestEntityConfiguration,
-        GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({}),
+        createTTLCache<LocalMemoryTestEntityFields>(),
       ),
       LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext),
     );
