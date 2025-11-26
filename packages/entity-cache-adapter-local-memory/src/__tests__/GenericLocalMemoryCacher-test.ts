@@ -7,7 +7,9 @@ import {
   SingleFieldValueHolderMap,
   UUIDField,
 } from '@expo/entity';
+import { TTLCache } from '@isaacs/ttlcache';
 import { describe, expect, it } from '@jest/globals';
+import invariant from 'invariant';
 
 import {
   DOES_NOT_EXIST_LOCAL_MEMORY_CACHE,
@@ -29,20 +31,22 @@ const entityConfiguration = new EntityConfiguration<BlahFields, 'id'>({
 });
 
 describe(GenericLocalMemoryCacher, () => {
-  describe(GenericLocalMemoryCacher.createLRUCache, () => {
+  describe(GenericLocalMemoryCacher.createTTLCache, () => {
     it('creates a cache with default options', () => {
-      const cache = GenericLocalMemoryCacher.createLRUCache();
+      const cache = GenericLocalMemoryCacher.createTTLCache();
+      invariant(cache instanceof TTLCache, 'should be TTLCache instance');
       expect(cache.max).toBe(10000);
-      expect(cache.maxAge).toBe(10000);
+      expect(cache.ttl).toBe(10000);
     });
 
     it('respects specified options', () => {
-      const cache = GenericLocalMemoryCacher.createLRUCache({
+      const cache = GenericLocalMemoryCacher.createTTLCache({
         ttlSeconds: 3,
         maxSize: 10,
       });
+      invariant(cache instanceof TTLCache, 'should be TTLCache instance');
       expect(cache.max).toBe(10);
-      expect(cache.maxAge).toBe(3000);
+      expect(cache.ttl).toBe(3000);
     });
   });
 
@@ -61,7 +65,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
       const cacheAdapter = new GenericEntityCacheAdapter(
         new GenericLocalMemoryCacher(
           entityConfiguration,
-          GenericLocalMemoryCacher.createLRUCache(),
+          GenericLocalMemoryCacher.createTTLCache(),
         ),
       );
 
@@ -99,7 +103,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
       const cacheAdapter = new GenericEntityCacheAdapter(
         new GenericLocalMemoryCacher(
           entityConfiguration,
-          GenericLocalMemoryCacher.createLRUCache(),
+          GenericLocalMemoryCacher.createTTLCache(),
         ),
       );
       const results = await cacheAdapter.loadManyAsync(
@@ -112,7 +116,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
 
   describe('cacheManyAsync', () => {
     it('correctly caches all objects', async () => {
-      const localMemoryCache = GenericLocalMemoryCacher.createLRUCache<BlahFields>({});
+      const localMemoryCache = GenericLocalMemoryCacher.createTTLCache<BlahFields>({});
 
       const localMemoryCacher = new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache);
       const cacheAdapter = new GenericEntityCacheAdapter(localMemoryCacher);
@@ -133,7 +137,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
 
   describe('cacheDBMissesAsync', () => {
     it('correctly caches misses', async () => {
-      const localMemoryCache = GenericLocalMemoryCacher.createLRUCache<BlahFields>({});
+      const localMemoryCache = GenericLocalMemoryCacher.createTTLCache<BlahFields>({});
 
       const localMemoryCacher = new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache);
       const cacheAdapter = new GenericEntityCacheAdapter(localMemoryCacher);
@@ -151,7 +155,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
 
   describe('invalidateManyAsync', () => {
     it('invalidates correctly', async () => {
-      const localMemoryCache = GenericLocalMemoryCacher.createLRUCache<BlahFields>({});
+      const localMemoryCache = GenericLocalMemoryCacher.createTTLCache<BlahFields>({});
 
       const cacheAdapter = new GenericEntityCacheAdapter(
         new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache),
@@ -184,7 +188,7 @@ describe('Use within GenericEntityCacheAdapter', () => {
       const cacheAdapter = new GenericEntityCacheAdapter(
         new GenericLocalMemoryCacher(
           entityConfiguration,
-          GenericLocalMemoryCacher.createLRUCache<BlahFields>({}),
+          GenericLocalMemoryCacher.createTTLCache<BlahFields>({}),
         ),
       );
       await cacheAdapter.invalidateManyAsync(

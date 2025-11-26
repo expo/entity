@@ -29,12 +29,11 @@
   "license": "MIT",
   "dependencies": {
     "@expo/entity": "workspace:^",
-    "lru-cache": "^6.0.0"
+    "@isaacs/ttlcache": "^2.1.3"
   },
   "devDependencies": {
     "@expo/entity-testing-utils": "workspace:^",
     "@jest/globals": "^30.2.0",
-    "@types/lru-cache": "^5.1.1",
     "typescript": "^5.9.3"
   }
 }
