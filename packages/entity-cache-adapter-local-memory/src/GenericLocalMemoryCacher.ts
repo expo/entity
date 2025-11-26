@@ -6,7 +6,7 @@ import {
   IEntityLoadKey,
   IEntityLoadValue,
 } from '@expo/entity';
-import LRUCache from 'lru-cache';
+import { TTLCache } from '@isaacs/ttlcache';
 
 // Sentinel value we store in local memory to negatively cache a database miss.
 // The sentinel value is distinct from any (positively) cached value.
@@ -14,10 +14,12 @@ export const DOES_NOT_EXIST_LOCAL_MEMORY_CACHE = Symbol('doesNotExist');
 export type LocalMemoryCacheValue<TFields extends Record<string, any>> =
   | Readonly<TFields>
   | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
-export type LocalMemoryCache<TFields extends Record<string, any>> = LRUCache<
-  string,
-  LocalMemoryCacheValue<TFields>
->;
+
+export interface ILocalMemoryCache<TFields extends Record<string, any>> {
+  get(key: string): LocalMemoryCacheValue<TFields> | undefined;
+  set(key: string, value: LocalMemoryCacheValue<TFields>): void;
+  delete(key: string): void;
+}
 
 export class GenericLocalMemoryCacher<
   TFields extends Record<string, any>,
@@ -26,27 +28,30 @@ export class GenericLocalMemoryCacher<
 {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
-    private readonly localMemoryCache: LocalMemoryCache<TFields>,
+    private readonly localMemoryCache: ILocalMemoryCache<TFields>,
   ) {}
 
-  static createLRUCache<TFields extends Record<string, any>>(
+  static createTTLCache<TFields extends Record<string, any>>(
     options: { maxSize?: number; ttlSeconds?: number } = {},
-  ): LocalMemoryCache<TFields> {
+  ): ILocalMemoryCache<TFields> {
     const DEFAULT_LRU_CACHE_MAX_AGE_SECONDS = 10;
     const DEFAULT_LRU_CACHE_SIZE = 10000;
     const maxAgeSeconds = options.ttlSeconds ?? DEFAULT_LRU_CACHE_MAX_AGE_SECONDS;
-    return new LRUCache<string, LocalMemoryCacheValue<TFields>>({
+    return new TTLCache<string, LocalMemoryCacheValue<TFields>>({
       max: options.maxSize ?? DEFAULT_LRU_CACHE_SIZE,
-      length: (value) => (value === DOES_NOT_EXIST_LOCAL_MEMORY_CACHE ? 0 : 1),
-      maxAge: maxAgeSeconds * 1000, // convert to ms
+      ttl: maxAgeSeconds * 1000, // convert to ms
+      updateAgeOnGet: true,
     });
   }
 
-  static createNoOpCache<TFields extends Record<string, any>>(): LocalMemoryCache<TFields> {
-    return new LRUCache<string, LocalMemoryCacheValue<TFields>>({
-      max: 0,
-      maxAge: -1,
-    });
+  static createNoOpCache<TFields extends Record<string, any>>(): ILocalMemoryCache<TFields> {
+    return {
+      get(_key: string): LocalMemoryCacheValue<TFields> | undefined {
+        return undefined;
+      },
+      set(_key: string, _value: LocalMemoryCacheValue<TFields>): void {},
+      delete(_key: string): void {},
+    };
   }
 
   public async loadManyAsync(
@@ -87,7 +92,7 @@ export class GenericLocalMemoryCacher<
 
   public async invalidateManyAsync(keys: readonly string[]): Promise<void> {
     for (const key of keys) {
-      this.localMemoryCache.del(key);
+      this.localMemoryCache.delete(key);
     }
   }
 

@@ -6,7 +6,7 @@ import {
   IEntityCacheAdapterProvider,
 } from '@expo/entity';
 
-import { GenericLocalMemoryCacher, LocalMemoryCache } from './GenericLocalMemoryCacher';
+import { GenericLocalMemoryCacher, ILocalMemoryCache } from './GenericLocalMemoryCacher';
 
 /**
  * Vends local memory cache adapters. An instance of this class may be shared across requests to
@@ -29,7 +29,7 @@ export class LocalMemoryCacheAdapterProvider implements IEntityCacheAdapterProvi
     options: { maxSize?: number; ttlSeconds?: number } = {},
   ): IEntityCacheAdapterProvider {
     return new LocalMemoryCacheAdapterProvider(<TFields extends Record<string, any>>() =>
-      GenericLocalMemoryCacher.createLRUCache<TFields>(options),
+      GenericLocalMemoryCacher.createTTLCache<TFields>(options),
     );
   }
 
@@ -41,7 +41,7 @@ export class LocalMemoryCacheAdapterProvider implements IEntityCacheAdapterProvi
   private constructor(
     private readonly localMemoryCacheCreator: <
       TFields extends Record<string, any>,
-    >() => LocalMemoryCache<TFields>,
+    >() => ILocalMemoryCache<TFields>,
   ) {}
 
   public getCacheAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(

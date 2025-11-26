@@ -1,7 +1,7 @@
 import { EntityConfiguration, GenericSecondaryEntityCache } from '@expo/entity';
 import {
   GenericLocalMemoryCacher,
-  LocalMemoryCache,
+  ILocalMemoryCache,
 } from '@expo/entity-cache-adapter-local-memory';
 
 /**
@@ -18,7 +18,7 @@ export class LocalMemorySecondaryEntityCache<
 > extends GenericSecondaryEntityCache<TFields, TIDField, TLoadParams> {
   constructor(
     entityConfiguration: EntityConfiguration<TFields, TIDField>,
-    localMemoryCache: LocalMemoryCache<TFields>,
+    localMemoryCache: ILocalMemoryCache<TFields>,
   ) {
     super(new GenericLocalMemoryCacher(entityConfiguration, localMemoryCache), (params) =>
       JSON.stringify(params),
