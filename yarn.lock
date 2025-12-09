@@ -2581,9 +2581,8 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
+    "@isaacs/ttlcache": "npm:^2.1.3"
     "@jest/globals": "npm:^30.2.0"
-    "@types/lru-cache": "npm:^5.1.1"
-    lru-cache: "npm:^6.0.0"
     typescript: "npm:^5.9.3"
   languageName: unknown
   linkType: soft
@@ -2683,6 +2682,7 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-local-memory": "workspace:^"
+    "@isaacs/ttlcache": "npm:^2.1.3"
     "@jest/globals": "npm:^30.0.1"
     nullthrows: "npm:^1.1.1"
     typescript: "npm:^5.9.3"
@@ -2885,6 +2885,13 @@ __metadata:
   version: 1.1.0
   resolution: "@isaacs/string-locale-compare@npm:1.1.0"
   checksum: 10c0/d67226ff7ac544a495c77df38187e69e0e3a0783724777f86caadafb306e2155dc3b5787d5927916ddd7fb4a53561ac8f705448ac3235d18ea60da5854829fdf
+  languageName: node
+  linkType: hard
+
+"@isaacs/ttlcache@npm:^2.1.3":
+  version: 2.1.3
+  resolution: "@isaacs/ttlcache@npm:2.1.3"
+  checksum: 10c0/3a8210d37a23e1a671297c2cd0f703303a39a1822e471a484fde5874828c57ce2cd730435ba12579f21e5b295ebaf66a72312d07511cacb8554006fab5e75b81
   languageName: node
   linkType: hard
 
@@ -4634,13 +4641,6 @@ __metadata:
   version: 4.0.2
   resolution: "@types/long@npm:4.0.2"
   checksum: 10c0/42ec66ade1f72ff9d143c5a519a65efc7c1c77be7b1ac5455c530ae9acd87baba065542f8847522af2e3ace2cc999f3ad464ef86e6b7352eece34daf88f8c924
-  languageName: node
-  linkType: hard
-
-"@types/lru-cache@npm:^5.1.1":
-  version: 5.1.1
-  resolution: "@types/lru-cache@npm:5.1.1"
-  checksum: 10c0/1f17ec9b202c01a89337cc5528198a690be6b61a6688242125fbfb7fa17770e453e00e4685021abf5ae605860ca0722209faac5c254b780d0104730bb0b9e354
   languageName: node
   linkType: hard
 
