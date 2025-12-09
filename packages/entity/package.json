@@ -36,7 +36,7 @@
     "@jest/globals": "^30.2.0",
     "@types/invariant": "^2.2.37",
     "@types/lodash": "^4.17.20",
-    "@types/node": "^20.19.1",
+    "@types/node": "^24.10.2",
     "@types/uuid": "^8.3.0",
     "lodash": "^4.17.21",
     "ts-mockito": "^2.6.1",
