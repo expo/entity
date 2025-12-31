@@ -40,9 +40,5 @@
   },
   "resolutions": {
     "collect-v8-coverage": "^1.0.3"
-  },
-  "volta": {
-    "node": "24.14.0"
-  },
-  "packageManager": "yarn@4.12.0"
+  }
 }

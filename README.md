@@ -79,6 +79,16 @@ Entity is not limited in where it can or should be used, but was designed for us
 
 Note: The entity framework instance should not be shared across multiple requests since it contains a unique memoized [Dataloader](https://github.com/graphql/dataloader#class-dataloader). A long-lived instance is prone to data synchronization issues, especially when the application is scaled horizontally and multiple shared caches would exist for the same data.
 
+## Contributing
+
+We control development tooling versions using [mise-en-place](https://mise.jdx.dev).  If you have it installed, then:
+
+- Running `mise run ci` will run all tests that our CI environment will run.
+- Running `mise t` will show a list of mise tasks you can run with `mise run <name>`.
+- Running `mise en .` will enter a shell environment which includes node and yarn.
+
+If you don't have `mise` installed, [you can install it](https://mise.jdx.dev/installing-mise.html#https-mise-run) as easily as running `curl https://mise.run/zsh | sh`.
+
 ## Releasing
 
 To release a new version:

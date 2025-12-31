@@ -3,6 +3,7 @@
   "extends": [
     "config:best-practices",
     ":pinOnlyDevDependencies",
+    "customManagers:githubActionsVersions",
     "helpers:pinGitHubActionDigestsToSemver"
   ],
   "packageRules": [
