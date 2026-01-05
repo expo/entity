@@ -1,6 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:best-practices",
+    ":pinOnlyDevDependencies",
+    "helpers:pinGitHubActionDigestsToSemver"
+  ],
+  "packageRules": [
+    {
+      "matchFileNames": [
+        "packages/entity-example/**",
+        "packages/entity-full-integration-tests/**"
+      ],
+      "extends": [ ":pinAllExceptPeerDependencies" ]
+    }
   ]
 }
