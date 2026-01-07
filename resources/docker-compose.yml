@@ -1,13 +1,13 @@
 version: '2'
 services:
   redis:
-    image: redis
+    image: redis@sha256:47200b04138293fae39737e50878a238b13ec0781083126b1b0c63cf5d992e8d
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
       - redis_data:/data
   postgres:
-    image: postgres:14
+    image: postgres:14@sha256:5fd97d3efae5e17da18b5884532f07c411330253e0a864d8895f176ab4ab0f90
     ports:
       - "${PGPORT}:5432"
     volumes:
