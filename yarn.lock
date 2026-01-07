@@ -224,7 +224,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@as-integrations/koa@npm:^1.1.1":
+"@as-integrations/koa@npm:1.1.1":
   version: 1.1.1
   resolution: "@as-integrations/koa@npm:1.1.1"
   peerDependencies:
@@ -303,6 +303,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/core@npm:7.28.5":
+  version: 7.28.5
+  resolution: "@babel/core@npm:7.28.5"
+  dependencies:
+    "@babel/code-frame": "npm:^7.27.1"
+    "@babel/generator": "npm:^7.28.5"
+    "@babel/helper-compilation-targets": "npm:^7.27.2"
+    "@babel/helper-module-transforms": "npm:^7.28.3"
+    "@babel/helpers": "npm:^7.28.4"
+    "@babel/parser": "npm:^7.28.5"
+    "@babel/template": "npm:^7.27.2"
+    "@babel/traverse": "npm:^7.28.5"
+    "@babel/types": "npm:^7.28.5"
+    "@jridgewell/remapping": "npm:^2.3.5"
+    convert-source-map: "npm:^2.0.0"
+    debug: "npm:^4.1.0"
+    gensync: "npm:^1.0.0-beta.2"
+    json5: "npm:^2.2.3"
+    semver: "npm:^6.3.1"
+  checksum: 10c0/535f82238027621da6bdffbdbe896ebad3558b311d6f8abc680637a9859b96edbf929ab010757055381570b29cf66c4a295b5618318d27a4273c0e2033925e72
+  languageName: node
+  linkType: hard
+
 "@babel/core@npm:^7.23.9":
   version: 7.24.6
   resolution: "@babel/core@npm:7.24.6"
@@ -369,29 +392,6 @@ __metadata:
     json5: "npm:^2.2.3"
     semver: "npm:^6.3.1"
   checksum: 10c0/d2d17b106a8d91d3eda754bb3f26b53a12eb7646df73c2b2d2e9b08d90529186bc69e3823f70a96ec6e5719dc2372fb54e14ad499da47ceeb172d2f7008787b5
-  languageName: node
-  linkType: hard
-
-"@babel/core@npm:^7.28.5":
-  version: 7.28.5
-  resolution: "@babel/core@npm:7.28.5"
-  dependencies:
-    "@babel/code-frame": "npm:^7.27.1"
-    "@babel/generator": "npm:^7.28.5"
-    "@babel/helper-compilation-targets": "npm:^7.27.2"
-    "@babel/helper-module-transforms": "npm:^7.28.3"
-    "@babel/helpers": "npm:^7.28.4"
-    "@babel/parser": "npm:^7.28.5"
-    "@babel/template": "npm:^7.27.2"
-    "@babel/traverse": "npm:^7.28.5"
-    "@babel/types": "npm:^7.28.5"
-    "@jridgewell/remapping": "npm:^2.3.5"
-    convert-source-map: "npm:^2.0.0"
-    debug: "npm:^4.1.0"
-    gensync: "npm:^1.0.0-beta.2"
-    json5: "npm:^2.2.3"
-    semver: "npm:^6.3.1"
-  checksum: 10c0/535f82238027621da6bdffbdbe896ebad3558b311d6f8abc680637a9859b96edbf929ab010757055381570b29cf66c4a295b5618318d27a4273c0e2033925e72
   languageName: node
   linkType: hard
 
@@ -2094,7 +2094,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.28.5":
+"@babel/preset-env@npm:7.28.5":
   version: 7.28.5
   resolution: "@babel/preset-env@npm:7.28.5"
   dependencies:
@@ -2200,6 +2200,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/preset-typescript@npm:7.28.5":
+  version: 7.28.5
+  resolution: "@babel/preset-typescript@npm:7.28.5"
+  dependencies:
+    "@babel/helper-plugin-utils": "npm:^7.27.1"
+    "@babel/helper-validator-option": "npm:^7.27.1"
+    "@babel/plugin-syntax-jsx": "npm:^7.27.1"
+    "@babel/plugin-transform-modules-commonjs": "npm:^7.27.1"
+    "@babel/plugin-transform-typescript": "npm:^7.28.5"
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 10c0/b3d55548854c105085dd80f638147aa8295bc186d70492289242d6c857cb03a6c61ec15186440ea10ed4a71cdde7d495f5eb3feda46273f36b0ac926e8409629
+  languageName: node
+  linkType: hard
+
 "@babel/preset-typescript@npm:^7.24.7":
   version: 7.26.0
   resolution: "@babel/preset-typescript@npm:7.26.0"
@@ -2212,21 +2227,6 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 10c0/20d86bc45d2bbfde2f84fc7d7b38746fa6481d4bde6643039ad4b1ff0b804c6d210ee43e6830effd8571f2ff43fa7ffd27369f42f2b3a2518bb92dc86c780c61
-  languageName: node
-  linkType: hard
-
-"@babel/preset-typescript@npm:^7.28.5":
-  version: 7.28.5
-  resolution: "@babel/preset-typescript@npm:7.28.5"
-  dependencies:
-    "@babel/helper-plugin-utils": "npm:^7.27.1"
-    "@babel/helper-validator-option": "npm:^7.27.1"
-    "@babel/plugin-syntax-jsx": "npm:^7.27.1"
-    "@babel/plugin-transform-modules-commonjs": "npm:^7.27.1"
-    "@babel/plugin-transform-typescript": "npm:^7.28.5"
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 10c0/b3d55548854c105085dd80f638147aa8295bc186d70492289242d6c857cb03a6c61ec15186440ea10ed4a71cdde7d495f5eb3feda46273f36b0ac926e8409629
   languageName: node
   linkType: hard
 
@@ -2568,7 +2568,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/batcher@npm:^1.0.0":
+"@expo/batcher@npm:1.0.0":
   version: 1.0.0
   resolution: "@expo/batcher@npm:1.0.0"
   checksum: 10c0/13026d1360753c31c646ff8050172a79b1787153212e5d6893dd240640674197ab300811ce835512de55d9ff5502e64c03f18f0b1dbefa74c15d571ec2331f24
@@ -2581,9 +2581,9 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
-    "@isaacs/ttlcache": "npm:^2.1.3"
-    "@jest/globals": "npm:^30.2.0"
-    typescript: "npm:^5.9.3"
+    "@isaacs/ttlcache": "npm:2.1.3"
+    "@jest/globals": "npm:30.2.0"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -2591,13 +2591,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@expo/entity-cache-adapter-redis@workspace:packages/entity-cache-adapter-redis"
   dependencies:
-    "@expo/batcher": "npm:^1.0.0"
+    "@expo/batcher": "npm:1.0.0"
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
-    "@jest/globals": "npm:^30.2.0"
-    ioredis: "npm:^5.8.2"
-    ts-mockito: "npm:^2.6.1"
-    typescript: "npm:^5.9.3"
+    "@jest/globals": "npm:30.2.0"
+    ioredis: "npm:5.8.2"
+    ts-mockito: "npm:2.6.1"
+    typescript: "npm:5.9.3"
   peerDependencies:
     ioredis: ">=5"
   languageName: unknown
@@ -2607,11 +2607,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@expo/entity-codemod@workspace:packages/entity-codemod"
   dependencies:
-    "@jest/globals": "npm:^30.2.0"
-    "@types/jscodeshift": "npm:^0.12.0"
-    "@types/node": "npm:^24.10.2"
-    jscodeshift: "npm:^17.3.0"
-    typescript: "npm:^5.9.3"
+    "@jest/globals": "npm:30.2.0"
+    "@types/jscodeshift": "npm:0.12.0"
+    "@types/node": "npm:24.10.2"
+    jscodeshift: "npm:17.3.0"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -2621,10 +2621,10 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
-    "@jest/globals": "npm:^30.2.0"
+    "@jest/globals": "npm:30.2.0"
     knex: "npm:^3.1.0"
     pg: "npm:8.16.3"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -2633,22 +2633,22 @@ __metadata:
   resolution: "@expo/entity-example@workspace:packages/entity-example"
   dependencies:
     "@apollo/server": "npm:^4.12.2"
-    "@as-integrations/koa": "npm:^1.1.1"
+    "@as-integrations/koa": "npm:1.1.1"
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
-    "@jest/globals": "npm:^30.2.0"
-    "@koa/cors": "npm:^5.0.0"
-    "@koa/router": "npm:^12.0.2"
-    "@types/koa": "npm:^2.15.0"
-    "@types/koa-bodyparser": "npm:^4.3.12"
-    "@types/koa__cors": "npm:^5.0.0"
-    "@types/koa__router": "npm:^12.0.4"
-    "@types/supertest": "npm:^2.0.10"
-    graphql: "npm:^16.11.0"
+    "@jest/globals": "npm:30.2.0"
+    "@koa/cors": "npm:5.0.0"
+    "@koa/router": "npm:12.0.2"
+    "@types/koa": "npm:2.15.0"
+    "@types/koa-bodyparser": "npm:4.3.12"
+    "@types/koa__cors": "npm:5.0.0"
+    "@types/koa__router": "npm:12.0.4"
+    "@types/supertest": "npm:2.0.12"
+    graphql: "npm:16.11.0"
     koa: "npm:^2.16.1"
-    koa-bodyparser: "npm:^4.4.1"
-    supertest: "npm:^4.0.2"
-    typescript: "npm:^5.9.3"
+    koa-bodyparser: "npm:4.4.1"
+    supertest: "npm:4.0.2"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -2659,8 +2659,8 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-redis": "workspace:^"
     "@expo/entity-database-adapter-knex": "workspace:^"
-    "@jest/globals": "npm:^30.2.0"
-    typescript: "npm:^5.9.3"
+    "@jest/globals": "npm:30.2.0"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -2670,9 +2670,9 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
-    "@jest/globals": "npm:^30.2.0"
+    "@jest/globals": "npm:30.2.0"
     ip-address: "npm:^10.1.0"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -2682,10 +2682,10 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-local-memory": "workspace:^"
-    "@isaacs/ttlcache": "npm:^2.1.3"
-    "@jest/globals": "npm:^30.0.1"
-    nullthrows: "npm:^1.1.1"
-    typescript: "npm:^5.9.3"
+    "@isaacs/ttlcache": "npm:2.1.3"
+    "@jest/globals": "npm:30.0.1"
+    nullthrows: "npm:1.1.1"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -2695,10 +2695,10 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-redis": "workspace:^"
-    "@jest/globals": "npm:^30.2.0"
-    ioredis: "npm:^5.8.2"
-    nullthrows: "npm:^1.1.1"
-    typescript: "npm:^5.9.3"
+    "@jest/globals": "npm:30.2.0"
+    ioredis: "npm:5.8.2"
+    nullthrows: "npm:1.1.1"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -2707,12 +2707,12 @@ __metadata:
   resolution: "@expo/entity-testing-utils@workspace:packages/entity-testing-utils"
   dependencies:
     "@expo/entity": "workspace:^"
-    "@jest/globals": "npm:^30.2.0"
-    "@types/lodash": "npm:^4.17.16"
-    "@types/node": "npm:^24.10.2"
+    "@jest/globals": "npm:30.2.0"
+    "@types/lodash": "npm:4.17.16"
+    "@types/node": "npm:24.10.2"
     lodash: "npm:^4.17.21"
     ts-mockito: "npm:^2.6.1"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:5.9.3"
   peerDependencies:
     "@jest/globals": "*"
   languageName: unknown
@@ -2723,19 +2723,19 @@ __metadata:
   resolution: "@expo/entity@workspace:packages/entity"
   dependencies:
     "@expo/results": "npm:^1.0.0"
-    "@jest/globals": "npm:^30.2.0"
-    "@types/invariant": "npm:^2.2.37"
-    "@types/lodash": "npm:^4.17.20"
-    "@types/node": "npm:^24.10.2"
-    "@types/uuid": "npm:^8.3.0"
+    "@jest/globals": "npm:30.2.0"
+    "@types/invariant": "npm:2.2.37"
+    "@types/lodash": "npm:4.17.20"
+    "@types/node": "npm:24.10.2"
+    "@types/uuid": "npm:8.3.4"
     dataloader: "npm:^2.2.3"
     es6-error: "npm:^4.1.1"
     invariant: "npm:^2.2.4"
-    lodash: "npm:^4.17.21"
-    ts-mockito: "npm:^2.6.1"
-    typescript: "npm:^5.9.3"
-    uuid: "npm:^8.3.0"
-    uuidv7: "npm:^1.0.0"
+    lodash: "npm:4.17.21"
+    ts-mockito: "npm:2.6.1"
+    typescript: "npm:5.9.3"
+    uuid: "npm:8.3.2"
+    uuidv7: "npm:1.0.0"
   languageName: unknown
   linkType: soft
 
@@ -2888,7 +2888,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@isaacs/ttlcache@npm:^2.1.3":
+"@isaacs/ttlcache@npm:2.1.3":
   version: 2.1.3
   resolution: "@isaacs/ttlcache@npm:2.1.3"
   checksum: 10c0/3a8210d37a23e1a671297c2cd0f703303a39a1822e471a484fde5874828c57ce2cd730435ba12579f21e5b295ebaf66a72312d07511cacb8554006fab5e75b81
@@ -3081,19 +3081,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/globals@npm:30.2.0, @jest/globals@npm:^30.2.0":
-  version: 30.2.0
-  resolution: "@jest/globals@npm:30.2.0"
-  dependencies:
-    "@jest/environment": "npm:30.2.0"
-    "@jest/expect": "npm:30.2.0"
-    "@jest/types": "npm:30.2.0"
-    jest-mock: "npm:30.2.0"
-  checksum: 10c0/7433a501e3122e94b24a7bacc44fdc3921b20abf67c9d795f5bdd169f1beac058cff8109e4fddf71fdc8b18e532cb88c55412ca9927966f354930d6bb3fcaf9c
-  languageName: node
-  linkType: hard
-
-"@jest/globals@npm:^30.0.1":
+"@jest/globals@npm:30.0.1":
   version: 30.0.1
   resolution: "@jest/globals@npm:30.0.1"
   dependencies:
@@ -3102,6 +3090,18 @@ __metadata:
     "@jest/types": "npm:30.0.1"
     jest-mock: "npm:30.0.1"
   checksum: 10c0/cded2c1d3032f30744b9ce3467c27f7de45786780a31b04ca59ae2862546c14a80b34c6d567868b95a03af6d9db67554a126a78768ea0d43bbc15b97890c3b94
+  languageName: node
+  linkType: hard
+
+"@jest/globals@npm:30.2.0":
+  version: 30.2.0
+  resolution: "@jest/globals@npm:30.2.0"
+  dependencies:
+    "@jest/environment": "npm:30.2.0"
+    "@jest/expect": "npm:30.2.0"
+    "@jest/types": "npm:30.2.0"
+    jest-mock: "npm:30.2.0"
+  checksum: 10c0/7433a501e3122e94b24a7bacc44fdc3921b20abf67c9d795f5bdd169f1beac058cff8109e4fddf71fdc8b18e532cb88c55412ca9927966f354930d6bb3fcaf9c
   languageName: node
   linkType: hard
 
@@ -3434,7 +3434,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@koa/cors@npm:^5.0.0":
+"@koa/cors@npm:5.0.0":
   version: 5.0.0
   resolution: "@koa/cors@npm:5.0.0"
   dependencies:
@@ -3443,7 +3443,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@koa/router@npm:^12.0.2":
+"@koa/router@npm:12.0.2":
   version: 12.0.2
   resolution: "@koa/router@npm:12.0.2"
   dependencies:
@@ -4289,14 +4289,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node24@npm:^24.0.3":
+"@tsconfig/node24@npm:24.0.3":
   version: 24.0.3
   resolution: "@tsconfig/node24@npm:24.0.3"
   checksum: 10c0/68068b503774450d533dda769785356c5722bdc6a3333646fcbcb265e02aafb6d0784619ed85de6d62414df20483428b25bf3d608955ca40b085fb1f12cc26c4
   languageName: node
   linkType: hard
 
-"@tsconfig/strictest@npm:^2.0.7":
+"@tsconfig/strictest@npm:2.0.7":
   version: 2.0.7
   resolution: "@tsconfig/strictest@npm:2.0.7"
   checksum: 10c0/5122ced742f7271fbc423182d40ade0264c7ef5acd517eb892a4aa2ea74bc0e4fa874931c4a8f271275913b2d289ae20bcc8cd9e355b38dfacd03d475a2c19f3
@@ -4338,7 +4338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/babel__core@npm:^7.20.5":
+"@types/babel__core@npm:7.20.5, @types/babel__core@npm:^7.20.5":
   version: 7.20.5
   resolution: "@types/babel__core@npm:7.20.5"
   dependencies:
@@ -4360,7 +4360,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/babel__preset-env@npm:^7.10.0":
+"@types/babel__preset-env@npm:7.10.0":
   version: 7.10.0
   resolution: "@types/babel__preset-env@npm:7.10.0"
   checksum: 10c0/5ad0c3a8bec4f7612ee8aeecb4ee94494d3bc193f6da608cd118175e726bb2cf649515aded650defb968bfae4ec6e6c52c0c06fc83be261c0b8eaa3f8f2cf336
@@ -4485,7 +4485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/invariant@npm:^2.2.37":
+"@types/invariant@npm:2.2.37":
   version: 2.2.37
   resolution: "@types/invariant@npm:2.2.37"
   checksum: 10c0/f57ed8445036ebda8bc93804f088c2a13050bbeef4e4bc6ed531a70e2869250dbe59413f2a9ed7d8f3efa960f191e8dfca9d25414d63cbf604d348428f8c5b75
@@ -4524,7 +4524,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jscodeshift@npm:^0.12.0":
+"@types/jscodeshift@npm:0.12.0":
   version: 0.12.0
   resolution: "@types/jscodeshift@npm:0.12.0"
   dependencies:
@@ -4555,7 +4555,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-bodyparser@npm:^4.3.12":
+"@types/koa-bodyparser@npm:4.3.12":
   version: 4.3.12
   resolution: "@types/koa-bodyparser@npm:4.3.12"
   dependencies:
@@ -4589,7 +4589,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa@npm:^2.15.0":
+"@types/koa@npm:2.15.0":
   version: 2.15.0
   resolution: "@types/koa@npm:2.15.0"
   dependencies:
@@ -4605,7 +4605,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa__cors@npm:^5.0.0":
+"@types/koa__cors@npm:5.0.0":
   version: 5.0.0
   resolution: "@types/koa__cors@npm:5.0.0"
   dependencies:
@@ -4614,7 +4614,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa__router@npm:^12.0.4":
+"@types/koa__router@npm:12.0.4":
   version: 12.0.4
   resolution: "@types/koa__router@npm:12.0.4"
   dependencies:
@@ -4623,14 +4623,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.17.16":
+"@types/lodash@npm:4.17.16":
   version: 4.17.16
   resolution: "@types/lodash@npm:4.17.16"
   checksum: 10c0/cf017901b8ab1d7aabc86d5189d9288f4f99f19a75caf020c0e2c77b8d4cead4db0d0b842d009b029339f92399f49f34377dd7c2721053388f251778b4c23534
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.17.20":
+"@types/lodash@npm:4.17.20":
   version: 4.17.20
   resolution: "@types/lodash@npm:4.17.20"
   checksum: 10c0/98cdd0faae22cbb8079a01a3bb65aa8f8c41143367486c1cbf5adc83f16c9272a2a5d2c1f541f61d0d73da543c16ee1d21cf2ef86cb93cd0cc0ac3bced6dd88f
@@ -4682,7 +4682,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.10.2":
+"@types/node@npm:24.10.2":
   version: 24.10.2
   resolution: "@types/node@npm:24.10.2"
   dependencies:
@@ -4749,7 +4749,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/supertest@npm:^2.0.10":
+"@types/supertest@npm:2.0.12":
   version: 2.0.12
   resolution: "@types/supertest@npm:2.0.12"
   dependencies:
@@ -4765,7 +4765,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^8.3.0":
+"@types/uuid@npm:8.3.4":
   version: 8.3.4
   resolution: "@types/uuid@npm:8.3.4"
   checksum: 10c0/b9ac98f82fcf35962317ef7dc44d9ac9e0f6fdb68121d384c88fe12ea318487d5585d3480fa003cf28be86a3bbe213ca688ba786601dce4a97724765eb5b1cf2
@@ -6752,7 +6752,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ctix@npm:^2.7.1":
+"ctix@npm:2.7.1":
   version: 2.7.1
   resolution: "ctix@npm:2.7.1"
   dependencies:
@@ -7552,7 +7552,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-universe@npm:^15.0.3":
+"eslint-config-universe@npm:15.0.3":
   version: 15.0.3
   resolution: "eslint-config-universe@npm:15.0.3"
   dependencies:
@@ -7746,7 +7746,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-tsdoc@npm:^0.5.0":
+"eslint-plugin-tsdoc@npm:0.5.0":
   version: 0.5.0
   resolution: "eslint-plugin-tsdoc@npm:0.5.0"
   dependencies:
@@ -7797,7 +7797,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.29.0":
+"eslint@npm:9.29.0":
   version: 9.29.0
   resolution: "eslint@npm:9.29.0"
   dependencies:
@@ -8822,7 +8822,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:^16.11.0":
+"graphql@npm:16.11.0":
   version: 16.11.0
   resolution: "graphql@npm:16.11.0"
   checksum: 10c0/124da7860a2292e9acf2fed0c71fc0f6a9b9ca865d390d112bdd563c1f474357141501c12891f4164fe984315764736ad67f705219c62f7580681d431a85db88
@@ -9311,7 +9311,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis@npm:^5.8.2":
+"ioredis@npm:5.8.2":
   version: 5.8.2
   resolution: "ioredis@npm:5.8.2"
   dependencies:
@@ -10431,7 +10431,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^30.2.0":
+"jest@npm:30.2.0":
   version: 30.2.0
   resolution: "jest@npm:30.2.0"
   dependencies:
@@ -10494,7 +10494,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jscodeshift@npm:^17.3.0":
+"jscodeshift@npm:17.3.0":
   version: 17.3.0
   resolution: "jscodeshift@npm:17.3.0"
   dependencies:
@@ -10761,7 +10761,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-bodyparser@npm:^4.4.1":
+"koa-bodyparser@npm:4.4.1":
   version: 4.4.1
   resolution: "koa-bodyparser@npm:4.4.1"
   dependencies:
@@ -10820,7 +10820,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lerna@npm:^8.2.2":
+"lerna@npm:8.2.2":
   version: 8.2.2
   resolution: "lerna@npm:8.2.2"
   dependencies:
@@ -11080,7 +11080,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.21, lodash@npm:^4.17.5":
+"lodash@npm:4.17.21, lodash@npm:^4.17.21, lodash@npm:^4.17.5":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 10c0/d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c
@@ -12015,7 +12015,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nullthrows@npm:^1.1.1":
+"nullthrows@npm:1.1.1":
   version: 1.1.1
   resolution: "nullthrows@npm:1.1.1"
   checksum: 10c0/56f34bd7c3dcb3bd23481a277fa22918120459d3e9d95ca72976c72e9cac33a97483f0b95fc420e2eb546b9fe6db398273aba9a938650cdb8c98ee8f159dcb30
@@ -12927,7 +12927,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-organize-imports@npm:^4.3.0":
+"prettier-plugin-organize-imports@npm:4.3.0":
   version: 4.3.0
   resolution: "prettier-plugin-organize-imports@npm:4.3.0"
   peerDependencies:
@@ -12941,7 +12941,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.6.2":
+"prettier@npm:3.6.2":
   version: 3.6.2
   resolution: "prettier@npm:3.6.2"
   bin:
@@ -13659,24 +13659,24 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root@workspace:."
   dependencies:
-    "@babel/core": "npm:^7.28.5"
-    "@babel/preset-env": "npm:^7.28.5"
-    "@babel/preset-typescript": "npm:^7.28.5"
-    "@tsconfig/node24": "npm:^24.0.3"
-    "@tsconfig/strictest": "npm:^2.0.7"
-    "@types/babel__core": "npm:^7.20.5"
-    "@types/babel__preset-env": "npm:^7.10.0"
-    "@types/node": "npm:^24.10.2"
-    ctix: "npm:^2.7.1"
-    eslint: "npm:^9.29.0"
-    eslint-config-universe: "npm:^15.0.3"
-    eslint-plugin-tsdoc: "npm:^0.5.0"
-    jest: "npm:^30.2.0"
-    lerna: "npm:^8.2.2"
-    prettier: "npm:^3.6.2"
-    prettier-plugin-organize-imports: "npm:^4.3.0"
-    typedoc: "npm:^0.28.14"
-    typescript: "npm:^5.9.3"
+    "@babel/core": "npm:7.28.5"
+    "@babel/preset-env": "npm:7.28.5"
+    "@babel/preset-typescript": "npm:7.28.5"
+    "@tsconfig/node24": "npm:24.0.3"
+    "@tsconfig/strictest": "npm:2.0.7"
+    "@types/babel__core": "npm:7.20.5"
+    "@types/babel__preset-env": "npm:7.10.0"
+    "@types/node": "npm:24.10.2"
+    ctix: "npm:2.7.1"
+    eslint: "npm:9.29.0"
+    eslint-config-universe: "npm:15.0.3"
+    eslint-plugin-tsdoc: "npm:0.5.0"
+    jest: "npm:30.2.0"
+    lerna: "npm:8.2.2"
+    prettier: "npm:3.6.2"
+    prettier-plugin-organize-imports: "npm:4.3.0"
+    typedoc: "npm:0.28.14"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -14477,7 +14477,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supertest@npm:^4.0.2":
+"supertest@npm:4.0.2":
   version: 4.0.2
   resolution: "supertest@npm:4.0.2"
   dependencies:
@@ -14767,7 +14767,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-mockito@npm:^2.6.1":
+"ts-mockito@npm:2.6.1, ts-mockito@npm:^2.6.1":
   version: 2.6.1
   resolution: "ts-mockito@npm:2.6.1"
   dependencies:
@@ -14997,7 +14997,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:^0.28.14":
+"typedoc@npm:0.28.14":
   version: 0.28.14
   resolution: "typedoc@npm:0.28.14"
   dependencies:
@@ -15014,6 +15014,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:5.9.3":
+  version: 5.9.3
+  resolution: "typescript@npm:5.9.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/6bd7552ce39f97e711db5aa048f6f9995b53f1c52f7d8667c1abdc1700c68a76a308f579cd309ce6b53646deb4e9a1be7c813a93baaf0a28ccd536a30270e1c5
+  languageName: node
+  linkType: hard
+
 "typescript@npm:>=3 < 6":
   version: 5.7.3
   resolution: "typescript@npm:5.7.3"
@@ -15024,13 +15034,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.9.3":
+"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>":
   version: 5.9.3
-  resolution: "typescript@npm:5.9.3"
+  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/6bd7552ce39f97e711db5aa048f6f9995b53f1c52f7d8667c1abdc1700c68a76a308f579cd309ce6b53646deb4e9a1be7c813a93baaf0a28ccd536a30270e1c5
+  checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
   languageName: node
   linkType: hard
 
@@ -15041,16 +15051,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/6fd7e0ed3bf23a81246878c613423730c40e8bdbfec4c6e4d7bf1b847cbb39076e56ad5f50aa9d7ebd89877999abaee216002d3f2818885e41c907caaa192cc4
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^5.9.3#optional!builtin<compat/typescript>":
-  version: 5.9.3
-  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
   languageName: node
   linkType: hard
 
@@ -15334,21 +15334,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uuid@npm:8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 10c0/bcbb807a917d374a49f475fae2e87fdca7da5e5530820ef53f65ba1d12131bd81a92ecf259cc7ce317cbe0f289e7d79fdfebcef9bfa3087c8c8a2fa304c9be54
+  languageName: node
+  linkType: hard
+
 "uuid@npm:^10.0.0":
   version: 10.0.0
   resolution: "uuid@npm:10.0.0"
   bin:
     uuid: dist/bin/uuid
   checksum: 10c0/eab18c27fe4ab9fb9709a5d5f40119b45f2ec8314f8d4cf12ce27e4c6f4ffa4a6321dc7db6c515068fa373c075b49691ba969f0010bf37f44c37ca40cd6bf7fe
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^8.3.0":
-  version: 8.3.2
-  resolution: "uuid@npm:8.3.2"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 10c0/bcbb807a917d374a49f475fae2e87fdca7da5e5530820ef53f65ba1d12131bd81a92ecf259cc7ce317cbe0f289e7d79fdfebcef9bfa3087c8c8a2fa304c9be54
   languageName: node
   linkType: hard
 
@@ -15361,7 +15361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuidv7@npm:^1.0.0":
+"uuidv7@npm:1.0.0":
   version: 1.0.0
   resolution: "uuidv7@npm:1.0.0"
   bin:

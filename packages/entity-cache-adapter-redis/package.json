@@ -34,11 +34,11 @@
     "ioredis": ">=5"
   },
   "devDependencies": {
-    "@expo/batcher": "^1.0.0",
+    "@expo/batcher": "1.0.0",
     "@expo/entity-testing-utils": "workspace:^",
-    "@jest/globals": "^30.2.0",
-    "ioredis": "^5.8.2",
-    "ts-mockito": "^2.6.1",
-    "typescript": "^5.9.3"
+    "@jest/globals": "30.2.0",
+    "ioredis": "5.8.2",
+    "ts-mockito": "2.6.1",
+    "typescript": "5.9.3"
   }
 }
