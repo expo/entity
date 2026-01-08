@@ -114,8 +114,9 @@ export interface QuerySelectionModifiers<TFields extends Record<string, any>> {
   limit?: number;
 }
 
-export interface QuerySelectionModifiersWithOrderByRaw<TFields extends Record<string, any>>
-  extends QuerySelectionModifiers<TFields> {
+export interface QuerySelectionModifiersWithOrderByRaw<
+  TFields extends Record<string, any>,
+> extends QuerySelectionModifiers<TFields> {
   /**
    * Order the entities by a raw SQL `ORDER BY` clause.
    */

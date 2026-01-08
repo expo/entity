@@ -32,14 +32,12 @@ export type SerializedCompositeFieldHolder = string & {
 export class CompositeFieldHolder<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
-> implements
-    IEntityLoadKey<
-      TFields,
-      TIDField,
-      SerializedCompositeFieldValueHolder,
-      CompositeFieldValueHolder<TFields, EntityCompositeField<TFields>>
-    >
-{
+> implements IEntityLoadKey<
+  TFields,
+  TIDField,
+  SerializedCompositeFieldValueHolder,
+  CompositeFieldValueHolder<TFields, EntityCompositeField<TFields>>
+> {
   public readonly compositeField: EntityCompositeField<TFields>;
 
   constructor(compositeFieldInput: EntityCompositeField<TFields>) {
@@ -174,8 +172,7 @@ export type SerializedCompositeFieldValueHolder = string & {
 export class CompositeFieldValueHolder<
   TFields extends Record<string, any>,
   TCompositeField extends EntityCompositeField<TFields>,
-> implements IEntityLoadValue<SerializedCompositeFieldValueHolder>
-{
+> implements IEntityLoadValue<SerializedCompositeFieldValueHolder> {
   constructor(
     public readonly compositeFieldValue: EntityCompositeFieldValue<TFields, TCompositeField>,
   ) {}

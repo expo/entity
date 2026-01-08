@@ -5,9 +5,10 @@ import { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
 /**
  * A ISecondaryEntityCache that composes other ISecondaryEntityCache instances.
  */
-export class ComposedSecondaryEntityCache<TLoadParams, TFields extends Record<string, any>>
-  implements ISecondaryEntityCache<TFields, TLoadParams>
-{
+export class ComposedSecondaryEntityCache<
+  TLoadParams,
+  TFields extends Record<string, any>,
+> implements ISecondaryEntityCache<TFields, TLoadParams> {
   /**
    * @param secondaryEntityCaches - list of caches to compose in order of precedence.
    *                                Earlier caches are read from first and written to (including invalidations) last.

@@ -10,8 +10,7 @@ import { CacheLoadResult, CacheStatus } from './internal/ReadThroughEntityCache'
 export class ComposedEntityCacheAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
-> implements IEntityCacheAdapter<TFields, TIDField>
-{
+> implements IEntityCacheAdapter<TFields, TIDField> {
   /**
    * @param cacheAdapters - list of cache adapters to compose in order of precedence.
    *                        Earlier cache adapters are read from first and written to (including invalidations) last.

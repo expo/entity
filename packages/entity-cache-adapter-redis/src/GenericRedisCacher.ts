@@ -113,9 +113,10 @@ export interface GenericRedisCacheContext {
   invalidationConfig: GenericRedisCacheInvalidationConfig;
 }
 
-export class GenericRedisCacher<TFields extends Record<string, any>, TIDField extends keyof TFields>
-  implements IEntityGenericCacher<TFields, TIDField>
-{
+export class GenericRedisCacher<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> implements IEntityGenericCacher<TFields, TIDField> {
   constructor(
     private readonly context: GenericRedisCacheContext,
     private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
