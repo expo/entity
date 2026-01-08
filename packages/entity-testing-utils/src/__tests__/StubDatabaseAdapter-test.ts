@@ -8,6 +8,7 @@ import {
 } from '@expo/entity';
 import { describe, expect, it, jest } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
+import { validate, version } from 'uuid';
 
 import { StubDatabaseAdapter } from '../StubDatabaseAdapter';
 import {
@@ -23,6 +24,12 @@ import {
   NumberKeyFields,
   numberKeyEntityConfiguration,
 } from '../__testfixtures__/TestEntityNumberKey';
+
+// uuid keeps state internally for v7 generation, so we fix the time for all tests for consistent test results
+const expectedTime = new Date('2024-06-03T20:16:33.761Z');
+jest.useFakeTimers({
+  now: expectedTime,
+});
 
 describe(StubDatabaseAdapter, () => {
   describe('fetchManyWhereAsync', () => {
@@ -362,12 +369,6 @@ describe(StubDatabaseAdapter, () => {
     });
 
     it('inserts a record with valid v7 id', async () => {
-      const expectedTime = new Date('2024-06-03T20:16:33.761Z');
-
-      jest.useFakeTimers({
-        now: expectedTime,
-      });
-
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
@@ -587,15 +588,13 @@ describe(StubDatabaseAdapter, () => {
   });
 });
 
-const UUIDV7_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
 /**
  * Returns the Date object encoded in the first 48 bits of the given UUIDv7.
  * @throws TypeError if the UUID is not version 7
  */
 function getTimeFromUUIDv7(uuid: string): Date {
-  if (!UUIDV7_REGEX.test(uuid)) {
-    throw new TypeError(`UUID must be version 7 to get its timestamp`);
+  if (!(validate(uuid) && version(uuid) === 7)) {
+    throw new TypeError(`Invalid UUID: ${uuid}`);
   }
 
   // The first 48 bits = 12 hex characters of the UUID encode the timestamp in big endian
