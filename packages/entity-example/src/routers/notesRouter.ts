@@ -54,7 +54,7 @@ router.post('/', async (ctx) => {
     return;
   }
 
-  const { title, body } = ctx.request.body as any;
+  const { title, body } = ctx.request.body;
 
   const createResult = await NoteEntity.creatorWithAuthorizationResults(viewerContext)
     .setField('userID', viewerContext.userID)
@@ -73,7 +73,7 @@ router.post('/', async (ctx) => {
 
 router.put('/:id', async (ctx) => {
   const viewerContext = ctx.state.viewerContext;
-  const { title, body } = ctx.request.body as any;
+  const { title, body } = ctx.request.body;
 
   const noteLoadResult = await NoteEntity.loaderWithAuthorizationResults(
     viewerContext,

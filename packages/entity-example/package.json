@@ -22,24 +22,23 @@
   "author": "Expo",
   "license": "MIT",
   "dependencies": {
-    "@apollo/server": "4.12.2",
+    "@apollo/server": "5.2.0",
     "@as-integrations/koa": "1.1.1",
     "@expo/entity": "workspace:^",
     "@expo/entity-testing-utils": "workspace:^",
+    "@koa/bodyparser": "^6.0.0",
     "@koa/cors": "5.0.0",
-    "@koa/router": "12.0.2",
-    "graphql": "16.11.0",
-    "koa": "2.16.3",
-    "koa-bodyparser": "4.4.1"
+    "@koa/router": "15.2.0",
+    "graphql": "16.12.0",
+    "koa": "3.1.1"
   },
   "devDependencies": {
     "@jest/globals": "30.2.0",
-    "@types/koa": "2.15.0",
-    "@types/koa-bodyparser": "4.3.12",
-    "@types/koa__cors": "5.0.0",
-    "@types/koa__router": "12.0.4",
+    "@types/koa": "3.0.1",
+    "@types/koa__cors": "5.0.1",
+    "@types/koa__router": "12.0.5",
     "@types/supertest": "2.0.12",
-    "supertest": "4.0.2",
+    "supertest": "7.2.2",
     "typescript": "5.9.3"
   }
 }

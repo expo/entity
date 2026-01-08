@@ -1,10 +1,10 @@
 import { ApolloServer } from '@apollo/server';
 import { koaMiddleware } from '@as-integrations/koa';
 import { EntityCompanionProvider } from '@expo/entity';
+import { bodyParser } from '@koa/bodyparser';
 import cors from '@koa/cors';
 import Router from '@koa/router';
 import Koa from 'koa';
-import bodyParser from 'koa-bodyparser';
 
 import { entityCompanionMiddleware, viewerContextMiddleware } from './middleware.ts';
 import { notesRouter } from './routers/notesRouter.ts';
