@@ -2640,7 +2640,7 @@ __metadata:
     "@koa/cors": "npm:5.0.0"
     "@koa/router": "npm:12.0.2"
     "@types/koa": "npm:2.15.0"
-    "@types/koa-bodyparser": "npm:4.3.12"
+    "@types/koa-bodyparser": "npm:4.3.13"
     "@types/koa__cors": "npm:5.0.0"
     "@types/koa__router": "npm:12.0.4"
     "@types/supertest": "npm:2.0.12"
@@ -4555,12 +4555,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-bodyparser@npm:4.3.12":
-  version: 4.3.12
-  resolution: "@types/koa-bodyparser@npm:4.3.12"
+"@types/koa-bodyparser@npm:4.3.13":
+  version: 4.3.13
+  resolution: "@types/koa-bodyparser@npm:4.3.13"
   dependencies:
     "@types/koa": "npm:*"
-  checksum: 10c0/1484ad4a24feff23e08d39d243ad80321ab0a42aef355ca8bbedecda85f9778b446d75d8e2ff511d8ad08afa3b473f513debc627b4e0053e9abe950c9e42d1e4
+  checksum: 10c0/b29f9b3a6a03050f51b087ab8eeb15b0fc0322c374a23e8ab3005a0fd1cc7dba129a472ce42eebda739e604409eb15304be639c3adaf0a57b2b0b3c4407a3151
   languageName: node
   linkType: hard
 
