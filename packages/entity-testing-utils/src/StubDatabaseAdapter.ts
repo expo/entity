@@ -14,7 +14,7 @@ import {
   transformFieldsToDatabaseObject,
 } from '@expo/entity';
 import invariant from 'invariant';
-import { uuidv7 } from 'uuidv7';
+import { v7 as uuidv7 } from 'uuid';
 
 export class StubDatabaseAdapter<
   TFields extends Record<string, any>,

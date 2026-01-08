@@ -1,5 +1,5 @@
 import invariant from 'invariant';
-import { uuidv7 } from 'uuidv7';
+import { v7 as uuidv7 } from 'uuid';
 
 import { EntityConfiguration } from '../../EntityConfiguration';
 import {

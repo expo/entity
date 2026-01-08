@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from '@jest/globals';
-import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5 } from 'uuid';
+import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5, v7 as uuidv7 } from 'uuid';
 
 import { EntityFieldDefinition } from '../EntityFieldDefinition';
 import {
@@ -58,13 +58,7 @@ describe(EntityFieldDefinition, () => {
 describeFieldTestCase(new StringField({ columnName: 'wat' }), ['hello', ''], [1, true, {}, [[]]]);
 describeFieldTestCase(
   new UUIDField({ columnName: 'wat' }),
-  [
-    uuidv1(),
-    uuidv3('wat', uuidv3.DNS),
-    uuidv4(),
-    uuidv5('wat', uuidv5.DNS),
-    /* UUIDv7 */ '018ebfda-dc80-782d-a891-22a0aa057d52',
-  ],
+  [uuidv1(), uuidv3('wat', uuidv3.DNS), uuidv4(), uuidv5('wat', uuidv5.DNS), uuidv7()],
   [uuidv4().replace('-', ''), '', 'hello', uuidv4().toUpperCase()],
 );
 describeFieldTestCase(new DateField({ columnName: 'wat' }), [new Date()], [Date.now()]);
