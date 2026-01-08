@@ -2703,7 +2703,7 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@jest/globals": "npm:30.2.0"
-    "@types/lodash": "npm:4.17.16"
+    "@types/lodash": "npm:4.17.21"
     "@types/node": "npm:24.10.2"
     lodash: "npm:^4.17.21"
     ts-mockito: "npm:^2.6.1"
@@ -2720,7 +2720,7 @@ __metadata:
     "@expo/results": "npm:^1.0.0"
     "@jest/globals": "npm:30.2.0"
     "@types/invariant": "npm:2.2.37"
-    "@types/lodash": "npm:4.17.20"
+    "@types/lodash": "npm:4.17.21"
     "@types/node": "npm:24.10.2"
     "@types/uuid": "npm:8.3.4"
     dataloader: "npm:^2.2.3"
@@ -4668,17 +4668,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.17.16":
-  version: 4.17.16
-  resolution: "@types/lodash@npm:4.17.16"
-  checksum: 10c0/cf017901b8ab1d7aabc86d5189d9288f4f99f19a75caf020c0e2c77b8d4cead4db0d0b842d009b029339f92399f49f34377dd7c2721053388f251778b4c23534
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:4.17.20":
-  version: 4.17.20
-  resolution: "@types/lodash@npm:4.17.20"
-  checksum: 10c0/98cdd0faae22cbb8079a01a3bb65aa8f8c41143367486c1cbf5adc83f16c9272a2a5d2c1f541f61d0d73da543c16ee1d21cf2ef86cb93cd0cc0ac3bced6dd88f
+"@types/lodash@npm:4.17.21":
+  version: 4.17.21
+  resolution: "@types/lodash@npm:4.17.21"
+  checksum: 10c0/73cb006e047d8871e9d63f3a165543bf16c44a5b6fe3f9f6299e37cb8d67a7b1d55ac730959a81f9def510fd07232ff7e30e05413e5d5a12793baad84ebe36c3
   languageName: node
   linkType: hard
 
