@@ -61,7 +61,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:^4.12.2":
+"@apollo/server@npm:4.12.2":
   version: 4.12.2
   resolution: "@apollo/server@npm:4.12.2"
   dependencies:
@@ -2632,7 +2632,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@expo/entity-example@workspace:packages/entity-example"
   dependencies:
-    "@apollo/server": "npm:^4.12.2"
+    "@apollo/server": "npm:4.12.2"
     "@as-integrations/koa": "npm:1.1.1"
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
