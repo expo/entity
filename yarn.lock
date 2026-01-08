@@ -2641,7 +2641,7 @@ __metadata:
     "@koa/router": "npm:12.0.2"
     "@types/koa": "npm:2.15.0"
     "@types/koa-bodyparser": "npm:4.3.12"
-    "@types/koa__cors": "npm:5.0.0"
+    "@types/koa__cors": "npm:5.0.1"
     "@types/koa__router": "npm:12.0.4"
     "@types/supertest": "npm:2.0.12"
     graphql: "npm:16.11.0"
@@ -4605,12 +4605,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa__cors@npm:5.0.0":
-  version: 5.0.0
-  resolution: "@types/koa__cors@npm:5.0.0"
+"@types/koa__cors@npm:5.0.1":
+  version: 5.0.1
+  resolution: "@types/koa__cors@npm:5.0.1"
   dependencies:
     "@types/koa": "npm:*"
-  checksum: 10c0/2392b4ad63b8f730fee49f5c2104602613e77cac8e5aaac42cd74c60107563ad6e1194422b565519462eb5358746f59f19f5e890896494f7e7de1ac71566bbb2
+  checksum: 10c0/0aaf9348629b9127436e12ec740dcf5ccf4f5c6ed2451ab14c722c0a49c9b8194f71106f74097948da6658917249001b9832b16c6f22e4bffda5cf4d9ce2b973
   languageName: node
   linkType: hard
 
