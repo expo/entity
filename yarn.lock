@@ -2730,7 +2730,7 @@ __metadata:
     ts-mockito: "npm:2.6.1"
     typescript: "npm:5.9.3"
     uuid: "npm:8.3.2"
-    uuidv7: "npm:1.0.0"
+    uuidv7: "npm:1.1.0"
   languageName: unknown
   linkType: soft
 
@@ -15239,12 +15239,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuidv7@npm:1.0.0":
-  version: 1.0.0
-  resolution: "uuidv7@npm:1.0.0"
+"uuidv7@npm:1.1.0":
+  version: 1.1.0
+  resolution: "uuidv7@npm:1.1.0"
   bin:
     uuidv7: cli.js
-  checksum: 10c0/be75f313803b112d62134eb91ec0bb0cb9239f766678c74f41ca99e6f5e71306cb9039c32d68744e25b4638c7353541c0baae945d129aeeff24224d91a1ef032
+  checksum: 10c0/eceeb6cd682e323f14778cda6f221ebfafc339cd8bf8032a905b367cec547bffd5c717a60e956891525066c9a45f44fbe7688c269d1f95773ab940a212f1319c
   languageName: node
   linkType: hard
 
