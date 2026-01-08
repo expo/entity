@@ -2608,7 +2608,7 @@ __metadata:
   resolution: "@expo/entity-codemod@workspace:packages/entity-codemod"
   dependencies:
     "@jest/globals": "npm:30.2.0"
-    "@types/jscodeshift": "npm:0.12.0"
+    "@types/jscodeshift": "npm:17.3.0"
     "@types/node": "npm:24.10.2"
     jscodeshift: "npm:17.3.0"
     typescript: "npm:5.9.3"
@@ -4459,13 +4459,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jscodeshift@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@types/jscodeshift@npm:0.12.0"
+"@types/jscodeshift@npm:17.3.0":
+  version: 17.3.0
+  resolution: "@types/jscodeshift@npm:17.3.0"
   dependencies:
-    ast-types: "npm:^0.14.1"
-    recast: "npm:^0.20.3"
-  checksum: 10c0/18dea1a12f47daa35063c872a255a7239125187b172ce66639c326bd4b6a500fc8b44a98ec3a8e3fc502786658874a6b35850ac9f4effd9b9aacd1602b033feb
+    ast-types: "npm:^0.16.1"
+    recast: "npm:^0.23.11"
+  checksum: 10c0/56b889b290f12322b43d74c7434b69cef3e1ca8444e37891e08585f716b1c23f44596f650fb92220a8c6e5776d3dbc7d8ece67e950b6f9e733eee8e712128c73
   languageName: node
   linkType: hard
 
@@ -5446,15 +5446,6 @@ __metadata:
   version: 2.0.6
   resolution: "asap@npm:2.0.6"
   checksum: 10c0/c6d5e39fe1f15e4b87677460bd66b66050cd14c772269cee6688824c1410a08ab20254bb6784f9afb75af9144a9f9a7692d49547f4d19d715aeb7c0318f3136d
-  languageName: node
-  linkType: hard
-
-"ast-types@npm:0.14.2, ast-types@npm:^0.14.1":
-  version: 0.14.2
-  resolution: "ast-types@npm:0.14.2"
-  dependencies:
-    tslib: "npm:^2.0.1"
-  checksum: 10c0/5d66d89b6c07fe092087454b6042dbaf81f2882b176db93861e2b986aafe0bce49e1f1ff59aac775d451c1426ad1e967d250e9e3548f5166ea8a3475e66c169d
   languageName: node
   linkType: hard
 
@@ -12868,18 +12859,6 @@ __metadata:
     string_decoder: "npm:~1.1.1"
     util-deprecate: "npm:~1.0.1"
   checksum: 10c0/1708755e6cf9daff6ff60fa5b4575636472289c5b95d38058a91f94732b8d024a940a0d4d955639195ce42c22cab16973ee8fea8deedd24b5fec3dd596465f86
-  languageName: node
-  linkType: hard
-
-"recast@npm:^0.20.3":
-  version: 0.20.5
-  resolution: "recast@npm:0.20.5"
-  dependencies:
-    ast-types: "npm:0.14.2"
-    esprima: "npm:~4.0.0"
-    source-map: "npm:~0.6.1"
-    tslib: "npm:^2.0.1"
-  checksum: 10c0/7810216ff36c7376eddd66d3ce6b2df421305fdc983f2122711837911712177d52d804419655e1f29d4bb93016c178cffe442af410bdcf726050ca19af6fed32
   languageName: node
   linkType: hard
 
