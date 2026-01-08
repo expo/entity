@@ -12,8 +12,7 @@ import { mapKeys } from './utils/collections/maps';
 export class GenericEntityCacheAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
-> implements IEntityCacheAdapter<TFields, TIDField>
-{
+> implements IEntityCacheAdapter<TFields, TIDField> {
   constructor(private readonly genericCacher: IEntityGenericCacher<TFields, TIDField>) {}
 
   public async loadManyAsync<

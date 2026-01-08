@@ -48,8 +48,7 @@ export interface ILocalMemoryCache<TFields extends Record<string, any>> {
 export class GenericLocalMemoryCacher<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
-> implements IEntityGenericCacher<TFields, TIDField>
-{
+> implements IEntityGenericCacher<TFields, TIDField> {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     private readonly localMemoryCache: ILocalMemoryCache<TFields>,

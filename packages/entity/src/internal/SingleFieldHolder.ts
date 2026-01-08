@@ -18,9 +18,12 @@ export class SingleFieldHolder<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
   N extends keyof TFields,
-> implements
-    IEntityLoadKey<TFields, TIDField, NonNullable<TFields[N]>, SingleFieldValueHolder<TFields, N>>
-{
+> implements IEntityLoadKey<
+  TFields,
+  TIDField,
+  NonNullable<TFields[N]>,
+  SingleFieldValueHolder<TFields, N>
+> {
   constructor(public readonly fieldName: N) {}
 
   toString(): string {
@@ -102,9 +105,10 @@ export class SingleFieldHolder<
  *
  * @internal
  */
-export class SingleFieldValueHolder<TFields extends Record<string, any>, N extends keyof TFields>
-  implements IEntityLoadValue<NonNullable<TFields[N]>>
-{
+export class SingleFieldValueHolder<
+  TFields extends Record<string, any>,
+  N extends keyof TFields,
+> implements IEntityLoadValue<NonNullable<TFields[N]>> {
   constructor(public readonly fieldValue: NonNullable<TFields[N]>) {}
 
   toString(): string {

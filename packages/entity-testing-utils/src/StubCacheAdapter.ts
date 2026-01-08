@@ -20,8 +20,7 @@ export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvi
 export class NoCacheStubCacheAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
-> implements IEntityCacheAdapter<TFields, TIDField>
-{
+> implements IEntityCacheAdapter<TFields, TIDField> {
   public async loadManyAsync<
     TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
@@ -77,8 +76,7 @@ export class InMemoryFullCacheStubCacheAdapterProvider implements IEntityCacheAd
 export class InMemoryFullCacheStubCacheAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
-> implements IEntityCacheAdapter<TFields, TIDField>
-{
+> implements IEntityCacheAdapter<TFields, TIDField> {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     private readonly cache: Map<string, Readonly<TFields> | typeof DOES_NOT_EXIST>,

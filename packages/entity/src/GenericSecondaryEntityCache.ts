@@ -14,8 +14,7 @@ export abstract class GenericSecondaryEntityCache<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
   TLoadParams,
-> implements ISecondaryEntityCache<TFields, TLoadParams>
-{
+> implements ISecondaryEntityCache<TFields, TLoadParams> {
   constructor(
     protected readonly cacher: IEntityGenericCacher<TFields, TIDField>,
     protected readonly constructCacheKey: (params: Readonly<TLoadParams>) => string,

@@ -27,9 +27,10 @@ type LocalMemoryCacheValue<TFields extends Record<string, any>> =
   | Readonly<TFields>
   | typeof DOES_NOT_EXIST_LOCAL_MEMORY_CACHE;
 
-class TestLocalCacheAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>
-  implements IEntityCacheAdapter<TFields, TIDField>
-{
+class TestLocalCacheAdapter<
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+> implements IEntityCacheAdapter<TFields, TIDField> {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     private readonly cache: Map<string, LocalMemoryCacheValue<TFields>>,

@@ -11,8 +11,7 @@ export class CompositeFieldValueMap<
   TFields extends Record<string, any>,
   N extends EntityCompositeField<TFields>,
   TOutput,
-> implements ReadonlyMap<EntityCompositeFieldValue<TFields, N>, TOutput>
-{
+> implements ReadonlyMap<EntityCompositeFieldValue<TFields, N>, TOutput> {
   private readonly map: Map<SerializedCompositeFieldValueHolder, TOutput>;
 
   constructor(entries: [CompositeFieldValueHolder<TFields, N>, TOutput][]) {

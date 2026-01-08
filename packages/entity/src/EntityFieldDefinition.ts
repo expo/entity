@@ -147,8 +147,7 @@ export interface EntityFieldDefinitionOptionsBase {
   association?: EntityAssociationDefinition<any, any, any, any, any, any>;
 }
 
-export interface EntityFieldDefinitionOptionsExplicitCache
-  extends EntityFieldDefinitionOptionsBase {
+export interface EntityFieldDefinitionOptionsExplicitCache extends EntityFieldDefinitionOptionsBase {
   /**
    * Whether or not to cache loaded instances of the entity by this field. The column name is
    * used to derive a cache key for the cache entry. If true, this column must be able uniquely
