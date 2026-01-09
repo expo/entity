@@ -7,21 +7,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: jdx/mise-action@v3.5.1
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           cache: yarn
-          node-version-file: package.json
-      - run: yarn --immutable
-      - run: yarn lint --max-warnings=0
-      - name: Check if barrels are up to date
-        run: yarn ctix && [ -z "$(git status --porcelain)" ]
-      - run: yarn test --coverage
-      - run: yarn integration --coverage
+      - run: mise run ci
+      - uses: codecov/codecov-action@v5
       - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -34,3 +28,18 @@ jobs:
           directory: ./coverage-integration
           flags: integration
           fail_ci_if_error: true
+  docs:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: jdx/mise-action@v3.5.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          cache: yarn
+      - run: mise run typedoc
+      - name: Deploy
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc

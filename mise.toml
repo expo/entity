@@ -1,0 +1,44 @@
+[tools]
+node = "24.12.0"
+
+[hooks] # requires experimental=true
+postinstall = [
+  "npx corepack enable",
+]
+
+[tasks.yarn]
+run = "yarn --immutable"
+
+[tasks.build]
+depends = "yarn"
+run = "yarn build"
+
+[tasks.typedoc]
+depends = "build"
+run = "yarn typedoc"
+
+[tasks."checks:lint"]
+depends = "yarn"
+run = "yarn lint --max-warnings=0"
+
+[tasks."checks:barrel"]
+description = "Check if barrel files are up-to-date"
+depends = "yarn"
+run = [
+  "yarn ctix",
+  '[ -z "$(git status --porcelain)" ]',
+]
+
+[tasks."checks:unit"]
+depends = "yarn"
+run = "yarn test --coverage"
+
+[tasks."checks:integration"]
+depends = "yarn"
+run = "yarn integration --coverage"
+
+[tasks.ci]
+run = { task = "checks:*" }
+
+[settings]
+experimental = true
