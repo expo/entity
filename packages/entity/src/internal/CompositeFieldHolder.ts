@@ -173,9 +173,17 @@ export class CompositeFieldValueHolder<
   TFields extends Record<string, any>,
   TCompositeField extends EntityCompositeField<TFields>,
 > implements IEntityLoadValue<SerializedCompositeFieldValueHolder> {
+  /**
+   * Cache sorted keys to avoid recomputing on every serialize() call.
+   * Keys are immutable after construction, so this is safe.
+   */
+  private readonly sortedKeys: string[];
+
   constructor(
     public readonly compositeFieldValue: EntityCompositeFieldValue<TFields, TCompositeField>,
-  ) {}
+  ) {
+    this.sortedKeys = Object.keys(this.compositeFieldValue).sort();
+  }
 
   toString(): string {
     return `CompositeFieldValue(${Object.entries(this.compositeFieldValue)
@@ -206,7 +214,7 @@ export class CompositeFieldValueHolder<
     // but it is a secondary effect of specifying the order of keys in the stringified object.
     return JSON.stringify(
       this.compositeFieldValue,
-      Object.keys(this.compositeFieldValue).sort(),
+      this.sortedKeys,
     ) as SerializedCompositeFieldValueHolder;
   }
 }
