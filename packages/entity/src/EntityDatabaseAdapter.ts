@@ -10,8 +10,10 @@ import {
   EntityDatabaseAdapterExcessiveUpdateResultError,
 } from './errors/EntityDatabaseAdapterError';
 import {
+  buildPrecomputedFieldTransformerMap,
   FieldTransformerMap,
   getDatabaseFieldForEntityField,
+  PrecomputedFieldTransformerMap,
   transformDatabaseObjectToFields,
   transformFieldsToDatabaseObject,
 } from './internal/EntityFieldTransformationUtils';
@@ -149,9 +151,14 @@ export abstract class EntityDatabaseAdapter<
   TIDField extends keyof TFields,
 > {
   private readonly fieldTransformerMap: FieldTransformerMap;
+  private readonly precomputedFieldTransformerMap: PrecomputedFieldTransformerMap<TFields>;
 
   constructor(private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>) {
     this.fieldTransformerMap = this.getFieldTransformerMap();
+    this.precomputedFieldTransformerMap = buildPrecomputedFieldTransformerMap(
+      entityConfiguration,
+      this.fieldTransformerMap,
+    );
   }
 
   /**
@@ -189,7 +196,12 @@ export abstract class EntityDatabaseAdapter<
     );
 
     const objects = results.map((result) =>
-      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
+      transformDatabaseObjectToFields(
+        this.entityConfiguration,
+        this.fieldTransformerMap,
+        result,
+        this.precomputedFieldTransformerMap,
+      ),
     );
 
     const objectMap = key.vendNewLoadValueMap<Readonly<TFields>[]>();
@@ -260,7 +272,12 @@ export abstract class EntityDatabaseAdapter<
     );
 
     return results.map((result) =>
-      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
+      transformDatabaseObjectToFields(
+        this.entityConfiguration,
+        this.fieldTransformerMap,
+        result,
+        this.precomputedFieldTransformerMap,
+      ),
     );
   }
 
@@ -296,7 +313,12 @@ export abstract class EntityDatabaseAdapter<
     );
 
     return results.map((result) =>
-      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
+      transformDatabaseObjectToFields(
+        this.entityConfiguration,
+        this.fieldTransformerMap,
+        result,
+        this.precomputedFieldTransformerMap,
+      ),
     );
   }
 
@@ -323,6 +345,7 @@ export abstract class EntityDatabaseAdapter<
       this.entityConfiguration,
       this.fieldTransformerMap,
       object,
+      this.precomputedFieldTransformerMap,
     );
     const results = await this.insertInternalAsync(
       queryContext.getQueryInterface(),
@@ -347,6 +370,7 @@ export abstract class EntityDatabaseAdapter<
       this.entityConfiguration,
       this.fieldTransformerMap,
       results[0]!,
+      this.precomputedFieldTransformerMap,
     );
   }
 
@@ -376,6 +400,7 @@ export abstract class EntityDatabaseAdapter<
       this.entityConfiguration,
       this.fieldTransformerMap,
       object,
+      this.precomputedFieldTransformerMap,
     );
     const results = await this.updateInternalAsync(
       queryContext.getQueryInterface(),
@@ -402,6 +427,7 @@ export abstract class EntityDatabaseAdapter<
       this.entityConfiguration,
       this.fieldTransformerMap,
       results[0]!,
+      this.precomputedFieldTransformerMap,
     );
   }
 

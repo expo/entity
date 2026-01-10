@@ -26,6 +26,39 @@ export interface FieldTransformer<T> {
 export type FieldTransformerMap = Map<string, FieldTransformer<any>>;
 
 /**
+ * Precomputed map from field name to its transformer. This eliminates two lookups
+ * (schema + constructor.name) per field during transformation, replacing them with
+ * a single direct lookup.
+ *
+ * @internal
+ */
+export type PrecomputedFieldTransformerMap<TFields> = ReadonlyMap<
+  keyof TFields,
+  FieldTransformer<any> | undefined
+>;
+
+/**
+ * Build a precomputed map from field name to transformer. This is called once during
+ * adapter construction to avoid repeated lookups during field transformation.
+ *
+ * @internal
+ */
+export const buildPrecomputedFieldTransformerMap = <
+  TFields extends Record<string, any>,
+  TIDField extends keyof TFields,
+>(
+  entityConfiguration: EntityConfiguration<TFields, TIDField>,
+  fieldTransformerMap: FieldTransformerMap,
+): PrecomputedFieldTransformerMap<TFields> => {
+  const map = new Map<keyof TFields, FieldTransformer<any> | undefined>();
+  for (const [fieldName, fieldDefinition] of entityConfiguration.schema) {
+    const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
+    map.set(fieldName, transformer);
+  }
+  return map;
+};
+
+/**
  * @internal
  */
 export const getDatabaseFieldForEntityField = <
@@ -50,6 +83,7 @@ export const transformDatabaseObjectToFields = <
   entityConfiguration: EntityConfiguration<TFields, TIDField>,
   fieldTransformerMap: FieldTransformerMap,
   databaseObject: { [key: string]: any },
+  precomputedFieldTransformerMap?: PrecomputedFieldTransformerMap<TFields>,
 ): Readonly<TFields> => {
   const fields: TFields = {} as any;
   for (const k in databaseObject) {
@@ -61,6 +95,7 @@ export const transformDatabaseObjectToFields = <
         fieldTransformerMap,
         fieldsKey,
         val,
+        precomputedFieldTransformerMap,
       );
     }
   }
@@ -77,6 +112,7 @@ export const transformFieldsToDatabaseObject = <
   entityConfiguration: EntityConfiguration<TFields, TIDField>,
   fieldTransformerMap: FieldTransformerMap,
   fields: Readonly<Partial<TFields>>,
+  precomputedFieldTransformerMap?: PrecomputedFieldTransformerMap<TFields>,
 ): object => {
   const databaseObject: { [key: string]: any } = {};
   for (const k in fields) {
@@ -88,6 +124,7 @@ export const transformFieldsToDatabaseObject = <
       fieldTransformerMap,
       k,
       val,
+      precomputedFieldTransformerMap,
     );
   }
   return databaseObject;
@@ -150,11 +187,16 @@ const maybeTransformDatabaseValueToFieldValue = <
   fieldTransformerMap: FieldTransformerMap,
   fieldName: N,
   value: any,
+  precomputedFieldTransformerMap?: PrecomputedFieldTransformerMap<TFields>,
 ): TFields[N] => {
-  // this will always be non-null due to the way the dbToEntityFieldsKeyMapping is computed and this
-  // function is called conditionally
-  const fieldDefinition = nullthrows(entityConfiguration.schema.get(fieldName));
-  const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
+  // Use precomputed map when available to avoid two lookups per field
+  let transformer: FieldTransformer<any> | undefined;
+  if (precomputedFieldTransformerMap) {
+    transformer = precomputedFieldTransformerMap.get(fieldName);
+  } else {
+    const fieldDefinition = nullthrows(entityConfiguration.schema.get(fieldName));
+    transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
+  }
   const readTransformer = transformer?.read;
   return readTransformer ? readTransformer(value) : value;
 };
@@ -168,9 +210,16 @@ const maybeTransformFieldValueToDatabaseValue = <
   fieldTransformerMap: FieldTransformerMap,
   fieldName: N,
   value: TFields[N],
+  precomputedFieldTransformerMap?: PrecomputedFieldTransformerMap<TFields>,
 ): any => {
-  const fieldDefinition = nullthrows(entityConfiguration.schema.get(fieldName));
-  const transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
+  // Use precomputed map when available to avoid two lookups per field
+  let transformer: FieldTransformer<any> | undefined;
+  if (precomputedFieldTransformerMap) {
+    transformer = precomputedFieldTransformerMap.get(fieldName);
+  } else {
+    const fieldDefinition = nullthrows(entityConfiguration.schema.get(fieldName));
+    transformer = fieldTransformerMap.get(fieldDefinition.constructor.name);
+  }
   const writeTransformer = transformer?.write;
   return writeTransformer ? writeTransformer(value) : value;
 };
