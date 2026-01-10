@@ -3,15 +3,22 @@ import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
 /**
  * Base class for all errors related to the database adapter.
  */
-export abstract class EntityDatabaseAdapterError extends EntityError {}
+export abstract class EntityDatabaseAdapterError extends EntityError {
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterError';
+  }
+}
 
 /**
  * Thrown when a transient error occurrs within the database adapter.
  * Transient errors may succeed if retried.
  */
 export class EntityDatabaseAdapterTransientError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.TRANSIENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_TRANSIENT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterTransientError';
+    this.prototype.state = EntityErrorState.TRANSIENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_TRANSIENT;
+  }
 }
 
 /**
@@ -19,8 +26,11 @@ export class EntityDatabaseAdapterTransientError extends EntityDatabaseAdapterEr
  * This is a catch-all error class for DBMS-specific errors that do not fit into other categories.
  */
 export class EntityDatabaseAdapterUnknownError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.UNKNOWN;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_UNKNOWN;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterUnknownError';
+    this.prototype.state = EntityErrorState.UNKNOWN;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_UNKNOWN;
+  }
 }
 
 /**
@@ -28,8 +38,11 @@ export class EntityDatabaseAdapterUnknownError extends EntityDatabaseAdapterErro
  * This indicates that a value being inserted or updated does not satisfy a defined data integrity constraint.
  */
 export class EntityDatabaseAdapterCheckConstraintError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_CHECK_CONSTRAINT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterCheckConstraintError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_CHECK_CONSTRAINT;
+  }
 }
 
 /**
@@ -37,8 +50,11 @@ export class EntityDatabaseAdapterCheckConstraintError extends EntityDatabaseAda
  * This indicates that a value being inserted or updated conflicts with an existing value based on a defined exclusion constraint.
  */
 export class EntityDatabaseAdapterExclusionConstraintError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EXCLUSION_CONSTRAINT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterExclusionConstraintError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EXCLUSION_CONSTRAINT;
+  }
 }
 
 /**
@@ -47,8 +63,11 @@ export class EntityDatabaseAdapterExclusionConstraintError extends EntityDatabas
  * or is referenced in a related table.
  */
 export class EntityDatabaseAdapterForeignKeyConstraintError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_FOREIGN_KEY_CONSTRAINT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterForeignKeyConstraintError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_FOREIGN_KEY_CONSTRAINT;
+  }
 }
 
 /**
@@ -56,8 +75,11 @@ export class EntityDatabaseAdapterForeignKeyConstraintError extends EntityDataba
  * This indicates that a null value is being inserted or updated into a column that does not allow null values.
  */
 export class EntityDatabaseAdapterNotNullConstraintError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_NOT_NULL_CONSTRAINT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterNotNullConstraintError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_NOT_NULL_CONSTRAINT;
+  }
 }
 
 /**
@@ -66,8 +88,11 @@ export class EntityDatabaseAdapterNotNullConstraintError extends EntityDatabaseA
  * that require unique values.
  */
 export class EntityDatabaseAdapterUniqueConstraintError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_UNIQUE_CONSTRAINT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterUniqueConstraintError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_UNIQUE_CONSTRAINT;
+  }
 }
 
 /**
@@ -76,8 +101,11 @@ export class EntityDatabaseAdapterUniqueConstraintError extends EntityDatabaseAd
  * triggers or something similar.
  */
 export class EntityDatabaseAdapterExcessiveInsertResultError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EXCESSIVE_INSERT_RESULT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterExcessiveInsertResultError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EXCESSIVE_INSERT_RESULT;
+  }
 }
 
 /**
@@ -86,8 +114,11 @@ export class EntityDatabaseAdapterExcessiveInsertResultError extends EntityDatab
  * triggers or something similar.
  */
 export class EntityDatabaseAdapterEmptyInsertResultError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EMPTY_INSERT_RESULT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterEmptyInsertResultError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EMPTY_INSERT_RESULT;
+  }
 }
 
 /**
@@ -96,8 +127,11 @@ export class EntityDatabaseAdapterEmptyInsertResultError extends EntityDatabaseA
  * primary key column.
  */
 export class EntityDatabaseAdapterExcessiveUpdateResultError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EXCESSIVE_UPDATE_RESULT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterExcessiveUpdateResultError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EXCESSIVE_UPDATE_RESULT;
+  }
 }
 
 /**
@@ -106,8 +140,11 @@ export class EntityDatabaseAdapterExcessiveUpdateResultError extends EntityDatab
  * was deleted by a different process between fetching and updating it in this process.
  */
 export class EntityDatabaseAdapterEmptyUpdateResultError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EMPTY_UPDATE_RESULT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterEmptyUpdateResultError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EMPTY_UPDATE_RESULT;
+  }
 }
 
 /**
@@ -116,6 +153,9 @@ export class EntityDatabaseAdapterEmptyUpdateResultError extends EntityDatabaseA
  * primary key column.
  */
 export class EntityDatabaseAdapterExcessiveDeleteResultError extends EntityDatabaseAdapterError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EXCESSIVE_DELETE_RESULT;
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterExcessiveDeleteResultError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EXCESSIVE_DELETE_RESULT;
+  }
 }

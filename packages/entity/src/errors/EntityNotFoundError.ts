@@ -49,8 +49,11 @@ export class EntityNotFoundError<
   N extends keyof TFields,
   TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_NOT_FOUND;
+  static {
+    this.prototype.name = 'EntityNotFoundError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_NOT_FOUND;
+  }
 
   constructor(message: string);
   constructor(

@@ -22,8 +22,11 @@ export class EntityInvalidFieldValueError<
   N extends keyof TFields,
   TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_INVALID_FIELD_VALUE;
+  static {
+    this.prototype.name = 'EntityInvalidFieldValueError';
+    this.prototype.state = EntityErrorState.PERMANENT;
+    this.prototype.code = EntityErrorCode.ERR_ENTITY_INVALID_FIELD_VALUE;
+  }
 
   constructor(
     entityClass: IEntityClass<
