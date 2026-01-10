@@ -115,8 +115,11 @@ export const pick = <T extends object, U extends keyof T>(
   object: T,
   props: readonly U[],
 ): Pick<T, U> => {
-  const propsSet = new Set(props);
-  return Object.fromEntries(
-    Object.entries(object).filter((entry) => propsSet.has(entry[0] as any)),
-  ) as any;
+  const result = {} as Pick<T, U>;
+  for (const prop of props) {
+    if (object.hasOwnProperty(prop)) {
+      result[prop] = object[prop];
+    }
+  }
+  return result;
 };
