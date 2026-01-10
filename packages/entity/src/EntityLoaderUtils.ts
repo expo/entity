@@ -61,29 +61,26 @@ export class EntityLoaderUtils<
     objectFields: Readonly<TFields>,
   ): readonly LoadPair<TFields, TIDField, any, any, any>[] {
     const keys = Object.keys(objectFields) as (keyof TFields)[];
-    const singleFieldKeyValues = keys
-      .map((fieldName: keyof TFields) => {
-        const value = objectFields[fieldName];
-        if (value === undefined || value === null) {
-          return null;
-        }
-        return [
+    const singleFieldKeyValues: LoadPair<TFields, TIDField, any, any, any>[] = [];
+    for (const fieldName of keys) {
+      const value = objectFields[fieldName];
+      if (value != null) {
+        singleFieldKeyValues.push([
           new SingleFieldHolder<TFields, TIDField, typeof fieldName>(fieldName),
           new SingleFieldValueHolder(value),
-        ] as const;
-      })
-      .filter((kv) => kv !== null);
+        ]);
+      }
+    }
 
-    const compositeFieldKeyValues = this.entityConfiguration.compositeFieldInfo
-      .getAllCompositeFieldHolders()
-      .map((compositeFieldHolder) => {
-        const compositeFieldValueHolder =
-          compositeFieldHolder.extractCompositeFieldValueHolderFromObjectFields(objectFields);
-        return compositeFieldValueHolder
-          ? ([compositeFieldHolder, compositeFieldValueHolder] as const)
-          : null;
-      })
-      .filter((kv) => kv !== null);
+    const compositeFieldKeyValues: LoadPair<TFields, TIDField, any, any, any>[] = [];
+    for (const compositeFieldHolder of this.entityConfiguration.compositeFieldInfo.getAllCompositeFieldHolders()) {
+      const compositeFieldValueHolder =
+        compositeFieldHolder.extractCompositeFieldValueHolderFromObjectFields(objectFields);
+      if (compositeFieldValueHolder) {
+        compositeFieldKeyValues.push([compositeFieldHolder, compositeFieldValueHolder]);
+      }
+    }
+
     return [...singleFieldKeyValues, ...compositeFieldKeyValues];
   }
 
