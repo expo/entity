@@ -64,7 +64,7 @@ export class EntityLoaderUtils<
     const singleFieldKeyValues: LoadPair<TFields, TIDField, any, any, any>[] = [];
     for (const fieldName of keys) {
       const value = objectFields[fieldName];
-      if (value != null) {
+      if (value !== undefined && value !== null) {
         singleFieldKeyValues.push([
           new SingleFieldHolder<TFields, TIDField, typeof fieldName>(fieldName),
           new SingleFieldValueHolder(value),
