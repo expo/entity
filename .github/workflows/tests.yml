@@ -17,6 +17,7 @@ jobs:
           cache: yarn
           node-version-file: package.json
       - run: yarn --immutable
+      - run: yarn tsc
       - run: yarn lint --max-warnings=0
       - name: Check if barrels are up to date
         run: yarn ctix && [ -z "$(git status --porcelain)" ]
