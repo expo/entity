@@ -28,6 +28,7 @@ module.exports = defineConfig([
       'tsdoc/syntax': 'warn',
       'no-console': 'warn',
       'handle-callback-err': 'off',
+      eqeqeq: ['warn', 'always'],
       'no-restricted-properties': [
         'warn',
         {
