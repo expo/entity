@@ -268,6 +268,47 @@ describe(canViewerDeleteAsync, () => {
     );
     expect(canViewerDeleteResult.allowed).toBe(true);
   });
+
+  it('evaluates privacy policy with synthetically nullified field for SET_NULL', async () => {
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(companionProvider);
+    const testEntity = await ParentEntity.creator(viewerContext).createAsync();
+
+    // Create a leaf entity that references the parent. This leaf entity's privacy policy
+    // allows updates only when its reference field is being set to null. This tests that canViewerDeleteAsync
+    // creates a synthetic entity with the field set to null when evaluating the SET_NULL case.
+    await LeafConditionalUpdateEntity.creator(viewerContext)
+      .setField('parent_id', testEntity.getID())
+      .createAsync();
+
+    const canViewerDelete = await canViewerDeleteAsync(ParentEntity, testEntity);
+    expect(canViewerDelete).toBe(true);
+
+    const canViewerDeleteResult = await getCanViewerDeleteResultAsync(ParentEntity, testEntity);
+    expect(canViewerDeleteResult.allowed).toBe(true);
+  });
+
+  it('denies deletion when privacy policy fails with synthetically nullified field for SET_NULL', async () => {
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(companionProvider);
+    const testEntity = await ParentEntity.creator(viewerContext).createAsync();
+
+    // Create a leaf entity that references the parent. This leaf entity's privacy policy
+    // denies updates when its reference field is being set to null. This tests that canViewerDeleteAsync
+    // properly evaluates the synthetic entity and denies when the policy fails.
+    const leafEntity = await LeafDenyUpdateWhenNullEntity.creator(viewerContext)
+      .setField('parent_id', testEntity.getID())
+      .createAsync();
+
+    const canViewerDelete = await canViewerDeleteAsync(ParentEntity, testEntity);
+    expect(canViewerDelete).toBe(false);
+
+    const canViewerDeleteResult = await getCanViewerDeleteResultAsync(ParentEntity, testEntity);
+    expectAuthorizationError(canViewerDeleteResult, {
+      entityId: leafEntity.getID(),
+      action: EntityAuthorizationAction.UPDATE,
+    });
+  });
 });
 
 type TestEntityFields = {
@@ -295,6 +336,20 @@ type TestLeafDenyReadFields = {
 type TestEntityThrowOtherErrorFields = {
   id: string;
   simple_test_id: string | null;
+};
+
+type ParentEntityFields = {
+  id: string;
+};
+
+type LeafConditionalUpdateEntityFields = {
+  id: string;
+  parent_id: string | null;
+};
+
+type LeafDenyUpdateWhenNullEntityFields = {
+  id: string;
+  parent_id: string | null;
 };
 
 class DenyUpdateEntityPrivacyPolicy<
@@ -675,6 +730,246 @@ class SimpleTestThrowOtherErrorEntity extends Entity<
         cacheAdapterFlavor: 'redis',
       }),
       privacyPolicyClass: ThrowOtherErrorEntityPrivacyPolicy,
+    };
+  }
+}
+
+class ConditionalUpdateEntityPrivacyPolicy extends EntityPrivacyPolicy<
+  LeafConditionalUpdateEntityFields,
+  'id',
+  ViewerContext,
+  LeafConditionalUpdateEntity
+> {
+  protected override readonly readRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      LeafConditionalUpdateEntityFields,
+      'id',
+      ViewerContext,
+      LeafConditionalUpdateEntity
+    >(),
+  ];
+  protected override readonly createRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      LeafConditionalUpdateEntityFields,
+      'id',
+      ViewerContext,
+      LeafConditionalUpdateEntity
+    >(),
+  ];
+  protected override readonly updateRules = [
+    {
+      async evaluateAsync(
+        _viewerContext: ViewerContext,
+        _queryContext: EntityQueryContext,
+        evaluationContext: EntityPrivacyPolicyEvaluationContext<
+          LeafConditionalUpdateEntityFields,
+          'id',
+          ViewerContext,
+          LeafConditionalUpdateEntity
+        >,
+        entity: LeafConditionalUpdateEntity,
+      ): Promise<RuleEvaluationResult> {
+        // Only allow updates when parent_id is being set to null
+        // and parent_id was previously non-null and was the cascading delete cause
+
+        const { previousValue, cascadingDeleteCause } = evaluationContext;
+        if (!previousValue || !cascadingDeleteCause) {
+          return RuleEvaluationResult.SKIP;
+        }
+
+        const parentId = entity.getField('parent_id');
+        const previousParentId = previousValue.getField('parent_id');
+
+        if (parentId !== null) {
+          return RuleEvaluationResult.SKIP;
+        }
+
+        if (!previousParentId) {
+          return RuleEvaluationResult.SKIP;
+        }
+
+        if (cascadingDeleteCause.entity.getID() !== previousParentId) {
+          return RuleEvaluationResult.SKIP;
+        }
+
+        return RuleEvaluationResult.ALLOW;
+      },
+    },
+  ];
+  protected override readonly deleteRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      LeafConditionalUpdateEntityFields,
+      'id',
+      ViewerContext,
+      LeafConditionalUpdateEntity
+    >(),
+  ];
+}
+
+// Privacy policy that denies updates when parent_id is null
+class DenyUpdateWhenNullEntityPrivacyPolicy extends EntityPrivacyPolicy<
+  LeafConditionalUpdateEntityFields,
+  'id',
+  ViewerContext,
+  LeafConditionalUpdateEntity
+> {
+  protected override readonly readRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      LeafConditionalUpdateEntityFields,
+      'id',
+      ViewerContext,
+      LeafConditionalUpdateEntity
+    >(),
+  ];
+  protected override readonly createRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      LeafConditionalUpdateEntityFields,
+      'id',
+      ViewerContext,
+      LeafConditionalUpdateEntity
+    >(),
+  ];
+  protected override readonly updateRules = [
+    {
+      async evaluateAsync(
+        _viewerContext: ViewerContext,
+        _queryContext: EntityQueryContext,
+        evaluationContext: EntityPrivacyPolicyEvaluationContext<
+          LeafConditionalUpdateEntityFields,
+          'id',
+          ViewerContext,
+          LeafConditionalUpdateEntity
+        >,
+        entity: LeafConditionalUpdateEntity,
+      ): Promise<RuleEvaluationResult> {
+        // Deny updates when parent_id is being set to null
+
+        const { previousValue } = evaluationContext;
+        if (!previousValue) {
+          return RuleEvaluationResult.SKIP;
+        }
+
+        const parentId = entity.getField('parent_id');
+        const previousParentId = previousValue.getField('parent_id');
+
+        if (!parentId && previousParentId) {
+          return RuleEvaluationResult.DENY;
+        }
+
+        return RuleEvaluationResult.SKIP;
+      },
+    },
+  ];
+  protected override readonly deleteRules = [
+    new AlwaysAllowPrivacyPolicyRule<
+      LeafConditionalUpdateEntityFields,
+      'id',
+      ViewerContext,
+      LeafConditionalUpdateEntity
+    >(),
+  ];
+}
+
+class ParentEntity extends Entity<ParentEntityFields, 'id', ViewerContext> {
+  static defineCompanionDefinition(): EntityCompanionDefinition<
+    ParentEntityFields,
+    'id',
+    ViewerContext,
+    ParentEntity,
+    DenyUpdateEntityPrivacyPolicy<ParentEntityFields, 'id', ViewerContext, ParentEntity>
+  > {
+    return {
+      entityClass: ParentEntity,
+      entityConfiguration: new EntityConfiguration<ParentEntityFields, 'id'>({
+        idField: 'id',
+        tableName: 'parent_entity',
+        inboundEdges: [LeafConditionalUpdateEntity, LeafDenyUpdateWhenNullEntity],
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+            cache: false,
+          }),
+        },
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
+      }),
+      privacyPolicyClass: DenyUpdateEntityPrivacyPolicy,
+    };
+  }
+}
+
+class LeafConditionalUpdateEntity extends Entity<
+  LeafConditionalUpdateEntityFields,
+  'id',
+  ViewerContext
+> {
+  static defineCompanionDefinition(): EntityCompanionDefinition<
+    LeafConditionalUpdateEntityFields,
+    'id',
+    ViewerContext,
+    LeafConditionalUpdateEntity,
+    ConditionalUpdateEntityPrivacyPolicy
+  > {
+    return {
+      entityClass: LeafConditionalUpdateEntity,
+      entityConfiguration: new EntityConfiguration<LeafConditionalUpdateEntityFields, 'id'>({
+        idField: 'id',
+        tableName: 'leaf_conditional_update',
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+            cache: false,
+          }),
+          parent_id: new UUIDField({
+            columnName: 'parent_id',
+            association: {
+              associatedEntityClass: ParentEntity,
+              edgeDeletionBehavior: EntityEdgeDeletionBehavior.SET_NULL,
+            },
+          }),
+        },
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
+      }),
+      privacyPolicyClass: ConditionalUpdateEntityPrivacyPolicy,
+    };
+  }
+}
+
+class LeafDenyUpdateWhenNullEntity extends Entity<
+  LeafDenyUpdateWhenNullEntityFields,
+  'id',
+  ViewerContext
+> {
+  static defineCompanionDefinition(): EntityCompanionDefinition<
+    LeafDenyUpdateWhenNullEntityFields,
+    'id',
+    ViewerContext,
+    LeafDenyUpdateWhenNullEntity,
+    DenyUpdateWhenNullEntityPrivacyPolicy
+  > {
+    return {
+      entityClass: LeafDenyUpdateWhenNullEntity,
+      entityConfiguration: new EntityConfiguration<LeafDenyUpdateWhenNullEntityFields, 'id'>({
+        idField: 'id',
+        tableName: 'leaf_deny_update_when_null',
+        schema: {
+          id: new UUIDField({
+            columnName: 'id',
+            cache: false,
+          }),
+          parent_id: new UUIDField({
+            columnName: 'parent_id',
+            association: {
+              associatedEntityClass: ParentEntity,
+              edgeDeletionBehavior: EntityEdgeDeletionBehavior.SET_NULL,
+            },
+          }),
+        },
+        databaseAdapterFlavor: 'postgres',
+        cacheAdapterFlavor: 'redis',
+      }),
+      privacyPolicyClass: DenyUpdateWhenNullEntityPrivacyPolicy,
     };
   }
 }
