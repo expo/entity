@@ -5,9 +5,9 @@ import {
   EntityEdgeDeletionAuthorizationInferenceBehavior,
   EntityEdgeDeletionBehavior,
 } from '../EntityFieldDefinition';
-import { EntityCascadingDeletionInfo } from '../EntityMutationInfo';
-import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
+import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
+import { ReadonlyEntity } from '../ReadonlyEntity';
 import { ViewerContext } from '../ViewerContext';
 import { failedResults, partitionArray } from '../entityUtils';
 import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';
@@ -74,7 +74,7 @@ export async function canViewerUpdateAsync<
   const result = await canViewerUpdateInternalAsync(
     entityClass,
     sourceEntity,
-    /* cascadingDeleteCause */ null,
+    { previousValue: sourceEntity, cascadingDeleteCause: null },
     queryContext,
   );
   return result.allowed;
@@ -121,7 +121,7 @@ export async function getCanViewerUpdateResultAsync<
   return await canViewerUpdateInternalAsync(
     entityClass,
     sourceEntity,
-    /* cascadingDeleteCause */ null,
+    { previousValue: sourceEntity, cascadingDeleteCause: null },
     queryContext,
   );
 }
@@ -149,7 +149,13 @@ async function canViewerUpdateInternalAsync<
     TSelectedFields
   >,
   sourceEntity: TEntity,
-  cascadingDeleteCause: EntityCascadingDeletionInfo | null,
+  evaluationContext: EntityPrivacyPolicyEvaluationContext<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
   queryContext: EntityQueryContext,
 ): Promise<EntityPrivacyEvaluationResult> {
   const companion = sourceEntity
@@ -160,7 +166,7 @@ async function canViewerUpdateInternalAsync<
     privacyPolicy.authorizeUpdateAsync(
       sourceEntity.getViewerContext(),
       queryContext,
-      { previousValue: null, cascadingDeleteCause },
+      evaluationContext,
       sourceEntity,
       companion.getMetricsAdapter(),
     ),
@@ -217,7 +223,7 @@ export async function canViewerDeleteAsync<
   const result = await canViewerDeleteInternalAsync(
     entityClass,
     sourceEntity,
-    /* cascadingDeleteCause */ null,
+    { previousValue: null, cascadingDeleteCause: null },
     queryContext,
   );
   return result.allowed;
@@ -264,7 +270,7 @@ export async function getCanViewerDeleteResultAsync<
   return await canViewerDeleteInternalAsync(
     entityClass,
     sourceEntity,
-    /* cascadingDeleteCause */ null,
+    { previousValue: null, cascadingDeleteCause: null },
     queryContext,
   );
 }
@@ -292,7 +298,13 @@ async function canViewerDeleteInternalAsync<
     TSelectedFields
   >,
   sourceEntity: TEntity,
-  cascadingDeleteCause: EntityCascadingDeletionInfo | null,
+  evaluationContext: EntityPrivacyPolicyEvaluationContext<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
   queryContext: EntityQueryContext,
 ): Promise<EntityPrivacyEvaluationResult> {
   const viewerContext = sourceEntity.getViewerContext();
@@ -306,7 +318,7 @@ async function canViewerDeleteInternalAsync<
     privacyPolicy.authorizeDeleteAsync(
       sourceEntity.getViewerContext(),
       queryContext,
-      { previousValue: null, cascadingDeleteCause },
+      evaluationContext,
       sourceEntity,
       viewerScopedCompanion.getMetricsAdapter(),
     ),
@@ -321,7 +333,7 @@ async function canViewerDeleteInternalAsync<
 
   const newCascadingDeleteCause = {
     entity: sourceEntity,
-    cascadingDeleteCause,
+    cascadingDeleteCause: evaluationContext.cascadingDeleteCause,
   };
 
   // Take entity X which is proposed to be deleted, look at inbound edges (entities that reference X).
@@ -366,7 +378,7 @@ async function canViewerDeleteInternalAsync<
       const edgeDeletionPermissionInferenceBehavior =
         association.edgeDeletionAuthorizationInferenceBehavior;
 
-      let entityResultsToCheckForInboundEdge: readonly Result<any>[];
+      let entityResultsToCheckForInboundEdge: readonly Result<ReadonlyEntity<any, any, any, any>>[];
 
       if (
         edgeDeletionPermissionInferenceBehavior ===
@@ -419,7 +431,7 @@ async function canViewerDeleteInternalAsync<
               canViewerDeleteInternalAsync(
                 inboundEdge,
                 entity,
-                newCascadingDeleteCause,
+                { previousValue: null, cascadingDeleteCause: newCascadingDeleteCause },
                 queryContext,
               ),
             ),
@@ -435,14 +447,43 @@ async function canViewerDeleteInternalAsync<
 
         case EntityEdgeDeletionBehavior.SET_NULL:
         case EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY: {
+          // create synthetic entities with the reference field set to null to properly evaluate
+          // privacy policy as it would be after the cascading SET NULL operation
+          const previousAndSyntheticEntitiesForInboundEdge = entitiesForInboundEdge.map(
+            (entity) => {
+              const entityLoader = viewerContext
+                .getViewerScopedEntityCompanionForClass(inboundEdge)
+                .getLoaderFactory()
+                .forLoad(queryContext, {
+                  previousValue: entity,
+                  cascadingDeleteCause: newCascadingDeleteCause,
+                });
+
+              const allFields = entity.getAllDatabaseFields();
+              const syntheticFields = {
+                ...allFields,
+                [fieldName]: null,
+              };
+
+              return {
+                previousValue: entity,
+                syntheticallyUpdatedValue: entityLoader.utils.constructEntity(syntheticFields),
+              };
+            },
+          );
+
           const canUpdateEvaluationResults = await Promise.all(
-            entitiesForInboundEdge.map((entity) =>
-              canViewerUpdateInternalAsync(
-                inboundEdge,
-                entity,
-                newCascadingDeleteCause,
-                queryContext,
-              ),
+            previousAndSyntheticEntitiesForInboundEdge.map(
+              ({ previousValue, syntheticallyUpdatedValue }) =>
+                canViewerUpdateInternalAsync(
+                  inboundEdge,
+                  syntheticallyUpdatedValue,
+                  {
+                    previousValue,
+                    cascadingDeleteCause: newCascadingDeleteCause,
+                  },
+                  queryContext,
+                ),
             ),
           );
 
