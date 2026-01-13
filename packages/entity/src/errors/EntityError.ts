@@ -1,5 +1,3 @@
-import ES6Error from 'es6-error';
-
 /**
  * The state of an entity error, indicating whether it may be transient/retryable.
  */
@@ -34,14 +32,15 @@ export enum EntityErrorCode {
 /**
  * Base class for all known errors thrown by the entity system.
  */
-export abstract class EntityError extends ES6Error {
+export abstract class EntityError extends Error {
+  static {
+    this.prototype.name = 'EntityError';
+  }
+
   public abstract readonly state: EntityErrorState;
   public abstract readonly code: EntityErrorCode;
 
-  constructor(
-    message: string,
-    public override readonly cause?: Error,
-  ) {
-    super(message);
+  constructor(message: string, cause?: Error) {
+    super(message, { cause });
   }
 }

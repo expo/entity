@@ -2727,7 +2727,6 @@ __metadata:
     "@types/lodash": "npm:4.17.21"
     "@types/node": "npm:24.10.5"
     dataloader: "npm:^2.2.3"
-    es6-error: "npm:^4.1.1"
     invariant: "npm:^2.2.4"
     lodash: "npm:4.17.21"
     ts-mockito: "npm:2.6.1"
@@ -7622,13 +7621,6 @@ __metadata:
     is-date-object: "npm:^1.0.5"
     is-symbol: "npm:^1.0.4"
   checksum: 10c0/c7e87467abb0b438639baa8139f701a06537d2b9bc758f23e8622c3b42fd0fdb5bde0f535686119e446dd9d5e4c0f238af4e14960f4771877cf818d023f6730b
-  languageName: node
-  linkType: hard
-
-"es6-error@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "es6-error@npm:4.1.1"
-  checksum: 10c0/357663fb1e845c047d548c3d30f86e005db71e122678f4184ced0693f634688c3f3ef2d7de7d4af732f734de01f528b05954e270f06aa7d133679fb9fe6600ef
   languageName: node
   linkType: hard
 

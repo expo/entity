@@ -13,8 +13,17 @@ export class EntityNotAuthorizedError<
   TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityError {
-  public readonly state = EntityErrorState.PERMANENT;
-  public readonly code = EntityErrorCode.ERR_ENTITY_NOT_AUTHORIZED;
+  static {
+    this.prototype.name = 'EntityNotAuthorizedError';
+  }
+
+  get state(): EntityErrorState.PERMANENT {
+    return EntityErrorState.PERMANENT;
+  }
+
+  get code(): EntityErrorCode.ERR_ENTITY_NOT_AUTHORIZED {
+    return EntityErrorCode.ERR_ENTITY_NOT_AUTHORIZED;
+  }
 
   public readonly entityClassName: string;
 
