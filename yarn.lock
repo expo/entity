@@ -2609,7 +2609,7 @@ __metadata:
   dependencies:
     "@jest/globals": "npm:30.2.0"
     "@types/jscodeshift": "npm:17.3.0"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.5"
     jscodeshift: "npm:17.3.0"
     typescript: "npm:5.9.3"
   languageName: unknown
@@ -2708,7 +2708,7 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@jest/globals": "npm:30.2.0"
     "@types/lodash": "npm:4.17.21"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.5"
     lodash: "npm:^4.17.21"
     ts-mockito: "npm:^2.6.1"
     typescript: "npm:5.9.3"
@@ -2725,7 +2725,7 @@ __metadata:
     "@jest/globals": "npm:30.2.0"
     "@types/invariant": "npm:2.2.37"
     "@types/lodash": "npm:4.17.21"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.5"
     dataloader: "npm:^2.2.3"
     es6-error: "npm:^4.1.1"
     invariant: "npm:^2.2.4"
@@ -4907,12 +4907,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.10.4":
-  version: 24.10.4
-  resolution: "@types/node@npm:24.10.4"
+"@types/node@npm:24.10.5":
+  version: 24.10.5
+  resolution: "@types/node@npm:24.10.5"
   dependencies:
     undici-types: "npm:~7.16.0"
-  checksum: 10c0/069639cb7233ee747df1897b5e784f6b6c5da765c96c94773c580aac888fa1a585048d2a6e95eb8302d89c7a9df75801c8b5a0b7d0221d4249059cf09a5f4228
+  checksum: 10c0/d0d3601de8611d7d6b79086e4ecfc16e2a4b9d77194758dac8d600e1439cd65932fee2909c7eaf3822392a6c8e8b2eeaba5d4a5649d5212f78c8034cd855d9fe
   languageName: node
   linkType: hard
 
@@ -13682,7 +13682,7 @@ __metadata:
     "@tsconfig/strictest": "npm:2.0.8"
     "@types/babel__core": "npm:7.20.5"
     "@types/babel__preset-env": "npm:7.10.0"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.5"
     ctix: "npm:2.7.2"
     eslint: "npm:9.39.2"
     eslint-config-universe: "npm:15.0.3"
