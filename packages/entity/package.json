@@ -35,7 +35,7 @@
     "@jest/globals": "30.2.0",
     "@types/invariant": "2.2.37",
     "@types/lodash": "4.17.23",
-    "@types/node": "24.10.8",
+    "@types/node": "24.10.9",
     "lodash": "4.17.21",
     "ts-mockito": "2.6.1",
     "typescript": "5.9.3",
