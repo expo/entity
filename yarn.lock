@@ -2765,7 +2765,7 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
     "@jest/globals": "npm:30.2.0"
-    ioredis: "npm:5.9.1"
+    ioredis: "npm:5.9.2"
     ts-mockito: "npm:2.6.1"
     typescript: "npm:5.9.3"
   peerDependencies:
@@ -2865,7 +2865,7 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-redis": "workspace:^"
     "@jest/globals": "npm:30.2.0"
-    ioredis: "npm:5.9.1"
+    ioredis: "npm:5.9.2"
     nullthrows: "npm:1.1.1"
     typescript: "npm:5.9.3"
   languageName: unknown
@@ -9605,9 +9605,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis@npm:5.9.1":
-  version: 5.9.1
-  resolution: "ioredis@npm:5.9.1"
+"ioredis@npm:5.9.2":
+  version: 5.9.2
+  resolution: "ioredis@npm:5.9.2"
   dependencies:
     "@ioredis/commands": "npm:1.5.0"
     cluster-key-slot: "npm:^1.1.0"
@@ -9618,7 +9618,7 @@ __metadata:
     redis-errors: "npm:^1.2.0"
     redis-parser: "npm:^3.0.0"
     standard-as-callback: "npm:^2.1.0"
-  checksum: 10c0/0993372ac380332d487e329882f247254a77dbf2d6f746e67c2211b50dda8067c0bce16c120b77ffe1eb693766dc4f36fac8cf5679231ab0c27671e34ef13449
+  checksum: 10c0/9732a3adab56c63a0e76bd1a1c891e4201448c44ab31e7e9aee8e83005be07597a4969199593c0d59642fb3fcd64ce00e9a8fad6c92d80e648df20b4b2b184ce
   languageName: node
   linkType: hard
 
