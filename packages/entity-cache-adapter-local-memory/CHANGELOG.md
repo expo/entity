@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.54.0](https://github.com/expo/entity/compare/v0.53.0...v0.54.0) (2026-01-21)
+
+### Bug Fixes
+
+- **deps:** pin dependencies ([#328](https://github.com/expo/entity/issues/328)) ([5679f27](https://github.com/expo/entity/commit/5679f27209f1515ca5e626d858c4aa054b414625))
+
 # [0.53.0](https://github.com/expo/entity/compare/v0.52.0...v0.53.0) (2025-12-19)
 
 **Note:** Version bump only for package @expo/entity-cache-adapter-local-memory

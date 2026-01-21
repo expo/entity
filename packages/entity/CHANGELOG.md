@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.54.0](https://github.com/expo/entity/compare/v0.53.0...v0.54.0) (2026-01-21)
+
+### Bug Fixes
+
+- **deps:** pin dependencies ([#328](https://github.com/expo/entity/issues/328)) ([5679f27](https://github.com/expo/entity/commit/5679f27209f1515ca5e626d858c4aa054b414625))
+- Inline map().filter() loops in EntityLoaderUtils ([#369](https://github.com/expo/entity/issues/369)) ([ea6c128](https://github.com/expo/entity/commit/ea6c128d9c8fc21484645796f79e1aa8839dd395))
+
+### Features
+
+- synthetically set cascading set-null fields to null during canViewerDeleteAsync evaluation ([#376](https://github.com/expo/entity/issues/376)) ([544bb7c](https://github.com/expo/entity/commit/544bb7c3f2f41419cb3b779f7e3d968e09455fa0))
+
 # [0.53.0](https://github.com/expo/entity/compare/v0.52.0...v0.53.0) (2025-12-19)
 
 **Note:** Version bump only for package @expo/entity

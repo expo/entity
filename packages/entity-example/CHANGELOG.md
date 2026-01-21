@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.54.0](https://github.com/expo/entity/compare/v0.53.0...v0.54.0) (2026-01-21)
+
+### Bug Fixes
+
+- **deps:** pin dependencies ([#328](https://github.com/expo/entity/issues/328)) ([5679f27](https://github.com/expo/entity/commit/5679f27209f1515ca5e626d858c4aa054b414625))
+- **deps:** pin dependency @apollo/server to 4.12.2 ([#330](https://github.com/expo/entity/issues/330)) ([7038912](https://github.com/expo/entity/commit/7038912ca5e5b203ebbca4b46bda5612e7660eac))
+- **deps:** pin dependency @koa/bodyparser to 6.0.0 ([#339](https://github.com/expo/entity/issues/339)) ([9f93926](https://github.com/expo/entity/commit/9f939269cf843059ec0ac729d470db074730348e))
+- **deps:** pin dependency koa to 2.16.3 ([#331](https://github.com/expo/entity/issues/331)) ([ce55922](https://github.com/expo/entity/commit/ce55922e3ec6692a9ea4847427dc475902174830))
+
 # [0.53.0](https://github.com/expo/entity/compare/v0.52.0...v0.53.0) (2025-12-19)
 
 **Note:** Version bump only for package @expo/entity-example
