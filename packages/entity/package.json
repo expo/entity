@@ -36,7 +36,7 @@
     "@types/invariant": "2.2.37",
     "@types/lodash": "4.17.23",
     "@types/node": "24.10.9",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "ts-mockito": "2.6.1",
     "typescript": "5.9.3",
     "uuid": "13.0.0"
