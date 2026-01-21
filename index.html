@@ -44,6 +44,7 @@
 <p>To release a new version:</p>
 <ol>
 <li><code>git checkout main</code></li>
+<li><code>npm login</code> (to refresh token)</li>
 <li><code>yarn lerna publish [patch|minor|major] -- --conventional-commits  --force-publish</code></li>
 <li>In GitHub release interface, create a new release from the tag, copy changelog changes to release description.</li>
 </ol>
