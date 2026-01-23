@@ -70,6 +70,7 @@ export * from './rules/AllowIfInParentCascadeDeletionPrivacyPolicyRule';
 export * from './rules/AlwaysAllowPrivacyPolicyRule';
 export * from './rules/AlwaysDenyPrivacyPolicyRule';
 export * from './rules/AlwaysSkipPrivacyPolicyRule';
+export * from './rules/EvaluateIfEntityFieldPredicatePrivacyPolicyRule';
 export * from './rules/PrivacyPolicyRule';
 export * from './utils/EntityCreationUtils';
 export * from './utils/EntityPrivacyUtils';
