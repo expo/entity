@@ -34,7 +34,7 @@
   "devDependencies": {
     "@expo/entity-testing-utils": "workspace:^",
     "@jest/globals": "30.2.0",
-    "pg": "8.17.1",
+    "pg": "8.17.2",
     "typescript": "5.9.3"
   }
 }
