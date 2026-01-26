@@ -22,7 +22,7 @@
   "author": "Expo",
   "license": "MIT",
   "dependencies": {
-    "@apollo/server": "5.2.0",
+    "@apollo/server": "5.3.0",
     "@as-integrations/koa": "1.1.1",
     "@expo/entity": "workspace:^",
     "@expo/entity-testing-utils": "workspace:^",
