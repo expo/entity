@@ -66,6 +66,7 @@ export * from './internal/SingleFieldHolder';
 export * from './metrics/EntityMetricsUtils';
 export * from './metrics/IEntityMetricsAdapter';
 export * from './metrics/NoOpEntityMetricsAdapter';
+export * from './rules/AllowIfInParentCascadeDeletionPrivacyPolicyRule';
 export * from './rules/AlwaysAllowPrivacyPolicyRule';
 export * from './rules/AlwaysDenyPrivacyPolicyRule';
 export * from './rules/AlwaysSkipPrivacyPolicyRule';
