@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.55.0](https://github.com/expo/entity/compare/v0.54.0...v0.55.0) (2026-01-27)
+
+### Features
+
+- add AllowIf[Any|All]SubRulesAllowPrivacyPolicyRule rules ([#401](https://github.com/expo/entity/issues/401)) ([5db8977](https://github.com/expo/entity/commit/5db89777c605eda9a8393227ceeb641e460dc463))
+- Add AllowIfInParentCascadeDeletionPrivacyPolicyRule ([#399](https://github.com/expo/entity/issues/399)) ([56ed357](https://github.com/expo/entity/commit/56ed357b923a8374a3c120e3eef5d487d5fb2f9c))
+- add EvaluateIfEntityFieldPredicatePrivacyPolicyRule ([#400](https://github.com/expo/entity/issues/400)) ([f3b575c](https://github.com/expo/entity/commit/f3b575cd00d47c747cf45e96c6db7857592b0f93))
+
 # [0.54.0](https://github.com/expo/entity/compare/v0.53.0...v0.54.0) (2026-01-21)
 
 ### Bug Fixes

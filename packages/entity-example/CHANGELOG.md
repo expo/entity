@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.55.0](https://github.com/expo/entity/compare/v0.54.0...v0.55.0) (2026-01-27)
+
+### Bug Fixes
+
+- **deps:** update dependency @apollo/server to v5.3.0 ([#403](https://github.com/expo/entity/issues/403)) ([b758c4d](https://github.com/expo/entity/commit/b758c4d344294797430de0afb88e47f558b6fa8d))
+
 # [0.54.0](https://github.com/expo/entity/compare/v0.53.0...v0.54.0) (2026-01-21)
 
 ### Bug Fixes
