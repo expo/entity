@@ -26,7 +26,7 @@
     "@as-integrations/koa": "1.1.1",
     "@expo/entity": "workspace:^",
     "@expo/entity-testing-utils": "workspace:^",
-    "@koa/bodyparser": "6.0.0",
+    "@koa/bodyparser": "6.1.0",
     "@koa/cors": "5.0.0",
     "@koa/router": "15.3.0",
     "graphql": "16.12.0",
