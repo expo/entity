@@ -2809,7 +2809,7 @@ __metadata:
     "@jest/globals": "npm:30.2.0"
     "@koa/bodyparser": "npm:6.0.0"
     "@koa/cors": "npm:5.0.0"
-    "@koa/router": "npm:15.2.0"
+    "@koa/router": "npm:15.3.0"
     "@types/koa": "npm:3.0.1"
     "@types/koa__cors": "npm:5.0.1"
     "@types/koa__router": "npm:12.0.5"
@@ -3762,9 +3762,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@koa/router@npm:15.2.0":
-  version: 15.2.0
-  resolution: "@koa/router@npm:15.2.0"
+"@koa/router@npm:15.3.0":
+  version: 15.3.0
+  resolution: "@koa/router@npm:15.3.0"
   dependencies:
     debug: "npm:^4.4.3"
     http-errors: "npm:^2.0.1"
@@ -3775,7 +3775,7 @@ __metadata:
   peerDependenciesMeta:
     koa:
       optional: false
-  checksum: 10c0/671679ea4ca5c0755136ecf02a43dde55730e4783d39f53f8f5176878b957d0d4526bea829f164c2ea1c8c45c5bfd858b9b8faa711a17872d632cc5cb568e70e
+  checksum: 10c0/a05f553130949ed15725781c6280624e3fe90a1d58f5833487d376c4d20fdc9a98384c53090a46d0c324316f962ec4848c7fe52325a7ca77d4070cd164e08aa7
   languageName: node
   linkType: hard
 
