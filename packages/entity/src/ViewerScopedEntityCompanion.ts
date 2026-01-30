@@ -5,6 +5,7 @@ import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
 import { ViewerScopedEntityLoaderFactory } from './ViewerScopedEntityLoaderFactory';
 import { ViewerScopedEntityMutatorFactory } from './ViewerScopedEntityMutatorFactory';
+import { ViewerScopedKnexEntityLoaderFactory } from './ViewerScopedKnexEntityLoaderFactory';
 import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
@@ -50,6 +51,23 @@ export class ViewerScopedEntityCompanion<
   > {
     return new ViewerScopedEntityLoaderFactory(
       this.entityCompanion.getLoaderFactory(),
+      this.viewerContext,
+    );
+  }
+
+  /**
+   * Vend a viewer-scoped knex entity loader.
+   */
+  getKnexLoaderFactory(): ViewerScopedKnexEntityLoaderFactory<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return new ViewerScopedKnexEntityLoaderFactory(
+      this.entityCompanion.getKnexLoaderFactory(),
       this.viewerContext,
     );
   }

@@ -390,7 +390,9 @@ describe('postgres entity integration', () => {
           .createAsync(),
       );
 
-      const results = await PostgresTestEntity.loader(vc1).loadManyByFieldEqualityConjunctionAsync([
+      const results = await PostgresTestEntity.knexLoader(
+        vc1,
+      ).loadManyByFieldEqualityConjunctionAsync([
         {
           fieldName: 'hasACat',
           fieldValue: false,
@@ -403,9 +405,11 @@ describe('postgres entity integration', () => {
 
       expect(results).toHaveLength(2);
 
-      const results2 = await PostgresTestEntity.loader(vc1).loadManyByFieldEqualityConjunctionAsync(
-        [{ fieldName: 'hasADog', fieldValues: [true, false] }],
-      );
+      const results2 = await PostgresTestEntity.knexLoader(
+        vc1,
+      ).loadManyByFieldEqualityConjunctionAsync([
+        { fieldName: 'hasADog', fieldValues: [true, false] },
+      ]);
       expect(results2).toHaveLength(3);
     });
 
@@ -424,19 +428,18 @@ describe('postgres entity integration', () => {
         PostgresTestEntity.creatorWithAuthorizationResults(vc1).setField('name', 'c').createAsync(),
       );
 
-      const results = await PostgresTestEntity.loader(vc1).loadManyByFieldEqualityConjunctionAsync(
-        [],
-        {
-          limit: 2,
-          offset: 1,
-          orderBy: [
-            {
-              fieldName: 'name',
-              order: OrderByOrdering.DESCENDING,
-            },
-          ],
-        },
-      );
+      const results = await PostgresTestEntity.knexLoader(
+        vc1,
+      ).loadManyByFieldEqualityConjunctionAsync([], {
+        limit: 2,
+        offset: 1,
+        orderBy: [
+          {
+            fieldName: 'name',
+            order: OrderByOrdering.DESCENDING,
+          },
+        ],
+      });
       expect(results).toHaveLength(2);
       expect(results.map((e) => e.getField('name'))).toEqual(['b', 'a']);
     });
@@ -468,13 +471,15 @@ describe('postgres entity integration', () => {
           .createAsync(),
       );
 
-      const results = await PostgresTestEntity.loader(vc1).loadManyByFieldEqualityConjunctionAsync([
-        { fieldName: 'name', fieldValue: null },
-      ]);
+      const results = await PostgresTestEntity.knexLoader(
+        vc1,
+      ).loadManyByFieldEqualityConjunctionAsync([{ fieldName: 'name', fieldValue: null }]);
       expect(results).toHaveLength(2);
       expect(results[0]!.getField('name')).toBeNull();
 
-      const results2 = await PostgresTestEntity.loader(vc1).loadManyByFieldEqualityConjunctionAsync(
+      const results2 = await PostgresTestEntity.knexLoader(
+        vc1,
+      ).loadManyByFieldEqualityConjunctionAsync(
         [
           { fieldName: 'name', fieldValues: ['a', null] },
           { fieldName: 'hasADog', fieldValue: true },
@@ -504,7 +509,7 @@ describe('postgres entity integration', () => {
           .createAsync(),
       );
 
-      const results = await PostgresTestEntity.loader(vc1).loadManyByRawWhereClauseAsync(
+      const results = await PostgresTestEntity.knexLoader(vc1).loadManyByRawWhereClauseAsync(
         'name = ?',
         ['hello'],
       );
@@ -523,7 +528,7 @@ describe('postgres entity integration', () => {
       );
 
       await expect(
-        PostgresTestEntity.loader(vc1).loadManyByRawWhereClauseAsync('invalid_column = ?', [
+        PostgresTestEntity.knexLoader(vc1).loadManyByRawWhereClauseAsync('invalid_column = ?', [
           'hello',
         ]),
       ).rejects.toThrow();
@@ -553,7 +558,7 @@ describe('postgres entity integration', () => {
           .createAsync(),
       );
 
-      const results = await PostgresTestEntity.loader(vc1).loadManyByRawWhereClauseAsync(
+      const results = await PostgresTestEntity.knexLoader(vc1).loadManyByRawWhereClauseAsync(
         'has_a_dog = ?',
         [true],
         {
@@ -571,7 +576,7 @@ describe('postgres entity integration', () => {
       expect(results).toHaveLength(2);
       expect(results.map((e) => e.getField('name'))).toEqual(['b', 'c']);
 
-      const resultsMultipleOrderBy = await PostgresTestEntity.loader(
+      const resultsMultipleOrderBy = await PostgresTestEntity.knexLoader(
         vc1,
       ).loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
         orderBy: [
@@ -589,13 +594,11 @@ describe('postgres entity integration', () => {
       expect(resultsMultipleOrderBy).toHaveLength(3);
       expect(resultsMultipleOrderBy.map((e) => e.getField('name'))).toEqual(['c', 'b', 'a']);
 
-      const resultsOrderByRaw = await PostgresTestEntity.loader(vc1).loadManyByRawWhereClauseAsync(
-        'has_a_dog = ?',
-        [true],
-        {
-          orderByRaw: 'has_a_dog ASC, name DESC',
-        },
-      );
+      const resultsOrderByRaw = await PostgresTestEntity.knexLoader(
+        vc1,
+      ).loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
+        orderByRaw: 'has_a_dog ASC, name DESC',
+      });
 
       expect(resultsOrderByRaw).toHaveLength(3);
       expect(resultsOrderByRaw.map((e) => e.getField('name'))).toEqual(['c', 'b', 'a']);
