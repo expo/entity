@@ -3,8 +3,10 @@ import { instance, mock } from 'ts-mockito';
 
 import { AuthorizationResultBasedEntityAssociationLoader } from '../AuthorizationResultBasedEntityAssociationLoader';
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
+import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader';
 import { EnforcingEntityAssociationLoader } from '../EnforcingEntityAssociationLoader';
 import { EnforcingEntityLoader } from '../EnforcingEntityLoader';
+import { EnforcingKnexEntityLoader } from '../EnforcingKnexEntityLoader';
 import { EntityLoaderUtils } from '../EntityLoaderUtils';
 import { ReadonlyEntity } from '../ReadonlyEntity';
 import { ViewerContext } from '../ViewerContext';
@@ -210,6 +212,24 @@ describe(ReadonlyEntity, () => {
       const viewerContext = new ViewerContext(companionProvider);
       expect(SimpleTestEntity.loaderWithAuthorizationResults(viewerContext)).toBeInstanceOf(
         AuthorizationResultBasedEntityLoader,
+      );
+    });
+  });
+
+  describe('knexLoader', () => {
+    it('creates a new EnforcingKnexEntityLoader', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+      expect(SimpleTestEntity.knexLoader(viewerContext)).toBeInstanceOf(EnforcingKnexEntityLoader);
+    });
+  });
+
+  describe('knexLoaderWithAuthorizationResults', () => {
+    it('creates a new AuthorizationResultBasedEntityLoader', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+      expect(SimpleTestEntity.knexLoaderWithAuthorizationResults(viewerContext)).toBeInstanceOf(
+        AuthorizationResultBasedKnexEntityLoader,
       );
     });
   });

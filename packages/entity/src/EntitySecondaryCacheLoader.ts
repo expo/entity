@@ -1,6 +1,7 @@
 import { Result } from '@expo/results';
 
 import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
+import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
@@ -61,6 +62,14 @@ export abstract class EntitySecondaryCacheLoader<
   constructor(
     private readonly secondaryEntityCache: ISecondaryEntityCache<TFields, TLoadParams>,
     protected readonly entityLoader: AuthorizationResultBasedEntityLoader<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    protected readonly knexEntityLoader: AuthorizationResultBasedKnexEntityLoader<
       TFields,
       TIDField,
       TViewerContext,

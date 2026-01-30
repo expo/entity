@@ -1,4 +1,5 @@
 import { Result, asyncResult, result } from '@expo/results';
+import invariant from 'invariant';
 import nullthrows from 'nullthrows';
 
 import { IEntityClass } from './Entity';
@@ -8,6 +9,7 @@ import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQue
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
 import { pick } from './entityUtils';
+import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError';
 import { EntityDataManager } from './internal/EntityDataManager';
 import { LoadPair } from './internal/EntityLoadInterfaces';
 import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
@@ -189,6 +191,27 @@ export class EntityLoaderUtils<
         );
       }),
     );
+  }
+
+  /**
+   * Validate that field values are valid according to the field's validation function.
+   *
+   * @param fieldName - field name to validate
+   * @param fieldValues - field values to validate
+   * @throws EntityInvalidFieldValueError when a field value is invalid
+   */
+  public validateFieldAndValues<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValues: readonly TFields[N][],
+  ): void {
+    const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
+    invariant(fieldDefinition, `must have field definition for field = ${String(fieldName)}`);
+    for (const fieldValue of fieldValues) {
+      const isInputValid = fieldDefinition.validateInputValue(fieldValue);
+      if (!isInputValid) {
+        throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
+      }
+    }
   }
 
   private tryConstructEntities(fieldsObjects: readonly TFields[]): readonly Result<TEntity>[] {

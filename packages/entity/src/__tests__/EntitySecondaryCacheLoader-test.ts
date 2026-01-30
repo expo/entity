@@ -47,6 +47,7 @@ describe(EntitySecondaryCacheLoader, () => {
       const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
         secondaryEntityCache,
         SimpleTestEntity.loaderWithAuthorizationResults(vc1),
+        SimpleTestEntity.knexLoaderWithAuthorizationResults(vc1),
       );
 
       await secondaryCacheLoader.loadManyAsync([loadParams]);
@@ -70,8 +71,13 @@ describe(EntitySecondaryCacheLoader, () => {
       const secondaryEntityCache = instance(secondaryEntityCacheMock);
 
       const loader = SimpleTestEntity.loaderWithAuthorizationResults(vc1);
+      const knexLoader = SimpleTestEntity.knexLoaderWithAuthorizationResults(vc1);
       const spiedPrivacyPolicy = spy(loader.utils['privacyPolicy']);
-      const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(secondaryEntityCache, loader);
+      const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
+        secondaryEntityCache,
+        loader,
+        knexLoader,
+      );
 
       const result = await secondaryCacheLoader.loadManyAsync([loadParams]);
       expect(result.get(loadParams)?.enforceValue().getID()).toEqual(createdEntity.getID());
@@ -99,7 +105,12 @@ describe(EntitySecondaryCacheLoader, () => {
         mock<ISecondaryEntityCache<SimpleTestFields, TestLoadParams>>();
       const secondaryEntityCache = instance(secondaryEntityCacheMock);
       const loader = SimpleTestEntity.loaderWithAuthorizationResults(vc1);
-      const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(secondaryEntityCache, loader);
+      const knexLoader = SimpleTestEntity.knexLoaderWithAuthorizationResults(vc1);
+      const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
+        secondaryEntityCache,
+        loader,
+        knexLoader,
+      );
       await secondaryCacheLoader.invalidateManyAsync([loadParams]);
 
       verify(secondaryEntityCacheMock.invalidateManyAsync(deepEqual([loadParams]))).once();

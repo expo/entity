@@ -51,7 +51,7 @@ describe('Two entities backed by the same table', () => {
       'OneTestEntity must be instantiated with one data',
     );
 
-    const fieldEqualityConjunctionResults = await OneTestEntity.loaderWithAuthorizationResults(
+    const fieldEqualityConjunctionResults = await OneTestEntity.knexLoaderWithAuthorizationResults(
       viewerContext,
     ).loadManyByFieldEqualityConjunctionAsync([
       {
