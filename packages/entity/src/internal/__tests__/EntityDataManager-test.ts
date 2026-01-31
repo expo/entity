@@ -1,13 +1,11 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import {
   anyNumber,
-  anyString,
   anything,
   deepEqual,
   instance,
   mock,
   resetCalls,
-  spy,
   verify,
   when,
 } from 'ts-mockito';
@@ -825,55 +823,6 @@ describe(EntityDataManager, () => {
     cacheSpy.mockReset();
   });
 
-  it('loads by field equality conjunction and does not cache', async () => {
-    const objects = getObjects();
-    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
-      testEntityConfiguration,
-      objects,
-    );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
-      testEntityConfiguration,
-      dataStore,
-    );
-    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
-    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
-    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
-    const entityDataManager = new EntityDataManager(
-      databaseAdapter,
-      entityCache,
-      new StubQueryContextProvider(),
-      new NoOpEntityMetricsAdapter(),
-      TestEntity.name,
-    );
-    const queryContext = new StubQueryContextProvider().getQueryContext();
-
-    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyByFieldEqualityConjunctionAsync');
-    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
-
-    const entityDatas = await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
-      queryContext,
-      [
-        {
-          fieldName: 'stringField',
-          fieldValue: 'hello',
-        },
-        {
-          fieldName: 'intField',
-          fieldValue: 1,
-        },
-      ],
-      {},
-    );
-
-    expect(entityDatas).toHaveLength(2);
-
-    expect(dbSpy).toHaveBeenCalled();
-    expect(cacheSpy).not.toHaveBeenCalled();
-
-    dbSpy.mockReset();
-    cacheSpy.mockReset();
-  });
-
   it('handles DB errors as expected', async () => {
     const databaseAdapterMock = mock<EntityDatabaseAdapter<TestFields, 'customIdField'>>();
     when(databaseAdapterMock.fetchManyWhereAsync(anything(), anything(), anything())).thenReject(
@@ -1054,56 +1003,6 @@ describe(EntityDataManager, () => {
           }),
         ),
       ).once();
-
-      resetCalls(metricsAdapterMock);
-
-      await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
-        queryContext,
-        [
-          {
-            fieldName: 'testIndexedField',
-            fieldValue: 'unique1',
-          },
-        ],
-        {},
-      );
-      verify(
-        metricsAdapterMock.logDataManagerLoadEvent(
-          deepEqual({
-            type: EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
-            isInTransaction: false,
-            entityClassName: TestEntity.name,
-            duration: anyNumber(),
-            count: 1,
-          }),
-        ),
-      ).once();
-
-      resetCalls(metricsAdapterMock);
-
-      const databaseAdapterSpy = spy(databaseAdapter);
-      when(
-        databaseAdapterSpy.fetchManyByRawWhereClauseAsync(
-          anything(),
-          anyString(),
-          anything(),
-          anything(),
-        ),
-      ).thenResolve([]);
-      await entityDataManager.loadManyByRawWhereClauseAsync(queryContext, '', [], {});
-      verify(
-        metricsAdapterMock.logDataManagerLoadEvent(
-          deepEqual({
-            type: EntityMetricsLoadType.LOAD_MANY_RAW,
-            isInTransaction: false,
-            entityClassName: TestEntity.name,
-            duration: anyNumber(),
-            count: 0,
-          }),
-        ),
-      ).once();
-
-      verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).never();
     });
 
     it('records metrics appropriately inside of transactions', async () => {
@@ -1194,56 +1093,6 @@ describe(EntityDataManager, () => {
             }),
           ),
         ).once();
-
-        resetCalls(metricsAdapterMock);
-
-        await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
-          queryContext,
-          [
-            {
-              fieldName: 'testIndexedField',
-              fieldValue: 'unique1',
-            },
-          ],
-          {},
-        );
-        verify(
-          metricsAdapterMock.logDataManagerLoadEvent(
-            deepEqual({
-              type: EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
-              isInTransaction: true,
-              entityClassName: TestEntity.name,
-              duration: anyNumber(),
-              count: 1,
-            }),
-          ),
-        ).once();
-
-        resetCalls(metricsAdapterMock);
-
-        const databaseAdapterSpy = spy(databaseAdapter);
-        when(
-          databaseAdapterSpy.fetchManyByRawWhereClauseAsync(
-            anything(),
-            anyString(),
-            anything(),
-            anything(),
-          ),
-        ).thenResolve([]);
-        await entityDataManager.loadManyByRawWhereClauseAsync(queryContext, '', [], {});
-        verify(
-          metricsAdapterMock.logDataManagerLoadEvent(
-            deepEqual({
-              type: EntityMetricsLoadType.LOAD_MANY_RAW,
-              isInTransaction: true,
-              entityClassName: TestEntity.name,
-              duration: anyNumber(),
-              count: 0,
-            }),
-          ),
-        ).once();
-
-        verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).never();
       });
     });
   });

@@ -87,7 +87,7 @@ export class EntityCompanion<
       TEntity,
       TPrivacyPolicy,
       TSelectedFields
-    >(this, tableDataCoordinator.dataManager, metricsAdapter);
+    >(this, tableDataCoordinator.dataManager, tableDataCoordinator.knexDataManager, metricsAdapter);
     this.entityMutatorFactory = new EntityMutatorFactory(
       entityCompanionProvider,
       tableDataCoordinator.entityConfiguration,
