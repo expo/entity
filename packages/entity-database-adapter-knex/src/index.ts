@@ -6,6 +6,7 @@
 
 export * from './EntityFields';
 export * from './PostgresEntityDatabaseAdapter';
+export * from './PostgresEntityKnexDatabaseAdapter';
 export * from './PostgresEntityDatabaseAdapterProvider';
 export * from './PostgresEntityQueryContextProvider';
 export * from './errors/wrapNativePostgresCallAsync';

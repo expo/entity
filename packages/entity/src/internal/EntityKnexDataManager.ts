@@ -1,9 +1,9 @@
 import {
-  EntityDatabaseAdapter,
   FieldEqualityCondition,
   QuerySelectionModifiers,
   QuerySelectionModifiersWithOrderByRaw,
 } from '../EntityDatabaseAdapter';
+import { EntityKnexDatabaseAdapter } from '../EntityKnexDatabaseAdapter';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { timeAndLogLoadEventAsync } from '../metrics/EntityMetricsUtils';
 import { EntityMetricsLoadType, IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
@@ -19,7 +19,7 @@ export class EntityKnexDataManager<
   TIDField extends keyof TFields,
 > {
   constructor(
-    private readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
+    private readonly databaseAdapter: EntityKnexDatabaseAdapter<TFields, TIDField>,
     private readonly metricsAdapter: IEntityMetricsAdapter,
     private readonly entityClassName: string,
   ) {}

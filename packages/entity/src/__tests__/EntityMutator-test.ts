@@ -17,6 +17,7 @@ import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBase
 import { EntityCompanionProvider } from '../EntityCompanionProvider';
 import { EntityConfiguration } from '../EntityConfiguration';
 import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
+import { EntityKnexDatabaseAdapter } from '../EntityKnexDatabaseAdapter';
 import { EntityLoaderFactory } from '../EntityLoaderFactory';
 import { EntityLoaderUtils } from '../EntityLoaderUtils';
 import {
@@ -52,6 +53,7 @@ import {
 } from '../utils/__testfixtures__/SimpleTestEntity';
 import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
 import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
+import { StubKnexDatabaseAdapter } from '../utils/__testfixtures__/StubKnexDatabaseAdapter';
 import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
 import {
   TestEntity,
@@ -362,18 +364,28 @@ const createEntityMutatorFactory = (
     afterAll: [new TestMutationTrigger()],
     afterCommit: [new TestNonTransactionalMutationTrigger()],
   };
+  const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+    testEntityConfiguration,
+    new Map([[testEntityConfiguration.tableName, existingObjects]]),
+  );
   const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
     testEntityConfiguration,
-    StubDatabaseAdapter.convertFieldObjectsToDataStore(
-      testEntityConfiguration,
-      new Map([[testEntityConfiguration.tableName, existingObjects]]),
-    ),
+    dataStore,
   );
   const customStubDatabaseAdapterProvider: IEntityDatabaseAdapterProvider = {
     getDatabaseAdapter<TFields extends Record<'customIdField', any>>(
       _entityConfiguration: EntityConfiguration<TFields, 'customIdField'>,
     ): EntityDatabaseAdapter<TFields, 'customIdField'> {
       return databaseAdapter as any as EntityDatabaseAdapter<TFields, 'customIdField'>;
+    },
+    getKnexDatabaseAdapter<TFields extends Record<'customIdField', any>>(
+      entityConfiguration: EntityConfiguration<TFields, 'customIdField'>,
+    ): EntityKnexDatabaseAdapter<TFields, 'customIdField'> {
+      return new StubKnexDatabaseAdapter<TFields, 'customIdField'>(
+        entityConfiguration,
+        new Map(), // field transformer map
+        dataStore,
+      ) as any;
     },
   };
   const metricsAdapter = new NoOpEntityMetricsAdapter();

@@ -15,6 +15,7 @@ import {
 import { EntityMetricsLoadType, IEntityMetricsAdapter } from '../../metrics/IEntityMetricsAdapter';
 import { NoOpEntityMetricsAdapter } from '../../metrics/NoOpEntityMetricsAdapter';
 import { StubDatabaseAdapter } from '../../utils/__testfixtures__/StubDatabaseAdapter';
+import { StubKnexDatabaseAdapter } from '../../utils/__testfixtures__/StubKnexDatabaseAdapter';
 import { StubQueryContextProvider } from '../../utils/__testfixtures__/StubQueryContextProvider';
 import {
   TestEntity,
@@ -63,18 +64,19 @@ describe(EntityKnexDataManager, () => {
       testEntityConfiguration,
       objects,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+    const knexDatabaseAdapter = new StubKnexDatabaseAdapter<TestFields, 'customIdField'>(
       testEntityConfiguration,
+      new Map(), // field transformer map
       dataStore,
     );
     const entityDataManager = new EntityKnexDataManager(
-      databaseAdapter,
+      knexDatabaseAdapter,
       new NoOpEntityMetricsAdapter(),
       TestEntity.name,
     );
     const queryContext = new StubQueryContextProvider().getQueryContext();
 
-    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyByFieldEqualityConjunctionAsync');
+    const dbSpy = jest.spyOn(knexDatabaseAdapter, 'fetchManyByFieldEqualityConjunctionAsync');
 
     const entityDatas = await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
       queryContext,
@@ -108,12 +110,13 @@ describe(EntityKnexDataManager, () => {
         testEntityConfiguration,
         objects,
       );
-      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      const knexDatabaseAdapter = new StubKnexDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
+        new Map(), // field transformer map
         dataStore,
       );
       const entityDataManager = new EntityKnexDataManager(
-        databaseAdapter,
+        knexDatabaseAdapter,
         metricsAdapter,
         TestEntity.name,
       );
@@ -143,9 +146,9 @@ describe(EntityKnexDataManager, () => {
 
       resetCalls(metricsAdapterMock);
 
-      const databaseAdapterSpy = spy(databaseAdapter);
+      const knexDatabaseAdapterSpy = spy(knexDatabaseAdapter);
       when(
-        databaseAdapterSpy.fetchManyByRawWhereClauseAsync(
+        knexDatabaseAdapterSpy.fetchManyByRawWhereClauseAsync(
           anything(),
           anyString(),
           anything(),
@@ -177,12 +180,13 @@ describe(EntityKnexDataManager, () => {
         testEntityConfiguration,
         objects,
       );
-      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      const knexDatabaseAdapter = new StubKnexDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
+        new Map(), // field transformer map
         dataStore,
       );
       const entityDataManager = new EntityKnexDataManager(
-        databaseAdapter,
+        knexDatabaseAdapter,
         metricsAdapter,
         TestEntity.name,
       );
@@ -212,9 +216,9 @@ describe(EntityKnexDataManager, () => {
 
         resetCalls(metricsAdapterMock);
 
-        const databaseAdapterSpy = spy(databaseAdapter);
+        const knexDatabaseAdapterSpy = spy(knexDatabaseAdapter);
         when(
-          databaseAdapterSpy.fetchManyByRawWhereClauseAsync(
+          knexDatabaseAdapterSpy.fetchManyByRawWhereClauseAsync(
             anything(),
             anyString(),
             anything(),

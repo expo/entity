@@ -23,6 +23,7 @@ export * from './EntityCompanionProvider';
 export * from './EntityConfiguration';
 export * from './EntityCreator';
 export * from './EntityDatabaseAdapter';
+export * from './EntityKnexDatabaseAdapter';
 export * from './EntityDeleter';
 export * from './EntityFieldDefinition';
 export * from './EntityFields';

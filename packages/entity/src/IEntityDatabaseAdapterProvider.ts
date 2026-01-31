@@ -2,6 +2,7 @@
 
 import { EntityConfiguration } from './EntityConfiguration';
 import { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
+import { EntityKnexDatabaseAdapter } from './EntityKnexDatabaseAdapter';
 
 /**
  * A database adapter provider vends database adapters for a particular database adapter type.
@@ -14,6 +15,13 @@ export interface IEntityDatabaseAdapterProvider {
   getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
     entityConfiguration: EntityConfiguration<TFields, TIDField>,
   ): EntityDatabaseAdapter<TFields, TIDField>;
+
+  /**
+   * Vend a knex database adapter.
+   */
+  getKnexDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+  ): EntityKnexDatabaseAdapter<TFields, TIDField>;
 }
 
 /* c8 ignore stop - interface only */

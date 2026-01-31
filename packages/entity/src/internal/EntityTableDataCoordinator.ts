@@ -1,5 +1,6 @@
 import { EntityConfiguration } from '../EntityConfiguration';
 import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
+import { EntityKnexDatabaseAdapter } from '../EntityKnexDatabaseAdapter';
 import { EntityQueryContextProvider } from '../EntityQueryContextProvider';
 import { IEntityCacheAdapter } from '../IEntityCacheAdapter';
 import { IEntityCacheAdapterProvider } from '../IEntityCacheAdapterProvider';
@@ -21,6 +22,7 @@ export class EntityTableDataCoordinator<
   TIDField extends keyof TFields,
 > {
   readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>;
+  readonly knexDatabaseAdapter: EntityKnexDatabaseAdapter<TFields, TIDField>;
   readonly cacheAdapter: IEntityCacheAdapter<TFields, TIDField>;
   readonly dataManager: EntityDataManager<TFields, TIDField>;
   readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>;
@@ -34,6 +36,7 @@ export class EntityTableDataCoordinator<
     entityClassName: string,
   ) {
     this.databaseAdapter = databaseAdapterProvider.getDatabaseAdapter(entityConfiguration);
+    this.knexDatabaseAdapter = databaseAdapterProvider.getKnexDatabaseAdapter(entityConfiguration);
     this.cacheAdapter = cacheAdapterProvider.getCacheAdapter(entityConfiguration);
     this.dataManager = new EntityDataManager(
       this.databaseAdapter,
@@ -43,7 +46,7 @@ export class EntityTableDataCoordinator<
       entityClassName,
     );
     this.knexDataManager = new EntityKnexDataManager(
-      this.databaseAdapter,
+      this.knexDatabaseAdapter,
       metricsAdapter,
       entityClassName,
     );

@@ -14,6 +14,7 @@ import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache';
 import { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
 import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
 import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
+import { StubKnexDatabaseAdapter } from '../utils/__testfixtures__/StubKnexDatabaseAdapter';
 import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
 import {
   TestEntity,
@@ -44,42 +45,48 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
     const id1 = uuidv4();
     const id2 = uuidv4();
     const id3 = uuidv4();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      new Map([
+        [
+          testEntityConfiguration.tableName,
+          [
+            {
+              customIdField: id1,
+              stringField: 'huh',
+              intField: 4,
+              testIndexedField: '4',
+              dateField: new Date(),
+              nullableField: null,
+            },
+            {
+              customIdField: id2,
+              stringField: 'huh',
+              intField: 4,
+              testIndexedField: '5',
+              dateField: new Date(),
+              nullableField: null,
+            },
+            {
+              customIdField: id3,
+              stringField: 'huh2',
+              intField: 4,
+              testIndexedField: '6',
+              dateField: new Date(),
+              nullableField: null,
+            },
+          ],
+        ],
+      ]),
+    );
     const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
       testEntityConfiguration,
-      StubDatabaseAdapter.convertFieldObjectsToDataStore(
-        testEntityConfiguration,
-        new Map([
-          [
-            testEntityConfiguration.tableName,
-            [
-              {
-                customIdField: id1,
-                stringField: 'huh',
-                intField: 4,
-                testIndexedField: '4',
-                dateField: new Date(),
-                nullableField: null,
-              },
-              {
-                customIdField: id2,
-                stringField: 'huh',
-                intField: 4,
-                testIndexedField: '5',
-                dateField: new Date(),
-                nullableField: null,
-              },
-              {
-                customIdField: id3,
-                stringField: 'huh2',
-                intField: 4,
-                testIndexedField: '6',
-                dateField: new Date(),
-                nullableField: null,
-              },
-            ],
-          ],
-        ]),
-      ),
+      dataStore,
+    );
+    const knexDatabaseAdapter = new StubKnexDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      new Map(), // field transformer map
+      dataStore,
     );
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
@@ -92,7 +99,7 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
       TestEntity.name,
     );
     const knexDataManager = new EntityKnexDataManager(
-      databaseAdapter,
+      knexDatabaseAdapter,
       metricsAdapter,
       TestEntity.name,
     );
@@ -164,42 +171,48 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
     const id1 = uuidv4();
     const id2 = uuidv4();
     const id3 = uuidv4();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      new Map([
+        [
+          testEntityConfiguration.tableName,
+          [
+            {
+              customIdField: id1,
+              stringField: 'huh',
+              intField: 4,
+              testIndexedField: '4',
+              dateField: new Date(),
+              nullableField: null,
+            },
+            {
+              customIdField: id2,
+              stringField: 'huh',
+              intField: 4,
+              testIndexedField: '5',
+              dateField: new Date(),
+              nullableField: null,
+            },
+            {
+              customIdField: id3,
+              stringField: 'huh2',
+              intField: 4,
+              testIndexedField: '6',
+              dateField: new Date(),
+              nullableField: null,
+            },
+          ],
+        ],
+      ]),
+    );
     const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
       testEntityConfiguration,
-      StubDatabaseAdapter.convertFieldObjectsToDataStore(
-        testEntityConfiguration,
-        new Map([
-          [
-            testEntityConfiguration.tableName,
-            [
-              {
-                customIdField: id1,
-                stringField: 'huh',
-                intField: 4,
-                testIndexedField: '4',
-                dateField: new Date(),
-                nullableField: null,
-              },
-              {
-                customIdField: id2,
-                stringField: 'huh',
-                intField: 4,
-                testIndexedField: '5',
-                dateField: new Date(),
-                nullableField: null,
-              },
-              {
-                customIdField: id3,
-                stringField: 'huh2',
-                intField: 4,
-                testIndexedField: '6',
-                dateField: new Date(),
-                nullableField: null,
-              },
-            ],
-          ],
-        ]),
-      ),
+      dataStore,
+    );
+    const knexDatabaseAdapter = new StubKnexDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      new Map(), // field transformer map
+      dataStore,
     );
     const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
     const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
@@ -212,7 +225,7 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
       TestEntity.name,
     );
     const knexDataManager = new EntityKnexDataManager(
-      databaseAdapter,
+      knexDatabaseAdapter,
       metricsAdapter,
       TestEntity.name,
     );
