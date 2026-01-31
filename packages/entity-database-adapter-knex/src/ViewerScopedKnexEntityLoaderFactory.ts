@@ -1,9 +1,13 @@
+import {
+  EntityPrivacyPolicy,
+  EntityPrivacyPolicyEvaluationContext,
+  EntityQueryContext,
+  ReadonlyEntity,
+  ViewerContext,
+} from '@expo/entity';
+
 import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
-import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
 import { KnexEntityLoaderFactory } from './KnexEntityLoaderFactory';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
 
 /**
  * Provides a cleaner API for loading entities via knex by passing through the ViewerContext.

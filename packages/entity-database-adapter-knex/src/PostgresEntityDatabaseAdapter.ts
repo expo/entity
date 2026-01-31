@@ -1,21 +1,20 @@
+import { FieldTransformer, FieldTransformerMap } from '@expo/entity';
+import { Knex } from 'knex';
+
 import {
-  EntityDatabaseAdapter,
-  FieldTransformer,
-  FieldTransformerMap,
+  BasePostgresEntityDatabaseAdapter,
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableQuerySelectionModifiers,
   TableQuerySelectionModifiersWithOrderByRaw,
-} from '@expo/entity';
-import { Knex } from 'knex';
-
+} from './BasePostgresEntityDatabaseAdapter';
 import { JSONArrayField, MaybeJSONArrayField } from './EntityFields';
 import { wrapNativePostgresCallAsync } from './errors/wrapNativePostgresCallAsync';
 
 export class PostgresEntityDatabaseAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
-> extends EntityDatabaseAdapter<TFields, TIDField> {
+> extends BasePostgresEntityDatabaseAdapter<TFields, TIDField> {
   protected getFieldTransformerMap(): FieldTransformerMap {
     return new Map<string, FieldTransformer<any>>([
       [

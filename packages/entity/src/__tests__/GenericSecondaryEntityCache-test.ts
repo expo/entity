@@ -108,11 +108,7 @@ class TestSecondaryCacheLoader extends EntitySecondaryCacheLoader<
     const emptyMap = new Map(loadParamsArray.map((p) => [p, null]));
     return await mapMapAsync(emptyMap, async (_value, loadParams) => {
       return (
-        (
-          await this.knexEntityLoader.loadManyByFieldEqualityConjunctionAsync([
-            { fieldName: 'intField', fieldValue: loadParams.intValue },
-          ])
-        )[0]
+        (await this.entityLoader.loadManyByFieldEqualingAsync('intField', loadParams.intValue))[0]
           ?.enforceValue()
           ?.getAllFields() ?? null
       );
@@ -134,7 +130,6 @@ describe(GenericSecondaryEntityCache, () => {
         (params) => `intValue.${params.intValue}`,
       ),
       TestEntity.loaderWithAuthorizationResults(viewerContext),
-      TestEntity.knexLoaderWithAuthorizationResults(viewerContext),
     );
 
     const loadParams = { intValue: 1 };
@@ -171,7 +166,6 @@ describe(GenericSecondaryEntityCache, () => {
         (params) => `intValue.${params.intValue}`,
       ),
       TestEntity.loaderWithAuthorizationResults(viewerContext),
-      TestEntity.knexLoaderWithAuthorizationResults(viewerContext),
     );
 
     const loadParams = { intValue: 2 };

@@ -1,12 +1,16 @@
 import {
-  EntityDatabaseAdapter,
+  EntityQueryContext,
+  timeAndLogLoadEventAsync,
+  EntityMetricsLoadType,
+  IEntityMetricsAdapter,
+} from '@expo/entity';
+
+import {
+  BasePostgresEntityDatabaseAdapter,
   FieldEqualityCondition,
   QuerySelectionModifiers,
   QuerySelectionModifiersWithOrderByRaw,
-} from '../EntityDatabaseAdapter';
-import { EntityQueryContext } from '../EntityQueryContext';
-import { timeAndLogLoadEventAsync } from '../metrics/EntityMetricsUtils';
-import { EntityMetricsLoadType, IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+} from '../BasePostgresEntityDatabaseAdapter';
 
 /**
  * A knex data manager is responsible for handling non-dataloader-based
@@ -19,7 +23,7 @@ export class EntityKnexDataManager<
   TIDField extends keyof TFields,
 > {
   constructor(
-    private readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
+    private readonly databaseAdapter: BasePostgresEntityDatabaseAdapter<TFields, TIDField>,
     private readonly metricsAdapter: IEntityMetricsAdapter,
     private readonly entityClassName: string,
   ) {}

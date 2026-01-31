@@ -2,17 +2,15 @@ import invariant from 'invariant';
 
 import { AuthorizationResultBasedEntityAssociationLoader } from './AuthorizationResultBasedEntityAssociationLoader';
 import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
-import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
 import { EnforcingEntityAssociationLoader } from './EnforcingEntityAssociationLoader';
 import { EnforcingEntityLoader } from './EnforcingEntityLoader';
-import { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
 import { IEntityClass } from './Entity';
 import { EntityAssociationLoader } from './EntityAssociationLoader';
+import { EntityConstructionUtils } from './EntityConstructionUtils';
+import { EntityInvalidationUtils } from './EntityInvalidationUtils';
 import { EntityLoader } from './EntityLoader';
-import { EntityLoaderUtils } from './EntityLoaderUtils';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
-import { KnexEntityLoader } from './KnexEntityLoader';
 import { ViewerContext } from './ViewerContext';
 
 /**
@@ -233,11 +231,10 @@ export abstract class ReadonlyEntity<
   }
 
   /**
-   * Vend loader for loading an entity in a given query context.
-   * @param viewerContext - viewer context of loading user
-   * @param queryContext - query context in which to perform the load
+   * Utilities for entity invalidation.
+   * Calling into these should only be necessary in rare cases.
    */
-  static loaderUtils<
+  static invalidationUtils<
     TMFields extends object,
     TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
@@ -265,7 +262,7 @@ export abstract class ReadonlyEntity<
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getQueryContext(),
-  ): EntityLoaderUtils<
+  ): EntityInvalidationUtils<
     TMFields,
     TMIDField,
     TMViewerContext,
@@ -273,15 +270,14 @@ export abstract class ReadonlyEntity<
     TMPrivacyPolicy,
     TMSelectedFields
   > {
-    return new EntityLoader(viewerContext, queryContext, this).utils();
+    return new EntityLoader(viewerContext, queryContext, this).invalidationUtils();
   }
 
   /**
-   * Vend knex loader for loading entities via non-data-loader methods in a given query context.
-   * @param viewerContext - viewer context of loading user
-   * @param queryContext - query context in which to perform the load
+   * Utilities for entity construction.
+   * Calling into these should only be necessary in rare cases.
    */
-  static knexLoader<
+  static constructionUtils<
     TMFields extends object,
     TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
@@ -309,7 +305,7 @@ export abstract class ReadonlyEntity<
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
       .getQueryContext(),
-  ): EnforcingKnexEntityLoader<
+  ): EntityConstructionUtils<
     TMFields,
     TMIDField,
     TMViewerContext,
@@ -317,50 +313,6 @@ export abstract class ReadonlyEntity<
     TMPrivacyPolicy,
     TMSelectedFields
   > {
-    return new KnexEntityLoader(viewerContext, queryContext, this).enforcing();
-  }
-
-  /**
-   * Vend knex loader for loading entities via non-data-loader methods in a given query context.
-   * @param viewerContext - viewer context of loading user
-   * @param queryContext - query context in which to perform the load
-   */
-  static knexLoaderWithAuthorizationResults<
-    TMFields extends object,
-    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
-    TMViewerContext extends ViewerContext,
-    TMViewerContext2 extends TMViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<
-      TMFields,
-      TMIDField,
-      TMViewerContext,
-      TMEntity,
-      TMSelectedFields
-    >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields,
-  >(
-    this: IEntityClass<
-      TMFields,
-      TMIDField,
-      TMViewerContext,
-      TMEntity,
-      TMPrivacyPolicy,
-      TMSelectedFields
-    >,
-    viewerContext: TMViewerContext2,
-    queryContext: EntityQueryContext = viewerContext
-      .getViewerScopedEntityCompanionForClass(this)
-      .getQueryContextProvider()
-      .getQueryContext(),
-  ): AuthorizationResultBasedKnexEntityLoader<
-    TMFields,
-    TMIDField,
-    TMViewerContext,
-    TMEntity,
-    TMPrivacyPolicy,
-    TMSelectedFields
-  > {
-    return new KnexEntityLoader(viewerContext, queryContext, this).withAuthorizationResults();
+    return new EntityLoader(viewerContext, queryContext, this).constructionUtils();
   }
 }

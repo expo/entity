@@ -1,6 +1,7 @@
 import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
 import { EntityCompanion } from './EntityCompanion';
-import { EntityLoaderUtils } from './EntityLoaderUtils';
+import { EntityConstructionUtils } from './EntityConstructionUtils';
+import { EntityInvalidationUtils } from './EntityInvalidationUtils';
 import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
@@ -61,7 +62,13 @@ export class EntityLoaderFactory<
     TPrivacyPolicy,
     TSelectedFields
   > {
-    const utils = new EntityLoaderUtils(
+    const invalidationUtils = new EntityInvalidationUtils(
+      this.entityCompanion.entityCompanionDefinition.entityConfiguration,
+      this.entityCompanion.entityCompanionDefinition.entityClass,
+      this.dataManager,
+      this.metricsAdapter,
+    );
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -69,7 +76,6 @@ export class EntityLoaderFactory<
       this.entityCompanion.entityCompanionDefinition.entityClass,
       this.entityCompanion.entityCompanionDefinition.entitySelectedFields,
       this.entityCompanion.privacyPolicy,
-      this.dataManager,
       this.metricsAdapter,
     );
 
@@ -79,7 +85,8 @@ export class EntityLoaderFactory<
       this.entityCompanion.entityCompanionDefinition.entityClass,
       this.dataManager,
       this.metricsAdapter,
-      utils,
+      invalidationUtils,
+      constructionUtils,
     );
   }
 }

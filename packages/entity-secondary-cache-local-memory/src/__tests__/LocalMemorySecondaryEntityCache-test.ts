@@ -172,11 +172,7 @@ class TestSecondaryLocalMemoryCacheLoader extends EntitySecondaryCacheLoader<
         return null;
       }
       return nullthrows(
-        (
-          await this.knexEntityLoader.loadManyByFieldEqualityConjunctionAsync([
-            { fieldName: 'id', fieldValue: loadParams.id },
-          ])
-        )[0],
+        (await this.entityLoader.loadManyByFieldEqualingAsync('id', loadParams.id))[0],
       )
         .enforceValue()
         .getAllFields();
@@ -198,7 +194,6 @@ describe(LocalMemorySecondaryEntityCache, () => {
         createTTLCache<LocalMemoryTestEntityFields>(),
       ),
       LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext),
-      LocalMemoryTestEntity.knexLoaderWithAuthorizationResults(viewerContext),
     );
 
     const loadParams = { id: createdEntity.getID() };
@@ -235,7 +230,6 @@ describe(LocalMemorySecondaryEntityCache, () => {
         createTTLCache<LocalMemoryTestEntityFields>(),
       ),
       LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext),
-      LocalMemoryTestEntity.knexLoaderWithAuthorizationResults(viewerContext),
     );
 
     const loadParams = { id: FAKE_ID };

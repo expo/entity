@@ -1,12 +1,11 @@
+import { EntityPrivacyPolicy, ReadonlyEntity, ViewerContext } from '@expo/entity';
+
 import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
 import {
   FieldEqualityCondition,
   QuerySelectionModifiers,
   QuerySelectionModifiersWithOrderByRaw,
-} from './EntityDatabaseAdapter';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+} from './BasePostgresEntityDatabaseAdapter';
 
 /**
  * Enforcing knex entity loader for non-data-loader-based load methods.

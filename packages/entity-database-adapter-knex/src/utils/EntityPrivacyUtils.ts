@@ -1,16 +1,18 @@
-import { Result, asyncResult } from '@expo/results';
-
-import { Entity, IEntityClass } from '../Entity';
 import {
+  Entity,
+  IEntityClass,
   EntityEdgeDeletionAuthorizationInferenceBehavior,
   EntityEdgeDeletionBehavior,
-} from '../EntityFieldDefinition';
-import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../EntityQueryContext';
-import { ReadonlyEntity } from '../ReadonlyEntity';
-import { ViewerContext } from '../ViewerContext';
-import { failedResults, partitionArray } from '../entityUtils';
-import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';
+  EntityPrivacyPolicy,
+  EntityPrivacyPolicyEvaluationContext,
+  EntityQueryContext,
+  ReadonlyEntity,
+  ViewerContext,
+  failedResults,
+  partitionArray,
+  EntityNotAuthorizedError,
+} from '@expo/entity';
+import { Result, asyncResult } from '@expo/results';
 
 export type EntityPrivacyEvaluationResultSuccess = {
   allowed: true;
@@ -354,12 +356,12 @@ async function canViewerDeleteInternalAsync<
       entityCompanionProvider.getCompanionForEntity(inboundEdge).entityCompanionDefinition
         .entityConfiguration;
 
-    const loaderFactory = viewerContext.getViewerScopedEntityCompanionForClass(inboundEdge);
-    const loader = loaderFactory.getLoaderFactory().forLoad(queryContext, {
+    const entityCompanion = viewerContext.getViewerScopedEntityCompanionForClass(inboundEdge);
+    const loader = entityCompanion.getLoaderFactory().forLoad(queryContext, {
       previousValue: null,
       cascadingDeleteCause: newCascadingDeleteCause,
     });
-    const knexLoader = loaderFactory.getKnexLoaderFactory().forLoad(queryContext, {
+    const knexLoader = entityCompanion.getKnexLoaderFactory().forLoad(queryContext, {
       previousValue: null,
       cascadingDeleteCause: newCascadingDeleteCause,
     });
@@ -469,7 +471,8 @@ async function canViewerDeleteInternalAsync<
 
               return {
                 previousValue: entity,
-                syntheticallyUpdatedValue: entityLoader.utils.constructEntity(syntheticFields),
+                syntheticallyUpdatedValue:
+                  entityLoader.constructionUtils.constructEntity(syntheticFields),
               };
             },
           );

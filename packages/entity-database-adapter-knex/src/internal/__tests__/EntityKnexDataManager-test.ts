@@ -1,4 +1,11 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import {
+  EntityMetricsLoadType,
+  EntityQueryContext,
+  IEntityMetricsAdapter,
+  NoOpEntityMetricsAdapter,
+} from '@expo/entity';
+import { StubQueryContextProvider } from '@expo/entity-testing-utils';
+import { describe, expect, it } from '@jest/globals';
 import {
   anyNumber,
   anyString,
@@ -7,74 +14,49 @@ import {
   instance,
   mock,
   resetCalls,
-  spy,
   verify,
   when,
 } from 'ts-mockito';
 
-import { EntityMetricsLoadType, IEntityMetricsAdapter } from '../../metrics/IEntityMetricsAdapter';
-import { NoOpEntityMetricsAdapter } from '../../metrics/NoOpEntityMetricsAdapter';
-import { StubDatabaseAdapter } from '../../utils/__testfixtures__/StubDatabaseAdapter';
-import { StubQueryContextProvider } from '../../utils/__testfixtures__/StubQueryContextProvider';
-import {
-  TestEntity,
-  testEntityConfiguration,
-  TestFields,
-} from '../../utils/__testfixtures__/TestEntity';
+import { PostgresEntityDatabaseAdapter } from '../../PostgresEntityDatabaseAdapter';
+import { TestEntity, TestFields } from '../../__tests__/fixtures/TestEntity';
 import { EntityKnexDataManager } from '../EntityKnexDataManager';
-
-const getObjects = (): Map<string, TestFields[]> =>
-  new Map([
-    [
-      testEntityConfiguration.tableName,
-      [
-        {
-          customIdField: '1',
-          testIndexedField: 'unique1',
-          stringField: 'hello',
-          intField: 1,
-          dateField: new Date(),
-          nullableField: null,
-        },
-        {
-          customIdField: '2',
-          testIndexedField: 'unique2',
-          stringField: 'hello',
-          intField: 1,
-          dateField: new Date(),
-          nullableField: null,
-        },
-        {
-          customIdField: '3',
-          testIndexedField: 'unique3',
-          stringField: 'world',
-          intField: 1,
-          dateField: new Date(),
-          nullableField: null,
-        },
-      ],
-    ],
-  ]);
 
 describe(EntityKnexDataManager, () => {
   it('loads by field equality conjunction and does not cache', async () => {
-    const objects = getObjects();
-    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
-      testEntityConfiguration,
-      objects,
+    const queryContext = instance(mock<EntityQueryContext>());
+    const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+      PostgresEntityDatabaseAdapter,
     );
-    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
-      testEntityConfiguration,
-      dataStore,
-    );
+    when(
+      databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+        queryContext,
+        anything(),
+        anything(),
+      ),
+    ).thenResolve([
+      {
+        customIdField: '1',
+        testIndexedField: 'unique1',
+        stringField: 'hello',
+        intField: 1,
+        dateField: new Date(),
+        nullableField: null,
+      },
+      {
+        customIdField: '2',
+        testIndexedField: 'unique2',
+        stringField: 'hello',
+        intField: 1,
+        dateField: new Date(),
+        nullableField: null,
+      },
+    ]);
     const entityDataManager = new EntityKnexDataManager(
-      databaseAdapter,
+      instance(databaseAdapterMock),
       new NoOpEntityMetricsAdapter(),
       TestEntity.name,
     );
-    const queryContext = new StubQueryContextProvider().getQueryContext();
-
-    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyByFieldEqualityConjunctionAsync');
 
     const entityDatas = await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
       queryContext,
@@ -93,31 +75,55 @@ describe(EntityKnexDataManager, () => {
 
     expect(entityDatas).toHaveLength(2);
 
-    expect(dbSpy).toHaveBeenCalled();
-
-    dbSpy.mockReset();
+    verify(
+      databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+        queryContext,
+        anything(),
+        anything(),
+      ),
+    ).once();
   });
 
   describe('metrics', () => {
     it('records metrics appropriately outside of transactions', async () => {
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
+      const queryContext = new StubQueryContextProvider().getQueryContext();
 
-      const objects = getObjects();
-      const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
-        testEntityConfiguration,
-        objects,
+      const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+        PostgresEntityDatabaseAdapter,
       );
-      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
-        testEntityConfiguration,
-        dataStore,
-      );
+
+      when(
+        databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+          anything(),
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([
+        {
+          customIdField: '1',
+          testIndexedField: 'unique1',
+          stringField: 'hello',
+          intField: 1,
+          dateField: new Date(),
+          nullableField: null,
+        },
+      ]);
+      when(
+        databaseAdapterMock.fetchManyByRawWhereClauseAsync(
+          anything(),
+          anyString(),
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([]);
+
       const entityDataManager = new EntityKnexDataManager(
-        databaseAdapter,
+        instance(databaseAdapterMock),
         metricsAdapter,
         TestEntity.name,
       );
-      const queryContext = new StubQueryContextProvider().getQueryContext();
 
       await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
         queryContext,
@@ -143,15 +149,6 @@ describe(EntityKnexDataManager, () => {
 
       resetCalls(metricsAdapterMock);
 
-      const databaseAdapterSpy = spy(databaseAdapter);
-      when(
-        databaseAdapterSpy.fetchManyByRawWhereClauseAsync(
-          anything(),
-          anyString(),
-          anything(),
-          anything(),
-        ),
-      ).thenResolve([]);
       await entityDataManager.loadManyByRawWhereClauseAsync(queryContext, '', [], {});
       verify(
         metricsAdapterMock.logDataManagerLoadEvent(
@@ -172,17 +169,37 @@ describe(EntityKnexDataManager, () => {
       const metricsAdapterMock = mock<IEntityMetricsAdapter>();
       const metricsAdapter = instance(metricsAdapterMock);
 
-      const objects = getObjects();
-      const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
-        testEntityConfiguration,
-        objects,
+      const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+        PostgresEntityDatabaseAdapter,
       );
-      const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
-        testEntityConfiguration,
-        dataStore,
-      );
+
+      when(
+        databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+          anything(),
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([
+        {
+          customIdField: '1',
+          testIndexedField: 'unique1',
+          stringField: 'hello',
+          intField: 1,
+          dateField: new Date(),
+          nullableField: null,
+        },
+      ]);
+      when(
+        databaseAdapterMock.fetchManyByRawWhereClauseAsync(
+          anything(),
+          anyString(),
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([]);
+
       const entityDataManager = new EntityKnexDataManager(
-        databaseAdapter,
+        instance(databaseAdapterMock),
         metricsAdapter,
         TestEntity.name,
       );
@@ -212,15 +229,6 @@ describe(EntityKnexDataManager, () => {
 
         resetCalls(metricsAdapterMock);
 
-        const databaseAdapterSpy = spy(databaseAdapter);
-        when(
-          databaseAdapterSpy.fetchManyByRawWhereClauseAsync(
-            anything(),
-            anyString(),
-            anything(),
-            anything(),
-          ),
-        ).thenResolve([]);
         await entityDataManager.loadManyByRawWhereClauseAsync(queryContext, '', [], {});
         verify(
           metricsAdapterMock.logDataManagerLoadEvent(

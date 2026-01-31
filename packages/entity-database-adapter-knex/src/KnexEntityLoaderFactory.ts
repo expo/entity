@@ -1,13 +1,16 @@
+import {
+  EntityCompanion,
+  EntityPrivacyPolicy,
+  EntityPrivacyPolicyEvaluationContext,
+  EntityQueryContext,
+  ReadonlyEntity,
+  ViewerContext,
+  IEntityMetricsAdapter,
+} from '@expo/entity';
+import { EntityConstructionUtils } from '@expo/entity/src/EntityConstructionUtils';
+
 import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
-import { EntityCompanion } from './EntityCompanion';
-import { EntityLoaderUtils } from './EntityLoaderUtils';
-import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
-import { EntityDataManager } from './internal/EntityDataManager';
 import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
-import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
  * The primary entry point for loading entities via knex queries (non-data-loader methods).
@@ -35,7 +38,6 @@ export class KnexEntityLoaderFactory<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly dataManager: EntityDataManager<TFields, TIDField>,
     private readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
@@ -63,7 +65,7 @@ export class KnexEntityLoaderFactory<
     TPrivacyPolicy,
     TSelectedFields
   > {
-    const utils = new EntityLoaderUtils(
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -71,7 +73,6 @@ export class KnexEntityLoaderFactory<
       this.entityCompanion.entityCompanionDefinition.entityClass,
       this.entityCompanion.entityCompanionDefinition.entitySelectedFields,
       this.entityCompanion.privacyPolicy,
-      this.dataManager,
       this.metricsAdapter,
     );
 
@@ -79,7 +80,7 @@ export class KnexEntityLoaderFactory<
       queryContext,
       this.knexDataManager,
       this.metricsAdapter,
-      utils,
+      constructionUtils,
     );
   }
 }

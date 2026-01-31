@@ -1,6 +1,6 @@
 import { Batcher } from '@expo/batcher';
 import {
-  IEntityGenericCacher,
+  GenericEntityCacheAdapter,
   SingleFieldHolder,
   SingleFieldValueHolder,
   ViewerContext,
@@ -109,12 +109,11 @@ describe(GenericRedisCacher, () => {
 
     const mgetSpy = jest.spyOn(redis, 'mget');
 
-    const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
-      RedisTestEntity,
-    )['tableDataCoordinator']['cacheAdapter']['genericCacher'] as IEntityGenericCacher<
-      RedisTestEntityFields,
-      'id'
-    >;
+    const genericCacher = (
+      viewerContext.entityCompanionProvider.getCompanionForEntity(RedisTestEntity)[
+        'tableDataCoordinator'
+      ]['cacheAdapter'] as GenericEntityCacheAdapter<RedisTestEntityFields, 'id'>
+    )['genericCacher'];
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')
@@ -187,7 +186,9 @@ describe(GenericRedisCacher, () => {
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly in both caches
-    await RedisTestEntity.loaderUtils(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
+    await RedisTestEntity.invalidationUtils(viewerContext).invalidateFieldsAsync(
+      entity1.getAllFields(),
+    );
     await expect(redis.get(cacheKeyEntity1)).resolves.toBeNull();
     await expect(redis.get(cacheKeyEntity1NameField)).resolves.toBeNull();
   });

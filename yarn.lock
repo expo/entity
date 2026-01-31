@@ -2842,6 +2842,7 @@ __metadata:
     "@jest/globals": "npm:30.2.0"
     knex: "npm:^3.1.0"
     pg: "npm:8.18.0"
+    ts-mockito: "npm:2.6.1"
     typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft

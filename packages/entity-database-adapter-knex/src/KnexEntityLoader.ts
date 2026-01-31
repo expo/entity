@@ -1,10 +1,13 @@
+import {
+  IEntityClass,
+  EntityPrivacyPolicy,
+  EntityQueryContext,
+  ReadonlyEntity,
+  ViewerContext,
+} from '@expo/entity';
+
 import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
 import { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
-import { IEntityClass } from './Entity';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
 
 /**
  * The primary interface for loading entities via non-data-loader-based methods

@@ -4,7 +4,8 @@ import { anyOfClass, anything, instance, mock, spy, verify, when } from 'ts-mock
 import { v4 as uuidv4 } from 'uuid';
 
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
-import { EntityLoaderUtils } from '../EntityLoaderUtils';
+import { EntityConstructionUtils } from '../EntityConstructionUtils';
+import { EntityInvalidationUtils } from '../EntityInvalidationUtils';
 import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { ViewerContext } from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
@@ -89,7 +90,13 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       instance(mock<IEntityMetricsAdapter>()),
       TestEntity.name,
     );
-    const utils = new EntityLoaderUtils(
+    const invalidationUtils = new EntityInvalidationUtils(
+      testEntityConfiguration,
+      TestEntity,
+      dataManager,
+      metricsAdapter,
+    );
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -97,7 +104,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManager,
       metricsAdapter,
     );
     const entityLoader = new AuthorizationResultBasedEntityLoader(
@@ -106,7 +112,8 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       dataManager,
       metricsAdapter,
-      utils,
+      invalidationUtils,
+      constructionUtils,
     );
 
     const entity = await enforceAsyncResult(entityLoader.loadByIDAsync(id1));
@@ -233,7 +240,13 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       instance(mock<IEntityMetricsAdapter>()),
       TestEntity.name,
     );
-    const utils = new EntityLoaderUtils(
+    const invalidationUtils = new EntityInvalidationUtils(
+      testEntityConfiguration,
+      TestEntity,
+      dataManager,
+      metricsAdapter,
+    );
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -241,7 +254,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManager,
       metricsAdapter,
     );
     const entityLoader = new AuthorizationResultBasedEntityLoader(
@@ -250,7 +262,8 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       dataManager,
       metricsAdapter,
-      utils,
+      invalidationUtils,
+      constructionUtils,
     );
 
     const entities = await enforceResultsAsync(
@@ -372,7 +385,13 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       instance(mock<IEntityMetricsAdapter>()),
       TestEntity.name,
     );
-    const utils = new EntityLoaderUtils(
+    const invalidationUtils = new EntityInvalidationUtils(
+      testEntityConfiguration,
+      TestEntity,
+      dataManager,
+      metricsAdapter,
+    );
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -380,7 +399,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManager,
       metricsAdapter,
     );
     const entityLoader = new AuthorizationResultBasedEntityLoader(
@@ -389,7 +407,8 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       dataManager,
       metricsAdapter,
-      utils,
+      invalidationUtils,
+      constructionUtils,
     );
     const entity = await enforceAsyncResult(entityLoader.loadByIDAsync(id1));
     verify(
@@ -423,7 +442,13 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const dataManagerInstance = instance(dataManagerMock);
 
     const id1 = uuidv4();
-    const utils = new EntityLoaderUtils(
+    const invalidationUtils = new EntityInvalidationUtils(
+      testEntityConfiguration,
+      TestEntity,
+      dataManagerInstance,
+      metricsAdapter,
+    );
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -431,7 +456,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManagerInstance,
       metricsAdapter,
     );
     const entityLoader = new AuthorizationResultBasedEntityLoader(
@@ -440,12 +464,13 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       dataManagerInstance,
       metricsAdapter,
-      utils,
+      invalidationUtils,
+      constructionUtils,
     );
 
     const date = new Date();
 
-    await entityLoader.utils.invalidateFieldsAsync({
+    await entityLoader.invalidationUtils.invalidateFieldsAsync({
       customIdField: id1,
       testIndexedField: 'h1',
       intField: 5,
@@ -526,7 +551,13 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     });
     const entityInstance = instance(entityMock);
 
-    const utils = new EntityLoaderUtils(
+    const invalidationUtils = new EntityInvalidationUtils(
+      testEntityConfiguration,
+      TestEntity,
+      dataManagerInstance,
+      metricsAdapter,
+    );
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -534,7 +565,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManagerInstance,
       metricsAdapter,
     );
     const entityLoader = new AuthorizationResultBasedEntityLoader(
@@ -543,9 +573,10 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       dataManagerInstance,
       metricsAdapter,
-      utils,
+      invalidationUtils,
+      constructionUtils,
     );
-    await entityLoader.utils.invalidateEntityAsync(entityInstance);
+    await entityLoader.invalidationUtils.invalidateEntityAsync(entityInstance);
 
     verify(dataManagerMock.invalidateKeyValuePairsAsync(anything())).once();
     verify(
@@ -620,7 +651,13 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const entityInstance = instance(entityMock);
 
     await new StubQueryContextProvider().runInTransactionAsync(async (queryContext) => {
-      const utils = new EntityLoaderUtils(
+      const invalidationUtils = new EntityInvalidationUtils(
+        testEntityConfiguration,
+        TestEntity,
+        dataManagerInstance,
+        metricsAdapter,
+      );
+      const constructionUtils = new EntityConstructionUtils(
         viewerContext,
         queryContext,
         privacyPolicyEvaluationContext,
@@ -628,7 +665,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         TestEntity,
         /* entitySelectedFields */ undefined,
         privacyPolicy,
-        dataManagerInstance,
         metricsAdapter,
       );
       const entityLoader = new AuthorizationResultBasedEntityLoader(
@@ -637,9 +673,10 @@ describe(AuthorizationResultBasedEntityLoader, () => {
         TestEntity,
         dataManagerInstance,
         metricsAdapter,
-        utils,
+        invalidationUtils,
+        constructionUtils,
       );
-      entityLoader.utils.invalidateEntityForTransaction(queryContext, entityInstance);
+      entityLoader.invalidationUtils.invalidateEntityForTransaction(queryContext, entityInstance);
 
       verify(
         dataManagerMock.invalidateKeyValuePairsForTransaction(queryContext, anything()),
@@ -735,7 +772,13 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const privacyPolicy = instance(privacyPolicyMock);
     const dataManagerInstance = instance(dataManagerMock);
 
-    const utils = new EntityLoaderUtils(
+    const invalidationUtils = new EntityInvalidationUtils(
+      testEntityConfiguration,
+      TestEntity,
+      dataManagerInstance,
+      metricsAdapter,
+    );
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -743,7 +786,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManagerInstance,
       metricsAdapter,
     );
     const entityLoader = new AuthorizationResultBasedEntityLoader(
@@ -752,7 +794,8 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       dataManagerInstance,
       metricsAdapter,
-      utils,
+      invalidationUtils,
+      constructionUtils,
     );
 
     const entityResult = await entityLoader.loadByIDAsync(id1);
@@ -787,7 +830,13 @@ describe(AuthorizationResultBasedEntityLoader, () => {
 
     const dataManagerInstance = instance(dataManagerMock);
 
-    const utils = new EntityLoaderUtils(
+    const invalidationUtils = new EntityInvalidationUtils(
+      testEntityConfiguration,
+      TestEntity,
+      dataManagerInstance,
+      metricsAdapter,
+    );
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -795,7 +844,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManagerInstance,
       metricsAdapter,
     );
     const entityLoader = new AuthorizationResultBasedEntityLoader(
@@ -804,7 +852,8 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       dataManagerInstance,
       metricsAdapter,
-      utils,
+      invalidationUtils,
+      constructionUtils,
     );
 
     const loadByValue = uuidv4();

@@ -1,0 +1,128 @@
+import { EntityQueryContext, FieldTransformerMap } from '@expo/entity';
+import { describe, expect, it } from '@jest/globals';
+import { instance, mock } from 'ts-mockito';
+
+import {
+  BasePostgresEntityDatabaseAdapter,
+  TableFieldMultiValueEqualityCondition,
+  TableFieldSingleValueEqualityCondition,
+} from '../BasePostgresEntityDatabaseAdapter';
+import { testEntityConfiguration, TestFields } from './fixtures/TestEntity';
+
+class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
+  TestFields,
+  'customIdField'
+> {
+  private readonly fetchResults: object[];
+  private readonly insertResults: object[];
+  private readonly updateResults: object[];
+  private readonly fetchEqualityConditionResults: object[];
+  private readonly fetchRawWhereResults: object[];
+  private readonly deleteCount: number;
+
+  constructor({
+    fetchResults = [],
+    insertResults = [],
+    updateResults = [],
+    fetchEqualityConditionResults = [],
+    fetchRawWhereResults = [],
+    deleteCount = 0,
+  }: {
+    fetchResults?: object[];
+    insertResults?: object[];
+    updateResults?: object[];
+    fetchEqualityConditionResults?: object[];
+    fetchRawWhereResults?: object[];
+    deleteCount?: number;
+  }) {
+    super(testEntityConfiguration);
+    this.fetchResults = fetchResults;
+    this.insertResults = insertResults;
+    this.updateResults = updateResults;
+    this.fetchEqualityConditionResults = fetchEqualityConditionResults;
+    this.fetchRawWhereResults = fetchRawWhereResults;
+    this.deleteCount = deleteCount;
+  }
+
+  protected getFieldTransformerMap(): FieldTransformerMap {
+    return new Map();
+  }
+
+  protected async fetchManyWhereInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableColumns: readonly string[],
+    _tableTuples: (readonly any[])[],
+  ): Promise<object[]> {
+    return this.fetchResults;
+  }
+
+  protected async fetchManyByRawWhereClauseInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _rawWhereClause: string,
+    _bindings: object | any[],
+  ): Promise<object[]> {
+    return this.fetchRawWhereResults;
+  }
+
+  protected async fetchManyByFieldEqualityConjunctionInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
+    _tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
+  ): Promise<object[]> {
+    return this.fetchEqualityConditionResults;
+  }
+
+  protected async insertInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _object: object,
+  ): Promise<object[]> {
+    return this.insertResults;
+  }
+
+  protected async updateInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableIdField: string,
+    _id: any,
+    _object: object,
+  ): Promise<object[]> {
+    return this.updateResults;
+  }
+
+  protected async deleteInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableIdField: string,
+    _id: any,
+  ): Promise<number> {
+    return this.deleteCount;
+  }
+}
+
+describe(BasePostgresEntityDatabaseAdapter, () => {
+  describe('fetchManyByFieldEqualityConjunction', () => {
+    it('transforms object', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({
+        fetchEqualityConditionResults: [{ string_field: 'hello' }],
+      });
+      const results = await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {});
+      expect(results).toEqual([{ stringField: 'hello' }]);
+    });
+  });
+
+  describe('fetchManyWithRawWhereClause', () => {
+    it('transforms object', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({
+        fetchRawWhereResults: [{ string_field: 'hello' }],
+      });
+      const results = await adapter.fetchManyByRawWhereClauseAsync(queryContext, 'hello', [], {});
+      expect(results).toEqual([{ stringField: 'hello' }]);
+    });
+  });
+});

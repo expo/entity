@@ -2,8 +2,9 @@ import { describe, expect, it } from '@jest/globals';
 
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
 import { EnforcingEntityLoader } from '../EnforcingEntityLoader';
+import { EntityConstructionUtils } from '../EntityConstructionUtils';
+import { EntityInvalidationUtils } from '../EntityInvalidationUtils';
 import { EntityLoader } from '../EntityLoader';
-import { EntityLoaderUtils } from '../EntityLoaderUtils';
 import { ViewerContext } from '../ViewerContext';
 import { SimpleTestEntity } from '../utils/__testfixtures__/SimpleTestEntity';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
@@ -27,11 +28,23 @@ describe(EntityLoader, () => {
     });
   });
 
-  describe('utils', () => {
-    it('returns a instance of EntityLoaderUtils', async () => {
+  describe('invalidationUtils', () => {
+    it('returns a instance of EntityInvalidationUtils', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.loaderUtils(viewerContext)).toBeInstanceOf(EntityLoaderUtils);
+      expect(SimpleTestEntity.invalidationUtils(viewerContext)).toBeInstanceOf(
+        EntityInvalidationUtils,
+      );
+    });
+  });
+
+  describe('constructionUtils', () => {
+    it('returns a instance of EntityConstructionUtils', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+      expect(SimpleTestEntity.constructionUtils(viewerContext)).toBeInstanceOf(
+        EntityConstructionUtils,
+      );
     });
   });
 });

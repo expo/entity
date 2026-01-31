@@ -1,6 +1,5 @@
 import {
   EntityDatabaseAdapterEmptyUpdateResultError,
-  OrderByOrdering,
   TransactionIsolationLevel,
   ViewerContext,
 } from '@expo/entity';
@@ -11,6 +10,7 @@ import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 import { setTimeout } from 'timers/promises';
 
+import { OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity';
 import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity';
 import { PostgresValidatorTestEntity } from '../__testfixtures__/PostgresValidatorTestEntity';

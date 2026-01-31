@@ -1,3 +1,11 @@
+import {
+  EntityConstructionUtils,
+  EntityPrivacyPolicy,
+  EntityQueryContext,
+  ReadonlyEntity,
+  ViewerContext,
+  IEntityMetricsAdapter,
+} from '@expo/entity';
 import { Result } from '@expo/results';
 
 import {
@@ -5,14 +13,8 @@ import {
   isSingleValueFieldEqualityCondition,
   QuerySelectionModifiers,
   QuerySelectionModifiersWithOrderByRaw,
-} from './EntityDatabaseAdapter';
-import { EntityLoaderUtils } from './EntityLoaderUtils';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+} from './BasePostgresEntityDatabaseAdapter';
 import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
-import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
  * Authorization-result-based knex entity loader for non-data-loader-based load methods.
@@ -38,7 +40,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
     private readonly queryContext: EntityQueryContext,
     private readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
-    public readonly utils: EntityLoaderUtils<
+    public readonly constructionUtils: EntityConstructionUtils<
       TFields,
       TIDField,
       TViewerContext,
@@ -77,7 +79,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
       const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
         ? [fieldEqualityOperand.fieldValue]
         : fieldEqualityOperand.fieldValues;
-      this.utils.validateFieldAndValues(fieldEqualityOperand.fieldName, fieldValues);
+      this.constructionUtils.validateFieldAndValues(fieldEqualityOperand.fieldName, fieldValues);
     }
 
     const fieldObjects = await this.knexDataManager.loadManyByFieldEqualityConjunctionAsync(
@@ -85,7 +87,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
       fieldEqualityOperands,
       querySelectionModifiers,
     );
-    return await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
+    return await this.constructionUtils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
 
   /**
@@ -104,6 +106,6 @@ export class AuthorizationResultBasedKnexEntityLoader<
       bindings,
       querySelectionModifiers,
     );
-    return await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
+    return await this.constructionUtils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
 }

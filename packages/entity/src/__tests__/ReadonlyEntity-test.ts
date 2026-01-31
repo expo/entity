@@ -3,11 +3,10 @@ import { instance, mock } from 'ts-mockito';
 
 import { AuthorizationResultBasedEntityAssociationLoader } from '../AuthorizationResultBasedEntityAssociationLoader';
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
-import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader';
 import { EnforcingEntityAssociationLoader } from '../EnforcingEntityAssociationLoader';
 import { EnforcingEntityLoader } from '../EnforcingEntityLoader';
-import { EnforcingKnexEntityLoader } from '../EnforcingKnexEntityLoader';
-import { EntityLoaderUtils } from '../EntityLoaderUtils';
+import { EntityConstructionUtils } from '../EntityConstructionUtils';
+import { EntityInvalidationUtils } from '../EntityInvalidationUtils';
 import { ReadonlyEntity } from '../ReadonlyEntity';
 import { ViewerContext } from '../ViewerContext';
 import { SimpleTestEntity } from '../utils/__testfixtures__/SimpleTestEntity';
@@ -216,29 +215,23 @@ describe(ReadonlyEntity, () => {
     });
   });
 
-  describe('knexLoader', () => {
-    it('creates a new EnforcingKnexEntityLoader', async () => {
+  describe('invalidationUtils', () => {
+    it('creates a new EntityInvalidationUtils', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.knexLoader(viewerContext)).toBeInstanceOf(EnforcingKnexEntityLoader);
-    });
-  });
-
-  describe('knexLoaderWithAuthorizationResults', () => {
-    it('creates a new AuthorizationResultBasedEntityLoader', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.knexLoaderWithAuthorizationResults(viewerContext)).toBeInstanceOf(
-        AuthorizationResultBasedKnexEntityLoader,
+      expect(SimpleTestEntity.invalidationUtils(viewerContext)).toBeInstanceOf(
+        EntityInvalidationUtils,
       );
     });
   });
 
-  describe('loaderUtils', () => {
-    it('creates a new EntityLoaderUtils', async () => {
+  describe('constructionUtils', () => {
+    it('creates a new EntityConstructionUtils', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.loaderUtils(viewerContext)).toBeInstanceOf(EntityLoaderUtils);
+      expect(SimpleTestEntity.constructionUtils(viewerContext)).toBeInstanceOf(
+        EntityConstructionUtils,
+      );
     });
   });
 });

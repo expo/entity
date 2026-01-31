@@ -1,11 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import {
-  EntityDatabaseAdapter,
-  TableFieldMultiValueEqualityCondition,
-  TableFieldSingleValueEqualityCondition,
-} from '../EntityDatabaseAdapter';
+import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
 import { EntityQueryContext } from '../EntityQueryContext';
 import {
   EntityDatabaseAdapterEmptyInsertResultError,
@@ -23,31 +19,23 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'custo
   private readonly fetchResults: object[];
   private readonly insertResults: object[];
   private readonly updateResults: object[];
-  private readonly fetchEqualityConditionResults: object[];
-  private readonly fetchRawWhereResults: object[];
   private readonly deleteCount: number;
 
   constructor({
     fetchResults = [],
     insertResults = [],
     updateResults = [],
-    fetchEqualityConditionResults = [],
-    fetchRawWhereResults = [],
     deleteCount = 0,
   }: {
     fetchResults?: object[];
     insertResults?: object[];
     updateResults?: object[];
-    fetchEqualityConditionResults?: object[];
-    fetchRawWhereResults?: object[];
     deleteCount?: number;
   }) {
     super(testEntityConfiguration);
     this.fetchResults = fetchResults;
     this.insertResults = insertResults;
     this.updateResults = updateResults;
-    this.fetchEqualityConditionResults = fetchEqualityConditionResults;
-    this.fetchRawWhereResults = fetchRawWhereResults;
     this.deleteCount = deleteCount;
   }
 
@@ -62,24 +50,6 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'custo
     _tableTuples: (readonly any[])[],
   ): Promise<object[]> {
     return this.fetchResults;
-  }
-
-  protected async fetchManyByRawWhereClauseInternalAsync(
-    _queryInterface: any,
-    _tableName: string,
-    _rawWhereClause: string,
-    _bindings: object | any[],
-  ): Promise<object[]> {
-    return this.fetchRawWhereResults;
-  }
-
-  protected async fetchManyByFieldEqualityConjunctionInternalAsync(
-    _queryInterface: any,
-    _tableName: string,
-    _tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
-    _tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
-  ): Promise<object[]> {
-    return this.fetchEqualityConditionResults;
   }
 
   protected async insertInternalAsync(
@@ -234,28 +204,6 @@ describe(EntityDatabaseAdapter, () => {
       ).rejects.toThrow(
         'One or more fields from the object is invalid for key CompositeField(intField,stringField); {"stringField":"hello"}. This may indicate a faulty database adapter implementation.',
       );
-    });
-  });
-
-  describe('fetchManyByFieldEqualityConjunction', () => {
-    it('transforms object', async () => {
-      const queryContext = instance(mock(EntityQueryContext));
-      const adapter = new TestEntityDatabaseAdapter({
-        fetchEqualityConditionResults: [{ string_field: 'hello' }],
-      });
-      const results = await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {});
-      expect(results).toEqual([{ stringField: 'hello' }]);
-    });
-  });
-
-  describe('fetchManyWithRawWhereClause', () => {
-    it('transforms object', async () => {
-      const queryContext = instance(mock(EntityQueryContext));
-      const adapter = new TestEntityDatabaseAdapter({
-        fetchRawWhereResults: [{ string_field: 'hello' }],
-      });
-      const results = await adapter.fetchManyByRawWhereClauseAsync(queryContext, 'hello', [], {});
-      expect(results).toEqual([{ stringField: 'hello' }]);
     });
   });
 
