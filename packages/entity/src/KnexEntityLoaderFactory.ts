@@ -6,6 +6,7 @@ import { EntityQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
 import { EntityDataManager } from './internal/EntityDataManager';
+import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
 import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
@@ -35,6 +36,7 @@ export class KnexEntityLoaderFactory<
       TSelectedFields
     >,
     private readonly dataManager: EntityDataManager<TFields, TIDField>,
+    private readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
@@ -75,7 +77,7 @@ export class KnexEntityLoaderFactory<
 
     return new AuthorizationResultBasedKnexEntityLoader(
       queryContext,
-      this.dataManager,
+      this.knexDataManager,
       this.metricsAdapter,
       utils,
     );

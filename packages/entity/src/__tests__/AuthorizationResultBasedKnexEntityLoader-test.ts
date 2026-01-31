@@ -9,6 +9,7 @@ import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { ViewerContext } from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import { EntityDataManager } from '../internal/EntityDataManager';
+import { EntityKnexDataManager } from '../internal/EntityKnexDataManager';
 import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache';
 import { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
 import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
@@ -90,6 +91,11 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
       instance(mock<IEntityMetricsAdapter>()),
       TestEntity.name,
     );
+    const knexDataManager = new EntityKnexDataManager(
+      databaseAdapter,
+      metricsAdapter,
+      TestEntity.name,
+    );
     const utils = new EntityLoaderUtils(
       viewerContext,
       queryContext,
@@ -103,7 +109,7 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
     );
     const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
       queryContext,
-      dataManager,
+      knexDataManager,
       metricsAdapter,
       utils,
     );
@@ -205,6 +211,11 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
       instance(mock<IEntityMetricsAdapter>()),
       TestEntity.name,
     );
+    const knexDataManager = new EntityKnexDataManager(
+      databaseAdapter,
+      metricsAdapter,
+      TestEntity.name,
+    );
     const utils = new EntityLoaderUtils(
       viewerContext,
       queryContext,
@@ -218,7 +229,7 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
     );
     const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
       queryContext,
-      dataManager,
+      knexDataManager,
       metricsAdapter,
       utils,
     );
@@ -271,9 +282,10 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
     const queryContext = new StubQueryContextProvider().getQueryContext();
 
-    const dataManagerMock = mock<EntityDataManager<TestFields, 'customIdField'>>(EntityDataManager);
+    const knexDataManagerMock =
+      mock<EntityKnexDataManager<TestFields, 'customIdField'>>(EntityKnexDataManager);
     when(
-      dataManagerMock.loadManyByRawWhereClauseAsync(
+      knexDataManagerMock.loadManyByRawWhereClauseAsync(
         queryContext,
         anything(),
         anything(),
@@ -289,6 +301,10 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
         nullableField: null,
       },
     ]);
+    const knexDataManager = instance(knexDataManagerMock);
+
+    // Create a real dataManager for the EntityLoaderUtils
+    const dataManagerMock = mock<EntityDataManager<TestFields, 'customIdField'>>(EntityDataManager);
     const dataManager = instance(dataManagerMock);
 
     const utils = new EntityLoaderUtils(
@@ -304,7 +320,7 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
     );
     const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
       queryContext,
-      dataManager,
+      knexDataManager,
       metricsAdapter,
       utils,
     );

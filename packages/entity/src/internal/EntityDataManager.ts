@@ -1,12 +1,7 @@
 import DataLoader from 'dataloader';
 import invariant from 'invariant';
 
-import {
-  EntityDatabaseAdapter,
-  FieldEqualityCondition,
-  QuerySelectionModifiers,
-  QuerySelectionModifiersWithOrderByRaw,
-} from '../EntityDatabaseAdapter';
+import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
 import {
   EntityQueryContext,
   EntityTransactionalQueryContext,
@@ -16,10 +11,7 @@ import { EntityQueryContextProvider } from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
 import { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces';
 import { ReadThroughEntityCache } from './ReadThroughEntityCache';
-import {
-  timeAndLogLoadEventAsync,
-  timeAndLogLoadMapEventAsync,
-} from '../metrics/EntityMetricsUtils';
+import { timeAndLogLoadMapEventAsync } from '../metrics/EntityMetricsUtils';
 import {
   EntityMetricsLoadType,
   IEntityMetricsAdapter,
@@ -249,64 +241,6 @@ export class EntityDataManager<
       mapToReturn.set(values[i]!, successfulValues[i]!);
     }
     return mapToReturn;
-  }
-
-  /**
-   * Loads many objects matching the conjunction of where clauses constructed from
-   * specified field equality operands.
-   *
-   * @param queryContext - query context in which to perform the load
-   * @param fieldEqualityOperands - list of field equality where clause operand specifications
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query
-   * @returns array of objects matching the query
-   */
-  async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
-    queryContext: EntityQueryContext,
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields>,
-  ): Promise<readonly Readonly<TFields>[]> {
-    return await timeAndLogLoadEventAsync(
-      this.metricsAdapter,
-      EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
-      this.entityClassName,
-      queryContext,
-    )(
-      this.databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
-        queryContext,
-        fieldEqualityOperands,
-        querySelectionModifiers,
-      ),
-    );
-  }
-
-  /**
-   * Loads many objects matching the raw WHERE clause.
-   *
-   * @param queryContext - query context in which to perform the load
-   * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
-   * @param bindings - array of positional bindings or object of named bindings
-   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
-   * @returns array of objects matching the query
-   */
-  async loadManyByRawWhereClauseAsync(
-    queryContext: EntityQueryContext,
-    rawWhereClause: string,
-    bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>,
-  ): Promise<readonly Readonly<TFields>[]> {
-    return await timeAndLogLoadEventAsync(
-      this.metricsAdapter,
-      EntityMetricsLoadType.LOAD_MANY_RAW,
-      this.entityClassName,
-      queryContext,
-    )(
-      this.databaseAdapter.fetchManyByRawWhereClauseAsync(
-        queryContext,
-        rawWhereClause,
-        bindings,
-        querySelectionModifiers,
-      ),
-    );
   }
 
   private async invalidateOneAsync<

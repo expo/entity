@@ -64,6 +64,7 @@ export * from './internal/CompositeFieldHolder';
 export * from './internal/CompositeFieldValueMap';
 export * from './internal/EntityDataManager';
 export * from './internal/EntityFieldTransformationUtils';
+export * from './internal/EntityKnexDataManager';
 export * from './internal/EntityLoadInterfaces';
 export * from './internal/EntityTableDataCoordinator';
 export * from './internal/ReadThroughEntityCache';
