@@ -6,9 +6,11 @@ import {
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableQuerySelectionModifiers,
+  TableQuerySelectionModifiersWithOrderByFragment,
   TableQuerySelectionModifiersWithOrderByRaw,
 } from './BasePostgresEntityDatabaseAdapter';
 import { JSONArrayField, MaybeJSONArrayField } from './EntityFields';
+import { SQLFragment } from './SQLOperator';
 import { wrapNativePostgresCallAsync } from './errors/wrapNativePostgresCallAsync';
 
 export class PostgresEntityDatabaseAdapter<
@@ -182,6 +184,24 @@ export class PostgresEntityDatabaseAdapter<
       .from(tableName)
       .whereRaw(rawWhereClause, bindings as any);
     query = this.applyQueryModifiersToQueryOrderByRaw(query, querySelectionModifiers);
+    return await wrapNativePostgresCallAsync(() => query);
+  }
+
+  protected async fetchManyBySQLFragmentInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment,
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+  ): Promise<object[]> {
+    let query = queryInterface
+      .select()
+      .from(tableName)
+      .whereRaw(sqlFragment.sql, sqlFragment.getKnexBindings());
+    query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
+    const { orderByFragment } = querySelectionModifiers;
+    if (orderByFragment !== undefined) {
+      query = query.orderByRaw(orderByFragment.sql, orderByFragment.getKnexBindings());
+    }
     return await wrapNativePostgresCallAsync(() => query);
   }
 

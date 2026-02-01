@@ -4,8 +4,11 @@ import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultB
 import {
   FieldEqualityCondition,
   QuerySelectionModifiers,
+  QuerySelectionModifiersWithOrderByFragment,
   QuerySelectionModifiersWithOrderByRaw,
 } from './BasePostgresEntityDatabaseAdapter';
+import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
+import { SQLFragment } from './SQLOperator';
 
 /**
  * Enforcing knex entity loader for non-data-loader-based load methods.
@@ -120,6 +123,85 @@ export class EnforcingKnexEntityLoader<
       bindings,
       querySelectionModifiers,
     );
+    return entityResults.map((result) => result.enforceValue());
+  }
+
+  /**
+   * Load entities using a SQL query builder. When executed, all queries will enforce authorization and throw if not authorized.
+   *
+   * @example
+   * ```ts
+   * const entities = await ExampleEntity.loader(vc)
+   *   .loadManyBySQL(sql`age >= ${18} AND status = ${'active'}`)
+   *   .orderBy('createdAt', 'DESC')
+   *   .limit(10)
+   *   .executeAsync();
+   *
+   * const { between, inArray } = SQLFragmentHelpers;
+   * const filtered = await ExampleEntity.loader(vc)
+   *   .loadManyBySQL(
+   *     sql`${between('age', 18, 65)} AND ${inArray('role', ['admin', 'moderator'])}`
+   *   )
+   *   .executeAsync();
+   * ```
+   */
+  loadManyBySQL(
+    fragment: SQLFragment,
+    modifiers: QuerySelectionModifiersWithOrderByFragment<TFields> = {},
+  ): EnforcingSQLQueryBuilder<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return new EnforcingSQLQueryBuilder(this.knexEntityLoader, fragment, modifiers);
+  }
+}
+
+/**
+ * SQL query builder for EnforcingKnexEntityLoader.
+ * Provides a fluent API for building and executing SQL queries with enforced authorization.
+ */
+export class EnforcingSQLQueryBuilder<
+  TFields extends Record<string, any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+  TViewerContext extends ViewerContext,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields,
+> extends BaseSQLQueryBuilder<TFields, TEntity> {
+  constructor(
+    private readonly knexEntityLoader: AuthorizationResultBasedKnexEntityLoader<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    sqlFragment: SQLFragment,
+    modifiers: QuerySelectionModifiersWithOrderByFragment<TFields>,
+  ) {
+    super(sqlFragment, modifiers);
+  }
+
+  /**
+   * Execute the query.
+   * @returns entities matching the query
+   * @throws EntityNotAuthorizedError if viewer is not authorized to view any entity
+   */
+  async executeInternalAsync(): Promise<readonly TEntity[]> {
+    const entityResults = await this.knexEntityLoader
+      .loadManyBySQL(this.getSQLFragment(), this.getModifiers())
+      .executeAsync();
     return entityResults.map((result) => result.enforceValue());
   }
 }

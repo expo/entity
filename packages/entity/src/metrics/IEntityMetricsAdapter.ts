@@ -8,6 +8,7 @@ export enum EntityMetricsLoadType {
   LOAD_MANY,
   LOAD_MANY_EQUALITY_CONJUNCTION,
   LOAD_MANY_RAW,
+  LOAD_MANY_SQL,
 }
 
 /**

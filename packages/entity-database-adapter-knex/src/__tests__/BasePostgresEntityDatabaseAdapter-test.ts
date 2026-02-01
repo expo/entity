@@ -18,6 +18,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
   private readonly updateResults: object[];
   private readonly fetchEqualityConditionResults: object[];
   private readonly fetchRawWhereResults: object[];
+  private readonly fetchSQLFragmentResults: object[];
   private readonly deleteCount: number;
 
   constructor({
@@ -26,6 +27,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     updateResults = [],
     fetchEqualityConditionResults = [],
     fetchRawWhereResults = [],
+    fetchSQLFragmentResults = [],
     deleteCount = 0,
   }: {
     fetchResults?: object[];
@@ -33,6 +35,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     updateResults?: object[];
     fetchEqualityConditionResults?: object[];
     fetchRawWhereResults?: object[];
+    fetchSQLFragmentResults?: object[];
     deleteCount?: number;
   }) {
     super(testEntityConfiguration);
@@ -41,6 +44,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     this.updateResults = updateResults;
     this.fetchEqualityConditionResults = fetchEqualityConditionResults;
     this.fetchRawWhereResults = fetchRawWhereResults;
+    this.fetchSQLFragmentResults = fetchSQLFragmentResults;
     this.deleteCount = deleteCount;
   }
 
@@ -64,6 +68,14 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     _bindings: object | any[],
   ): Promise<object[]> {
     return this.fetchRawWhereResults;
+  }
+
+  protected async fetchManyBySQLFragmentInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _sqlFragment: any,
+  ): Promise<object[]> {
+    return this.fetchSQLFragmentResults;
   }
 
   protected async fetchManyByFieldEqualityConjunctionInternalAsync(

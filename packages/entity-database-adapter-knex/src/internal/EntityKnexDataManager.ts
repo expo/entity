@@ -9,8 +9,10 @@ import {
   BasePostgresEntityDatabaseAdapter,
   FieldEqualityCondition,
   QuerySelectionModifiers,
+  QuerySelectionModifiersWithOrderByFragment,
   QuerySelectionModifiersWithOrderByRaw,
 } from '../BasePostgresEntityDatabaseAdapter';
+import { SQLFragment } from '../SQLOperator';
 
 /**
  * A knex data manager is responsible for handling non-dataloader-based
@@ -81,6 +83,25 @@ export class EntityKnexDataManager<
         queryContext,
         rawWhereClause,
         bindings,
+        querySelectionModifiers,
+      ),
+    );
+  }
+
+  async loadManyBySQLFragmentAsync(
+    queryContext: EntityQueryContext,
+    sqlFragment: SQLFragment,
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByFragment<TFields>,
+  ): Promise<readonly Readonly<TFields>[]> {
+    return await timeAndLogLoadEventAsync(
+      this.metricsAdapter,
+      EntityMetricsLoadType.LOAD_MANY_SQL,
+      this.entityClassName,
+      queryContext,
+    )(
+      this.databaseAdapter.fetchManyBySQLFragmentAsync(
+        queryContext,
+        sqlFragment,
         querySelectionModifiers,
       ),
     );
