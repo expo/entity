@@ -8,16 +8,15 @@ import {
   StringField,
   transformFieldsToDatabaseObject,
 } from '@expo/entity';
-import invariant from 'invariant';
-import { v7 as uuidv7 } from 'uuid';
-
 import {
   BasePostgresEntityDatabaseAdapter,
   OrderByOrdering,
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableQuerySelectionModifiers,
-} from '../../BasePostgresEntityDatabaseAdapter';
+} from '@expo/entity-database-adapter-knex';
+import invariant from 'invariant';
+import { v7 as uuidv7 } from 'uuid';
 
 export class StubPostgresDatabaseAdapter<
   TFields extends Record<string, any>,

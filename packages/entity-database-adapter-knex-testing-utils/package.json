@@ -1,0 +1,45 @@
+{
+  "name": "@expo/entity-database-adapter-knex-testing-utils",
+  "version": "0.55.0",
+  "description": "Testing utilities for applications using Entity with Knex database adapter",
+  "files": [
+    "build",
+    "!*.tsbuildinfo",
+    "!__*",
+    "src"
+  ],
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "prepack": "rm -rf build && yarn build",
+    "clean": "yarn build --clean",
+    "lint": "yarn run --top-level eslint src",
+    "lint-fix": "yarn run lint --fix",
+    "test": "yarn test:all --rootDir $(pwd)"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "keywords": [
+    "entity"
+  ],
+  "author": "Expo",
+  "license": "MIT",
+  "dependencies": {
+    "@expo/entity": "workspace:^",
+    "@expo/entity-database-adapter-knex": "workspace:^",
+    "invariant": "^2.2.4",
+    "uuid": "^13.0.0"
+  },
+  "peerDependencies": {
+    "@jest/globals": "*"
+  },
+  "devDependencies": {
+    "@jest/globals": "30.2.0",
+    "@types/invariant": "2.2.37",
+    "@types/node": "24.10.9",
+    "@types/uuid": "10.0.0",
+    "typescript": "5.9.3"
+  }
+}

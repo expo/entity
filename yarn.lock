@@ -2833,6 +2833,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@expo/entity-database-adapter-knex-testing-utils@workspace:packages/entity-database-adapter-knex-testing-utils":
+  version: 0.0.0-use.local
+  resolution: "@expo/entity-database-adapter-knex-testing-utils@workspace:packages/entity-database-adapter-knex-testing-utils"
+  dependencies:
+    "@expo/entity": "workspace:^"
+    "@expo/entity-database-adapter-knex": "workspace:^"
+    "@jest/globals": "npm:30.2.0"
+    "@types/invariant": "npm:2.2.37"
+    "@types/node": "npm:24.10.9"
+    "@types/uuid": "npm:10.0.0"
+    invariant: "npm:^2.2.4"
+    typescript: "npm:5.9.3"
+    uuid: "npm:^13.0.0"
+  peerDependencies:
+    "@jest/globals": "*"
+  languageName: unknown
+  linkType: soft
+
 "@expo/entity-database-adapter-knex@workspace:^, @expo/entity-database-adapter-knex@workspace:packages/entity-database-adapter-knex":
   version: 0.0.0-use.local
   resolution: "@expo/entity-database-adapter-knex@workspace:packages/entity-database-adapter-knex"
@@ -5134,6 +5152,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:24.10.9":
+  version: 24.10.9
+  resolution: "@types/node@npm:24.10.9"
+  dependencies:
+    undici-types: "npm:~7.16.0"
+  checksum: 10c0/e9e436fcd2136bddb1bbe3271a89f4653910bcf6ee8047c4117f544c7905a106c039e2720ee48f28505ef2560e22fb9ead719f28bf5e075fdde0c1120e38e3b2
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.1
   resolution: "@types/normalize-package-data@npm:2.4.1"
@@ -5208,6 +5235,13 @@ __metadata:
   version: 3.0.3
   resolution: "@types/unist@npm:3.0.3"
   checksum: 10c0/2b1e4adcab78388e088fcc3c0ae8700f76619dbcb4741d7d201f87e2cb346bfc29a89003cfea2d76c996e1061452e14fcd737e8b25aacf949c1f2d6b2bc3dd60
+  languageName: node
+  linkType: hard
+
+"@types/uuid@npm:10.0.0":
+  version: 10.0.0
+  resolution: "@types/uuid@npm:10.0.0"
+  checksum: 10c0/9a1404bf287164481cb9b97f6bb638f78f955be57c40c6513b7655160beb29df6f84c915aaf4089a1559c216557dc4d2f79b48d978742d3ae10b937420ddac60
   languageName: node
   linkType: hard
 
@@ -15595,7 +15629,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:13.0.0":
+"uuid@npm:13.0.0, uuid@npm:^13.0.0":
   version: 13.0.0
   resolution: "uuid@npm:13.0.0"
   bin:
