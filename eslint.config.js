@@ -46,6 +46,21 @@ module.exports = defineConfig([
           property: 'only',
           message: 'describe.only should not be committed to main.',
         },
+        {
+          object: 'it',
+          property: 'skip',
+          message: 'it.skip should not be committed to main.',
+        },
+        {
+          object: 'test',
+          property: 'skip',
+          message: 'test.skip should not be committed to main.',
+        },
+        {
+          object: 'describe',
+          property: 'skip',
+          message: 'describe.skip should not be committed to main.',
+        },
       ],
     },
   },
