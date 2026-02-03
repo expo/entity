@@ -1,7 +1,7 @@
 version: '2'
 services:
   redis:
-    image: redis@sha256:e59abdb114af4c9106fc16d4c2e9d9ad408db8c7db333ae05055949a5f3df41e
+    image: redis@sha256:c22af04bb576503bf16b3e34a1fd2fd82de0f765afd866d2e380145e0af30d78
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
