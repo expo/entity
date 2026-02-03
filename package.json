@@ -19,8 +19,8 @@
     "typedoc": "yarn build && typedoc"
   },
   "devDependencies": {
-    "@babel/core": "7.28.6",
-    "@babel/preset-env": "7.28.6",
+    "@babel/core": "7.29.0",
+    "@babel/preset-env": "7.29.0",
     "@babel/preset-typescript": "7.28.5",
     "@tsconfig/node24": "24.0.3",
     "@tsconfig/strictest": "2.0.8",
