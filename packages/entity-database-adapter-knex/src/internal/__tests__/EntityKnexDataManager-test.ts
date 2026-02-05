@@ -19,7 +19,11 @@ import {
 } from 'ts-mockito';
 
 import { PostgresEntityDatabaseAdapter } from '../../PostgresEntityDatabaseAdapter';
-import { TestEntity, TestFields } from '../../__tests__/fixtures/TestEntity';
+import {
+  TestEntity,
+  TestFields,
+  testEntityConfiguration,
+} from '../../__tests__/fixtures/TestEntity';
 import { EntityKnexDataManager } from '../EntityKnexDataManager';
 
 describe(EntityKnexDataManager, () => {
@@ -53,6 +57,7 @@ describe(EntityKnexDataManager, () => {
       },
     ]);
     const entityDataManager = new EntityKnexDataManager(
+      testEntityConfiguration,
       instance(databaseAdapterMock),
       new NoOpEntityMetricsAdapter(),
       TestEntity.name,
@@ -120,6 +125,7 @@ describe(EntityKnexDataManager, () => {
       ).thenResolve([]);
 
       const entityDataManager = new EntityKnexDataManager(
+        testEntityConfiguration,
         instance(databaseAdapterMock),
         metricsAdapter,
         TestEntity.name,
@@ -199,6 +205,7 @@ describe(EntityKnexDataManager, () => {
       ).thenResolve([]);
 
       const entityDataManager = new EntityKnexDataManager(
+        testEntityConfiguration,
         instance(databaseAdapterMock),
         metricsAdapter,
         TestEntity.name,

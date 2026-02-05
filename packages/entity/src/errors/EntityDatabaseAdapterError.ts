@@ -231,3 +231,17 @@ export class EntityDatabaseAdapterExcessiveDeleteResultError extends EntityDatab
     return EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EXCESSIVE_DELETE_RESULT;
   }
 }
+
+export class EntityDatabaseAdapterPaginationCursorInvalidError extends EntityDatabaseAdapterError {
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterPaginationCursorError';
+  }
+
+  get state(): EntityErrorState.PERMANENT {
+    return EntityErrorState.PERMANENT;
+  }
+
+  get code(): EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_PAGINATION_CURSOR_INVALID {
+    return EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_PAGINATION_CURSOR_INVALID;
+  }
+}

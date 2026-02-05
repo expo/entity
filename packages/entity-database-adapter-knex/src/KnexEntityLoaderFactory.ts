@@ -10,6 +10,7 @@ import {
 import { EntityConstructionUtils } from '@expo/entity/src/EntityConstructionUtils';
 
 import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
+import { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
 import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
 
 /**
@@ -77,6 +78,49 @@ export class KnexEntityLoaderFactory<
     );
 
     return new AuthorizationResultBasedKnexEntityLoader(
+      queryContext,
+      this.knexDataManager,
+      this.metricsAdapter,
+      constructionUtils,
+    );
+  }
+
+  /**
+   * Vend enforcing knex loader for loading an entity in a given query context.
+   * @param viewerContext - viewer context of loading user
+   * @param queryContext - query context in which to perform the load
+   */
+  forLoadEnforcing(
+    viewerContext: TViewerContext,
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+  ): EnforcingKnexEntityLoader<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    const constructionUtils = new EntityConstructionUtils(
+      viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+      this.entityCompanion.entityCompanionDefinition.entityConfiguration,
+      this.entityCompanion.entityCompanionDefinition.entityClass,
+      this.entityCompanion.entityCompanionDefinition.entitySelectedFields,
+      this.entityCompanion.privacyPolicy,
+      this.metricsAdapter,
+    );
+
+    return new EnforcingKnexEntityLoader(
+      this.forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext),
       queryContext,
       this.knexDataManager,
       this.metricsAdapter,

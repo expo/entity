@@ -15,6 +15,7 @@ import {
 } from './BasePostgresEntityDatabaseAdapter';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
 import { SQLFragment } from './SQLOperator';
+import type { Connection, PageInfo } from './internal/EntityKnexDataManager';
 import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
 
 export interface EntityLoaderOrderByClause<
@@ -74,6 +75,70 @@ export interface EntityLoaderQuerySelectionModifiersWithOrderByFragment<
    */
   orderByFragment?: SQLFragment;
 }
+
+/**
+ * Base pagination arguments
+ */
+interface EntityLoaderBasePaginationArgs<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> {
+  /**
+   * SQLFragment representing the WHERE clause to filter the entities being paginated.
+   */
+  where?: SQLFragment;
+
+  /**
+   * Order the entities by specified columns and orders. If the ID field is not included in the orderBy, it will be automatically included as the last orderBy field to ensure stable pagination.
+   */
+  orderBy?: EntityLoaderOrderByClause<TFields, TSelectedFields>[];
+}
+
+/**
+ * Forward pagination arguments
+ */
+export interface EntityLoaderForwardPaginationArgs<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> extends EntityLoaderBasePaginationArgs<TFields, TSelectedFields> {
+  /**
+   * The number of entities to return starting from the entity after the cursor (for forward pagination). Must be a positive integer.
+   */
+  first: number;
+
+  /**
+   * The cursor to paginate after for forward pagination, typically an opaque string encoding of the values of the cursor fields of the last entity in the previous page. If not provided, pagination starts from the beginning of the result set.
+   */
+  after?: string;
+}
+
+/**
+ * Backward pagination arguments
+ */
+export interface EntityLoaderBackwardPaginationArgs<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> extends EntityLoaderBasePaginationArgs<TFields, TSelectedFields> {
+  /**
+   * The number of entities to return starting from the entity before the cursor (for backward pagination). Must be a positive integer.
+   */
+  last: number;
+
+  /**
+   * The cursor to paginate before for backward pagination, typically an opaque string encoding of the values of the cursor fields of the first entity in the previous page. If not provided, pagination starts from the end of the result set.
+   */
+  before?: string;
+}
+
+/**
+ * Load page pagination arguments, which can be either forward or backward pagination arguments.
+ */
+export type EntityLoaderLoadPageArgs<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> =
+  | EntityLoaderForwardPaginationArgs<TFields, TSelectedFields>
+  | EntityLoaderBackwardPaginationArgs<TFields, TSelectedFields>;
 
 /**
  * Authorization-result-based knex entity loader for non-data-loader-based load methods.
@@ -199,6 +264,47 @@ export class AuthorizationResultBasedKnexEntityLoader<
       fragment,
       modifiers,
     );
+  }
+
+  /**
+   * Load a page of entities with Relay-style cursor pagination.
+   * Only returns successfully authorized entities for cursor stability; failed authorization results are filtered out.
+   *
+   * @returns Connection with only successfully authorized entities
+   */
+  async loadPageBySQLAsync(
+    args: EntityLoaderLoadPageArgs<TFields, TSelectedFields>,
+  ): Promise<Connection<TEntity>> {
+    const pageResult = await this.knexDataManager.loadPageBySQLFragmentAsync(
+      this.queryContext,
+      args,
+    );
+
+    const edgeResults = await Promise.all(
+      pageResult.edges.map(async (edge) => {
+        const entityResult = await this.constructionUtils.constructAndAuthorizeEntityAsync(
+          edge.node,
+        );
+        if (!entityResult.ok) {
+          return null;
+        }
+        return {
+          ...edge,
+          node: entityResult.value,
+        };
+      }),
+    );
+    const edges = edgeResults.filter((edge) => edge !== null);
+    const pageInfo: PageInfo = {
+      ...pageResult.pageInfo,
+      startCursor: edges[0]?.cursor ?? null,
+      endCursor: edges[edges.length - 1]?.cursor ?? null,
+    };
+
+    return {
+      edges,
+      pageInfo,
+    };
   }
 }
 

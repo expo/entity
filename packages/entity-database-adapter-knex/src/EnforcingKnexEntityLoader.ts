@@ -1,7 +1,15 @@
-import { EntityPrivacyPolicy, ReadonlyEntity, ViewerContext } from '@expo/entity';
+import {
+  EntityConstructionUtils,
+  EntityPrivacyPolicy,
+  EntityQueryContext,
+  IEntityMetricsAdapter,
+  ReadonlyEntity,
+  ViewerContext,
+} from '@expo/entity';
 
 import {
   AuthorizationResultBasedKnexEntityLoader,
+  EntityLoaderLoadPageArgs,
   EntityLoaderQuerySelectionModifiers,
   EntityLoaderQuerySelectionModifiersWithOrderByFragment,
   EntityLoaderQuerySelectionModifiersWithOrderByRaw,
@@ -9,6 +17,7 @@ import {
 import { FieldEqualityCondition } from './BasePostgresEntityDatabaseAdapter';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
 import { SQLFragment } from './SQLOperator';
+import type { Connection, EntityKnexDataManager } from './internal/EntityKnexDataManager';
 
 /**
  * Enforcing knex entity loader for non-data-loader-based load methods.
@@ -30,6 +39,17 @@ export class EnforcingKnexEntityLoader<
 > {
   constructor(
     private readonly knexEntityLoader: AuthorizationResultBasedKnexEntityLoader<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    private readonly queryContext: EntityQueryContext,
+    private readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>,
+    protected readonly metricsAdapter: IEntityMetricsAdapter,
+    private readonly constructionUtils: EntityConstructionUtils<
       TFields,
       TIDField,
       TViewerContext,
@@ -166,6 +186,59 @@ export class EnforcingKnexEntityLoader<
     TSelectedFields
   > {
     return new EnforcingSQLQueryBuilder(this.knexEntityLoader, fragment, modifiers);
+  }
+
+  /**
+   * Load a page of entities with Relay-style cursor pagination.
+   *
+   * @param args - Pagination arguments with either first/after or last/before
+   *
+   * @example
+   * ```typescript
+   * // Forward pagination - get first 10 items
+   * const users = await TestEntity.knexLoader(vc)
+   *   .loadPageBySQLAsync({
+   *     first: 10,
+   *     where: sql`age > ${18}`,
+   *     orderBy: 'created_at'
+   *   });
+   *
+   * // Backward pagination with cursor - get last 10 items before the cursor
+   * const lastResults = await TestEntity.knexLoader(vc)
+   *   .loadPageBySQLAsync({
+   *     last: 10,
+   *     where: sql`status = ${'active'}`,
+   *     before: cursor,
+   *   });
+   * ```
+   *
+   * @throws EntityNotAuthorizedError if viewer is not authorized to view any returned entity
+   */
+  async loadPageBySQLAsync(
+    args: EntityLoaderLoadPageArgs<TFields, TSelectedFields>,
+  ): Promise<Connection<TEntity>> {
+    const pageResult = await this.knexDataManager.loadPageBySQLFragmentAsync(
+      this.queryContext,
+      args,
+    );
+
+    const edges = await Promise.all(
+      pageResult.edges.map(async (edge) => {
+        const entityResult = await this.constructionUtils.constructAndAuthorizeEntityAsync(
+          edge.node,
+        );
+        const entity = entityResult.enforceValue();
+        return {
+          ...edge,
+          node: entity,
+        };
+      }),
+    );
+
+    return {
+      edges,
+      pageInfo: pageResult.pageInfo,
+    };
   }
 }
 

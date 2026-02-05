@@ -7,6 +7,7 @@ import {
 } from '@expo/entity';
 
 import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
+import { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
 import { KnexEntityLoaderFactory } from './KnexEntityLoaderFactory';
 
 /**
@@ -56,6 +57,30 @@ export class ViewerScopedKnexEntityLoaderFactory<
     TSelectedFields
   > {
     return this.knexEntityLoaderFactory.forLoad(
+      this.viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+    );
+  }
+
+  forLoadEnforcing(
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+  ): EnforcingKnexEntityLoader<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return this.knexEntityLoaderFactory.forLoadEnforcing(
       this.viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
