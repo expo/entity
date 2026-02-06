@@ -8,9 +8,9 @@ import {
 import {
   BasePostgresEntityDatabaseAdapter,
   FieldEqualityCondition,
-  QuerySelectionModifiers,
-  QuerySelectionModifiersWithOrderByFragment,
-  QuerySelectionModifiersWithOrderByRaw,
+  PostgresQuerySelectionModifiers,
+  PostgresQuerySelectionModifiersWithOrderByFragment,
+  PostgresQuerySelectionModifiersWithOrderByRaw,
 } from '../BasePostgresEntityDatabaseAdapter';
 import { SQLFragment } from '../SQLOperator';
 
@@ -42,7 +42,7 @@ export class EntityKnexDataManager<
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
     queryContext: EntityQueryContext,
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
@@ -71,7 +71,7 @@ export class EntityKnexDataManager<
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByRaw<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
@@ -91,7 +91,7 @@ export class EntityKnexDataManager<
   async loadManyBySQLFragmentAsync(
     queryContext: EntityQueryContext,
     sqlFragment: SQLFragment,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByFragment<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByFragment<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,

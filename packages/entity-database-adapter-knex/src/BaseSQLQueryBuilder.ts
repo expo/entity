@@ -1,13 +1,18 @@
 import {
-  OrderByOrdering,
-  QuerySelectionModifiersWithOrderByFragment,
-} from './BasePostgresEntityDatabaseAdapter';
+  EntityLoaderOrderByClause,
+  EntityLoaderQuerySelectionModifiersWithOrderByFragment,
+} from './AuthorizationResultBasedKnexEntityLoader';
+import { OrderByOrdering } from './BasePostgresEntityDatabaseAdapter';
 import { SQLFragment } from './SQLOperator';
 
 /**
  * Base SQL query builder that provides common functionality for building SQL queries.
  */
-export abstract class BaseSQLQueryBuilder<TFields extends Record<string, any>, TResultType> {
+export abstract class BaseSQLQueryBuilder<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+  TResultType,
+> {
   private executed = false;
 
   constructor(
@@ -15,7 +20,7 @@ export abstract class BaseSQLQueryBuilder<TFields extends Record<string, any>, T
     private readonly modifiers: {
       limit?: number;
       offset?: number;
-      orderBy?: { fieldName: keyof TFields; order: OrderByOrdering }[];
+      orderBy?: readonly EntityLoaderOrderByClause<TFields, TSelectedFields>[];
       orderByFragment?: SQLFragment;
     },
   ) {}
@@ -39,7 +44,7 @@ export abstract class BaseSQLQueryBuilder<TFields extends Record<string, any>, T
   /**
    * Order by a field. Can be called multiple times to add multiple order bys.
    */
-  orderBy(fieldName: keyof TFields, order: OrderByOrdering = OrderByOrdering.ASCENDING): this {
+  orderBy(fieldName: TSelectedFields, order: OrderByOrdering = OrderByOrdering.ASCENDING): this {
     this.modifiers.orderBy = [...(this.modifiers.orderBy ?? []), { fieldName, order }];
     return this;
   }
@@ -71,7 +76,10 @@ export abstract class BaseSQLQueryBuilder<TFields extends Record<string, any>, T
   /**
    * Get the current modifiers as QuerySelectionModifiersWithOrderByFragment<TFields>
    */
-  protected getModifiers(): QuerySelectionModifiersWithOrderByFragment<TFields> {
+  protected getModifiers(): EntityLoaderQuerySelectionModifiersWithOrderByFragment<
+    TFields,
+    TSelectedFields
+  > {
     return this.modifiers;
   }
 
