@@ -2,10 +2,16 @@ import { describe, expect, it } from '@jest/globals';
 
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder';
 
+type TestFields = {
+  id: string;
+  field1: string;
+  field2: string;
+};
+
 describe(CompositeFieldHolder, () => {
   it('is order-agnostic for serialization', () => {
-    const compositeFieldHolder = new CompositeFieldHolder(['field1', 'field2']);
-    const compositeFieldHolder2 = new CompositeFieldHolder(['field2', 'field1']);
+    const compositeFieldHolder = new CompositeFieldHolder<TestFields, 'id'>(['field1', 'field2']);
+    const compositeFieldHolder2 = new CompositeFieldHolder<TestFields, 'id'>(['field2', 'field1']);
 
     expect(compositeFieldHolder.serialize()).toEqual(compositeFieldHolder2.serialize());
   });

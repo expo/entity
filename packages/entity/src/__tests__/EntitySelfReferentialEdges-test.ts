@@ -250,7 +250,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
       'cacheAdapter'
     ] as InMemoryFullCacheStubCacheAdapter<CategoryFields, 'id'>;
     const subCategoryCachedBefore = await categoryCacheAdapter.loadManyAsync(
-      new SingleFieldHolder('parent_category_id'),
+      new SingleFieldHolder<CategoryFields, 'id', 'parent_category_id'>('parent_category_id'),
       [new SingleFieldValueHolder(parentCategory.getID())],
     );
     expect(
@@ -258,7 +258,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     ).toEqual(CacheStatus.HIT);
 
     const subSubCategoryCachedBefore = await categoryCacheAdapter.loadManyAsync(
-      new SingleFieldHolder('parent_category_id'),
+      new SingleFieldHolder<CategoryFields, 'id', 'parent_category_id'>('parent_category_id'),
       [new SingleFieldValueHolder(subCategory.getID())],
     );
     expect(
@@ -268,7 +268,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     await CategoryEntity.deleter(parentCategory).deleteAsync();
 
     const subCategoryCachedAfter = await categoryCacheAdapter.loadManyAsync(
-      new SingleFieldHolder('parent_category_id'),
+      new SingleFieldHolder<CategoryFields, 'id', 'parent_category_id'>('parent_category_id'),
       [new SingleFieldValueHolder(parentCategory.getID())],
     );
     expect(
@@ -276,7 +276,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     ).toEqual(CacheStatus.MISS);
 
     const subSubCategoryCachedAfter = await categoryCacheAdapter.loadManyAsync(
-      new SingleFieldHolder('parent_category_id'),
+      new SingleFieldHolder<CategoryFields, 'id', 'parent_category_id'>('parent_category_id'),
       [new SingleFieldValueHolder(subCategory.getID())],
     );
     expect(
@@ -329,7 +329,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
       'cacheAdapter'
     ] as InMemoryFullCacheStubCacheAdapter<CategoryFields, 'id'>;
     const categoriesCachedBefore = await categoryCacheAdapter.loadManyAsync(
-      new SingleFieldHolder('parent_category_id'),
+      new SingleFieldHolder<CategoryFields, 'id', 'parent_category_id'>('parent_category_id'),
       [
         new SingleFieldValueHolder(categoryA.getID()),
         new SingleFieldValueHolder(categoryB.getID()),
@@ -345,7 +345,7 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     await CategoryEntity.deleter(categoryA).deleteAsync();
 
     const categoriesCachedAfter = await categoryCacheAdapter.loadManyAsync(
-      new SingleFieldHolder('parent_category_id'),
+      new SingleFieldHolder<CategoryFields, 'id', 'parent_category_id'>('parent_category_id'),
       [
         new SingleFieldValueHolder(categoryA.getID()),
         new SingleFieldValueHolder(categoryB.getID()),

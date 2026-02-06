@@ -506,11 +506,14 @@ describe(AuthorizationResultBasedEntityLoader, () => {
             new SingleFieldValueHolder<TestFields, 'dateField'>(date),
           ],
           [
-            new CompositeFieldHolder(['stringField', 'intField']),
+            new CompositeFieldHolder<TestFields, 'customIdField'>(['stringField', 'intField']),
             new CompositeFieldValueHolder({ stringField: 'huh', intField: 5 }),
           ],
           [
-            new CompositeFieldHolder(['stringField', 'testIndexedField']),
+            new CompositeFieldHolder<TestFields, 'customIdField'>([
+              'stringField',
+              'testIndexedField',
+            ]),
             new CompositeFieldValueHolder({ stringField: 'huh', testIndexedField: 'h1' }),
           ],
         ]),
@@ -605,11 +608,14 @@ describe(AuthorizationResultBasedEntityLoader, () => {
             new SingleFieldValueHolder<TestFields, 'dateField'>(date),
           ],
           [
-            new CompositeFieldHolder(['stringField', 'intField']),
+            new CompositeFieldHolder<TestFields, 'customIdField'>(['stringField', 'intField']),
             new CompositeFieldValueHolder({ stringField: 'huh', intField: 5 }),
           ],
           [
-            new CompositeFieldHolder(['stringField', 'testIndexedField']),
+            new CompositeFieldHolder<TestFields, 'customIdField'>([
+              'stringField',
+              'testIndexedField',
+            ]),
             new CompositeFieldValueHolder({ stringField: 'huh', testIndexedField: 'h1' }),
           ],
         ]),
@@ -708,11 +714,14 @@ describe(AuthorizationResultBasedEntityLoader, () => {
               new SingleFieldValueHolder<TestFields, 'dateField'>(date),
             ],
             [
-              new CompositeFieldHolder(['stringField', 'intField']),
+              new CompositeFieldHolder<TestFields, 'customIdField'>(['stringField', 'intField']),
               new CompositeFieldValueHolder({ stringField: 'huh', intField: 5 }),
             ],
             [
-              new CompositeFieldHolder(['stringField', 'testIndexedField']),
+              new CompositeFieldHolder<TestFields, 'customIdField'>([
+                'stringField',
+                'testIndexedField',
+              ]),
               new CompositeFieldValueHolder({ stringField: 'huh', testIndexedField: 'h1' }),
             ],
           ]),

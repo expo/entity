@@ -376,10 +376,10 @@ const createEntityMutatorFactory = (
 
     installExtensions: () => {},
 
-    getDatabaseAdapter<TFields extends Record<'customIdField', any>>(
-      _entityConfiguration: EntityConfiguration<TFields, 'customIdField'>,
-    ): EntityDatabaseAdapter<TFields, 'customIdField'> {
-      return databaseAdapter as any as EntityDatabaseAdapter<TFields, 'customIdField'>;
+    getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
+      _entityConfiguration: EntityConfiguration<TFields, TIDField>,
+    ): EntityDatabaseAdapter<TFields, TIDField> {
+      return databaseAdapter as any as EntityDatabaseAdapter<TFields, TIDField>;
     },
   };
   const metricsAdapter = new NoOpEntityMetricsAdapter();

@@ -67,7 +67,9 @@ export class CompositeFieldInfo<
           keyDefinition.compositeField.length === new Set(keyDefinition.compositeField).size,
           'Composite field must have unique sub-fields',
         );
-        const compositeFieldHolder = new CompositeFieldHolder(keyDefinition.compositeField);
+        const compositeFieldHolder = new CompositeFieldHolder<TFields, TIDField>(
+          keyDefinition.compositeField,
+        );
         return [
           compositeFieldHolder.serialize(),
           { compositeFieldHolder, cache: keyDefinition.cache ?? false },
@@ -79,8 +81,9 @@ export class CompositeFieldInfo<
   public getCompositeFieldHolderForCompositeField(
     compositeField: EntityCompositeField<TFields>,
   ): CompositeFieldHolder<TFields, TIDField> | undefined {
-    return this.compositeFieldInfoMap.get(new CompositeFieldHolder(compositeField).serialize())
-      ?.compositeFieldHolder;
+    return this.compositeFieldInfoMap.get(
+      new CompositeFieldHolder<TFields, TIDField>(compositeField).serialize(),
+    )?.compositeFieldHolder;
   }
 
   public getAllCompositeFieldHolders(): readonly CompositeFieldHolder<TFields, TIDField>[] {
@@ -89,7 +92,7 @@ export class CompositeFieldInfo<
 
   public canCacheCompositeField(compositeField: EntityCompositeField<TFields>): boolean {
     const compositeFieldInfo = this.compositeFieldInfoMap.get(
-      new CompositeFieldHolder(compositeField).serialize(),
+      new CompositeFieldHolder<TFields, TIDField>(compositeField).serialize(),
     );
     invariant(
       compositeFieldInfo,
@@ -107,7 +110,7 @@ export class EntityConfiguration<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > {
-  readonly idField: keyof TFields;
+  readonly idField: TIDField;
   readonly tableName: string;
   readonly cacheableKeys: ReadonlySet<keyof TFields>;
   readonly compositeFieldInfo: CompositeFieldInfo<TFields, TIDField>;

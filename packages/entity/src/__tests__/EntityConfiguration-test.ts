@@ -46,8 +46,8 @@ describe(EntityConfiguration, () => {
       expect(blahEntityConfiguration.databaseAdapterFlavor).toEqual('postgres');
       expect(blahEntityConfiguration.cacheAdapterFlavor).toEqual('redis');
       expect(blahEntityConfiguration.compositeFieldInfo.getAllCompositeFieldHolders()).toEqual([
-        new CompositeFieldHolder(['id', 'cacheable']),
-        new CompositeFieldHolder(['id', 'uniqueButNotCacheable']),
+        new CompositeFieldHolder<BlahT, 'id'>(['id', 'cacheable']),
+        new CompositeFieldHolder<BlahT, 'id'>(['id', 'uniqueButNotCacheable']),
       ]);
     });
 
