@@ -1,7 +1,6 @@
 import { Result } from '@expo/results';
 
 import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
-import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
@@ -69,14 +68,6 @@ export abstract class EntitySecondaryCacheLoader<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    protected readonly knexEntityLoader: AuthorizationResultBasedKnexEntityLoader<
-      TFields,
-      TIDField,
-      TViewerContext,
-      TEntity,
-      TPrivacyPolicy,
-      TSelectedFields
-    >,
   ) {}
 
   /**
@@ -93,9 +84,10 @@ export abstract class EntitySecondaryCacheLoader<
     );
 
     // convert value to and from array to reuse complex code
-    const entitiesMap = await this.entityLoader.utils.constructAndAuthorizeEntitiesAsync(
-      mapMap(loadParamsToFieldObjects, (fieldObject) => (fieldObject ? [fieldObject] : [])),
-    );
+    const entitiesMap =
+      await this.entityLoader.constructionUtils.constructAndAuthorizeEntitiesAsync(
+        mapMap(loadParamsToFieldObjects, (fieldObject) => (fieldObject ? [fieldObject] : [])),
+      );
     return mapMap(entitiesMap, (fieldObjects) => fieldObjects[0] ?? null);
   }
 

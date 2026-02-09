@@ -133,6 +133,7 @@ export class EntityCompanionProvider {
     new Map();
   private readonly tableDataCoordinatorMap: Map<string, EntityTableDataCoordinator<any, any>> =
     new Map();
+  private static readonly installedExtensions = new Set<string>();
 
   /**
    * Instantiate an Entity framework.
@@ -158,7 +159,21 @@ export class EntityCompanionProvider {
       any,
       any
     > = {},
-  ) {}
+  ) {
+    // Install any extensions required by the database adapter flavors
+    for (const flavorDefinition of databaseAdapterFlavors.values()) {
+      if (
+        !EntityCompanionProvider.installedExtensions.has(
+          flavorDefinition.adapterProvider.getExtensionsKey(),
+        )
+      ) {
+        flavorDefinition.adapterProvider.installExtensions();
+        EntityCompanionProvider.installedExtensions.add(
+          flavorDefinition.adapterProvider.getExtensionsKey(),
+        );
+      }
+    }
+  }
 
   /**
    * Get the entity companion for specified entity. If not already computed and cached, the entity

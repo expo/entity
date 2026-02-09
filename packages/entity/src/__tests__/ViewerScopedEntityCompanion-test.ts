@@ -33,5 +33,6 @@ describe(ViewerScopedEntityCompanion, () => {
     expect(viewerScopedEntityCompanion.getMutatorFactory()).toBeInstanceOf(
       ViewerScopedEntityMutatorFactory,
     );
+    expect(viewerScopedEntityCompanion.getMetricsAdapter()).toBeDefined();
   });
 });

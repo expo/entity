@@ -16,9 +16,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
 import { EntityCompanionProvider } from '../EntityCompanionProvider';
 import { EntityConfiguration } from '../EntityConfiguration';
+import { EntityConstructionUtils } from '../EntityConstructionUtils';
 import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
 import { EntityLoaderFactory } from '../EntityLoaderFactory';
-import { EntityLoaderUtils } from '../EntityLoaderUtils';
 import {
   EntityCascadingDeletionInfo,
   EntityMutationType,
@@ -370,6 +370,12 @@ const createEntityMutatorFactory = (
     ),
   );
   const customStubDatabaseAdapterProvider: IEntityDatabaseAdapterProvider = {
+    getExtensionsKey() {
+      return 'CustomStubDatabaseAdapterProvider';
+    },
+
+    installExtensions: () => {},
+
     getDatabaseAdapter<TFields extends Record<'customIdField', any>>(
       _entityConfiguration: EntityConfiguration<TFields, 'customIdField'>,
     ): EntityDatabaseAdapter<TFields, 'customIdField'> {
@@ -1499,9 +1505,9 @@ describe(EntityMutatorFactory, () => {
         keyof SimpleTestFields
       >
     >(AuthorizationResultBasedEntityLoader);
-    const entityLoaderUtilsMock =
+    const entityConstructionUtilsMock =
       mock<
-        EntityLoaderUtils<
+        EntityConstructionUtils<
           SimpleTestFields,
           'id',
           ViewerContext,
@@ -1509,9 +1515,9 @@ describe(EntityMutatorFactory, () => {
           SimpleTestEntityPrivacyPolicy,
           keyof SimpleTestFields
         >
-      >(EntityLoaderUtils);
-    when(entityLoaderUtilsMock.constructEntity(anything())).thenReturn(fakeEntity);
-    when(entityLoaderMock.utils).thenReturn(instance(entityLoaderUtilsMock));
+      >(EntityConstructionUtils);
+    when(entityConstructionUtilsMock.constructEntity(anything())).thenReturn(fakeEntity);
+    when(entityLoaderMock.constructionUtils).thenReturn(instance(entityConstructionUtilsMock));
     const entityLoader = instance(entityLoaderMock);
 
     const entityLoaderFactoryMock =
@@ -1634,9 +1640,9 @@ describe(EntityMutatorFactory, () => {
         keyof SimpleTestFields
       >
     >(AuthorizationResultBasedEntityLoader);
-    const entityLoaderUtilsMock =
+    const entityConstructionUtilsMock =
       mock<
-        EntityLoaderUtils<
+        EntityConstructionUtils<
           SimpleTestFields,
           'id',
           ViewerContext,
@@ -1644,9 +1650,9 @@ describe(EntityMutatorFactory, () => {
           SimpleTestEntityPrivacyPolicy,
           keyof SimpleTestFields
         >
-      >(EntityLoaderUtils);
-    when(entityLoaderUtilsMock.constructEntity(anything())).thenReturn(fakeEntity);
-    when(entityLoaderMock.utils).thenReturn(instance(entityLoaderUtilsMock));
+      >(EntityConstructionUtils);
+    when(entityConstructionUtilsMock.constructEntity(anything())).thenReturn(fakeEntity);
+    when(entityLoaderMock.constructionUtils).thenReturn(instance(entityConstructionUtilsMock));
     const entityLoader = instance(entityLoaderMock);
 
     const entityLoaderFactoryMock =

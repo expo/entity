@@ -8,7 +8,8 @@ import {
   EntityCompositeFieldValue,
   EntityConfiguration,
 } from './EntityConfiguration';
-import { EntityLoaderUtils } from './EntityLoaderUtils';
+import { EntityConstructionUtils } from './EntityConstructionUtils';
+import { EntityInvalidationUtils } from './EntityInvalidationUtils';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
@@ -55,7 +56,15 @@ export class AuthorizationResultBasedEntityLoader<
     >,
     private readonly dataManager: EntityDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
-    public readonly utils: EntityLoaderUtils<
+    public readonly invalidationUtils: EntityInvalidationUtils<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    public readonly constructionUtils: EntityConstructionUtils<
       TFields,
       TIDField,
       TViewerContext,
@@ -89,7 +98,9 @@ export class AuthorizationResultBasedEntityLoader<
       loadValuesToFieldObjects,
       (loadValue) => loadValue.fieldValue,
     );
-    return await this.utils.constructAndAuthorizeEntitiesAsync(fieldValuesToFieldObjects);
+    return await this.constructionUtils.constructAndAuthorizeEntitiesAsync(
+      fieldValuesToFieldObjects,
+    );
   }
 
   /**
@@ -265,7 +276,7 @@ export class AuthorizationResultBasedEntityLoader<
     loadKey: SingleFieldHolder<TFields, TIDField, N>;
     loadValues: readonly SingleFieldValueHolder<TFields, N>[];
   } {
-    this.utils.validateFieldAndValues(fieldName, fieldValues);
+    this.constructionUtils.validateFieldAndValues(fieldName, fieldValues);
 
     return {
       loadKey: new SingleFieldHolder<TFields, TIDField, N>(fieldName),
@@ -308,7 +319,7 @@ export class AuthorizationResultBasedEntityLoader<
       );
       for (const field of compositeField) {
         const fieldValue = compositeFieldValueHolder.compositeFieldValue[field];
-        this.utils.validateFieldAndValues(field, [fieldValue]);
+        this.constructionUtils.validateFieldAndValues(field, [fieldValue]);
       }
     }
 
@@ -328,7 +339,7 @@ export class AuthorizationResultBasedEntityLoader<
         Array.from(map.entries()).map(async ([compositeFieldValueHolder, fieldObjects]) => {
           return [
             compositeFieldValueHolder,
-            await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects),
+            await this.constructionUtils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects),
           ];
         }),
       ),

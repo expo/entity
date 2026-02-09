@@ -1,7 +1,7 @@
 import {
   CompositeFieldHolder,
   CompositeFieldValueHolder,
-  IEntityGenericCacher,
+  GenericEntityCacheAdapter,
   SingleFieldHolder,
   SingleFieldValueHolder,
   ViewerContext,
@@ -55,12 +55,11 @@ describe(GenericRedisCacher, () => {
     const viewerContext = new TestViewerContext(
       createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
     );
-    const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
-      RedisTestEntity,
-    )['tableDataCoordinator']['cacheAdapter']['genericCacher'] as IEntityGenericCacher<
-      RedisTestEntityFields,
-      'id'
-    >;
+    const genericCacher = (
+      viewerContext.entityCompanionProvider.getCompanionForEntity(RedisTestEntity)[
+        'tableDataCoordinator'
+      ]['cacheAdapter'] as GenericEntityCacheAdapter<RedisTestEntityFields, 'id'>
+    )['genericCacher'];
 
     const entity1Created = await RedisTestEntity.creator(viewerContext)
       .setField('name', 'blah')
@@ -144,7 +143,9 @@ describe(GenericRedisCacher, () => {
     expect(entityNonExistentCompositeResult2).toBe(null);
 
     // invalidate from cache to ensure it invalidates correctly
-    await RedisTestEntity.loaderUtils(viewerContext).invalidateFieldsAsync(entity1.getAllFields());
+    await RedisTestEntity.invalidationUtils(viewerContext).invalidateFieldsAsync(
+      entity1.getAllFields(),
+    );
     const cachedValueNullKeys = genericCacher.makeCacheKeysForInvalidation(
       new SingleFieldHolder('id'),
       new SingleFieldValueHolder(entity1.getID()),

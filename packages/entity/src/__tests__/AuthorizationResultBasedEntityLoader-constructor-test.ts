@@ -5,8 +5,9 @@ import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBase
 import { Entity } from '../Entity';
 import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import { EntityConfiguration } from '../EntityConfiguration';
+import { EntityConstructionUtils } from '../EntityConstructionUtils';
 import { StringField } from '../EntityFields';
-import { EntityLoaderUtils } from '../EntityLoaderUtils';
+import { EntityInvalidationUtils } from '../EntityInvalidationUtils';
 import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { ViewerContext } from '../ViewerContext';
 import { EntityDataManager } from '../internal/EntityDataManager';
@@ -164,7 +165,13 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       metricsAdapter,
       TestEntity.name,
     );
-    const utils = new EntityLoaderUtils(
+    const invalidationUtils = new EntityInvalidationUtils(
+      testEntityConfiguration,
+      TestEntity,
+      dataManager,
+      metricsAdapter,
+    );
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -172,7 +179,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManager,
       metricsAdapter,
     );
     const entityLoader = new AuthorizationResultBasedEntityLoader(
@@ -181,7 +187,8 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       TestEntity,
       dataManager,
       metricsAdapter,
-      utils,
+      invalidationUtils,
+      constructionUtils,
     );
 
     let capturedThrownThing1: any;

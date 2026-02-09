@@ -78,4 +78,22 @@ describe(EntityCompanion, () => {
       afterCommit: [localTriggers!.afterCommit![0]],
     });
   });
+  it('returns correct metrics adapter', () => {
+    const entityCompanionProvider = instance(mock<EntityCompanionProvider>());
+
+    const tableDataCoordinatorMock = mock<EntityTableDataCoordinator<TestMTFields, 'id'>>();
+    when(tableDataCoordinatorMock.entityConfiguration).thenReturn(testEntityMTConfiguration);
+
+    const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+    const metricsAdapterInstance = instance(metricsAdapterMock);
+
+    const companion = new EntityCompanion(
+      entityCompanionProvider,
+      TestEntityWithMutationTriggers.defineCompanionDefinition(),
+      instance(tableDataCoordinatorMock),
+      metricsAdapterInstance,
+    );
+
+    expect(companion.getMetricsAdapter()).toBe(metricsAdapterInstance);
+  });
 });

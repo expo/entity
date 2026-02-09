@@ -1,5 +1,6 @@
 import {
   CacheStatus,
+  GenericEntityCacheAdapter,
   IEntityGenericCacher,
   SingleFieldHolder,
   SingleFieldValueHolder,
@@ -23,12 +24,11 @@ describe(GenericLocalMemoryCacher, () => {
   it('has correct caching behavior', async () => {
     const entityCompanionProvider = createLocalMemoryTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(entityCompanionProvider);
-    const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
-      LocalMemoryTestEntity,
-    )['tableDataCoordinator']['cacheAdapter']['genericCacher'] as IEntityGenericCacher<
-      LocalMemoryTestEntityFields,
-      'id'
-    >;
+    const genericCacher = (
+      viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)[
+        'tableDataCoordinator'
+      ]['cacheAdapter'] as GenericEntityCacheAdapter<LocalMemoryTestEntityFields, 'id'>
+    )['genericCacher'];
 
     const date = new Date();
     const entity1Created = await LocalMemoryTestEntity.creator(viewerContext)
@@ -105,7 +105,7 @@ describe(GenericLocalMemoryCacher, () => {
     expect(entityNonExistentResult2.ok).toBe(false);
 
     // invalidate from cache to ensure it invalidates correctly
-    await LocalMemoryTestEntity.loaderUtils(viewerContext).invalidateFieldsAsync(
+    await LocalMemoryTestEntity.invalidationUtils(viewerContext).invalidateFieldsAsync(
       entity1.getAllFields(),
     );
     const keys = genericCacher.makeCacheKeysForInvalidation(
@@ -121,12 +121,11 @@ describe(GenericLocalMemoryCacher, () => {
   it('respects the parameters of a noop cache', async () => {
     const entityCompanionProvider = createNoOpLocalMemoryIntegrationTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(entityCompanionProvider);
-    const genericCacher = viewerContext.entityCompanionProvider.getCompanionForEntity(
-      LocalMemoryTestEntity,
-    )['tableDataCoordinator']['cacheAdapter']['genericCacher'] as IEntityGenericCacher<
-      LocalMemoryTestEntityFields,
-      'id'
-    >;
+    const genericCacher = (
+      viewerContext.entityCompanionProvider.getCompanionForEntity(LocalMemoryTestEntity)[
+        'tableDataCoordinator'
+      ]['cacheAdapter'] as GenericEntityCacheAdapter<LocalMemoryTestEntityFields, 'id'>
+    )['genericCacher'];
     const cacheKeyMaker = genericCacher['makeCacheKeyForStorage'].bind(genericCacher);
 
     const date = new Date();

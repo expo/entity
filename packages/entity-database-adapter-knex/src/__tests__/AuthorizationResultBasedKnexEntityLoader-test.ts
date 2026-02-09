@@ -1,26 +1,24 @@
+import {
+  EntityPrivacyPolicyEvaluationContext,
+  ViewerContext,
+  enforceResultsAsync,
+  IEntityMetricsAdapter,
+  EntityConstructionUtils,
+  EntityQueryContext,
+} from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 import { anyOfClass, anything, instance, mock, spy, verify, when } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader';
-import { OrderByOrdering } from '../EntityDatabaseAdapter';
-import { EntityLoaderUtils } from '../EntityLoaderUtils';
-import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { ViewerContext } from '../ViewerContext';
-import { enforceResultsAsync } from '../entityUtils';
-import { EntityDataManager } from '../internal/EntityDataManager';
-import { EntityKnexDataManager } from '../internal/EntityKnexDataManager';
-import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache';
-import { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
-import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
-import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
-import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
+import { OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import {
   TestEntity,
-  TestEntityPrivacyPolicy,
   testEntityConfiguration,
+  TestEntityPrivacyPolicy,
   TestFields,
-} from '../utils/__testfixtures__/TestEntity';
+} from './fixtures/TestEntity';
+import { EntityKnexDataManager } from '../internal/EntityKnexDataManager';
 
 describe(AuthorizationResultBasedKnexEntityLoader, () => {
   it('loads entities with loadManyByFieldEqualityConjunction', async () => {
@@ -39,64 +37,39 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
         >(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = new StubQueryContextProvider().getQueryContext();
+    const queryContext = instance(mock<EntityQueryContext>());
+
+    const knexDataManagerMock =
+      mock<EntityKnexDataManager<TestFields, 'customIdField'>>(EntityKnexDataManager);
 
     const id1 = uuidv4();
     const id2 = uuidv4();
-    const id3 = uuidv4();
-    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
-      testEntityConfiguration,
-      StubDatabaseAdapter.convertFieldObjectsToDataStore(
-        testEntityConfiguration,
-        new Map([
-          [
-            testEntityConfiguration.tableName,
-            [
-              {
-                customIdField: id1,
-                stringField: 'huh',
-                intField: 4,
-                testIndexedField: '4',
-                dateField: new Date(),
-                nullableField: null,
-              },
-              {
-                customIdField: id2,
-                stringField: 'huh',
-                intField: 4,
-                testIndexedField: '5',
-                dateField: new Date(),
-                nullableField: null,
-              },
-              {
-                customIdField: id3,
-                stringField: 'huh2',
-                intField: 4,
-                testIndexedField: '6',
-                dateField: new Date(),
-                nullableField: null,
-              },
-            ],
-          ],
-        ]),
+    when(
+      knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+        queryContext,
+        anything(),
+        anything(),
       ),
-    );
-    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
-    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
-    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
-    const dataManager = new EntityDataManager(
-      databaseAdapter,
-      entityCache,
-      new StubQueryContextProvider(),
-      instance(mock<IEntityMetricsAdapter>()),
-      TestEntity.name,
-    );
-    const knexDataManager = new EntityKnexDataManager(
-      databaseAdapter,
-      metricsAdapter,
-      TestEntity.name,
-    );
-    const utils = new EntityLoaderUtils(
+    ).thenResolve([
+      {
+        customIdField: id1,
+        stringField: 'huh',
+        intField: 4,
+        testIndexedField: '4',
+        dateField: new Date(),
+        nullableField: null,
+      },
+      {
+        customIdField: id2,
+        stringField: 'huh',
+        intField: 4,
+        testIndexedField: '5',
+        dateField: new Date(),
+        nullableField: null,
+      },
+    ]);
+
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -104,14 +77,13 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManager,
       metricsAdapter,
     );
     const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
       queryContext,
-      knexDataManager,
+      instance(knexDataManagerMock),
       metricsAdapter,
-      utils,
+      constructionUtils,
     );
     const entityResults = await enforceResultsAsync(
       knexEntityLoader.loadManyByFieldEqualityConjunctionAsync([
@@ -159,64 +131,28 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
         >(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = new StubQueryContextProvider().getQueryContext();
+    const queryContext = instance(mock<EntityQueryContext>());
 
-    const id1 = uuidv4();
-    const id2 = uuidv4();
-    const id3 = uuidv4();
-    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
-      testEntityConfiguration,
-      StubDatabaseAdapter.convertFieldObjectsToDataStore(
-        testEntityConfiguration,
-        new Map([
-          [
-            testEntityConfiguration.tableName,
-            [
-              {
-                customIdField: id1,
-                stringField: 'huh',
-                intField: 4,
-                testIndexedField: '4',
-                dateField: new Date(),
-                nullableField: null,
-              },
-              {
-                customIdField: id2,
-                stringField: 'huh',
-                intField: 4,
-                testIndexedField: '5',
-                dateField: new Date(),
-                nullableField: null,
-              },
-              {
-                customIdField: id3,
-                stringField: 'huh2',
-                intField: 4,
-                testIndexedField: '6',
-                dateField: new Date(),
-                nullableField: null,
-              },
-            ],
-          ],
-        ]),
+    const knexDataManagerMock =
+      mock<EntityKnexDataManager<TestFields, 'customIdField'>>(EntityKnexDataManager);
+    when(
+      knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+        queryContext,
+        anything(),
+        anything(),
       ),
-    );
-    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
-    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
-    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
-    const dataManager = new EntityDataManager(
-      databaseAdapter,
-      entityCache,
-      new StubQueryContextProvider(),
-      instance(mock<IEntityMetricsAdapter>()),
-      TestEntity.name,
-    );
-    const knexDataManager = new EntityKnexDataManager(
-      databaseAdapter,
-      metricsAdapter,
-      TestEntity.name,
-    );
-    const utils = new EntityLoaderUtils(
+    ).thenResolve([
+      {
+        customIdField: 'id',
+        stringField: 'huh',
+        intField: 4,
+        testIndexedField: '5',
+        dateField: new Date(),
+        nullableField: null,
+      },
+    ]);
+
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -224,14 +160,13 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManager,
       metricsAdapter,
     );
     const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
       queryContext,
-      knexDataManager,
+      instance(knexDataManagerMock),
       metricsAdapter,
-      utils,
+      constructionUtils,
     );
     const result = await knexEntityLoader.loadFirstByFieldEqualityConjunctionAsync(
       [
@@ -280,7 +215,7 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
         >(),
       );
     const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
-    const queryContext = new StubQueryContextProvider().getQueryContext();
+    const queryContext = instance(mock<EntityQueryContext>());
 
     const knexDataManagerMock =
       mock<EntityKnexDataManager<TestFields, 'customIdField'>>(EntityKnexDataManager);
@@ -303,11 +238,7 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
     ]);
     const knexDataManager = instance(knexDataManagerMock);
 
-    // Create a real dataManager for the EntityLoaderUtils
-    const dataManagerMock = mock<EntityDataManager<TestFields, 'customIdField'>>(EntityDataManager);
-    const dataManager = instance(dataManagerMock);
-
-    const utils = new EntityLoaderUtils(
+    const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
@@ -315,14 +246,13 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
       TestEntity,
       /* entitySelectedFields */ undefined,
       privacyPolicy,
-      dataManager,
       metricsAdapter,
     );
     const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
       queryContext,
       knexDataManager,
       metricsAdapter,
-      utils,
+      constructionUtils,
     );
 
     const result = await knexEntityLoader.loadManyByRawWhereClauseAsync('id = ?', [1], {

@@ -1,7 +1,8 @@
 import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
 import { EnforcingEntityLoader } from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
-import { EntityLoaderUtils } from './EntityLoaderUtils';
+import { EntityConstructionUtils } from './EntityConstructionUtils';
+import { EntityInvalidationUtils } from './EntityInvalidationUtils';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
@@ -75,10 +76,10 @@ export class EntityLoader<
   }
 
   /**
-   * Entity loader utilities for things like cache invalidation, entity construction, and authorization.
+   * Entity cache invalidation utilities.
    * Calling into these should only be necessary in rare cases.
    */
-  public utils(): EntityLoaderUtils<
+  public invalidationUtils(): EntityInvalidationUtils<
     TFields,
     TIDField,
     TViewerContext,
@@ -86,6 +87,21 @@ export class EntityLoader<
     TPrivacyPolicy,
     TSelectedFields
   > {
-    return this.withAuthorizationResults().utils;
+    return this.withAuthorizationResults().invalidationUtils;
+  }
+
+  /**
+   * Entity construction and validation utilities.
+   * Calling into these should only be necessary in rare cases.
+   */
+  public constructionUtils(): EntityConstructionUtils<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return this.withAuthorizationResults().constructionUtils;
   }
 }

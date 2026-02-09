@@ -334,7 +334,7 @@ export class AuthorizationResultBasedCreateMutator<
       cascadingDeleteCause: null,
     });
 
-    const temporaryEntityForPrivacyCheck = entityLoader.utils.constructEntity({
+    const temporaryEntityForPrivacyCheck = entityLoader.constructionUtils.constructEntity({
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
       ...this.fieldsForEntity,
     } as unknown as TFields);
@@ -376,13 +376,14 @@ export class AuthorizationResultBasedCreateMutator<
     // Invalidate all caches for the new entity so that any previously-negatively-cached loads
     // are removed from the caches.
     queryContext.appendPostCommitInvalidationCallback(async () => {
-      entityLoader.utils.invalidateFieldsForTransaction(queryContext, insertResult);
-      await entityLoader.utils.invalidateFieldsAsync(insertResult);
+      entityLoader.invalidationUtils.invalidateFieldsForTransaction(queryContext, insertResult);
+      await entityLoader.invalidationUtils.invalidateFieldsAsync(insertResult);
     });
 
-    entityLoader.utils.invalidateFieldsForTransaction(queryContext, insertResult);
+    entityLoader.invalidationUtils.invalidateFieldsForTransaction(queryContext, insertResult);
 
-    const unauthorizedEntityAfterInsert = entityLoader.utils.constructEntity(insertResult);
+    const unauthorizedEntityAfterInsert =
+      entityLoader.constructionUtils.constructEntity(insertResult);
     const newEntity = await enforceAsyncResult(
       entityLoader.loadByIDAsync(unauthorizedEntityAfterInsert.getID()),
     );
@@ -542,7 +543,9 @@ export class AuthorizationResultBasedUpdateMutator<
       cascadingDeleteCause: this.cascadingDeleteCause,
     });
 
-    const entityAboutToBeUpdated = entityLoader.utils.constructEntity(this.fieldsForEntity);
+    const entityAboutToBeUpdated = entityLoader.constructionUtils.constructEntity(
+      this.fieldsForEntity,
+    );
     const authorizeUpdateResult = await asyncResult(
       this.privacyPolicy.authorizeUpdateAsync(
         this.viewerContext,
@@ -606,22 +609,30 @@ export class AuthorizationResultBasedUpdateMutator<
     // version of the entity.
 
     queryContext.appendPostCommitInvalidationCallback(async () => {
-      entityLoader.utils.invalidateFieldsForTransaction(
+      entityLoader.invalidationUtils.invalidateFieldsForTransaction(
         queryContext,
         this.originalEntity.getAllDatabaseFields(),
       );
-      entityLoader.utils.invalidateFieldsForTransaction(queryContext, this.fieldsForEntity);
+      entityLoader.invalidationUtils.invalidateFieldsForTransaction(
+        queryContext,
+        this.fieldsForEntity,
+      );
       await Promise.all([
-        entityLoader.utils.invalidateFieldsAsync(this.originalEntity.getAllDatabaseFields()),
-        entityLoader.utils.invalidateFieldsAsync(this.fieldsForEntity),
+        entityLoader.invalidationUtils.invalidateFieldsAsync(
+          this.originalEntity.getAllDatabaseFields(),
+        ),
+        entityLoader.invalidationUtils.invalidateFieldsAsync(this.fieldsForEntity),
       ]);
     });
 
-    entityLoader.utils.invalidateFieldsForTransaction(
+    entityLoader.invalidationUtils.invalidateFieldsForTransaction(
       queryContext,
       this.originalEntity.getAllDatabaseFields(),
     );
-    entityLoader.utils.invalidateFieldsForTransaction(queryContext, this.fieldsForEntity);
+    entityLoader.invalidationUtils.invalidateFieldsForTransaction(
+      queryContext,
+      this.fieldsForEntity,
+    );
 
     const updatedEntity = await enforceAsyncResult(
       entityLoader.loadByIDAsync(entityAboutToBeUpdated.getID()),
@@ -847,13 +858,15 @@ export class AuthorizationResultBasedDeleteMutator<
     // Invalidate all caches for the entity so that any previously-cached loads
     // are removed from the caches.
     queryContext.appendPostCommitInvalidationCallback(async () => {
-      entityLoader.utils.invalidateFieldsForTransaction(
+      entityLoader.invalidationUtils.invalidateFieldsForTransaction(
         queryContext,
         this.entity.getAllDatabaseFields(),
       );
-      await entityLoader.utils.invalidateFieldsAsync(this.entity.getAllDatabaseFields());
+      await entityLoader.invalidationUtils.invalidateFieldsAsync(
+        this.entity.getAllDatabaseFields(),
+      );
     });
-    entityLoader.utils.invalidateFieldsForTransaction(
+    entityLoader.invalidationUtils.invalidateFieldsForTransaction(
       queryContext,
       this.entity.getAllDatabaseFields(),
     );

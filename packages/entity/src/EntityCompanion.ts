@@ -3,7 +3,6 @@ import { EntityLoaderFactory } from './EntityLoaderFactory';
 import { EntityMutatorFactory } from './EntityMutatorFactory';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContextProvider } from './EntityQueryContextProvider';
-import { KnexEntityLoaderFactory } from './KnexEntityLoaderFactory';
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
 import { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
@@ -41,14 +40,6 @@ export class EntityCompanion<
     TPrivacyPolicy,
     TSelectedFields
   >;
-  private readonly knexEntityLoaderFactory: KnexEntityLoaderFactory<
-    TFields,
-    TIDField,
-    TViewerContext,
-    TEntity,
-    TPrivacyPolicy,
-    TSelectedFields
-  >;
   private readonly entityMutatorFactory: EntityMutatorFactory<
     TFields,
     TIDField,
@@ -68,8 +59,8 @@ export class EntityCompanion<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly tableDataCoordinator: EntityTableDataCoordinator<TFields, TIDField>,
-    private readonly metricsAdapter: IEntityMetricsAdapter,
+    public readonly tableDataCoordinator: EntityTableDataCoordinator<TFields, TIDField>,
+    public readonly metricsAdapter: IEntityMetricsAdapter,
   ) {
     this.privacyPolicy = new entityCompanionDefinition.privacyPolicyClass();
     this.entityLoaderFactory = new EntityLoaderFactory<
@@ -80,14 +71,6 @@ export class EntityCompanion<
       TPrivacyPolicy,
       TSelectedFields
     >(this, tableDataCoordinator.dataManager, metricsAdapter);
-    this.knexEntityLoaderFactory = new KnexEntityLoaderFactory<
-      TFields,
-      TIDField,
-      TViewerContext,
-      TEntity,
-      TPrivacyPolicy,
-      TSelectedFields
-    >(this, tableDataCoordinator.dataManager, tableDataCoordinator.knexDataManager, metricsAdapter);
     this.entityMutatorFactory = new EntityMutatorFactory(
       entityCompanionProvider,
       tableDataCoordinator.entityConfiguration,
@@ -113,17 +96,6 @@ export class EntityCompanion<
     TSelectedFields
   > {
     return this.entityLoaderFactory;
-  }
-
-  getKnexLoaderFactory(): KnexEntityLoaderFactory<
-    TFields,
-    TIDField,
-    TViewerContext,
-    TEntity,
-    TPrivacyPolicy,
-    TSelectedFields
-  > {
-    return this.knexEntityLoaderFactory;
   }
 
   getMutatorFactory(): EntityMutatorFactory<

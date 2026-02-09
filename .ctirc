@@ -7,44 +7,42 @@
     {
       "project": "packages/entity/tsconfig.json",
       "output": "packages/entity/src",
-      "exclude": [
-        "**/__testfixtures__/**",
-        "**/__tests__/**"
-      ]
+      "exclude": [ "**/__testfixtures__/**", "**/__tests__/**" ]
     },
     {
       "project": "packages/entity-cache-adapter-local-memory/tsconfig.json",
       "output": "packages/entity-cache-adapter-local-memory/src",
-      "exclude": [ "**/__testfixtures__/**" ]
+      "exclude": [ "**/__testfixtures__/**", "**/__tests__/**" ]
     },
     {
       "project": "packages/entity-cache-adapter-redis/tsconfig.json",
       "output": "packages/entity-cache-adapter-redis/src",
-      "exclude": [ "**/__testfixtures__/**" ]
+      "exclude": [ "**/__testfixtures__/**", "**/__tests__/**" ]
     },
     {
       "project": "packages/entity-database-adapter-knex/tsconfig.json",
       "output": "packages/entity-database-adapter-knex/src",
-      "exclude": [ "**/__testfixtures__/**" ]
+      "exclude": [ "**/__testfixtures__/**", "**/__tests__/**" ]
     },
     {
       "project": "packages/entity-ip-address-field/tsconfig.json",
       "output": "packages/entity-ip-address-field/src",
+      "exclude": [ "**/__testfixtures__/**", "**/__tests__/**" ]
     },
     {
       "project": "packages/entity-secondary-cache-local-memory/tsconfig.json",
       "output": "packages/entity-secondary-cache-local-memory/src",
-      "exclude": [ "**/__tests__/**" ]
+      "exclude": [ "**/__testfixtures__/**", "**/__tests__/**" ]
     },
     {
       "project": "packages/entity-secondary-cache-redis/tsconfig.json",
       "output": "packages/entity-secondary-cache-redis/src",
-      "exclude": [ "**/__testfixtures__/**" ]
+      "exclude": [ "**/__testfixtures__/**", "**/__tests__/**" ]
     },
     {
       "project": "packages/entity-testing-utils/tsconfig.json",
       "output": "packages/entity-testing-utils/src",
-      "exclude": [ "**/__testfixtures__/**" ]
+      "exclude": [ "**/__testfixtures__/**", "**/__tests__/**" ]
     }
   ]
 }

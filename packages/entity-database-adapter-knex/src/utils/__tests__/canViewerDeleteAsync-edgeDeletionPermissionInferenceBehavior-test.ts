@@ -1,25 +1,25 @@
-import { describe, expect, it, jest } from '@jest/globals';
-
-import { Entity } from '../../Entity';
-import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import { EntityConfiguration } from '../../EntityConfiguration';
 import {
+  Entity,
+  EntityCompanionDefinition,
+  EntityConfiguration,
   EntityEdgeDeletionAuthorizationInferenceBehavior,
   EntityEdgeDeletionBehavior,
-} from '../../EntityFieldDefinition';
-import { UUIDField } from '../../EntityFields';
-import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
-import { ReadonlyEntity } from '../../ReadonlyEntity';
-import { ViewerContext } from '../../ViewerContext';
-import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
-import { AlwaysDenyPrivacyPolicyRule } from '../../rules/AlwaysDenyPrivacyPolicyRule';
+  UUIDField,
+  EntityPrivacyPolicy,
+  ReadonlyEntity,
+  ViewerContext,
+  AlwaysAllowPrivacyPolicyRule,
+  AlwaysDenyPrivacyPolicyRule,
+} from '@expo/entity';
+import { describe, expect, it, jest } from '@jest/globals';
+
+import { createUnitTestPostgresEntityCompanionProvider } from '../../__tests__/fixtures/createUnitTestPostgresEntityCompanionProvider';
 import { canViewerDeleteAsync } from '../EntityPrivacyUtils';
-import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider';
 
 describe(canViewerDeleteAsync, () => {
   describe('edgeDeletionPermissionInferenceBehavior', () => {
     it('optimizes when EntityEdgeDeletionPermissionInferenceBehavior.ONE_IMPLIES_ALL', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
+      const companionProvider = createUnitTestPostgresEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
 
       // create root
@@ -61,7 +61,7 @@ describe(canViewerDeleteAsync, () => {
     });
 
     it('does not optimize when undefined', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
+      const companionProvider = createUnitTestPostgresEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
 
       // create root

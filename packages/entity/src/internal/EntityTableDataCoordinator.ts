@@ -5,7 +5,6 @@ import { IEntityCacheAdapter } from '../IEntityCacheAdapter';
 import { IEntityCacheAdapterProvider } from '../IEntityCacheAdapterProvider';
 import { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider';
 import { EntityDataManager } from './EntityDataManager';
-import { EntityKnexDataManager } from './EntityKnexDataManager';
 import { ReadThroughEntityCache } from './ReadThroughEntityCache';
 import { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
 
@@ -23,15 +22,14 @@ export class EntityTableDataCoordinator<
   readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>;
   readonly cacheAdapter: IEntityCacheAdapter<TFields, TIDField>;
   readonly dataManager: EntityDataManager<TFields, TIDField>;
-  readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>;
 
   constructor(
     readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
     databaseAdapterProvider: IEntityDatabaseAdapterProvider,
     cacheAdapterProvider: IEntityCacheAdapterProvider,
     private readonly queryContextProvider: EntityQueryContextProvider,
-    metricsAdapter: IEntityMetricsAdapter,
-    entityClassName: string,
+    public readonly metricsAdapter: IEntityMetricsAdapter,
+    public readonly entityClassName: string,
   ) {
     this.databaseAdapter = databaseAdapterProvider.getDatabaseAdapter(entityConfiguration);
     this.cacheAdapter = cacheAdapterProvider.getCacheAdapter(entityConfiguration);
@@ -39,11 +37,6 @@ export class EntityTableDataCoordinator<
       this.databaseAdapter,
       new ReadThroughEntityCache(entityConfiguration, this.cacheAdapter),
       queryContextProvider,
-      metricsAdapter,
-      entityClassName,
-    );
-    this.knexDataManager = new EntityKnexDataManager(
-      this.databaseAdapter,
       metricsAdapter,
       entityClassName,
     );

@@ -44,11 +44,7 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
         return null;
       }
       return nullthrows(
-        (
-          await this.knexEntityLoader.loadManyByFieldEqualityConjunctionAsync([
-            { fieldName: 'id', fieldValue: loadParams.id },
-          ])
-        )[0],
+        (await this.entityLoader.loadManyByFieldEqualingAsync('id', loadParams.id))[0],
       )
         .enforceValue()
         .getAllFields();
@@ -98,7 +94,6 @@ describe(RedisSecondaryEntityCache, () => {
         (loadParams) => `test-key-${loadParams.id}`,
       ),
       RedisTestEntity.loaderWithAuthorizationResults(viewerContext),
-      RedisTestEntity.knexLoaderWithAuthorizationResults(viewerContext),
     );
 
     const loadParams = { id: createdEntity.getID() };
@@ -138,7 +133,6 @@ describe(RedisSecondaryEntityCache, () => {
         (loadParams) => `test-key-${loadParams.id}`,
       ),
       RedisTestEntity.loaderWithAuthorizationResults(viewerContext),
-      RedisTestEntity.knexLoaderWithAuthorizationResults(viewerContext),
     );
 
     const loadParams = { id: FAKE_ID };

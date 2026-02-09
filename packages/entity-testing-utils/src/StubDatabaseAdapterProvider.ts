@@ -7,6 +7,14 @@ import {
 import { StubDatabaseAdapter } from './StubDatabaseAdapter';
 
 export class StubDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
+  getExtensionsKey(): string {
+    return 'StubDatabaseAdapterProvider';
+  }
+
+  installExtensions(): void {
+    // No-op
+  }
+
   private readonly objectCollection = new Map();
 
   getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(

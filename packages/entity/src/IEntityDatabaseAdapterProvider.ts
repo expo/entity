@@ -9,6 +9,16 @@ import { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
  */
 export interface IEntityDatabaseAdapterProvider {
   /**
+   * A unique key for this type of adapter provider, used to avoid installing extensions multiple times.
+   */
+  getExtensionsKey(): string;
+
+  /**
+   * Install any necessary extensions to the Entity system.
+   */
+  installExtensions(): void;
+
+  /**
    * Vend a database adapter.
    */
   getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
