@@ -1,10 +1,5 @@
 import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
 import { EntityCompositeField, EntityCompositeFieldValue } from './EntityConfiguration';
-import {
-  FieldEqualityCondition,
-  QuerySelectionModifiers,
-  QuerySelectionModifiersWithOrderByRaw,
-} from './EntityDatabaseAdapter';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
@@ -218,94 +213,5 @@ export class EnforcingEntityLoader<
   ): Promise<ReadonlyMap<TFields[TIDField], TEntity | null>> {
     const entityResults = await this.entityLoader.loadManyByIDsNullableAsync(ids);
     return mapMap(entityResults, (result) => result?.enforceValue() ?? null);
-  }
-
-  /**
-   * Loads the first entity matching the selection constructed from the conjunction of specified
-   * operands, or null if no matching entity exists. Entities loaded using this method are not
-   * batched or cached.
-   *
-   * This is a convenience method for {@link loadManyByFieldEqualityConjunctionAsync}. However, the
-   * `orderBy` option must be specified to define what "first" means. If ordering doesn't matter,
-   * explicitly pass in an empty array.
-   *
-   * @param fieldEqualityOperands - list of field equality selection operand specifications
-   * @param querySelectionModifiers - orderBy and optional offset for the query
-   * @returns the first entity that matches the query or null if no entity matches the query
-   * @throws EntityNotAuthorizedError when viewer is not authorized to view the returned entity
-   */
-  async loadFirstByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: Omit<QuerySelectionModifiers<TFields>, 'limit'> &
-      Required<Pick<QuerySelectionModifiers<TFields>, 'orderBy'>>,
-  ): Promise<TEntity | null> {
-    const entityResult = await this.entityLoader.loadFirstByFieldEqualityConjunctionAsync(
-      fieldEqualityOperands,
-      querySelectionModifiers,
-    );
-    return entityResult ? entityResult.enforceValue() : null;
-  }
-
-  /**
-   * Loads many entities matching the selection constructed from the conjunction of specified operands.
-   * Entities loaded using this method are not batched or cached.
-   *
-   * @example
-   * fieldEqualityOperands:
-   * `[{fieldName: 'hello', fieldValue: 1}, {fieldName: 'world', fieldValues: [2, 3]}]`
-   * Entities returned with a SQL EntityDatabaseAdapter:
-   * `WHERE hello = 1 AND world = ANY({2, 3})`
-   *
-   * @param fieldEqualityOperands - list of field equality selection operand specifications
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query
-   * @returns array of entities that match the query
-   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
-   */
-  async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields> = {},
-  ): Promise<readonly TEntity[]> {
-    const entityResults = await this.entityLoader.loadManyByFieldEqualityConjunctionAsync(
-      fieldEqualityOperands,
-      querySelectionModifiers,
-    );
-    return entityResults.map((result) => result.enforceValue());
-  }
-
-  /**
-   * Loads many entities matching the raw WHERE clause. Corresponds to the knex `whereRaw` argument format.
-   *
-   * @remarks
-   * Important notes:
-   * - Fields in clause are database column names instead of transformed entity field names.
-   * - Entities loaded using this method are not batched or cached.
-   * - Not all database adapters implement the ability to execute this method of fetching entities.
-   *
-   * @example
-   * rawWhereClause: `id = ?`
-   * bindings: `[1]`
-   * Entites returned `WHERE id = 1`
-   *
-   * http://knexjs.org/#Builder-whereRaw
-   * http://knexjs.org/#Raw-Bindings
-   *
-   * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
-   * @param bindings - array of positional bindings or object of named bindings
-   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
-   * @returns array of entities that match the query
-   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
-   * @throws Error when rawWhereClause or bindings are invalid
-   */
-  async loadManyByRawWhereClauseAsync(
-    rawWhereClause: string,
-    bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields> = {},
-  ): Promise<readonly TEntity[]> {
-    const entityResults = await this.entityLoader.loadManyByRawWhereClauseAsync(
-      rawWhereClause,
-      bindings,
-      querySelectionModifiers,
-    );
-    return entityResults.map((result) => result.enforceValue());
   }
 }

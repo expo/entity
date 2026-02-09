@@ -8,18 +8,11 @@ import {
   EntityCompositeFieldValue,
   EntityConfiguration,
 } from './EntityConfiguration';
-import {
-  FieldEqualityCondition,
-  isSingleValueFieldEqualityCondition,
-  QuerySelectionModifiers,
-  QuerySelectionModifiersWithOrderByRaw,
-} from './EntityDatabaseAdapter';
 import { EntityLoaderUtils } from './EntityLoaderUtils';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
-import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError';
 import { EntityNotFoundError } from './errors/EntityNotFoundError';
 import { CompositeFieldHolder, CompositeFieldValueHolder } from './internal/CompositeFieldHolder';
 import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap';
@@ -265,79 +258,6 @@ export class AuthorizationResultBasedEntityLoader<
     });
   }
 
-  /**
-   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
-   * @returns the first entity results that matches the query, where result error can be
-   *  UnauthorizedError
-   */
-  async loadFirstByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: Omit<QuerySelectionModifiers<TFields>, 'limit'> &
-      Required<Pick<QuerySelectionModifiers<TFields>, 'orderBy'>>,
-  ): Promise<Result<TEntity> | null> {
-    const results = await this.loadManyByFieldEqualityConjunctionAsync(fieldEqualityOperands, {
-      ...querySelectionModifiers,
-      limit: 1,
-    });
-    return results[0] ?? null;
-  }
-
-  /**
-   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
-   * @returns array of entity results that match the query, where result error can be UnauthorizedError
-   */
-  async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields> = {},
-  ): Promise<readonly Result<TEntity>[]> {
-    for (const fieldEqualityOperand of fieldEqualityOperands) {
-      const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
-        ? [fieldEqualityOperand.fieldValue]
-        : fieldEqualityOperand.fieldValues;
-      this.validateFieldAndValues(fieldEqualityOperand.fieldName, fieldValues);
-    }
-
-    const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
-      this.queryContext,
-      fieldEqualityOperands,
-      querySelectionModifiers,
-    );
-    return await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
-  }
-
-  /**
-   * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
-   * @returns array of entity results that match the query, where result error can be UnauthorizedError
-   * @throws Error when rawWhereClause or bindings are invalid
-   */
-  async loadManyByRawWhereClauseAsync(
-    rawWhereClause: string,
-    bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields> = {},
-  ): Promise<readonly Result<TEntity>[]> {
-    const fieldObjects = await this.dataManager.loadManyByRawWhereClauseAsync(
-      this.queryContext,
-      rawWhereClause,
-      bindings,
-      querySelectionModifiers,
-    );
-    return await this.utils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
-  }
-
-  private validateFieldAndValues<N extends keyof Pick<TFields, TSelectedFields>>(
-    fieldName: N,
-    fieldValues: readonly TFields[N][],
-  ): void {
-    const fieldDefinition = this.entityConfiguration.schema.get(fieldName);
-    invariant(fieldDefinition, `must have field definition for field = ${String(fieldName)}`);
-    for (const fieldValue of fieldValues) {
-      const isInputValid = fieldDefinition.validateInputValue(fieldValue);
-      if (!isInputValid) {
-        throw new EntityInvalidFieldValueError(this.entityClass, fieldName, fieldValue);
-      }
-    }
-  }
-
   private validateFieldAndValuesAndConvertToHolders<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValues: readonly NonNullable<TFields[N]>[],
@@ -345,7 +265,7 @@ export class AuthorizationResultBasedEntityLoader<
     loadKey: SingleFieldHolder<TFields, TIDField, N>;
     loadValues: readonly SingleFieldValueHolder<TFields, N>[];
   } {
-    this.validateFieldAndValues(fieldName, fieldValues);
+    this.utils.validateFieldAndValues(fieldName, fieldValues);
 
     return {
       loadKey: new SingleFieldHolder<TFields, TIDField, N>(fieldName),
@@ -388,7 +308,7 @@ export class AuthorizationResultBasedEntityLoader<
       );
       for (const field of compositeField) {
         const fieldValue = compositeFieldValueHolder.compositeFieldValue[field];
-        this.validateFieldAndValues(field, [fieldValue]);
+        this.utils.validateFieldAndValues(field, [fieldValue]);
       }
     }
 

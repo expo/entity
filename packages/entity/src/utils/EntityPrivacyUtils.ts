@@ -354,13 +354,15 @@ async function canViewerDeleteInternalAsync<
       entityCompanionProvider.getCompanionForEntity(inboundEdge).entityCompanionDefinition
         .entityConfiguration;
 
-    const loader = viewerContext
-      .getViewerScopedEntityCompanionForClass(inboundEdge)
-      .getLoaderFactory()
-      .forLoad(queryContext, {
-        previousValue: null,
-        cascadingDeleteCause: newCascadingDeleteCause,
-      });
+    const loaderFactory = viewerContext.getViewerScopedEntityCompanionForClass(inboundEdge);
+    const loader = loaderFactory.getLoaderFactory().forLoad(queryContext, {
+      previousValue: null,
+      cascadingDeleteCause: newCascadingDeleteCause,
+    });
+    const knexLoader = loaderFactory.getKnexLoaderFactory().forLoad(queryContext, {
+      previousValue: null,
+      cascadingDeleteCause: newCascadingDeleteCause,
+    });
 
     for (const [fieldName, fieldDefinition] of configurationForInboundEdge.schema) {
       const association = fieldDefinition.association;
@@ -385,7 +387,7 @@ async function canViewerDeleteInternalAsync<
         EntityEdgeDeletionAuthorizationInferenceBehavior.ONE_IMPLIES_ALL
       ) {
         const singleEntityResultToTestForInboundEdge =
-          await loader.loadFirstByFieldEqualityConjunctionAsync(
+          await knexLoader.loadFirstByFieldEqualityConjunctionAsync(
             [
               {
                 fieldName,
