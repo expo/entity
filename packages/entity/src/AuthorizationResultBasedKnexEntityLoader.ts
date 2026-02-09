@@ -11,7 +11,7 @@ import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
-import { EntityDataManager } from './internal/EntityDataManager';
+import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
 import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
@@ -36,7 +36,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
 > {
   constructor(
     private readonly queryContext: EntityQueryContext,
-    private readonly dataManager: EntityDataManager<TFields, TIDField>,
+    private readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
     public readonly utils: EntityLoaderUtils<
       TFields,
@@ -80,7 +80,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
       this.utils.validateFieldAndValues(fieldEqualityOperand.fieldName, fieldValues);
     }
 
-    const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
+    const fieldObjects = await this.knexDataManager.loadManyByFieldEqualityConjunctionAsync(
       this.queryContext,
       fieldEqualityOperands,
       querySelectionModifiers,
@@ -98,7 +98,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
     bindings: any[] | object,
     querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields> = {},
   ): Promise<readonly Result<TEntity>[]> {
-    const fieldObjects = await this.dataManager.loadManyByRawWhereClauseAsync(
+    const fieldObjects = await this.knexDataManager.loadManyByRawWhereClauseAsync(
       this.queryContext,
       rawWhereClause,
       bindings,
