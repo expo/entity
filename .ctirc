@@ -43,6 +43,11 @@
       "project": "packages/entity-testing-utils/tsconfig.json",
       "output": "packages/entity-testing-utils/src",
       "exclude": [ "**/__testfixtures__/**", "**/__tests__/**" ]
+    },
+    {
+      "project": "packages/entity-database-adapter-knex-testing-utils/tsconfig.json",
+      "output": "packages/entity-database-adapter-knex-testing-utils/src",
+      "exclude": [ "**/__testfixtures__/**", "**/__tests__/**" ]
     }
   ]
 }

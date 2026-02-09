@@ -11,6 +11,7 @@
     { "path": "./packages/entity-ip-address-field" },
     { "path": "./packages/entity-secondary-cache-local-memory" },
     { "path": "./packages/entity-secondary-cache-redis" },
-    { "path": "./packages/entity-testing-utils" }
+    { "path": "./packages/entity-testing-utils" },
+    { "path": "./packages/entity-database-adapter-knex-testing-utils" }
   ]
 }
