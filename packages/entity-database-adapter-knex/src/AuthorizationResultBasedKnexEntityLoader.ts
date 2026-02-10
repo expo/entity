@@ -14,6 +14,7 @@ import {
   OrderByOrdering,
 } from './BasePostgresEntityDatabaseAdapter';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
+import { PaginationStrategy } from './PaginationStrategy';
 import { SQLFragment } from './SQLOperator';
 import type { Connection, PageInfo } from './internal/EntityKnexDataManager';
 import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
@@ -76,10 +77,94 @@ export interface EntityLoaderQuerySelectionModifiersWithOrderByFragment<
   orderByFragment?: SQLFragment;
 }
 
+interface SearchSpecificationBase<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> {
+  /**
+   * The search term to search for. Must be a non-empty string.
+   */
+  term: string;
+
+  /**
+   * The fields to search within. Must be a non-empty array.
+   */
+  fields: TSelectedFields[];
+}
+
+interface ILikeSearchSpecification<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> extends SearchSpecificationBase<TFields, TSelectedFields> {
+  /**
+   * Case-insensitive pattern matching search using SQL ILIKE operator.
+   * Results are ordered by the fields being searched within in the order specified, then by ID for tie-breaking and stable pagination.
+   */
+  strategy: PaginationStrategy.ILIKE_SEARCH;
+}
+
+interface TrigramSearchSpecification<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> extends SearchSpecificationBase<TFields, TSelectedFields> {
+  /**
+   * Similarity search using PostgreSQL trigram similarity. Results are ordered by exact match priority, then by similarity score, then by specified extra order by fields if provided, then by ID for tie-breaking and stable pagination.
+   * Note that trigram similarity search can be significantly slower than ILIKE search, especially on large datasets without appropriate indexes, and results may not be as relevant as more advanced full-text search solutions.
+   * It is recommended to use this strategy only when ILIKE search does not meet the application's needs and to ensure appropriate database indexing for performance.
+   */
+  strategy: PaginationStrategy.TRIGRAM_SEARCH;
+
+  /**
+   * Similarity threshold for trigram matching.
+   * Must be between 0 and 1, where:
+   * - 0 matches everything
+   * - 1 requires exact match
+   *
+   * Recommended threshold values:
+   * - 0.3: Loose matching, allows more variation (default PostgreSQL similarity threshold)
+   * - 0.4-0.5: Moderate matching, good balance for most use cases
+   * - 0.6+: Strict matching, requires high similarity
+   */
+  threshold: number;
+
+  /**
+   * Optional additional fields to order by after similarity score and before ID for tie-breaking.
+   * These fields are independent of search fields and can be used to provide meaningful
+   * ordering when multiple results have the same similarity score.
+   */
+  extraOrderByFields?: TSelectedFields[];
+}
+
+interface StandardPaginationSpecification<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> {
+  /**
+   * Standard pagination without search. Results are ordered by the specified orderBy fields.
+   */
+  strategy: PaginationStrategy.STANDARD;
+
+  /**
+   * Order the entities by specified columns and orders. If the ID field is not included, it will be automatically added for stable pagination.
+   */
+  orderBy: EntityLoaderOrderByClause<TFields, TSelectedFields>[];
+}
+
 /**
- * Base pagination arguments
+ * Pagination specification for SQL-based pagination (with or without search).
  */
-interface EntityLoaderBasePaginationArgs<
+export type PaginationSpecification<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> =
+  | StandardPaginationSpecification<TFields, TSelectedFields>
+  | ILikeSearchSpecification<TFields, TSelectedFields>
+  | TrigramSearchSpecification<TFields, TSelectedFields>;
+
+/**
+ * Base unified pagination arguments
+ */
+interface EntityLoaderBaseUnifiedPaginationArgs<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields,
 > {
@@ -89,56 +174,56 @@ interface EntityLoaderBasePaginationArgs<
   where?: SQLFragment;
 
   /**
-   * Order the entities by specified columns and orders. If the ID field is not included in the orderBy, it will be automatically included as the last orderBy field to ensure stable pagination.
+   * Pagination specification determining how to order and paginate results.
    */
-  orderBy?: EntityLoaderOrderByClause<TFields, TSelectedFields>[];
+  pagination: PaginationSpecification<TFields, TSelectedFields>;
 }
 
 /**
- * Forward pagination arguments
+ * Forward unified pagination arguments
  */
-export interface EntityLoaderForwardPaginationArgs<
+export interface EntityLoaderForwardUnifiedPaginationArgs<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields,
-> extends EntityLoaderBasePaginationArgs<TFields, TSelectedFields> {
+> extends EntityLoaderBaseUnifiedPaginationArgs<TFields, TSelectedFields> {
   /**
-   * The number of entities to return starting from the entity after the cursor (for forward pagination). Must be a positive integer.
+   * The number of entities to return starting from the entity after the cursor. Must be a positive integer.
    */
   first: number;
 
   /**
-   * The cursor to paginate after for forward pagination, typically an opaque string encoding of the values of the cursor fields of the last entity in the previous page. If not provided, pagination starts from the beginning of the result set.
+   * The cursor to paginate after for forward pagination.
    */
   after?: string;
 }
 
 /**
- * Backward pagination arguments
+ * Backward unified pagination arguments
  */
-export interface EntityLoaderBackwardPaginationArgs<
+export interface EntityLoaderBackwardUnifiedPaginationArgs<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields,
-> extends EntityLoaderBasePaginationArgs<TFields, TSelectedFields> {
+> extends EntityLoaderBaseUnifiedPaginationArgs<TFields, TSelectedFields> {
   /**
-   * The number of entities to return starting from the entity before the cursor (for backward pagination). Must be a positive integer.
+   * The number of entities to return starting from the entity before the cursor. Must be a positive integer.
    */
   last: number;
 
   /**
-   * The cursor to paginate before for backward pagination, typically an opaque string encoding of the values of the cursor fields of the first entity in the previous page. If not provided, pagination starts from the end of the result set.
+   * The cursor to paginate before for backward pagination.
    */
   before?: string;
 }
 
 /**
- * Load page pagination arguments, which can be either forward or backward pagination arguments.
+ * Load page pagination arguments, which can be either forward or backward unified pagination arguments.
  */
 export type EntityLoaderLoadPageArgs<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields,
 > =
-  | EntityLoaderForwardPaginationArgs<TFields, TSelectedFields>
-  | EntityLoaderBackwardPaginationArgs<TFields, TSelectedFields>;
+  | EntityLoaderForwardUnifiedPaginationArgs<TFields, TSelectedFields>
+  | EntityLoaderBackwardUnifiedPaginationArgs<TFields, TSelectedFields>;
 
 /**
  * Authorization-result-based knex entity loader for non-data-loader-based load methods.
@@ -267,18 +352,15 @@ export class AuthorizationResultBasedKnexEntityLoader<
   }
 
   /**
-   * Load a page of entities with Relay-style cursor pagination.
+   * Load a page of entities with Relay-style cursor pagination using a unified pagination specification.
    * Only returns successfully authorized entities for cursor stability; failed authorization results are filtered out.
    *
    * @returns Connection with only successfully authorized entities
    */
-  async loadPageBySQLAsync(
+  async loadPageAsync(
     args: EntityLoaderLoadPageArgs<TFields, TSelectedFields>,
   ): Promise<Connection<TEntity>> {
-    const pageResult = await this.knexDataManager.loadPageBySQLFragmentAsync(
-      this.queryContext,
-      args,
-    );
+    const pageResult = await this.knexDataManager.loadPageAsync(this.queryContext, args);
 
     const edgeResults = await Promise.all(
       pageResult.edges.map(async (edge) => {
