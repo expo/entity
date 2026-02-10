@@ -12,8 +12,11 @@ import {
   FieldEqualityCondition,
   isSingleValueFieldEqualityCondition,
   QuerySelectionModifiers,
+  QuerySelectionModifiersWithOrderByFragment,
   QuerySelectionModifiersWithOrderByRaw,
 } from './BasePostgresEntityDatabaseAdapter';
+import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
+import { SQLFragment } from './SQLOperator';
 import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
 
 /**
@@ -40,7 +43,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
     private readonly queryContext: EntityQueryContext,
     private readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
-    public readonly constructionUtils: EntityConstructionUtils<
+    private readonly constructionUtils: EntityConstructionUtils<
       TFields,
       TIDField,
       TViewerContext,
@@ -105,6 +108,77 @@ export class AuthorizationResultBasedKnexEntityLoader<
       rawWhereClause,
       bindings,
       querySelectionModifiers,
+    );
+    return await this.constructionUtils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
+  }
+
+  /**
+   * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
+   * @returns SQL query builder for building and executing SQL queries that when executed returns entity results where result error can be UnauthorizedError.
+   */
+  loadManyBySQL(
+    fragment: SQLFragment,
+    modifiers: QuerySelectionModifiersWithOrderByFragment<TFields> = {},
+  ): AuthorizationResultBasedSQLQueryBuilder<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return new AuthorizationResultBasedSQLQueryBuilder(
+      this.knexDataManager,
+      this.constructionUtils,
+      this.queryContext,
+      fragment,
+      modifiers,
+    );
+  }
+}
+
+/**
+ * SQL query builder implementation for AuthorizationResultBasedKnexEntityLoader.
+ */
+export class AuthorizationResultBasedSQLQueryBuilder<
+  TFields extends Record<string, any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+  TViewerContext extends ViewerContext,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields,
+> extends BaseSQLQueryBuilder<TFields, Result<TEntity>> {
+  constructor(
+    private readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>,
+    private readonly constructionUtils: EntityConstructionUtils<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    private readonly queryContext: EntityQueryContext,
+    sqlFragment: SQLFragment,
+    modifiers: QuerySelectionModifiersWithOrderByFragment<TFields>,
+  ) {
+    super(sqlFragment, modifiers);
+  }
+
+  /**
+   * Execute the query and return results.
+   */
+  async executeInternalAsync(): Promise<readonly Result<TEntity>[]> {
+    const fieldObjects = await this.knexDataManager.loadManyBySQLFragmentAsync(
+      this.queryContext,
+      this.getSQLFragment(),
+      this.getModifiers(),
     );
     return await this.constructionUtils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }

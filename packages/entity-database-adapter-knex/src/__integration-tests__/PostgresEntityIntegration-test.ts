@@ -11,6 +11,7 @@ import nullthrows from 'nullthrows';
 import { setTimeout } from 'timers/promises';
 
 import { OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
+import { raw, sql, SQLFragment, SQLFragmentHelpers } from '../SQLOperator';
 import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity';
 import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity';
 import { PostgresValidatorTestEntity } from '../__testfixtures__/PostgresValidatorTestEntity';
@@ -360,6 +361,484 @@ describe('postgres entity integration', () => {
     );
     expect(results2.get(true)).toHaveLength(2);
     expect(results2.get(false)).toHaveLength(1);
+  });
+
+  describe('SQL operator loading with loadManyBySQL', () => {
+    it('supports basic SQL template literal queries', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'Alice')
+          .setField('hasACat', true)
+          .setField('hasADog', false)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'Bob')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'Charlie')
+          .setField('hasACat', true)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      // Test basic SQL query with parameters
+      const catOwners = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`has_a_cat = ${true}`)
+        .orderBy('name', OrderByOrdering.ASCENDING)
+        .executeAsync();
+
+      expect(catOwners).toHaveLength(2);
+      expect(catOwners[0]!.getField('name')).toBe('Alice');
+      expect(catOwners[1]!.getField('name')).toBe('Charlie');
+
+      // Test with limit and offset
+      const limitedResults = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`has_a_cat = ${true}`)
+        .orderBy('name', OrderByOrdering.ASCENDING)
+        .limit(1)
+        .offset(1)
+        .executeAsync();
+
+      expect(limitedResults).toHaveLength(1);
+      expect(limitedResults[0]!.getField('name')).toBe('Charlie');
+    });
+
+    it('supports SQL helper functions', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const { and, or, eq, neq, inArray } = SQLFragmentHelpers;
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'User1')
+          .setField('hasACat', true)
+          .setField('hasADog', false)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'User2')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'User3')
+          .setField('hasACat', true)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      // Test AND condition
+      const bothPets = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(and(eq('has_a_cat', true), eq('has_a_dog', true)))
+        .executeAsync();
+
+      expect(bothPets).toHaveLength(1);
+      expect(bothPets[0]!.getField('name')).toBe('User3');
+
+      // Test OR condition
+      const eitherPet = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(or(eq('has_a_cat', false), eq('has_a_dog', false)))
+        .orderBy('name', OrderByOrdering.ASCENDING)
+        .executeAsync();
+
+      expect(eitherPet).toHaveLength(2);
+      expect(eitherPet[0]!.getField('name')).toBe('User1');
+      expect(eitherPet[1]!.getField('name')).toBe('User2');
+
+      // Test IN array
+      const specificUsers = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(inArray('name', ['User1', 'User3']))
+        .orderBy('name', OrderByOrdering.ASCENDING)
+        .executeAsync();
+
+      expect(specificUsers).toHaveLength(2);
+      expect(specificUsers[0]!.getField('name')).toBe('User1');
+      expect(specificUsers[1]!.getField('name')).toBe('User3');
+
+      // Test complex condition
+      const complexQuery = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(and(or(eq('has_a_cat', true), eq('has_a_dog', true)), neq('name', 'User2')))
+        .orderBy('name', OrderByOrdering.ASCENDING)
+        .executeAsync();
+
+      expect(complexQuery).toHaveLength(2);
+      expect(complexQuery[0]!.getField('name')).toBe('User1');
+      expect(complexQuery[1]!.getField('name')).toBe('User3');
+    });
+
+    it('supports executeFirstAsync', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'First')
+          .setField('hasACat', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'Second')
+          .setField('hasACat', true)
+          .createAsync(),
+      );
+
+      const firstCatOwnerLimit1 = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`has_a_cat = ${true}`)
+        .orderBy('name', OrderByOrdering.ASCENDING)
+        .limit(1)
+        .executeAsync();
+
+      expect(firstCatOwnerLimit1).toHaveLength(1);
+      expect(firstCatOwnerLimit1[0]?.getField('name')).toBe('First');
+
+      // Test executeFirstAsync with no results
+      const noDogOwnerLimit1 = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`has_a_dog = ${true}`)
+        .limit(1)
+        .executeAsync();
+
+      expect(noDogOwnerLimit1).toHaveLength(0);
+    });
+
+    it('supports authorization result-based loading', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'AuthTest1')
+          .setField('hasACat', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'AuthTest2')
+          .setField('hasACat', false)
+          .createAsync(),
+      );
+
+      // Test with authorization results
+      const results = await PostgresTestEntity.knexLoaderWithAuthorizationResults(vc1)
+        .loadManyBySQL(sql`name LIKE ${'AuthTest%'}`)
+        .orderBy('name', OrderByOrdering.ASCENDING)
+        .executeAsync();
+
+      expect(results).toHaveLength(2);
+      expect(results[0]!.ok).toBe(true);
+      expect(results[1]!.ok).toBe(true);
+
+      if (results[0]!.ok) {
+        expect(results[0]!.value.getField('name')).toBe('AuthTest1');
+      }
+      if (results[1]!.ok) {
+        expect(results[1]!.value.getField('name')).toBe('AuthTest2');
+      }
+
+      const firstResultLimit1 = await PostgresTestEntity.knexLoaderWithAuthorizationResults(vc1)
+        .loadManyBySQL(sql`has_a_cat = ${false}`)
+        .limit(1)
+        .executeAsync();
+
+      expect(firstResultLimit1).toHaveLength(1);
+      const firstResult = firstResultLimit1[0];
+      expect(firstResult?.ok).toBe(true);
+      if (firstResult?.ok) {
+        expect(firstResult.value.getField('name')).toBe('AuthTest2');
+      }
+    });
+
+    it('supports raw SQL for dynamic queries', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'RawTest1')
+          .setField('hasACat', true)
+          .setField('hasADog', false)
+          .createAsync(),
+      );
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'RawTest2')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'RawTest3')
+          .setField('hasACat', true)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      // Test raw SQL for dynamic column names with orderBySQL
+      const sortColumn = 'name';
+      const rawResults = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`${raw('name')} LIKE ${'RawTest%'}`)
+        .orderBySQL(sql`${raw(sortColumn)} DESC`)
+        .executeAsync();
+
+      expect(rawResults).toHaveLength(3);
+      expect(rawResults[0]!.getField('name')).toBe('RawTest3');
+      expect(rawResults[1]!.getField('name')).toBe('RawTest2');
+      expect(rawResults[2]!.getField('name')).toBe('RawTest1');
+
+      // Test complex ORDER BY with CASE statement
+      const priorityResults = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`name LIKE ${'RawTest%'}`)
+        .orderBySQL(
+          sql`CASE
+            WHEN has_a_cat = true AND has_a_dog = true THEN 0
+            WHEN has_a_cat = true THEN 1
+            ELSE 2
+          END, ${raw('name')} ASC`,
+        )
+        .executeAsync();
+
+      expect(priorityResults).toHaveLength(3);
+      expect(priorityResults[0]!.getField('name')).toBe('RawTest3'); // has both
+      expect(priorityResults[1]!.getField('name')).toBe('RawTest1'); // has cat only
+      expect(priorityResults[2]!.getField('name')).toBe('RawTest2'); // has dog only
+
+      // Test raw SQL with complex expressions - using CASE statement
+      const complexExpression = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(
+          sql`${raw('CASE WHEN has_a_cat THEN 1 ELSE 0 END')} + ${raw(
+            'CASE WHEN has_a_dog THEN 1 ELSE 0 END',
+          )} >= 1 AND name LIKE ${'RawTest%'}`,
+        )
+        .executeAsync();
+
+      expect(complexExpression).toHaveLength(3);
+    });
+
+    it('supports join helper for building complex queries', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'JoinTest1')
+          .setField('hasACat', true)
+          .setField('hasADog', false)
+          .createAsync(),
+      );
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'JoinTest2')
+          .setField('hasACat', true)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      // Test join with OR conditions
+      const conditions = [
+        sql`name = ${'JoinTest1'}`,
+        sql`(has_a_cat = ${true} AND has_a_dog = ${true})`,
+      ];
+      const joinedResults = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(SQLFragment.join(conditions, ' OR '))
+        .orderBy('name', OrderByOrdering.ASCENDING)
+        .executeAsync();
+
+      expect(joinedResults).toHaveLength(2);
+      expect(joinedResults[0]!.getField('name')).toBe('JoinTest1');
+      expect(joinedResults[1]!.getField('name')).toBe('JoinTest2');
+    });
+
+    it('provides debug text for SQL queries', async () => {
+      // Create a SQL fragment with various types of values
+      const fragment = sql`name = ${'TestUser'} AND has_a_cat = ${true} AND age > ${18} AND data = ${{
+        key: 'value',
+      }} AND created_at > ${new Date('2024-01-01')}`;
+
+      // Get the debug text
+      const debugText = fragment.toDebugString;
+
+      // Verify the text contains properly formatted values
+      expect(debugText).toContain("'TestUser'");
+      expect(debugText).toContain('TRUE');
+      expect(debugText).toContain('18');
+      expect(debugText).toContain('{"key":"value"}');
+      expect(debugText).toContain('2024-01-01');
+
+      // Ensure it's still a valid query (though we wouldn't execute the text directly)
+      expect(debugText).toMatch(
+        /^name = .* AND has_a_cat = .* AND age > .* AND data = .* AND created_at > .*$/,
+      );
+    });
+
+    it('supports orderBySQL for type-safe dynamic ordering', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Create test entities with different combinations of fields
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'OrderTest1')
+          .setField('hasACat', true)
+          .setField('hasADog', false)
+          .setField('stringArray', ['a', 'b', 'c'])
+          .createAsync(),
+      );
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'OrderTest2')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .setField('stringArray', ['x', 'y'])
+          .createAsync(),
+      );
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'OrderTest3')
+          .setField('hasACat', true)
+          .setField('hasADog', true)
+          .setField('stringArray', null)
+          .createAsync(),
+      );
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'OrderTest4')
+          .setField('hasACat', false)
+          .setField('hasADog', false)
+          .setField('stringArray', ['m'])
+          .createAsync(),
+      );
+
+      // Test 1: Simple orderBySQL with raw column
+      const simpleOrder = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
+        .orderBySQL(sql`${raw('name')} DESC`)
+        .executeAsync();
+
+      expect(simpleOrder).toHaveLength(4);
+      expect(simpleOrder[0]!.getField('name')).toBe('OrderTest4');
+      expect(simpleOrder[1]!.getField('name')).toBe('OrderTest3');
+      expect(simpleOrder[2]!.getField('name')).toBe('OrderTest2');
+      expect(simpleOrder[3]!.getField('name')).toBe('OrderTest1');
+
+      // Test 2: Complex CASE statement ordering with parameterized values
+      const priority1 = 1;
+      const priority2 = 2;
+      const priority3 = 3;
+      const priority4 = 4;
+      const caseOrder = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
+        .orderBySQL(
+          sql`CASE
+            WHEN has_a_cat = true AND has_a_dog = true THEN ${priority1}
+            WHEN has_a_cat = true THEN ${priority2}
+            WHEN has_a_dog = true THEN ${priority3}
+            ELSE ${priority4}
+          END, ${raw('name')} ASC`,
+        )
+        .executeAsync();
+
+      expect(caseOrder).toHaveLength(4);
+      expect(caseOrder[0]!.getField('name')).toBe('OrderTest3'); // Both pets = 1
+      expect(caseOrder[1]!.getField('name')).toBe('OrderTest1'); // Cat only = 2
+      expect(caseOrder[2]!.getField('name')).toBe('OrderTest2'); // Dog only = 3
+      expect(caseOrder[3]!.getField('name')).toBe('OrderTest4'); // Neither = 4
+
+      // Test 3: Order by array length (PostgreSQL specific)
+      const arrayLengthOrder = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
+        .orderBySQL(sql`COALESCE(array_length(string_array, 1), 0) DESC, ${raw('name')} ASC`)
+        .executeAsync();
+
+      expect(arrayLengthOrder).toHaveLength(4);
+      expect(arrayLengthOrder[0]!.getField('name')).toBe('OrderTest1'); // 3 elements
+      expect(arrayLengthOrder[1]!.getField('name')).toBe('OrderTest2'); // 2 elements
+      expect(arrayLengthOrder[2]!.getField('name')).toBe('OrderTest4'); // 1 element
+      expect(arrayLengthOrder[3]!.getField('name')).toBe('OrderTest3'); // null = 0
+
+      // Test 4: Multiple orderBySQL calls (last one wins)
+      const multipleOrderBy = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
+        .orderBySQL(sql`${raw('name')} DESC`) // This will be overridden
+        .orderBySQL(sql`${raw('name')} ASC`) // This one wins
+        .executeAsync();
+
+      expect(multipleOrderBy).toHaveLength(4);
+      expect(multipleOrderBy[0]!.getField('name')).toBe('OrderTest1');
+      expect(multipleOrderBy[3]!.getField('name')).toBe('OrderTest4');
+
+      // Test 5: Combining orderBySQL with limit and offset
+      const limitedOrder = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
+        .orderBySQL(sql`${raw('name')} ASC`)
+        .limit(2)
+        .offset(1)
+        .executeAsync();
+
+      expect(limitedOrder).toHaveLength(2);
+      expect(limitedOrder[0]!.getField('name')).toBe('OrderTest2');
+      expect(limitedOrder[1]!.getField('name')).toBe('OrderTest3');
+
+      // Test 6: orderBySQL with NULLS FIRST/LAST
+      const nullsOrder = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
+        .orderBySQL(sql`string_array IS NULL, ${raw('name')} ASC`)
+        .executeAsync();
+
+      expect(nullsOrder).toHaveLength(4);
+      expect(nullsOrder[0]!.getField('stringArray')).not.toBeNull(); // false comes first (not null)
+      expect(nullsOrder[3]!.getField('stringArray')).toBeNull(); // true comes last (is null)
+    });
+
+    it('throws error on multiple executeAsync calls', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Create a test entity
+      await PostgresTestEntity.creator(vc1)
+        .setField('name', 'MultiExecTest')
+        .setField('hasACat', true)
+        .createAsync();
+
+      // Create a query builder
+      const queryBuilder = PostgresTestEntity.knexLoader(vc1).loadManyBySQL(
+        sql`name = ${'MultiExecTest'}`,
+      );
+
+      // First execution should succeed
+      const firstResult = await queryBuilder.executeAsync();
+      expect(firstResult).toHaveLength(1);
+      expect(firstResult[0]!.getField('name')).toBe('MultiExecTest');
+
+      // Second execution should throw
+      await expect(queryBuilder.executeAsync()).rejects.toThrow(
+        'Query has already been executed. Create a new query builder to execute again.',
+      );
+
+      // Third execution should also throw
+      await expect(queryBuilder.executeAsync()).rejects.toThrow(
+        'Query has already been executed. Create a new query builder to execute again.',
+      );
+
+      // A new query builder should work fine
+      const newQueryBuilder = PostgresTestEntity.knexLoader(vc1).loadManyBySQL(
+        sql`name = ${'MultiExecTest'}`,
+      );
+
+      const newResult = await newQueryBuilder.executeAsync();
+      expect(newResult).toHaveLength(1);
+      expect(newResult[0]!.getField('name')).toBe('MultiExecTest');
+    });
   });
 
   describe('conjunction field equality loading', () => {

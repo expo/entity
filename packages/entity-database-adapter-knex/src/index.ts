@@ -6,6 +6,7 @@
 
 export * from './AuthorizationResultBasedKnexEntityLoader';
 export * from './BasePostgresEntityDatabaseAdapter';
+export * from './BaseSQLQueryBuilder';
 export * from './EnforcingKnexEntityLoader';
 export * from './EntityFields';
 export * from './KnexEntityLoader';
@@ -13,6 +14,7 @@ export * from './KnexEntityLoaderFactory';
 export * from './PostgresEntityDatabaseAdapter';
 export * from './PostgresEntityDatabaseAdapterProvider';
 export * from './PostgresEntityQueryContextProvider';
+export * from './SQLOperator';
 export * from './ViewerScopedKnexEntityLoaderFactory';
 export * from './errors/wrapNativePostgresCallAsync';
 export * from './extensions/EntityCompanionExtensions';

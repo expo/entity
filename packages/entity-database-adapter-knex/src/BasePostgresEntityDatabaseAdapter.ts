@@ -6,6 +6,8 @@ import {
 } from '@expo/entity';
 import { Knex } from 'knex';
 
+import { SQLFragment } from './SQLOperator';
+
 /**
  * Equality operand that is used for selecting entities with a field with a single value.
  */
@@ -112,6 +114,15 @@ export interface QuerySelectionModifiersWithOrderByRaw<
   orderByRaw?: string;
 }
 
+export interface QuerySelectionModifiersWithOrderByFragment<
+  TFields extends Record<string, any>,
+> extends QuerySelectionModifiers<TFields> {
+  /**
+   * Order the entities by a SQL fragment `ORDER BY` clause.
+   */
+  orderByFragment?: SQLFragment;
+}
+
 export interface TableQuerySelectionModifiers {
   orderBy:
     | {
@@ -125,6 +136,11 @@ export interface TableQuerySelectionModifiers {
 
 export interface TableQuerySelectionModifiersWithOrderByRaw extends TableQuerySelectionModifiers {
   orderByRaw: string | undefined;
+  orderByRawBindings?: readonly any[];
+}
+
+export interface TableQuerySelectionModifiersWithOrderByFragment extends TableQuerySelectionModifiers {
+  orderByFragment: SQLFragment | undefined;
 }
 
 export abstract class BasePostgresEntityDatabaseAdapter<
@@ -218,12 +234,53 @@ export abstract class BasePostgresEntityDatabaseAdapter<
     querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,
   ): Promise<object[]>;
 
+  /**
+   * Fetch many objects matching the SQL fragment.
+   *
+   * @param queryContext - query context with which to perform the fetch
+   * @param sqlFragment - SQLFragment for the WHERE clause of the query
+   * @param querySelectionModifiers - limit, offset, and orderByFragment for the query
+   * @returns array of objects matching the query
+   */
+  async fetchManyBySQLFragmentAsync(
+    queryContext: EntityQueryContext,
+    sqlFragment: SQLFragment,
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByFragment<TFields>,
+  ): Promise<readonly Readonly<TFields>[]> {
+    const results = await this.fetchManyBySQLFragmentInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      sqlFragment,
+      this.convertToTableQueryModifiersWithOrderByFragment(querySelectionModifiers),
+    );
+
+    return results.map((result) =>
+      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
+    );
+  }
+
+  protected abstract fetchManyBySQLFragmentInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment,
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+  ): Promise<object[]>;
+
   private convertToTableQueryModifiersWithOrderByRaw(
     querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>,
   ): TableQuerySelectionModifiersWithOrderByRaw {
     return {
       ...this.convertToTableQueryModifiers(querySelectionModifiers),
       orderByRaw: querySelectionModifiers.orderByRaw,
+    };
+  }
+
+  private convertToTableQueryModifiersWithOrderByFragment(
+    querySelectionModifiers: QuerySelectionModifiersWithOrderByFragment<TFields>,
+  ): TableQuerySelectionModifiersWithOrderByFragment {
+    return {
+      ...this.convertToTableQueryModifiers(querySelectionModifiers),
+      orderByFragment: querySelectionModifiers.orderByFragment,
     };
   }
 

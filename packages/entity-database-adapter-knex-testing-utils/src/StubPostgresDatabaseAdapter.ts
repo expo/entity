@@ -11,9 +11,11 @@ import {
 import {
   BasePostgresEntityDatabaseAdapter,
   OrderByOrdering,
+  SQLFragment,
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableQuerySelectionModifiers,
+  TableQuerySelectionModifiersWithOrderByFragment,
 } from '@expo/entity-database-adapter-knex';
 import invariant from 'invariant';
 import { v7 as uuidv7 } from 'uuid';
@@ -182,6 +184,15 @@ export class StubPostgresDatabaseAdapter<
     _querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]> {
     throw new Error('Raw WHERE clauses not supported for StubDatabaseAdapter');
+  }
+
+  protected fetchManyBySQLFragmentInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _sqlFragment: SQLFragment,
+    _querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+  ): Promise<object[]> {
+    throw new Error('SQL fragments not supported for StubDatabaseAdapter');
   }
 
   private generateRandomID(): any {
