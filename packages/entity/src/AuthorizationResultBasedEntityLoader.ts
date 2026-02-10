@@ -146,6 +146,41 @@ export class AuthorizationResultBasedEntityLoader<
   }
 
   /**
+   * Load one entity where fieldName equals fieldValue, or null if no entity exists matching the condition.
+   * Not cached or coalesced, and not guaranteed to be deterministic if multiple entities match the condition.
+   *
+   * Only used when evaluating EntityEdgeDeletionAuthorizationInferenceBehavior.ONE_IMPLIES_ALL.
+   *
+   * @param fieldName - entity field being queried
+   * @param fieldValue - fieldName field value being queried
+   * @returns entity result matching the query for fieldValue. Returns null if no entity matches the query.
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view the returned entity
+   *
+   * @internal
+   */
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore -- this method is used in EntityPrivacyUtils, but is not intended to be part of the public API of this class, so it is marked as private.
+  private async loadOneByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>,
+  ): Promise<Result<TEntity> | null> {
+    const { loadKey, loadValue } = this.validateFieldAndValueAndConvertToHolders(
+      fieldName,
+      fieldValue,
+    );
+    const result = await this.dataManager.loadOneEqualingAsync(
+      this.queryContext,
+      loadKey,
+      loadValue,
+    );
+    if (!result) {
+      return null;
+    }
+
+    return await this.constructionUtils.constructAndAuthorizeEntityAsync(result);
+  }
+
+  /**
    * Authorization-result-based version of the EnforcingEntityLoader method by the same name.
    * @returns array of entity results that match the query for compositeFieldValue, where result error can be UnauthorizedError
    */
@@ -283,6 +318,21 @@ export class AuthorizationResultBasedEntityLoader<
       loadValues: fieldValues.map(
         (fieldValue) => new SingleFieldValueHolder<TFields, N>(fieldValue),
       ),
+    };
+  }
+
+  private validateFieldAndValueAndConvertToHolders<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>,
+  ): {
+    loadKey: SingleFieldHolder<TFields, TIDField, N>;
+    loadValue: SingleFieldValueHolder<TFields, N>;
+  } {
+    this.constructionUtils.validateFieldAndValues(fieldName, [fieldValue]);
+
+    return {
+      loadKey: new SingleFieldHolder<TFields, TIDField, N>(fieldName),
+      loadValue: new SingleFieldValueHolder<TFields, N>(fieldValue),
     };
   }
 

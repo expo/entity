@@ -181,6 +181,108 @@ describe(StubPostgresDatabaseAdapter, () => {
     });
   });
 
+  describe('fetchOneWhereAsync', () => {
+    it('fetches one where single', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        StubPostgresDatabaseAdapter.convertFieldObjectsToDataStore(
+          testEntityConfiguration,
+          new Map([
+            [
+              testEntityConfiguration.tableName,
+              [
+                {
+                  customIdField: 'hello',
+                  testIndexedField: 'h1',
+                  intField: 5,
+                  stringField: 'huh',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+                {
+                  customIdField: 'world',
+                  testIndexedField: 'h2',
+                  intField: 3,
+                  stringField: 'huh',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+              ],
+            ],
+          ]),
+        ),
+      );
+
+      const result = await databaseAdapter.fetchOneWhereAsync(
+        queryContext,
+        new SingleFieldHolder('stringField'),
+        new SingleFieldValueHolder('huh'),
+      );
+      expect(result).toMatchObject({
+        stringField: 'huh',
+      });
+    });
+
+    it('returns null when no record found', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        new Map(),
+      );
+
+      const result = await databaseAdapter.fetchOneWhereAsync(
+        queryContext,
+        new SingleFieldHolder('stringField'),
+        new SingleFieldValueHolder('huh'),
+      );
+      expect(result).toBeNull();
+    });
+
+    it('fetches one where composite', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        StubPostgresDatabaseAdapter.convertFieldObjectsToDataStore(
+          testEntityConfiguration,
+          new Map([
+            [
+              testEntityConfiguration.tableName,
+              [
+                {
+                  customIdField: 'hello',
+                  testIndexedField: 'h1',
+                  intField: 5,
+                  stringField: 'huh',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+                {
+                  customIdField: 'world',
+                  testIndexedField: 'h2',
+                  intField: 5,
+                  stringField: 'huh',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+              ],
+            ],
+          ]),
+        ),
+      );
+
+      const result = await databaseAdapter.fetchOneWhereAsync(
+        queryContext,
+        new CompositeFieldHolder<TestFields, 'customIdField'>(['stringField', 'intField']),
+        new CompositeFieldValueHolder({ stringField: 'huh', intField: 5 }),
+      );
+      expect(result).toMatchObject({
+        stringField: 'huh',
+        intField: 5,
+      });
+    });
+  });
+
   describe('fetchManyByFieldEqualityConjunctionAsync', () => {
     it('supports conjuntions and query modifiers', async () => {
       const queryContext = instance(mock(EntityQueryContext));

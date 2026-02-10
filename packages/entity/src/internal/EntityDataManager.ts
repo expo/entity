@@ -11,7 +11,10 @@ import { EntityQueryContextProvider } from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
 import { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces';
 import { ReadThroughEntityCache } from './ReadThroughEntityCache';
-import { timeAndLogLoadMapEventAsync } from '../metrics/EntityMetricsUtils';
+import {
+  timeAndLogLoadMapEventAsync,
+  timeAndLogLoadOneEventAsync,
+} from '../metrics/EntityMetricsUtils';
 import {
   EntityMetricsLoadType,
   IEntityMetricsAdapter,
@@ -241,6 +244,34 @@ export class EntityDataManager<
       mapToReturn.set(values[i]!, successfulValues[i]!);
     }
     return mapToReturn;
+  }
+
+  /**
+   * Load one object matching load key and load value if at least one matching object exists.
+   * Returned object is not guaranteed to be deterministic.
+   *
+   * Used when evaluating EntityEdgeDeletionAuthorizationInferenceBehavior.ONE_IMPLIES_ALL.
+   *
+   * @param queryContext - query context in which to perform the load
+   * @param key - load key being queried
+   * @param values - load value being queried for the key
+   * @returns at most one that match the query for that load value
+   */
+  public async loadOneEqualingAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    queryContext: EntityQueryContext,
+    key: TLoadKey,
+    value: TLoadValue,
+  ): Promise<Readonly<TFields> | null> {
+    return await timeAndLogLoadOneEventAsync(
+      this.metricsAdapter,
+      EntityMetricsLoadType.LOAD_ONE,
+      this.entityClassName,
+      queryContext,
+    )(this.databaseAdapter.fetchOneWhereAsync(queryContext, key, value));
   }
 
   private async invalidateOneAsync<

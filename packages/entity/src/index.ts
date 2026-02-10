@@ -76,6 +76,7 @@ export * from './rules/AlwaysSkipPrivacyPolicyRule';
 export * from './rules/EvaluateIfEntityFieldPredicatePrivacyPolicyRule';
 export * from './rules/PrivacyPolicyRule';
 export * from './utils/EntityCreationUtils';
+export * from './utils/EntityPrivacyUtils';
 export * from './utils/mergeEntityMutationTriggerConfigurations';
 export * from './utils/collections/maps';
 export * from './utils/collections/SerializableKeyMap';

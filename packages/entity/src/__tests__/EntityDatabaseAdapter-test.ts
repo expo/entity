@@ -17,23 +17,27 @@ import { TestFields, testEntityConfiguration } from '../utils/__testfixtures__/T
 
 class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'customIdField'> {
   private readonly fetchResults: object[];
+  private readonly fetchOneResult: object | null;
   private readonly insertResults: object[];
   private readonly updateResults: object[];
   private readonly deleteCount: number;
 
   constructor({
     fetchResults = [],
+    fetchOneResult = null,
     insertResults = [],
     updateResults = [],
     deleteCount = 0,
   }: {
     fetchResults?: object[];
+    fetchOneResult?: object | null;
     insertResults?: object[];
     updateResults?: object[];
     deleteCount?: number;
   }) {
     super(testEntityConfiguration);
     this.fetchResults = fetchResults;
+    this.fetchOneResult = fetchOneResult;
     this.insertResults = insertResults;
     this.updateResults = updateResults;
     this.deleteCount = deleteCount;
@@ -50,6 +54,15 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'custo
     _tableTuples: (readonly any[])[],
   ): Promise<object[]> {
     return this.fetchResults;
+  }
+
+  protected async fetchOneWhereInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableColumns: readonly string[],
+    _tableTuple: readonly any[],
+  ): Promise<object | null> {
+    return this.fetchOneResult;
   }
 
   protected async insertInternalAsync(

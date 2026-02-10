@@ -55,6 +55,21 @@ class InMemoryDatabaseAdapter<
     return [...results];
   }
 
+  protected override async fetchOneWhereInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    tableColumns: readonly string[],
+    tableTuple: readonly any[],
+  ): Promise<object | null> {
+    const results = await this.fetchManyWhereInternalAsync(
+      queryInterface,
+      tableName,
+      tableColumns,
+      [tableTuple],
+    );
+    return results[0] ?? null;
+  }
+
   protected async insertInternalAsync(
     _queryInterface: any,
     _tableName: string,

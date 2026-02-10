@@ -87,6 +87,25 @@ export class PostgresEntityDatabaseAdapter<
     );
   }
 
+  protected async fetchOneWhereInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    tableColumns: readonly string[],
+    tableTuple: readonly any[],
+  ): Promise<object | null> {
+    const results = await this.fetchManyByFieldEqualityConjunctionInternalAsync(
+      queryInterface,
+      tableName,
+      tableColumns.map((column, index) => ({
+        tableField: column,
+        tableValue: tableTuple[index],
+      })),
+      [],
+      { limit: 1, orderBy: undefined, offset: undefined },
+    );
+    return results[0] ?? null;
+  }
+
   private applyQueryModifiersToQueryOrderByRaw(
     query: Knex.QueryBuilder,
     querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,

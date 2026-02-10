@@ -100,21 +100,34 @@ export class EntityConstructionUtils<
   ): Promise<readonly Result<TEntity>[]> {
     const uncheckedEntityResults = this.tryConstructEntities(fieldObjects);
     return await Promise.all(
-      uncheckedEntityResults.map(async (uncheckedEntityResult) => {
-        if (!uncheckedEntityResult.ok) {
-          return uncheckedEntityResult;
-        }
-        return await asyncResult(
-          this.privacyPolicy.authorizeReadAsync(
-            this.viewerContext,
-            this.queryContext,
-            this.privacyPolicyEvaluationContext,
-            uncheckedEntityResult.value,
-            this.metricsAdapter,
-          ),
-        );
-      }),
+      uncheckedEntityResults.map((uncheckedEntityResult) =>
+        this.authorizeEntityResultAsync(uncheckedEntityResult),
+      ),
     );
+  }
+
+  private async authorizeEntityResultAsync(
+    uncheckedEntityResult: Result<TEntity>,
+  ): Promise<Result<TEntity>> {
+    if (!uncheckedEntityResult.ok) {
+      return uncheckedEntityResult;
+    }
+    return await asyncResult(
+      this.privacyPolicy.authorizeReadAsync(
+        this.viewerContext,
+        this.queryContext,
+        this.privacyPolicyEvaluationContext,
+        uncheckedEntityResult.value,
+        this.metricsAdapter,
+      ),
+    );
+  }
+
+  public async constructAndAuthorizeEntityAsync(
+    fieldsObject: Readonly<TFields>,
+  ): Promise<Result<TEntity>> {
+    const uncheckedEntityResult = this.tryConstructEntity(fieldsObject);
+    return await this.authorizeEntityResultAsync(uncheckedEntityResult);
   }
 
   /**
@@ -139,15 +152,17 @@ export class EntityConstructionUtils<
   }
 
   private tryConstructEntities(fieldsObjects: readonly TFields[]): readonly Result<TEntity>[] {
-    return fieldsObjects.map((fieldsObject) => {
-      try {
-        return result(this.constructEntity(fieldsObject));
-      } catch (e) {
-        if (!(e instanceof Error)) {
-          throw e;
-        }
-        return result(e);
+    return fieldsObjects.map((fieldsObject) => this.tryConstructEntity(fieldsObject));
+  }
+
+  private tryConstructEntity(fieldsObject: TFields): Result<TEntity> {
+    try {
+      return result(this.constructEntity(fieldsObject));
+    } catch (e) {
+      if (!(e instanceof Error)) {
+        throw e;
       }
-    });
+      return result(e);
+    }
   }
 }

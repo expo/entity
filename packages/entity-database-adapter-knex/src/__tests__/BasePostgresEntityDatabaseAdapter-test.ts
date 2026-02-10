@@ -14,6 +14,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
   'customIdField'
 > {
   private readonly fetchResults: object[];
+  private readonly fetchOneResult: object | null;
   private readonly insertResults: object[];
   private readonly updateResults: object[];
   private readonly fetchEqualityConditionResults: object[];
@@ -23,6 +24,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
 
   constructor({
     fetchResults = [],
+    fetchOneResult = null,
     insertResults = [],
     updateResults = [],
     fetchEqualityConditionResults = [],
@@ -31,6 +33,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     deleteCount = 0,
   }: {
     fetchResults?: object[];
+    fetchOneResult?: object | null;
     insertResults?: object[];
     updateResults?: object[];
     fetchEqualityConditionResults?: object[];
@@ -40,6 +43,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
   }) {
     super(testEntityConfiguration);
     this.fetchResults = fetchResults;
+    this.fetchOneResult = fetchOneResult;
     this.insertResults = insertResults;
     this.updateResults = updateResults;
     this.fetchEqualityConditionResults = fetchEqualityConditionResults;
@@ -59,6 +63,15 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     _tableTuples: (readonly any[])[],
   ): Promise<object[]> {
     return this.fetchResults;
+  }
+
+  protected async fetchOneWhereInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableColumns: readonly string[],
+    _tableTuple: readonly any[],
+  ): Promise<object | null> {
+    return this.fetchOneResult;
   }
 
   protected async fetchManyByRawWhereClauseInternalAsync(

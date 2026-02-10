@@ -447,6 +447,8 @@ describe(EnforcingEntityLoader, () => {
 
     // ensure known differences still exist for sanity check
     const knownLoaderOnlyDifferences = [
+      'loadOneByFieldEqualingAsync', // private method used in EntityPrivacyUtils that is not intended to be part of the public API of AuthorizationResultBasedEntityLoader, and has no equivalent in EnforcingEntityLoader
+      'validateFieldAndValueAndConvertToHolders',
       'validateFieldAndValuesAndConvertToHolders',
       'validateCompositeFieldAndValuesAndConvertToHolders',
       'constructAndAuthorizeEntitiesFromCompositeFieldValueHolderMapAsync',

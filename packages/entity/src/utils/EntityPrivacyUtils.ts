@@ -1,18 +1,16 @@
+import { Result, asyncResult } from '@expo/results';
+
+import { Entity, IEntityClass } from '../Entity';
 import {
-  Entity,
-  IEntityClass,
   EntityEdgeDeletionAuthorizationInferenceBehavior,
   EntityEdgeDeletionBehavior,
-  EntityPrivacyPolicy,
-  EntityPrivacyPolicyEvaluationContext,
-  EntityQueryContext,
-  ReadonlyEntity,
-  ViewerContext,
-  failedResults,
-  partitionArray,
-  EntityNotAuthorizedError,
-} from '@expo/entity';
-import { Result, asyncResult } from '@expo/results';
+} from '../EntityFieldDefinition';
+import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import { EntityQueryContext } from '../EntityQueryContext';
+import { ReadonlyEntity } from '../ReadonlyEntity';
+import { ViewerContext } from '../ViewerContext';
+import { failedResults, partitionArray } from '../entityUtils';
+import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';
 
 export type EntityPrivacyEvaluationResultSuccess = {
   allowed: true;
@@ -361,10 +359,6 @@ async function canViewerDeleteInternalAsync<
       previousValue: null,
       cascadingDeleteCause: newCascadingDeleteCause,
     });
-    const knexLoader = entityCompanion.getKnexLoaderFactory().forLoad(queryContext, {
-      previousValue: null,
-      cascadingDeleteCause: newCascadingDeleteCause,
-    });
 
     for (const [fieldName, fieldDefinition] of configurationForInboundEdge.schema) {
       const association = fieldDefinition.association;
@@ -388,18 +382,12 @@ async function canViewerDeleteInternalAsync<
         edgeDeletionPermissionInferenceBehavior ===
         EntityEdgeDeletionAuthorizationInferenceBehavior.ONE_IMPLIES_ALL
       ) {
-        const singleEntityResultToTestForInboundEdge =
-          await knexLoader.loadFirstByFieldEqualityConjunctionAsync(
-            [
-              {
-                fieldName,
-                fieldValue: association.associatedEntityLookupByField
-                  ? sourceEntity.getField(association.associatedEntityLookupByField as any)
-                  : sourceEntity.getID(),
-              },
-            ],
-            { orderBy: [] },
-          );
+        const singleEntityResultToTestForInboundEdge = await loader['loadOneByFieldEqualingAsync'](
+          fieldName,
+          association.associatedEntityLookupByField
+            ? sourceEntity.getField(association.associatedEntityLookupByField as any)
+            : sourceEntity.getID(),
+        );
         entityResultsToCheckForInboundEdge = singleEntityResultToTestForInboundEdge
           ? [singleEntityResultToTestForInboundEdge]
           : [];

@@ -306,6 +306,42 @@ describe('postgres entity integration', () => {
     });
   });
 
+  describe('single field value loading (fetchOneWhereInternalAsync)', () => {
+    it('supports one loading', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'hello')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'world')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'wat')
+          .setField('hasACat', false)
+          .setField('hasADog', false)
+          .createAsync(),
+      );
+
+      const result = await PostgresTestEntity.loaderWithAuthorizationResults(vc1)[
+        'loadOneByFieldEqualingAsync'
+      ]('hasACat', false);
+      expect(result?.enforceValue()).not.toBeNull();
+      expect(result?.enforceValue().getField('hasACat')).toBe(false);
+    });
+  });
+
   it('supports single field and composite field equality loading', async () => {
     const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 

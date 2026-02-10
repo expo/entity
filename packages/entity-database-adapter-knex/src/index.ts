@@ -22,4 +22,3 @@ export * from './extensions/EntityTableDataCoordinatorExtensions';
 export * from './extensions/ReadonlyEntityExtensions';
 export * from './extensions/ViewerScopedEntityCompanionExtensions';
 export * from './internal/EntityKnexDataManager';
-export * from './utils/EntityPrivacyUtils';
