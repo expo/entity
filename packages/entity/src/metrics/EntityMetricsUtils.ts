@@ -30,6 +30,30 @@ export const timeAndLogLoadEventAsync =
     return result;
   };
 
+export const timeAndLogLoadEventGenericAsync =
+  <T>(
+    metricsAdapter: IEntityMetricsAdapter,
+    loadType: EntityMetricsLoadType,
+    entityClassName: string,
+    queryContext: EntityQueryContext,
+    countExtractor: (result: T) => number,
+  ) =>
+  async (promise: Promise<T>) => {
+    const startTime = Date.now();
+    const result = await promise;
+    const endTime = Date.now();
+
+    metricsAdapter.logDataManagerLoadEvent({
+      type: loadType,
+      isInTransaction: queryContext.isInTransaction(),
+      entityClassName,
+      duration: endTime - startTime,
+      count: countExtractor(result),
+    });
+
+    return result;
+  };
+
 export const timeAndLogLoadOneEventAsync =
   (
     metricsAdapter: IEntityMetricsAdapter,

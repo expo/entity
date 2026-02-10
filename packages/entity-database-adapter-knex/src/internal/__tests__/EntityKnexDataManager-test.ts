@@ -253,4 +253,129 @@ describe(EntityKnexDataManager, () => {
       });
     });
   });
+
+  describe('loadPageBySQLFragmentAsync', () => {
+    describe('includeTotal functionality', () => {
+      it('includes totalCount when includeTotal is true', async () => {
+        const queryContext = instance(mock<EntityQueryContext>());
+        const databaseAdapterMock = mock<
+          PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>
+        >(PostgresEntityDatabaseAdapter);
+
+        // Mock the new window function method
+        when(
+          databaseAdapterMock.fetchManyBySQLFragmentWithCountAsync(
+            anything(),
+            anything(),
+            anything(),
+          ),
+        ).thenResolve({
+          results: [
+            {
+              customIdField: '1',
+              testIndexedField: 'unique1',
+              stringField: 'hello',
+              intField: 1,
+              dateField: new Date(),
+              nullableField: null,
+            },
+            {
+              customIdField: '2',
+              testIndexedField: 'unique2',
+              stringField: 'world',
+              intField: 2,
+              dateField: new Date(),
+              nullableField: null,
+            },
+          ],
+          totalCount: 42,
+        });
+
+        const entityDataManager = new EntityKnexDataManager(
+          testEntityConfiguration,
+          instance(databaseAdapterMock),
+          new NoOpEntityMetricsAdapter(),
+          TestEntity.name,
+        );
+
+        const result = await entityDataManager.loadPageBySQLFragmentAsync(queryContext, {
+          first: 10,
+          includeTotal: true,
+        });
+
+        expect(result.edges).toHaveLength(2);
+        expect(result.totalCount).toBe(42);
+        // Verify the new method is called instead of separate count query
+        verify(
+          databaseAdapterMock.fetchManyBySQLFragmentWithCountAsync(
+            anything(),
+            anything(),
+            anything(),
+          ),
+        ).once();
+        verify(databaseAdapterMock.fetchCountBySQLFragmentAsync(anything(), anything())).never();
+      });
+
+      it('does not include totalCount when includeTotal is false', async () => {
+        const queryContext = instance(mock<EntityQueryContext>());
+        const databaseAdapterMock = mock<
+          PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>
+        >(PostgresEntityDatabaseAdapter);
+
+        when(
+          databaseAdapterMock.fetchManyBySQLFragmentAsync(anything(), anything(), anything()),
+        ).thenResolve([
+          {
+            customIdField: '1',
+            testIndexedField: 'unique1',
+            stringField: 'hello',
+            intField: 1,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ]);
+
+        const entityDataManager = new EntityKnexDataManager(
+          testEntityConfiguration,
+          instance(databaseAdapterMock),
+          new NoOpEntityMetricsAdapter(),
+          TestEntity.name,
+        );
+
+        const result = await entityDataManager.loadPageBySQLFragmentAsync(queryContext, {
+          first: 10,
+          includeTotal: false,
+        });
+
+        expect(result.edges).toHaveLength(1);
+        expect(result.totalCount).toBeUndefined();
+        verify(databaseAdapterMock.fetchCountBySQLFragmentAsync(anything(), anything())).never();
+      });
+
+      it('does not include totalCount when includeTotal is not specified', async () => {
+        const queryContext = instance(mock<EntityQueryContext>());
+        const databaseAdapterMock = mock<
+          PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>
+        >(PostgresEntityDatabaseAdapter);
+
+        when(
+          databaseAdapterMock.fetchManyBySQLFragmentAsync(anything(), anything(), anything()),
+        ).thenResolve([]);
+
+        const entityDataManager = new EntityKnexDataManager(
+          testEntityConfiguration,
+          instance(databaseAdapterMock),
+          new NoOpEntityMetricsAdapter(),
+          TestEntity.name,
+        );
+
+        const result = await entityDataManager.loadPageBySQLFragmentAsync(queryContext, {
+          first: 10,
+        });
+
+        expect(result.totalCount).toBeUndefined();
+        verify(databaseAdapterMock.fetchCountBySQLFragmentAsync(anything(), anything())).never();
+      });
+    });
+  });
 });

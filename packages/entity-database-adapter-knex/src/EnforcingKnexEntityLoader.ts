@@ -238,6 +238,7 @@ export class EnforcingKnexEntityLoader<
     return {
       edges,
       pageInfo: pageResult.pageInfo,
+      ...(pageResult.totalCount !== undefined && { totalCount: pageResult.totalCount }),
     };
   }
 }

@@ -520,6 +520,32 @@ describe(StubPostgresDatabaseAdapter, () => {
     });
   });
 
+  describe('fetchCountBySQLFragmentAsync', () => {
+    it('throws because it is unsupported', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        new Map(),
+      );
+      await expect(
+        databaseAdapter.fetchCountBySQLFragmentAsync(queryContext, sql``),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('fetchManyBySQLFragmentWithCountAsync', () => {
+    it('throws because it is unsupported', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        new Map(),
+      );
+      await expect(
+        databaseAdapter.fetchManyBySQLFragmentWithCountAsync(queryContext, sql``, {}),
+      ).rejects.toThrow();
+    });
+  });
+
   describe('insertAsync', () => {
     it('inserts a record', async () => {
       const queryContext = instance(mock(EntityQueryContext));

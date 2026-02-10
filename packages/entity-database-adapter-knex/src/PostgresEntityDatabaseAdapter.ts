@@ -17,6 +17,8 @@ export class PostgresEntityDatabaseAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > extends BasePostgresEntityDatabaseAdapter<TFields, TIDField> {
+  private static readonly INTERNAL_TOTAL_COUNT_FIELD = '__entity_internal_total_count__';
+
   protected getFieldTransformerMap(): FieldTransformerMap {
     return new Map<string, FieldTransformer<any>>([
       [
@@ -212,16 +214,114 @@ export class PostgresEntityDatabaseAdapter<
     sqlFragment: SQLFragment,
     querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
   ): Promise<object[]> {
-    let query = queryInterface
-      .select()
+    const { results } = await this.fetchManyBySQLFragmentWithOptionalCountInternalAsync(
+      queryInterface,
+      tableName,
+      sqlFragment,
+      querySelectionModifiers,
+      false,
+    );
+    return results;
+  }
+
+  protected async fetchCountBySQLFragmentInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment,
+  ): Promise<number> {
+    const query = queryInterface
+      .count('* as count')
       .from(tableName)
-      .whereRaw(sqlFragment.sql, sqlFragment.getKnexBindings());
+      .whereRaw(sqlFragment.sql, sqlFragment.getKnexBindings())
+      .first();
+    const result = await wrapNativePostgresCallAsync(() => query);
+    return parseInt(result?.count ?? '0', 10);
+  }
+
+  /**
+   * Fetches paginated results with total count using a window function.
+   * This executes a single query that returns both the result set and the total count,
+   * avoiding the need for two separate queries.
+   *
+   * The query uses COUNT(*) OVER() to calculate the total count as a window function,
+   * which runs over the entire result set before LIMIT/OFFSET are applied.
+   */
+  protected async fetchManyBySQLFragmentWithCountInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment,
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+  ): Promise<{ results: object[]; totalCount: number }> {
+    return await this.fetchManyBySQLFragmentWithOptionalCountInternalAsync(
+      queryInterface,
+      tableName,
+      sqlFragment,
+      querySelectionModifiers,
+      true,
+    );
+  }
+
+  private async fetchManyBySQLFragmentWithOptionalCountInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment,
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+    includeTotalCountViaWindowFunction: true,
+  ): Promise<{ results: object[]; totalCount: number }>;
+  private async fetchManyBySQLFragmentWithOptionalCountInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment,
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+    includeTotalCountViaWindowFunction: false,
+  ): Promise<{ results: object[]; totalCount: undefined }>;
+  private async fetchManyBySQLFragmentWithOptionalCountInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment,
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+    includeTotalCountViaWindowFunction: boolean,
+  ): Promise<{ results: object[]; totalCount: number | undefined }> {
+    // Build the base query with window function for total count
+    let query = queryInterface.select('*');
+    if (includeTotalCountViaWindowFunction) {
+      query = query.select(
+        queryInterface.raw(
+          `COUNT(*) OVER() as ${PostgresEntityDatabaseAdapter.INTERNAL_TOTAL_COUNT_FIELD}`,
+        ),
+      );
+    }
+    query = query.from(tableName).whereRaw(sqlFragment.sql, sqlFragment.getKnexBindings());
+
+    // Apply order by modifiers
     query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
     const { orderByFragment } = querySelectionModifiers;
     if (orderByFragment !== undefined) {
       query = query.orderByRaw(orderByFragment.sql, orderByFragment.getKnexBindings());
     }
-    return await wrapNativePostgresCallAsync(() => query);
+
+    const rows = await wrapNativePostgresCallAsync(() => query);
+
+    if (!includeTotalCountViaWindowFunction) {
+      return { results: rows, totalCount: undefined };
+    }
+
+    // If no rows, return empty results with 0 count
+    if (rows.length === 0) {
+      return { results: [], totalCount: 0 };
+    }
+
+    // Extract total count from the first row and remove it from all rows
+    const totalCount = parseInt(
+      rows[0][PostgresEntityDatabaseAdapter.INTERNAL_TOTAL_COUNT_FIELD] ?? '0',
+      10,
+    );
+    const results = rows.map((row) => {
+      const { [PostgresEntityDatabaseAdapter.INTERNAL_TOTAL_COUNT_FIELD]: _, ...rest } = row;
+      return rest;
+    });
+
+    return { results, totalCount };
   }
 
   protected async insertInternalAsync(

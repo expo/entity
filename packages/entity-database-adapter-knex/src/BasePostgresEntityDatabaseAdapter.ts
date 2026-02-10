@@ -268,6 +268,68 @@ export abstract class BasePostgresEntityDatabaseAdapter<
     querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
   ): Promise<object[]>;
 
+  /**
+   * Fetch total count of objects matching the SQL fragment.
+   *
+   * Note that this may be an expensive operation, especially for large datasets, as it does a full query with a COUNT(*) aggregation.
+   *
+   * @param queryContext - query context with which to perform the fetch
+   * @param sqlFragment - SQLFragment for the WHERE clause of the query
+   * @returns total count of objects matching the SQL fragment
+   */
+  async fetchCountBySQLFragmentAsync(
+    queryContext: EntityQueryContext,
+    sqlFragment: SQLFragment,
+  ): Promise<number> {
+    return await this.fetchCountBySQLFragmentInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      sqlFragment,
+    );
+  }
+
+  protected abstract fetchCountBySQLFragmentInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment,
+  ): Promise<number>;
+
+  /**
+   * Fetch many objects matching the SQL fragment along with the total count using a window function.
+   * This is more efficient than running separate fetch and count queries when both are needed.
+   *
+   * @param queryContext - query context with which to perform the fetch
+   * @param sqlFragment - SQLFragment for the WHERE clause of the query
+   * @param querySelectionModifiers - limit, offset, and orderByFragment for the query
+   * @returns Object containing both the results array and the total count
+   */
+  async fetchManyBySQLFragmentWithCountAsync(
+    queryContext: EntityQueryContext,
+    sqlFragment: SQLFragment,
+    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByFragment<TFields>,
+  ): Promise<{ results: readonly Readonly<TFields>[]; totalCount: number }> {
+    const { results, totalCount } = await this.fetchManyBySQLFragmentWithCountInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      sqlFragment,
+      this.convertToTableQueryModifiersWithOrderByFragment(querySelectionModifiers),
+    );
+
+    return {
+      results: results.map((result) =>
+        transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
+      ),
+      totalCount,
+    };
+  }
+
+  protected abstract fetchManyBySQLFragmentWithCountInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment,
+    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+  ): Promise<{ results: object[]; totalCount: number }>;
+
   private convertToTableQueryModifiersWithOrderByRaw(
     querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByRaw<TFields>,
   ): TableQuerySelectionModifiersWithOrderByRaw {

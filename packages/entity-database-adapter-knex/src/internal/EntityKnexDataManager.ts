@@ -6,6 +6,7 @@ import {
   EntityConfiguration,
   getDatabaseFieldForEntityField,
   EntityDatabaseAdapterPaginationCursorInvalidError,
+  timeAndLogLoadEventGenericAsync,
 } from '@expo/entity';
 import assert from 'assert';
 
@@ -26,6 +27,7 @@ import { SQLFragment, identifier, raw, sql } from '../SQLOperator';
 interface BasePaginationArgs<TFields extends Record<string, any>> {
   where?: SQLFragment;
   orderBy?: PostgresOrderByClause<TFields>[];
+  includeTotal?: boolean;
 }
 
 /**
@@ -79,6 +81,11 @@ export interface PageInfo {
 export interface Connection<TNode> {
   edges: Edge<TNode>[];
   pageInfo: PageInfo;
+  /**
+   * Total count of all matching entities (not just those in the current page).
+   * Only present when includeTotal is true in the page function arguments.
+   */
+  totalCount?: number;
 }
 
 /**
@@ -203,7 +210,7 @@ export class EntityKnexDataManager<
     }
 
     const isForward = 'first' in args;
-    const { where, orderBy } = args;
+    const { where, orderBy, includeTotal } = args;
 
     let limit: number;
     let cursor: string | undefined;
@@ -244,17 +251,67 @@ export class EntityKnexDataManager<
         }));
 
     // Fetch data with limit + 1 to check for more pages
-    const fieldObjects = await timeAndLogLoadEventAsync(
-      this.metricsAdapter,
-      EntityMetricsLoadType.LOAD_PAGE,
-      this.entityClassName,
-      queryContext,
-    )(
-      this.databaseAdapter.fetchManyBySQLFragmentAsync(queryContext, whereClause, {
-        orderBy: finalOrderByClauses,
-        limit: limit + 1,
-      }),
-    );
+    let fieldObjects: readonly Readonly<TFields>[];
+    let totalCount: number | undefined;
+
+    if (includeTotal && !cursor) {
+      // When includeTotal is true and there's no cursor (fetching first or last page),
+      // use window function to get count in single query
+      const resultWithCount = await timeAndLogLoadEventGenericAsync<{
+        results: readonly Readonly<TFields>[];
+        totalCount: number;
+      }>(
+        this.metricsAdapter,
+        EntityMetricsLoadType.LOAD_PAGE_AND_TOTAL_COUNT,
+        this.entityClassName,
+        queryContext,
+        (r) => r.results.length,
+      )(
+        this.databaseAdapter.fetchManyBySQLFragmentWithCountAsync(queryContext, whereClause, {
+          orderBy: finalOrderByClauses,
+          limit: limit + 1,
+        }),
+      );
+      fieldObjects = resultWithCount.results;
+      totalCount = resultWithCount.totalCount;
+    } else if (includeTotal && cursor) {
+      // When there's a cursor, window function doesn't work. Fetch page results and total count in parallel
+      const [fieldObjectsResult, totalCountResult] = await Promise.all([
+        timeAndLogLoadEventAsync(
+          this.metricsAdapter,
+          EntityMetricsLoadType.LOAD_PAGE,
+          this.entityClassName,
+          queryContext,
+        )(
+          this.databaseAdapter.fetchManyBySQLFragmentAsync(queryContext, whereClause, {
+            orderBy: finalOrderByClauses,
+            limit: limit + 1,
+          }),
+        ),
+        timeAndLogLoadEventGenericAsync<number>(
+          this.metricsAdapter,
+          EntityMetricsLoadType.LOAD_TOTAL_COUNT,
+          this.entityClassName,
+          queryContext,
+          () => 1,
+        )(this.databaseAdapter.fetchCountBySQLFragmentAsync(queryContext, where ?? sql`1 = 1`)),
+      ]);
+      fieldObjects = fieldObjectsResult;
+      totalCount = totalCountResult;
+    } else {
+      fieldObjects = await timeAndLogLoadEventAsync(
+        this.metricsAdapter,
+        EntityMetricsLoadType.LOAD_PAGE,
+        this.entityClassName,
+        queryContext,
+      )(
+        this.databaseAdapter.fetchManyBySQLFragmentAsync(queryContext, whereClause, {
+          orderBy: finalOrderByClauses,
+          limit: limit + 1,
+        }),
+      );
+      totalCount = undefined;
+    }
 
     // Process results
     const hasMore = fieldObjects.length > limit;
@@ -280,6 +337,7 @@ export class EntityKnexDataManager<
     return {
       edges,
       pageInfo,
+      ...(totalCount !== undefined && { totalCount }),
     };
   }
 

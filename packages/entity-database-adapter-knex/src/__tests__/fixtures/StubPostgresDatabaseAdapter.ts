@@ -299,4 +299,21 @@ export class StubPostgresDatabaseAdapter<
     objectCollection.splice(objectIndex, 1);
     return 1;
   }
+
+  protected async fetchCountBySQLFragmentInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _sqlFragment: any,
+  ): Promise<number> {
+    throw new Error('SQL fragments not supported for StubDatabaseAdapter');
+  }
+
+  protected async fetchManyBySQLFragmentWithCountInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _sqlFragment: SQLFragment,
+    _querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+  ): Promise<{ results: object[]; totalCount: number }> {
+    throw new Error('SQL fragments not supported for StubDatabaseAdapter');
+  }
 }

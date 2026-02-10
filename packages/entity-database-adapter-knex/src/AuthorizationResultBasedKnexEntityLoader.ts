@@ -92,6 +92,17 @@ interface EntityLoaderBasePaginationArgs<
    * Order the entities by specified columns and orders. If the ID field is not included in the orderBy, it will be automatically included as the last orderBy field to ensure stable pagination.
    */
   orderBy?: EntityLoaderOrderByClause<TFields, TSelectedFields>[];
+
+  /**
+   * Whether to calculate and include the Connection totalCount field containing the total count of entities matching the where SQLFragment.
+   *
+   * Note that this may be an expensive operation, especially for large datasets, as it may require an additional SQL query with a COUNT(*) aggregation.
+   * It is recommended to only set this to true when necessary for the client application, such as when implementing pagination UIs that need to know the total number of pages.
+   *
+   * When true and cursor is non-null, the total count is calculated by running a separate COUNT(*) query with the same WHERE clause.
+   * When true and cursor is null, the total count is calculated by running the main query with a window function to count all matching rows, which is slightly faster but still expensive.
+   */
+  includeTotal?: boolean;
 }
 
 /**
@@ -304,6 +315,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
     return {
       edges,
       pageInfo,
+      ...(pageResult.totalCount !== undefined && { totalCount: pageResult.totalCount }),
     };
   }
 }

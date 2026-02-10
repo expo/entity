@@ -1771,5 +1771,144 @@ describe('postgres entity integration', () => {
       expect(page2.edges).toHaveLength(1);
       expect(page2.pageInfo.hasNextPage).toBe(false);
     });
+
+    it('includes total count when includeTotal is true', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
+      await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
+
+      // Create test data
+      const names = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Henry'];
+      for (let i = 0; i < names.length; i++) {
+        await PostgresTestEntity.creator(vc)
+          .setField('name', names[i]!)
+          .setField('hasACat', i % 2 === 0)
+          .setField('hasADog', i % 3 === 0)
+          .createAsync();
+      }
+
+      // Test includeTotal with no filter
+      const pageWithTotal = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        includeTotal: true,
+      });
+
+      expect(pageWithTotal.edges).toHaveLength(3);
+      expect(pageWithTotal.totalCount).toBe(8);
+      expect(pageWithTotal.edges[0]?.node.getField('name')).toBe('Alice');
+      expect(pageWithTotal.edges[1]?.node.getField('name')).toBe('Bob');
+      expect(pageWithTotal.edges[2]?.node.getField('name')).toBe('Charlie');
+
+      // Test includeTotal with where clause
+      const pageWithFilter = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 2,
+        where: sql`has_a_cat = ${true}`,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        includeTotal: true,
+      });
+
+      expect(pageWithFilter.edges).toHaveLength(2);
+      expect(pageWithFilter.totalCount).toBe(4); // Alice, Charlie, Eve, Grace have cats
+      expect(pageWithFilter.edges[0]?.node.getField('name')).toBe('Alice');
+      expect(pageWithFilter.edges[1]?.node.getField('name')).toBe('Charlie');
+
+      // Test that totalCount is not affected by pagination cursor
+      const nextPageWithTotal = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 2,
+        after: pageWithFilter.pageInfo.endCursor!,
+        where: sql`has_a_cat = ${true}`,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        includeTotal: true,
+      });
+
+      expect(nextPageWithTotal.edges).toHaveLength(2);
+      expect(nextPageWithTotal.totalCount).toBe(4); // Total count remains the same
+      expect(nextPageWithTotal.edges[0]?.node.getField('name')).toBe('Eve');
+      expect(nextPageWithTotal.edges[1]?.node.getField('name')).toBe('Grace');
+
+      // Test backward pagination with includeTotal
+      const backwardPageWithTotal = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        last: 2,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        includeTotal: true,
+      });
+
+      expect(backwardPageWithTotal.edges).toHaveLength(2);
+      expect(backwardPageWithTotal.totalCount).toBe(8);
+      expect(backwardPageWithTotal.edges[0]?.node.getField('name')).toBe('Grace');
+      expect(backwardPageWithTotal.edges[1]?.node.getField('name')).toBe('Henry');
+
+      // Test that totalCount is undefined when includeTotal is false
+      const pageWithoutTotal = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        includeTotal: false,
+      });
+
+      expect(pageWithoutTotal.edges).toHaveLength(3);
+      expect(pageWithoutTotal.totalCount).toBeUndefined();
+
+      // Test that totalCount is undefined when includeTotal is not specified
+      const pageDefaultNoTotal = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(pageDefaultNoTotal.edges).toHaveLength(3);
+      expect(pageDefaultNoTotal.totalCount).toBeUndefined();
+    });
+
+    it('returns totalCount of 0 when includeTotal is true but no results match', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
+      await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
+
+      // Create test data
+      await PostgresTestEntity.creator(vc)
+        .setField('name', 'Alice')
+        .setField('hasACat', true)
+        .setField('hasADog', false)
+        .createAsync();
+      await PostgresTestEntity.creator(vc)
+        .setField('name', 'Bob')
+        .setField('hasACat', false)
+        .setField('hasADog', true)
+        .createAsync();
+
+      // Query with a filter that matches no records
+      const emptyPageWithTotal = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 10,
+        where: sql`has_a_cat = ${true} AND has_a_dog = ${true}`, // No one has both a cat and a dog
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        includeTotal: true,
+      });
+
+      expect(emptyPageWithTotal.edges).toHaveLength(0);
+      expect(emptyPageWithTotal.totalCount).toBe(0);
+      expect(emptyPageWithTotal.pageInfo.hasNextPage).toBe(false);
+      expect(emptyPageWithTotal.pageInfo.hasPreviousPage).toBe(false);
+      expect(emptyPageWithTotal.pageInfo.startCursor).toBeNull();
+      expect(emptyPageWithTotal.pageInfo.endCursor).toBeNull();
+
+      // Also test backward pagination with empty results
+      const emptyBackwardPageWithTotal = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync(
+        {
+          last: 10,
+          where: sql`name = ${'NonExistent'}`, // Name that doesn't exist
+          orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+          includeTotal: true,
+        },
+      );
+
+      expect(emptyBackwardPageWithTotal.edges).toHaveLength(0);
+      expect(emptyBackwardPageWithTotal.totalCount).toBe(0);
+      expect(emptyBackwardPageWithTotal.pageInfo.hasNextPage).toBe(false);
+      expect(emptyBackwardPageWithTotal.pageInfo.hasPreviousPage).toBe(false);
+      expect(emptyBackwardPageWithTotal.pageInfo.startCursor).toBeNull();
+      expect(emptyBackwardPageWithTotal.pageInfo.endCursor).toBeNull();
+    });
   });
 });

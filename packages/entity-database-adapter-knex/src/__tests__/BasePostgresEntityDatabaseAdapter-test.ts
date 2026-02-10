@@ -126,6 +126,23 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
   ): Promise<number> {
     return this.deleteCount;
   }
+
+  protected async fetchCountBySQLFragmentInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _sqlFragment: any,
+  ): Promise<number> {
+    return 0;
+  }
+
+  protected async fetchManyBySQLFragmentWithCountInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _sqlFragment: any,
+    _querySelectionModifiers: any,
+  ): Promise<{ results: object[]; totalCount: number }> {
+    return { results: this.fetchSQLFragmentResults, totalCount: 0 };
+  }
 }
 
 describe(BasePostgresEntityDatabaseAdapter, () => {
