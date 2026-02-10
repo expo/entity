@@ -42,7 +42,7 @@
     "collect-v8-coverage": "^1.0.3"
   },
   "volta": {
-    "node": "24.13.0"
+    "node": "24.13.1"
   },
   "packageManager": "yarn@4.12.0"
 }
