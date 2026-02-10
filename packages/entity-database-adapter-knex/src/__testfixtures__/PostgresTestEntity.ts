@@ -31,6 +31,7 @@ type PostgresTestEntityFields = {
   maybeJsonArrayField: string[] | { hello: string } | null;
   bigintField: string | null;
   binaryField: Buffer | null;
+  createdAt: Date;
 };
 
 export class PostgresTestEntity extends Entity<PostgresTestEntityFields, 'id', ViewerContext> {
@@ -64,6 +65,7 @@ export class PostgresTestEntity extends Entity<PostgresTestEntityFields, 'id', V
         table.jsonb('maybe_json_array_field');
         table.bigint('bigint_field');
         table.binary('binary_field');
+        table.dateTime('created_at', { useTz: true }).defaultTo(knex.fn.now());
       });
     }
     await knex.into(tableName).truncate();
@@ -158,6 +160,9 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<
     }),
     binaryField: new BufferField({
       columnName: 'binary_field',
+    }),
+    createdAt: new DateField({
+      columnName: 'created_at',
     }),
   },
   databaseAdapterFlavor: 'postgres',
