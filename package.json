@@ -26,7 +26,7 @@
     "@tsconfig/strictest": "2.0.8",
     "@types/babel__core": "7.20.5",
     "@types/babel__preset-env": "7.10.0",
-    "@types/node": "24.10.11",
+    "@types/node": "24.10.12",
     "ctix": "2.7.2",
     "eslint": "9.39.2",
     "eslint-config-universe": "15.0.3",
