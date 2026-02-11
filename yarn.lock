@@ -2827,7 +2827,7 @@ __metadata:
   dependencies:
     "@jest/globals": "npm:30.2.0"
     "@types/jscodeshift": "npm:17.3.0"
-    "@types/node": "npm:24.10.11"
+    "@types/node": "npm:24.10.12"
     jscodeshift: "npm:17.3.0"
     typescript: "npm:5.9.3"
   languageName: unknown
@@ -2841,7 +2841,7 @@ __metadata:
     "@expo/entity-database-adapter-knex": "workspace:^"
     "@jest/globals": "npm:30.2.0"
     "@types/invariant": "npm:2.2.37"
-    "@types/node": "npm:24.10.11"
+    "@types/node": "npm:24.10.12"
     "@types/uuid": "npm:10.0.0"
     invariant: "npm:^2.2.4"
     typescript: "npm:5.9.3"
@@ -2945,7 +2945,7 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@jest/globals": "npm:30.2.0"
     "@types/lodash": "npm:4.17.23"
-    "@types/node": "npm:24.10.11"
+    "@types/node": "npm:24.10.12"
     lodash: "npm:^4.17.21"
     ts-mockito: "npm:^2.6.1"
     typescript: "npm:5.9.3"
@@ -2962,7 +2962,7 @@ __metadata:
     "@jest/globals": "npm:30.2.0"
     "@types/invariant": "npm:2.2.37"
     "@types/lodash": "npm:4.17.23"
-    "@types/node": "npm:24.10.11"
+    "@types/node": "npm:24.10.12"
     dataloader: "npm:^2.2.3"
     invariant: "npm:^2.2.4"
     lodash: "npm:4.17.23"
@@ -5143,12 +5143,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.10.11":
-  version: 24.10.11
-  resolution: "@types/node@npm:24.10.11"
+"@types/node@npm:24.10.12":
+  version: 24.10.12
+  resolution: "@types/node@npm:24.10.12"
   dependencies:
     undici-types: "npm:~7.16.0"
-  checksum: 10c0/2578baa9443d62b0f13444b7965790912eca6d25c205e594cfa96689fa9bc6a676d2d4d7024a95a92e42e4be52133e5608ece2ef86edb12ee110c8b52f603a35
+  checksum: 10c0/fa39b88c8d82a2cec41544bee3426c4b78a13cc3c5ccf6fcb6c9528a68466ffcc73772833c612c7bb7e5fe1bc8e38002d1d543152e43b20b0600096cf6f210d1
   languageName: node
   linkType: hard
 
@@ -13952,7 +13952,7 @@ __metadata:
     "@tsconfig/strictest": "npm:2.0.8"
     "@types/babel__core": "npm:7.20.5"
     "@types/babel__preset-env": "npm:7.10.0"
-    "@types/node": "npm:24.10.11"
+    "@types/node": "npm:24.10.12"
     ctix: "npm:2.7.2"
     eslint: "npm:9.39.2"
     eslint-config-universe: "npm:15.0.3"
