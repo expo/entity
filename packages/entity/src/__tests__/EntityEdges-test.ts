@@ -772,7 +772,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         'id'
       >;
       const childCachedBefore = await childCacheAdapter.loadManyAsync(
-        new SingleFieldHolder('parent_id'),
+        new SingleFieldHolder<ChildFields, 'id', 'parent_id'>('parent_id'),
         [new SingleFieldValueHolder(parent.getID())],
       );
       expect(childCachedBefore.get(new SingleFieldValueHolder(parent.getID()))?.status).toEqual(
@@ -783,9 +783,9 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         GrandChildEntity,
       )['entityCompanion']['tableDataCoordinator'][
         'cacheAdapter'
-      ] as InMemoryFullCacheStubCacheAdapter<ChildFields, 'id'>;
+      ] as InMemoryFullCacheStubCacheAdapter<GrandChildFields, 'id'>;
       const grandChildCachedBefore = await grandChildCacheAdapter.loadManyAsync(
-        new SingleFieldHolder('parent_id'),
+        new SingleFieldHolder<GrandChildFields, 'id', 'parent_id'>('parent_id'),
         [new SingleFieldValueHolder(child.getID())],
       );
       expect(grandChildCachedBefore.get(new SingleFieldValueHolder(child.getID()))?.status).toEqual(
@@ -797,7 +797,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       const childCachedAfter = await childCacheAdapter.loadManyAsync(
-        new SingleFieldHolder('parent_id'),
+        new SingleFieldHolder<ChildFields, 'id', 'parent_id'>('parent_id'),
         [new SingleFieldValueHolder(parent.getID())],
       );
       expect(childCachedAfter.get(new SingleFieldValueHolder(parent.getID()))?.status).toEqual(
@@ -805,7 +805,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       );
 
       const grandChildCachedAfter = await grandChildCacheAdapter.loadManyAsync(
-        new SingleFieldHolder('parent_id'),
+        new SingleFieldHolder<GrandChildFields, 'id', 'parent_id'>('parent_id'),
         [new SingleFieldValueHolder(child.getID())],
       );
       expect(grandChildCachedAfter.get(new SingleFieldValueHolder(child.getID()))?.status).toEqual(
@@ -922,7 +922,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         'id'
       >;
       const childCachedBefore = await childCacheAdapter.loadManyAsync(
-        new SingleFieldHolder('parent_id'),
+        new SingleFieldHolder<ChildFields, 'id', 'parent_id'>('parent_id'),
         [new SingleFieldValueHolder(parent.getID())],
       );
       expect(childCachedBefore.get(new SingleFieldValueHolder(parent.getID()))?.status).toEqual(
@@ -933,9 +933,9 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
         GrandChildEntity,
       )['entityCompanion']['tableDataCoordinator'][
         'cacheAdapter'
-      ] as InMemoryFullCacheStubCacheAdapter<ChildFields, 'id'>;
+      ] as InMemoryFullCacheStubCacheAdapter<GrandChildFields, 'id'>;
       const grandChildCachedBefore = await grandChildCacheAdapter.loadManyAsync(
-        new SingleFieldHolder('parent_id'),
+        new SingleFieldHolder<GrandChildFields, 'id', 'parent_id'>('parent_id'),
         [new SingleFieldValueHolder(child.getID())],
       );
       expect(grandChildCachedBefore.get(new SingleFieldValueHolder(child.getID()))?.status).toEqual(
@@ -947,7 +947,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       privacyPolicyEvaluationRecords.shouldRecord = false;
 
       const childCachedAfter = await childCacheAdapter.loadManyAsync(
-        new SingleFieldHolder('parent_id'),
+        new SingleFieldHolder<ChildFields, 'id', 'parent_id'>('parent_id'),
         [new SingleFieldValueHolder(parent.getID())],
       );
       expect(childCachedAfter.get(new SingleFieldValueHolder(parent.getID()))?.status).toEqual(
@@ -955,7 +955,7 @@ describe('EntityMutator.processEntityDeletionForInboundEdgesAsync', () => {
       );
 
       const grandChildCachedAfter = await grandChildCacheAdapter.loadManyAsync(
-        new SingleFieldHolder('parent_id'),
+        new SingleFieldHolder<GrandChildFields, 'id', 'parent_id'>('parent_id'),
         [new SingleFieldValueHolder(child.getID())],
       );
       expect(grandChildCachedAfter.get(new SingleFieldValueHolder(child.getID()))?.status).toEqual(

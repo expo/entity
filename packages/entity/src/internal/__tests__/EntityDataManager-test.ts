@@ -96,7 +96,7 @@ describe(EntityDataManager, () => {
 
     const entityDatas = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('customIdField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'customIdField'>('customIdField'),
       [new SingleFieldValueHolder('2')],
     );
     expect(entityDatas.get(new SingleFieldValueHolder('2'))).toHaveLength(1);
@@ -108,7 +108,7 @@ describe(EntityDataManager, () => {
 
     const entityDatas2 = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('testIndexedField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
       [new SingleFieldValueHolder('unique2'), new SingleFieldValueHolder('unique3')],
     );
     expect(entityDatas2.get(new SingleFieldValueHolder('unique2'))).toHaveLength(1);
@@ -147,7 +147,7 @@ describe(EntityDataManager, () => {
 
     const entityDatas = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('customIdField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'customIdField'>('customIdField'),
       [new SingleFieldValueHolder('1')],
     );
     expect(entityDatas.get(new SingleFieldValueHolder('1'))).toHaveLength(1);
@@ -159,7 +159,7 @@ describe(EntityDataManager, () => {
 
     const entityDatas2 = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('testIndexedField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
       [new SingleFieldValueHolder('unique2'), new SingleFieldValueHolder('unique3')],
     );
     expect(entityDatas2.get(new SingleFieldValueHolder('unique2'))).toHaveLength(1);
@@ -206,12 +206,12 @@ describe(EntityDataManager, () => {
 
     await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('testIndexedField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
       [new SingleFieldValueHolder('unique2')],
     );
     await entityDataManager2.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('testIndexedField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
       [new SingleFieldValueHolder('unique2')],
     );
 
@@ -249,12 +249,12 @@ describe(EntityDataManager, () => {
 
     await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('testIndexedField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
       [new SingleFieldValueHolder('unique2')],
     );
     await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('testIndexedField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
       [new SingleFieldValueHolder('unique2')],
     );
 
@@ -292,12 +292,12 @@ describe(EntityDataManager, () => {
 
     const entityData = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('stringField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
       [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
     );
     const entityData2 = await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('stringField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
       [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
     );
 
@@ -341,12 +341,12 @@ describe(EntityDataManager, () => {
         const [entityData, entityData2] = await Promise.all([
           entityDataManager.loadManyEqualingAsync(
             queryContext,
-            new SingleFieldHolder('stringField'),
+            new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
             [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
           ),
           entityDataManager.loadManyEqualingAsync(
             queryContext,
-            new SingleFieldHolder('stringField'),
+            new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
             [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
           ),
         ]);
@@ -354,7 +354,7 @@ describe(EntityDataManager, () => {
           async (innerQueryContext) => {
             const entityData3 = await entityDataManager.loadManyEqualingAsync(
               innerQueryContext,
-              new SingleFieldHolder('stringField'),
+              new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
               [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
             );
 
@@ -362,7 +362,7 @@ describe(EntityDataManager, () => {
               async (innerInnerQueryContext) => {
                 return await entityDataManager.loadManyEqualingAsync(
                   innerInnerQueryContext,
-                  new SingleFieldHolder('stringField'),
+                  new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
                   [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
                 );
               },
@@ -417,19 +417,19 @@ describe(EntityDataManager, () => {
       await new StubQueryContextProvider().runInTransactionAsync(async (queryContext) => {
         const entityData = await entityDataManager.loadManyEqualingAsync(
           queryContext,
-          new SingleFieldHolder('stringField'),
+          new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
           [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
         );
         const entityData2 = await entityDataManager.loadManyEqualingAsync(
           queryContext,
-          new SingleFieldHolder('stringField'),
+          new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
           [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
         );
         const [entityData3, entityData4] = await queryContext.runInNestedTransactionAsync(
           async (innerQueryContext) => {
             const entityData3 = await entityDataManager.loadManyEqualingAsync(
               innerQueryContext,
-              new SingleFieldHolder('stringField'),
+              new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
               [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
             );
 
@@ -437,7 +437,7 @@ describe(EntityDataManager, () => {
               async (innerInnerQueryContext) => {
                 return await entityDataManager.loadManyEqualingAsync(
                   innerInnerQueryContext,
-                  new SingleFieldHolder('stringField'),
+                  new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
                   [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
                 );
               },
@@ -493,19 +493,19 @@ describe(EntityDataManager, () => {
         async (queryContext) => {
           const entityData = await entityDataManager.loadManyEqualingAsync(
             queryContext,
-            new SingleFieldHolder('stringField'),
+            new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
             [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
           );
           const entityData2 = await entityDataManager.loadManyEqualingAsync(
             queryContext,
-            new SingleFieldHolder('stringField'),
+            new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
             [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
           );
           const [entityData3, entityData4] = await queryContext.runInNestedTransactionAsync(
             async (innerQueryContext) => {
               const entityData3 = await entityDataManager.loadManyEqualingAsync(
                 innerQueryContext,
-                new SingleFieldHolder('stringField'),
+                new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
                 [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
               );
 
@@ -513,7 +513,9 @@ describe(EntityDataManager, () => {
                 async (innerInnerQueryContext) => {
                   return await entityDataManager.loadManyEqualingAsync(
                     innerInnerQueryContext,
-                    new SingleFieldHolder('stringField'),
+                    new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>(
+                      'stringField',
+                    ),
                     [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('world')],
                   );
                 },
@@ -572,18 +574,18 @@ describe(EntityDataManager, () => {
 
     await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('testIndexedField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
       [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
     );
     await entityDataManager.invalidateKeyValuePairsAsync([
       [
-        new SingleFieldHolder('testIndexedField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
         new SingleFieldValueHolder(objectInQuestion['testIndexedField']),
       ],
     ]);
     await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('testIndexedField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
       [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
     );
 
@@ -623,18 +625,18 @@ describe(EntityDataManager, () => {
 
     await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('testIndexedField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
       [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
     );
     await entityDataManager.invalidateKeyValuePairsAsync([
       [
-        new SingleFieldHolder('testIndexedField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
         new SingleFieldValueHolder(objectInQuestion['testIndexedField']),
       ],
     ]);
     await entityDataManager.loadManyEqualingAsync(
       queryContext,
-      new SingleFieldHolder('customIdField'),
+      new SingleFieldHolder<TestFields, 'customIdField', 'customIdField'>('customIdField'),
       [new SingleFieldValueHolder(objectInQuestion['customIdField'])],
     );
 
@@ -674,18 +676,20 @@ describe(EntityDataManager, () => {
 
       await entityDataManager.loadManyEqualingAsync(
         queryContext,
-        new SingleFieldHolder('testIndexedField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
         [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
       );
       entityDataManager.invalidateKeyValuePairsForTransaction(queryContext, [
         [
-          new SingleFieldHolder('testIndexedField'),
+          new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>(
+            'testIndexedField',
+          ),
           new SingleFieldValueHolder(objectInQuestion['testIndexedField']),
         ],
       ]);
       await entityDataManager.loadManyEqualingAsync(
         queryContext,
-        new SingleFieldHolder('testIndexedField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
         [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
       );
 
@@ -698,18 +702,24 @@ describe(EntityDataManager, () => {
       await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
         await entityDataManager.loadManyEqualingAsync(
           innerQueryContext,
-          new SingleFieldHolder('testIndexedField'),
+          new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>(
+            'testIndexedField',
+          ),
           [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
         );
         entityDataManager.invalidateKeyValuePairsForTransaction(innerQueryContext, [
           [
-            new SingleFieldHolder('testIndexedField'),
+            new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>(
+              'testIndexedField',
+            ),
             new SingleFieldValueHolder(objectInQuestion['testIndexedField']),
           ],
         ]);
         await entityDataManager.loadManyEqualingAsync(
           innerQueryContext,
-          new SingleFieldHolder('testIndexedField'),
+          new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>(
+            'testIndexedField',
+          ),
           [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
         );
 
@@ -752,18 +762,24 @@ describe(EntityDataManager, () => {
 
         await entityDataManager.loadManyEqualingAsync(
           queryContext,
-          new SingleFieldHolder('testIndexedField'),
+          new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>(
+            'testIndexedField',
+          ),
           [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
         );
         entityDataManager.invalidateKeyValuePairsForTransaction(queryContext, [
           [
-            new SingleFieldHolder('testIndexedField'),
+            new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>(
+              'testIndexedField',
+            ),
             new SingleFieldValueHolder(objectInQuestion['testIndexedField']),
           ],
         ]);
         await entityDataManager.loadManyEqualingAsync(
           queryContext,
-          new SingleFieldHolder('testIndexedField'),
+          new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>(
+            'testIndexedField',
+          ),
           [new SingleFieldValueHolder(objectInQuestion['testIndexedField'])],
         );
 
@@ -807,7 +823,7 @@ describe(EntityDataManager, () => {
       async (queryContext) => {
         return await entityDataManager.loadManyEqualingAsync(
           queryContext,
-          new SingleFieldHolder('customIdField'),
+          new SingleFieldHolder<TestFields, 'customIdField', 'customIdField'>('customIdField'),
           [new SingleFieldValueHolder('1')],
         );
       },
@@ -845,7 +861,7 @@ describe(EntityDataManager, () => {
     await expect(
       entityDataManager.loadManyEqualingAsync(
         queryContext,
-        new SingleFieldHolder('customIdField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'customIdField'>('customIdField'),
         [new SingleFieldValueHolder('2')],
       ),
     ).rejects.toThrow();
@@ -881,7 +897,7 @@ describe(EntityDataManager, () => {
       // for dataloader, cache, and database
       await entityDataManager.loadManyEqualingAsync(
         queryContext,
-        new SingleFieldHolder('testIndexedField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
         [new SingleFieldValueHolder('unique1')],
       );
       verify(
@@ -936,7 +952,7 @@ describe(EntityDataManager, () => {
       // entity is in local dataloader
       await entityDataManager.loadManyEqualingAsync(
         queryContext,
-        new SingleFieldHolder('testIndexedField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
         [new SingleFieldValueHolder('unique1')],
       );
       verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).once();
@@ -966,7 +982,7 @@ describe(EntityDataManager, () => {
       );
       await entityDataManager2.loadManyEqualingAsync(
         queryContext,
-        new SingleFieldHolder('testIndexedField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>('testIndexedField'),
         [new SingleFieldValueHolder('unique1'), new SingleFieldValueHolder('unique2')],
       );
       verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).thrice();
@@ -1034,7 +1050,9 @@ describe(EntityDataManager, () => {
         // for dataloader, cache, and database
         await entityDataManager.loadManyEqualingAsync(
           queryContext,
-          new SingleFieldHolder('testIndexedField'),
+          new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>(
+            'testIndexedField',
+          ),
           [new SingleFieldValueHolder('unique1')],
         );
         verify(
@@ -1078,7 +1096,9 @@ describe(EntityDataManager, () => {
         // entity is in local dataloader
         await entityDataManager.loadManyEqualingAsync(
           queryContext,
-          new SingleFieldHolder('testIndexedField'),
+          new SingleFieldHolder<TestFields, 'customIdField', 'testIndexedField'>(
+            'testIndexedField',
+          ),
           [new SingleFieldValueHolder('unique1')],
         );
         verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).once();
@@ -1122,7 +1142,7 @@ describe(EntityDataManager, () => {
     await expect(
       entityDataManager.loadManyEqualingAsync(
         queryContext,
-        new SingleFieldHolder('nullableField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'nullableField'>('nullableField'),
         [new SingleFieldValueHolder(null as any)],
       ),
     ).rejects.toThrow('Invalid load: TestEntity (nullableField = null)');
@@ -1130,7 +1150,7 @@ describe(EntityDataManager, () => {
     await expect(
       entityDataManager.loadManyEqualingAsync(
         queryContext,
-        new SingleFieldHolder('nullableField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'nullableField'>('nullableField'),
         [new SingleFieldValueHolder(undefined as any)],
       ),
     ).rejects.toThrow('Invalid load: TestEntity (nullableField = undefined)');

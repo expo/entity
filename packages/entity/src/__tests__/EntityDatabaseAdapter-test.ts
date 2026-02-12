@@ -87,7 +87,7 @@ describe(EntityDatabaseAdapter, () => {
       const adapter = new TestEntityDatabaseAdapter({ fetchResults: [{ string_field: 'hello' }] });
       const result = await adapter.fetchManyWhereAsync(
         queryContext,
-        new SingleFieldHolder('stringField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
         [new SingleFieldValueHolder('hello')],
       );
       expect(result.get(new SingleFieldValueHolder('hello'))).toEqual([{ stringField: 'hello' }]);
@@ -100,7 +100,7 @@ describe(EntityDatabaseAdapter, () => {
       });
       const result = await adapter.fetchManyWhereAsync(
         queryContext,
-        new SingleFieldHolder('stringField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
         [new SingleFieldValueHolder('hello'), new SingleFieldValueHolder('wat')],
       );
       expect(result.get(new SingleFieldValueHolder('hello'))).toEqual([{ stringField: 'hello' }]);
@@ -140,7 +140,7 @@ describe(EntityDatabaseAdapter, () => {
       const adapter = new TestEntityDatabaseAdapter({});
       const result = await adapter.fetchManyWhereAsync(
         queryContext,
-        new SingleFieldHolder('stringField'),
+        new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
         [new SingleFieldValueHolder('what'), new SingleFieldValueHolder('who')],
       );
       expect(Array.from(result.keys()).map((v) => v.fieldValue)).toEqual(['what', 'who']);
@@ -152,9 +152,11 @@ describe(EntityDatabaseAdapter, () => {
         fetchResults: [{ string_field: null }],
       });
       await expect(
-        adapter.fetchManyWhereAsync(queryContext, new SingleFieldHolder('stringField'), [
-          new SingleFieldValueHolder('hello'),
-        ]),
+        adapter.fetchManyWhereAsync(
+          queryContext,
+          new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
+          [new SingleFieldValueHolder('hello')],
+        ),
       ).rejects.toThrow(
         'One or more fields from the object is invalid for key SingleField(stringField); {"stringField":null}. This may indicate a faulty database adapter implementation.',
       );
@@ -166,9 +168,11 @@ describe(EntityDatabaseAdapter, () => {
         fetchResults: [{ string_field: undefined }],
       });
       await expect(
-        adapter.fetchManyWhereAsync(queryContext, new SingleFieldHolder('stringField'), [
-          new SingleFieldValueHolder('hello'),
-        ]),
+        adapter.fetchManyWhereAsync(
+          queryContext,
+          new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
+          [new SingleFieldValueHolder('hello')],
+        ),
       ).rejects.toThrow(
         'One or more fields from the object is invalid for key SingleField(stringField); {}. This may indicate a faulty database adapter implementation.',
       );
