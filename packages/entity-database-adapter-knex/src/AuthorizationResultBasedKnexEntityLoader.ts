@@ -11,13 +11,69 @@ import { Result } from '@expo/results';
 import {
   FieldEqualityCondition,
   isSingleValueFieldEqualityCondition,
-  QuerySelectionModifiers,
-  QuerySelectionModifiersWithOrderByFragment,
-  QuerySelectionModifiersWithOrderByRaw,
+  OrderByOrdering,
 } from './BasePostgresEntityDatabaseAdapter';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
 import { SQLFragment } from './SQLOperator';
 import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
+
+export interface EntityLoaderOrderByClause<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> {
+  /**
+   * The field name to order by.
+   */
+  fieldName: TSelectedFields;
+
+  /**
+   * The OrderByOrdering to order by.
+   */
+  order: OrderByOrdering;
+}
+
+/**
+ * SQL modifiers that only affect the selection but not the projection.
+ */
+export interface EntityLoaderQuerySelectionModifiers<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> {
+  /**
+   * Order the entities by specified columns and orders.
+   */
+  orderBy?: readonly EntityLoaderOrderByClause<TFields, TSelectedFields>[];
+
+  /**
+   * Skip the specified number of entities queried before returning.
+   */
+  offset?: number;
+
+  /**
+   * Limit the number of entities returned.
+   */
+  limit?: number;
+}
+
+export interface EntityLoaderQuerySelectionModifiersWithOrderByRaw<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> extends EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> {
+  /**
+   * Order the entities by a raw SQL `ORDER BY` clause.
+   */
+  orderByRaw?: string;
+}
+
+export interface EntityLoaderQuerySelectionModifiersWithOrderByFragment<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> extends EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> {
+  /**
+   * Order the entities by a SQL fragment `ORDER BY` clause.
+   */
+  orderByFragment?: SQLFragment;
+}
 
 /**
  * Authorization-result-based knex entity loader for non-data-loader-based load methods.
@@ -60,8 +116,11 @@ export class AuthorizationResultBasedKnexEntityLoader<
    */
   async loadFirstByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: Omit<QuerySelectionModifiers<TFields>, 'limit'> &
-      Required<Pick<QuerySelectionModifiers<TFields>, 'orderBy'>>,
+    querySelectionModifiers: Omit<
+      EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields>,
+      'limit'
+    > &
+      Required<Pick<EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields>, 'orderBy'>>,
   ): Promise<Result<TEntity> | null> {
     const results = await this.loadManyByFieldEqualityConjunctionAsync(fieldEqualityOperands, {
       ...querySelectionModifiers,
@@ -76,7 +135,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields> = {},
+    querySelectionModifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> = {},
   ): Promise<readonly Result<TEntity>[]> {
     for (const fieldEqualityOperand of fieldEqualityOperands) {
       const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
@@ -101,7 +160,10 @@ export class AuthorizationResultBasedKnexEntityLoader<
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields> = {},
+    querySelectionModifiers: EntityLoaderQuerySelectionModifiersWithOrderByRaw<
+      TFields,
+      TSelectedFields
+    > = {},
   ): Promise<readonly Result<TEntity>[]> {
     const fieldObjects = await this.knexDataManager.loadManyByRawWhereClauseAsync(
       this.queryContext,
@@ -118,7 +180,10 @@ export class AuthorizationResultBasedKnexEntityLoader<
    */
   loadManyBySQL(
     fragment: SQLFragment,
-    modifiers: QuerySelectionModifiersWithOrderByFragment<TFields> = {},
+    modifiers: EntityLoaderQuerySelectionModifiersWithOrderByFragment<
+      TFields,
+      TSelectedFields
+    > = {},
   ): AuthorizationResultBasedSQLQueryBuilder<
     TFields,
     TIDField,
@@ -153,7 +218,7 @@ export class AuthorizationResultBasedSQLQueryBuilder<
     TSelectedFields
   >,
   TSelectedFields extends keyof TFields,
-> extends BaseSQLQueryBuilder<TFields, Result<TEntity>> {
+> extends BaseSQLQueryBuilder<TFields, TSelectedFields, Result<TEntity>> {
   constructor(
     private readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>,
     private readonly constructionUtils: EntityConstructionUtils<
@@ -166,7 +231,7 @@ export class AuthorizationResultBasedSQLQueryBuilder<
     >,
     private readonly queryContext: EntityQueryContext,
     sqlFragment: SQLFragment,
-    modifiers: QuerySelectionModifiersWithOrderByFragment<TFields>,
+    modifiers: EntityLoaderQuerySelectionModifiersWithOrderByFragment<TFields, TSelectedFields>,
   ) {
     super(sqlFragment, modifiers);
   }

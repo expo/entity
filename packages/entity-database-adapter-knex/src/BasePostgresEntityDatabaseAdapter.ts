@@ -75,24 +75,26 @@ export enum OrderByOrdering {
   DESCENDING = 'desc',
 }
 
+export interface PostgresOrderByClause<TFields extends Record<string, any>> {
+  /**
+   * The field name to order by.
+   */
+  fieldName: keyof TFields;
+
+  /**
+   * The OrderByOrdering to order by.
+   */
+  order: OrderByOrdering;
+}
+
 /**
  * SQL modifiers that only affect the selection but not the projection.
  */
-export interface QuerySelectionModifiers<TFields extends Record<string, any>> {
+export interface PostgresQuerySelectionModifiers<TFields extends Record<string, any>> {
   /**
    * Order the entities by specified columns and orders.
    */
-  orderBy?: {
-    /**
-     * The field name to order by.
-     */
-    fieldName: keyof TFields;
-
-    /**
-     * The OrderByOrdering to order by.
-     */
-    order: OrderByOrdering;
-  }[];
+  orderBy?: readonly PostgresOrderByClause<TFields>[];
 
   /**
    * Skip the specified number of entities queried before returning.
@@ -105,18 +107,18 @@ export interface QuerySelectionModifiers<TFields extends Record<string, any>> {
   limit?: number;
 }
 
-export interface QuerySelectionModifiersWithOrderByRaw<
+export interface PostgresQuerySelectionModifiersWithOrderByRaw<
   TFields extends Record<string, any>,
-> extends QuerySelectionModifiers<TFields> {
+> extends PostgresQuerySelectionModifiers<TFields> {
   /**
    * Order the entities by a raw SQL `ORDER BY` clause.
    */
   orderByRaw?: string;
 }
 
-export interface QuerySelectionModifiersWithOrderByFragment<
+export interface PostgresQuerySelectionModifiersWithOrderByFragment<
   TFields extends Record<string, any>,
-> extends QuerySelectionModifiers<TFields> {
+> extends PostgresQuerySelectionModifiers<TFields> {
   /**
    * Order the entities by a SQL fragment `ORDER BY` clause.
    */
@@ -159,7 +161,7 @@ export abstract class BasePostgresEntityDatabaseAdapter<
   async fetchManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
     queryContext: EntityQueryContext,
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: QuerySelectionModifiers<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     const tableFieldSingleValueOperands: TableFieldSingleValueEqualityCondition[] = [];
     const tableFieldMultipleValueOperands: TableFieldMultiValueEqualityCondition[] = [];
@@ -211,7 +213,7 @@ export abstract class BasePostgresEntityDatabaseAdapter<
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByRaw<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     const results = await this.fetchManyByRawWhereClauseInternalAsync(
       queryContext.getQueryInterface(),
@@ -245,7 +247,7 @@ export abstract class BasePostgresEntityDatabaseAdapter<
   async fetchManyBySQLFragmentAsync(
     queryContext: EntityQueryContext,
     sqlFragment: SQLFragment,
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByFragment<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByFragment<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     const results = await this.fetchManyBySQLFragmentInternalAsync(
       queryContext.getQueryInterface(),
@@ -267,7 +269,7 @@ export abstract class BasePostgresEntityDatabaseAdapter<
   ): Promise<object[]>;
 
   private convertToTableQueryModifiersWithOrderByRaw(
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByRaw<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByRaw<TFields>,
   ): TableQuerySelectionModifiersWithOrderByRaw {
     return {
       ...this.convertToTableQueryModifiers(querySelectionModifiers),
@@ -276,7 +278,7 @@ export abstract class BasePostgresEntityDatabaseAdapter<
   }
 
   private convertToTableQueryModifiersWithOrderByFragment(
-    querySelectionModifiers: QuerySelectionModifiersWithOrderByFragment<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByFragment<TFields>,
   ): TableQuerySelectionModifiersWithOrderByFragment {
     return {
       ...this.convertToTableQueryModifiers(querySelectionModifiers),
@@ -285,7 +287,7 @@ export abstract class BasePostgresEntityDatabaseAdapter<
   }
 
   private convertToTableQueryModifiers(
-    querySelectionModifiers: QuerySelectionModifiers<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): TableQuerySelectionModifiers {
     const orderBy = querySelectionModifiers.orderBy;
     return {
