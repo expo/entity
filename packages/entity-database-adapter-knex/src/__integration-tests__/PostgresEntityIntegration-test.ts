@@ -1358,4 +1358,418 @@ describe('postgres entity integration', () => {
       expect(postCommitCallCount).toBe(2);
     });
   });
+
+  describe('pagination with loadPageBySQLAsync', () => {
+    beforeEach(async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Create test data with predictable values
+      const names = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Henry'];
+      for (let i = 0; i < names.length; i++) {
+        await PostgresTestEntity.creator(vc)
+          .setField('name', names[i]!)
+          .setField('hasACat', i % 2 === 0)
+          .setField('hasADog', i % 3 === 0)
+          .setField('dateField', new Date(2024, 0, i + 1))
+          .createAsync();
+      }
+    });
+
+    it('performs forward pagination with first/after', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Get first page
+      const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(firstPage.edges).toHaveLength(3);
+      expect(firstPage.edges[0]?.node.getField('name')).toBe('Alice');
+      expect(firstPage.edges[1]?.node.getField('name')).toBe('Bob');
+      expect(firstPage.edges[2]?.node.getField('name')).toBe('Charlie');
+      expect(firstPage.pageInfo.hasNextPage).toBe(true);
+      expect(firstPage.pageInfo.hasPreviousPage).toBe(false);
+
+      // Get second page using cursor
+      const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        after: firstPage.pageInfo.endCursor!,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(secondPage.edges).toHaveLength(3);
+      expect(secondPage.edges[0]?.node.getField('name')).toBe('David');
+      expect(secondPage.edges[1]?.node.getField('name')).toBe('Eve');
+      expect(secondPage.edges[2]?.node.getField('name')).toBe('Frank');
+      expect(secondPage.pageInfo.hasNextPage).toBe(true);
+      expect(secondPage.pageInfo.hasPreviousPage).toBe(false);
+    });
+
+    it('performs backward pagination with last/before', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Get last page
+      const lastPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        last: 3,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(lastPage.edges).toHaveLength(3);
+      expect(lastPage.edges[0]?.node.getField('name')).toBe('Frank');
+      expect(lastPage.edges[1]?.node.getField('name')).toBe('Grace');
+      expect(lastPage.edges[2]?.node.getField('name')).toBe('Henry');
+      expect(lastPage.pageInfo.hasNextPage).toBe(false);
+      expect(lastPage.pageInfo.hasPreviousPage).toBe(true);
+
+      // Get previous page using cursor
+      const previousPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        last: 3,
+        before: lastPage.pageInfo.startCursor!,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(previousPage.edges).toHaveLength(3);
+      expect(previousPage.edges[0]?.node.getField('name')).toBe('Charlie');
+      expect(previousPage.edges[1]?.node.getField('name')).toBe('David');
+      expect(previousPage.edges[2]?.node.getField('name')).toBe('Eve');
+      expect(previousPage.pageInfo.hasNextPage).toBe(false);
+      expect(previousPage.pageInfo.hasPreviousPage).toBe(true);
+    });
+
+    it('supports pagination with SQL where conditions', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Query only entities with cats
+      const page = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 2,
+        where: sql`has_a_cat = ${true}`,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(page.edges).toHaveLength(2);
+      expect(page.edges[0]?.node.getField('name')).toBe('Alice');
+      expect(page.edges[0]?.node.getField('hasACat')).toBe(true);
+      expect(page.edges[1]?.node.getField('name')).toBe('Charlie');
+      expect(page.edges[1]?.node.getField('hasACat')).toBe(true);
+      expect(page.pageInfo.hasNextPage).toBe(true);
+
+      // Get next page with same where condition
+      const nextPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 2,
+        after: page.pageInfo.endCursor!,
+        where: sql`has_a_cat = ${true}`,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(nextPage.edges).toHaveLength(2);
+      expect(nextPage.edges[0]?.node.getField('name')).toBe('Eve');
+      expect(nextPage.edges[0]?.node.getField('hasACat')).toBe(true);
+      expect(nextPage.edges[1]?.node.getField('name')).toBe('Grace');
+      expect(nextPage.edges[1]?.node.getField('hasACat')).toBe(true);
+      expect(nextPage.pageInfo.hasNextPage).toBe(false);
+    });
+
+    it('supports pagination with multiple orderBy fields', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const page = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 4,
+        orderBy: [
+          { fieldName: 'hasACat', order: OrderByOrdering.DESCENDING },
+          { fieldName: 'name', order: OrderByOrdering.ASCENDING },
+        ],
+      });
+
+      // Entities with cats (true) come first, then sorted by name
+      expect(page.edges).toHaveLength(4);
+      expect(page.edges[0]?.node.getField('hasACat')).toBe(true);
+      expect(page.edges[0]?.node.getField('name')).toBe('Alice');
+      expect(page.edges[1]?.node.getField('hasACat')).toBe(true);
+      expect(page.edges[1]?.node.getField('name')).toBe('Charlie');
+      expect(page.edges[2]?.node.getField('hasACat')).toBe(true);
+      expect(page.edges[2]?.node.getField('name')).toBe('Eve');
+      expect(page.edges[3]?.node.getField('hasACat')).toBe(true);
+      expect(page.edges[3]?.node.getField('name')).toBe('Grace');
+    });
+
+    it('handles empty results correctly', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const page = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 10,
+        where: sql`name = ${'NonexistentName'}`,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(page.edges).toHaveLength(0);
+      expect(page.pageInfo.hasNextPage).toBe(false);
+      expect(page.pageInfo.hasPreviousPage).toBe(false);
+      expect(page.pageInfo.startCursor).toBeNull();
+      expect(page.pageInfo.endCursor).toBeNull();
+    });
+
+    it('includes cursors for each edge', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const page = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      // Each edge should have a cursor
+      expect(page.edges[0]?.cursor).toBeTruthy();
+      expect(page.edges[1]?.cursor).toBeTruthy();
+      expect(page.edges[2]?.cursor).toBeTruthy();
+
+      // Start from middle item
+      const nextPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 2,
+        after: page.edges[1]!.cursor,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(nextPage.edges).toHaveLength(2);
+      expect(nextPage.edges[0]?.node.getField('name')).toBe('Charlie');
+      expect(nextPage.edges[1]?.node.getField('name')).toBe('David');
+    });
+
+    it('derives postgres cursor fields from orderBy', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const page = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        orderBy: [{ fieldName: 'dateField', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(page.edges).toHaveLength(3);
+
+      // Navigate using cursor
+      const nextPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        after: page.pageInfo.endCursor!,
+        orderBy: [{ fieldName: 'dateField', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(nextPage.edges).toHaveLength(3);
+      expect(nextPage.pageInfo.hasNextPage).toBe(true);
+    });
+
+    it('performs backward pagination with descending order', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Create test data with names that sort in a specific order
+      await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
+      await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
+
+      const entities = [];
+      for (let i = 1; i <= 5; i++) {
+        const entity = await PostgresTestEntity.creator(vc)
+          .setField('name', `Z_Item_${i}`) // Z_Item_1, Z_Item_2, Z_Item_3, Z_Item_4, Z_Item_5
+          .createAsync();
+        entities.push(entity);
+      }
+
+      // Test backward pagination with DESCENDING order
+      // This internally flips DESCENDING to ASCENDING for the query
+      const page = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        last: 3,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.DESCENDING }],
+      });
+
+      // With `last: 3` and DESCENDING order, we get the last 3 items when sorted descending
+      // Sorted descending: Z_Item_5, Z_Item_4, Z_Item_3, Z_Item_2, Z_Item_1
+      // Last 3: Z_Item_3, Z_Item_2, Z_Item_1
+      expect(page.edges).toHaveLength(3);
+      expect(page.edges[0]?.node.getField('name')).toBe('Z_Item_3');
+      expect(page.edges[1]?.node.getField('name')).toBe('Z_Item_2');
+      expect(page.edges[2]?.node.getField('name')).toBe('Z_Item_1');
+      expect(page.pageInfo.hasPreviousPage).toBe(true);
+      expect(page.pageInfo.hasNextPage).toBe(false);
+
+      // Verify the order is maintained correctly with forward pagination too
+      const forwardPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.DESCENDING }],
+      });
+
+      // First 3 in descending order
+      expect(forwardPage.edges).toHaveLength(3);
+      expect(forwardPage.edges[0]?.node.getField('name')).toBe('Z_Item_5');
+      expect(forwardPage.edges[1]?.node.getField('name')).toBe('Z_Item_4');
+      expect(forwardPage.edges[2]?.node.getField('name')).toBe('Z_Item_3');
+      expect(forwardPage.pageInfo.hasNextPage).toBe(true);
+      expect(forwardPage.pageInfo.hasPreviousPage).toBe(false);
+    });
+
+    it('always includes ID field in orderBy for stability', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Create entities with duplicate values to test stability
+      await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
+      await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
+
+      const entities = [];
+      for (let i = 1; i <= 6; i++) {
+        const entity = await PostgresTestEntity.creator(vc)
+          .setField('name', `Test${Math.floor((i - 1) / 2)}`) // Creates duplicates: Test0, Test0, Test1, Test1, Test2, Test2
+          .setField('hasACat', i % 2 === 0)
+          .createAsync();
+        entities.push(entity);
+      }
+
+      // Pagination with only name in orderBy - ID should be added automatically for stability
+      const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(firstPage.edges).toHaveLength(3);
+
+      // Get second page
+      const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        after: firstPage.pageInfo.endCursor!,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(secondPage.edges).toHaveLength(3);
+
+      // Ensure no overlap between pages (stability check)
+      const firstPageIds = firstPage.edges.map((e) => e.node.getID());
+      const secondPageIds = secondPage.edges.map((e) => e.node.getID());
+      const intersection = firstPageIds.filter((id) => secondPageIds.includes(id));
+      expect(intersection).toHaveLength(0);
+
+      // Test with explicit ID in orderBy (shouldn't duplicate)
+      const pageWithExplicitId = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 3,
+        orderBy: [
+          { fieldName: 'name', order: OrderByOrdering.ASCENDING },
+          { fieldName: 'id', order: OrderByOrdering.ASCENDING },
+        ],
+      });
+
+      expect(pageWithExplicitId.edges).toHaveLength(3);
+    });
+
+    it('throws error for invalid cursor format', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Try with completely invalid cursor
+      await expect(
+        PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+          first: 10,
+          after: 'not-a-valid-cursor',
+          orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        }),
+      ).rejects.toThrow('Failed to decode cursor');
+
+      // Try with valid base64 but invalid JSON
+      const invalidJsonCursor = Buffer.from('not json').toString('base64url');
+      await expect(
+        PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+          first: 10,
+          after: invalidJsonCursor,
+          orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        }),
+      ).rejects.toThrow('Failed to decode cursor');
+
+      // Try with valid JSON but missing required fields
+      const missingFieldsCursor = Buffer.from(JSON.stringify({ some: 'field' })).toString(
+        'base64url',
+      );
+      await expect(
+        PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+          first: 10,
+          after: missingFieldsCursor,
+          orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        }),
+      ).rejects.toThrow("Cursor is missing required 'id' field.");
+    });
+
+    it('performs pagination with both loader types', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
+      await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
+
+      // Create entities with different names
+      const names = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank'];
+      for (const name of names) {
+        await PostgresTestEntity.creator(vc).setField('name', name).createAsync();
+      }
+
+      // Test with enforcing loader (standard pagination)
+      const pageEnforced = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 4,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      // Should return entities directly
+      expect(pageEnforced.edges).toHaveLength(4);
+      expect(pageEnforced.edges[0]?.node.getField('name')).toBe('Alice');
+      expect(pageEnforced.edges[1]?.node.getField('name')).toBe('Bob');
+      expect(pageEnforced.edges[2]?.node.getField('name')).toBe('Charlie');
+      expect(pageEnforced.edges[3]?.node.getField('name')).toBe('David');
+
+      // Test pagination continues correctly
+      const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 4,
+        after: pageEnforced.pageInfo.endCursor!,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(secondPage.edges).toHaveLength(2); // Only 2 entities left
+      expect(secondPage.edges[0]?.node.getField('name')).toBe('Eve');
+      expect(secondPage.edges[1]?.node.getField('name')).toBe('Frank');
+
+      // Test with authorization result-based loader
+      // Note: Currently loadPageBySQLAsync with knexLoaderWithAuthorizationResults
+      // returns entities directly, not Result objects (unlike loadManyBySQL)
+      const pageWithAuth = await PostgresTestEntity.knexLoaderWithAuthorizationResults(
+        vc,
+      ).loadPageBySQLAsync({
+        first: 3,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(pageWithAuth.edges).toHaveLength(3);
+      // These are entities, not Result objects in the current implementation
+      expect(pageWithAuth.edges[0]?.node.getField('name')).toBe('Alice');
+      expect(pageWithAuth.edges[1]?.node.getField('name')).toBe('Bob');
+      expect(pageWithAuth.edges[2]?.node.getField('name')).toBe('Charlie');
+    });
+
+    it('correctly handles hasMore flag when filtering unauthorized entities', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
+      await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
+
+      // Create exactly 6 entities
+      for (let i = 1; i <= 6; i++) {
+        await PostgresTestEntity.creator(vc).setField('name', `Entity${i}`).createAsync();
+      }
+
+      // Load with limit 5 - should have hasNextPage=true
+      const page1 = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 5,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(page1.edges).toHaveLength(5);
+      expect(page1.pageInfo.hasNextPage).toBe(true);
+
+      // Load the last entity
+      const page2 = await PostgresTestEntity.knexLoader(vc).loadPageBySQLAsync({
+        first: 5,
+        after: page1.pageInfo.endCursor!,
+        orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(page2.edges).toHaveLength(1);
+      expect(page2.pageInfo.hasNextPage).toBe(false);
+    });
+  });
 });

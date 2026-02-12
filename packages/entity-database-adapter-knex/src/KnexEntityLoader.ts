@@ -54,7 +54,10 @@ export class KnexEntityLoader<
     TPrivacyPolicy,
     TSelectedFields
   > {
-    return new EnforcingKnexEntityLoader(this.withAuthorizationResults());
+    return this.viewerContext
+      .getViewerScopedEntityCompanionForClass(this.entityClass)
+      .getKnexLoaderFactory()
+      .forLoadEnforcing(this.queryContext, { previousValue: null, cascadingDeleteCause: null });
   }
 
   /**

@@ -10,6 +10,7 @@ export enum EntityMetricsLoadType {
   LOAD_MANY_RAW,
   LOAD_MANY_SQL,
   LOAD_ONE,
+  LOAD_PAGE,
 }
 
 /**

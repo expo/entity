@@ -35,6 +35,7 @@ export function installEntityTableDataCoordinatorExtensions(): void {
     TIDField extends keyof TFields,
   >(this: EntityTableDataCoordinator<TFields, TIDField>): EntityKnexDataManager<TFields, TIDField> {
     return (this[KNEX_DATA_MANAGER] ??= new EntityKnexDataManager(
+      this.entityConfiguration,
       requireBasePostgresAdapter(this.databaseAdapter),
       this.metricsAdapter,
       this.entityClassName,

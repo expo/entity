@@ -11,6 +11,7 @@ import {
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
   EntityDatabaseAdapterNotNullConstraintError,
+  EntityDatabaseAdapterPaginationCursorInvalidError,
   EntityDatabaseAdapterTransientError,
   EntityDatabaseAdapterUniqueConstraintError,
   EntityDatabaseAdapterUnknownError,
@@ -81,6 +82,14 @@ describe(EntityDatabaseAdapterError, () => {
     expect(excessiveDeleteError.state).toBe(EntityErrorState.PERMANENT);
     expect(excessiveDeleteError.code).toBe(
       EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_EXCESSIVE_DELETE_RESULT,
+    );
+
+    const paginationCursorInvalidError = new EntityDatabaseAdapterPaginationCursorInvalidError(
+      'test',
+    );
+    expect(paginationCursorInvalidError.state).toBe(EntityErrorState.PERMANENT);
+    expect(paginationCursorInvalidError.code).toBe(
+      EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_PAGINATION_CURSOR_INVALID,
     );
   });
 });

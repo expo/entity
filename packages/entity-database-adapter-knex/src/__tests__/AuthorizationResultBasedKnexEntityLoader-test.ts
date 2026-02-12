@@ -12,12 +12,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader';
 import { OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
+import { sql } from '../SQLOperator';
 import {
   TestEntity,
   testEntityConfiguration,
   TestEntityPrivacyPolicy,
   TestFields,
 } from './fixtures/TestEntity';
+import {
+  TestPaginationEntity,
+  testPaginationEntityConfiguration,
+  TestPaginationPrivacyPolicy,
+  TestPaginationFields,
+} from './fixtures/TestPaginationEntity';
 import { EntityKnexDataManager } from '../internal/EntityKnexDataManager';
 
 describe(AuthorizationResultBasedKnexEntityLoader, () => {
@@ -272,5 +279,442 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
         anything(),
       ),
     ).once();
+  });
+
+  describe('loads entities with loadManyBySQL', () => {
+    it('returns entities with authorization results', async () => {
+      const privacyPolicy = new TestEntityPrivacyPolicy();
+      const spiedPrivacyPolicy = spy(privacyPolicy);
+      const viewerContext = instance(mock(ViewerContext));
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              'customIdField',
+              ViewerContext,
+              TestEntity
+            >
+          >(),
+        );
+      const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+      const queryContext = instance(mock<EntityQueryContext>());
+
+      const knexDataManagerMock =
+        mock<EntityKnexDataManager<TestFields, 'customIdField'>>(EntityKnexDataManager);
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
+      when(
+        knexDataManagerMock.loadManyBySQLFragmentAsync(queryContext, anything(), anything()),
+      ).thenResolve([
+        {
+          customIdField: id1,
+          stringField: 'test1',
+          intField: 1,
+          testIndexedField: '1',
+          dateField: new Date(),
+          nullableField: null,
+        },
+        {
+          customIdField: id2,
+          stringField: 'test2',
+          intField: 2,
+          testIndexedField: '2',
+          dateField: new Date(),
+          nullableField: null,
+        },
+      ]);
+
+      const constructionUtils = new EntityConstructionUtils(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        testEntityConfiguration,
+        TestEntity,
+        /* entitySelectedFields */ undefined,
+        privacyPolicy,
+        metricsAdapter,
+      );
+
+      const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
+        queryContext,
+        instance(knexDataManagerMock),
+        metricsAdapter,
+        constructionUtils,
+      );
+
+      const queryBuilder = knexEntityLoader.loadManyBySQL(sql`intField > ${0}`);
+      const results = await queryBuilder.executeAsync();
+
+      expect(results).toHaveLength(2);
+      expect(results[0]!.ok).toBe(true);
+      expect(results[1]!.ok).toBe(true);
+
+      const entity1 = results[0]!.enforceValue();
+      const entity2 = results[1]!.enforceValue();
+      expect(entity1.getField('stringField')).toEqual('test1');
+      expect(entity2.getField('stringField')).toEqual('test2');
+
+      verify(
+        spiedPrivacyPolicy.authorizeReadAsync(
+          viewerContext,
+          queryContext,
+          privacyPolicyEvaluationContext,
+          anyOfClass(TestEntity),
+          anything(),
+        ),
+      ).twice();
+    });
+
+    it('supports chaining query builder methods', async () => {
+      const privacyPolicy = new TestEntityPrivacyPolicy();
+      const viewerContext = instance(mock(ViewerContext));
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              'customIdField',
+              ViewerContext,
+              TestEntity
+            >
+          >(),
+        );
+      const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+      const queryContext = instance(mock<EntityQueryContext>());
+
+      const knexDataManagerMock =
+        mock<EntityKnexDataManager<TestFields, 'customIdField'>>(EntityKnexDataManager);
+
+      when(
+        knexDataManagerMock.loadManyBySQLFragmentAsync(queryContext, anything(), anything()),
+      ).thenCall(async (_context, _fragment, modifiers) => {
+        // Verify the modifiers are passed correctly
+        expect(modifiers?.limit).toEqual(5);
+        expect(modifiers?.orderBy).toEqual([
+          { fieldName: 'intField', order: OrderByOrdering.DESCENDING },
+        ]);
+        return [
+          {
+            customIdField: uuidv4(),
+            stringField: 'result',
+            intField: 10,
+            testIndexedField: '1',
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ];
+      });
+
+      const constructionUtils = new EntityConstructionUtils(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        testEntityConfiguration,
+        TestEntity,
+        /* entitySelectedFields */ undefined,
+        privacyPolicy,
+        metricsAdapter,
+      );
+
+      const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
+        queryContext,
+        instance(knexDataManagerMock),
+        metricsAdapter,
+        constructionUtils,
+      );
+
+      const results = await knexEntityLoader
+        .loadManyBySQL(sql`status = ${'active'}`)
+        .orderBy('intField', OrderByOrdering.DESCENDING)
+        .limit(5)
+        .executeAsync();
+
+      expect(results).toHaveLength(1);
+      expect(results[0]!.ok).toBe(true);
+    });
+  });
+
+  describe('loads entities with loadPageBySQLAsync', () => {
+    it('returns paginated entities with forward pagination', async () => {
+      const privacyPolicy = new TestEntityPrivacyPolicy();
+      const spiedPrivacyPolicy = spy(privacyPolicy);
+      const viewerContext = instance(mock(ViewerContext));
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              'customIdField',
+              ViewerContext,
+              TestEntity
+            >
+          >(),
+        );
+      const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+      const queryContext = instance(mock<EntityQueryContext>());
+
+      const knexDataManagerMock =
+        mock<EntityKnexDataManager<TestFields, 'customIdField'>>(EntityKnexDataManager);
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
+      when(knexDataManagerMock.loadPageBySQLFragmentAsync(queryContext, anything())).thenResolve({
+        edges: [
+          {
+            cursor: 'cursor1',
+            node: {
+              customIdField: id1,
+              stringField: 'page1',
+              intField: 1,
+              testIndexedField: '1',
+              dateField: new Date(),
+              nullableField: null,
+            },
+          },
+          {
+            cursor: 'cursor2',
+            node: {
+              customIdField: id2,
+              stringField: 'page2',
+              intField: 2,
+              testIndexedField: '2',
+              dateField: new Date(),
+              nullableField: null,
+            },
+          },
+        ],
+        pageInfo: {
+          hasNextPage: true,
+          hasPreviousPage: false,
+          startCursor: 'cursor1',
+          endCursor: 'cursor2',
+        },
+      });
+
+      const constructionUtils = new EntityConstructionUtils(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        testEntityConfiguration,
+        TestEntity,
+        /* entitySelectedFields */ undefined,
+        privacyPolicy,
+        metricsAdapter,
+      );
+
+      const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
+        queryContext,
+        instance(knexDataManagerMock),
+        metricsAdapter,
+        constructionUtils,
+      );
+
+      const connection = await knexEntityLoader.loadPageBySQLAsync({
+        first: 10,
+        where: sql`intField > ${0}`,
+        orderBy: [{ fieldName: 'intField', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(connection.edges).toHaveLength(2);
+      expect(connection.edges[0]!.cursor).toEqual('cursor1');
+      expect(connection.edges[0]!.node.getField('stringField')).toEqual('page1');
+      expect(connection.edges[1]!.cursor).toEqual('cursor2');
+      expect(connection.edges[1]!.node.getField('stringField')).toEqual('page2');
+
+      expect(connection.pageInfo).toEqual({
+        hasNextPage: true,
+        hasPreviousPage: false,
+        startCursor: 'cursor1',
+        endCursor: 'cursor2',
+      });
+
+      verify(
+        spiedPrivacyPolicy.authorizeReadAsync(
+          viewerContext,
+          queryContext,
+          privacyPolicyEvaluationContext,
+          anyOfClass(TestEntity),
+          anything(),
+        ),
+      ).twice();
+    });
+
+    it('filters out entities that fail authorization', async () => {
+      const privacyPolicy = new TestPaginationPrivacyPolicy();
+      const viewerContext = instance(mock(ViewerContext));
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestPaginationFields,
+              'id',
+              ViewerContext,
+              TestPaginationEntity
+            >
+          >(),
+        );
+      const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+      const queryContext = instance(mock<EntityQueryContext>());
+
+      const knexDataManagerMock =
+        mock<EntityKnexDataManager<TestPaginationFields, 'id'>>(EntityKnexDataManager);
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
+      const id3 = uuidv4();
+      when(knexDataManagerMock.loadPageBySQLFragmentAsync(queryContext, anything())).thenResolve({
+        edges: [
+          {
+            cursor: 'cursor1',
+            node: {
+              id: id1,
+              name: 'Entity 1',
+              status: 'active',
+              createdAt: new Date('2024-01-01'),
+              score: 100,
+            },
+          },
+          {
+            cursor: 'cursor2',
+            node: {
+              id: id2,
+              name: 'Entity 2',
+              status: 'unauthorized', // This will fail authorization
+              createdAt: new Date('2024-01-02'),
+              score: 200,
+            },
+          },
+          {
+            cursor: 'cursor3',
+            node: {
+              id: id3,
+              name: 'Entity 3',
+              status: 'active',
+              createdAt: new Date('2024-01-03'),
+              score: 300,
+            },
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: 'cursor1',
+          endCursor: 'cursor3',
+        },
+      });
+
+      const constructionUtils = new EntityConstructionUtils(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        testPaginationEntityConfiguration,
+        TestPaginationEntity,
+        /* entitySelectedFields */ undefined,
+        privacyPolicy,
+        metricsAdapter,
+      );
+
+      const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
+        queryContext,
+        instance(knexDataManagerMock),
+        metricsAdapter,
+        constructionUtils,
+      );
+
+      const connection = await knexEntityLoader.loadPageBySQLAsync({
+        first: 10,
+        where: sql`score > ${0}`,
+        orderBy: [{ fieldName: 'createdAt', order: OrderByOrdering.ASCENDING }],
+      });
+
+      // Should only have 2 entities (unauthorized one filtered out)
+      expect(connection.edges).toHaveLength(2);
+      expect(connection.edges[0]!.node.getField('name')).toEqual('Entity 1');
+      expect(connection.edges[1]!.node.getField('name')).toEqual('Entity 3');
+
+      // Cursors should be maintained from successful entities only
+      expect(connection.edges[0]!.cursor).toEqual('cursor1');
+      expect(connection.edges[1]!.cursor).toEqual('cursor3');
+
+      expect(connection.pageInfo).toEqual({
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: 'cursor1',
+        endCursor: 'cursor3',
+      });
+    });
+
+    it('supports backward pagination with last/before', async () => {
+      const privacyPolicy = new TestEntityPrivacyPolicy();
+      const viewerContext = instance(mock(ViewerContext));
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              'customIdField',
+              ViewerContext,
+              TestEntity
+            >
+          >(),
+        );
+      const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+      const queryContext = instance(mock<EntityQueryContext>());
+
+      const knexDataManagerMock =
+        mock<EntityKnexDataManager<TestFields, 'customIdField'>>(EntityKnexDataManager);
+
+      when(knexDataManagerMock.loadPageBySQLFragmentAsync(queryContext, anything())).thenResolve({
+        edges: [
+          {
+            cursor: 'cursor5',
+            node: {
+              customIdField: uuidv4(),
+              stringField: 'item5',
+              intField: 5,
+              testIndexedField: '5',
+              dateField: new Date(),
+              nullableField: null,
+            },
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: true,
+          startCursor: 'cursor5',
+          endCursor: 'cursor5',
+        },
+      });
+
+      const constructionUtils = new EntityConstructionUtils(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        testEntityConfiguration,
+        TestEntity,
+        /* entitySelectedFields */ undefined,
+        privacyPolicy,
+        metricsAdapter,
+      );
+
+      const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
+        queryContext,
+        instance(knexDataManagerMock),
+        metricsAdapter,
+        constructionUtils,
+      );
+
+      const connection = await knexEntityLoader.loadPageBySQLAsync({
+        last: 5,
+        before: 'someCursor',
+        orderBy: [{ fieldName: 'intField', order: OrderByOrdering.ASCENDING }],
+      });
+
+      expect(connection.edges).toHaveLength(1);
+      expect(connection.pageInfo.hasPreviousPage).toBe(true);
+      expect(connection.pageInfo.hasNextPage).toBe(false);
+    });
   });
 });
