@@ -89,6 +89,21 @@ export class StubPostgresDatabaseAdapter<
     return [...results];
   }
 
+  protected async fetchOneWhereInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    tableColumns: readonly string[],
+    tableTuple: readonly any[],
+  ): Promise<object | null> {
+    const results = await this.fetchManyWhereInternalAsync(
+      queryInterface,
+      tableName,
+      tableColumns,
+      [tableTuple],
+    );
+    return results[0] ?? null;
+  }
+
   private static compareByOrderBys(
     orderBys: {
       columnName: string;

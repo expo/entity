@@ -78,6 +78,21 @@ export class StubDatabaseAdapter<
     return [...results];
   }
 
+  protected async fetchOneWhereInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    tableColumns: readonly string[],
+    tableTuple: readonly any[],
+  ): Promise<object | null> {
+    const results = await this.fetchManyWhereInternalAsync(
+      queryInterface,
+      tableName,
+      tableColumns,
+      [tableTuple],
+    );
+    return results[0] ?? null;
+  }
+
   private generateRandomID(): any {
     const idSchemaField = this.entityConfiguration2.schema.get(this.entityConfiguration2.idField);
     invariant(

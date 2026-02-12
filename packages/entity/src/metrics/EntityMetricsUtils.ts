@@ -30,6 +30,29 @@ export const timeAndLogLoadEventAsync =
     return result;
   };
 
+export const timeAndLogLoadOneEventAsync =
+  (
+    metricsAdapter: IEntityMetricsAdapter,
+    loadType: EntityMetricsLoadType,
+    entityClassName: string,
+    queryContext: EntityQueryContext,
+  ) =>
+  async <TFields>(promise: Promise<Readonly<TFields> | null>) => {
+    const startTime = Date.now();
+    const result = await promise;
+    const endTime = Date.now();
+
+    metricsAdapter.logDataManagerLoadEvent({
+      type: loadType,
+      isInTransaction: queryContext.isInTransaction(),
+      entityClassName,
+      duration: endTime - startTime,
+      count: result ? 1 : 0,
+    });
+
+    return result;
+  };
+
 export const timeAndLogLoadMapEventAsync =
   (
     metricsAdapter: IEntityMetricsAdapter,

@@ -1,23 +1,22 @@
-import {
-  Entity,
-  EntityCompanionDefinition,
-  EntityConfiguration,
-  EntityEdgeDeletionBehavior,
-  UUIDField,
-  EntityAuthorizationAction,
-  EntityPrivacyPolicy,
-  EntityPrivacyPolicyEvaluationContext,
-  EntityQueryContext,
-  ReadonlyEntity,
-  ViewerContext,
-  AlwaysAllowPrivacyPolicyRule,
-  AlwaysDenyPrivacyPolicyRule,
-  RuleEvaluationResult,
-} from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 import nullthrows from 'nullthrows';
 
-import { createUnitTestPostgresEntityCompanionProvider } from '../../__tests__/fixtures/createUnitTestPostgresEntityCompanionProvider';
+import { Entity } from '../../Entity';
+import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
+import { EntityConfiguration } from '../../EntityConfiguration';
+import { EntityEdgeDeletionBehavior } from '../../EntityFieldDefinition';
+import { UUIDField } from '../../EntityFields';
+import {
+  EntityAuthorizationAction,
+  EntityPrivacyPolicy,
+  EntityPrivacyPolicyEvaluationContext,
+} from '../../EntityPrivacyPolicy';
+import { EntityQueryContext } from '../../EntityQueryContext';
+import { ReadonlyEntity } from '../../ReadonlyEntity';
+import { ViewerContext } from '../../ViewerContext';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
+import { AlwaysDenyPrivacyPolicyRule } from '../../rules/AlwaysDenyPrivacyPolicyRule';
+import { RuleEvaluationResult } from '../../rules/PrivacyPolicyRule';
 import {
   canViewerDeleteAsync,
   canViewerUpdateAsync,
@@ -26,6 +25,7 @@ import {
   getCanViewerDeleteResultAsync,
   getCanViewerUpdateResultAsync,
 } from '../EntityPrivacyUtils';
+import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider';
 
 function assertEntityPrivacyEvaluationResultFailure(
   evaluationResult: EntityPrivacyEvaluationResult,
@@ -50,7 +50,7 @@ function expectAuthorizationError(
 
 describe(canViewerUpdateAsync, () => {
   it('appropriately executes update privacy policy', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestDenyDeleteEntity.creator(viewerContext).createAsync();
     const canViewerUpdate = await canViewerUpdateAsync(SimpleTestDenyDeleteEntity, testEntity);
@@ -63,7 +63,7 @@ describe(canViewerUpdateAsync, () => {
   });
 
   it('denies when policy denies', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     const canViewerUpdate = await canViewerUpdateAsync(SimpleTestDenyUpdateEntity, testEntity);
@@ -79,7 +79,7 @@ describe(canViewerUpdateAsync, () => {
   });
 
   it('rethrows non-authorization errors', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestThrowOtherErrorEntity.creator(viewerContext).createAsync();
     await expect(canViewerUpdateAsync(SimpleTestThrowOtherErrorEntity, testEntity)).rejects.toThrow(
@@ -93,7 +93,7 @@ describe(canViewerUpdateAsync, () => {
 
 describe(canViewerDeleteAsync, () => {
   it('appropriately executes update privacy policy', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     const canViewerDelete = await canViewerDeleteAsync(SimpleTestDenyUpdateEntity, testEntity);
@@ -106,7 +106,7 @@ describe(canViewerDeleteAsync, () => {
   });
 
   it('denies when policy denies', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestDenyDeleteEntity.creator(viewerContext).createAsync();
     const canViewerDelete = await canViewerDeleteAsync(SimpleTestDenyDeleteEntity, testEntity);
@@ -122,7 +122,7 @@ describe(canViewerDeleteAsync, () => {
   });
 
   it('denies when recursive policy denies for CASCADE_DELETE', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     // add another entity referencing testEntity that would cascade deletion to itself when testEntity is deleted
@@ -142,7 +142,7 @@ describe(canViewerDeleteAsync, () => {
   });
 
   it('denies when recursive policy denies for SET_NULL', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     // add another entity referencing testEntity that would set null to its column when testEntity is deleted
@@ -162,7 +162,7 @@ describe(canViewerDeleteAsync, () => {
   });
 
   it('allows when recursive policy allows for CASCADE_DELETE and SET_NULL', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     // add another entity referencing testEntity that would cascade deletion to itself when testEntity is deleted
@@ -184,7 +184,7 @@ describe(canViewerDeleteAsync, () => {
   });
 
   it('rethrows non-authorization errors', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestThrowOtherErrorEntity.creator(viewerContext).createAsync();
     await expect(canViewerDeleteAsync(SimpleTestThrowOtherErrorEntity, testEntity)).rejects.toThrow(
@@ -196,7 +196,7 @@ describe(canViewerDeleteAsync, () => {
   });
 
   it('returns false when edge cannot be read', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     const leafEntity = await LeafDenyReadEntity.creator(viewerContext)
@@ -215,7 +215,7 @@ describe(canViewerDeleteAsync, () => {
   });
 
   it('rethrows non-authorization edge read errors', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await SimpleTestDenyUpdateEntity.creator(viewerContext).createAsync();
     await SimpleTestThrowOtherErrorEntity.creator(viewerContext)
@@ -230,7 +230,7 @@ describe(canViewerDeleteAsync, () => {
   });
 
   it('supports running within a transaction', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const canViewerDelete = await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
       'postgres',
@@ -270,7 +270,7 @@ describe(canViewerDeleteAsync, () => {
   });
 
   it('evaluates privacy policy with synthetically nullified field for SET_NULL', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await ParentEntity.creator(viewerContext).createAsync();
 
@@ -289,7 +289,7 @@ describe(canViewerDeleteAsync, () => {
   });
 
   it('denies deletion when privacy policy fails with synthetically nullified field for SET_NULL', async () => {
-    const companionProvider = createUnitTestPostgresEntityCompanionProvider();
+    const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
     const testEntity = await ParentEntity.creator(viewerContext).createAsync();
 

@@ -101,6 +101,53 @@ export abstract class EntityDatabaseAdapter<
   ): Promise<object[]>;
 
   /**
+   * Fetch one objects where key is equal to value, null if no matching object exists.
+   * Returned object is not guaranteed to be deterministic. Most concrete implementations will implement this
+   * with a "first" or "limit 1" query.
+   *
+   * @param queryContext - query context with which to perform the fetch
+   * @param key - load key being queried
+   * @param values - load value being queried
+   * @returns object that matches the query for the value
+   */
+  async fetchOneWhereAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    queryContext: EntityQueryContext,
+    key: TLoadKey,
+    value: TLoadValue,
+  ): Promise<Readonly<TFields> | null> {
+    const keyDatabaseColumns = key.getDatabaseColumns(this.entityConfiguration);
+    const valueDatabaseValue = key.getDatabaseValues(value);
+
+    const result = await this.fetchOneWhereInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      keyDatabaseColumns,
+      valueDatabaseValue,
+    );
+
+    if (!result) {
+      return null;
+    }
+
+    return transformDatabaseObjectToFields(
+      this.entityConfiguration,
+      this.fieldTransformerMap,
+      result,
+    );
+  }
+
+  protected abstract fetchOneWhereInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    tableColumns: readonly string[],
+    tableTuple: readonly any[],
+  ): Promise<object | null>;
+
+  /**
    * Insert an object.
    *
    * @param queryContext - query context with which to perform the insert
