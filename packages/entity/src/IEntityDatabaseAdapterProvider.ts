@@ -1,7 +1,11 @@
 /* c8 ignore start - interface only */
 
+import { EntityCompanion } from './EntityCompanion';
 import { EntityConfiguration } from './EntityConfiguration';
 import { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
+import { ReadonlyEntity } from './ReadonlyEntity';
+import { ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';
+import { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
 
 /**
  * A database adapter provider vends database adapters for a particular database adapter type.
@@ -16,7 +20,17 @@ export interface IEntityDatabaseAdapterProvider {
   /**
    * Install any necessary extensions to the Entity system.
    */
-  installExtensions(): void;
+  installExtensions({
+    EntityCompanionClass,
+    EntityTableDataCoordinatorClass,
+    ViewerScopedEntityCompanionClass,
+    ReadonlyEntityClass,
+  }: {
+    EntityCompanionClass: typeof EntityCompanion;
+    EntityTableDataCoordinatorClass: typeof EntityTableDataCoordinator;
+    ViewerScopedEntityCompanionClass: typeof ViewerScopedEntityCompanion;
+    ReadonlyEntityClass: typeof ReadonlyEntity;
+  }): void;
 
   /**
    * Vend a database adapter.

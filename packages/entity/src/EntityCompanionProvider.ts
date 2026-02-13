@@ -11,6 +11,7 @@ import { IEntityCacheAdapterProvider } from './IEntityCacheAdapterProvider';
 import { IEntityDatabaseAdapterProvider } from './IEntityDatabaseAdapterProvider';
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
+import { ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';
 import { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
 import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { computeIfAbsent } from './utils/collections/maps';
@@ -167,7 +168,12 @@ export class EntityCompanionProvider {
           flavorDefinition.adapterProvider.getExtensionsKey(),
         )
       ) {
-        flavorDefinition.adapterProvider.installExtensions();
+        flavorDefinition.adapterProvider.installExtensions({
+          EntityCompanionClass: EntityCompanion,
+          EntityTableDataCoordinatorClass: EntityTableDataCoordinator,
+          ViewerScopedEntityCompanionClass: ViewerScopedEntityCompanion,
+          ReadonlyEntityClass: ReadonlyEntity,
+        });
         EntityCompanionProvider.installedExtensions.add(
           flavorDefinition.adapterProvider.getExtensionsKey(),
         );
