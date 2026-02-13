@@ -1,10 +1,12 @@
 import { ViewerContext } from '@expo/entity';
 import { CommentEntity } from './entities/CommentEntity';
 
+import { knexLoader, knexLoaderWithAuthorizationResults } from "@expo/entity-database-adapter-knex";
+
 // Chained calls
 const loadComments = async (viewerContext: ViewerContext) => {
   // Direct chaining with knex-specific method
-  const comments = await CommentEntity.knexLoader(viewerContext)
+  const comments = await knexLoader(CommentEntity, viewerContext)
     .loadManyByFieldEqualityConjunctionAsync([
       { fieldName: 'postId', fieldValue: '123' }
     ]);
@@ -15,8 +17,7 @@ const loadComments = async (viewerContext: ViewerContext) => {
     .loadByIDAsync('456');
 
   // With authorization results and knex method
-  const commentsWithAuth = await CommentEntity
-    .knexLoaderWithAuthorizationResults(viewerContext)
+  const commentsWithAuth = await knexLoaderWithAuthorizationResults(CommentEntity, viewerContext)
     .loadManyByRawWhereClauseAsync('postId = ?', ['456']);
 
   // Edge cases - these should NOT be transformed

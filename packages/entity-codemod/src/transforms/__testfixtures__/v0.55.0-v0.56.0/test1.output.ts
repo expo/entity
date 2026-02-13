@@ -2,10 +2,12 @@ import { ViewerContext } from '@expo/entity';
 import { UserEntity } from './entities/UserEntity';
 import { PostEntity } from './entities/PostEntity';
 
+import { knexLoader, knexLoaderWithAuthorizationResults } from "@expo/entity-database-adapter-knex";
+
 async function loadUser(viewerContext: ViewerContext) {
   // Basic loader calls - only transformed when using knex-specific methods
   const userLoader = UserEntity.loader(viewerContext);
-  const postLoader = PostEntity.knexLoader(viewerContext);
+  const postLoader = knexLoader(PostEntity, viewerContext);
 
   // These use knex-specific methods, so they should be transformed
   const posts = await postLoader.loadManyByFieldEqualityConjunctionAsync([
@@ -16,7 +18,7 @@ async function loadUser(viewerContext: ViewerContext) {
   ]);
 
   // Loader with authorization results - only transformed when using knex methods
-  const userLoaderWithAuth = UserEntity.knexLoaderWithAuthorizationResults(viewerContext);
+  const userLoaderWithAuth = knexLoaderWithAuthorizationResults(UserEntity, viewerContext);
   const rawResults = await userLoaderWithAuth.loadManyByRawWhereClauseAsync('age > ?', [18]);
 
   // Loader that doesn't use knex methods - should NOT be transformed
