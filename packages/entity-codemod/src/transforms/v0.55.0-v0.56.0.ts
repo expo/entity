@@ -83,9 +83,7 @@ function isKnexSpecificMethodUsed(j: API['jscodeshift'], node: any): boolean {
   return false;
 }
 
-function transformLoaderToKnexLoader(j: API['jscodeshift'], root: Collection<any>): boolean {
-  let transformed = false;
-
+function transformLoaderToKnexLoader(j: API['jscodeshift'], root: Collection<any>): void {
   // Find all entity expressions of the form `Entity.loader(viewerContext)`
   root
     .find(j.CallExpression, {
@@ -111,28 +109,20 @@ function transformLoaderToKnexLoader(j: API['jscodeshift'], root: Collection<any
         if (firstChar && firstChar === firstChar.toUpperCase()) {
           // Check if this loader uses knex-specific methods
           if (isKnexSpecificMethodUsed(j, path)) {
-            // Transform Entity.loader(viewerContext) → knexLoader(Entity, viewerContext)
-            const entityIdentifier = loaderCallee.object;
-            const args = loaderCallExpression.arguments;
-
-            j(path).replaceWith(
-              j.callExpression(j.identifier('knexLoader'), [entityIdentifier, ...args]),
-            );
-            transformed = true;
+            // Rename loader to knexLoader
+            if (loaderCallee.property.type === 'Identifier') {
+              loaderCallee.property.name = 'knexLoader';
+            }
           }
         }
       }
     });
-
-  return transformed;
 }
 
 function transformLoaderWithAuthorizationResultsToKnexLoaderWithAuthorizationResults(
   j: API['jscodeshift'],
   root: Collection<any>,
-): boolean {
-  let transformed = false;
-
+): void {
   // Find all entity expressions of the form `Entity.loaderWithAuthorizationResults(viewerContext)`
   root
     .find(j.CallExpression, {
@@ -158,88 +148,22 @@ function transformLoaderWithAuthorizationResultsToKnexLoaderWithAuthorizationRes
         if (firstChar && firstChar === firstChar.toUpperCase()) {
           // Check if this loader uses knex-specific methods
           if (isKnexSpecificMethodUsed(j, path)) {
-            // Transform Entity.loaderWithAuthorizationResults(viewerContext) → knexLoaderWithAuthorizationResults(Entity, viewerContext)
-            const entityIdentifier = loaderCallee.object;
-            const args = loaderCallExpression.arguments;
-
-            j(path).replaceWith(
-              j.callExpression(j.identifier('knexLoaderWithAuthorizationResults'), [
-                entityIdentifier,
-                ...args,
-              ]),
-            );
-            transformed = true;
+            // Rename loaderWithAuthorizationResults to knexLoaderWithAuthorizationResults
+            if (loaderCallee.property.type === 'Identifier') {
+              loaderCallee.property.name = 'knexLoaderWithAuthorizationResults';
+            }
           }
         }
       }
     });
-
-  return transformed;
-}
-
-function addKnexImportIfNeeded(
-  j: API['jscodeshift'],
-  root: Collection<any>,
-  needsKnexLoader: boolean,
-  needsKnexLoaderWithAuthorizationResults: boolean,
-): void {
-  if (!needsKnexLoader && !needsKnexLoaderWithAuthorizationResults) {
-    return;
-  }
-
-  const specifiers: string[] = [];
-  if (needsKnexLoader) {
-    specifiers.push('knexLoader');
-  }
-  if (needsKnexLoaderWithAuthorizationResults) {
-    specifiers.push('knexLoaderWithAuthorizationResults');
-  }
-
-  // Check if the import already exists
-  const existingImport = root.find(j.ImportDeclaration, {
-    source: { value: '@expo/entity-database-adapter-knex' },
-  });
-
-  if (existingImport.size() > 0) {
-    // Add specifiers to existing import
-    const importDecl = existingImport.get();
-    const existingSpecifierNames = new Set(
-      importDecl.node.specifiers?.map((s: any) => s.imported?.name).filter(Boolean) ?? [],
-    );
-
-    for (const specifier of specifiers) {
-      if (!existingSpecifierNames.has(specifier)) {
-        importDecl.node.specifiers?.push(j.importSpecifier(j.identifier(specifier)));
-      }
-    }
-  } else {
-    // Create new import declaration
-    const importSpecifiers = specifiers.map((s) => j.importSpecifier(j.identifier(s)));
-    const importDecl = j.importDeclaration(
-      importSpecifiers,
-      j.literal('@expo/entity-database-adapter-knex'),
-    );
-
-    // Add after the last import
-    const allImports = root.find(j.ImportDeclaration);
-    if (allImports.size() > 0) {
-      allImports.at(-1).insertAfter(importDecl);
-    } else {
-      // No imports, add at the top
-      root.get().node.program.body.unshift(importDecl);
-    }
-  }
 }
 
 export default function transformer(file: FileInfo, api: API, _options: Options): string {
   const j = api.jscodeshift;
   const root = j.withParser('ts')(file.source);
 
-  const needsKnexLoader = transformLoaderToKnexLoader(j, root);
-  const needsKnexLoaderWithAuthorizationResults =
-    transformLoaderWithAuthorizationResultsToKnexLoaderWithAuthorizationResults(j, root);
-
-  addKnexImportIfNeeded(j, root, needsKnexLoader, needsKnexLoaderWithAuthorizationResults);
+  transformLoaderToKnexLoader(j, root);
+  transformLoaderWithAuthorizationResultsToKnexLoaderWithAuthorizationResults(j, root);
 
   return root.toSource();
 }
