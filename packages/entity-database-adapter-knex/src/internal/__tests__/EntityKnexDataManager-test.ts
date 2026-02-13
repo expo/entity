@@ -18,6 +18,8 @@ import {
   when,
 } from 'ts-mockito';
 
+import { OrderByOrdering } from '../../BasePostgresEntityDatabaseAdapter';
+import { PaginationStrategy } from '../../PaginationStrategy';
 import { PostgresEntityDatabaseAdapter } from '../../PostgresEntityDatabaseAdapter';
 import {
   TestEntity,
@@ -250,6 +252,126 @@ describe(EntityKnexDataManager, () => {
         ).once();
 
         verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).never();
+      });
+    });
+  });
+
+  describe('pagination', () => {
+    describe('max page size validation', () => {
+      it('should throw when first exceeds maxPageSize', async () => {
+        const queryContext = instance(mock<EntityQueryContext>());
+        const databaseAdapterMock = mock<
+          PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>
+        >(PostgresEntityDatabaseAdapter);
+
+        // Configure the adapter to return a maxPageSize of 100
+        when(databaseAdapterMock.paginationMaxPageSize).thenReturn(100);
+
+        const entityDataManager = new EntityKnexDataManager(
+          testEntityConfiguration,
+          instance(databaseAdapterMock),
+          new NoOpEntityMetricsAdapter(),
+          TestEntity.name,
+        );
+
+        await expect(
+          entityDataManager.loadPageAsync(queryContext, {
+            first: 101,
+            pagination: {
+              strategy: PaginationStrategy.STANDARD,
+              orderBy: [{ fieldName: 'customIdField', order: OrderByOrdering.ASCENDING }],
+            },
+          }),
+        ).rejects.toThrow('first must not exceed maximum page size of 100');
+      });
+
+      it('should throw when last exceeds maxPageSize', async () => {
+        const queryContext = instance(mock<EntityQueryContext>());
+        const databaseAdapterMock = mock<
+          PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>
+        >(PostgresEntityDatabaseAdapter);
+
+        // Configure the adapter to return a maxPageSize of 100
+        when(databaseAdapterMock.paginationMaxPageSize).thenReturn(100);
+
+        const entityDataManager = new EntityKnexDataManager(
+          testEntityConfiguration,
+          instance(databaseAdapterMock),
+          new NoOpEntityMetricsAdapter(),
+          TestEntity.name,
+        );
+
+        await expect(
+          entityDataManager.loadPageAsync(queryContext, {
+            last: 101,
+            pagination: {
+              strategy: PaginationStrategy.STANDARD,
+              orderBy: [{ fieldName: 'customIdField', order: OrderByOrdering.ASCENDING }],
+            },
+          }),
+        ).rejects.toThrow('last must not exceed maximum page size of 100');
+      });
+
+      it('should allow first/last within maxPageSize', async () => {
+        const queryContext = instance(mock<EntityQueryContext>());
+        const databaseAdapterMock = mock<
+          PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>
+        >(PostgresEntityDatabaseAdapter);
+
+        // Configure the adapter to return a maxPageSize of 100
+        when(databaseAdapterMock.paginationMaxPageSize).thenReturn(100);
+        when(
+          databaseAdapterMock.fetchManyBySQLFragmentAsync(queryContext, anything(), anything()),
+        ).thenResolve([]);
+
+        const entityDataManager = new EntityKnexDataManager(
+          testEntityConfiguration,
+          instance(databaseAdapterMock),
+          new NoOpEntityMetricsAdapter(),
+          TestEntity.name,
+        );
+
+        // This should not throw
+        const result = await entityDataManager.loadPageAsync(queryContext, {
+          first: 100,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [{ fieldName: 'customIdField', order: OrderByOrdering.ASCENDING }],
+          },
+        });
+
+        expect(result.edges).toEqual([]);
+      });
+
+      it('should allow pagination when maxPageSize is not configured', async () => {
+        const queryContext = instance(mock<EntityQueryContext>());
+        const databaseAdapterMock = mock<
+          PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>
+        >(PostgresEntityDatabaseAdapter);
+
+        // Configure the adapter to return undefined for maxPageSize
+        when(databaseAdapterMock.paginationMaxPageSize).thenReturn(undefined);
+        when(
+          databaseAdapterMock.fetchManyBySQLFragmentAsync(queryContext, anything(), anything()),
+        ).thenResolve([]);
+
+        const entityDataManager = new EntityKnexDataManager(
+          testEntityConfiguration,
+          instance(databaseAdapterMock),
+          new NoOpEntityMetricsAdapter(),
+          TestEntity.name,
+        );
+
+        // This should not throw even with a large page size
+        const result = await entityDataManager.loadPageAsync(queryContext, {
+          first: 10000,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [{ fieldName: 'customIdField', order: OrderByOrdering.ASCENDING }],
+          },
+        });
+
+        expect(result.edges).toEqual([]);
       });
     });
   });
