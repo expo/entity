@@ -8,6 +8,7 @@ import {
   AuthorizationResultBasedSQLQueryBuilder,
 } from '../AuthorizationResultBasedKnexEntityLoader';
 import { EnforcingKnexEntityLoader } from '../EnforcingKnexEntityLoader';
+import { PaginationStrategy } from '../PaginationStrategy';
 import { sql } from '../SQLOperator';
 import { EntityKnexDataManager } from '../internal/EntityKnexDataManager';
 
@@ -248,7 +249,7 @@ describe(EnforcingKnexEntityLoader, () => {
     });
   });
 
-  describe('loadPageBySQLAsync', () => {
+  describe('loadPageAsync', () => {
     it('throws when result is unsuccessful', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const knexDataManagerMock = mock<EntityKnexDataManager<any, any>>(EntityKnexDataManager);
@@ -257,7 +258,7 @@ describe(EnforcingKnexEntityLoader, () => {
       const rejection = new Error('Entity not authorized');
 
       // Mock the data manager to return a connection with field objects
-      when(knexDataManagerMock.loadPageBySQLFragmentAsync(anything(), anything())).thenResolve({
+      when(knexDataManagerMock.loadPageAsync(anything(), anything())).thenResolve({
         edges: [
           {
             cursor: 'cursor1',
@@ -286,9 +287,12 @@ describe(EnforcingKnexEntityLoader, () => {
       );
 
       await expect(
-        enforcingKnexEntityLoader.loadPageBySQLAsync({
+        enforcingKnexEntityLoader.loadPageAsync({
           first: 10,
-          orderBy: [],
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [],
+          },
         }),
       ).rejects.toThrow(rejection);
     });
@@ -301,7 +305,7 @@ describe(EnforcingKnexEntityLoader, () => {
       const entity1 = { id: '1', name: 'Entity 1', getID: () => '1' };
       const entity2 = { id: '2', name: 'Entity 2', getID: () => '2' };
 
-      when(knexDataManagerMock.loadPageBySQLFragmentAsync(anything(), anything())).thenResolve({
+      when(knexDataManagerMock.loadPageAsync(anything(), anything())).thenResolve({
         edges: [
           {
             cursor: 'cursor1',
@@ -339,9 +343,12 @@ describe(EnforcingKnexEntityLoader, () => {
         instance(constructionUtilsMock),
       );
 
-      const connection = await enforcingKnexEntityLoader.loadPageBySQLAsync({
+      const connection = await enforcingKnexEntityLoader.loadPageAsync({
         first: 10,
-        orderBy: [],
+        pagination: {
+          strategy: PaginationStrategy.STANDARD,
+          orderBy: [],
+        },
       });
 
       expect(connection.edges).toHaveLength(2);
