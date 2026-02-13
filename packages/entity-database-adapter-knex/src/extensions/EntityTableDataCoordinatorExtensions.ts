@@ -29,8 +29,12 @@ function requireBasePostgresAdapter<
   return databaseAdapter;
 }
 
-export function installEntityTableDataCoordinatorExtensions(): void {
-  EntityTableDataCoordinator.prototype.getKnexDataManager = function <
+export function installEntityTableDataCoordinatorExtensions({
+  EntityTableDataCoordinatorClass,
+}: {
+  EntityTableDataCoordinatorClass: typeof EntityTableDataCoordinator;
+}): void {
+  EntityTableDataCoordinatorClass.prototype.getKnexDataManager = function <
     TFields extends Record<string, any>,
     TIDField extends keyof TFields,
   >(this: EntityTableDataCoordinator<TFields, TIDField>): EntityKnexDataManager<TFields, TIDField> {

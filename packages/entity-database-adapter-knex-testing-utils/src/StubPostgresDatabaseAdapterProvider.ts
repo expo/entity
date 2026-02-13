@@ -17,11 +17,21 @@ export class StubPostgresDatabaseAdapterProvider implements IEntityDatabaseAdapt
     return 'StubPostgresDatabaseAdapterProvider';
   }
 
-  installExtensions(): void {
-    installEntityCompanionExtensions();
-    installEntityTableDataCoordinatorExtensions();
-    installViewerScopedEntityCompanionExtensions();
-    installReadonlyEntityExtensions();
+  installExtensions({
+    EntityCompanionClass,
+    EntityTableDataCoordinatorClass,
+    ViewerScopedEntityCompanionClass,
+    ReadonlyEntityClass,
+  }: {
+    EntityCompanionClass: typeof import('@expo/entity').EntityCompanion;
+    EntityTableDataCoordinatorClass: typeof import('@expo/entity').EntityTableDataCoordinator;
+    ViewerScopedEntityCompanionClass: typeof import('@expo/entity').ViewerScopedEntityCompanion;
+    ReadonlyEntityClass: typeof import('@expo/entity').ReadonlyEntity;
+  }): void {
+    installEntityCompanionExtensions({ EntityCompanionClass });
+    installEntityTableDataCoordinatorExtensions({ EntityTableDataCoordinatorClass });
+    installViewerScopedEntityCompanionExtensions({ ViewerScopedEntityCompanionClass });
+    installReadonlyEntityExtensions({ ReadonlyEntityClass });
   }
 
   private readonly objectCollection = new Map();
