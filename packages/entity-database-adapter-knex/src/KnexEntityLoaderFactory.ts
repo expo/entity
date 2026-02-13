@@ -1,5 +1,6 @@
 import {
   EntityCompanion,
+  EntityConstructionUtils,
   EntityPrivacyPolicy,
   EntityPrivacyPolicyEvaluationContext,
   EntityQueryContext,
@@ -7,7 +8,6 @@ import {
   ViewerContext,
   IEntityMetricsAdapter,
 } from '@expo/entity';
-import { EntityConstructionUtils } from '@expo/entity/src/EntityConstructionUtils';
 
 import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
 import { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
