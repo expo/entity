@@ -33,8 +33,12 @@ declare module '@expo/entity' {
   }
 }
 
-export function installViewerScopedEntityCompanionExtensions(): void {
-  ViewerScopedEntityCompanion.prototype.getKnexLoaderFactory = function <
+export function installViewerScopedEntityCompanionExtensions({
+  ViewerScopedEntityCompanionClass,
+}: {
+  ViewerScopedEntityCompanionClass: typeof ViewerScopedEntityCompanion;
+}): void {
+  ViewerScopedEntityCompanionClass.prototype.getKnexLoaderFactory = function <
     TFields extends Record<string, any>,
     TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
     TViewerContext extends ViewerContext,

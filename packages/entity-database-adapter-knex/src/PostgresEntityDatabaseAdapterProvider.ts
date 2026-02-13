@@ -24,11 +24,21 @@ export class PostgresEntityDatabaseAdapterProvider implements IEntityDatabaseAda
     return 'PostgresEntityDatabaseAdapterProvider';
   }
 
-  installExtensions(): void {
-    installEntityCompanionExtensions();
-    installEntityTableDataCoordinatorExtensions();
-    installViewerScopedEntityCompanionExtensions();
-    installReadonlyEntityExtensions();
+  installExtensions({
+    EntityCompanionClass,
+    EntityTableDataCoordinatorClass,
+    ViewerScopedEntityCompanionClass,
+    ReadonlyEntityClass,
+  }: {
+    EntityCompanionClass: typeof import('@expo/entity').EntityCompanion;
+    EntityTableDataCoordinatorClass: typeof import('@expo/entity').EntityTableDataCoordinator;
+    ViewerScopedEntityCompanionClass: typeof import('@expo/entity').ViewerScopedEntityCompanion;
+    ReadonlyEntityClass: typeof import('@expo/entity').ReadonlyEntity;
+  }): void {
+    installEntityCompanionExtensions({ EntityCompanionClass });
+    installEntityTableDataCoordinatorExtensions({ EntityTableDataCoordinatorClass });
+    installViewerScopedEntityCompanionExtensions({ ViewerScopedEntityCompanionClass });
+    installReadonlyEntityExtensions({ ReadonlyEntityClass });
   }
 
   getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
