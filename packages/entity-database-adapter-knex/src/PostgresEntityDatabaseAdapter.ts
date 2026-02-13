@@ -1,4 +1,4 @@
-import { FieldTransformer, FieldTransformerMap } from '@expo/entity';
+import { EntityConfiguration, FieldTransformer, FieldTransformerMap } from '@expo/entity';
 import { Knex } from 'knex';
 
 import {
@@ -10,6 +10,7 @@ import {
   TableQuerySelectionModifiersWithOrderByRaw,
 } from './BasePostgresEntityDatabaseAdapter';
 import { JSONArrayField, MaybeJSONArrayField } from './EntityFields';
+import { PostgresEntityDatabaseAdapterConfiguration } from './PostgresEntityDatabaseAdapterProvider';
 import { SQLFragment } from './SQLOperator';
 import { wrapNativePostgresCallAsync } from './errors/wrapNativePostgresCallAsync';
 
@@ -17,6 +18,17 @@ export class PostgresEntityDatabaseAdapter<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > extends BasePostgresEntityDatabaseAdapter<TFields, TIDField> {
+  constructor(
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+    private readonly adapterConfiguration: PostgresEntityDatabaseAdapterConfiguration = {},
+  ) {
+    super(entityConfiguration);
+  }
+
+  override get paginationMaxPageSize(): number | undefined {
+    return this.adapterConfiguration.paginationMaxPageSize;
+  }
+
   protected getFieldTransformerMap(): FieldTransformerMap {
     return new Map<string, FieldTransformer<any>>([
       [

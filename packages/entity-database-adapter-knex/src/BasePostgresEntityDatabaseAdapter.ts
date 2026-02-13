@@ -150,6 +150,13 @@ export abstract class BasePostgresEntityDatabaseAdapter<
   TIDField extends keyof TFields,
 > extends EntityDatabaseAdapter<TFields, TIDField> {
   /**
+   * Get the maximum page size for pagination.
+   * @returns maximum page size if configured, undefined otherwise
+   */
+  get paginationMaxPageSize(): number | undefined {
+    return undefined;
+  }
+  /**
    * Fetch many objects matching the conjunction of where clauses constructed from
    * specified field equality operands.
    *
