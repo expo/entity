@@ -10,14 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
 const dbObjects: Readonly<{ [key: string]: any }>[] = [];
 
 export class InMemoryDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
-  getExtensionsKey(): string {
-    return 'InMemoryDatabaseAdapterProvider';
-  }
-
-  installExtensions(): void {
-    // No-op
-  }
-
   getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
     entityConfiguration: EntityConfiguration<TFields, TIDField>,
   ): EntityDatabaseAdapter<TFields, TIDField> {
