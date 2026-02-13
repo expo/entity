@@ -172,8 +172,12 @@ class ReadonlyEntityExtensions {
   }
 }
 
-export function installReadonlyEntityExtensions(): void {
-  ReadonlyEntity.knexLoader = ReadonlyEntityExtensions.knexLoader;
-  ReadonlyEntity.knexLoaderWithAuthorizationResults =
+export function installReadonlyEntityExtensions({
+  ReadonlyEntityClass,
+}: {
+  ReadonlyEntityClass: typeof ReadonlyEntity;
+}): void {
+  ReadonlyEntityClass.knexLoader = ReadonlyEntityExtensions.knexLoader;
+  ReadonlyEntityClass.knexLoaderWithAuthorizationResults =
     ReadonlyEntityExtensions.knexLoaderWithAuthorizationResults;
 }
