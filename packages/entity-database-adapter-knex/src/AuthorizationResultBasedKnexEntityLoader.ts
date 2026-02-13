@@ -21,7 +21,7 @@ import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
 
 export interface EntityLoaderOrderByClause<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   /**
    * The field name to order by.
@@ -39,7 +39,7 @@ export interface EntityLoaderOrderByClause<
  */
 export interface EntityLoaderQuerySelectionModifiers<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   /**
    * Order the entities by specified columns and orders.
@@ -59,7 +59,7 @@ export interface EntityLoaderQuerySelectionModifiers<
 
 export interface EntityLoaderQuerySelectionModifiersWithOrderByRaw<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> {
   /**
    * Order the entities by a raw SQL `ORDER BY` clause.
@@ -69,7 +69,7 @@ export interface EntityLoaderQuerySelectionModifiersWithOrderByRaw<
 
 export interface EntityLoaderQuerySelectionModifiersWithOrderByFragment<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> {
   /**
    * Order the entities by a SQL fragment `ORDER BY` clause.
@@ -79,7 +79,7 @@ export interface EntityLoaderQuerySelectionModifiersWithOrderByFragment<
 
 interface SearchSpecificationBase<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   /**
    * The search term to search for. Must be a non-empty string.
@@ -94,7 +94,7 @@ interface SearchSpecificationBase<
 
 interface ILikeSearchSpecification<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends SearchSpecificationBase<TFields, TSelectedFields> {
   /**
    * Case-insensitive pattern matching search using SQL ILIKE operator.
@@ -105,7 +105,7 @@ interface ILikeSearchSpecification<
 
 interface TrigramSearchSpecification<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends SearchSpecificationBase<TFields, TSelectedFields> {
   /**
    * Similarity search using PostgreSQL trigram similarity. Results are ordered by exact match priority, then by similarity score, then by specified extra order by fields if provided, then by ID for tie-breaking and stable pagination.
@@ -137,7 +137,7 @@ interface TrigramSearchSpecification<
 
 interface StandardPaginationSpecification<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   /**
    * Standard pagination without search. Results are ordered by the specified orderBy fields.
@@ -155,7 +155,7 @@ interface StandardPaginationSpecification<
  */
 export type PaginationSpecification<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > =
   | StandardPaginationSpecification<TFields, TSelectedFields>
   | ILikeSearchSpecification<TFields, TSelectedFields>
@@ -166,7 +166,7 @@ export type PaginationSpecification<
  */
 interface EntityLoaderBaseUnifiedPaginationArgs<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   /**
    * SQLFragment representing the WHERE clause to filter the entities being paginated.
@@ -184,7 +184,7 @@ interface EntityLoaderBaseUnifiedPaginationArgs<
  */
 export interface EntityLoaderForwardUnifiedPaginationArgs<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityLoaderBaseUnifiedPaginationArgs<TFields, TSelectedFields> {
   /**
    * The number of entities to return starting from the entity after the cursor. Must be a positive integer.
@@ -202,7 +202,7 @@ export interface EntityLoaderForwardUnifiedPaginationArgs<
  */
 export interface EntityLoaderBackwardUnifiedPaginationArgs<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityLoaderBaseUnifiedPaginationArgs<TFields, TSelectedFields> {
   /**
    * The number of entities to return starting from the entity before the cursor. Must be a positive integer.
@@ -220,7 +220,7 @@ export interface EntityLoaderBackwardUnifiedPaginationArgs<
  */
 export type EntityLoaderLoadPageArgs<
   TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > =
   | EntityLoaderForwardUnifiedPaginationArgs<TFields, TSelectedFields>
   | EntityLoaderBackwardUnifiedPaginationArgs<TFields, TSelectedFields>;
@@ -243,7 +243,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
     TEntity,
     TSelectedFields
   >,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   constructor(
     private readonly queryContext: EntityQueryContext,
