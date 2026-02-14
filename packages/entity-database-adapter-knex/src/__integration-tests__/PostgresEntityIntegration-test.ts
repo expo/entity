@@ -17,7 +17,6 @@ import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity';
 import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity';
 import { PostgresValidatorTestEntity } from '../__testfixtures__/PostgresValidatorTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
-import { knexLoader, knexLoaderWithAuthorizationResults } from '../knexLoader';
 
 describe('postgres entity integration', () => {
   let knexInstance: Knex;
@@ -430,7 +429,7 @@ describe('postgres entity integration', () => {
       );
 
       // Test basic SQL query with parameters
-      const catOwners = await knexLoader(PostgresTestEntity, vc1)
+      const catOwners = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`has_a_cat = ${true}`)
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
@@ -440,7 +439,7 @@ describe('postgres entity integration', () => {
       expect(catOwners[1]!.getField('name')).toBe('Charlie');
 
       // Test with limit and offset
-      const limitedResults = await knexLoader(PostgresTestEntity, vc1)
+      const limitedResults = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`has_a_cat = ${true}`)
         .orderBy('name', OrderByOrdering.ASCENDING)
         .limit(1)
@@ -480,7 +479,7 @@ describe('postgres entity integration', () => {
       );
 
       // Test AND condition
-      const bothPets = await knexLoader(PostgresTestEntity, vc1)
+      const bothPets = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(and(eq('has_a_cat', true), eq('has_a_dog', true)))
         .executeAsync();
 
@@ -488,7 +487,7 @@ describe('postgres entity integration', () => {
       expect(bothPets[0]!.getField('name')).toBe('User3');
 
       // Test OR condition
-      const eitherPet = await knexLoader(PostgresTestEntity, vc1)
+      const eitherPet = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(or(eq('has_a_cat', false), eq('has_a_dog', false)))
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
@@ -498,7 +497,7 @@ describe('postgres entity integration', () => {
       expect(eitherPet[1]!.getField('name')).toBe('User2');
 
       // Test IN array
-      const specificUsers = await knexLoader(PostgresTestEntity, vc1)
+      const specificUsers = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(inArray('name', ['User1', 'User3']))
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
@@ -508,7 +507,7 @@ describe('postgres entity integration', () => {
       expect(specificUsers[1]!.getField('name')).toBe('User3');
 
       // Test complex condition
-      const complexQuery = await knexLoader(PostgresTestEntity, vc1)
+      const complexQuery = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(and(or(eq('has_a_cat', true), eq('has_a_dog', true)), neq('name', 'User2')))
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
@@ -535,7 +534,7 @@ describe('postgres entity integration', () => {
           .createAsync(),
       );
 
-      const firstCatOwnerLimit1 = await knexLoader(PostgresTestEntity, vc1)
+      const firstCatOwnerLimit1 = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`has_a_cat = ${true}`)
         .orderBy('name', OrderByOrdering.ASCENDING)
         .limit(1)
@@ -545,7 +544,7 @@ describe('postgres entity integration', () => {
       expect(firstCatOwnerLimit1[0]?.getField('name')).toBe('First');
 
       // Test executeFirstAsync with no results
-      const noDogOwnerLimit1 = await knexLoader(PostgresTestEntity, vc1)
+      const noDogOwnerLimit1 = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`has_a_dog = ${true}`)
         .limit(1)
         .executeAsync();
@@ -571,7 +570,7 @@ describe('postgres entity integration', () => {
       );
 
       // Test with authorization results
-      const results = await knexLoaderWithAuthorizationResults(PostgresTestEntity, vc1)
+      const results = await PostgresTestEntity.knexLoaderWithAuthorizationResults(vc1)
         .loadManyBySQL(sql`name LIKE ${'AuthTest%'}`)
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
@@ -587,7 +586,7 @@ describe('postgres entity integration', () => {
         expect(results[1]!.value.getField('name')).toBe('AuthTest2');
       }
 
-      const firstResultLimit1 = await knexLoaderWithAuthorizationResults(PostgresTestEntity, vc1)
+      const firstResultLimit1 = await PostgresTestEntity.knexLoaderWithAuthorizationResults(vc1)
         .loadManyBySQL(sql`has_a_cat = ${false}`)
         .limit(1)
         .executeAsync();
@@ -627,7 +626,7 @@ describe('postgres entity integration', () => {
 
       // Test raw SQL for dynamic column names with orderBySQL
       const sortColumn = 'name';
-      const rawResults = await knexLoader(PostgresTestEntity, vc1)
+      const rawResults = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`${raw('name')} LIKE ${'RawTest%'}`)
         .orderBySQL(sql`${raw(sortColumn)} DESC`)
         .executeAsync();
@@ -638,7 +637,7 @@ describe('postgres entity integration', () => {
       expect(rawResults[2]!.getField('name')).toBe('RawTest1');
 
       // Test complex ORDER BY with CASE statement
-      const priorityResults = await knexLoader(PostgresTestEntity, vc1)
+      const priorityResults = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'RawTest%'}`)
         .orderBySQL(
           sql`CASE
@@ -655,7 +654,7 @@ describe('postgres entity integration', () => {
       expect(priorityResults[2]!.getField('name')).toBe('RawTest2'); // has dog only
 
       // Test raw SQL with complex expressions - using CASE statement
-      const complexExpression = await knexLoader(PostgresTestEntity, vc1)
+      const complexExpression = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(
           sql`${raw('CASE WHEN has_a_cat THEN 1 ELSE 0 END')} + ${raw(
             'CASE WHEN has_a_dog THEN 1 ELSE 0 END',
@@ -689,7 +688,7 @@ describe('postgres entity integration', () => {
         sql`name = ${'JoinTest1'}`,
         sql`(has_a_cat = ${true} AND has_a_dog = ${true})`,
       ];
-      const joinedResults = await knexLoader(PostgresTestEntity, vc1)
+      const joinedResults = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(SQLFragment.join(conditions, ' OR '))
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
@@ -759,7 +758,7 @@ describe('postgres entity integration', () => {
       );
 
       // Test 1: Simple orderBySQL with raw column
-      const simpleOrder = await knexLoader(PostgresTestEntity, vc1)
+      const simpleOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
         .orderBySQL(sql`${raw('name')} DESC`)
         .executeAsync();
@@ -775,7 +774,7 @@ describe('postgres entity integration', () => {
       const priority2 = 2;
       const priority3 = 3;
       const priority4 = 4;
-      const caseOrder = await knexLoader(PostgresTestEntity, vc1)
+      const caseOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
         .orderBySQL(
           sql`CASE
@@ -794,7 +793,7 @@ describe('postgres entity integration', () => {
       expect(caseOrder[3]!.getField('name')).toBe('OrderTest4'); // Neither = 4
 
       // Test 3: Order by array length (PostgreSQL specific)
-      const arrayLengthOrder = await knexLoader(PostgresTestEntity, vc1)
+      const arrayLengthOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
         .orderBySQL(sql`COALESCE(array_length(string_array, 1), 0) DESC, ${raw('name')} ASC`)
         .executeAsync();
@@ -806,7 +805,7 @@ describe('postgres entity integration', () => {
       expect(arrayLengthOrder[3]!.getField('name')).toBe('OrderTest3'); // null = 0
 
       // Test 4: Multiple orderBySQL calls (last one wins)
-      const multipleOrderBy = await knexLoader(PostgresTestEntity, vc1)
+      const multipleOrderBy = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
         .orderBySQL(sql`${raw('name')} DESC`) // This will be overridden
         .orderBySQL(sql`${raw('name')} ASC`) // This one wins
@@ -817,7 +816,7 @@ describe('postgres entity integration', () => {
       expect(multipleOrderBy[3]!.getField('name')).toBe('OrderTest4');
 
       // Test 5: Combining orderBySQL with limit and offset
-      const limitedOrder = await knexLoader(PostgresTestEntity, vc1)
+      const limitedOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
         .orderBySQL(sql`${raw('name')} ASC`)
         .limit(2)
@@ -829,7 +828,7 @@ describe('postgres entity integration', () => {
       expect(limitedOrder[1]!.getField('name')).toBe('OrderTest3');
 
       // Test 6: orderBySQL with NULLS FIRST/LAST
-      const nullsOrder = await knexLoader(PostgresTestEntity, vc1)
+      const nullsOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
         .orderBySQL(sql`string_array IS NULL, ${raw('name')} ASC`)
         .executeAsync();
@@ -849,7 +848,7 @@ describe('postgres entity integration', () => {
         .createAsync();
 
       // Create a query builder
-      const queryBuilder = knexLoader(PostgresTestEntity, vc1).loadManyBySQL(
+      const queryBuilder = PostgresTestEntity.knexLoader(vc1).loadManyBySQL(
         sql`name = ${'MultiExecTest'}`,
       );
 
@@ -869,7 +868,7 @@ describe('postgres entity integration', () => {
       );
 
       // A new query builder should work fine
-      const newQueryBuilder = knexLoader(PostgresTestEntity, vc1).loadManyBySQL(
+      const newQueryBuilder = PostgresTestEntity.knexLoader(vc1).loadManyBySQL(
         sql`name = ${'MultiExecTest'}`,
       );
 
@@ -907,8 +906,7 @@ describe('postgres entity integration', () => {
           .createAsync(),
       );
 
-      const results = await knexLoader(
-        PostgresTestEntity,
+      const results = await PostgresTestEntity.knexLoader(
         vc1,
       ).loadManyByFieldEqualityConjunctionAsync([
         {
@@ -923,8 +921,7 @@ describe('postgres entity integration', () => {
 
       expect(results).toHaveLength(2);
 
-      const results2 = await knexLoader(
-        PostgresTestEntity,
+      const results2 = await PostgresTestEntity.knexLoader(
         vc1,
       ).loadManyByFieldEqualityConjunctionAsync([
         { fieldName: 'hasADog', fieldValues: [true, false] },
@@ -947,8 +944,7 @@ describe('postgres entity integration', () => {
         PostgresTestEntity.creatorWithAuthorizationResults(vc1).setField('name', 'c').createAsync(),
       );
 
-      const results = await knexLoader(
-        PostgresTestEntity,
+      const results = await PostgresTestEntity.knexLoader(
         vc1,
       ).loadManyByFieldEqualityConjunctionAsync([], {
         limit: 2,
@@ -991,15 +987,13 @@ describe('postgres entity integration', () => {
           .createAsync(),
       );
 
-      const results = await knexLoader(
-        PostgresTestEntity,
+      const results = await PostgresTestEntity.knexLoader(
         vc1,
       ).loadManyByFieldEqualityConjunctionAsync([{ fieldName: 'name', fieldValue: null }]);
       expect(results).toHaveLength(2);
       expect(results[0]!.getField('name')).toBeNull();
 
-      const results2 = await knexLoader(
-        PostgresTestEntity,
+      const results2 = await PostgresTestEntity.knexLoader(
         vc1,
       ).loadManyByFieldEqualityConjunctionAsync(
         [
@@ -1031,7 +1025,7 @@ describe('postgres entity integration', () => {
           .createAsync(),
       );
 
-      const results = await knexLoader(PostgresTestEntity, vc1).loadManyByRawWhereClauseAsync(
+      const results = await PostgresTestEntity.knexLoader(vc1).loadManyByRawWhereClauseAsync(
         'name = ?',
         ['hello'],
       );
@@ -1050,7 +1044,7 @@ describe('postgres entity integration', () => {
       );
 
       await expect(
-        knexLoader(PostgresTestEntity, vc1).loadManyByRawWhereClauseAsync('invalid_column = ?', [
+        PostgresTestEntity.knexLoader(vc1).loadManyByRawWhereClauseAsync('invalid_column = ?', [
           'hello',
         ]),
       ).rejects.toThrow();
@@ -1080,7 +1074,7 @@ describe('postgres entity integration', () => {
           .createAsync(),
       );
 
-      const results = await knexLoader(PostgresTestEntity, vc1).loadManyByRawWhereClauseAsync(
+      const results = await PostgresTestEntity.knexLoader(vc1).loadManyByRawWhereClauseAsync(
         'has_a_dog = ?',
         [true],
         {
@@ -1098,8 +1092,7 @@ describe('postgres entity integration', () => {
       expect(results).toHaveLength(2);
       expect(results.map((e) => e.getField('name'))).toEqual(['b', 'c']);
 
-      const resultsMultipleOrderBy = await knexLoader(
-        PostgresTestEntity,
+      const resultsMultipleOrderBy = await PostgresTestEntity.knexLoader(
         vc1,
       ).loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
         orderBy: [
@@ -1117,8 +1110,7 @@ describe('postgres entity integration', () => {
       expect(resultsMultipleOrderBy).toHaveLength(3);
       expect(resultsMultipleOrderBy.map((e) => e.getField('name'))).toEqual(['c', 'b', 'a']);
 
-      const resultsOrderByRaw = await knexLoader(
-        PostgresTestEntity,
+      const resultsOrderByRaw = await PostgresTestEntity.knexLoader(
         vc1,
       ).loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
         orderByRaw: 'has_a_dog ASC, name DESC',
@@ -1394,7 +1386,7 @@ describe('postgres entity integration', () => {
           );
 
           // Get first page
-          const firstPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 3,
             pagination: {
               strategy: PaginationStrategy.STANDARD,
@@ -1410,7 +1402,7 @@ describe('postgres entity integration', () => {
           expect(firstPage.pageInfo.hasPreviousPage).toBe(false);
 
           // Get second page using cursor
-          const secondPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 3,
             after: firstPage.pageInfo.endCursor!,
             pagination: {
@@ -1433,7 +1425,7 @@ describe('postgres entity integration', () => {
           );
 
           // Get last page
-          const lastPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const lastPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             last: 3,
             pagination: {
               strategy: PaginationStrategy.STANDARD,
@@ -1449,7 +1441,7 @@ describe('postgres entity integration', () => {
           expect(lastPage.pageInfo.hasPreviousPage).toBe(true);
 
           // Get previous page using cursor
-          const previousPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const previousPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             last: 3,
             before: lastPage.pageInfo.startCursor!,
             pagination: {
@@ -1472,7 +1464,7 @@ describe('postgres entity integration', () => {
           );
 
           // Query only entities with cats
-          const page = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 2,
             where: sql`has_a_cat = ${true}`,
             pagination: {
@@ -1489,7 +1481,7 @@ describe('postgres entity integration', () => {
           expect(page.pageInfo.hasNextPage).toBe(true);
 
           // Get next page with same where condition
-          const nextPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const nextPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 2,
             after: page.pageInfo.endCursor!,
             where: sql`has_a_cat = ${true}`,
@@ -1512,7 +1504,7 @@ describe('postgres entity integration', () => {
             createKnexIntegrationTestEntityCompanionProvider(knexInstance),
           );
 
-          const page = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 4,
             pagination: {
               strategy: PaginationStrategy.STANDARD,
@@ -1541,7 +1533,7 @@ describe('postgres entity integration', () => {
             createKnexIntegrationTestEntityCompanionProvider(knexInstance),
           );
 
-          const page = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 10,
             where: sql`name = ${'NonexistentName'}`,
             pagination: {
@@ -1562,7 +1554,7 @@ describe('postgres entity integration', () => {
             createKnexIntegrationTestEntityCompanionProvider(knexInstance),
           );
 
-          const page = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 3,
             pagination: {
               strategy: PaginationStrategy.STANDARD,
@@ -1576,7 +1568,7 @@ describe('postgres entity integration', () => {
           expect(page.edges[2]?.cursor).toBeTruthy();
 
           // Start from middle item
-          const nextPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const nextPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 2,
             after: page.edges[1]!.cursor,
             pagination: {
@@ -1595,7 +1587,7 @@ describe('postgres entity integration', () => {
             createKnexIntegrationTestEntityCompanionProvider(knexInstance),
           );
 
-          const page = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 3,
             pagination: {
               strategy: PaginationStrategy.STANDARD,
@@ -1606,7 +1598,7 @@ describe('postgres entity integration', () => {
           expect(page.edges).toHaveLength(3);
 
           // Navigate using cursor
-          const nextPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const nextPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 3,
             after: page.pageInfo.endCursor!,
             pagination: {
@@ -1639,7 +1631,7 @@ describe('postgres entity integration', () => {
 
         // Test backward pagination with DESCENDING order
         // This internally flips DESCENDING to ASCENDING for the query
-        const page = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 3,
           pagination: {
             strategy: PaginationStrategy.STANDARD,
@@ -1658,7 +1650,7 @@ describe('postgres entity integration', () => {
         expect(page.pageInfo.hasNextPage).toBe(false);
 
         // Verify the order is maintained correctly with forward pagination too
-        const forwardPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const forwardPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           pagination: {
             strategy: PaginationStrategy.STANDARD,
@@ -1694,7 +1686,7 @@ describe('postgres entity integration', () => {
         }
 
         // Pagination with only name in orderBy - ID should be added automatically for stability
-        const firstPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           pagination: {
             strategy: PaginationStrategy.STANDARD,
@@ -1705,7 +1697,7 @@ describe('postgres entity integration', () => {
         expect(firstPage.edges).toHaveLength(3);
 
         // Get second page
-        const secondPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           after: firstPage.pageInfo.endCursor!,
           pagination: {
@@ -1723,7 +1715,7 @@ describe('postgres entity integration', () => {
         expect(intersection).toHaveLength(0);
 
         // Test with explicit ID in orderBy (shouldn't duplicate)
-        const pageWithExplicitId = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const pageWithExplicitId = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           pagination: {
             strategy: PaginationStrategy.STANDARD,
@@ -1741,7 +1733,7 @@ describe('postgres entity integration', () => {
 
         // Try with completely invalid cursor
         await expect(
-          knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 10,
             after: 'not-a-valid-cursor',
             pagination: {
@@ -1754,7 +1746,7 @@ describe('postgres entity integration', () => {
         // Try with valid base64 but invalid JSON
         const invalidJsonCursor = Buffer.from('not json').toString('base64url');
         await expect(
-          knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 10,
             after: invalidJsonCursor,
             pagination: {
@@ -1769,7 +1761,7 @@ describe('postgres entity integration', () => {
           'base64url',
         );
         await expect(
-          knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 10,
             after: missingFieldsCursor,
             pagination: {
@@ -1795,7 +1787,7 @@ describe('postgres entity integration', () => {
         }
 
         // Test with enforcing loader (standard pagination)
-        const pageEnforced = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const pageEnforced = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 4,
           pagination: {
             strategy: PaginationStrategy.STANDARD,
@@ -1811,7 +1803,7 @@ describe('postgres entity integration', () => {
         expect(pageEnforced.edges[3]?.node.getField('name')).toBe('David');
 
         // Test pagination continues correctly
-        const secondPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 4,
           after: pageEnforced.pageInfo.endCursor!,
           pagination: {
@@ -1827,8 +1819,7 @@ describe('postgres entity integration', () => {
         // Test with authorization result-based loader
         // Note: Currently loadPageWithSearchAsync with knexLoaderWithAuthorizationResults
         // returns entities directly, not Result objects (unlike loadManyBySQL)
-        const pageWithAuth = await knexLoaderWithAuthorizationResults(
-          PostgresTestEntity,
+        const pageWithAuth = await PostgresTestEntity.knexLoaderWithAuthorizationResults(
           vc,
         ).loadPageAsync({
           first: 3,
@@ -1859,7 +1850,7 @@ describe('postgres entity integration', () => {
         }
 
         // Load with limit 5 - should have hasNextPage=true
-        const page1 = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const page1 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 5,
           pagination: {
             strategy: PaginationStrategy.STANDARD,
@@ -1871,7 +1862,7 @@ describe('postgres entity integration', () => {
         expect(page1.pageInfo.hasNextPage).toBe(true);
 
         // Load the last entity
-        const page2 = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const page2 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 5,
           after: page1.pageInfo.endCursor!,
           pagination: {
@@ -1900,7 +1891,7 @@ describe('postgres entity integration', () => {
         // Test that orderByFragment overrides orderBy completely
         // orderBy would sort by name ascending (Alice, Bob, Charlie, David)
         // orderByFragment will sort by name descending (David, Charlie, Bob, Alice)
-        const results = await knexLoader(PostgresTestEntity, vc)
+        const results = await PostgresTestEntity.knexLoader(vc)
           .loadManyBySQL(sql`1 = 1`, {
             orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
             orderByFragment: sql`name DESC`,
@@ -1944,7 +1935,7 @@ describe('postgres entity integration', () => {
         }
 
         // Test 1: Regular loader with ILIKE search
-        const iLikeSearchRegular = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const iLikeSearchRegular = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 2,
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
@@ -1959,8 +1950,7 @@ describe('postgres entity integration', () => {
         expect(iLikeSearchRegular.pageInfo.hasNextPage).toBe(true);
 
         // Test 2: Authorization result loader with same ILIKE search
-        const iLikeSearchAuth = await knexLoaderWithAuthorizationResults(
-          PostgresTestEntity,
+        const iLikeSearchAuth = await PostgresTestEntity.knexLoaderWithAuthorizationResults(
           vc,
         ).loadPageAsync({
           first: 2,
@@ -1978,7 +1968,7 @@ describe('postgres entity integration', () => {
         expect(iLikeSearchAuth.pageInfo.hasNextPage).toBe(true);
 
         // Test 3: Regular loader with TRIGRAM search
-        const trigramSearchRegular = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const trigramSearchRegular = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
@@ -1996,8 +1986,7 @@ describe('postgres entity integration', () => {
         expect(foundNames).toContain('Frank Johnson');
 
         // Test 4: Authorization result loader with TRIGRAM search
-        const trigramSearchAuth = await knexLoaderWithAuthorizationResults(
-          PostgresTestEntity,
+        const trigramSearchAuth = await PostgresTestEntity.knexLoaderWithAuthorizationResults(
           vc,
         ).loadPageAsync({
           first: 3,
@@ -2016,7 +2005,7 @@ describe('postgres entity integration', () => {
         expect(foundNamesAuth).toContain('Frank Johnson');
 
         // Test 5: Test pagination with cursor for both loader types
-        const firstPageRegular = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const firstPageRegular = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 1,
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
@@ -2028,7 +2017,7 @@ describe('postgres entity integration', () => {
         expect(firstPageRegular.edges).toHaveLength(1);
         expect(firstPageRegular.edges[0]?.node.getField('name')).toBe('Bob Smith');
 
-        const secondPageRegular = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const secondPageRegular = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 1,
           after: firstPageRegular.pageInfo.endCursor!,
           pagination: {
@@ -2042,7 +2031,7 @@ describe('postgres entity integration', () => {
         expect(secondPageRegular.edges[0]?.node.getField('name')).toBe('David Smith');
 
         // Test 6: Combine search with WHERE filter for both loaders
-        const filteredSearchRegular = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const filteredSearchRegular = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 10,
           where: sql`has_a_cat = ${true}`,
           pagination: {
@@ -2059,8 +2048,7 @@ describe('postgres entity integration', () => {
         expect(filteredSearchRegular.edges[1]?.node.getField('name')).toBe('Charlie Johnson');
         expect(filteredSearchRegular.edges[1]?.node.getField('hasACat')).toBe(true);
 
-        const filteredSearchAuth = await knexLoaderWithAuthorizationResults(
-          PostgresTestEntity,
+        const filteredSearchAuth = await PostgresTestEntity.knexLoaderWithAuthorizationResults(
           vc,
         ).loadPageAsync({
           first: 10,
@@ -2077,7 +2065,7 @@ describe('postgres entity integration', () => {
         expect(filteredSearchAuth.edges[1]?.node.getField('name')).toBe('Charlie Johnson');
 
         // Test 7: Test with both loader types
-        const withRegular = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const withRegular = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 1,
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
@@ -2088,8 +2076,7 @@ describe('postgres entity integration', () => {
 
         expect(withRegular.edges).toHaveLength(1);
 
-        const withAuth = await knexLoaderWithAuthorizationResults(
-          PostgresTestEntity,
+        const withAuth = await PostgresTestEntity.knexLoaderWithAuthorizationResults(
           vc,
         ).loadPageAsync({
           first: 1,
@@ -2130,7 +2117,7 @@ describe('postgres entity integration', () => {
         }
 
         // Search for names containing "Johnson"
-        const searchResults = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const searchResults = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 10,
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
@@ -2144,7 +2131,7 @@ describe('postgres entity integration', () => {
         expect(searchResults.edges[1]?.node.getField('name')).toBe('Eve Johnson');
 
         // Search for names containing "Smith" with pagination
-        const smithPage1 = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const smithPage1 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 1,
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
@@ -2158,7 +2145,7 @@ describe('postgres entity integration', () => {
         expect(smithPage1.pageInfo.hasNextPage).toBe(true);
 
         // Get next page
-        const smithPage2 = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const smithPage2 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 1,
           after: smithPage1.pageInfo.endCursor!,
           pagination: {
@@ -2173,7 +2160,7 @@ describe('postgres entity integration', () => {
         expect(smithPage2.pageInfo.hasNextPage).toBe(false);
 
         // Test partial match (case insensitive)
-        const partialMatch = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const partialMatch = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 10,
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
@@ -2187,7 +2174,7 @@ describe('postgres entity integration', () => {
         expect(partialMatch.edges[1]?.node.getField('name')).toBe('Eve Johnson');
 
         // Test search with WHERE clause
-        const combinedFilter = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const combinedFilter = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 10,
           where: sql`has_a_cat = ${true}`,
           pagination: {
@@ -2219,7 +2206,7 @@ describe('postgres entity integration', () => {
         }
 
         // Forward pagination with ILIKE search
-        const forwardPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const forwardPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 2,
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
@@ -2236,7 +2223,7 @@ describe('postgres entity integration', () => {
         });
 
         // Backward pagination with ILIKE search
-        const backwardPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const backwardPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 2,
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
@@ -2257,7 +2244,7 @@ describe('postgres entity integration', () => {
         let hasNext = true;
 
         while (hasNext) {
-          const page = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: 10,
             ...(cursor && { after: cursor }),
             pagination: {
@@ -2316,7 +2303,7 @@ describe('postgres entity integration', () => {
         const pageSize = 3;
 
         while (true) {
-          const page = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             first: pageSize,
             ...(cursor && { after: cursor }),
             pagination: {
@@ -2357,7 +2344,7 @@ describe('postgres entity integration', () => {
         pageCount = 0;
 
         while (true) {
-          const page = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+          const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
             last: pageSize,
             ...(backCursor && { before: backCursor }),
             pagination: {
@@ -2417,7 +2404,7 @@ describe('postgres entity integration', () => {
         }
 
         // Search for similar names to "Johnson" using trigram
-        const trigramSearch = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const trigramSearch = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 10,
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
@@ -2438,7 +2425,7 @@ describe('postgres entity integration', () => {
         expect(foundNames).toContain('Johnsen');
 
         // Test combining with WHERE clause
-        const filteredTrigram = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const filteredTrigram = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 10,
           where: sql`has_a_cat = ${true}`,
           pagination: {
@@ -2488,7 +2475,7 @@ describe('postgres entity integration', () => {
         }
 
         // First page with trigram search (no cursor)
-        const firstPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
@@ -2507,7 +2494,7 @@ describe('postgres entity integration', () => {
         // Second page with cursor
         // Note: For trigram search with cursor, we use regular orderBy instead of custom order
         // so results might not be in perfect similarity order, but should still be filtered
-        const secondPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           after: firstPageCursor!,
           pagination: {
@@ -2525,7 +2512,7 @@ describe('postgres entity integration', () => {
         // being passed through the parallel query path
 
         // Test backward pagination with cursor
-        const lastPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const lastPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 2,
           before: firstPageCursor!,
           pagination: {
@@ -2542,7 +2529,7 @@ describe('postgres entity integration', () => {
         // Test with WHERE clause, cursor, and search
         const firstEdgeCursor = firstPage.edges[0]?.cursor;
         expect(firstEdgeCursor).toBeDefined();
-        const filteredWithCursor = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const filteredWithCursor = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 2,
           after: firstEdgeCursor!,
           where: sql`has_a_cat = ${true}`,
@@ -2593,7 +2580,7 @@ describe('postgres entity integration', () => {
         }
 
         // Test 1: Forward pagination (first)
-        const firstPageForward = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const firstPageForward = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 4,
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
@@ -2614,7 +2601,7 @@ describe('postgres entity integration', () => {
         expect(forwardNames).not.toContain('Williams');
 
         // Test 2: Backward pagination (last)
-        const lastPageBackward = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const lastPageBackward = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 4,
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
@@ -2636,7 +2623,7 @@ describe('postgres entity integration', () => {
         // Test 3: Test cursor pagination with trigram search
         // With the improved implementation, TRIGRAM cursor pagination now preserves
         // similarity-based ordering by computing similarity scores dynamically via subquery
-        const firstPageForwardCursor = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const firstPageForwardCursor = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
@@ -2655,7 +2642,7 @@ describe('postgres entity integration', () => {
         }));
         const firstPageForwardCursorIDs = firstPageForwardCursorData.map((d) => d.id);
 
-        const secondPageForwardCursor = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const secondPageForwardCursor = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           after: firstPageForwardCursor.pageInfo.endCursor!,
           pagination: {
@@ -2683,7 +2670,7 @@ describe('postgres entity integration', () => {
         expect(overlapForwardCursor).toHaveLength(0);
 
         // Test 4: test backward cursor pagination with trigram search
-        const firstPageBackwardCursor = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const firstPageBackwardCursor = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 3,
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
@@ -2702,7 +2689,7 @@ describe('postgres entity integration', () => {
         const firstPageBackwardIDs = firstPageBackwardCursorData.map((d) => d.id);
         expect(firstPageBackwardIDs.length).toBeGreaterThan(0);
 
-        const secondPageBackwardCursor = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const secondPageBackwardCursor = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 3,
           before: firstPageBackwardCursor.pageInfo.startCursor!,
           pagination: {
@@ -2760,7 +2747,7 @@ describe('postgres entity integration', () => {
         }
 
         // Test TRIGRAM search with extraOrderByFields for stable pagination
-        const firstPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
@@ -2779,7 +2766,7 @@ describe('postgres entity integration', () => {
 
         // Get second page using cursor
         // With extraOrderByFields, cursor includes hasACat field which provides more stable pagination
-        const secondPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           after: firstPageCursor!,
           pagination: {
@@ -2800,7 +2787,7 @@ describe('postgres entity integration', () => {
         expect(overlap).toHaveLength(0);
 
         // Test backward pagination with extraOrderByFields
-        const lastPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const lastPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 2,
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
@@ -2815,7 +2802,7 @@ describe('postgres entity integration', () => {
 
         // Test that extraOrderByFields provides consistent ordering
         // Get all results in one go for comparison
-        const allResultsPage = await knexLoader(PostgresTestEntity, vc).loadPageAsync({
+        const allResultsPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 10,
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
