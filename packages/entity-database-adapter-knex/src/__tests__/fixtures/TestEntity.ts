@@ -1,5 +1,4 @@
 import {
-  Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
   DateField,
@@ -11,6 +10,8 @@ import {
   AlwaysAllowPrivacyPolicyRule,
 } from '@expo/entity';
 import { result, Result } from '@expo/results';
+
+import { PostgresEntity } from '../../PostgresEntity';
 
 export type TestFields = {
   customIdField: string;
@@ -75,7 +76,7 @@ export class TestEntityPrivacyPolicy extends EntityPrivacyPolicy<
   ];
 }
 
-export class TestEntity extends Entity<TestFields, 'customIdField', ViewerContext> {
+export class TestEntity extends PostgresEntity<TestFields, 'customIdField', ViewerContext> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestFields,
     'customIdField',

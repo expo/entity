@@ -1,5 +1,4 @@
 import {
-  Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
   EntityPrivacyPolicy,
@@ -12,6 +11,8 @@ import {
   IntField,
   RuleEvaluationResult,
 } from '@expo/entity';
+
+import { PostgresEntity } from '../../PostgresEntity';
 
 export interface TestPaginationFields {
   id: string;
@@ -85,7 +86,11 @@ export class TestPaginationPrivacyPolicy extends EntityPrivacyPolicy<
   protected override readonly deleteRules = [];
 }
 
-export class TestPaginationEntity extends Entity<TestPaginationFields, 'id', ViewerContext> {
+export class TestPaginationEntity extends PostgresEntity<
+  TestPaginationFields,
+  'id',
+  ViewerContext
+> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     TestPaginationFields,
     'id',
