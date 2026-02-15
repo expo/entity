@@ -31,6 +31,30 @@ import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
 import { EntityMetricsMutationType, IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
 
+type EntityLoaderForBatch<
+  TFields extends Record<string, any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields,
+> = ReturnType<
+  EntityLoaderFactory<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  >['forLoad']
+>;
+
 /**
  * Base class for entity mutators. Mutators are builder-like class instances that are
  * responsible for creating, updating, and deleting entities, and for calling out to
@@ -237,6 +261,151 @@ export abstract class AuthorizationResultBasedBaseMutator<
       triggers.map((trigger) =>
         trigger.executeAsync(this.viewerContext, queryContext, entity, mutationInfo),
       ),
+    );
+  }
+
+  /**
+   * Finds all entities referencing the specified entity and either deletes them, nullifies
+   * their references to the specified entity, or invalidates the cache depending on the
+   * OnDeleteBehavior of the field referencing the specified entity.
+   *
+   * @remarks
+   * This works by doing reverse fan-out queries:
+   * 1. Load all entity configurations of entity types that reference this type of entity
+   * 2. For each entity configuration, find all fields that contain edges to this type of entity
+   * 3. For each edge field, load all entities with an edge from target entity to this entity via that field
+   * 4. Perform desired OnDeleteBehavior for entities
+   *
+   * @param entity - entity to find all references to
+   * @param cascadingDeleteCause - cascading delete info to pass down
+   * @param queryContext - query context for the transaction
+   * @param processedEntityIdentifiers - set tracking already-processed entities to prevent cycles
+   */
+  protected async processEntityDeletionForInboundEdgesAsync(
+    entity: TEntity,
+    cascadingDeleteCause: EntityCascadingDeletionInfo | null,
+    queryContext: EntityTransactionalQueryContext,
+    processedEntityIdentifiers: Set<string>,
+  ): Promise<void> {
+    // prevent infinite reference cycles by keeping track of entities already processed
+    if (processedEntityIdentifiers.has(entity.getUniqueIdentifier())) {
+      return;
+    }
+    processedEntityIdentifiers.add(entity.getUniqueIdentifier());
+
+    const companionDefinition = this.companionProvider.getCompanionForEntity(
+      entity.constructor as IEntityClass<
+        TFields,
+        TIDField,
+        TViewerContext,
+        TEntity,
+        TPrivacyPolicy,
+        TSelectedFields
+      >,
+    ).entityCompanionDefinition;
+    const entityConfiguration = companionDefinition.entityConfiguration;
+    const inboundEdges = entityConfiguration.inboundEdges;
+
+    const newCascadingDeleteCause = {
+      entity,
+      cascadingDeleteCause,
+    };
+
+    await Promise.all(
+      inboundEdges.map(async (entityClass) => {
+        const loaderFactory = entity
+          .getViewerContext()
+          .getViewerScopedEntityCompanionForClass(entityClass)
+          .getLoaderFactory();
+        const mutatorFactory = entity
+          .getViewerContext()
+          .getViewerScopedEntityCompanionForClass(entityClass)
+          .getMutatorFactory();
+
+        return await mapMapAsync(
+          this.companionProvider.getCompanionForEntity(entityClass).entityCompanionDefinition
+            .entityConfiguration.schema,
+          async (fieldDefinition, fieldName) => {
+            const association = fieldDefinition.association;
+            if (!association) {
+              return;
+            }
+
+            const associatedConfiguration = this.companionProvider.getCompanionForEntity(
+              association.associatedEntityClass,
+            ).entityCompanionDefinition.entityConfiguration;
+            if (associatedConfiguration !== entityConfiguration) {
+              return;
+            }
+
+            const inboundReferenceEntities = await enforceResultsAsync(
+              loaderFactory
+                .forLoad(queryContext, {
+                  previousValue: null,
+                  cascadingDeleteCause: newCascadingDeleteCause,
+                })
+                .loadManyByFieldEqualingAsync(
+                  fieldName,
+                  association.associatedEntityLookupByField
+                    ? entity.getField(association.associatedEntityLookupByField as any)
+                    : entity.getID(),
+                ),
+            );
+
+            switch (association.edgeDeletionBehavior) {
+              case EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY: {
+                await Promise.all(
+                  inboundReferenceEntities.map((inboundReferenceEntity) =>
+                    enforceAsyncResult(
+                      mutatorFactory
+                        .forDelete(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
+                        ['deleteInTransactionAsync'](processedEntityIdentifiers, true),
+                    ),
+                  ),
+                );
+                break;
+              }
+              case EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY: {
+                await Promise.all(
+                  inboundReferenceEntities.map((inboundReferenceEntity) =>
+                    enforceAsyncResult(
+                      mutatorFactory
+                        .forUpdate(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
+                        .setField(fieldName, null)
+                        ['updateInTransactionAsync'](/* skipDatabaseUpdate */ true),
+                    ),
+                  ),
+                );
+                break;
+              }
+              case EntityEdgeDeletionBehavior.SET_NULL: {
+                await Promise.all(
+                  inboundReferenceEntities.map((inboundReferenceEntity) =>
+                    enforceAsyncResult(
+                      mutatorFactory
+                        .forUpdate(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
+                        .setField(fieldName, null)
+                        ['updateInTransactionAsync'](/* skipDatabaseUpdate */ false),
+                    ),
+                  ),
+                );
+                break;
+              }
+              case EntityEdgeDeletionBehavior.CASCADE_DELETE: {
+                await Promise.all(
+                  inboundReferenceEntities.map((inboundReferenceEntity) =>
+                    enforceAsyncResult(
+                      mutatorFactory
+                        .forDelete(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
+                        ['deleteInTransactionAsync'](processedEntityIdentifiers, false),
+                    ),
+                  ),
+                );
+              }
+            }
+          },
+        );
+      }),
     );
   }
 
@@ -810,6 +979,7 @@ export class AuthorizationResultBasedDeleteMutator<
 
     await this.processEntityDeletionForInboundEdgesAsync(
       this.entity,
+      this.cascadingDeleteCause,
       queryContext,
       processedEntityIdentifiersFromTransitiveDeletions,
     );
@@ -904,151 +1074,790 @@ export class AuthorizationResultBasedDeleteMutator<
 
     return result();
   }
+}
+
+/**
+ * Mutator for batch creating multiple new entities in a single transaction with a single
+ * multi-row INSERT statement. Runs the full entity mutation pipeline (authorization,
+ * validation, triggers, cache invalidation) per-item.
+ */
+export class AuthorizationResultBasedBatchCreateMutator<
+  TFields extends Record<string, any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields,
+> extends AuthorizationResultBasedBaseMutator<
+  TFields,
+  TIDField,
+  TViewerContext,
+  TEntity,
+  TPrivacyPolicy,
+  TSelectedFields
+> {
+  constructor(
+    companionProvider: EntityCompanionProvider,
+    viewerContext: TViewerContext,
+    queryContext: EntityQueryContext,
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+    entityClass: IEntityClass<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    privacyPolicy: TPrivacyPolicy,
+    mutationValidators: EntityMutationValidatorConfiguration<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+    mutationTriggers: EntityMutationTriggerConfiguration<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+    entityLoaderFactory: EntityLoaderFactory<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
+    metricsAdapter: IEntityMetricsAdapter,
+    private readonly fieldObjects: readonly Readonly<Partial<TFields>>[],
+  ) {
+    super(
+      companionProvider,
+      viewerContext,
+      queryContext,
+      entityConfiguration,
+      entityClass,
+      privacyPolicy,
+      mutationValidators,
+      mutationTriggers,
+      entityLoaderFactory,
+      databaseAdapter,
+      metricsAdapter,
+    );
+  }
 
   /**
-   * Finds all entities referencing the specified entity and either deletes them, nullifies
-   * their references to the specified entity, or invalidates the cache depending on the
-   * OnDeleteBehavior of the field referencing the specified entity.
-   *
-   * @remarks
-   * This works by doing reverse fan-out queries:
-   * 1. Load all entity configurations of entity types that reference this type of entity
-   * 2. For each entity configuration, find all fields that contain edges to this type of entity
-   * 3. For each edge field, load all entities with an edge from target entity to this entity via that field
-   * 4. Perform desired OnDeleteBehavior for entities
-   *
-   * @param entity - entity to find all references to
+   * Commit the batch of new entities after authorizing each against creation privacy rules.
+   * If any item fails authorization, the entire batch is aborted.
+   * @returns authorized, cached, newly-created entities result, where result error can be UnauthorizedError
    */
-  private async processEntityDeletionForInboundEdgesAsync(
-    entity: TEntity,
-    queryContext: EntityTransactionalQueryContext,
-    processedEntityIdentifiers: Set<string>,
-  ): Promise<void> {
-    // prevent infinite reference cycles by keeping track of entities already processed
-    if (processedEntityIdentifiers.has(entity.getUniqueIdentifier())) {
-      return;
+  async createAsync(): Promise<Result<readonly TEntity[]>> {
+    if (this.fieldObjects.length === 0) {
+      return result([]);
     }
-    processedEntityIdentifiers.add(entity.getUniqueIdentifier());
+    return await timeAndLogMutationEventAsync(
+      this.metricsAdapter,
+      EntityMetricsMutationType.CREATE,
+      this.entityClass.name,
+      this.queryContext,
+    )(this.createInTransactionAsync());
+  }
 
-    const companionDefinition = this.companionProvider.getCompanionForEntity(
-      entity.constructor as IEntityClass<
-        TFields,
-        TIDField,
-        TViewerContext,
-        TEntity,
-        TPrivacyPolicy,
-        TSelectedFields
-      >,
-    ).entityCompanionDefinition;
-    const entityConfiguration = companionDefinition.entityConfiguration;
-    const inboundEdges = entityConfiguration.inboundEdges;
-
-    const newCascadingDeleteCause = {
-      entity,
-      cascadingDeleteCause: this.cascadingDeleteCause,
-    };
-
-    await Promise.all(
-      inboundEdges.map(async (entityClass) => {
-        const loaderFactory = entity
-          .getViewerContext()
-          .getViewerScopedEntityCompanionForClass(entityClass)
-          .getLoaderFactory();
-        const mutatorFactory = entity
-          .getViewerContext()
-          .getViewerScopedEntityCompanionForClass(entityClass)
-          .getMutatorFactory();
-
-        return await mapMapAsync(
-          this.companionProvider.getCompanionForEntity(entityClass).entityCompanionDefinition
-            .entityConfiguration.schema,
-          async (fieldDefinition, fieldName) => {
-            const association = fieldDefinition.association;
-            if (!association) {
-              return;
-            }
-
-            const associatedConfiguration = this.companionProvider.getCompanionForEntity(
-              association.associatedEntityClass,
-            ).entityCompanionDefinition.entityConfiguration;
-            if (associatedConfiguration !== entityConfiguration) {
-              return;
-            }
-
-            const inboundReferenceEntities = await enforceResultsAsync(
-              loaderFactory
-                .forLoad(queryContext, {
-                  previousValue: null,
-                  cascadingDeleteCause: newCascadingDeleteCause,
-                })
-                .loadManyByFieldEqualingAsync(
-                  fieldName,
-                  association.associatedEntityLookupByField
-                    ? entity.getField(association.associatedEntityLookupByField as any)
-                    : entity.getID(),
-                ),
-            );
-
-            switch (association.edgeDeletionBehavior) {
-              case EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY: {
-                await Promise.all(
-                  inboundReferenceEntities.map((inboundReferenceEntity) =>
-                    enforceAsyncResult(
-                      mutatorFactory
-                        .forDelete(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
-                        .deleteInTransactionAsync(
-                          processedEntityIdentifiers,
-                          /* skipDatabaseDeletion */ true, // deletion is handled by DB
-                        ),
-                    ),
-                  ),
-                );
-                break;
-              }
-              case EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY: {
-                await Promise.all(
-                  inboundReferenceEntities.map((inboundReferenceEntity) =>
-                    enforceAsyncResult(
-                      mutatorFactory
-                        .forUpdate(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
-                        .setField(fieldName, null)
-                        ['updateInTransactionAsync'](/* skipDatabaseUpdate */ true),
-                    ),
-                  ),
-                );
-                break;
-              }
-              case EntityEdgeDeletionBehavior.SET_NULL: {
-                await Promise.all(
-                  inboundReferenceEntities.map((inboundReferenceEntity) =>
-                    enforceAsyncResult(
-                      mutatorFactory
-                        .forUpdate(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
-                        .setField(fieldName, null)
-                        ['updateInTransactionAsync'](/* skipDatabaseUpdate */ false),
-                    ),
-                  ),
-                );
-                break;
-              }
-              case EntityEdgeDeletionBehavior.CASCADE_DELETE: {
-                await Promise.all(
-                  inboundReferenceEntities.map((inboundReferenceEntity) =>
-                    enforceAsyncResult(
-                      mutatorFactory
-                        .forDelete(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
-                        .deleteInTransactionAsync(
-                          processedEntityIdentifiers,
-                          /* skipDatabaseDeletion */ false,
-                        ),
-                    ),
-                  ),
-                );
-              }
-            }
-          },
-        );
-      }),
+  private async createInTransactionAsync(): Promise<Result<readonly TEntity[]>> {
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.createInternalAsync(innerQueryContext),
     );
+  }
+
+  private async createInternalAsync(
+    queryContext: EntityTransactionalQueryContext,
+  ): Promise<Result<readonly TEntity[]>> {
+    // 1. Validate fields for ALL items
+    for (const fieldObject of this.fieldObjects) {
+      this.validateFields(fieldObject);
+    }
+
+    const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
+      previousValue: null,
+      cascadingDeleteCause: null,
+    });
+
+    // 2. Construct temp entities and authorize create for each
+    const temporaryEntities: TEntity[] = [];
+    for (const fieldObject of this.fieldObjects) {
+      const temporaryEntity = entityLoader.constructionUtils.constructEntity({
+        [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000',
+        ...fieldObject,
+      } as unknown as TFields);
+
+      const authorizeCreateResult = await asyncResult(
+        this.privacyPolicy.authorizeCreateAsync(
+          this.viewerContext,
+          queryContext,
+          { previousValue: null, cascadingDeleteCause: null },
+          temporaryEntity,
+          this.metricsAdapter,
+        ),
+      );
+      if (!authorizeCreateResult.ok) {
+        return result(authorizeCreateResult.reason);
+      }
+
+      temporaryEntities.push(temporaryEntity);
+    }
+
+    // 3. Run beforeCreateAndUpdate validators for each
+    for (const temporaryEntity of temporaryEntities) {
+      await this.executeMutationValidatorsAsync(
+        this.mutationValidators.beforeCreateAndUpdate,
+        queryContext,
+        temporaryEntity,
+        { type: EntityMutationType.CREATE },
+      );
+    }
+
+    // 4. Run beforeAll triggers for each
+    for (const temporaryEntity of temporaryEntities) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.beforeAll,
+        queryContext,
+        temporaryEntity,
+        { type: EntityMutationType.CREATE },
+      );
+    }
+
+    // 5. Run beforeCreate triggers for each
+    for (const temporaryEntity of temporaryEntities) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.beforeCreate,
+        queryContext,
+        temporaryEntity,
+        { type: EntityMutationType.CREATE },
+      );
+    }
+
+    // 6. Batch insert — single multi-row INSERT
+    const insertResults = await this.databaseAdapter.batchInsertAsync(
+      queryContext,
+      this.fieldObjects,
+    );
+
+    // 7. Invalidate caches for each result
+    for (const insertResult of insertResults) {
+      queryContext.appendPostCommitInvalidationCallback(async () => {
+        entityLoader.invalidationUtils.invalidateFieldsForTransaction(queryContext, insertResult);
+        await entityLoader.invalidationUtils.invalidateFieldsAsync(insertResult);
+      });
+
+      entityLoader.invalidationUtils.invalidateFieldsForTransaction(queryContext, insertResult);
+    }
+
+    // 8. Reload all entities via loadByIDAsync per entity
+    const newEntities: TEntity[] = [];
+    for (const insertResult of insertResults) {
+      const unauthorizedEntityAfterInsert =
+        entityLoader.constructionUtils.constructEntity(insertResult);
+      const newEntity = await enforceAsyncResult(
+        entityLoader.loadByIDAsync(unauthorizedEntityAfterInsert.getID()),
+      );
+      newEntities.push(newEntity);
+    }
+
+    // 9. Run afterCreate triggers for each
+    for (const newEntity of newEntities) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.afterCreate,
+        queryContext,
+        newEntity,
+        { type: EntityMutationType.CREATE },
+      );
+    }
+
+    // 10. Run afterAll triggers for each
+    for (const newEntity of newEntities) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.afterAll,
+        queryContext,
+        newEntity,
+        { type: EntityMutationType.CREATE },
+      );
+    }
+
+    // 11. Schedule afterCommit triggers for each
+    for (const newEntity of newEntities) {
+      queryContext.appendPostCommitCallback(
+        this.executeNonTransactionalMutationTriggersAsync.bind(
+          this,
+          this.mutationTriggers.afterCommit,
+          newEntity,
+          { type: EntityMutationType.CREATE },
+        ),
+      );
+    }
+
+    return result(newEntities);
+  }
+}
+
+/**
+ * Mutator for batch updating multiple existing entities in a single transaction with a single
+ * UPDATE ... WHERE IN statement. The same field changes are applied to all entities.
+ * Runs the full entity mutation pipeline (authorization, validation, triggers, cache invalidation)
+ * per-item.
+ */
+export class AuthorizationResultBasedBatchUpdateMutator<
+  TFields extends Record<string, any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields,
+> extends AuthorizationResultBasedBaseMutator<
+  TFields,
+  TIDField,
+  TViewerContext,
+  TEntity,
+  TPrivacyPolicy,
+  TSelectedFields
+> {
+  private readonly updatedFields: Partial<TFields> = {};
+
+  constructor(
+    companionProvider: EntityCompanionProvider,
+    viewerContext: TViewerContext,
+    queryContext: EntityQueryContext,
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+    entityClass: IEntityClass<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    privacyPolicy: TPrivacyPolicy,
+    mutationValidators: EntityMutationValidatorConfiguration<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+    mutationTriggers: EntityMutationTriggerConfiguration<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+    entityLoaderFactory: EntityLoaderFactory<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
+    metricsAdapter: IEntityMetricsAdapter,
+    private readonly originalEntities: readonly TEntity[],
+  ) {
+    super(
+      companionProvider,
+      viewerContext,
+      queryContext,
+      entityConfiguration,
+      entityClass,
+      privacyPolicy,
+      mutationValidators,
+      mutationTriggers,
+      entityLoaderFactory,
+      databaseAdapter,
+      metricsAdapter,
+    );
+  }
+
+  /**
+   * Set the value for entity field. Same value is applied to all entities in the batch.
+   * @param fieldName - entity field being updated
+   * @param value - value for entity field
+   */
+  setField<K extends keyof Pick<TFields, TSelectedFields>>(fieldName: K, value: TFields[K]): this {
+    this.updatedFields[fieldName] = value;
+    return this;
+  }
+
+  /**
+   * Commit the changes to all entities after authorizing each against update privacy rules.
+   * If any item fails authorization, the entire batch is aborted.
+   * @returns authorized updated entities result, where result error can be UnauthorizedError
+   */
+  async updateAsync(): Promise<Result<readonly TEntity[]>> {
+    if (this.originalEntities.length === 0) {
+      return result([]);
+    }
+    return await timeAndLogMutationEventAsync(
+      this.metricsAdapter,
+      EntityMetricsMutationType.UPDATE,
+      this.entityClass.name,
+      this.queryContext,
+    )(this.updateInTransactionAsync());
+  }
+
+  private async updateInTransactionAsync(): Promise<Result<readonly TEntity[]>> {
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.updateInternalAsync(innerQueryContext),
+    );
+  }
+
+  private async updateInternalAsync(
+    queryContext: EntityTransactionalQueryContext,
+  ): Promise<Result<readonly TEntity[]>> {
+    // 1. Validate updated fields once + ensure stable ID for each entity
+    this.validateFields(this.updatedFields);
+    for (const originalEntity of this.originalEntities) {
+      this.ensureStableIDField(originalEntity, this.updatedFields);
+    }
+
+    // 2. Construct entity-about-to-be-updated and authorize update for each
+    const entityLoadersPerEntity: EntityLoaderForBatch<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >[] = [];
+    const entitiesAboutToBeUpdated: TEntity[] = [];
+    const fieldsForEntities: TFields[] = [];
+
+    for (const originalEntity of this.originalEntities) {
+      const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
+        previousValue: originalEntity,
+        cascadingDeleteCause: null,
+      });
+      entityLoadersPerEntity.push(entityLoader);
+
+      const fieldsForEntity = {
+        ...originalEntity.getAllDatabaseFields(),
+        ...this.updatedFields,
+      };
+      fieldsForEntities.push(fieldsForEntity);
+
+      const entityAboutToBeUpdated =
+        entityLoader.constructionUtils.constructEntity(fieldsForEntity);
+      entitiesAboutToBeUpdated.push(entityAboutToBeUpdated);
+
+      const authorizeUpdateResult = await asyncResult(
+        this.privacyPolicy.authorizeUpdateAsync(
+          this.viewerContext,
+          queryContext,
+          { previousValue: originalEntity, cascadingDeleteCause: null },
+          entityAboutToBeUpdated,
+          this.metricsAdapter,
+        ),
+      );
+      if (!authorizeUpdateResult.ok) {
+        return result(authorizeUpdateResult.reason);
+      }
+    }
+
+    // 3. Run beforeCreateAndUpdate validators for each
+    for (let i = 0; i < this.originalEntities.length; i++) {
+      await this.executeMutationValidatorsAsync(
+        this.mutationValidators.beforeCreateAndUpdate,
+        queryContext,
+        entitiesAboutToBeUpdated[i]!,
+        {
+          type: EntityMutationType.UPDATE,
+          previousValue: this.originalEntities[i]!,
+          cascadingDeleteCause: null,
+        },
+      );
+    }
+
+    // 4. Run beforeAll triggers for each
+    for (let i = 0; i < this.originalEntities.length; i++) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.beforeAll,
+        queryContext,
+        entitiesAboutToBeUpdated[i]!,
+        {
+          type: EntityMutationType.UPDATE,
+          previousValue: this.originalEntities[i]!,
+          cascadingDeleteCause: null,
+        },
+      );
+    }
+
+    // 5. Run beforeUpdate triggers for each
+    for (let i = 0; i < this.originalEntities.length; i++) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.beforeUpdate,
+        queryContext,
+        entitiesAboutToBeUpdated[i]!,
+        {
+          type: EntityMutationType.UPDATE,
+          previousValue: this.originalEntities[i]!,
+          cascadingDeleteCause: null,
+        },
+      );
+    }
+
+    // 6. Batch update — single UPDATE ... WHERE IN
+    const ids = this.originalEntities.map((entity) => entity.getID());
+    await this.databaseAdapter.batchUpdateAsync(
+      queryContext,
+      this.entityConfiguration.idField,
+      ids,
+      this.updatedFields,
+    );
+
+    // 7. Invalidate caches for both original and new field values per entity
+    for (let i = 0; i < this.originalEntities.length; i++) {
+      const entityLoader = entityLoadersPerEntity[i]!;
+      const originalFields = this.originalEntities[i]!.getAllDatabaseFields();
+      const newFields = fieldsForEntities[i]!;
+
+      queryContext.appendPostCommitInvalidationCallback(async () => {
+        entityLoader.invalidationUtils.invalidateFieldsForTransaction(queryContext, originalFields);
+        entityLoader.invalidationUtils.invalidateFieldsForTransaction(queryContext, newFields);
+        await Promise.all([
+          entityLoader.invalidationUtils.invalidateFieldsAsync(originalFields),
+          entityLoader.invalidationUtils.invalidateFieldsAsync(newFields),
+        ]);
+      });
+
+      entityLoader.invalidationUtils.invalidateFieldsForTransaction(queryContext, originalFields);
+      entityLoader.invalidationUtils.invalidateFieldsForTransaction(queryContext, newFields);
+    }
+
+    // 8. Reload all entities via per-entity loadByIDAsync
+    const updatedEntities: TEntity[] = [];
+    for (let i = 0; i < this.originalEntities.length; i++) {
+      const entityLoader = entityLoadersPerEntity[i]!;
+      const updatedEntity = await enforceAsyncResult(
+        entityLoader.loadByIDAsync(entitiesAboutToBeUpdated[i]!.getID()),
+      );
+      updatedEntities.push(updatedEntity);
+    }
+
+    // 9. Run afterUpdate triggers for each
+    for (let i = 0; i < this.originalEntities.length; i++) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.afterUpdate,
+        queryContext,
+        updatedEntities[i]!,
+        {
+          type: EntityMutationType.UPDATE,
+          previousValue: this.originalEntities[i]!,
+          cascadingDeleteCause: null,
+        },
+      );
+    }
+
+    // 10. Run afterAll triggers for each
+    for (let i = 0; i < this.originalEntities.length; i++) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.afterAll,
+        queryContext,
+        updatedEntities[i]!,
+        {
+          type: EntityMutationType.UPDATE,
+          previousValue: this.originalEntities[i]!,
+          cascadingDeleteCause: null,
+        },
+      );
+    }
+
+    // 11. Schedule afterCommit triggers for each
+    for (let i = 0; i < this.originalEntities.length; i++) {
+      queryContext.appendPostCommitCallback(
+        this.executeNonTransactionalMutationTriggersAsync.bind(
+          this,
+          this.mutationTriggers.afterCommit,
+          updatedEntities[i]!,
+          {
+            type: EntityMutationType.UPDATE,
+            previousValue: this.originalEntities[i]!,
+            cascadingDeleteCause: null,
+          },
+        ),
+      );
+    }
+
+    return result(updatedEntities);
+  }
+
+  private ensureStableIDField(entity: TEntity, updatedFields: Partial<TFields>): void {
+    const originalId = entity.getID();
+    const idField = this.entityConfiguration.idField;
+    if (updatedFields.hasOwnProperty(idField) && originalId !== updatedFields[idField]) {
+      throw new Error(`id field updates not supported: (entityClass = ${this.entityClass.name})`);
+    }
+  }
+}
+
+/**
+ * Mutator for batch deleting multiple existing entities in a single transaction with a single
+ * DELETE ... WHERE IN statement. Runs the full entity mutation pipeline (authorization,
+ * inbound edge processing, validation, triggers, cache invalidation) per-item.
+ */
+export class AuthorizationResultBasedBatchDeleteMutator<
+  TFields extends Record<string, any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+  TViewerContext extends ViewerContext,
+  TEntity extends Entity<TFields, TIDField, TViewerContext, TSelectedFields>,
+  TPrivacyPolicy extends EntityPrivacyPolicy<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TSelectedFields
+  >,
+  TSelectedFields extends keyof TFields,
+> extends AuthorizationResultBasedBaseMutator<
+  TFields,
+  TIDField,
+  TViewerContext,
+  TEntity,
+  TPrivacyPolicy,
+  TSelectedFields
+> {
+  constructor(
+    companionProvider: EntityCompanionProvider,
+    viewerContext: TViewerContext,
+    queryContext: EntityQueryContext,
+    entityConfiguration: EntityConfiguration<TFields, TIDField>,
+    entityClass: IEntityClass<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    privacyPolicy: TPrivacyPolicy,
+    mutationValidators: EntityMutationValidatorConfiguration<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+    mutationTriggers: EntityMutationTriggerConfiguration<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+    entityLoaderFactory: EntityLoaderFactory<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
+    metricsAdapter: IEntityMetricsAdapter,
+    private readonly entities: readonly TEntity[],
+  ) {
+    super(
+      companionProvider,
+      viewerContext,
+      queryContext,
+      entityConfiguration,
+      entityClass,
+      privacyPolicy,
+      mutationValidators,
+      mutationTriggers,
+      entityLoaderFactory,
+      databaseAdapter,
+      metricsAdapter,
+    );
+  }
+
+  /**
+   * Delete all entities after authorizing each against delete privacy rules.
+   * If any item fails authorization, the entire batch is aborted.
+   * @returns void result, where result error can be UnauthorizedError
+   */
+  async deleteAsync(): Promise<Result<void>> {
+    if (this.entities.length === 0) {
+      return result();
+    }
+    return await timeAndLogMutationEventAsync(
+      this.metricsAdapter,
+      EntityMetricsMutationType.DELETE,
+      this.entityClass.name,
+      this.queryContext,
+    )(this.deleteInTransactionAsync());
+  }
+
+  private async deleteInTransactionAsync(): Promise<Result<void>> {
+    return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+      this.deleteInternalAsync(innerQueryContext),
+    );
+  }
+
+  private async deleteInternalAsync(
+    queryContext: EntityTransactionalQueryContext,
+  ): Promise<Result<void>> {
+    const processedEntityIdentifiers = new Set<string>();
+
+    // 1. Authorize delete for each entity
+    for (const entity of this.entities) {
+      const authorizeDeleteResult = await asyncResult(
+        this.privacyPolicy.authorizeDeleteAsync(
+          this.viewerContext,
+          queryContext,
+          { previousValue: null, cascadingDeleteCause: null },
+          entity,
+          this.metricsAdapter,
+        ),
+      );
+      if (!authorizeDeleteResult.ok) {
+        return authorizeDeleteResult;
+      }
+    }
+
+    // 2. Process inbound edge deletions for each entity
+    for (const entity of this.entities) {
+      await this.processEntityDeletionForInboundEdgesAsync(
+        entity,
+        null,
+        queryContext,
+        processedEntityIdentifiers,
+      );
+    }
+
+    // 3. Run beforeDelete validators for each
+    for (const entity of this.entities) {
+      await this.executeMutationValidatorsAsync(
+        this.mutationValidators.beforeDelete,
+        queryContext,
+        entity,
+        {
+          type: EntityMutationType.DELETE,
+          cascadingDeleteCause: null,
+        },
+      );
+    }
+
+    // 4. Run beforeAll triggers for each
+    for (const entity of this.entities) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.beforeAll,
+        queryContext,
+        entity,
+        {
+          type: EntityMutationType.DELETE,
+          cascadingDeleteCause: null,
+        },
+      );
+    }
+
+    // 5. Run beforeDelete triggers for each
+    for (const entity of this.entities) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.beforeDelete,
+        queryContext,
+        entity,
+        {
+          type: EntityMutationType.DELETE,
+          cascadingDeleteCause: null,
+        },
+      );
+    }
+
+    // 6. Batch delete — single DELETE ... WHERE IN
+    const ids = this.entities.map((entity) => entity.getID());
+    await this.databaseAdapter.batchDeleteAsync(
+      queryContext,
+      this.entityConfiguration.idField,
+      ids,
+    );
+
+    // 7. Invalidate caches for each entity
+    for (const entity of this.entities) {
+      const entityLoader = this.entityLoaderFactory.forLoad(this.viewerContext, queryContext, {
+        previousValue: null,
+        cascadingDeleteCause: null,
+      });
+
+      queryContext.appendPostCommitInvalidationCallback(async () => {
+        entityLoader.invalidationUtils.invalidateFieldsForTransaction(
+          queryContext,
+          entity.getAllDatabaseFields(),
+        );
+        await entityLoader.invalidationUtils.invalidateFieldsAsync(entity.getAllDatabaseFields());
+      });
+      entityLoader.invalidationUtils.invalidateFieldsForTransaction(
+        queryContext,
+        entity.getAllDatabaseFields(),
+      );
+    }
+
+    // 8. Run afterDelete triggers for each
+    for (const entity of this.entities) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.afterDelete,
+        queryContext,
+        entity,
+        {
+          type: EntityMutationType.DELETE,
+          cascadingDeleteCause: null,
+        },
+      );
+    }
+
+    // 9. Run afterAll triggers for each
+    for (const entity of this.entities) {
+      await this.executeMutationTriggersAsync(
+        this.mutationTriggers.afterAll,
+        queryContext,
+        entity,
+        {
+          type: EntityMutationType.DELETE,
+          cascadingDeleteCause: null,
+        },
+      );
+    }
+
+    // 10. Schedule afterCommit triggers for each
+    for (const entity of this.entities) {
+      queryContext.appendPostCommitCallback(
+        this.executeNonTransactionalMutationTriggersAsync.bind(
+          this,
+          this.mutationTriggers.afterCommit,
+          entity,
+          {
+            type: EntityMutationType.DELETE,
+            cascadingDeleteCause: null,
+          },
+        ),
+      );
+    }
+
+    return result();
   }
 }

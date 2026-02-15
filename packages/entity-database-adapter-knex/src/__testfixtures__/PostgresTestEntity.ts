@@ -17,7 +17,7 @@ import { Knex } from 'knex';
 import { BigIntField, JSONArrayField, MaybeJSONArrayField } from '../EntityFields';
 import { PostgresEntity } from '../PostgresEntity';
 
-type PostgresTestEntityFields = {
+export type PostgresTestEntityFields = {
   id: string;
   name: string | null;
   hasADog: boolean | null;

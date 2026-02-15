@@ -100,6 +100,24 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     return this.fetchEqualityConditionResults;
   }
 
+  protected async batchInsertInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _objects: readonly object[],
+  ): Promise<object[]> {
+    return [];
+  }
+
+  protected async batchUpdateInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableIdField: string,
+    _ids: readonly any[],
+    _object: object,
+  ): Promise<object[]> {
+    return [];
+  }
+
   protected async insertInternalAsync(
     _queryInterface: any,
     _tableName: string,
@@ -116,6 +134,15 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     _object: object,
   ): Promise<object[]> {
     return this.updateResults;
+  }
+
+  protected async batchDeleteInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableIdField: string,
+    _ids: readonly any[],
+  ): Promise<number> {
+    return 0;
   }
 
   protected async deleteInternalAsync(

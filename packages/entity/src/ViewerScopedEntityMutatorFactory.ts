@@ -1,4 +1,7 @@
 import {
+  AuthorizationResultBasedBatchCreateMutator,
+  AuthorizationResultBasedBatchDeleteMutator,
+  AuthorizationResultBasedBatchUpdateMutator,
   AuthorizationResultBasedCreateMutator,
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
@@ -80,5 +83,47 @@ export class ViewerScopedEntityMutatorFactory<
     TSelectedFields
   > {
     return this.entityMutatorFactory.forDelete(existingEntity, queryContext, cascadingDeleteCause);
+  }
+
+  forBatchCreate(
+    queryContext: EntityQueryContext,
+    fieldObjects: readonly Readonly<Partial<TFields>>[],
+  ): AuthorizationResultBasedBatchCreateMutator<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return this.entityMutatorFactory.forBatchCreate(this.viewerContext, queryContext, fieldObjects);
+  }
+
+  forBatchDelete(
+    existingEntities: readonly TEntity[],
+    queryContext: EntityQueryContext,
+  ): AuthorizationResultBasedBatchDeleteMutator<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return this.entityMutatorFactory.forBatchDelete(existingEntities, queryContext);
+  }
+
+  forBatchUpdate(
+    existingEntities: readonly TEntity[],
+    queryContext: EntityQueryContext,
+  ): AuthorizationResultBasedBatchUpdateMutator<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return this.entityMutatorFactory.forBatchUpdate(existingEntities, queryContext);
   }
 }

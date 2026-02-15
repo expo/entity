@@ -250,6 +250,35 @@ export class PostgresEntityDatabaseAdapter<
     return await wrapNativePostgresCallAsync(() => query);
   }
 
+  protected async batchInsertInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    objects: readonly object[],
+  ): Promise<object[]> {
+    return await wrapNativePostgresCallAsync(() =>
+      queryInterface
+        .insert([...objects])
+        .into(tableName)
+        .returning('*'),
+    );
+  }
+
+  protected async batchUpdateInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    tableIdField: string,
+    ids: readonly any[],
+    object: object,
+  ): Promise<object[]> {
+    return await wrapNativePostgresCallAsync(() =>
+      queryInterface
+        .update(object)
+        .into(tableName)
+        .whereIn(tableIdField, [...ids])
+        .returning('*'),
+    );
+  }
+
   protected async insertInternalAsync(
     queryInterface: Knex,
     tableName: string,
@@ -269,6 +298,20 @@ export class PostgresEntityDatabaseAdapter<
   ): Promise<object[]> {
     return await wrapNativePostgresCallAsync(() =>
       queryInterface.update(object).into(tableName).where(tableIdField, id).returning('*'),
+    );
+  }
+
+  protected async batchDeleteInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    tableIdField: string,
+    ids: readonly any[],
+  ): Promise<number> {
+    return await wrapNativePostgresCallAsync(() =>
+      queryInterface
+        .into(tableName)
+        .whereIn(tableIdField, [...ids])
+        .del(),
     );
   }
 
