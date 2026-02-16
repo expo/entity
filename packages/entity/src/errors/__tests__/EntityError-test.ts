@@ -1,5 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
+import { instance, mock } from 'ts-mockito';
 
+import { ViewerContext } from '../../ViewerContext';
+import { SimpleTestEntity } from '../../utils/__testfixtures__/SimpleTestEntity';
 import { EntityCacheAdapterTransientError } from '../EntityCacheAdapterError';
 import { EntityErrorCode, EntityErrorState } from '../EntityError';
 import { EntityInvalidFieldValueError } from '../EntityInvalidFieldValueError';
@@ -14,16 +17,21 @@ describe('EntityError subclasses', () => {
   });
 
   it('EntityNotAuthorizedError has correct state and code', () => {
-    const mockEntity = { constructor: { name: 'TestEntity' }, toString: () => 'TestEntity' } as any;
-    const mockViewerContext = { toString: () => 'TestViewer' } as any;
-    const error = new EntityNotAuthorizedError(mockEntity, mockViewerContext, 0, 0);
+    const viewerContext = instance(mock(ViewerContext));
+    const data = { id: '1' };
+    const testEntity = new SimpleTestEntity({
+      viewerContext,
+      id: 'what',
+      databaseFields: data,
+      selectedFields: data,
+    });
+    const error = new EntityNotAuthorizedError(testEntity, viewerContext, 0, 0);
     expect(error.state).toBe(EntityErrorState.PERMANENT);
     expect(error.code).toBe(EntityErrorCode.ERR_ENTITY_NOT_AUTHORIZED);
   });
 
   it('EntityInvalidFieldValueError has correct state and code', () => {
-    const mockEntityClass = { name: 'TestEntity' } as any;
-    const error = new EntityInvalidFieldValueError(mockEntityClass, 'testField', 'badValue');
+    const error = new EntityInvalidFieldValueError(SimpleTestEntity, 'id', 'badValue');
     expect(error.state).toBe(EntityErrorState.PERMANENT);
     expect(error.code).toBe(EntityErrorCode.ERR_ENTITY_INVALID_FIELD_VALUE);
   });

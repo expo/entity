@@ -280,7 +280,7 @@ describe('SQLOperator', () => {
 
       it('handles non-SupportedSQLValue types gracefully', () => {
         const fragment = new SQLFragment('SELECT * FROM test WHERE field = ? AND field2 = ?', [
-          { type: 'value', value: new Error('wat') as any },
+          { type: 'value', value: new Error('wat') },
           { type: 'value', value: Object.create(null) },
         ]);
 

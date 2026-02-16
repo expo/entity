@@ -986,7 +986,7 @@ export class AuthorizationResultBasedDeleteMutator<
                 .loadManyByFieldEqualingAsync(
                   fieldName,
                   association.associatedEntityLookupByField
-                    ? entity.getField(association.associatedEntityLookupByField as any)
+                    ? entity.getField(association.associatedEntityLookupByField)
                     : entity.getID(),
                 ),
             );

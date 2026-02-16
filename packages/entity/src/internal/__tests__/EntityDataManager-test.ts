@@ -1143,7 +1143,7 @@ describe(EntityDataManager, () => {
       entityDataManager.loadManyEqualingAsync(
         queryContext,
         new SingleFieldHolder<TestFields, 'customIdField', 'nullableField'>('nullableField'),
-        [new SingleFieldValueHolder(null as any)],
+        [new SingleFieldValueHolder(null)],
       ),
     ).rejects.toThrow('Invalid load: TestEntity (nullableField = null)');
 
@@ -1151,7 +1151,7 @@ describe(EntityDataManager, () => {
       entityDataManager.loadManyEqualingAsync(
         queryContext,
         new SingleFieldHolder<TestFields, 'customIdField', 'nullableField'>('nullableField'),
-        [new SingleFieldValueHolder(undefined as any)],
+        [new SingleFieldValueHolder(undefined)],
       ),
     ).rejects.toThrow('Invalid load: TestEntity (nullableField = undefined)');
   });
@@ -1187,7 +1187,7 @@ describe(EntityDataManager, () => {
         ]),
         [
           new CompositeFieldValueHolder({
-            nullableField: null as any,
+            nullableField: null,
             testIndexedField: 'unique1',
           }),
         ],
@@ -1205,7 +1205,7 @@ describe(EntityDataManager, () => {
         ]),
         [
           new CompositeFieldValueHolder({
-            nullableField: undefined as any,
+            nullableField: undefined,
             testIndexedField: 'unique1',
           }),
         ],

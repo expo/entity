@@ -103,7 +103,7 @@ export interface EntityAssociationDefinition<
    * Field by which to load the instance of associatedEntityClass. If not provided, the
    * associatedEntityClass instance is fetched by its ID.
    */
-  associatedEntityLookupByField?: keyof TAssociatedFields;
+  associatedEntityLookupByField?: TAssociatedSelectedFields;
 
   /**
    * What action to perform on the entity at the other end of this edge when the entity on the source end of

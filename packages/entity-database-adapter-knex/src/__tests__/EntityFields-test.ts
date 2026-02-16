@@ -4,7 +4,7 @@ import { BigIntField, JSONArrayField, MaybeJSONArrayField } from '../EntityField
 
 describeFieldTestCase(
   new JSONArrayField({ columnName: 'wat' }),
-  [[[1, 2]] as any, [['hello']] as any],
+  [[[1, 2]], [['hello']]],
   [1, 'hello'],
 );
 describeFieldTestCase(
