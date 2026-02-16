@@ -13,6 +13,7 @@ describe('knexLoader', () => {
       const companionProvider = createUnitTestPostgresEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
       expect(knexLoader(TestEntity, viewerContext)).toBeInstanceOf(EnforcingKnexEntityLoader);
+      expect(TestEntity.knexLoader(viewerContext)).toBeInstanceOf(EnforcingKnexEntityLoader);
     });
   });
 
@@ -21,6 +22,9 @@ describe('knexLoader', () => {
       const companionProvider = createUnitTestPostgresEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
       expect(knexLoaderWithAuthorizationResults(TestEntity, viewerContext)).toBeInstanceOf(
+        AuthorizationResultBasedKnexEntityLoader,
+      );
+      expect(TestEntity.knexLoaderWithAuthorizationResults(viewerContext)).toBeInstanceOf(
         AuthorizationResultBasedKnexEntityLoader,
       );
     });

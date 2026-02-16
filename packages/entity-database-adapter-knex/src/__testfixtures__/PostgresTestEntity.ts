@@ -2,7 +2,6 @@ import {
   AlwaysAllowPrivacyPolicyRule,
   BooleanField,
   DateField,
-  Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
   EntityPrivacyPolicy,
@@ -16,6 +15,7 @@ import {
 import { Knex } from 'knex';
 
 import { BigIntField, JSONArrayField, MaybeJSONArrayField } from '../EntityFields';
+import { PostgresEntity } from '../PostgresEntity';
 
 type PostgresTestEntityFields = {
   id: string;
@@ -34,7 +34,11 @@ type PostgresTestEntityFields = {
   createdAt: Date;
 };
 
-export class PostgresTestEntity extends Entity<PostgresTestEntityFields, 'id', ViewerContext> {
+export class PostgresTestEntity extends PostgresEntity<
+  PostgresTestEntityFields,
+  'id',
+  ViewerContext
+> {
   static defineCompanionDefinition(): EntityCompanionDefinition<
     PostgresTestEntityFields,
     'id',
