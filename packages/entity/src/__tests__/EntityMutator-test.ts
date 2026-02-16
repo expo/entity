@@ -1510,7 +1510,7 @@ describe(EntityMutatorFactory, () => {
           keyof SimpleTestFields
         >
       >(EntityConstructionUtils);
-    when(entityConstructionUtilsMock.constructEntity(anything())).thenReturn(fakeEntity);
+    when(entityConstructionUtilsMock['constructEntity'](anything())).thenReturn(fakeEntity);
     when(entityLoaderMock.constructionUtils).thenReturn(instance(entityConstructionUtilsMock));
     const entityLoader = instance(entityLoaderMock);
 
@@ -1645,7 +1645,7 @@ describe(EntityMutatorFactory, () => {
           keyof SimpleTestFields
         >
       >(EntityConstructionUtils);
-    when(entityConstructionUtilsMock.constructEntity(anything())).thenReturn(fakeEntity);
+    when(entityConstructionUtilsMock['constructEntity'](anything())).thenReturn(fakeEntity);
     when(entityLoaderMock.constructionUtils).thenReturn(instance(entityConstructionUtilsMock));
     const entityLoader = instance(entityLoaderMock);
 

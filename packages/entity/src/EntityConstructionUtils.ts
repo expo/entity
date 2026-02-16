@@ -61,7 +61,7 @@ export class EntityConstructionUtils<
    *
    * @param fieldsObject - fields object
    */
-  public constructEntity(fieldsObject: TFields): TEntity {
+  private constructEntity(fieldsObject: TFields): TEntity {
     const idField = this.entityConfiguration.idField;
     const id = nullthrows(fieldsObject[idField], 'must provide ID to create an entity');
     const entitySelectedFields =
