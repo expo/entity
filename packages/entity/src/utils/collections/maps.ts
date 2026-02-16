@@ -1,8 +1,8 @@
 import invariant from 'invariant';
 
 /**
- * If the specified key is not already associated with a value in this map, attempts to compute
- * its value using the given mapping function and enters it into this map unless null.
+ * If the specified key is not already associated with a value in this map, computes
+ * its value using the given mapping function and enters it into this map.
  *
  * @param map - map from which to get the key's value or compute and associate
  * @param key - key for which to get the value or with which the computed value is to be associated

@@ -370,12 +370,6 @@ const createEntityMutatorFactory = (
     ),
   );
   const customStubDatabaseAdapterProvider: IEntityDatabaseAdapterProvider = {
-    getExtensionsKey() {
-      return 'CustomStubDatabaseAdapterProvider';
-    },
-
-    installExtensions: () => {},
-
     getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
       _entityConfiguration: EntityConfiguration<TFields, TIDField>,
     ): EntityDatabaseAdapter<TFields, TIDField> {
