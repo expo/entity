@@ -460,7 +460,7 @@ async function canViewerDeleteInternalAsync<
               return {
                 previousValue: entity,
                 syntheticallyUpdatedValue:
-                  entityLoader.constructionUtils.constructEntity(syntheticFields),
+                  entityLoader.constructionUtils['constructEntity'](syntheticFields),
               };
             },
           );

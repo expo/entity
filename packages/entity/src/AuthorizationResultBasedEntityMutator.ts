@@ -334,7 +334,7 @@ export class AuthorizationResultBasedCreateMutator<
       cascadingDeleteCause: null,
     });
 
-    const temporaryEntityForPrivacyCheck = entityLoader.constructionUtils.constructEntity({
+    const temporaryEntityForPrivacyCheck = entityLoader.constructionUtils['constructEntity']({
       [this.entityConfiguration.idField]: '00000000-0000-0000-0000-000000000000', // zero UUID
       ...this.fieldsForEntity,
     } as unknown as TFields);
@@ -383,7 +383,7 @@ export class AuthorizationResultBasedCreateMutator<
     entityLoader.invalidationUtils.invalidateFieldsForTransaction(queryContext, insertResult);
 
     const unauthorizedEntityAfterInsert =
-      entityLoader.constructionUtils.constructEntity(insertResult);
+      entityLoader.constructionUtils['constructEntity'](insertResult);
     const newEntity = await enforceAsyncResult(
       entityLoader.loadByIDAsync(unauthorizedEntityAfterInsert.getID()),
     );
@@ -543,7 +543,7 @@ export class AuthorizationResultBasedUpdateMutator<
       cascadingDeleteCause: this.cascadingDeleteCause,
     });
 
-    const entityAboutToBeUpdated = entityLoader.constructionUtils.constructEntity(
+    const entityAboutToBeUpdated = entityLoader.constructionUtils['constructEntity'](
       this.fieldsForEntity,
     );
     const authorizeUpdateResult = await asyncResult(
