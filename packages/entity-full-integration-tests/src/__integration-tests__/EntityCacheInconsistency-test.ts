@@ -181,7 +181,7 @@ describe('Entity cache inconsistency', () => {
 
         openBarrier2!();
       })(),
-      viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+      viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           await TestEntity.updater(entity1, queryContext)

@@ -232,7 +232,7 @@ describe(canViewerDeleteAsync, () => {
   it('supports running within a transaction', async () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new ViewerContext(companionProvider);
-    const canViewerDelete = await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+    const canViewerDelete = await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
       'postgres',
       async (queryContext) => {
         const testEntity = await SimpleTestDenyUpdateEntity.creator(
@@ -248,7 +248,7 @@ describe(canViewerDeleteAsync, () => {
     );
     expect(canViewerDelete).toBe(true);
 
-    const canViewerDeleteResult = await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+    const canViewerDeleteResult = await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
       'postgres',
       async (queryContext) => {
         const testEntity = await SimpleTestDenyUpdateEntity.creator(

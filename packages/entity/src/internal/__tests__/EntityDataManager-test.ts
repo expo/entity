@@ -120,7 +120,7 @@ describe(EntityDataManager, () => {
     cacheSpy.mockClear();
   });
 
-  it('loads from a caching adaptor', async () => {
+  it('loads from a caching adapter', async () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
       testEntityConfiguration,

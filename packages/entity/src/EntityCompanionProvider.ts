@@ -208,13 +208,13 @@ export class EntityCompanionProvider {
     });
   }
 
-  getQueryContextProviderForDatabaseAdaptorFlavor(
+  getQueryContextProviderForDatabaseAdapterFlavor(
     databaseAdapterFlavor: DatabaseAdapterFlavor,
   ): EntityQueryContextProvider {
     const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors.get(databaseAdapterFlavor);
     invariant(
       entityDatabaseAdapterFlavor,
-      `No database adaptor configuration found for flavor: ${databaseAdapterFlavor}`,
+      `No database adapter configuration found for flavor: ${databaseAdapterFlavor}`,
     );
 
     return entityDatabaseAdapterFlavor.queryContextProvider;
@@ -233,7 +233,7 @@ export class EntityCompanionProvider {
       );
       invariant(
         entityDatabaseAdapterFlavor,
-        `No database adaptor configuration found for flavor: ${entityConfiguration.databaseAdapterFlavor}`,
+        `No database adapter configuration found for flavor: ${entityConfiguration.databaseAdapterFlavor}`,
       );
 
       const entityCacheAdapterFlavor = this.cacheAdapterFlavors.get(
@@ -241,7 +241,7 @@ export class EntityCompanionProvider {
       );
       invariant(
         entityCacheAdapterFlavor,
-        `No cache adaptor configuration found for flavor: ${entityConfiguration.cacheAdapterFlavor}`,
+        `No cache adapter configuration found for flavor: ${entityConfiguration.cacheAdapterFlavor}`,
       );
 
       return new EntityTableDataCoordinator(
