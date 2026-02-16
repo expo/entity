@@ -154,34 +154,28 @@ describe(createWithUniqueConstraintRecoveryAsync, () => {
       let createdEntities: [PostgresUniqueTestEntity, PostgresUniqueTestEntity];
       if (parallel) {
         createdEntities = await Promise.all([
-          await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
-            'postgres',
-            async (queryContext) => {
-              return await createWithUniqueConstraintRecoveryAsync(
-                vc1,
-                PostgresUniqueTestEntity,
-                PostgresUniqueTestEntity.getByNameAsync,
-                args,
-                PostgresUniqueTestEntity.createWithNameAsync,
-                args,
-                queryContext,
-              );
-            },
-          ),
-          await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
-            'postgres',
-            async (queryContext) => {
-              return await createWithUniqueConstraintRecoveryAsync(
-                vc1,
-                PostgresUniqueTestEntity,
-                PostgresUniqueTestEntity.getByNameAsync,
-                args,
-                PostgresUniqueTestEntity.createWithNameAsync,
-                args,
-                queryContext,
-              );
-            },
-          ),
+          vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+            return await createWithUniqueConstraintRecoveryAsync(
+              vc1,
+              PostgresUniqueTestEntity,
+              PostgresUniqueTestEntity.getByNameAsync,
+              args,
+              PostgresUniqueTestEntity.createWithNameAsync,
+              args,
+              queryContext,
+            );
+          }),
+          vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+            return await createWithUniqueConstraintRecoveryAsync(
+              vc1,
+              PostgresUniqueTestEntity,
+              PostgresUniqueTestEntity.getByNameAsync,
+              args,
+              PostgresUniqueTestEntity.createWithNameAsync,
+              args,
+              queryContext,
+            );
+          }),
         ]);
       } else {
         createdEntities = [

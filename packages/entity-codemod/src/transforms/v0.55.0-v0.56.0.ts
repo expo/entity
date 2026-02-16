@@ -12,13 +12,9 @@ function isKnexSpecificMethodUsed(j: API['jscodeshift'], node: any): boolean {
   const parent = node.parent;
 
   // Check if the loader call is directly chained with a knex method
-  if (parent && parent.value.type === 'MemberExpression' && parent.value.object === node.value) {
+  if (parent?.value.type === 'MemberExpression' && parent.value.object === node.value) {
     const grandParent = parent.parent;
-    if (
-      grandParent &&
-      grandParent.value.type === 'CallExpression' &&
-      grandParent.value.callee === parent.value
-    ) {
+    if (grandParent?.value.type === 'CallExpression' && grandParent.value.callee === parent.value) {
       if (
         parent.value.property.type === 'Identifier' &&
         KNEX_SPECIFIC_METHODS.includes(parent.value.property.name)
@@ -29,7 +25,7 @@ function isKnexSpecificMethodUsed(j: API['jscodeshift'], node: any): boolean {
   }
 
   // Check if the loader is assigned to a variable and then used with knex methods
-  if (parent && parent.value.type === 'VariableDeclarator' && parent.value.init === node.value) {
+  if (parent?.value.type === 'VariableDeclarator' && parent.value.init === node.value) {
     const variableName = parent.value.id.name;
     const scope = parent.scope;
 
@@ -54,9 +50,9 @@ function isKnexSpecificMethodUsed(j: API['jscodeshift'], node: any): boolean {
   }
 
   // Check await expressions
-  if (parent && parent.value.type === 'AwaitExpression' && parent.value.argument === node.value) {
+  if (parent?.value.type === 'AwaitExpression' && parent.value.argument === node.value) {
     const awaitParent = parent.parent;
-    if (awaitParent && awaitParent.value.type === 'VariableDeclarator') {
+    if (awaitParent?.value.type === 'VariableDeclarator') {
       const variableName = awaitParent.value.id.name;
       const scope = awaitParent.scope;
 
@@ -106,7 +102,7 @@ function transformLoaderToKnexLoader(j: API['jscodeshift'], root: Collection<any
       // Typically entity names start with uppercase letter
       if (loaderCallee.object.type === 'Identifier') {
         const firstChar = loaderCallee.object.name[0];
-        if (firstChar && firstChar === firstChar.toUpperCase()) {
+        if (firstChar === firstChar?.toUpperCase()) {
           // Check if this loader uses knex-specific methods
           if (isKnexSpecificMethodUsed(j, path)) {
             // Rename loader to knexLoader
@@ -145,7 +141,7 @@ function transformLoaderWithAuthorizationResultsToKnexLoaderWithAuthorizationRes
       // Typically entity names start with uppercase letter
       if (loaderCallee.object.type === 'Identifier') {
         const firstChar = loaderCallee.object.name[0];
-        if (firstChar && firstChar === firstChar.toUpperCase()) {
+        if (firstChar === firstChar?.toUpperCase()) {
           // Check if this loader uses knex-specific methods
           if (isKnexSpecificMethodUsed(j, path)) {
             // Rename loaderWithAuthorizationResults to knexLoaderWithAuthorizationResults
