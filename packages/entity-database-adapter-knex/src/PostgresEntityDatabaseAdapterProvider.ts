@@ -10,7 +10,16 @@ import { installEntityTableDataCoordinatorExtensions } from './extensions/Entity
 import { installReadonlyEntityExtensions } from './extensions/ReadonlyEntityExtensions';
 import { installViewerScopedEntityCompanionExtensions } from './extensions/ViewerScopedEntityCompanionExtensions';
 
+export interface PostgresEntityDatabaseAdapterConfiguration {
+  /**
+   * Maximum page size for pagination (first/last parameters).
+   * If not specified, no limit is enforced.
+   */
+  paginationMaxPageSize?: number;
+}
+
 export class PostgresEntityDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
+  constructor(private readonly configuration: PostgresEntityDatabaseAdapterConfiguration = {}) {}
   getExtensionsKey(): string {
     return 'PostgresEntityDatabaseAdapterProvider';
   }
@@ -25,6 +34,6 @@ export class PostgresEntityDatabaseAdapterProvider implements IEntityDatabaseAda
   getDatabaseAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(
     entityConfiguration: EntityConfiguration<TFields, TIDField>,
   ): EntityDatabaseAdapter<TFields, TIDField> {
-    return new PostgresEntityDatabaseAdapter(entityConfiguration);
+    return new PostgresEntityDatabaseAdapter(entityConfiguration, this.configuration);
   }
 }

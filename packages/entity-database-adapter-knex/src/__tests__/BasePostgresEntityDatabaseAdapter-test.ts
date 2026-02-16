@@ -129,6 +129,13 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
 }
 
 describe(BasePostgresEntityDatabaseAdapter, () => {
+  describe('get paginationMaxPageSize', () => {
+    it('returns the default paginationMaxPageSize (undefined)', () => {
+      const adapter = new TestEntityDatabaseAdapter({});
+      expect(adapter.paginationMaxPageSize).toBe(undefined);
+    });
+  });
+
   describe('fetchManyByFieldEqualityConjunction', () => {
     it('transforms object', async () => {
       const queryContext = instance(mock(EntityQueryContext));

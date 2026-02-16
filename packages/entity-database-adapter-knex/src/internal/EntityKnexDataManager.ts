@@ -324,17 +324,30 @@ export class EntityKnexDataManager<
     const idField = this.entityConfiguration.idField;
 
     // Validate pagination arguments
+    const maxPageSize = this.databaseAdapter.paginationMaxPageSize;
     const isForward = 'first' in args;
     if (isForward) {
       assert(
         Number.isInteger(args.first) && args.first > 0,
         'first must be an integer greater than 0',
       );
+      if (maxPageSize !== undefined) {
+        assert(
+          args.first <= maxPageSize,
+          `first must not exceed maximum page size of ${maxPageSize}`,
+        );
+      }
     } else {
       assert(
         Number.isInteger(args.last) && args.last > 0,
         'last must be an integer greater than 0',
       );
+      if (maxPageSize !== undefined) {
+        assert(
+          args.last <= maxPageSize,
+          `last must not exceed maximum page size of ${maxPageSize}`,
+        );
+      }
     }
 
     const direction = isForward ? PaginationDirection.FORWARD : PaginationDirection.BACKWARD;
