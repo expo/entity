@@ -32,6 +32,12 @@ import { ViewerContext } from './ViewerContext';
  *
  * All concrete entity implementations should extend this class and provide their
  * own EntityCompanionDefinition.
+ *
+ * Generic type parameters:
+ * TFields - the shape of the underlying data for this entity, typically corresponding to a database table schema. The mapping from TFields to the actual database schema is defined in the EntityCompanionDefinition for this entity.
+ * TIDField - the key of the ID field in TFields, which must be non-nullable and is used to uniquely identify individual entities
+ * TViewerContext - the type of ViewerContext that can be used with this entity
+ * TSelectedFields - the keys of fields in TFields that belong to this entity; used when there are multiple entities backed by the same underlying table with different field subsets
  */
 export abstract class Entity<
   TFields extends Record<string, any>,

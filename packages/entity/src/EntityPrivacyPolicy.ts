@@ -123,6 +123,9 @@ export abstract class EntityPrivacyPolicy<
   TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > {
+  /**
+   * List of rules to evaluate for create authorization.
+   */
   protected readonly createRules: readonly PrivacyPolicyRule<
     TFields,
     TIDField,
@@ -130,6 +133,10 @@ export abstract class EntityPrivacyPolicy<
     TEntity,
     TSelectedFields
   >[] = [];
+
+  /**
+   * List of rules to evaluate for read authorization.
+   */
   protected readonly readRules: readonly PrivacyPolicyRule<
     TFields,
     TIDField,
@@ -137,6 +144,10 @@ export abstract class EntityPrivacyPolicy<
     TEntity,
     TSelectedFields
   >[] = [];
+
+  /**
+   * List of rules to evaluate for update authorization.
+   */
   protected readonly updateRules: readonly PrivacyPolicyRule<
     TFields,
     TIDField,
@@ -144,6 +155,10 @@ export abstract class EntityPrivacyPolicy<
     TEntity,
     TSelectedFields
   >[] = [];
+
+  /**
+   * List of rules to evaluate for delete authorization.
+   */
   protected readonly deleteRules: readonly PrivacyPolicyRule<
     TFields,
     TIDField,
@@ -155,6 +170,9 @@ export abstract class EntityPrivacyPolicy<
   /**
    * Get the privacy policy evaluation mode and deny handler for this policy.
    * Defaults to normal enforcing policy.
+   *
+   * DRY_RUN mode is useful for testing and logging the effects of a policy without actually enforcing it, such as when
+   * first rolling out a new policy. Entities that fail the policy will be allowed so caution should be take when using.
    *
    * @remarks
    *
@@ -204,7 +222,9 @@ export abstract class EntityPrivacyPolicy<
    * Authorize an entity against read policy.
    * @param viewerContext - viewer context of user reading the entity
    * @param queryContext - query context in which to perform the read authorization
+   * @param evaluationContext - context about the reason for this privacy policy evaluation
    * @param entity - entity to authorize
+   * @param metricsAdapter - adapter for logging metrics about this authorization
    * @returns entity if authorized
    * @throws EntityNotAuthorizedError when not authorized
    */
@@ -236,7 +256,9 @@ export abstract class EntityPrivacyPolicy<
    * Authorize an entity against update policy.
    * @param viewerContext - viewer context of user updating the entity
    * @param queryContext - query context in which to perform the update authorization
+   * @param evaluationContext - context about the reason for this privacy policy evaluation
    * @param entity - entity to authorize
+   * @param metricsAdapter - adapter for logging metrics about this authorization
    * @returns entity if authorized
    * @throws EntityNotAuthorizedError when not authorized
    */
@@ -268,7 +290,9 @@ export abstract class EntityPrivacyPolicy<
    * Authorize an entity against deletion policy.
    * @param viewerContext - viewer context of user deleting the entity
    * @param queryContext - query context in which to perform the delete authorization
+   * @param evaluationContext - context about the reason for this privacy policy evaluation
    * @param entity - entity to authorize
+   * @param metricsAdapter - adapter for logging metrics about this authorization
    * @returns entity if authorized
    * @throws EntityNotAuthorizedError when not authorized
    */

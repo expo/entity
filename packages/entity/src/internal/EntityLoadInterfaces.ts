@@ -3,6 +3,8 @@ import { ISerializable, SerializableKeyMap } from '../utils/collections/Serializ
 
 /**
  * Load method type identifier of a load key. Used for keying data loaders and identification in metrics.
+ *
+ * @internal
  */
 export enum EntityLoadMethodType {
   /**
