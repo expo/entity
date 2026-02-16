@@ -1,11 +1,20 @@
 import {
+  AuthorizationResultBasedBatchCreateMutator,
+  AuthorizationResultBasedBatchDeleteMutator,
+  AuthorizationResultBasedBatchUpdateMutator,
   AuthorizationResultBasedCreateMutator,
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
 } from './AuthorizationResultBasedEntityMutator';
+import { EnforcingEntityBatchCreator } from './EnforcingEntityBatchCreator';
+import { EnforcingEntityBatchDeleter } from './EnforcingEntityBatchDeleter';
+import { EnforcingEntityBatchUpdater } from './EnforcingEntityBatchUpdater';
 import { EnforcingEntityCreator } from './EnforcingEntityCreator';
 import { EnforcingEntityDeleter } from './EnforcingEntityDeleter';
 import { EnforcingEntityUpdater } from './EnforcingEntityUpdater';
+import { EntityBatchCreator } from './EntityBatchCreator';
+import { EntityBatchDeleter } from './EntityBatchDeleter';
+import { EntityBatchUpdater } from './EntityBatchUpdater';
 import { EntityCompanionDefinition } from './EntityCompanionProvider';
 import { EntityCreator } from './EntityCreator';
 import { EntityDeleter } from './EntityDeleter';
@@ -307,6 +316,285 @@ export abstract class Entity<
     TMSelectedFields
   > {
     return new EntityDeleter(existingEntity, queryContext, this).withAuthorizationResults();
+  }
+
+  /**
+   * Vend mutator for batch creating multiple new entities in given query context.
+   * @param viewerContext - viewer context of creating user
+   * @param fieldObjects - field values for each entity to create
+   * @param queryContext - query context in which to perform the batch create
+   * @returns enforcing mutator for batch creating entities
+   */
+  static batchCreator<
+    TMFields extends object,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
+    TMViewerContext extends ViewerContext,
+    TMViewerContext2 extends TMViewerContext,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    viewerContext: TMViewerContext2,
+    fieldObjects: readonly Readonly<Partial<TMFields>>[],
+    queryContext: EntityQueryContext = viewerContext
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): EnforcingEntityBatchCreator<
+    TMFields,
+    TMIDField,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityBatchCreator(viewerContext, queryContext, this, fieldObjects).enforcing();
+  }
+
+  /**
+   * Vend mutator for batch creating multiple new entities in given query context.
+   * @param viewerContext - viewer context of creating user
+   * @param fieldObjects - field values for each entity to create
+   * @param queryContext - query context in which to perform the batch create
+   * @returns authorization-result-based mutator for batch creating entities
+   */
+  static batchCreatorWithAuthorizationResults<
+    TMFields extends object,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
+    TMViewerContext extends ViewerContext,
+    TMViewerContext2 extends TMViewerContext,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    viewerContext: TMViewerContext2,
+    fieldObjects: readonly Readonly<Partial<TMFields>>[],
+    queryContext: EntityQueryContext = viewerContext
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): AuthorizationResultBasedBatchCreateMutator<
+    TMFields,
+    TMIDField,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityBatchCreator(
+      viewerContext,
+      queryContext,
+      this,
+      fieldObjects,
+    ).withAuthorizationResults();
+  }
+
+  /**
+   * Vend mutator for batch updating multiple existing entities in given query context.
+   * @param existingEntities - entities to update (must have at least one)
+   * @param queryContext - query context in which to perform the batch update
+   * @returns enforcing mutator for batch updating entities
+   */
+  static batchUpdater<
+    TMFields extends object,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    existingEntities: readonly TMEntity[],
+    queryContext: EntityQueryContext = existingEntities[0]!
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): EnforcingEntityBatchUpdater<
+    TMFields,
+    TMIDField,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityBatchUpdater(existingEntities, queryContext, this).enforcing();
+  }
+
+  /**
+   * Vend mutator for batch updating multiple existing entities in given query context.
+   * @param existingEntities - entities to update (must have at least one)
+   * @param queryContext - query context in which to perform the batch update
+   * @returns authorization-result-based mutator for batch updating entities
+   */
+  static batchUpdaterWithAuthorizationResults<
+    TMFields extends object,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    existingEntities: readonly TMEntity[],
+    queryContext: EntityQueryContext = existingEntities[0]!
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): AuthorizationResultBasedBatchUpdateMutator<
+    TMFields,
+    TMIDField,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityBatchUpdater(existingEntities, queryContext, this).withAuthorizationResults();
+  }
+
+  /**
+   * Vend mutator for batch deleting multiple existing entities in given query context.
+   * @param existingEntities - entities to delete (must have at least one)
+   * @param queryContext - query context in which to perform the batch delete
+   * @returns enforcing mutator for batch deleting entities
+   */
+  static batchDeleter<
+    TMFields extends object,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    existingEntities: readonly TMEntity[],
+    queryContext: EntityQueryContext = existingEntities[0]!
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): EnforcingEntityBatchDeleter<
+    TMFields,
+    TMIDField,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityBatchDeleter(existingEntities, queryContext, this).enforcing();
+  }
+
+  /**
+   * Vend mutator for batch deleting multiple existing entities in given query context.
+   * @param existingEntities - entities to delete (must have at least one)
+   * @param queryContext - query context in which to perform the batch delete
+   * @returns authorization-result-based mutator for batch deleting entities
+   */
+  static batchDeleterWithAuthorizationResults<
+    TMFields extends object,
+    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
+    TMViewerContext extends ViewerContext,
+    TMEntity extends Entity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
+    TMPrivacyPolicy extends EntityPrivacyPolicy<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMSelectedFields
+    >,
+    TMSelectedFields extends keyof TMFields = keyof TMFields,
+  >(
+    this: IEntityClass<
+      TMFields,
+      TMIDField,
+      TMViewerContext,
+      TMEntity,
+      TMPrivacyPolicy,
+      TMSelectedFields
+    >,
+    existingEntities: readonly TMEntity[],
+    queryContext: EntityQueryContext = existingEntities[0]!
+      .getViewerContext()
+      .getViewerScopedEntityCompanionForClass(this)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): AuthorizationResultBasedBatchDeleteMutator<
+    TMFields,
+    TMIDField,
+    TMViewerContext,
+    TMEntity,
+    TMPrivacyPolicy,
+    TMSelectedFields
+  > {
+    return new EntityBatchDeleter(existingEntities, queryContext, this).withAuthorizationResults();
   }
 }
 

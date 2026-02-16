@@ -1,4 +1,5 @@
 import {
+  EntityDatabaseAdapterBatchUpdateMismatchResultError,
   EntityDatabaseAdapterEmptyUpdateResultError,
   TransactionIsolationLevel,
   ViewerContext,
@@ -12,8 +13,14 @@ import { setTimeout } from 'timers/promises';
 
 import { OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
+import { PostgresEntityDatabaseAdapter } from '../PostgresEntityDatabaseAdapter';
+import { PostgresEntityQueryContextProvider } from '../PostgresEntityQueryContextProvider';
 import { raw, sql, SQLFragment, SQLFragmentHelpers } from '../SQLOperator';
-import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity';
+import {
+  PostgresTestEntity,
+  PostgresTestEntityFields,
+  postgresTestEntityConfiguration,
+} from '../__testfixtures__/PostgresTestEntity';
 import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity';
 import { PostgresValidatorTestEntity } from '../__testfixtures__/PostgresValidatorTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
@@ -2822,6 +2829,284 @@ describe('postgres entity integration', () => {
         // Johnson (exact match) should be first
         expect(allNames[0]?.name).toBe('Johnson');
       });
+    });
+  });
+
+  describe('batch operations', () => {
+    let adapter: PostgresEntityDatabaseAdapter<PostgresTestEntityFields, 'id'>;
+    let queryContextProvider: PostgresEntityQueryContextProvider;
+
+    beforeAll(() => {
+      adapter = new PostgresEntityDatabaseAdapter(postgresTestEntityConfiguration);
+      queryContextProvider = new PostgresEntityQueryContextProvider(knexInstance);
+    });
+
+    describe('batchInsertAsync', () => {
+      it('inserts multiple rows and returns all with correct fields', async () => {
+        const queryContext = queryContextProvider.getQueryContext();
+        const results = await adapter.batchInsertAsync(queryContext, [
+          { name: 'batch1', hasACat: true, hasADog: false },
+          { name: 'batch2', hasACat: false, hasADog: true },
+          { name: 'batch3', hasACat: true, hasADog: true },
+        ]);
+
+        expect(results).toHaveLength(3);
+        expect(results[0]!.name).toBe('batch1');
+        expect(results[0]!.hasACat).toBe(true);
+        expect(results[0]!.hasADog).toBe(false);
+        expect(results[0]!.id).toBeTruthy();
+        expect(results[1]!.name).toBe('batch2');
+        expect(results[2]!.name).toBe('batch3');
+
+        // Verify all exist in DB
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+        for (const result of results) {
+          const loaded = await PostgresTestEntity.loader(vc).loadByIDAsync(result.id);
+          expect(loaded.getField('name')).toBe(result.name);
+        }
+      });
+
+      it('fails the whole batch on unique constraint violation', async () => {
+        const queryContext = queryContextProvider.getQueryContext();
+
+        // Insert the first row
+        await adapter.batchInsertAsync(queryContext, [{ name: 'unique-test' }]);
+
+        // Now try a batch insert where the second row has the same generated UUID
+        // We'll test this by inserting rows with the same explicit ID
+        const id = '00000000-0000-0000-0000-000000000001';
+        await adapter.batchInsertAsync(queryContext, [{ id, name: 'first' }]);
+
+        await expect(
+          adapter.batchInsertAsync(queryContext, [{ id, name: 'duplicate' }]),
+        ).rejects.toThrow();
+      });
+
+      it('handles JSON array field transformation in batch', async () => {
+        const queryContext = queryContextProvider.getQueryContext();
+        const results = await adapter.batchInsertAsync(queryContext, [
+          { name: 'json-batch1', jsonArrayField: ['a', 'b', 'c'] },
+          { name: 'json-batch2', jsonArrayField: ['x', 'y'] },
+        ]);
+
+        expect(results).toHaveLength(2);
+        expect(results[0]!.jsonArrayField).toEqual(['a', 'b', 'c']);
+        expect(results[1]!.jsonArrayField).toEqual(['x', 'y']);
+      });
+    });
+
+    describe('batchUpdateAsync', () => {
+      it('updates multiple rows and returns all with correct fields', async () => {
+        const queryContext = queryContextProvider.getQueryContext();
+
+        // Insert rows first
+        const inserted = await adapter.batchInsertAsync(queryContext, [
+          { name: 'update1', hasACat: false },
+          { name: 'update2', hasACat: false },
+          { name: 'update3', hasACat: false },
+        ]);
+
+        const ids = inserted.map((r) => r.id);
+        const updated = await adapter.batchUpdateAsync(queryContext, 'id', ids, {
+          hasACat: true,
+        });
+
+        expect(updated).toHaveLength(3);
+        for (const result of updated) {
+          expect(result.hasACat).toBe(true);
+        }
+      });
+
+      it('throws mismatch error when updating with a nonexistent ID', async () => {
+        const queryContext = queryContextProvider.getQueryContext();
+
+        const inserted = await adapter.batchInsertAsync(queryContext, [{ name: 'exists' }]);
+
+        await expect(
+          adapter.batchUpdateAsync(
+            queryContext,
+            'id',
+            [inserted[0]!.id, '00000000-0000-0000-0000-000000000099'],
+            { name: 'updated' },
+          ),
+        ).rejects.toThrow(EntityDatabaseAdapterBatchUpdateMismatchResultError);
+      });
+
+      it('returns results in input ID order', async () => {
+        const queryContext = queryContextProvider.getQueryContext();
+
+        const inserted = await adapter.batchInsertAsync(queryContext, [
+          { name: 'order-a' },
+          { name: 'order-b' },
+          { name: 'order-c' },
+        ]);
+
+        // Request update in reverse order
+        const reversedIds = [inserted[2]!.id, inserted[1]!.id, inserted[0]!.id];
+        const updated = await adapter.batchUpdateAsync(queryContext, 'id', reversedIds, {
+          hasADog: true,
+        });
+
+        expect(updated).toHaveLength(3);
+        expect(updated[0]!.id).toBe(inserted[2]!.id);
+        expect(updated[1]!.id).toBe(inserted[1]!.id);
+        expect(updated[2]!.id).toBe(inserted[0]!.id);
+      });
+    });
+  });
+
+  describe('batch entity operations', () => {
+    it('batch creates multiple entities via entity-level API', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const entities = await PostgresTestEntity.batchCreator(vc, [
+        { name: 'batch-a', hasACat: true },
+        { name: 'batch-b', hasACat: false },
+        { name: 'batch-c', hasADog: true },
+      ]).createAsync();
+
+      expect(entities).toHaveLength(3);
+      expect(entities[0]!.getField('name')).toBe('batch-a');
+      expect(entities[0]!.getField('hasACat')).toBe(true);
+      expect(entities[1]!.getField('name')).toBe('batch-b');
+      expect(entities[1]!.getField('hasACat')).toBe(false);
+      expect(entities[2]!.getField('name')).toBe('batch-c');
+      expect(entities[2]!.getField('hasADog')).toBe(true);
+
+      // Verify all are loadable independently
+      for (const entity of entities) {
+        const loaded = await PostgresTestEntity.loader(vc).loadByIDAsync(entity.getID());
+        expect(loaded.getID()).toBe(entity.getID());
+      }
+    });
+
+    it('batch creates with empty array returns empty', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entities = await PostgresTestEntity.batchCreator(vc, []).createAsync();
+      expect(entities).toHaveLength(0);
+    });
+
+    it('batch updates multiple entities with same field changes', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Create entities first
+      const entity1 = await PostgresTestEntity.creator(vc)
+        .setField('name', 'update-a')
+        .setField('hasACat', false)
+        .createAsync();
+      const entity2 = await PostgresTestEntity.creator(vc)
+        .setField('name', 'update-b')
+        .setField('hasACat', false)
+        .createAsync();
+
+      // Batch update
+      const updatedEntities = await PostgresTestEntity.batchUpdater([entity1, entity2])
+        .setField('hasACat', true)
+        .updateAsync();
+
+      expect(updatedEntities).toHaveLength(2);
+      expect(updatedEntities[0]!.getField('hasACat')).toBe(true);
+      expect(updatedEntities[1]!.getField('hasACat')).toBe(true);
+      // Verify names unchanged
+      expect(updatedEntities[0]!.getField('name')).toBe('update-a');
+      expect(updatedEntities[1]!.getField('name')).toBe('update-b');
+      // Verify ordering matches input
+      expect(updatedEntities[0]!.getID()).toBe(entity1.getID());
+      expect(updatedEntities[1]!.getID()).toBe(entity2.getID());
+
+      // Verify via reload
+      const reloaded1 = await PostgresTestEntity.loader(vc).loadByIDAsync(entity1.getID());
+      const reloaded2 = await PostgresTestEntity.loader(vc).loadByIDAsync(entity2.getID());
+      expect(reloaded1.getField('hasACat')).toBe(true);
+      expect(reloaded2.getField('hasACat')).toBe(true);
+    });
+
+    it('batch create with authorization results returns result', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const result = await PostgresTestEntity.batchCreatorWithAuthorizationResults(vc, [
+        { name: 'result-a' },
+        { name: 'result-b' },
+      ]).createAsync();
+
+      expect(result.ok).toBe(true);
+      const entities = result.enforceValue();
+      expect(entities).toHaveLength(2);
+      expect(entities[0]!.getField('name')).toBe('result-a');
+      expect(entities[1]!.getField('name')).toBe('result-b');
+    });
+
+    it('batch update with authorization results returns result', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const entity1 = await PostgresTestEntity.creator(vc)
+        .setField('name', 'auth-update-a')
+        .createAsync();
+      const entity2 = await PostgresTestEntity.creator(vc)
+        .setField('name', 'auth-update-b')
+        .createAsync();
+
+      const result = await PostgresTestEntity.batchUpdaterWithAuthorizationResults([
+        entity1,
+        entity2,
+      ])
+        .setField('hasADog', true)
+        .updateAsync();
+
+      expect(result.ok).toBe(true);
+      const entities = result.enforceValue();
+      expect(entities).toHaveLength(2);
+      expect(entities[0]!.getField('hasADog')).toBe(true);
+      expect(entities[1]!.getField('hasADog')).toBe(true);
+    });
+
+    it('batch deletes multiple entities', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const entity1 = await PostgresTestEntity.creator(vc)
+        .setField('name', 'delete-a')
+        .createAsync();
+      const entity2 = await PostgresTestEntity.creator(vc)
+        .setField('name', 'delete-b')
+        .createAsync();
+      const entity3 = await PostgresTestEntity.creator(vc).setField('name', 'keep-c').createAsync();
+
+      await PostgresTestEntity.batchDeleter([entity1, entity2]).deleteAsync();
+
+      // Verify deleted entities are not loadable
+      const loadResult1 = await PostgresTestEntity.loaderWithAuthorizationResults(vc).loadByIDAsync(
+        entity1.getID(),
+      );
+      expect(loadResult1.ok).toBe(false);
+
+      const loadResult2 = await PostgresTestEntity.loaderWithAuthorizationResults(vc).loadByIDAsync(
+        entity2.getID(),
+      );
+      expect(loadResult2.ok).toBe(false);
+
+      // Verify non-deleted entity is still loadable
+      const loadedEntity3 = await PostgresTestEntity.loader(vc).loadByIDAsync(entity3.getID());
+      expect(loadedEntity3.getField('name')).toBe('keep-c');
+    });
+
+    it('batch delete with authorization results returns success result', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      const entity1 = await PostgresTestEntity.creator(vc)
+        .setField('name', 'auth-delete-a')
+        .createAsync();
+      const entity2 = await PostgresTestEntity.creator(vc)
+        .setField('name', 'auth-delete-b')
+        .createAsync();
+
+      const result = await PostgresTestEntity.batchDeleterWithAuthorizationResults([
+        entity1,
+        entity2,
+      ]).deleteAsync();
+
+      expect(result.ok).toBe(true);
     });
   });
 });

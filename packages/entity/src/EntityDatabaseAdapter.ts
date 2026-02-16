@@ -3,6 +3,9 @@ import invariant from 'invariant';
 import { EntityConfiguration } from './EntityConfiguration';
 import { EntityQueryContext } from './EntityQueryContext';
 import {
+  EntityDatabaseAdapterBatchDeleteExcessiveResultError,
+  EntityDatabaseAdapterBatchInsertMismatchResultError,
+  EntityDatabaseAdapterBatchUpdateMismatchResultError,
   EntityDatabaseAdapterEmptyInsertResultError,
   EntityDatabaseAdapterEmptyUpdateResultError,
   EntityDatabaseAdapterExcessiveDeleteResultError,
@@ -251,6 +254,149 @@ export abstract class EntityDatabaseAdapter<
     id: any,
     object: object,
   ): Promise<object[]>;
+
+  /**
+   * Batch insert multiple objects in a single SQL statement.
+   *
+   * @param queryContext - query context with which to perform the insert
+   * @param objects - the objects to insert
+   * @returns the inserted objects
+   */
+  async batchInsertAsync(
+    queryContext: EntityQueryContext,
+    objects: readonly Readonly<Partial<TFields>>[],
+  ): Promise<readonly Readonly<TFields>[]> {
+    if (objects.length === 0) {
+      return [];
+    }
+
+    const dbObjects = objects.map((object) =>
+      transformFieldsToDatabaseObject(this.entityConfiguration, this.fieldTransformerMap, object),
+    );
+    const results = await this.batchInsertInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      dbObjects,
+    );
+
+    if (results.length !== objects.length) {
+      throw new EntityDatabaseAdapterBatchInsertMismatchResultError(
+        `Batch insert result count (${results.length}) does not match input count (${objects.length}): ${this.entityConfiguration.tableName}`,
+      );
+    }
+
+    return results.map((result) =>
+      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
+    );
+  }
+
+  protected abstract batchInsertInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    objects: readonly object[],
+  ): Promise<object[]>;
+
+  /**
+   * Batch update multiple objects by ID in a single SQL statement.
+   * The same field values are applied to all rows matching the given IDs.
+   *
+   * @param queryContext - query context with which to perform the update
+   * @param idField - the field in the object that is the ID
+   * @param ids - the values of the ID field to update
+   * @param object - the field values to apply to all matching rows
+   * @returns the updated objects, in the same order as the input IDs
+   */
+  async batchUpdateAsync<K extends keyof TFields>(
+    queryContext: EntityQueryContext,
+    idField: K,
+    ids: readonly TFields[K][],
+    object: Readonly<Partial<TFields>>,
+  ): Promise<readonly Readonly<TFields>[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const idColumn = getDatabaseFieldForEntityField(this.entityConfiguration, idField);
+    const dbObject = transformFieldsToDatabaseObject(
+      this.entityConfiguration,
+      this.fieldTransformerMap,
+      object,
+    );
+    const results = await this.batchUpdateInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      idColumn,
+      ids,
+      dbObject,
+    );
+
+    if (results.length !== ids.length) {
+      throw new EntityDatabaseAdapterBatchUpdateMismatchResultError(
+        `Batch update result count (${results.length}) does not match input ID count (${ids.length}): ${this.entityConfiguration.tableName}`,
+      );
+    }
+
+    const transformedResults = results.map((result) =>
+      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
+    );
+
+    // Re-order results to match input ID order (Postgres WHERE IN doesn't guarantee order)
+    const resultMap = new Map<TFields[K], Readonly<TFields>>();
+    for (const transformedResult of transformedResults) {
+      resultMap.set(transformedResult[idField], transformedResult);
+    }
+    return ids.map((id) => {
+      const result = resultMap.get(id);
+      invariant(result, `Missing result for ID ${String(id)} after batch update`);
+      return result;
+    });
+  }
+
+  protected abstract batchUpdateInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    tableIdField: string,
+    ids: readonly any[],
+    object: object,
+  ): Promise<object[]>;
+
+  /**
+   * Batch delete multiple objects by ID in a single SQL statement.
+   *
+   * @param queryContext - query context with which to perform the deletion
+   * @param idField - the field in the object that is the ID
+   * @param ids - the values of the ID field to delete
+   */
+  async batchDeleteAsync<K extends keyof TFields>(
+    queryContext: EntityQueryContext,
+    idField: K,
+    ids: readonly TFields[K][],
+  ): Promise<void> {
+    if (ids.length === 0) {
+      return;
+    }
+
+    const idColumn = getDatabaseFieldForEntityField(this.entityConfiguration, idField);
+    const numDeleted = await this.batchDeleteInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      idColumn,
+      ids,
+    );
+
+    if (numDeleted > ids.length) {
+      throw new EntityDatabaseAdapterBatchDeleteExcessiveResultError(
+        `Excessive deletions from database adapter batch delete: ${this.entityConfiguration.tableName} (expected <= ${ids.length}, got ${numDeleted})`,
+      );
+    }
+  }
+
+  protected abstract batchDeleteInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    tableIdField: string,
+    ids: readonly any[],
+  ): Promise<number>;
 
   /**
    * Delete an object by ID.

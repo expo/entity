@@ -1,4 +1,7 @@
 import {
+  AuthorizationResultBasedBatchCreateMutator,
+  AuthorizationResultBasedBatchDeleteMutator,
+  AuthorizationResultBasedBatchUpdateMutator,
   AuthorizationResultBasedCreateMutator,
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
@@ -169,6 +172,115 @@ export class EntityMutatorFactory<
       this.metricsAdapter,
       existingEntity,
       cascadingDeleteCause,
+    );
+  }
+
+  /**
+   * Vend mutator for batch creating multiple new entities in given query context.
+   * @param viewerContext - viewer context of creating user
+   * @param queryContext - query context in which to perform the batch create
+   * @param fieldObjects - field values for each entity to create
+   * @returns mutator for batch creating entities
+   */
+  forBatchCreate(
+    viewerContext: TViewerContext,
+    queryContext: EntityQueryContext,
+    fieldObjects: readonly Readonly<Partial<TFields>>[],
+  ): AuthorizationResultBasedBatchCreateMutator<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return new AuthorizationResultBasedBatchCreateMutator(
+      this.entityCompanionProvider,
+      viewerContext,
+      queryContext,
+      this.entityConfiguration,
+      this.entityClass,
+      this.privacyPolicy,
+      this.mutationValidators,
+      this.mutationTriggers,
+      this.entityLoaderFactory,
+      this.databaseAdapter,
+      this.metricsAdapter,
+      fieldObjects,
+    );
+  }
+
+  /**
+   * Vend mutator for batch deleting multiple existing entities in given query context.
+   * @param existingEntities - entities to delete
+   * @param queryContext - query context in which to perform the batch delete
+   * @returns mutator for batch deleting entities
+   */
+  forBatchDelete(
+    existingEntities: readonly TEntity[],
+    queryContext: EntityQueryContext,
+  ): AuthorizationResultBasedBatchDeleteMutator<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    const viewerContext =
+      existingEntities.length > 0
+        ? existingEntities[0]!.getViewerContext()
+        : (undefined as unknown as TViewerContext);
+    return new AuthorizationResultBasedBatchDeleteMutator(
+      this.entityCompanionProvider,
+      viewerContext,
+      queryContext,
+      this.entityConfiguration,
+      this.entityClass,
+      this.privacyPolicy,
+      this.mutationValidators,
+      this.mutationTriggers,
+      this.entityLoaderFactory,
+      this.databaseAdapter,
+      this.metricsAdapter,
+      existingEntities,
+    );
+  }
+
+  /**
+   * Vend mutator for batch updating multiple existing entities in given query context.
+   * @param existingEntities - entities to update
+   * @param queryContext - query context in which to perform the batch update
+   * @returns mutator for batch updating entities
+   */
+  forBatchUpdate(
+    existingEntities: readonly TEntity[],
+    queryContext: EntityQueryContext,
+  ): AuthorizationResultBasedBatchUpdateMutator<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    const viewerContext =
+      existingEntities.length > 0
+        ? existingEntities[0]!.getViewerContext()
+        : (undefined as unknown as TViewerContext);
+    return new AuthorizationResultBasedBatchUpdateMutator(
+      this.entityCompanionProvider,
+      viewerContext,
+      queryContext,
+      this.entityConfiguration,
+      this.entityClass,
+      this.privacyPolicy,
+      this.mutationValidators,
+      this.mutationTriggers,
+      this.entityLoaderFactory,
+      this.databaseAdapter,
+      this.metricsAdapter,
+      existingEntities,
     );
   }
 }

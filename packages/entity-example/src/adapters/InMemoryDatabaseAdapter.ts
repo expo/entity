@@ -62,6 +62,53 @@ class InMemoryDatabaseAdapter<
     return results[0] ?? null;
   }
 
+  protected async batchInsertInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    objects: readonly object[],
+  ): Promise<object[]> {
+    const configurationPrivate = this['entityConfiguration'];
+    const idField = getDatabaseFieldForEntityField(
+      configurationPrivate,
+      configurationPrivate.idField,
+    );
+    const insertedObjects: object[] = [];
+    for (const object of objects) {
+      const objectToInsert = {
+        [idField]: uuidv4(),
+        ...object,
+      };
+      dbObjects.push(objectToInsert);
+      insertedObjects.push(objectToInsert);
+    }
+    return insertedObjects;
+  }
+
+  protected async batchUpdateInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    tableIdField: string,
+    ids: readonly any[],
+    object: object,
+  ): Promise<object[]> {
+    if (Object.keys(object).length === 0) {
+      throw new Error(`Empty batch update (${tableIdField} IN (${ids.join(', ')}))`);
+    }
+
+    const updatedObjects: object[] = [];
+    for (const id of ids) {
+      const objectIndex = dbObjects.findIndex((obj) => obj[tableIdField] === id);
+      if (objectIndex >= 0) {
+        dbObjects[objectIndex] = {
+          ...dbObjects[objectIndex],
+          ...object,
+        };
+        updatedObjects.push(dbObjects[objectIndex]);
+      }
+    }
+    return updatedObjects;
+  }
+
   protected async insertInternalAsync(
     _queryInterface: any,
     _tableName: string,
@@ -107,6 +154,24 @@ class InMemoryDatabaseAdapter<
       ...object,
     };
     return [dbObjects[objectIndex]];
+  }
+
+  protected async batchDeleteInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    tableIdField: string,
+    ids: readonly any[],
+  ): Promise<number> {
+    let count = 0;
+
+    for (const id of ids) {
+      const objectIndex = dbObjects.findIndex((obj) => obj[tableIdField] === id);
+      if (objectIndex >= 0) {
+        dbObjects.splice(objectIndex, 1);
+        count++;
+      }
+    }
+    return count;
   }
 
   protected async deleteInternalAsync(

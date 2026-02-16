@@ -232,6 +232,57 @@ export class EntityDatabaseAdapterExcessiveDeleteResultError extends EntityDatab
   }
 }
 
+/**
+ * Thrown when a batch insert operation returns a different number of results than the number of objects inserted.
+ */
+export class EntityDatabaseAdapterBatchInsertMismatchResultError extends EntityDatabaseAdapterError {
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterBatchInsertMismatchResultError';
+  }
+
+  get state(): EntityErrorState.PERMANENT {
+    return EntityErrorState.PERMANENT;
+  }
+
+  get code(): EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_BATCH_INSERT_MISMATCH_RESULT {
+    return EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_BATCH_INSERT_MISMATCH_RESULT;
+  }
+}
+
+/**
+ * Thrown when a batch update operation returns a different number of results than the number of IDs provided.
+ */
+export class EntityDatabaseAdapterBatchUpdateMismatchResultError extends EntityDatabaseAdapterError {
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterBatchUpdateMismatchResultError';
+  }
+
+  get state(): EntityErrorState.PERMANENT {
+    return EntityErrorState.PERMANENT;
+  }
+
+  get code(): EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_BATCH_UPDATE_MISMATCH_RESULT {
+    return EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_BATCH_UPDATE_MISMATCH_RESULT;
+  }
+}
+
+/**
+ * Thrown when a batch delete operation deletes more rows than the number of IDs provided.
+ */
+export class EntityDatabaseAdapterBatchDeleteExcessiveResultError extends EntityDatabaseAdapterError {
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterBatchDeleteExcessiveResultError';
+  }
+
+  get state(): EntityErrorState.PERMANENT {
+    return EntityErrorState.PERMANENT;
+  }
+
+  get code(): EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_BATCH_DELETE_EXCESSIVE_RESULT {
+    return EntityErrorCode.ERR_ENTITY_DATABASE_ADAPTER_BATCH_DELETE_EXCESSIVE_RESULT;
+  }
+}
+
 export class EntityDatabaseAdapterPaginationCursorInvalidError extends EntityDatabaseAdapterError {
   static {
     this.prototype.name = 'EntityDatabaseAdapterPaginationCursorError';
