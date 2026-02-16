@@ -11,6 +11,7 @@ export * from './EnforcingKnexEntityLoader';
 export * from './EntityFields';
 export * from './KnexEntityLoader';
 export * from './KnexEntityLoaderFactory';
+export * from './PaginationStrategy';
 export * from './PostgresEntityDatabaseAdapter';
 export * from './PostgresEntityDatabaseAdapterProvider';
 export * from './PostgresEntityQueryContextProvider';

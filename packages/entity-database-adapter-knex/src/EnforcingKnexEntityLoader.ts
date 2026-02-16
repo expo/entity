@@ -191,37 +191,14 @@ export class EnforcingKnexEntityLoader<
   /**
    * Load a page of entities with Relay-style cursor pagination.
    *
-   * @param args - Pagination arguments with either first/after or last/before
-   *
-   * @example
-   * ```typescript
-   * // Forward pagination - get first 10 items
-   * const users = await TestEntity.knexLoader(vc)
-   *   .loadPageBySQLAsync({
-   *     first: 10,
-   *     where: sql`age > ${18}`,
-   *     orderBy: 'created_at'
-   *   });
-   *
-   * // Backward pagination with cursor - get last 10 items before the cursor
-   * const lastResults = await TestEntity.knexLoader(vc)
-   *   .loadPageBySQLAsync({
-   *     last: 10,
-   *     where: sql`status = ${'active'}`,
-   *     before: cursor,
-   *   });
-   * ```
-   *
+   * @param args - Pagination arguments with pagination and either first/after or last/before
+   * @returns a page of entities matching the pagination arguments
    * @throws EntityNotAuthorizedError if viewer is not authorized to view any returned entity
    */
-  async loadPageBySQLAsync(
+  async loadPageAsync(
     args: EntityLoaderLoadPageArgs<TFields, TSelectedFields>,
   ): Promise<Connection<TEntity>> {
-    const pageResult = await this.knexDataManager.loadPageBySQLFragmentAsync(
-      this.queryContext,
-      args,
-    );
-
+    const pageResult = await this.knexDataManager.loadPageAsync(this.queryContext, args);
     const edges = await Promise.all(
       pageResult.edges.map(async (edge) => {
         const entityResult = await this.constructionUtils.constructAndAuthorizeEntityAsync(

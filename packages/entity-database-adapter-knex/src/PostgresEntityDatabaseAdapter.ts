@@ -110,14 +110,19 @@ export class PostgresEntityDatabaseAdapter<
     query: Knex.QueryBuilder,
     querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,
   ): Knex.QueryBuilder {
-    let ret = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
-
     const { orderByRaw } = querySelectionModifiers;
-    if (orderByRaw !== undefined) {
-      ret = ret.orderByRaw(orderByRaw);
-    }
 
-    return ret;
+    // orderByRaw takes precedence over orderBy - they are mutually exclusive
+    if (orderByRaw !== undefined) {
+      // Apply only orderByRaw (offset/limit still applied, but not orderBy)
+      return this.applyQueryModifiersToQuery(query, {
+        ...querySelectionModifiers,
+        orderBy: undefined, // Explicitly exclude orderBy when orderByRaw is present
+      }).orderByRaw(orderByRaw);
+    } else {
+      // Apply regular orderBy (and offset/limit)
+      return this.applyQueryModifiersToQuery(query, querySelectionModifiers);
+    }
   }
 
   private applyQueryModifiersToQuery(
@@ -216,10 +221,19 @@ export class PostgresEntityDatabaseAdapter<
       .select()
       .from(tableName)
       .whereRaw(sqlFragment.sql, sqlFragment.getKnexBindings());
-    query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
+
+    // Apply order by modifiers
+    // orderByFragment takes precedence over orderBy - they are mutually exclusive
     const { orderByFragment } = querySelectionModifiers;
     if (orderByFragment !== undefined) {
-      query = query.orderByRaw(orderByFragment.sql, orderByFragment.getKnexBindings());
+      // Apply only orderByFragment (offset/limit still applied, but not orderBy)
+      query = this.applyQueryModifiersToQuery(query, {
+        ...querySelectionModifiers,
+        orderBy: undefined, // Explicitly exclude orderBy when orderByFragment is present
+      }).orderByRaw(orderByFragment.sql, orderByFragment.getKnexBindings());
+    } else {
+      // Apply regular orderBy (and offset/limit)
+      query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
     }
     return await wrapNativePostgresCallAsync(() => query);
   }
