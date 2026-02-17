@@ -218,6 +218,15 @@ export class EntityKnexDataManager<
   /**
    * Load a page of objects using cursor-based pagination with unified pagination specification.
    *
+   * @remarks
+   *
+   * This method implements cursor-based pagination using the seek method for efficient pagination even on large datasets
+   * given appropriate indexes. Cursors are opaque and encode the necessary information to fetch the next page based on the
+   * specified pagination strategy (standard, ILIKE search, or trigram search). For this implementation in particular,
+   * the cursor encodes the ID of the last entity in the page to ensure correct pagination for all strategies, even in cases
+   * where multiple rows have the same value for all fields other than the ID. If the entity referenced by a cursor has been
+   * deleted, the load will return an empty page with `hasNextPage: false`.
+   *
    * @param queryContext - query context in which to perform the load
    * @param args - pagination arguments including pagination and first/after or last/before
    * @returns connection with edges containing field objects and page info
@@ -477,6 +486,8 @@ export class EntityKnexDataManager<
     // We build a tuple comparison for fieldsToUseInPostgresTupleCursor fields of the
     // entity identified by the external cursor to ensure correct pagination behavior
     // even in cases where multiple rows have the same value all fields other than id.
+    // If the cursor entity has been deleted, the subquery returns no rows and the
+    // comparison evaluates to NULL, filtering out all results (empty page).
     const operator = direction === PaginationDirection.FORWARD ? '>' : '<';
 
     const idField = getDatabaseFieldForEntityField(
@@ -555,7 +566,9 @@ export class EntityKnexDataManager<
     decodedExternalCursorEntityID: TFields[TIDField],
     direction: PaginationDirection,
   ): SQLFragment {
-    // For TRIGRAM search, we compute the similarity values using a subquery, similar to normal cursor
+    // For TRIGRAM search, we compute the similarity values using a subquery, similar to normal cursor.
+    // If the cursor entity has been deleted, the subquery returns no rows and the
+    // comparison evaluates to NULL, filtering out all results (empty page).
     const operator = direction === PaginationDirection.FORWARD ? '<' : '>';
     const idField = getDatabaseFieldForEntityField(
       this.entityConfiguration,

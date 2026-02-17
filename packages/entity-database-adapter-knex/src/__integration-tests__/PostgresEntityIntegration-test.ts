@@ -1618,8 +1618,6 @@ describe('postgres entity integration', () => {
         );
 
         // Create test data with names that sort in a specific order
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
 
         const entities = [];
         for (let i = 1; i <= 5; i++) {
@@ -1673,8 +1671,6 @@ describe('postgres entity integration', () => {
         );
 
         // Create entities with duplicate values to test stability
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
 
         const entities = [];
         for (let i = 1; i <= 6; i++) {
@@ -1777,9 +1773,6 @@ describe('postgres entity integration', () => {
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
 
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
-
         // Create entities with different names
         const names = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank'];
         for (const name of names) {
@@ -1841,9 +1834,6 @@ describe('postgres entity integration', () => {
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
 
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
-
         // Create exactly 6 entities
         for (let i = 1; i <= 6; i++) {
           await PostgresTestEntity.creator(vc).setField('name', `Entity${i}`).createAsync();
@@ -1879,8 +1869,6 @@ describe('postgres entity integration', () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
 
         // Create test data with specific order
         await PostgresTestEntity.creator(vc).setField('name', 'Charlie').createAsync();
@@ -1910,8 +1898,6 @@ describe('postgres entity integration', () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
 
         // Enable pg_trgm extension for trigram similarity
         await knexInstance.raw('CREATE EXTENSION IF NOT EXISTS pg_trgm');
@@ -2091,14 +2077,55 @@ describe('postgres entity integration', () => {
       });
     });
 
+    it('returns empty page when cursor entity no longer exists', async () => {
+      const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      // Create test entities
+      const names = ['Alice', 'Bob', 'Charlie', 'David', 'Eve'];
+      for (const name of names) {
+        await PostgresTestEntity.creator(vc).setField('name', name).createAsync();
+      }
+
+      // Get first page and capture cursor pointing to a specific entity
+      const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+        first: 2,
+        pagination: {
+          strategy: PaginationStrategy.STANDARD,
+          orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        },
+      });
+
+      expect(firstPage.edges).toHaveLength(2);
+      const cursorEntityNode = firstPage.edges[1]!.node; // 'Bob'
+      const cursor = firstPage.pageInfo.endCursor!;
+
+      // Delete the entity that the cursor refers to
+      await PostgresTestEntity.deleter(cursorEntityNode).deleteAsync();
+
+      // Paginate using the cursor of the now-deleted entity
+      const result = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+        first: 10,
+        after: cursor,
+        pagination: {
+          strategy: PaginationStrategy.STANDARD,
+          orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+        },
+      });
+
+      expect(result.edges).toEqual([]);
+      expect(result.pageInfo).toEqual({
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: null,
+        endCursor: null,
+      });
+    });
+
     describe(PaginationStrategy.ILIKE_SEARCH, () => {
       it('supports search with ILIKE strategy', async () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
-
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
 
         // Create test data with searchable names
         const names = [
@@ -2196,8 +2223,6 @@ describe('postgres entity integration', () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
 
         // Create test data
         const names = ['Apple', 'Application', 'Apply', 'Banana', 'Cherry', 'Pineapple'];
@@ -2388,9 +2413,6 @@ describe('postgres entity integration', () => {
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
 
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
-
         // Enable pg_trgm extension for trigram similarity
         await knexInstance.raw('CREATE EXTENSION IF NOT EXISTS pg_trgm');
 
@@ -2448,8 +2470,6 @@ describe('postgres entity integration', () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
 
         // Enable pg_trgm extension for trigram similarity
         await knexInstance.raw('CREATE EXTENSION IF NOT EXISTS pg_trgm');
@@ -2552,8 +2572,6 @@ describe('postgres entity integration', () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
 
         // Enable pg_trgm extension for trigram similarity
         await knexInstance.raw('CREATE EXTENSION IF NOT EXISTS pg_trgm');
@@ -2721,8 +2739,6 @@ describe('postgres entity integration', () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
-        await PostgresTestEntity.dropPostgresTableAsync(knexInstance);
-        await PostgresTestEntity.createOrTruncatePostgresTableAsync(knexInstance);
 
         // Enable pg_trgm extension for trigram similarity
         await knexInstance.raw('CREATE EXTENSION IF NOT EXISTS pg_trgm');
