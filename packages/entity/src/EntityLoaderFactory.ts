@@ -39,6 +39,52 @@ export class EntityLoaderFactory<
     protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
+  invalidationUtils(): EntityInvalidationUtils<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return new EntityInvalidationUtils(
+      this.entityCompanion.entityCompanionDefinition.entityConfiguration,
+      this.entityCompanion.entityCompanionDefinition.entityClass,
+      this.dataManager,
+      this.metricsAdapter,
+    );
+  }
+
+  constructionUtils(
+    viewerContext: TViewerContext,
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+  ): EntityConstructionUtils<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return new EntityConstructionUtils(
+      viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+      this.entityCompanion.entityCompanionDefinition.entityConfiguration,
+      this.entityCompanion.entityCompanionDefinition.entityClass,
+      this.entityCompanion.entityCompanionDefinition.entitySelectedFields,
+      this.entityCompanion.privacyPolicy,
+      this.metricsAdapter,
+    );
+  }
+
   /**
    * Vend loader for loading an entity in a given query context.
    * @param viewerContext - viewer context of loading user
@@ -62,21 +108,10 @@ export class EntityLoaderFactory<
     TPrivacyPolicy,
     TSelectedFields
   > {
-    const invalidationUtils = new EntityInvalidationUtils(
-      this.entityCompanion.entityCompanionDefinition.entityConfiguration,
-      this.entityCompanion.entityCompanionDefinition.entityClass,
-      this.dataManager,
-      this.metricsAdapter,
-    );
-    const constructionUtils = new EntityConstructionUtils(
+    const constructionUtils = this.constructionUtils(
       viewerContext,
       queryContext,
       privacyPolicyEvaluationContext,
-      this.entityCompanion.entityCompanionDefinition.entityConfiguration,
-      this.entityCompanion.entityCompanionDefinition.entityClass,
-      this.entityCompanion.entityCompanionDefinition.entitySelectedFields,
-      this.entityCompanion.privacyPolicy,
-      this.metricsAdapter,
     );
 
     return new AuthorizationResultBasedEntityLoader(
@@ -84,8 +119,6 @@ export class EntityLoaderFactory<
       this.entityCompanion.entityCompanionDefinition.entityConfiguration,
       this.entityCompanion.entityCompanionDefinition.entityClass,
       this.dataManager,
-      this.metricsAdapter,
-      invalidationUtils,
       constructionUtils,
     );
   }

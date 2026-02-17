@@ -5,7 +5,6 @@ import { AuthorizationResultBasedEntityAssociationLoader } from '../Authorizatio
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
 import { EnforcingEntityAssociationLoader } from '../EnforcingEntityAssociationLoader';
 import { EnforcingEntityLoader } from '../EnforcingEntityLoader';
-import { EntityConstructionUtils } from '../EntityConstructionUtils';
 import { EntityInvalidationUtils } from '../EntityInvalidationUtils';
 import { ReadonlyEntity } from '../ReadonlyEntity';
 import { ViewerContext } from '../ViewerContext';
@@ -221,16 +220,6 @@ describe(ReadonlyEntity, () => {
       const viewerContext = new ViewerContext(companionProvider);
       expect(SimpleTestEntity.invalidationUtils(viewerContext)).toBeInstanceOf(
         EntityInvalidationUtils,
-      );
-    });
-  });
-
-  describe('constructionUtils', () => {
-    it('creates a new EntityConstructionUtils', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
-      expect(SimpleTestEntity.constructionUtils(viewerContext)).toBeInstanceOf(
-        EntityConstructionUtils,
       );
     });
   });

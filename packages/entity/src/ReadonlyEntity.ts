@@ -6,7 +6,6 @@ import { EnforcingEntityAssociationLoader } from './EnforcingEntityAssociationLo
 import { EnforcingEntityLoader } from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
 import { EntityAssociationLoader } from './EntityAssociationLoader';
-import { EntityConstructionUtils } from './EntityConstructionUtils';
 import { EntityInvalidationUtils } from './EntityInvalidationUtils';
 import { EntityLoader } from './EntityLoader';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
@@ -232,7 +231,7 @@ export abstract class ReadonlyEntity<
 
   /**
    * Utilities for entity invalidation.
-   * Calling into these should only be necessary in rare cases.
+   * Call these manually to keep entity cache consistent when performing operations outside of the entity framework.
    */
   static invalidationUtils<
     TMFields extends object,
@@ -258,10 +257,6 @@ export abstract class ReadonlyEntity<
       TMSelectedFields
     >,
     viewerContext: TMViewerContext2,
-    queryContext: EntityQueryContext = viewerContext
-      .getViewerScopedEntityCompanionForClass(this)
-      .getQueryContextProvider()
-      .getQueryContext(),
   ): EntityInvalidationUtils<
     TMFields,
     TMIDField,
@@ -270,49 +265,9 @@ export abstract class ReadonlyEntity<
     TMPrivacyPolicy,
     TMSelectedFields
   > {
-    return new EntityLoader(viewerContext, queryContext, this).invalidationUtils();
-  }
-
-  /**
-   * Utilities for entity construction.
-   * Calling into these should only be necessary in rare cases.
-   */
-  static constructionUtils<
-    TMFields extends object,
-    TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
-    TMViewerContext extends ViewerContext,
-    TMViewerContext2 extends TMViewerContext,
-    TMEntity extends ReadonlyEntity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
-    TMPrivacyPolicy extends EntityPrivacyPolicy<
-      TMFields,
-      TMIDField,
-      TMViewerContext,
-      TMEntity,
-      TMSelectedFields
-    >,
-    TMSelectedFields extends keyof TMFields = keyof TMFields,
-  >(
-    this: IEntityClass<
-      TMFields,
-      TMIDField,
-      TMViewerContext,
-      TMEntity,
-      TMPrivacyPolicy,
-      TMSelectedFields
-    >,
-    viewerContext: TMViewerContext2,
-    queryContext: EntityQueryContext = viewerContext
+    return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
-      .getQueryContextProvider()
-      .getQueryContext(),
-  ): EntityConstructionUtils<
-    TMFields,
-    TMIDField,
-    TMViewerContext,
-    TMEntity,
-    TMPrivacyPolicy,
-    TMSelectedFields
-  > {
-    return new EntityLoader(viewerContext, queryContext, this).constructionUtils();
+      .getLoaderFactory()
+      .invalidationUtils();
   }
 }

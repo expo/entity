@@ -1511,7 +1511,6 @@ describe(EntityMutatorFactory, () => {
         >
       >(EntityConstructionUtils);
     when(entityConstructionUtilsMock.constructEntity(anything())).thenReturn(fakeEntity);
-    when(entityLoaderMock.constructionUtils).thenReturn(instance(entityConstructionUtilsMock));
     const entityLoader = instance(entityLoaderMock);
 
     const entityLoaderFactoryMock =
@@ -1532,6 +1531,13 @@ describe(EntityMutatorFactory, () => {
         anything(),
       ),
     ).thenReturn(entityLoader);
+    when(
+      entityLoaderFactoryMock.constructionUtils(
+        viewerContext,
+        anyOfClass(EntityTransactionalQueryContext),
+        anything(),
+      ),
+    ).thenReturn(instance(entityConstructionUtilsMock));
     const entityLoaderFactory = instance(entityLoaderFactoryMock);
 
     const rejectionError = new Error();
@@ -1646,7 +1652,6 @@ describe(EntityMutatorFactory, () => {
         >
       >(EntityConstructionUtils);
     when(entityConstructionUtilsMock.constructEntity(anything())).thenReturn(fakeEntity);
-    when(entityLoaderMock.constructionUtils).thenReturn(instance(entityConstructionUtilsMock));
     const entityLoader = instance(entityLoaderMock);
 
     const entityLoaderFactoryMock =
@@ -1667,6 +1672,13 @@ describe(EntityMutatorFactory, () => {
         anything(),
       ),
     ).thenReturn(entityLoader);
+    when(
+      entityLoaderFactoryMock.constructionUtils(
+        viewerContext,
+        anyOfClass(EntityTransactionalQueryContext),
+        anything(),
+      ),
+    ).thenReturn(instance(entityConstructionUtilsMock));
     const entityLoaderFactory = instance(entityLoaderFactoryMock);
 
     const rejectionError = new Error();

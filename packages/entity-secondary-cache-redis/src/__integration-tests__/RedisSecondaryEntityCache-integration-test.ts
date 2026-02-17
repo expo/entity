@@ -1,4 +1,10 @@
-import { EntitySecondaryCacheLoader, mapMapAsync, ViewerContext } from '@expo/entity';
+import {
+  AuthorizationResultBasedEntityLoader,
+  EntityConstructionUtils,
+  EntitySecondaryCacheLoader,
+  mapMapAsync,
+  ViewerContext,
+} from '@expo/entity';
 import {
   GenericRedisCacheContext,
   RedisCacheInvalidationStrategy,
@@ -32,6 +38,28 @@ class TestSecondaryRedisCacheLoader extends EntitySecondaryCacheLoader<
   RedisTestEntityPrivacyPolicy
 > {
   public databaseLoadCount = 0;
+
+  constructor(
+    secondaryEntityCache: RedisSecondaryEntityCache<RedisTestEntityFields, 'id', TestLoadParams>,
+    constructionUtils: EntityConstructionUtils<
+      RedisTestEntityFields,
+      'id',
+      TestViewerContext,
+      RedisTestEntity,
+      RedisTestEntityPrivacyPolicy,
+      keyof RedisTestEntityFields
+    >,
+    private readonly entityLoader: AuthorizationResultBasedEntityLoader<
+      RedisTestEntityFields,
+      'id',
+      TestViewerContext,
+      RedisTestEntity,
+      RedisTestEntityPrivacyPolicy,
+      keyof RedisTestEntityFields
+    >,
+  ) {
+    super(secondaryEntityCache, constructionUtils);
+  }
 
   protected async fetchObjectsFromDatabaseAsync(
     loadParamsArray: readonly Readonly<TestLoadParams>[],
@@ -93,6 +121,7 @@ describe(RedisSecondaryEntityCache, () => {
         genericRedisCacheContext,
         (loadParams) => `test-key-${loadParams.id}`,
       ),
+      EntitySecondaryCacheLoader.getConstructionUtilsForEntityClass(RedisTestEntity, viewerContext),
       RedisTestEntity.loaderWithAuthorizationResults(viewerContext),
     );
 
@@ -132,6 +161,7 @@ describe(RedisSecondaryEntityCache, () => {
         genericRedisCacheContext,
         (loadParams) => `test-key-${loadParams.id}`,
       ),
+      EntitySecondaryCacheLoader.getConstructionUtilsForEntityClass(RedisTestEntity, viewerContext),
       RedisTestEntity.loaderWithAuthorizationResults(viewerContext),
     );
 

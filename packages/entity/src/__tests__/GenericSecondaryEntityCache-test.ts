@@ -1,6 +1,8 @@
 import { describe, it, expect } from '@jest/globals';
 import nullthrows from 'nullthrows';
 
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
+import { EntityConstructionUtils } from '../EntityConstructionUtils';
 import { EntitySecondaryCacheLoader } from '../EntitySecondaryCacheLoader';
 import { GenericSecondaryEntityCache } from '../GenericSecondaryEntityCache';
 import { IEntityGenericCacher } from '../IEntityGenericCacher';
@@ -100,6 +102,28 @@ class TestSecondaryCacheLoader extends EntitySecondaryCacheLoader<
 > {
   public databaseLoadCount = 0;
 
+  constructor(
+    secondaryEntityCache: TestSecondaryEntityCache<TestFields, 'customIdField', TestLoadParams>,
+    constructionUtils: EntityConstructionUtils<
+      TestFields,
+      'customIdField',
+      ViewerContext,
+      TestEntity,
+      TestEntityPrivacyPolicy,
+      keyof TestFields
+    >,
+    private readonly entityLoader: AuthorizationResultBasedEntityLoader<
+      TestFields,
+      'customIdField',
+      ViewerContext,
+      TestEntity,
+      TestEntityPrivacyPolicy,
+      keyof TestFields
+    >,
+  ) {
+    super(secondaryEntityCache, constructionUtils);
+  }
+
   protected override async fetchObjectsFromDatabaseAsync(
     loadParamsArray: readonly Readonly<TestLoadParams>[],
   ): Promise<ReadonlyMap<Readonly<Readonly<TestLoadParams>>, Readonly<TestFields> | null>> {
@@ -129,6 +153,7 @@ describe(GenericSecondaryEntityCache, () => {
         new TestGenericCacher(),
         (params) => `intValue.${params.intValue}`,
       ),
+      EntitySecondaryCacheLoader.getConstructionUtilsForEntityClass(TestEntity, viewerContext),
       TestEntity.loaderWithAuthorizationResults(viewerContext),
     );
 
@@ -165,6 +190,7 @@ describe(GenericSecondaryEntityCache, () => {
         new TestGenericCacher(),
         (params) => `intValue.${params.intValue}`,
       ),
+      EntitySecondaryCacheLoader.getConstructionUtilsForEntityClass(TestEntity, viewerContext),
       TestEntity.loaderWithAuthorizationResults(viewerContext),
     );
 
