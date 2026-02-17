@@ -1,4 +1,6 @@
 import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
+import { EntityConstructionUtils } from './EntityConstructionUtils';
+import { EntityInvalidationUtils } from './EntityInvalidationUtils';
 import { EntityLoaderFactory } from './EntityLoaderFactory';
 import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
@@ -33,6 +35,41 @@ export class ViewerScopedEntityLoaderFactory<
     >,
     private readonly viewerContext: TViewerContext,
   ) {}
+
+  invalidationUtils(): EntityInvalidationUtils<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return this.entityLoaderFactory.invalidationUtils();
+  }
+
+  constructionUtils(
+    queryContext: EntityQueryContext,
+    privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+  ): EntityConstructionUtils<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return this.entityLoaderFactory.constructionUtils(
+      this.viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+    );
+  }
 
   forLoad(
     queryContext: EntityQueryContext,

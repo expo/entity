@@ -1,9 +1,11 @@
 import {
   AlwaysAllowPrivacyPolicyRule,
+  AuthorizationResultBasedEntityLoader,
   Entity,
   EntityCompanionDefinition,
   EntityCompanionProvider,
   EntityConfiguration,
+  EntityConstructionUtils,
   EntityPrivacyPolicy,
   EntitySecondaryCacheLoader,
   IEntityMetricsAdapter,
@@ -161,6 +163,32 @@ class TestSecondaryLocalMemoryCacheLoader extends EntitySecondaryCacheLoader<
 > {
   public databaseLoadCount = 0;
 
+  constructor(
+    secondaryEntityCache: LocalMemorySecondaryEntityCache<
+      LocalMemoryTestEntityFields,
+      'id',
+      TestLoadParams
+    >,
+    constructionUtils: EntityConstructionUtils<
+      LocalMemoryTestEntityFields,
+      'id',
+      TestViewerContext,
+      LocalMemoryTestEntity,
+      LocalMemoryTestEntityPrivacyPolicy,
+      keyof LocalMemoryTestEntityFields
+    >,
+    private readonly entityLoader: AuthorizationResultBasedEntityLoader<
+      LocalMemoryTestEntityFields,
+      'id',
+      TestViewerContext,
+      LocalMemoryTestEntity,
+      LocalMemoryTestEntityPrivacyPolicy,
+      keyof LocalMemoryTestEntityFields
+    >,
+  ) {
+    super(secondaryEntityCache, constructionUtils);
+  }
+
   protected async fetchObjectsFromDatabaseAsync(
     loadParamsArray: readonly Readonly<TestLoadParams>[],
   ): Promise<ReadonlyMap<Readonly<TestLoadParams>, Readonly<LocalMemoryTestEntityFields> | null>> {
@@ -192,6 +220,10 @@ describe(LocalMemorySecondaryEntityCache, () => {
       new LocalMemorySecondaryEntityCache(
         localMemoryTestEntityConfiguration,
         createTTLCache<LocalMemoryTestEntityFields>(),
+      ),
+      EntitySecondaryCacheLoader.getConstructionUtilsForEntityClass(
+        LocalMemoryTestEntity,
+        viewerContext,
       ),
       LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext),
     );
@@ -228,6 +260,10 @@ describe(LocalMemorySecondaryEntityCache, () => {
       new LocalMemorySecondaryEntityCache(
         localMemoryTestEntityConfiguration,
         createTTLCache<LocalMemoryTestEntityFields>(),
+      ),
+      EntitySecondaryCacheLoader.getConstructionUtilsForEntityClass(
+        LocalMemoryTestEntity,
+        viewerContext,
       ),
       LocalMemoryTestEntity.loaderWithAuthorizationResults(viewerContext),
     );

@@ -9,7 +9,6 @@ import {
   EntityConfiguration,
 } from './EntityConfiguration';
 import { EntityConstructionUtils } from './EntityConstructionUtils';
-import { EntityInvalidationUtils } from './EntityInvalidationUtils';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
@@ -19,7 +18,6 @@ import { CompositeFieldHolder, CompositeFieldValueHolder } from './internal/Comp
 import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap';
 import { EntityDataManager } from './internal/EntityDataManager';
 import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
-import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { mapKeys, mapMap } from './utils/collections/maps';
 import { areSetsEqual } from './utils/collections/sets';
 
@@ -55,16 +53,7 @@ export class AuthorizationResultBasedEntityLoader<
       TSelectedFields
     >,
     private readonly dataManager: EntityDataManager<TFields, TIDField>,
-    protected readonly metricsAdapter: IEntityMetricsAdapter,
-    public readonly invalidationUtils: EntityInvalidationUtils<
-      TFields,
-      TIDField,
-      TViewerContext,
-      TEntity,
-      TPrivacyPolicy,
-      TSelectedFields
-    >,
-    public readonly constructionUtils: EntityConstructionUtils<
+    private readonly constructionUtils: EntityConstructionUtils<
       TFields,
       TIDField,
       TViewerContext,

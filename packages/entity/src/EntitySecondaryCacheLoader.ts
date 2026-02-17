@@ -1,7 +1,9 @@
 import { Result } from '@expo/results';
 
-import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
+import { IEntityClass } from './Entity';
+import { EntityConstructionUtils } from './EntityConstructionUtils';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import { EntityQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
 import { mapMap } from './utils/collections/maps';
@@ -60,7 +62,7 @@ export abstract class EntitySecondaryCacheLoader<
 > {
   constructor(
     private readonly secondaryEntityCache: ISecondaryEntityCache<TFields, TLoadParams>,
-    protected readonly entityLoader: AuthorizationResultBasedEntityLoader<
+    private readonly constructionUtils: EntityConstructionUtils<
       TFields,
       TIDField,
       TViewerContext,
@@ -84,10 +86,9 @@ export abstract class EntitySecondaryCacheLoader<
     );
 
     // convert value to and from array to reuse complex code
-    const entitiesMap =
-      await this.entityLoader.constructionUtils.constructAndAuthorizeEntitiesAsync(
-        mapMap(loadParamsToFieldObjects, (fieldObject) => (fieldObject ? [fieldObject] : [])),
-      );
+    const entitiesMap = await this.constructionUtils.constructAndAuthorizeEntitiesAsync(
+      mapMap(loadParamsToFieldObjects, (fieldObject) => (fieldObject ? [fieldObject] : [])),
+    );
     return mapMap(entitiesMap, (fieldObjects) => fieldObjects[0] ?? null);
   }
 
@@ -110,4 +111,53 @@ export abstract class EntitySecondaryCacheLoader<
   protected abstract fetchObjectsFromDatabaseAsync(
     loadParamsArray: readonly Readonly<TLoadParams>[],
   ): Promise<ReadonlyMap<Readonly<Readonly<TLoadParams>>, Readonly<TFields> | null>>;
+
+  /**
+   * Helper to get construction utils for instantiating a EntitySecondaryCacheLoader.
+   *
+   * @param entityClass - the entity class for which to get construction utils for
+   * @param viewerContext - the viewer context to use for construction utils
+   * @param queryContext - query context to use for construction utils
+   * @returns construction utils for the given entity class and viewer context
+   */
+  public static getConstructionUtilsForEntityClass<
+    TFields extends Record<string, any>,
+    TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+    TViewerContext extends ViewerContext,
+    TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
+    TPrivacyPolicy extends EntityPrivacyPolicy<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+    TSelectedFields extends keyof TFields = keyof TFields,
+  >(
+    entityClass: IEntityClass<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
+    viewerContext: TViewerContext,
+    queryContext: EntityQueryContext = viewerContext
+      .getViewerScopedEntityCompanionForClass(entityClass)
+      .getQueryContextProvider()
+      .getQueryContext(),
+  ): EntityConstructionUtils<
+    TFields,
+    TIDField,
+    TViewerContext,
+    TEntity,
+    TPrivacyPolicy,
+    TSelectedFields
+  > {
+    return viewerContext
+      .getViewerScopedEntityCompanionForClass(entityClass)
+      .getLoaderFactory()
+      .constructionUtils(queryContext, { previousValue: null, cascadingDeleteCause: null });
+  }
 }

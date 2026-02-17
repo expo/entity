@@ -1,8 +1,6 @@
 import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
 import { EnforcingEntityLoader } from './EnforcingEntityLoader';
 import { IEntityClass } from './Entity';
-import { EntityConstructionUtils } from './EntityConstructionUtils';
-import { EntityInvalidationUtils } from './EntityInvalidationUtils';
 import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
 import { EntityQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
@@ -73,35 +71,5 @@ export class EntityLoader<
       .getViewerScopedEntityCompanionForClass(this.entityClass)
       .getLoaderFactory()
       .forLoad(this.queryContext, { previousValue: null, cascadingDeleteCause: null });
-  }
-
-  /**
-   * Entity cache invalidation utilities.
-   * Calling into these should only be necessary in rare cases.
-   */
-  public invalidationUtils(): EntityInvalidationUtils<
-    TFields,
-    TIDField,
-    TViewerContext,
-    TEntity,
-    TPrivacyPolicy,
-    TSelectedFields
-  > {
-    return this.withAuthorizationResults().invalidationUtils;
-  }
-
-  /**
-   * Entity construction and validation utilities.
-   * Calling into these should only be necessary in rare cases.
-   */
-  public constructionUtils(): EntityConstructionUtils<
-    TFields,
-    TIDField,
-    TViewerContext,
-    TEntity,
-    TPrivacyPolicy,
-    TSelectedFields
-  > {
-    return this.withAuthorizationResults().constructionUtils;
   }
 }

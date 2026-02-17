@@ -355,7 +355,12 @@ async function canViewerDeleteInternalAsync<
         .entityConfiguration;
 
     const entityCompanion = viewerContext.getViewerScopedEntityCompanionForClass(inboundEdge);
-    const loader = entityCompanion.getLoaderFactory().forLoad(queryContext, {
+    const loaderFactory = entityCompanion.getLoaderFactory();
+    const loader = loaderFactory.forLoad(queryContext, {
+      previousValue: null,
+      cascadingDeleteCause: newCascadingDeleteCause,
+    });
+    const constructionUtils = loaderFactory.constructionUtils(queryContext, {
       previousValue: null,
       cascadingDeleteCause: newCascadingDeleteCause,
     });
@@ -443,14 +448,6 @@ async function canViewerDeleteInternalAsync<
           // privacy policy as it would be after the cascading SET NULL operation
           const previousAndSyntheticEntitiesForInboundEdge = entitiesForInboundEdge.map(
             (entity) => {
-              const entityLoader = viewerContext
-                .getViewerScopedEntityCompanionForClass(inboundEdge)
-                .getLoaderFactory()
-                .forLoad(queryContext, {
-                  previousValue: entity,
-                  cascadingDeleteCause: newCascadingDeleteCause,
-                });
-
               const allFields = entity.getAllDatabaseFields();
               const syntheticFields = {
                 ...allFields,
@@ -459,8 +456,7 @@ async function canViewerDeleteInternalAsync<
 
               return {
                 previousValue: entity,
-                syntheticallyUpdatedValue:
-                  entityLoader.constructionUtils.constructEntity(syntheticFields),
+                syntheticallyUpdatedValue: constructionUtils.constructEntity(syntheticFields),
               };
             },
           );

@@ -7,7 +7,6 @@ import { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import { EntityConfiguration } from '../EntityConfiguration';
 import { EntityConstructionUtils } from '../EntityConstructionUtils';
 import { StringField } from '../EntityFields';
-import { EntityInvalidationUtils } from '../EntityInvalidationUtils';
 import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { ViewerContext } from '../ViewerContext';
 import { EntityDataManager } from '../internal/EntityDataManager';
@@ -165,12 +164,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       metricsAdapter,
       TestEntity.name,
     );
-    const invalidationUtils = new EntityInvalidationUtils(
-      testEntityConfiguration,
-      TestEntity,
-      dataManager,
-      metricsAdapter,
-    );
     const constructionUtils = new EntityConstructionUtils(
       viewerContext,
       queryContext,
@@ -186,8 +179,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
       testEntityConfiguration,
       TestEntity,
       dataManager,
-      metricsAdapter,
-      invalidationUtils,
       constructionUtils,
     );
 
