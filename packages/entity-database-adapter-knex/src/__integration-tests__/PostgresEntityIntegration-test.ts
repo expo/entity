@@ -125,7 +125,7 @@ describe('postgres entity integration', () => {
     const errorToThrow = new Error('Intentional error');
 
     await expect(
-      vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
+      vc1.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           // put another in the DB that will be rolled back due to error thrown
@@ -167,7 +167,7 @@ describe('postgres entity integration', () => {
           delay: number,
         ): Promise<{ error?: Error }> => {
           try {
-            await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
+            await vc1.runInTransactionForDatabaseAdapterFlavorAsync(
               'postgres',
               async (queryContext) => {
                 const entity = await PostgresTestEntity.loader(vc1, queryContext).loadByIDAsync(
@@ -1311,7 +1311,7 @@ describe('postgres entity integration', () => {
       let preCommitInnerCallCount = 0;
       let postCommitCallCount = 0;
 
-      await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
         queryContext.appendPostCommitCallback(async () => {
           postCommitCallCount++;
         });
@@ -1343,7 +1343,7 @@ describe('postgres entity integration', () => {
       });
 
       await expect(
-        vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+        vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
           queryContext.appendPostCommitCallback(async () => {
             postCommitCallCount++;
           });

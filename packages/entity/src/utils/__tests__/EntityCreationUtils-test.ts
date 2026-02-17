@@ -40,7 +40,7 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       );
 
       if (inTransaction) {
-        await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
           'postgres',
           async (queryContext) => {
             await createOrGetExistingAsync(
@@ -92,7 +92,7 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       );
 
       if (inTransaction) {
-        await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
           'postgres',
           async (queryContext) => {
             await createOrGetExistingAsync(
@@ -146,7 +146,7 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       );
 
       if (inTransaction) {
-        await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
           'postgres',
           async (queryContext) => {
             await createWithUniqueConstraintRecoveryAsync(
@@ -204,7 +204,7 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       );
 
       if (inTransaction) {
-        await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
           'postgres',
           async (queryContext) => {
             await createWithUniqueConstraintRecoveryAsync(
@@ -261,7 +261,7 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
 
       if (inTransaction) {
         await expect(
-          viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+          viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
             'postgres',
             async (queryContext) => {
               return await createWithUniqueConstraintRecoveryAsync(
@@ -321,7 +321,7 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
 
       if (inTransaction) {
         await expect(
-          viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+          viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
             'postgres',
             async (queryContext) => {
               return await createWithUniqueConstraintRecoveryAsync(

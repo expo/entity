@@ -49,7 +49,7 @@ describe(EntityQueryContext, () => {
         );
       });
 
-      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           queryContext.appendPostCommitCallback(postCommitCallback);
@@ -76,7 +76,7 @@ describe(EntityQueryContext, () => {
       const postCommitCallback = jest.fn(async (): Promise<void> => {});
 
       await expect(
-        viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+        viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
           'postgres',
           async (queryContext) => {
             queryContext.appendPostCommitCallback(postCommitCallback);
@@ -105,7 +105,7 @@ describe(EntityQueryContext, () => {
       const postCommitCallback = jest.fn(async (): Promise<void> => {});
       const postCommitNestedCallback = jest.fn(async (): Promise<void> => {});
 
-      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           queryContext.appendPostCommitCallback(postCommitCallback);
@@ -152,13 +152,13 @@ describe(EntityQueryContext, () => {
       const viewerContext = new ViewerContext(companionProvider);
 
       const queryContextProvider =
-        companionProvider.getQueryContextProviderForDatabaseAdaptorFlavor('postgres');
+        companionProvider.getQueryContextProviderForDatabaseAdapterFlavor('postgres');
       const queryContextProviderSpy = jest.spyOn(queryContextProvider, 'runInTransactionAsync');
 
       const transactionScopeFn = async (): Promise<any> => {};
       const transactionConfig = { isolationLevel: TransactionIsolationLevel.SERIALIZABLE };
 
-      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         transactionScopeFn,
         transactionConfig,
@@ -171,7 +171,7 @@ describe(EntityQueryContext, () => {
       const companionProvider = createUnitTestEntityCompanionProvider();
       const viewerContext = new ViewerContext(companionProvider);
 
-      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
@@ -182,7 +182,7 @@ describe(EntityQueryContext, () => {
         { transactionalDataLoaderMode: TransactionalDataLoaderMode.DISABLED },
       );
 
-      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
@@ -193,7 +193,7 @@ describe(EntityQueryContext, () => {
         { transactionalDataLoaderMode: TransactionalDataLoaderMode.ENABLED_BATCH_ONLY },
       );
 
-      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
@@ -252,7 +252,7 @@ describe(EntityQueryContext, () => {
       );
       const viewerContext = new ViewerContext(companionProvider);
 
-      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
@@ -263,7 +263,7 @@ describe(EntityQueryContext, () => {
         { transactionalDataLoaderMode: TransactionalDataLoaderMode.DISABLED },
       );
 
-      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());
@@ -274,7 +274,7 @@ describe(EntityQueryContext, () => {
         { transactionalDataLoaderMode: TransactionalDataLoaderMode.ENABLED_BATCH_ONLY },
       );
 
-      await viewerContext.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           assert(queryContext.isInTransaction());

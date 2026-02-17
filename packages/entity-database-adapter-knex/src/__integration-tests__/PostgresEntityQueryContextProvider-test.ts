@@ -41,7 +41,7 @@ describe(PostgresEntityQueryContextProvider, () => {
       await PostgresUniqueTestEntity.creator(vc1).setField('name', 'wat').createAsync()
     ).getID();
 
-    await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+    await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
       const entity = await PostgresUniqueTestEntity.loader(vc1, queryContext).loadByIDAsync(id);
       await PostgresUniqueTestEntity.updater(entity, queryContext)
         .setField('name', 'wat2')
@@ -81,7 +81,7 @@ describe(PostgresEntityQueryContextProvider, () => {
     const entityLoaded = await PostgresUniqueTestEntity.loader(vc1).loadByIDAsync(entity.getID());
     expect(entityLoaded.getField('name')).toEqual('who');
 
-    await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+    await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
       const entityLoadedOuter = await PostgresUniqueTestEntity.loader(vc1).loadByIDAsync(
         entity.getID(),
       );
@@ -124,7 +124,7 @@ describe(PostgresEntityQueryContextProvider, () => {
     const entityLoaded = await PostgresUniqueTestEntity.loader(vc1).loadByIDAsync(entity.getID());
     expect(entityLoaded.getField('name')).toEqual('who');
 
-    await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+    await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
       const entityLoadedOuter = await PostgresUniqueTestEntity.loader(vc1).loadByIDAsync(
         entity.getID(),
       );
@@ -181,7 +181,7 @@ describe(PostgresEntityQueryContextProvider, () => {
     });
 
     await Promise.all([
-      vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+      vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
         const entityLoadedOuter = await PostgresUniqueTestEntity.loader(vc1).loadByIDAsync(
           entity.getID(),
         );
@@ -235,7 +235,7 @@ describe(PostgresEntityQueryContextProvider, () => {
       transactionalDataLoaderMode: TransactionalDataLoaderMode,
     ): Promise<void> => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-      await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (outerQueryContext) => {
           // put it in local dataloader
@@ -334,7 +334,7 @@ describe(PostgresEntityQueryContextProvider, () => {
       transactionalDataLoaderMode: TransactionalDataLoaderMode,
     ): Promise<void> => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-      await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (outerQueryContext) => {
           // put it in local dataloader
@@ -432,7 +432,7 @@ describe(PostgresEntityQueryContextProvider, () => {
       await PostgresUniqueTestEntity.creator(vc1).setField('name', 'wat').createAsync()
     ).getID();
 
-    await vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+    await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
       await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
         await innerQueryContext.runInNestedTransactionAsync(async (innerQueryContex2) => {
           await innerQueryContex2.runInNestedTransactionAsync(async (innerQueryContex3) => {

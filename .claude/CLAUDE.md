@@ -28,3 +28,4 @@ This is Entity, a privacy-aware data layer for defining, caching, and authorizin
 - Do not use jest's `test.skip`
 - Prefer not to use dynamic imports for now
 - Whenever technically correct, use typescript types for something instead of `any`
+- Prefer American English spellings of words over British English. For example, prefer "Adapter" over "Adaptor".

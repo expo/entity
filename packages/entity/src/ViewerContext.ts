@@ -64,30 +64,30 @@ export class ViewerContext {
   }
 
   /**
-   * Get the regular (non-transactional) query context for a database adaptor flavor.
-   * @param databaseAdaptorFlavor - database adaptor flavor
+   * Get the regular (non-transactional) query context for a database adapter flavor.
+   * @param databaseAdapterFlavor - database adapter flavor
    */
-  getQueryContextForDatabaseAdaptorFlavor(
-    databaseAdaptorFlavor: DatabaseAdapterFlavor,
+  getQueryContextForDatabaseAdapterFlavor(
+    databaseAdapterFlavor: DatabaseAdapterFlavor,
   ): EntityQueryContext {
     return this.entityCompanionProvider
-      .getQueryContextProviderForDatabaseAdaptorFlavor(databaseAdaptorFlavor)
+      .getQueryContextProviderForDatabaseAdapterFlavor(databaseAdapterFlavor)
       .getQueryContext();
   }
 
   /**
-   * Run a transaction of specified database adaptor flavor and execute the provided
+   * Run a transaction of specified database adapter flavor and execute the provided
    * transaction-scoped closure within the transaction.
-   * @param databaseAdaptorFlavor - databaseAdaptorFlavor
+   * @param databaseAdapterFlavor - databaseAdapterFlavor
    * @param transactionScope - async callback to execute within the transaction
    */
-  async runInTransactionForDatabaseAdaptorFlavorAsync<TResult>(
-    databaseAdaptorFlavor: DatabaseAdapterFlavor,
+  async runInTransactionForDatabaseAdapterFlavorAsync<TResult>(
+    databaseAdapterFlavor: DatabaseAdapterFlavor,
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<TResult>,
     transactionConfig?: TransactionConfig,
   ): Promise<TResult> {
     return await this.entityCompanionProvider
-      .getQueryContextProviderForDatabaseAdaptorFlavor(databaseAdaptorFlavor)
+      .getQueryContextProviderForDatabaseAdapterFlavor(databaseAdapterFlavor)
       .getQueryContext()
       .runInTransactionIfNotInTransactionAsync(transactionScope, transactionConfig);
   }

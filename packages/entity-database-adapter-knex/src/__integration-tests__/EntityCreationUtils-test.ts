@@ -90,7 +90,7 @@ describe(createWithUniqueConstraintRecoveryAsync, () => {
         name: 'unique',
       };
 
-      const createdEntities = await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
+      const createdEntities = await vc1.runInTransactionForDatabaseAdapterFlavorAsync(
         'postgres',
         async (queryContext) => {
           if (parallel) {
@@ -154,7 +154,7 @@ describe(createWithUniqueConstraintRecoveryAsync, () => {
       let createdEntities: [PostgresUniqueTestEntity, PostgresUniqueTestEntity];
       if (parallel) {
         createdEntities = await Promise.all([
-          vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+          vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
             return await createWithUniqueConstraintRecoveryAsync(
               vc1,
               PostgresUniqueTestEntity,
@@ -165,7 +165,7 @@ describe(createWithUniqueConstraintRecoveryAsync, () => {
               queryContext,
             );
           }),
-          vc1.runInTransactionForDatabaseAdaptorFlavorAsync('postgres', async (queryContext) => {
+          vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
             return await createWithUniqueConstraintRecoveryAsync(
               vc1,
               PostgresUniqueTestEntity,
@@ -179,7 +179,7 @@ describe(createWithUniqueConstraintRecoveryAsync, () => {
         ]);
       } else {
         createdEntities = [
-          await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
+          await vc1.runInTransactionForDatabaseAdapterFlavorAsync(
             'postgres',
             async (queryContext) => {
               return await createWithUniqueConstraintRecoveryAsync(
@@ -193,7 +193,7 @@ describe(createWithUniqueConstraintRecoveryAsync, () => {
               );
             },
           ),
-          await vc1.runInTransactionForDatabaseAdaptorFlavorAsync(
+          await vc1.runInTransactionForDatabaseAdapterFlavorAsync(
             'postgres',
             async (queryContext) => {
               return await createWithUniqueConstraintRecoveryAsync(
