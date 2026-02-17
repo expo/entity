@@ -1,4 +1,4 @@
-import { ApolloServer } from '@apollo/server';
+import { ApolloServer, type BaseContext } from '@apollo/server';
 import { koaMiddleware } from '@as-integrations/koa';
 import { EntityCompanionProvider } from '@expo/entity';
 import { bodyParser } from '@koa/bodyparser';
@@ -23,6 +23,10 @@ export type ExampleState = {
   entityCompanionProvider: EntityCompanionProvider; // entityCompanionMiddleware
 };
 
+export interface GraphQLContext extends BaseContext {
+  viewerContext: ExampleViewerContext;
+}
+
 export async function createAppAsync(): Promise<Koa<ExampleState, ExampleContext>> {
   const app = new Koa<ExampleState, ExampleContext>();
 
@@ -44,15 +48,15 @@ export async function createAppAsync(): Promise<Koa<ExampleState, ExampleContext
   router.use(notesRouter.routes());
 
   // GraphQL routes
-  const server = new ApolloServer({
+  const server = new ApolloServer<GraphQLContext>({
     typeDefs,
     resolvers,
   });
   await server.start();
   router.post(
     '/graphql',
-    // https://github.com/apollographql/apollo-server/issues/7625
-    koaMiddleware(server as any, {
+    // @ts-expect-error - @as-integrations/koa peers on @apollo/server ^4 (CJS types) but we use v5 (ESM types)
+    koaMiddleware<GraphQLContext, ExampleState, ExampleContext>(server, {
       context: async ({ ctx }: { ctx: ExampleContext }) => ({
         viewerContext: ctx.state.viewerContext,
       }),

@@ -390,7 +390,7 @@ async function canViewerDeleteInternalAsync<
         const singleEntityResultToTestForInboundEdge = await loader['loadOneByFieldEqualingAsync'](
           fieldName,
           association.associatedEntityLookupByField
-            ? sourceEntity.getField(association.associatedEntityLookupByField as any)
+            ? sourceEntity.getField(association.associatedEntityLookupByField)
             : sourceEntity.getID(),
         );
         entityResultsToCheckForInboundEdge = singleEntityResultToTestForInboundEdge
@@ -400,7 +400,7 @@ async function canViewerDeleteInternalAsync<
         const entityResultsForInboundEdge = await loader.loadManyByFieldEqualingAsync(
           fieldName,
           association.associatedEntityLookupByField
-            ? sourceEntity.getField(association.associatedEntityLookupByField as any)
+            ? sourceEntity.getField(association.associatedEntityLookupByField)
             : sourceEntity.getID(),
         );
         entityResultsToCheckForInboundEdge = entityResultsForInboundEdge;

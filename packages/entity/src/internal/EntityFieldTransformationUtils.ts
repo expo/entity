@@ -51,7 +51,7 @@ export const transformDatabaseObjectToFields = <
   fieldTransformerMap: FieldTransformerMap,
   databaseObject: { [key: string]: any },
 ): Readonly<TFields> => {
-  const fields: TFields = {} as any;
+  const fields: Partial<TFields> = {};
   for (const k in databaseObject) {
     const val = databaseObject[k];
     const fieldsKey = entityConfiguration.dbToEntityFieldsKeyMapping.get(k);
@@ -64,7 +64,7 @@ export const transformDatabaseObjectToFields = <
       );
     }
   }
-  return fields;
+  return fields as Readonly<TFields>;
 };
 
 /**
@@ -81,7 +81,7 @@ export const transformFieldsToDatabaseObject = <
   const databaseObject: { [key: string]: any } = {};
   for (const k in fields) {
     const val = fields[k]!;
-    const databaseKey = entityConfiguration.entityToDBFieldsKeyMapping.get(k as any);
+    const databaseKey = entityConfiguration.entityToDBFieldsKeyMapping.get(k);
     invariant(databaseKey, `must be database key for field: ${k}`);
     databaseObject[databaseKey] = maybeTransformFieldValueToDatabaseValue(
       entityConfiguration,
@@ -104,7 +104,7 @@ export const transformCacheObjectToFields = <
   fieldTransformerMap: FieldTransformerMap,
   cacheObject: { [key: string]: any },
 ): Readonly<TFields> => {
-  const fields: TFields = {} as any;
+  const fields: Partial<TFields> = {};
   for (const fieldsKey in cacheObject) {
     const val = cacheObject[fieldsKey]!;
     fields[fieldsKey as keyof TFields] = maybeTransformCacheValueToFieldValue(
@@ -114,7 +114,7 @@ export const transformCacheObjectToFields = <
       val,
     );
   }
-  return fields;
+  return fields as Readonly<TFields>;
 };
 
 /**

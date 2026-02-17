@@ -289,7 +289,7 @@ describe(ComposedEntityCacheAdapter, () => {
       const { cacheAdapter } = makeTestCacheAdapters();
       const results = await cacheAdapter.loadManyAsync(
         new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
-        [] as any,
+        [] as readonly SingleFieldValueHolder<BlahFields, 'id'>[],
       );
       expect(results.size).toBe(0);
     });
@@ -298,7 +298,7 @@ describe(ComposedEntityCacheAdapter, () => {
       const cacheAdapter = new ComposedEntityCacheAdapter<BlahFields, 'id'>([]);
       const results = await cacheAdapter.loadManyAsync(
         new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
-        [] as any,
+        [] as readonly SingleFieldValueHolder<BlahFields, 'id'>[],
       );
       expect(results.size).toBe(0);
     });
@@ -430,7 +430,7 @@ describe(ComposedEntityCacheAdapter, () => {
 
       await cacheAdapter.invalidateManyAsync(
         new SingleFieldHolder<BlahFields, 'id', 'id'>('id'),
-        [] as any,
+        [] as readonly SingleFieldValueHolder<BlahFields, 'id'>[],
       );
     });
   });

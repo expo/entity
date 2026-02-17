@@ -109,7 +109,7 @@ describe(GenericRedisCacher, () => {
           return pipeline;
         },
       );
-      when(mockPipeline.exec()).thenResolve({} as any);
+      when(mockPipeline.exec()).thenResolve([]);
       const pipeline = instance(mockPipeline);
 
       const mockRedisClient = mock<Redis>();
@@ -154,7 +154,7 @@ describe(GenericRedisCacher, () => {
           return pipeline;
         },
       );
-      when(mockPipeline.exec()).thenResolve({} as any);
+      when(mockPipeline.exec()).thenResolve([]);
       const pipeline = instance(mockPipeline);
 
       const mockRedisClient = mock<Redis>();

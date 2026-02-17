@@ -215,10 +215,7 @@ export class PostgresEntityDatabaseAdapter<
     bindings: object | any[],
     querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,
   ): Promise<object[]> {
-    let query = queryInterface
-      .select()
-      .from(tableName)
-      .whereRaw(rawWhereClause, bindings as any);
+    let query = queryInterface.select().from(tableName).whereRaw(rawWhereClause, bindings);
     query = this.applyQueryModifiersToQueryOrderByRaw(query, querySelectionModifiers);
     return await wrapNativePostgresCallAsync(() => query);
   }

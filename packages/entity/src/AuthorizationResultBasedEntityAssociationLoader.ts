@@ -16,7 +16,7 @@ export class AuthorizationResultBasedEntityAssociationLoader<
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
-  TSelectedFields extends keyof TFields,
+  TSelectedFields extends keyof TFields = keyof TFields,
 > {
   constructor(
     private readonly entity: TEntity,
@@ -123,10 +123,7 @@ export class AuthorizationResultBasedEntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getLoaderFactory()
       .forLoad(this.queryContext, { previousValue: null, cascadingDeleteCause: null });
-    return await loader.loadManyByFieldEqualingAsync(
-      associatedEntityFieldContainingThisID,
-      thisID as any,
-    );
+    return await loader.loadManyByFieldEqualingAsync(associatedEntityFieldContainingThisID, thisID);
   }
 
   /**
@@ -178,7 +175,7 @@ export class AuthorizationResultBasedEntityAssociationLoader<
       .forLoad(this.queryContext, { previousValue: null, cascadingDeleteCause: null });
     return await loader.loadByFieldEqualingAsync(
       associatedEntityLookupByField,
-      associatedFieldValue as any,
+      associatedFieldValue,
     );
   }
 
@@ -232,7 +229,7 @@ export class AuthorizationResultBasedEntityAssociationLoader<
       .forLoad(this.queryContext, { previousValue: null, cascadingDeleteCause: null });
     return await loader.loadManyByFieldEqualingAsync(
       associatedEntityLookupByField,
-      associatedFieldValue as any,
+      associatedFieldValue,
     );
   }
 

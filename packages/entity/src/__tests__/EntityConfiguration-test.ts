@@ -175,7 +175,7 @@ describe(EntityConfiguration, () => {
       ])('disallows %p as field key', (keyName) => {
         expect(
           () =>
-            new EntityConfiguration<any, 'id'>({
+            new EntityConfiguration<{ id: string }, 'id'>({
               idField: 'id',
               tableName: 'blah_table',
               schema: {
@@ -186,7 +186,7 @@ describe(EntityConfiguration, () => {
                 [keyName]: new StringField({
                   columnName: 'any',
                 }),
-              } as any,
+              },
               databaseAdapterFlavor: 'postgres',
               cacheAdapterFlavor: 'redis',
             }),
