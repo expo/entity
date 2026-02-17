@@ -6,7 +6,7 @@ import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
 
 /**
- * Enforcing entity creator. All updates
+ * Enforcing entity creator. All creates
  * through this creator will throw if authorization is not successful.
  */
 export class EnforcingEntityCreator<
