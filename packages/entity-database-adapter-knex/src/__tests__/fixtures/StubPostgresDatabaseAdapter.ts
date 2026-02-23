@@ -16,6 +16,7 @@ import {
   OrderByOrdering,
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
+  TableOrderByClause,
   TableQuerySelectionModifiers,
   TableQuerySelectionModifiersWithOrderByFragment,
 } from '../../BasePostgresEntityDatabaseAdapter';
@@ -106,10 +107,7 @@ export class StubPostgresDatabaseAdapter<
   }
 
   private static compareByOrderBys(
-    orderBys: {
-      columnName: string;
-      order: OrderByOrdering;
-    }[],
+    orderBys: TableOrderByClause[],
     objectA: { [key: string]: any },
     objectB: { [key: string]: any },
   ): 0 | 1 | -1 {
@@ -118,6 +116,9 @@ export class StubPostgresDatabaseAdapter<
     }
 
     const currentOrderBy = orderBys[0]!;
+    if (!('columnName' in currentOrderBy)) {
+      throw new Error('SQL fragment order by not supported for StubDatabaseAdapter');
+    }
     const aField = objectA[currentOrderBy.columnName];
     const bField = objectB[currentOrderBy.columnName];
     switch (currentOrderBy.order) {

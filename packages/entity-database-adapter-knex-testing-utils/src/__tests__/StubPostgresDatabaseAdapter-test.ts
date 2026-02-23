@@ -782,6 +782,20 @@ describe('compareByOrderBys', () => {
         ),
       ).toEqual(expectedResult);
     });
+    it('throws for SQL fragment order by', () => {
+      expect(() =>
+        StubPostgresDatabaseAdapter['compareByOrderBys'](
+          [
+            {
+              columnFragment: sql`some_function(col)`,
+              order: OrderByOrdering.ASCENDING,
+            },
+          ],
+          { hello: 'a' },
+          { hello: 'b' },
+        ),
+      ).toThrow('SQL fragment order by not supported for StubDatabaseAdapter');
+    });
     it('works for empty', () => {
       expect(
         StubPostgresDatabaseAdapter['compareByOrderBys'](

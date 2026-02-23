@@ -960,6 +960,76 @@ describe('postgres entity integration', () => {
       expect(results.map((e) => e.getField('name'))).toEqual(['b', 'a']);
     });
 
+    it('supports fieldFragment orderBy', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'alpha')
+          .setField('hasACat', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'beta')
+          .setField('hasACat', false)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'gamma')
+          .setField('hasACat', true)
+          .createAsync(),
+      );
+
+      // Order by a SQL expression: CASE WHEN has_a_cat THEN 0 ELSE 1 END, name ASC
+      // This should put cat owners first (alpha, gamma), then non-cat owners (beta)
+      const results = await PostgresTestEntity.knexLoader(
+        vc1,
+      ).loadManyByFieldEqualityConjunctionAsync([], {
+        orderBy: [
+          {
+            fieldFragment: sql`CASE WHEN has_a_cat = ${true} THEN ${0} ELSE ${1} END`,
+            order: OrderByOrdering.ASCENDING,
+          },
+          {
+            fieldName: 'name',
+            order: OrderByOrdering.ASCENDING,
+          },
+        ],
+      });
+      expect(results).toHaveLength(3);
+      expect(results.map((e) => e.getField('name'))).toEqual(['alpha', 'gamma', 'beta']);
+    });
+
+    it('rejects fieldFragment containing trailing ASC or DESC', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await expect(
+        PostgresTestEntity.knexLoader(vc1).loadManyByFieldEqualityConjunctionAsync([], {
+          orderBy: [
+            {
+              fieldFragment: sql`${raw('name')} ASC`,
+              order: OrderByOrdering.ASCENDING,
+            },
+          ],
+        }),
+      ).rejects.toThrow('fieldFragment must not contain ASC or DESC at the end');
+
+      await expect(
+        PostgresTestEntity.knexLoader(vc1).loadManyByFieldEqualityConjunctionAsync([], {
+          orderBy: [
+            {
+              fieldFragment: sql`${raw('name')} desc`,
+              order: OrderByOrdering.DESCENDING,
+            },
+          ],
+        }),
+      ).rejects.toThrow('fieldFragment must not contain ASC or DESC at the end');
+    });
+
     it('supports null field values', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
       await enforceAsyncResult(
@@ -1526,6 +1596,80 @@ describe('postgres entity integration', () => {
           expect(page.edges[2]?.node.getField('name')).toBe('Eve');
           expect(page.edges[3]?.node.getField('hasACat')).toBe(true);
           expect(page.edges[3]?.node.getField('name')).toBe('Grace');
+        });
+
+        it('supports pagination with fieldFragment orderBy', async () => {
+          const vc = new ViewerContext(
+            createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+          );
+
+          // Order by computed expression: cat owners first, then by name
+          // Standard test data: Alice(cat), Bob, Charlie(cat), David, Eve(cat), Frank, Grace(cat), Henry
+          const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+            first: 3,
+            pagination: {
+              strategy: PaginationStrategy.STANDARD,
+              orderBy: [
+                {
+                  fieldFragment: sql`CASE WHEN has_a_cat = ${true} THEN ${0} ELSE ${1} END`,
+                  order: OrderByOrdering.ASCENDING,
+                },
+                { fieldName: 'name', order: OrderByOrdering.ASCENDING },
+              ],
+            },
+          });
+
+          // Cat owners alphabetically first: Alice, Charlie, Eve
+          expect(firstPage.edges).toHaveLength(3);
+          expect(firstPage.edges[0]?.node.getField('name')).toBe('Alice');
+          expect(firstPage.edges[1]?.node.getField('name')).toBe('Charlie');
+          expect(firstPage.edges[2]?.node.getField('name')).toBe('Eve');
+          expect(firstPage.pageInfo.hasNextPage).toBe(true);
+
+          // Get second page using cursor
+          const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+            first: 3,
+            after: firstPage.pageInfo.endCursor!,
+            pagination: {
+              strategy: PaginationStrategy.STANDARD,
+              orderBy: [
+                {
+                  fieldFragment: sql`CASE WHEN has_a_cat = ${true} THEN ${0} ELSE ${1} END`,
+                  order: OrderByOrdering.ASCENDING,
+                },
+                { fieldName: 'name', order: OrderByOrdering.ASCENDING },
+              ],
+            },
+          });
+
+          // Next cat owner, then non-cat-owners alphabetically: Grace, Bob, David
+          expect(secondPage.edges).toHaveLength(3);
+          expect(secondPage.edges[0]?.node.getField('name')).toBe('Grace');
+          expect(secondPage.edges[1]?.node.getField('name')).toBe('Bob');
+          expect(secondPage.edges[2]?.node.getField('name')).toBe('David');
+          expect(secondPage.pageInfo.hasNextPage).toBe(true);
+
+          // Get third (last) page
+          const thirdPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+            first: 3,
+            after: secondPage.pageInfo.endCursor!,
+            pagination: {
+              strategy: PaginationStrategy.STANDARD,
+              orderBy: [
+                {
+                  fieldFragment: sql`CASE WHEN has_a_cat = ${true} THEN ${0} ELSE ${1} END`,
+                  order: OrderByOrdering.ASCENDING,
+                },
+                { fieldName: 'name', order: OrderByOrdering.ASCENDING },
+              ],
+            },
+          });
+
+          // Remaining non-cat-owners: Frank, Henry
+          expect(thirdPage.edges).toHaveLength(2);
+          expect(thirdPage.edges[0]?.node.getField('name')).toBe('Frank');
+          expect(thirdPage.edges[1]?.node.getField('name')).toBe('Henry');
+          expect(thirdPage.pageInfo.hasNextPage).toBe(false);
         });
 
         it('handles empty results correctly', async () => {

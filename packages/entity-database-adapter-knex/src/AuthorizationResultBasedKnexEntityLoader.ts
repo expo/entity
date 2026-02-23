@@ -19,20 +19,33 @@ import { SQLFragment } from './SQLOperator';
 import type { Connection, PageInfo } from './internal/EntityKnexDataManager';
 import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
 
-export interface EntityLoaderOrderByClause<
+export type EntityLoaderOrderByClause<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields = keyof TFields,
-> {
-  /**
-   * The field name to order by.
-   */
-  fieldName: TSelectedFields;
+> =
+  | {
+      /**
+       * The field name to order by.
+       */
+      fieldName: TSelectedFields;
 
-  /**
-   * The OrderByOrdering to order by.
-   */
-  order: OrderByOrdering;
-}
+      /**
+       * The OrderByOrdering to order by.
+       */
+      order: OrderByOrdering;
+    }
+  | {
+      /**
+       * The SQL fragment to order by, which can reference selected fields. Example: `COALESCE(NULLIF(display_name, ''), split_part(full_name, '/', 2))`.
+       * May not contain ASC or DESC, as ordering direction is controlled by the `order` property.
+       */
+      fieldFragment: SQLFragment;
+
+      /**
+       * The OrderByOrdering to order by.
+       */
+      order: OrderByOrdering;
+    };
 
 /**
  * SQL modifiers that only affect the selection but not the projection.
