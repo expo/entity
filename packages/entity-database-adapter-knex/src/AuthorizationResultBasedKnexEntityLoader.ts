@@ -299,6 +299,8 @@ export class AuthorizationResultBasedKnexEntityLoader<
    * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    * @throws Error when rawWhereClause or bindings are invalid
+   *
+   * @deprecated Use loadManyBySQL instead for safer value bindings and more flexible query building.
    */
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
