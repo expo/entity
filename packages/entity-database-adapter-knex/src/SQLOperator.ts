@@ -83,7 +83,7 @@ export class SQLFragment {
    * Get a debug representation of the query with values inline
    * WARNING: This is for debugging only. Never execute the returned string directly.
    */
-  get toDebugString(): string {
+  getDebugString(): string {
     let debugString = this.sql;
     let bindingIndex = 0;
 

@@ -705,7 +705,7 @@ describe('postgres entity integration', () => {
       }} AND created_at > ${new Date('2024-01-01')}`;
 
       // Get the debug text
-      const debugText = fragment.toDebugString;
+      const debugText = fragment.getDebugString();
 
       // Verify the text contains properly formatted values
       expect(debugText).toContain("'TestUser'");
