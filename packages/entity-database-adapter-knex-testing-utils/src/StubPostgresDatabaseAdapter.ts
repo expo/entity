@@ -16,7 +16,6 @@ import {
   TableFieldSingleValueEqualityCondition,
   TableOrderByClause,
   TableQuerySelectionModifiers,
-  TableQuerySelectionModifiersWithOrderByFragment,
 } from '@expo/entity-database-adapter-knex';
 import invariant from 'invariant';
 import { v7 as uuidv7 } from 'uuid';
@@ -206,7 +205,7 @@ export class StubPostgresDatabaseAdapter<
     _queryInterface: any,
     _tableName: string,
     _sqlFragment: SQLFragment,
-    _querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+    _querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]> {
     throw new Error('SQL fragments not supported for StubDatabaseAdapter');
   }

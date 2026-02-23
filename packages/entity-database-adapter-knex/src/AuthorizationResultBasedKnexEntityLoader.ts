@@ -70,26 +70,6 @@ export interface EntityLoaderQuerySelectionModifiers<
   limit?: number;
 }
 
-export interface EntityLoaderQuerySelectionModifiersWithOrderByRaw<
-  TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields = keyof TFields,
-> extends EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> {
-  /**
-   * Order the entities by a raw SQL `ORDER BY` clause.
-   */
-  orderByRaw?: string;
-}
-
-export interface EntityLoaderQuerySelectionModifiersWithOrderByFragment<
-  TFields extends Record<string, any>,
-  TSelectedFields extends keyof TFields = keyof TFields,
-> extends EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> {
-  /**
-   * Order the entities by a SQL fragment `ORDER BY` clause.
-   */
-  orderByFragment?: SQLFragment;
-}
-
 interface SearchSpecificationBase<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields = keyof TFields,
@@ -323,10 +303,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: EntityLoaderQuerySelectionModifiersWithOrderByRaw<
-      TFields,
-      TSelectedFields
-    > = {},
+    querySelectionModifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> = {},
   ): Promise<readonly Result<TEntity>[]> {
     const fieldObjects = await this.knexDataManager.loadManyByRawWhereClauseAsync(
       this.queryContext,
@@ -343,10 +320,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
    */
   loadManyBySQL(
     fragment: SQLFragment,
-    modifiers: EntityLoaderQuerySelectionModifiersWithOrderByFragment<
-      TFields,
-      TSelectedFields
-    > = {},
+    modifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> = {},
   ): AuthorizationResultBasedSQLQueryBuilder<
     TFields,
     TIDField,
@@ -432,7 +406,7 @@ export class AuthorizationResultBasedSQLQueryBuilder<
     >,
     private readonly queryContext: EntityQueryContext,
     sqlFragment: SQLFragment,
-    modifiers: EntityLoaderQuerySelectionModifiersWithOrderByFragment<TFields, TSelectedFields>,
+    modifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields>,
   ) {
     super(sqlFragment, modifiers);
   }

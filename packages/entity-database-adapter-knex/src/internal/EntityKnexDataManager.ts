@@ -15,8 +15,6 @@ import {
   OrderByOrdering,
   PostgresOrderByClause,
   PostgresQuerySelectionModifiers,
-  PostgresQuerySelectionModifiersWithOrderByFragment,
-  PostgresQuerySelectionModifiersWithOrderByRaw,
 } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
 import { SQLFragment, SQLFragmentHelpers, identifier, raw, sql } from '../SQLOperator';
@@ -113,7 +111,6 @@ interface PaginationProvider<TFields extends Record<string, any>, TIDField exten
   whereClause: SQLFragment | undefined;
   buildOrderBy: (direction: PaginationDirection) => {
     clauses?: PostgresOrderByClause<TFields>[];
-    fragment?: SQLFragment | undefined;
   };
   buildCursorCondition: (
     decodedCursorId: TFields[TIDField],
@@ -181,7 +178,7 @@ export class EntityKnexDataManager<
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByRaw<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
 
@@ -203,7 +200,7 @@ export class EntityKnexDataManager<
   async loadManyBySQLFragmentAsync(
     queryContext: EntityQueryContext,
     sqlFragment: SQLFragment,
-    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByFragment<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
 
@@ -292,12 +289,7 @@ export class EntityKnexDataManager<
       assert(search.term.length > 0, 'Search term must be a non-empty string');
       assert(search.fields.length > 0, 'Search fields must be a non-empty array');
 
-      const direction =
-        'first' in args ? PaginationDirection.FORWARD : PaginationDirection.BACKWARD;
-      const { searchWhere, searchOrderByFragment } = this.buildSearchConditionAndOrderBy(
-        search,
-        direction,
-      );
+      const { searchWhere, searchOrderByClauses } = this.buildSearchConditionAndOrderBy(search);
 
       // Combine WHERE conditions: base where + search where
       const whereClause =
@@ -313,8 +305,18 @@ export class EntityKnexDataManager<
       // Create strategy for search pagination
       const strategy: PaginationProvider<TFields, TIDField> = {
         whereClause,
-        buildOrderBy: () => {
-          return { fragment: searchOrderByFragment };
+        buildOrderBy: (direction) => {
+          const clauses =
+            direction === PaginationDirection.FORWARD
+              ? searchOrderByClauses
+              : searchOrderByClauses.map((clause) => ({
+                  ...clause,
+                  order:
+                    clause.order === OrderByOrdering.ASCENDING
+                      ? OrderByOrdering.DESCENDING
+                      : OrderByOrdering.ASCENDING,
+                }));
+          return { clauses };
         },
         buildCursorCondition: (decodedCursorId, direction) =>
           search.strategy === PaginationStrategy.TRIGRAM_SEARCH
@@ -384,12 +386,10 @@ export class EntityKnexDataManager<
     const whereClause = this.combineWhereConditions(baseWhere, cursorCondition);
 
     // Get ordering from strategy
-    const { clauses: orderByClauses, fragment: orderByFragment } =
-      paginationProvider.buildOrderBy(direction);
+    const { clauses: orderByClauses } = paginationProvider.buildOrderBy(direction);
 
     // Determine query modifiers
-    const queryModifiers: PostgresQuerySelectionModifiersWithOrderByFragment<TFields> = {
-      ...(orderByFragment !== undefined && { orderByFragment }),
+    const queryModifiers: PostgresQuerySelectionModifiers<TFields> = {
       ...(orderByClauses !== undefined && { orderBy: orderByClauses }),
       limit: limit + 1, // Fetch data with limit + 1 to check for more pages
     };
@@ -662,28 +662,31 @@ export class EntityKnexDataManager<
     return sql`(${leftSide}) ${raw(operator)} (${rightSideSubquery})`;
   }
 
-  private buildSearchConditionAndOrderBy(
-    search: DataManagerSearchSpecification<TFields>,
-    direction: PaginationDirection,
-  ): {
+  private buildSearchConditionAndOrderBy(search: DataManagerSearchSpecification<TFields>): {
     searchWhere: SQLFragment;
-    searchOrderByFragment: SQLFragment | undefined;
+    searchOrderByClauses: PostgresOrderByClause<TFields>[];
   } {
     switch (search.strategy) {
       case PaginationStrategy.ILIKE_SEARCH: {
         const conditions = this.buildILikeConditions(search);
 
         // Order by search fields + ID to match cursor fields
-        const orderByFields = [...search.fields, this.entityConfiguration.idField].map((field) => {
-          const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, field);
-          return sql`${identifier(dbField)} ${raw(
-            direction === PaginationDirection.FORWARD ? 'ASC' : 'DESC',
-          )}`;
-        });
+        const searchOrderByClauses: PostgresOrderByClause<TFields>[] = [
+          ...search.fields.map(
+            (field): PostgresOrderByClause<TFields> => ({
+              fieldName: field,
+              order: OrderByOrdering.ASCENDING,
+            }),
+          ),
+          {
+            fieldName: this.entityConfiguration.idField,
+            order: OrderByOrdering.ASCENDING,
+          },
+        ];
 
         return {
           searchWhere: conditions.length > 0 ? SQLFragment.join(conditions, ' OR ') : sql`1 = 0`,
-          searchOrderByFragment: SQLFragment.join(orderByFields, ', '),
+          searchOrderByClauses,
         };
       }
 
@@ -702,77 +705,37 @@ export class EntityKnexDataManager<
         // Combine exact matches (ILIKE) with similarity
         const allConditions = [...ilikeConditions, ...conditions];
 
-        // Build ORDER BY components
-        const exactMatchPriority = this.buildTrigramExactMatchPriority(ilikeConditions, direction);
-        const similarityRanking = this.buildTrigramSimilarityRanking(search, direction);
-        const tieBreakers = this.buildTrigramTieBreakers(search, direction);
+        // Build ORDER BY clauses for trigram search:
+        // 1. Exact matches first (ILIKE)
+        // 2. Then by similarity score
+        // 3. Then by extra fields and ID field for stability
+        const searchOrderByClauses: PostgresOrderByClause<TFields>[] = [
+          {
+            fieldFragment: this.buildTrigramExactMatchCaseExpression(search),
+            order: OrderByOrdering.DESCENDING,
+          },
+          {
+            fieldFragment: this.buildTrigramSimilarityGreatestExpression(search),
+            order: OrderByOrdering.DESCENDING,
+          },
+          ...(search.extraOrderByFields ?? []).map(
+            (field): PostgresOrderByClause<TFields> => ({
+              fieldName: field,
+              order: OrderByOrdering.DESCENDING,
+            }),
+          ),
+          {
+            fieldName: this.entityConfiguration.idField,
+            order: OrderByOrdering.DESCENDING,
+          },
+        ];
 
         return {
           searchWhere: SQLFragment.join(allConditions, ' OR '),
-          // For trigram search, order by relevance with direction-aware ordering
-          // 1. Exact matches first (ILIKE)
-          // 2. Then by similarity score
-          // 3. Then by extra fields and ID field for stability
-          searchOrderByFragment: SQLFragment.join(
-            [exactMatchPriority, similarityRanking, tieBreakers],
-            ', ',
-          ),
+          searchOrderByClauses,
         };
       }
     }
-  }
-
-  /**
-   * Builds the exact match priority component of the ORDER BY clause for trigram search.
-   * Exact matches (via ILIKE) are prioritized over similarity matches.
-   */
-  private buildTrigramExactMatchPriority(
-    ilikeConditions: SQLFragment[],
-    direction: PaginationDirection,
-  ): SQLFragment {
-    const sortOrder = direction === PaginationDirection.FORWARD ? 'DESC' : 'ASC';
-    const exactMatchCondition = SQLFragment.join(ilikeConditions, ' OR ');
-    return sql`CASE WHEN ${exactMatchCondition} THEN 1 ELSE 0 END ${raw(sortOrder)}`;
-  }
-
-  /**
-   * Builds the similarity score ranking component of the ORDER BY clause.
-   * Uses the highest similarity score across all search fields.
-   */
-  private buildTrigramSimilarityRanking(
-    search: DataManagerSearchSpecification<TFields>,
-    direction: PaginationDirection,
-  ): SQLFragment {
-    const sortOrder = direction === PaginationDirection.FORWARD ? 'DESC' : 'ASC';
-    const similarityGreatestExpr = this.buildTrigramSimilarityGreatestExpression(search);
-    return sql`${similarityGreatestExpr} ${raw(sortOrder)}`;
-  }
-
-  /**
-   * Builds the tie-breaker fields component of the ORDER BY clause.
-   * Includes extra order-by fields (if specified) and always includes the ID field for stability.
-   */
-  private buildTrigramTieBreakers(
-    search: DataManagerTrigramSearchSpecification<TFields>,
-    direction: PaginationDirection,
-  ): SQLFragment {
-    const idField = getDatabaseFieldForEntityField(
-      this.entityConfiguration,
-      this.entityConfiguration.idField,
-    );
-
-    const extraOrderByFields = search.extraOrderByFields?.map((field) =>
-      getDatabaseFieldForEntityField(this.entityConfiguration, field),
-    );
-
-    const sortOrder = direction === PaginationDirection.FORWARD ? 'DESC' : 'ASC';
-
-    const allTieBreakerFields = [...(extraOrderByFields ?? []), idField];
-    const tieBreakerClauses = allTieBreakerFields.map(
-      (field) => sql`${identifier(field)} ${raw(sortOrder)}`,
-    );
-
-    return SQLFragment.join(tieBreakerClauses, ', ');
   }
 
   private static escapeILikePattern(term: string): string {

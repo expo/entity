@@ -18,7 +18,6 @@ import {
   TableFieldSingleValueEqualityCondition,
   TableOrderByClause,
   TableQuerySelectionModifiers,
-  TableQuerySelectionModifiersWithOrderByFragment,
 } from '../../BasePostgresEntityDatabaseAdapter';
 import { SQLFragment } from '../../SQLOperator';
 
@@ -207,7 +206,7 @@ export class StubPostgresDatabaseAdapter<
     _queryInterface: any,
     _tableName: string,
     _sqlFragment: SQLFragment,
-    _querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+    _querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]> {
     throw new Error('SQL fragments not supported for StubDatabaseAdapter');
   }

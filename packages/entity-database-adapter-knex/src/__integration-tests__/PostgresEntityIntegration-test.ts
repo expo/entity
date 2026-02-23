@@ -628,7 +628,7 @@ describe('postgres entity integration', () => {
       const sortColumn = 'name';
       const rawResults = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`${raw('name')} LIKE ${'RawTest%'}`)
-        .orderBySQL(sql`${raw(sortColumn)} DESC`)
+        .orderBySQL(sql`${raw(sortColumn)}`, OrderByOrdering.DESCENDING)
         .executeAsync();
 
       expect(rawResults).toHaveLength(3);
@@ -644,8 +644,10 @@ describe('postgres entity integration', () => {
             WHEN has_a_cat = true AND has_a_dog = true THEN 0
             WHEN has_a_cat = true THEN 1
             ELSE 2
-          END, ${raw('name')} ASC`,
+          END`,
+          OrderByOrdering.ASCENDING,
         )
+        .orderBySQL(sql`${raw('name')}`, OrderByOrdering.ASCENDING)
         .executeAsync();
 
       expect(priorityResults).toHaveLength(3);
@@ -760,7 +762,7 @@ describe('postgres entity integration', () => {
       // Test 1: Simple orderBySQL with raw column
       const simpleOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
-        .orderBySQL(sql`${raw('name')} DESC`)
+        .orderBySQL(sql`${raw('name')}`, OrderByOrdering.DESCENDING)
         .executeAsync();
 
       expect(simpleOrder).toHaveLength(4);
@@ -782,8 +784,9 @@ describe('postgres entity integration', () => {
             WHEN has_a_cat = true THEN ${priority2}
             WHEN has_a_dog = true THEN ${priority3}
             ELSE ${priority4}
-          END, ${raw('name')} ASC`,
+          END`,
         )
+        .orderBySQL(sql`${raw('name')}`, OrderByOrdering.ASCENDING)
         .executeAsync();
 
       expect(caseOrder).toHaveLength(4);
@@ -795,7 +798,8 @@ describe('postgres entity integration', () => {
       // Test 3: Order by array length (PostgreSQL specific)
       const arrayLengthOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
-        .orderBySQL(sql`COALESCE(array_length(string_array, 1), 0) DESC, ${raw('name')} ASC`)
+        .orderBySQL(sql`COALESCE(array_length(string_array, 1), 0)`, OrderByOrdering.DESCENDING)
+        .orderBySQL(sql`${raw('name')}`, OrderByOrdering.ASCENDING)
         .executeAsync();
 
       expect(arrayLengthOrder).toHaveLength(4);
@@ -804,21 +808,10 @@ describe('postgres entity integration', () => {
       expect(arrayLengthOrder[2]!.getField('name')).toBe('OrderTest4'); // 1 element
       expect(arrayLengthOrder[3]!.getField('name')).toBe('OrderTest3'); // null = 0
 
-      // Test 4: Multiple orderBySQL calls (last one wins)
-      const multipleOrderBy = await PostgresTestEntity.knexLoader(vc1)
-        .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
-        .orderBySQL(sql`${raw('name')} DESC`) // This will be overridden
-        .orderBySQL(sql`${raw('name')} ASC`) // This one wins
-        .executeAsync();
-
-      expect(multipleOrderBy).toHaveLength(4);
-      expect(multipleOrderBy[0]!.getField('name')).toBe('OrderTest1');
-      expect(multipleOrderBy[3]!.getField('name')).toBe('OrderTest4');
-
-      // Test 5: Combining orderBySQL with limit and offset
+      // Test 4: Combining orderBySQL with limit and offset
       const limitedOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
-        .orderBySQL(sql`${raw('name')} ASC`)
+        .orderBySQL(sql`${raw('name')}`, OrderByOrdering.ASCENDING)
         .limit(2)
         .offset(1)
         .executeAsync();
@@ -827,10 +820,10 @@ describe('postgres entity integration', () => {
       expect(limitedOrder[0]!.getField('name')).toBe('OrderTest2');
       expect(limitedOrder[1]!.getField('name')).toBe('OrderTest3');
 
-      // Test 6: orderBySQL with NULLS FIRST/LAST
+      // Test 5: orderBySQL with NULLS FIRST/LAST
       const nullsOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
-        .orderBySQL(sql`string_array IS NULL, ${raw('name')} ASC`)
+        .orderBySQL(sql`string_array IS NULL`, OrderByOrdering.ASCENDING)
         .executeAsync();
 
       expect(nullsOrder).toHaveLength(4);
@@ -1183,7 +1176,16 @@ describe('postgres entity integration', () => {
       const resultsOrderByRaw = await PostgresTestEntity.knexLoader(
         vc1,
       ).loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
-        orderByRaw: 'has_a_dog ASC, name DESC',
+        orderBy: [
+          {
+            fieldFragment: sql`has_a_dog`,
+            order: OrderByOrdering.ASCENDING,
+          },
+          {
+            fieldFragment: sql`name`,
+            order: OrderByOrdering.DESCENDING,
+          },
+        ],
       });
 
       expect(resultsOrderByRaw).toHaveLength(3);
@@ -2009,35 +2011,6 @@ describe('postgres entity integration', () => {
         expect(page2.pageInfo.hasNextPage).toBe(false);
       });
 
-      it('orderByFragment takes precedence over orderBy when both are specified', async () => {
-        const vc = new ViewerContext(
-          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
-        );
-
-        // Create test data with specific order
-        await PostgresTestEntity.creator(vc).setField('name', 'Charlie').createAsync();
-        await PostgresTestEntity.creator(vc).setField('name', 'Alice').createAsync();
-        await PostgresTestEntity.creator(vc).setField('name', 'Bob').createAsync();
-        await PostgresTestEntity.creator(vc).setField('name', 'David').createAsync();
-
-        // Test that orderByFragment overrides orderBy completely
-        // orderBy would sort by name ascending (Alice, Bob, Charlie, David)
-        // orderByFragment will sort by name descending (David, Charlie, Bob, Alice)
-        const results = await PostgresTestEntity.knexLoader(vc)
-          .loadManyBySQL(sql`1 = 1`, {
-            orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
-            orderByFragment: sql`name DESC`,
-          })
-          .executeAsync();
-
-        // Should be in descending order due to orderByFragment taking precedence
-        expect(results).toHaveLength(4);
-        expect(results[0]?.getField('name')).toBe('David');
-        expect(results[1]?.getField('name')).toBe('Charlie');
-        expect(results[2]?.getField('name')).toBe('Bob');
-        expect(results[3]?.getField('name')).toBe('Alice');
-      });
-
       it('performs paginated search with both loader types', async () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
@@ -2672,7 +2645,7 @@ describe('postgres entity integration', () => {
         // Should have results (might be empty if first page had all results)
         expect(secondPage.edges.length).toBeGreaterThanOrEqual(0);
 
-        // The key test is that the query runs successfully with the searchOrderByFragment
+        // The key test is that the query runs successfully with the searchOrderByClauses
         // being passed through the parallel query path
 
         // Test backward pagination with cursor

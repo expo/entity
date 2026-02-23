@@ -119,24 +119,6 @@ export interface PostgresQuerySelectionModifiers<TFields extends Record<string, 
   limit?: number;
 }
 
-export interface PostgresQuerySelectionModifiersWithOrderByRaw<
-  TFields extends Record<string, any>,
-> extends PostgresQuerySelectionModifiers<TFields> {
-  /**
-   * Order the entities by a raw SQL `ORDER BY` clause.
-   */
-  orderByRaw?: string;
-}
-
-export interface PostgresQuerySelectionModifiersWithOrderByFragment<
-  TFields extends Record<string, any>,
-> extends PostgresQuerySelectionModifiers<TFields> {
-  /**
-   * Order the entities by a SQL fragment `ORDER BY` clause.
-   */
-  orderByFragment?: SQLFragment;
-}
-
 export type TableOrderByClause =
   | {
       columnName: string;
@@ -151,15 +133,6 @@ export interface TableQuerySelectionModifiers {
   orderBy: TableOrderByClause[] | undefined;
   offset: number | undefined;
   limit: number | undefined;
-}
-
-export interface TableQuerySelectionModifiersWithOrderByRaw extends TableQuerySelectionModifiers {
-  orderByRaw: string | undefined;
-  orderByRawBindings?: readonly any[];
-}
-
-export interface TableQuerySelectionModifiersWithOrderByFragment extends TableQuerySelectionModifiers {
-  orderByFragment: SQLFragment | undefined;
 }
 
 export abstract class BasePostgresEntityDatabaseAdapter<
@@ -237,14 +210,14 @@ export abstract class BasePostgresEntityDatabaseAdapter<
     queryContext: EntityQueryContext,
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByRaw<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     const results = await this.fetchManyByRawWhereClauseInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       rawWhereClause,
       bindings,
-      this.convertToTableQueryModifiersWithOrderByRaw(querySelectionModifiers),
+      this.convertToTableQueryModifiers(querySelectionModifiers),
     );
 
     return results.map((result) =>
@@ -257,7 +230,7 @@ export abstract class BasePostgresEntityDatabaseAdapter<
     tableName: string,
     rawWhereClause: string,
     bindings: object | any[],
-    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,
+    querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]>;
 
   /**
@@ -271,13 +244,13 @@ export abstract class BasePostgresEntityDatabaseAdapter<
   async fetchManyBySQLFragmentAsync(
     queryContext: EntityQueryContext,
     sqlFragment: SQLFragment,
-    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByFragment<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     const results = await this.fetchManyBySQLFragmentInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       sqlFragment,
-      this.convertToTableQueryModifiersWithOrderByFragment(querySelectionModifiers),
+      this.convertToTableQueryModifiers(querySelectionModifiers),
     );
 
     return results.map((result) =>
@@ -289,26 +262,8 @@ export abstract class BasePostgresEntityDatabaseAdapter<
     queryInterface: Knex,
     tableName: string,
     sqlFragment: SQLFragment,
-    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+    querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]>;
-
-  private convertToTableQueryModifiersWithOrderByRaw(
-    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByRaw<TFields>,
-  ): TableQuerySelectionModifiersWithOrderByRaw {
-    return {
-      ...this.convertToTableQueryModifiers(querySelectionModifiers),
-      orderByRaw: querySelectionModifiers.orderByRaw,
-    };
-  }
-
-  private convertToTableQueryModifiersWithOrderByFragment(
-    querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByFragment<TFields>,
-  ): TableQuerySelectionModifiersWithOrderByFragment {
-    return {
-      ...this.convertToTableQueryModifiers(querySelectionModifiers),
-      orderByFragment: querySelectionModifiers.orderByFragment,
-    };
-  }
 
   private convertToTableQueryModifiers(
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,

@@ -6,8 +6,6 @@ import {
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableQuerySelectionModifiers,
-  TableQuerySelectionModifiersWithOrderByFragment,
-  TableQuerySelectionModifiersWithOrderByRaw,
 } from './BasePostgresEntityDatabaseAdapter';
 import { JSONArrayField, MaybeJSONArrayField } from './EntityFields';
 import { PostgresEntityDatabaseAdapterConfiguration } from './PostgresEntityDatabaseAdapterProvider';
@@ -118,25 +116,6 @@ export class PostgresEntityDatabaseAdapter<
     return results[0] ?? null;
   }
 
-  private applyQueryModifiersToQueryOrderByRaw(
-    query: Knex.QueryBuilder,
-    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,
-  ): Knex.QueryBuilder {
-    const { orderByRaw } = querySelectionModifiers;
-
-    // orderByRaw takes precedence over orderBy - they are mutually exclusive
-    if (orderByRaw !== undefined) {
-      // Apply only orderByRaw (offset/limit still applied, but not orderBy)
-      return this.applyQueryModifiersToQuery(query, {
-        ...querySelectionModifiers,
-        orderBy: undefined, // Explicitly exclude orderBy when orderByRaw is present
-      }).orderByRaw(orderByRaw);
-    } else {
-      // Apply regular orderBy (and offset/limit)
-      return this.applyQueryModifiersToQuery(query, querySelectionModifiers);
-    }
-  }
-
   private applyQueryModifiersToQuery(
     query: Knex.QueryBuilder,
     querySelectionModifiers: TableQuerySelectionModifiers,
@@ -220,10 +199,10 @@ export class PostgresEntityDatabaseAdapter<
     tableName: string,
     rawWhereClause: string,
     bindings: object | any[],
-    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByRaw,
+    querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]> {
     let query = queryInterface.select().from(tableName).whereRaw(rawWhereClause, bindings);
-    query = this.applyQueryModifiersToQueryOrderByRaw(query, querySelectionModifiers);
+    query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
     return await wrapNativePostgresCallAsync(() => query);
   }
 
@@ -231,26 +210,13 @@ export class PostgresEntityDatabaseAdapter<
     queryInterface: Knex,
     tableName: string,
     sqlFragment: SQLFragment,
-    querySelectionModifiers: TableQuerySelectionModifiersWithOrderByFragment,
+    querySelectionModifiers: TableQuerySelectionModifiers,
   ): Promise<object[]> {
     let query = queryInterface
       .select()
       .from(tableName)
       .whereRaw(sqlFragment.sql, sqlFragment.getKnexBindings());
-
-    // Apply order by modifiers
-    // orderByFragment takes precedence over orderBy - they are mutually exclusive
-    const { orderByFragment } = querySelectionModifiers;
-    if (orderByFragment !== undefined) {
-      // Apply only orderByFragment (offset/limit still applied, but not orderBy)
-      query = this.applyQueryModifiersToQuery(query, {
-        ...querySelectionModifiers,
-        orderBy: undefined, // Explicitly exclude orderBy when orderByFragment is present
-      }).orderByRaw(orderByFragment.sql, orderByFragment.getKnexBindings());
-    } else {
-      // Apply regular orderBy (and offset/limit)
-      query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
-    }
+    query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
     return await wrapNativePostgresCallAsync(() => query);
   }
 
