@@ -11,6 +11,7 @@ import {
   EntityPrivacyPolicyEvaluationContext,
   EntityPrivacyPolicyEvaluationMode,
   EntityPrivacyPolicyEvaluator,
+  EntityPrivacyPolicyRuleEvaluationContext,
 } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { ViewerContext } from '../ViewerContext';
@@ -271,6 +272,47 @@ class EmptyPolicy extends EntityPrivacyPolicy<BlahFields, 'id', ViewerContext, B
   protected override readonly readRules = [];
   protected override readonly updateRules = [];
   protected override readonly deleteRules = [];
+}
+
+class ContextCapturingRule extends PrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity> {
+  public capturedContext: EntityPrivacyPolicyRuleEvaluationContext<
+    BlahFields,
+    'id',
+    ViewerContext,
+    BlahEntity
+  > | null = null;
+
+  async evaluateAsync(
+    _viewerContext: ViewerContext,
+    _queryContext: EntityQueryContext,
+    evaluationContext: EntityPrivacyPolicyRuleEvaluationContext<
+      BlahFields,
+      'id',
+      ViewerContext,
+      BlahEntity
+    >,
+    _entity: BlahEntity,
+  ): Promise<RuleEvaluationResult> {
+    this.capturedContext = evaluationContext;
+    return RuleEvaluationResult.ALLOW;
+  }
+}
+
+class ContextCapturingPolicy extends EntityPrivacyPolicy<
+  BlahFields,
+  'id',
+  ViewerContext,
+  BlahEntity
+> {
+  public readonly createRule = new ContextCapturingRule();
+  public readonly readRule = new ContextCapturingRule();
+  public readonly updateRule = new ContextCapturingRule();
+  public readonly deleteRule = new ContextCapturingRule();
+
+  protected override readonly createRules = [this.createRule];
+  protected override readonly readRules = [this.readRule];
+  protected override readonly updateRules = [this.updateRule];
+  protected override readonly deleteRules = [this.deleteRule];
 }
 
 describe(EntityPrivacyPolicy, () => {
@@ -716,6 +758,66 @@ describe(EntityPrivacyPolicy, () => {
       verify(policySpy.denyHandler(anyOfClass(EntityNotAuthorizedError))).never();
 
       verify(metricsAdapterMock.logAuthorizationEvent(anything())).never();
+    });
+  });
+
+  describe('EntityPrivacyPolicyRuleEvaluationContext', () => {
+    it('passes correct authorization action to rules for each CRUD operation', async () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const queryContext = instance(mock(EntityQueryContext));
+      const privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
+        BlahFields,
+        'id',
+        ViewerContext,
+        BlahEntity
+      > = {
+        previousValue: null,
+        cascadingDeleteCause: null,
+      };
+      const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
+      const policy = new ContextCapturingPolicy();
+
+      await policy.authorizeCreateAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        entity,
+        metricsAdapter,
+      );
+      expect(policy.createRule.capturedContext?.action).toBe(EntityAuthorizationAction.CREATE);
+
+      await policy.authorizeReadAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        entity,
+        metricsAdapter,
+      );
+      expect(policy.readRule.capturedContext?.action).toBe(EntityAuthorizationAction.READ);
+
+      await policy.authorizeUpdateAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        entity,
+        metricsAdapter,
+      );
+      expect(policy.updateRule.capturedContext?.action).toBe(EntityAuthorizationAction.UPDATE);
+
+      await policy.authorizeDeleteAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        entity,
+        metricsAdapter,
+      );
+      expect(policy.deleteRule.capturedContext?.action).toBe(EntityAuthorizationAction.DELETE);
     });
   });
 });

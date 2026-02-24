@@ -1,4 +1,4 @@
-import { instance, mock, when } from 'ts-mockito';
+import { anything, instance, mock, when } from 'ts-mockito';
 
 import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
@@ -96,6 +96,7 @@ describePrivacyPolicyRule(
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext: {
+          action: anything(),
           previousValue: instance(childEntityMock),
           cascadingDeleteCause: {
             entity: parentEntity,
@@ -109,6 +110,7 @@ describePrivacyPolicyRule(
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext: {
+          action: anything(),
           previousValue: instance(childEntityMock),
           cascadingDeleteCause: {
             entity: parentEntity,
@@ -124,6 +126,7 @@ describePrivacyPolicyRule(
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext: {
+          action: anything(),
           previousValue: null,
           cascadingDeleteCause: null,
         },
@@ -134,6 +137,7 @@ describePrivacyPolicyRule(
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext: {
+          action: anything(),
           previousValue: null,
           cascadingDeleteCause: {
             entity: instance(unrelatedOtherEntityMock),
@@ -147,6 +151,7 @@ describePrivacyPolicyRule(
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext: {
+          action: anything(),
           previousValue: null,
           cascadingDeleteCause: {
             entity: otherParentEntity,
@@ -160,6 +165,7 @@ describePrivacyPolicyRule(
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext: {
+          action: anything(),
           previousValue: null,
           cascadingDeleteCause: {
             entity: parentEntity,
@@ -173,6 +179,7 @@ describePrivacyPolicyRule(
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext: {
+          action: anything(),
           previousValue: null,
           cascadingDeleteCause: {
             entity: parentEntity,
@@ -186,6 +193,7 @@ describePrivacyPolicyRule(
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext: {
+          action: anything(),
           previousValue: instance(childEntityDifferentParentMock),
           cascadingDeleteCause: {
             entity: parentEntity,
@@ -232,6 +240,7 @@ describePrivacyPolicyRule(
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext: {
+          action: anything(),
           previousValue: instance(childEntityWithNameRefMock),
           cascadingDeleteCause: {
             entity: parentEntityWithName,
@@ -245,6 +254,7 @@ describePrivacyPolicyRule(
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext: {
+          action: anything(),
           previousValue: instance(childEntityWithNameRefMock),
           cascadingDeleteCause: {
             entity: parentEntityWithName,
