@@ -1,10 +1,10 @@
 import {
-  EntityPrivacyPolicyEvaluationContext,
   EntityQueryContext,
   ReadonlyEntity,
   ViewerContext,
   PrivacyPolicyRule,
   RuleEvaluationResult,
+  EntityPrivacyPolicyRuleEvaluationContext,
 } from '@expo/entity';
 import { describe, expect, test } from '@jest/globals';
 
@@ -17,7 +17,7 @@ export interface Case<
 > {
   viewerContext: TViewerContext;
   queryContext: EntityQueryContext;
-  evaluationContext: EntityPrivacyPolicyEvaluationContext<
+  evaluationContext: EntityPrivacyPolicyRuleEvaluationContext<
     TFields,
     TIDField,
     TViewerContext,

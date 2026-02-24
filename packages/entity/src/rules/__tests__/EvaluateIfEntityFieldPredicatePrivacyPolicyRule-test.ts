@@ -1,6 +1,6 @@
 import { mock, instance, when } from 'ts-mockito';
 
-import { EntityPrivacyPolicyEvaluationContext } from '../../EntityPrivacyPolicy';
+import { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../../EntityQueryContext';
 import { ViewerContext } from '../../ViewerContext';
 import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils';
@@ -30,7 +30,7 @@ describePrivacyPolicyRule<TestFields, 'customIdField', ViewerContext, TestEntity
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext:
-          instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
+          instance(mock<EntityPrivacyPolicyRuleEvaluationContext<any, any, any, any, any>>()),
         entity: entityBlah,
       },
     ],
@@ -39,7 +39,7 @@ describePrivacyPolicyRule<TestFields, 'customIdField', ViewerContext, TestEntity
         viewerContext: instance(mock(ViewerContext)),
         queryContext: instance(mock(EntityQueryContext)),
         evaluationContext:
-          instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
+          instance(mock<EntityPrivacyPolicyRuleEvaluationContext<any, any, any, any, any>>()),
         entity: entityFoo,
       },
     ],

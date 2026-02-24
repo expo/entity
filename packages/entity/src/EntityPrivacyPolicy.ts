@@ -32,6 +32,25 @@ export type EntityPrivacyPolicyEvaluationContext<
   cascadingDeleteCause: EntityCascadingDeletionInfo | null;
 };
 
+export type EntityPrivacyPolicyRuleEvaluationContext<
+  TFields extends Record<string, any>,
+  TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
+  TViewerContext extends ViewerContext,
+  TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
+  TSelectedFields extends keyof TFields = keyof TFields,
+> = EntityPrivacyPolicyEvaluationContext<
+  TFields,
+  TIDField,
+  TViewerContext,
+  TEntity,
+  TSelectedFields
+> & {
+  /**
+   * The CRUD action for which the privacy policy rule is being evaluated.
+   */
+  action: EntityAuthorizationAction;
+};
+
 /**
  * Evaluation mode for a EntityPrivacyPolicy. Useful when transitioning to
  * using Entity for privacy.
@@ -460,7 +479,7 @@ export abstract class EntityPrivacyPolicy<
       const ruleEvaluationResult = await rule.evaluateAsync(
         viewerContext,
         queryContext,
-        evaluationContext,
+        { ...evaluationContext, action },
         entity,
       );
       switch (ruleEvaluationResult) {

@@ -1,4 +1,4 @@
-import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import { EntityPrivacyPolicyRuleEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { ReadonlyEntity } from '../ReadonlyEntity';
 import { ViewerContext } from '../ViewerContext';
@@ -46,7 +46,7 @@ export abstract class PrivacyPolicyRule<
   abstract evaluateAsync(
     viewerContext: TViewerContext,
     queryContext: EntityQueryContext,
-    evaluationContext: EntityPrivacyPolicyEvaluationContext<
+    evaluationContext: EntityPrivacyPolicyRuleEvaluationContext<
       TFields,
       TIDField,
       TViewerContext,
