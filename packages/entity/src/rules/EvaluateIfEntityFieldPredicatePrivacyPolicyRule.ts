@@ -1,4 +1,7 @@
-import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import {
+  EntityAuthorizationAction,
+  EntityPrivacyPolicyEvaluationContext,
+} from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { ReadonlyEntity } from '../ReadonlyEntity';
 import { ViewerContext } from '../ViewerContext';
@@ -37,10 +40,17 @@ export class EvaluateIfEntityFieldPredicatePrivacyPolicyRule<
       TSelectedFields
     >,
     entity: TEntity,
+    action: EntityAuthorizationAction,
   ): Promise<RuleEvaluationResult> {
     const fieldValue = entity.getField(this.fieldName);
     return this.shouldEvaluatePredicate(fieldValue)
-      ? await this.rule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity)
+      ? await this.rule.evaluateAsync(
+          viewerContext,
+          queryContext,
+          evaluationContext,
+          entity,
+          action,
+        )
       : RuleEvaluationResult.SKIP;
   }
 }

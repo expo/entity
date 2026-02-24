@@ -1,4 +1,4 @@
-import { instance, mock, when } from 'ts-mockito';
+import { anything, instance, mock, when } from 'ts-mockito';
 
 import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
@@ -103,6 +103,7 @@ describePrivacyPolicyRule(
           },
         },
         entity: instance(childEntityMock),
+        action: anything(),
       },
       // parent id matches parent being deleted, field null in current version but filled in previous version
       {
@@ -116,6 +117,7 @@ describePrivacyPolicyRule(
           },
         },
         entity: instance(childEntityMockWithNullifiedField),
+        action: anything(),
       },
     ],
     skipCases: [
@@ -128,6 +130,7 @@ describePrivacyPolicyRule(
           cascadingDeleteCause: null,
         },
         entity: instance(childEntityMock),
+        action: anything(),
       },
       // cascading delete not from parent entity class
       {
@@ -141,6 +144,7 @@ describePrivacyPolicyRule(
           },
         },
         entity: instance(childEntityMock),
+        action: anything(),
       },
       // cascading delete from different parent, field not nullified
       {
@@ -154,6 +158,7 @@ describePrivacyPolicyRule(
           },
         },
         entity: instance(childEntityMock),
+        action: anything(),
       },
       // entity belongs to different parent
       {
@@ -167,6 +172,7 @@ describePrivacyPolicyRule(
           },
         },
         entity: instance(childEntityDifferentParentMock),
+        action: anything(),
       },
       // parent id field undefined (null) and no previous value
       {
@@ -180,6 +186,7 @@ describePrivacyPolicyRule(
           },
         },
         entity: instance(childEntityMockWithNullifiedField),
+        action: anything(),
       },
       // parent id now null but previous value different parent
       {
@@ -193,6 +200,7 @@ describePrivacyPolicyRule(
           },
         },
         entity: instance(childEntityMockWithNullifiedField),
+        action: anything(),
       },
     ],
   },
@@ -239,6 +247,7 @@ describePrivacyPolicyRule(
           },
         },
         entity: instance(childEntityWithNameRefMock),
+        action: anything(),
       },
       // parent name matches parent being deleted, field null in current version but filled in previous version
       {
@@ -252,6 +261,7 @@ describePrivacyPolicyRule(
           },
         },
         entity: instance(childEntityWithNameRefMockWithNullifiedField),
+        action: anything(),
       },
     ],
   },

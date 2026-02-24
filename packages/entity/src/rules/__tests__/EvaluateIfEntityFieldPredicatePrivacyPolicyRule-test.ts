@@ -1,4 +1,4 @@
-import { mock, instance, when } from 'ts-mockito';
+import { mock, instance, when, anything } from 'ts-mockito';
 
 import { EntityPrivacyPolicyEvaluationContext } from '../../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../../EntityQueryContext';
@@ -32,6 +32,7 @@ describePrivacyPolicyRule<TestFields, 'customIdField', ViewerContext, TestEntity
         evaluationContext:
           instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
         entity: entityBlah,
+        action: anything(),
       },
     ],
     skipCases: [
@@ -41,6 +42,7 @@ describePrivacyPolicyRule<TestFields, 'customIdField', ViewerContext, TestEntity
         evaluationContext:
           instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
         entity: entityFoo,
+        action: anything(),
       },
     ],
   },

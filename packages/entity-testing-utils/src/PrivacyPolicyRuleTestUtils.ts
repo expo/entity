@@ -5,6 +5,7 @@ import {
   ViewerContext,
   PrivacyPolicyRule,
   RuleEvaluationResult,
+  EntityAuthorizationAction,
 } from '@expo/entity';
 import { describe, expect, test } from '@jest/globals';
 
@@ -25,6 +26,7 @@ export interface Case<
     TSelectedFields
   >;
   entity: TEntity;
+  action: EntityAuthorizationAction;
 }
 
 export type CaseMap<
@@ -60,10 +62,16 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
     if (allowCases && allowCases.size > 0) {
       describe('allow cases', () => {
         test.each(Array.from(allowCases.keys()))('%p', async (caseKey) => {
-          const { viewerContext, queryContext, evaluationContext, entity } =
+          const { viewerContext, queryContext, evaluationContext, entity, action } =
             await allowCases.get(caseKey)!();
           await expect(
-            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity),
+            privacyPolicyRule.evaluateAsync(
+              viewerContext,
+              queryContext,
+              evaluationContext,
+              entity,
+              action,
+            ),
           ).resolves.toEqual(RuleEvaluationResult.ALLOW);
         });
       });
@@ -72,10 +80,16 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
     if (skipCases && skipCases.size > 0) {
       describe('skip cases', () => {
         test.each(Array.from(skipCases.keys()))('%p', async (caseKey) => {
-          const { viewerContext, queryContext, evaluationContext, entity } =
+          const { viewerContext, queryContext, evaluationContext, entity, action } =
             await skipCases.get(caseKey)!();
           await expect(
-            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity),
+            privacyPolicyRule.evaluateAsync(
+              viewerContext,
+              queryContext,
+              evaluationContext,
+              entity,
+              action,
+            ),
           ).resolves.toEqual(RuleEvaluationResult.SKIP);
         });
       });
@@ -84,10 +98,16 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
     if (denyCases && denyCases.size > 0) {
       describe('deny cases', () => {
         test.each(Array.from(denyCases.keys()))('%p', async (caseKey) => {
-          const { viewerContext, queryContext, evaluationContext, entity } =
+          const { viewerContext, queryContext, evaluationContext, entity, action } =
             await denyCases.get(caseKey)!();
           await expect(
-            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity),
+            privacyPolicyRule.evaluateAsync(
+              viewerContext,
+              queryContext,
+              evaluationContext,
+              entity,
+              action,
+            ),
           ).resolves.toEqual(RuleEvaluationResult.DENY);
         });
       });

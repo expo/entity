@@ -22,6 +22,7 @@ describePrivacyPolicyRule(
         evaluationContext:
           instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
         entity: anything(),
+        action: anything(),
       },
     ],
   },
@@ -40,6 +41,7 @@ describePrivacyPolicyRule(
         evaluationContext:
           instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
         entity: anything(),
+        action: anything(),
       },
     ],
   },
@@ -58,6 +60,7 @@ describePrivacyPolicyRule(
         evaluationContext:
           instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
         entity: anything(),
+        action: anything(),
       },
     ],
   },

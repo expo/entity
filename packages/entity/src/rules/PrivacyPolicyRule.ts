@@ -1,4 +1,7 @@
-import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import {
+  EntityAuthorizationAction,
+  EntityPrivacyPolicyEvaluationContext,
+} from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { ReadonlyEntity } from '../ReadonlyEntity';
 import { ViewerContext } from '../ViewerContext';
@@ -54,5 +57,6 @@ export abstract class PrivacyPolicyRule<
       TSelectedFields
     >,
     entity: TEntity,
+    action: EntityAuthorizationAction,
   ): Promise<RuleEvaluationResult>;
 }

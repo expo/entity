@@ -216,6 +216,7 @@ class AlwaysThrowPrivacyPolicyRule extends PrivacyPolicyRule<
       BlahEntity
     >,
     _entity: BlahEntity,
+    _action: EntityAuthorizationAction,
   ): Promise<RuleEvaluationResult> {
     throw new Error('WooHoo!');
   }
@@ -264,6 +265,43 @@ class LoggingEnforceThrowAllPolicy extends ThrowAllPolicy {
       denyHandler: this.denyHandler,
     };
   }
+}
+
+class ActionCapturingRule extends PrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity> {
+  public capturedAction: EntityAuthorizationAction | null = null;
+
+  async evaluateAsync(
+    _viewerContext: ViewerContext,
+    _queryContext: EntityQueryContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      BlahFields,
+      'id',
+      ViewerContext,
+      BlahEntity
+    >,
+    _entity: BlahEntity,
+    action: EntityAuthorizationAction,
+  ): Promise<RuleEvaluationResult> {
+    this.capturedAction = action;
+    return RuleEvaluationResult.ALLOW;
+  }
+}
+
+class ActionCapturingPolicy extends EntityPrivacyPolicy<
+  BlahFields,
+  'id',
+  ViewerContext,
+  BlahEntity
+> {
+  public readonly createRule = new ActionCapturingRule();
+  public readonly readRule = new ActionCapturingRule();
+  public readonly updateRule = new ActionCapturingRule();
+  public readonly deleteRule = new ActionCapturingRule();
+
+  protected override readonly createRules = [this.createRule];
+  protected override readonly readRules = [this.readRule];
+  protected override readonly updateRules = [this.updateRule];
+  protected override readonly deleteRules = [this.deleteRule];
 }
 
 class EmptyPolicy extends EntityPrivacyPolicy<BlahFields, 'id', ViewerContext, BlahEntity> {
@@ -447,6 +485,59 @@ describe(EntityPrivacyPolicy, () => {
           }),
         ),
       ).once();
+    });
+
+    it('passes the correct action to rule evaluateAsync', async () => {
+      const viewerContext = instance(mock(ViewerContext));
+      const queryContext = instance(mock(EntityQueryContext));
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
+        );
+      const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
+      const policy = new ActionCapturingPolicy();
+
+      await policy.authorizeCreateAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        entity,
+        metricsAdapter,
+      );
+      expect(policy.createRule.capturedAction).toBe(EntityAuthorizationAction.CREATE);
+
+      await policy.authorizeReadAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        entity,
+        metricsAdapter,
+      );
+      expect(policy.readRule.capturedAction).toBe(EntityAuthorizationAction.READ);
+
+      await policy.authorizeUpdateAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        entity,
+        metricsAdapter,
+      );
+      expect(policy.updateRule.capturedAction).toBe(EntityAuthorizationAction.UPDATE);
+
+      await policy.authorizeDeleteAsync(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        entity,
+        metricsAdapter,
+      );
+      expect(policy.deleteRule.capturedAction).toBe(EntityAuthorizationAction.DELETE);
     });
 
     it('throws when rule throws', async () => {

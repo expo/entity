@@ -14,6 +14,7 @@ describePrivacyPolicyRule(new AlwaysSkipPrivacyPolicyRule(), {
       evaluationContext:
         instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
       entity: anything(),
+      action: anything(),
     },
   ],
 });

@@ -1,4 +1,7 @@
-import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import {
+  EntityAuthorizationAction,
+  EntityPrivacyPolicyEvaluationContext,
+} from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { ReadonlyEntity } from '../ReadonlyEntity';
 import { ViewerContext } from '../ViewerContext';
@@ -34,10 +37,11 @@ export class AllowIfAllSubRulesAllowPrivacyPolicyRule<
       TSelectedFields
     >,
     entity: TEntity,
+    action: EntityAuthorizationAction,
   ): Promise<RuleEvaluationResult> {
     const results = await Promise.all(
       this.subRules.map((subRule) =>
-        subRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity),
+        subRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity, action),
       ),
     );
     return results.every((result) => result === RuleEvaluationResult.ALLOW)

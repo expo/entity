@@ -4,6 +4,7 @@ import {
   ViewerContext,
   AlwaysAllowPrivacyPolicyRule,
   AlwaysDenyPrivacyPolicyRule,
+  EntityAuthorizationAction,
 } from '@expo/entity';
 import { describe } from '@jest/globals';
 import { anything, instance, mock } from 'ts-mockito';
@@ -22,6 +23,7 @@ describe(describePrivacyPolicyRuleWithAsyncTestCase, () => {
             evaluationContext:
               instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
             entity: anything(),
+            action: EntityAuthorizationAction.READ,
           }),
         ],
       ]),
@@ -37,6 +39,7 @@ describe(describePrivacyPolicyRuleWithAsyncTestCase, () => {
             evaluationContext:
               instance(mock<EntityPrivacyPolicyEvaluationContext<any, any, any, any, any>>()),
             entity: anything(),
+            action: EntityAuthorizationAction.READ,
           }),
         ],
       ]),

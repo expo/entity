@@ -25,6 +25,7 @@ export type EntityPrivacyPolicyEvaluationContext<
    * when an entity is updated it is re-LOADed after the update completes.
    */
   previousValue: TEntity | null;
+
   /**
    * When this privacy policy is being evaluated as a result of a cascading deletion, this will be populated
    * with information on the cascading delete.
@@ -462,6 +463,7 @@ export abstract class EntityPrivacyPolicy<
         queryContext,
         evaluationContext,
         entity,
+        action,
       );
       switch (ruleEvaluationResult) {
         case RuleEvaluationResult.DENY:
