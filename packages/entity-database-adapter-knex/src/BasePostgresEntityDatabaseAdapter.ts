@@ -75,17 +75,29 @@ export enum OrderByOrdering {
   DESCENDING = 'desc',
 }
 
-export interface PostgresOrderByClause<TFields extends Record<string, any>> {
-  /**
-   * The field name to order by.
-   */
-  fieldName: keyof TFields;
+export type PostgresOrderByClause<TFields extends Record<string, any>> =
+  | {
+      /**
+       * The field name to order by.
+       */
+      fieldName: keyof TFields;
 
-  /**
-   * The OrderByOrdering to order by.
-   */
-  order: OrderByOrdering;
-}
+      /**
+       * The OrderByOrdering to order by.
+       */
+      order: OrderByOrdering;
+    }
+  | {
+      /**
+       * A raw SQL fragment to order by. May not contain ASC or DESC, as ordering direction is determined by the `order` property.
+       */
+      fieldFragment: SQLFragment;
+
+      /**
+       * The OrderByOrdering to order by.
+       */
+      order: OrderByOrdering;
+    };
 
 /**
  * SQL modifiers that only affect the selection but not the projection.
@@ -125,13 +137,18 @@ export interface PostgresQuerySelectionModifiersWithOrderByFragment<
   orderByFragment?: SQLFragment;
 }
 
+export type TableOrderByClause =
+  | {
+      columnName: string;
+      order: OrderByOrdering;
+    }
+  | {
+      columnFragment: SQLFragment;
+      order: OrderByOrdering;
+    };
+
 export interface TableQuerySelectionModifiers {
-  orderBy:
-    | {
-        columnName: string;
-        order: OrderByOrdering;
-      }[]
-    | undefined;
+  orderBy: TableOrderByClause[] | undefined;
   offset: number | undefined;
   limit: number | undefined;
 }
@@ -300,13 +317,22 @@ export abstract class BasePostgresEntityDatabaseAdapter<
     return {
       orderBy:
         orderBy !== undefined
-          ? orderBy.map((orderBySpecification) => ({
-              columnName: getDatabaseFieldForEntityField(
-                this.entityConfiguration,
-                orderBySpecification.fieldName,
-              ),
-              order: orderBySpecification.order,
-            }))
+          ? orderBy.map((orderBySpecification): TableOrderByClause => {
+              if ('fieldName' in orderBySpecification) {
+                return {
+                  columnName: getDatabaseFieldForEntityField(
+                    this.entityConfiguration,
+                    orderBySpecification.fieldName,
+                  ),
+                  order: orderBySpecification.order,
+                };
+              } else {
+                return {
+                  columnFragment: orderBySpecification.fieldFragment,
+                  order: orderBySpecification.order,
+                };
+              }
+            })
           : undefined,
       offset: querySelectionModifiers.offset,
       limit: querySelectionModifiers.limit,

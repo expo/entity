@@ -152,6 +152,8 @@ export class EntityKnexDataManager<
     fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
+    EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
+
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
       EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
@@ -181,6 +183,8 @@ export class EntityKnexDataManager<
     bindings: any[] | object,
     querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByRaw<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
+    EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
+
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
       EntityMetricsLoadType.LOAD_MANY_RAW,
@@ -201,6 +205,8 @@ export class EntityKnexDataManager<
     sqlFragment: SQLFragment,
     querySelectionModifiers: PostgresQuerySelectionModifiersWithOrderByFragment<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
+    EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
+
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
       EntityMetricsLoadType.LOAD_MANY_SQL,
@@ -239,12 +245,15 @@ export class EntityKnexDataManager<
 
     if (pagination.strategy === PaginationStrategy.STANDARD) {
       // Standard pagination
+      EntityKnexDataManager.validateOrderByClauses(pagination.orderBy);
+
       const idField = this.entityConfiguration.idField;
       const augmentedOrderByClauses = this.augmentOrderByIfNecessary(pagination.orderBy, idField);
 
-      const fieldsToUseInPostgresTupleCursor = augmentedOrderByClauses.map(
-        (order) => order.fieldName,
-      );
+      const fieldsToUseInPostgresTupleCursor: (keyof TFields | SQLFragment)[] =
+        augmentedOrderByClauses.map((order) =>
+          'fieldName' in order ? order.fieldName : order.fieldFragment,
+        );
 
       // Create strategy for regular pagination
       const strategy: PaginationProvider<TFields, TIDField> = {
@@ -262,7 +271,7 @@ export class EntityKnexDataManager<
             direction === PaginationDirection.FORWARD
               ? augmentedOrderByClauses
               : augmentedOrderByClauses.map((clause) => ({
-                  fieldName: clause.fieldName,
+                  ...clause,
                   order:
                     clause.order === OrderByOrdering.ASCENDING
                       ? OrderByOrdering.DESCENDING
@@ -445,12 +454,30 @@ export class EntityKnexDataManager<
   ): PostgresOrderByClause<TFields>[] {
     const clauses = orderBy ?? [];
 
-    // Always ensure ID is included for stability and cursor correctness
-    const hasId = clauses.some((spec) => spec.fieldName === idField);
+    // Always ensure ID is included for stability and cursor correctness. Note that this may add a redundant order by
+    // if ID is already included as a fragment, but that is preferable to the risk of incorrect pagination behavior.
+    const hasId = clauses.some((spec) => 'fieldName' in spec && spec.fieldName === idField);
     if (!hasId) {
       return [...clauses, { fieldName: idField, order: OrderByOrdering.ASCENDING }];
     }
     return clauses;
+  }
+
+  private static validateOrderByClauses<TFields extends Record<string, any>>(
+    orderBy: readonly PostgresOrderByClause<TFields>[] | undefined,
+  ): void {
+    if (orderBy === undefined) {
+      return;
+    }
+    for (const clause of orderBy) {
+      if ('fieldFragment' in clause) {
+        const trimmedSql = clause.fieldFragment.sql.trimEnd();
+        assert(
+          !/\b(ASC|DESC)\s*$/i.test(trimmedSql),
+          'fieldFragment must not contain ASC or DESC at the end. Use the order property to specify ordering direction.',
+        );
+      }
+    }
   }
 
   private encodeOpaqueCursor(idField: TFields[TIDField]): string {
@@ -480,7 +507,7 @@ export class EntityKnexDataManager<
 
   private buildCursorCondition(
     decodedExternalCursorEntityID: TFields[TIDField],
-    fieldsToUseInPostgresTupleCursor: readonly (keyof TFields)[],
+    fieldsToUseInPostgresTupleCursor: readonly (keyof TFields | SQLFragment)[],
     direction: PaginationDirection,
   ): SQLFragment {
     // We build a tuple comparison for fieldsToUseInPostgresTupleCursor fields of the
@@ -497,6 +524,9 @@ export class EntityKnexDataManager<
     const tableName = this.entityConfiguration.tableName;
 
     const postgresCursorFieldIdentifiers = fieldsToUseInPostgresTupleCursor.map((f) => {
+      if (f instanceof SQLFragment) {
+        return f;
+      }
       const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, f);
       return sql`${identifier(dbField)}`;
     });
@@ -504,8 +534,13 @@ export class EntityKnexDataManager<
     // Build left side of comparison (current row's computed values)
     const leftSide = SQLFragment.join(postgresCursorFieldIdentifiers, ', ');
 
-    // Build right side using subquery to get computed values for cursor entity
+    // Build right side using subquery to get computed values for cursor entity.
+    // For field names, qualify with the cursor row alias. For SQL fragments,
+    // use as-is since unqualified column names resolve to the only table in the subquery.
     const postgresCursorRowFieldIdentifiers = fieldsToUseInPostgresTupleCursor.map((f) => {
+      if (f instanceof SQLFragment) {
+        return f;
+      }
       const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, f);
       return sql`${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(dbField)}`;
     });

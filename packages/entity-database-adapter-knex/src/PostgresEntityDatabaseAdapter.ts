@@ -147,7 +147,14 @@ export class PostgresEntityDatabaseAdapter<
 
     if (orderBy !== undefined) {
       for (const orderBySpecification of orderBy) {
-        ret = ret.orderBy(orderBySpecification.columnName, orderBySpecification.order);
+        if ('columnName' in orderBySpecification) {
+          ret = ret.orderBy(orderBySpecification.columnName, orderBySpecification.order);
+        } else {
+          ret = ret.orderByRaw(
+            `(${orderBySpecification.columnFragment.sql}) ${orderBySpecification.order}`,
+            orderBySpecification.columnFragment.getKnexBindings(),
+          );
+        }
       }
     }
 
