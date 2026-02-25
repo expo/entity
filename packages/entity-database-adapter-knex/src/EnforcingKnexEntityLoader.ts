@@ -132,6 +132,8 @@ export class EnforcingKnexEntityLoader<
    * @returns entities matching the WHERE clause
    * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
    * @throws Error when rawWhereClause or bindings are invalid
+   *
+   * @deprecated Use loadManyBySQL instead for safer value bindings and more flexible query building.
    */
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
