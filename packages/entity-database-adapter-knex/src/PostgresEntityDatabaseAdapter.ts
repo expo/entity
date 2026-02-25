@@ -3,6 +3,7 @@ import { Knex } from 'knex';
 
 import {
   BasePostgresEntityDatabaseAdapter,
+  NullsOrdering,
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableQuerySelectionModifiers,
@@ -127,10 +128,17 @@ export class PostgresEntityDatabaseAdapter<
     if (orderBy !== undefined) {
       for (const orderBySpecification of orderBy) {
         if ('columnName' in orderBySpecification) {
-          ret = ret.orderBy(orderBySpecification.columnName, orderBySpecification.order);
+          ret = ret.orderBy(
+            orderBySpecification.columnName,
+            orderBySpecification.order,
+            orderBySpecification.nulls,
+          );
         } else {
+          const nullsSuffix = orderBySpecification.nulls
+            ? ` NULLS ${orderBySpecification.nulls === NullsOrdering.FIRST ? 'FIRST' : 'LAST'}`
+            : '';
           ret = ret.orderByRaw(
-            `(${orderBySpecification.columnFragment.sql}) ${orderBySpecification.order}`,
+            `(${orderBySpecification.columnFragment.sql}) ${orderBySpecification.order}${nullsSuffix}`,
             orderBySpecification.columnFragment.getKnexBindings(),
           );
         }

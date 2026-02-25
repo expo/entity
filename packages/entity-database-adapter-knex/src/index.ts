@@ -22,4 +22,5 @@ export * from './errors/wrapNativePostgresCallAsync';
 export * from './internal/EntityKnexDataManager';
 export * from './internal/getKnexDataManager';
 export * from './internal/getKnexEntityLoaderFactory';
+export * from './internal/utilityTypes';
 export * from './internal/weakMaps';

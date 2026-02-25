@@ -58,6 +58,11 @@ export interface TableFieldMultiValueEqualityCondition {
   tableValues: readonly any[];
 }
 
+export enum NullsOrdering {
+  FIRST = 'first',
+  LAST = 'last',
+}
+
 /**
  * Ordering options for `orderBy` clauses.
  */
@@ -86,6 +91,12 @@ export type PostgresOrderByClause<TFields extends Record<string, any>> =
        * The OrderByOrdering to order by.
        */
       order: OrderByOrdering;
+
+      /**
+       * Optional nulls ordering. If not provided, the database default is used
+       * (NULLS LAST for ASC, NULLS FIRST for DESC in PostgreSQL).
+       */
+      nulls?: NullsOrdering | undefined;
     }
   | {
       /**
@@ -97,6 +108,12 @@ export type PostgresOrderByClause<TFields extends Record<string, any>> =
        * The OrderByOrdering to order by.
        */
       order: OrderByOrdering;
+
+      /**
+       * Optional nulls ordering. If not provided, the database default is used
+       * (NULLS LAST for ASC, NULLS FIRST for DESC in PostgreSQL).
+       */
+      nulls?: NullsOrdering | undefined;
     };
 
 /**
@@ -123,10 +140,12 @@ export type TableOrderByClause =
   | {
       columnName: string;
       order: OrderByOrdering;
+      nulls: NullsOrdering | undefined;
     }
   | {
       columnFragment: SQLFragment;
       order: OrderByOrdering;
+      nulls: NullsOrdering | undefined;
     };
 
 export interface TableQuerySelectionModifiers {
@@ -280,11 +299,13 @@ export abstract class BasePostgresEntityDatabaseAdapter<
                     orderBySpecification.fieldName,
                   ),
                   order: orderBySpecification.order,
+                  nulls: orderBySpecification.nulls,
                 };
               } else {
                 return {
                   columnFragment: orderBySpecification.fieldFragment,
                   order: orderBySpecification.order,
+                  nulls: orderBySpecification.nulls,
                 };
               }
             })

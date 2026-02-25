@@ -11,6 +11,7 @@ import { Result } from '@expo/results';
 import {
   FieldEqualityCondition,
   isSingleValueFieldEqualityCondition,
+  NullsOrdering,
   OrderByOrdering,
 } from './BasePostgresEntityDatabaseAdapter';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
@@ -18,34 +19,44 @@ import { PaginationStrategy } from './PaginationStrategy';
 import { SQLFragment } from './SQLOperator';
 import type { Connection, PageInfo } from './internal/EntityKnexDataManager';
 import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
+import { NonNullableKeys } from './internal/utilityTypes';
+
+export type EntityLoaderBaseOrderByClause = {
+  /**
+   * The OrderByOrdering to order by.
+   */
+  order: OrderByOrdering;
+
+  /**
+   * Optional nulls ordering for this order by clause. If not provided, no specific nulls ordering is applied.
+   */
+  nulls?: NullsOrdering | undefined;
+};
+
+export type EntityLoaderFieldNameOrderByClause<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields = keyof TFields,
+> = EntityLoaderBaseOrderByClause & {
+  /**
+   * The field name to order by.
+   */
+  fieldName: TSelectedFields;
+};
+
+export type EntityLoaderFieldFragmentOrderByClause = EntityLoaderBaseOrderByClause & {
+  /**
+   * The SQL fragment to order by, which can reference selected fields. Example: `COALESCE(NULLIF(display_name, ''), split_part(full_name, '/', 2))`.
+   * May not contain ASC or DESC, as ordering direction is controlled by the `order` property.
+   */
+  fieldFragment: SQLFragment;
+};
 
 export type EntityLoaderOrderByClause<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > =
-  | {
-      /**
-       * The field name to order by.
-       */
-      fieldName: TSelectedFields;
-
-      /**
-       * The OrderByOrdering to order by.
-       */
-      order: OrderByOrdering;
-    }
-  | {
-      /**
-       * The SQL fragment to order by, which can reference selected fields. Example: `COALESCE(NULLIF(display_name, ''), split_part(full_name, '/', 2))`.
-       * May not contain ASC or DESC, as ordering direction is controlled by the `order` property.
-       */
-      fieldFragment: SQLFragment;
-
-      /**
-       * The OrderByOrdering to order by.
-       */
-      order: OrderByOrdering;
-    };
+  | EntityLoaderFieldNameOrderByClause<TFields, TSelectedFields>
+  | EntityLoaderFieldFragmentOrderByClause;
 
 /**
  * SQL modifiers that only affect the selection but not the projection.
@@ -82,7 +93,7 @@ interface SearchSpecificationBase<
   /**
    * The fields to search within. Must be a non-empty array.
    */
-  fields: TSelectedFields[];
+  fields: (TSelectedFields & NonNullableKeys<TFields>)[];
 }
 
 interface ILikeSearchSpecification<
@@ -125,7 +136,7 @@ interface TrigramSearchSpecification<
    * These fields are independent of search fields and can be used to provide meaningful
    * ordering when multiple results have the same similarity score.
    */
-  extraOrderByFields?: TSelectedFields[];
+  extraOrderByFields?: (TSelectedFields & NonNullableKeys<TFields>)[];
 }
 
 interface StandardPaginationSpecification<
