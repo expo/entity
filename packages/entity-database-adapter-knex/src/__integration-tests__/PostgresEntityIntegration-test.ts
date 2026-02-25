@@ -10,7 +10,7 @@ import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 import { setTimeout } from 'timers/promises';
 
-import { OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
+import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
 import { raw, sql, SQLFragment, SQLFragmentHelpers } from '../SQLOperator';
 import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity';
@@ -821,14 +821,23 @@ describe('postgres entity integration', () => {
       expect(limitedOrder[1]!.getField('name')).toBe('OrderTest3');
 
       // Test 5: orderBySQL with NULLS FIRST/LAST
-      const nullsOrder = await PostgresTestEntity.knexLoader(vc1)
+      const nullsOrderLast = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
-        .orderBySQL(sql`string_array IS NULL`, OrderByOrdering.ASCENDING)
+        .orderBySQL(sql`string_array`, OrderByOrdering.ASCENDING, NullsOrdering.LAST)
         .executeAsync();
 
-      expect(nullsOrder).toHaveLength(4);
-      expect(nullsOrder[0]!.getField('stringArray')).not.toBeNull(); // false comes first (not null)
-      expect(nullsOrder[3]!.getField('stringArray')).toBeNull(); // true comes last (is null)
+      expect(nullsOrderLast).toHaveLength(4);
+      expect(nullsOrderLast[0]!.getField('stringArray')).not.toBeNull(); // non-null comes first
+      expect(nullsOrderLast[3]!.getField('stringArray')).toBeNull(); // null comes last
+
+      const nullsOrderFirst = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
+        .orderBySQL(sql`string_array`, OrderByOrdering.ASCENDING, NullsOrdering.FIRST)
+        .executeAsync();
+
+      expect(nullsOrderFirst).toHaveLength(4);
+      expect(nullsOrderFirst[0]!.getField('stringArray')).toBeNull(); // null comes first
+      expect(nullsOrderFirst[3]!.getField('stringArray')).not.toBeNull(); // non-null comes last
     });
 
     it('throws error on multiple executeAsync calls', async () => {
@@ -2011,6 +2020,158 @@ describe('postgres entity integration', () => {
         expect(page2.pageInfo.hasNextPage).toBe(false);
       });
 
+      it('supports forward pagination with NULLS FIRST on ASC', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Create entities: some with null names, some with non-null names
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Alice').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Bob').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Charlie').createAsync();
+
+        // ASC NULLS FIRST means nulls come first, then ascending values.
+        // This overrides the PostgreSQL default of NULLS LAST for ASC.
+        const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [
+              {
+                fieldName: 'name',
+                order: OrderByOrdering.ASCENDING,
+                nulls: NullsOrdering.FIRST,
+              },
+            ],
+          },
+        });
+
+        expect(firstPage.edges).toHaveLength(3);
+        expect(firstPage.edges[0]?.node.getField('name')).toBeNull();
+        expect(firstPage.edges[1]?.node.getField('name')).toBeNull();
+        expect(firstPage.edges[2]?.node.getField('name')).toBe('Alice');
+        expect(firstPage.pageInfo.hasNextPage).toBe(true);
+      });
+
+      it('supports forward pagination with NULLS LAST on DESC', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Create entities: some with null names, some with non-null names
+        await PostgresTestEntity.creator(vc).setField('name', 'Alice').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Bob').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Charlie').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+
+        // DESC NULLS LAST means descending values first, then nulls last.
+        // This overrides the PostgreSQL default of NULLS FIRST for DESC.
+        const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [
+              {
+                fieldName: 'name',
+                order: OrderByOrdering.DESCENDING,
+                nulls: NullsOrdering.LAST,
+              },
+            ],
+          },
+        });
+
+        expect(firstPage.edges).toHaveLength(3);
+        expect(firstPage.edges[0]?.node.getField('name')).toBe('Charlie');
+        expect(firstPage.edges[1]?.node.getField('name')).toBe('Bob');
+        expect(firstPage.edges[2]?.node.getField('name')).toBe('Alice');
+        expect(firstPage.pageInfo.hasNextPage).toBe(true);
+      });
+
+      it('supports backward pagination with nulls ordering by flipping nulls direction', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Use non-null entities only to avoid the pre-existing limitation where
+        // PostgreSQL tuple comparison evaluates to NULL when any element is NULL,
+        // breaking cursor-based pagination across NULL boundaries.
+        for (const name of ['Alice', 'Bob', 'Charlie', 'David', 'Eve']) {
+          await PostgresTestEntity.creator(vc).setField('name', name).createAsync();
+        }
+
+        // Backward pagination with ASC NULLS FIRST.
+        // Internally this flips to DESC NULLS LAST (via flipNullsOrderingSpread),
+        // fetches in that order, then reverses to present ASC NULLS FIRST order.
+        const lastPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 3,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [
+              {
+                fieldName: 'name',
+                order: OrderByOrdering.ASCENDING,
+                nulls: NullsOrdering.FIRST,
+              },
+            ],
+          },
+        });
+
+        // Last 3 in ASC order: Charlie, David, Eve
+        expect(lastPage.edges).toHaveLength(3);
+        expect(lastPage.edges[0]?.node.getField('name')).toBe('Charlie');
+        expect(lastPage.edges[1]?.node.getField('name')).toBe('David');
+        expect(lastPage.edges[2]?.node.getField('name')).toBe('Eve');
+        expect(lastPage.pageInfo.hasPreviousPage).toBe(true);
+
+        // Continue backward with cursor: get the previous page before Charlie.
+        // Cursor is on a non-null row so tuple comparison works correctly.
+        const previousPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 3,
+          before: lastPage.pageInfo.startCursor!,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [
+              {
+                fieldName: 'name',
+                order: OrderByOrdering.ASCENDING,
+                nulls: NullsOrdering.FIRST,
+              },
+            ],
+          },
+        });
+
+        expect(previousPage.edges).toHaveLength(2);
+        expect(previousPage.edges[0]?.node.getField('name')).toBe('Alice');
+        expect(previousPage.edges[1]?.node.getField('name')).toBe('Bob');
+        expect(previousPage.pageInfo.hasPreviousPage).toBe(false);
+
+        // Also test DESC NULLS LAST backward pagination (without cursor).
+        // This exercises flipNullsOrderingSpread: DESC NULLS LAST flips to ASC NULLS FIRST.
+        const lastPageDesc = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 3,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [
+              {
+                fieldName: 'name',
+                order: OrderByOrdering.DESCENDING,
+                nulls: NullsOrdering.LAST,
+              },
+            ],
+          },
+        });
+
+        // Last 3 in DESC order: Charlie, Bob, Alice
+        expect(lastPageDesc.edges).toHaveLength(3);
+        expect(lastPageDesc.edges[0]?.node.getField('name')).toBe('Charlie');
+        expect(lastPageDesc.edges[1]?.node.getField('name')).toBe('Bob');
+        expect(lastPageDesc.edges[2]?.node.getField('name')).toBe('Alice');
+        expect(lastPageDesc.pageInfo.hasPreviousPage).toBe(true);
+      });
+
       it('performs paginated search with both loader types', async () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
@@ -2032,6 +2193,7 @@ describe('postgres entity integration', () => {
         for (const data of testData) {
           await PostgresTestEntity.creator(vc)
             .setField('name', data.name)
+            .setField('label', data.name)
             .setField('hasACat', data.hasACat)
             .setField('hasADog', data.hasADog)
             .createAsync();
@@ -2043,7 +2205,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2060,7 +2222,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2076,7 +2238,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Jonson', // Intentional misspelling to test similarity
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.2,
           },
         });
@@ -2096,7 +2258,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Jonson', // Intentional misspelling
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.2,
           },
         });
@@ -2113,7 +2275,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Smith',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2126,7 +2288,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Smith',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2140,7 +2302,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2159,7 +2321,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2173,7 +2335,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2186,7 +2348,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2256,6 +2418,7 @@ describe('postgres entity integration', () => {
         for (let i = 0; i < names.length; i++) {
           await PostgresTestEntity.creator(vc)
             .setField('name', names[i]!)
+            .setField('label', names[i]!)
             .setField('hasACat', i % 2 === 0)
             .createAsync();
         }
@@ -2266,7 +2429,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2280,7 +2443,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Smith',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2295,7 +2458,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Smith',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2309,7 +2472,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'john',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2324,7 +2487,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2344,7 +2507,10 @@ describe('postgres entity integration', () => {
         // Create test data
         const names = ['Apple', 'Application', 'Apply', 'Banana', 'Cherry', 'Pineapple'];
         for (const name of names) {
-          await PostgresTestEntity.creator(vc).setField('name', name).createAsync();
+          await PostgresTestEntity.creator(vc)
+            .setField('name', name)
+            .setField('label', name)
+            .createAsync();
         }
 
         // Forward pagination with ILIKE search
@@ -2353,7 +2519,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'app',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2370,7 +2536,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.ILIKE_SEARCH,
             term: 'app',
-            fields: ['name'],
+            fields: ['label'],
           },
         });
 
@@ -2392,7 +2558,7 @@ describe('postgres entity integration', () => {
             pagination: {
               strategy: PaginationStrategy.ILIKE_SEARCH,
               term: 'app',
-              fields: ['name'],
+              fields: ['label'],
             },
           });
 
@@ -2433,6 +2599,7 @@ describe('postgres entity integration', () => {
         for (const name of shuffled) {
           const entity = await PostgresTestEntity.creator(vc)
             .setField('name', name)
+            .setField('label', name)
             .setField('hasACat', Math.random() > 0.5)
             .createAsync();
           createdEntities.push(entity);
@@ -2451,7 +2618,7 @@ describe('postgres entity integration', () => {
             pagination: {
               strategy: PaginationStrategy.ILIKE_SEARCH,
               term: 'Pattern',
-              fields: ['name'],
+              fields: ['label'],
             },
           });
 
@@ -2492,7 +2659,7 @@ describe('postgres entity integration', () => {
             pagination: {
               strategy: PaginationStrategy.ILIKE_SEARCH,
               term: 'Pattern',
-              fields: ['name'],
+              fields: ['label'],
             },
           });
 
@@ -2538,6 +2705,7 @@ describe('postgres entity integration', () => {
         for (let i = 0; i < names.length; i++) {
           await PostgresTestEntity.creator(vc)
             .setField('name', names[i]!)
+            .setField('label', names[i]!)
             .setField('hasACat', i < 3) // First 3 have cats
             .createAsync();
         }
@@ -2548,7 +2716,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.3, // Similarity threshold
           },
         });
@@ -2570,7 +2738,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.3,
           },
         });
@@ -2607,6 +2775,7 @@ describe('postgres entity integration', () => {
         for (let i = 0; i < names.length; i++) {
           await PostgresTestEntity.creator(vc)
             .setField('name', names[i]!)
+            .setField('label', names[i]!)
             .setField('hasACat', i < 5) // First 5 have cats (Johnson-like names)
             .createAsync();
         }
@@ -2617,7 +2786,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.3,
           },
         });
@@ -2637,7 +2806,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.3,
           },
         });
@@ -2655,7 +2824,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.3,
           },
         });
@@ -2673,7 +2842,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.3,
           },
         });
@@ -2709,6 +2878,7 @@ describe('postgres entity integration', () => {
         for (const data of testData) {
           const entity = await PostgresTestEntity.creator(vc)
             .setField('name', data.name)
+            .setField('label', data.name)
             .setField('hasACat', data.hasACat)
             .createAsync();
           createdEntities.push(entity);
@@ -2720,7 +2890,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
@@ -2741,7 +2911,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
@@ -2763,7 +2933,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
@@ -2783,7 +2953,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
@@ -2810,7 +2980,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
@@ -2830,7 +3000,7 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
@@ -2875,6 +3045,7 @@ describe('postgres entity integration', () => {
         for (const data of testData) {
           await PostgresTestEntity.creator(vc)
             .setField('name', data.name)
+            .setField('label', data.name)
             .setField('hasACat', data.hasACat)
             .createAsync();
         }
@@ -2885,9 +3056,9 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.2,
-            extraOrderByFields: ['hasACat'], // Add extra stable ordering
+            extraOrderByFields: ['createdAt'], // Add extra stable ordering
           },
         });
 
@@ -2905,9 +3076,9 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.2,
-            extraOrderByFields: ['hasACat'],
+            extraOrderByFields: ['createdAt'],
           },
         });
 
@@ -2925,9 +3096,9 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.2,
-            extraOrderByFields: ['hasACat'],
+            extraOrderByFields: ['createdAt'],
           },
         });
 
@@ -2940,9 +3111,9 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['name'],
+            fields: ['label'],
             threshold: 0.2,
-            extraOrderByFields: ['hasACat'],
+            extraOrderByFields: ['createdAt'],
           },
         });
 

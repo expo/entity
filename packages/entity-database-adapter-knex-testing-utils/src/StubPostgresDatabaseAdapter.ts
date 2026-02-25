@@ -10,6 +10,7 @@ import {
 } from '@expo/entity';
 import {
   BasePostgresEntityDatabaseAdapter,
+  NullsOrdering,
   OrderByOrdering,
   SQLFragment,
   TableFieldMultiValueEqualityCondition,
@@ -119,17 +120,25 @@ export class StubPostgresDatabaseAdapter<
     }
     const aField = objectA[currentOrderBy.columnName];
     const bField = objectB[currentOrderBy.columnName];
+
+    // Determine effective nulls ordering:
+    // - If explicitly set, use that
+    // - Otherwise use PostgreSQL defaults: NULLS LAST for ASC, NULLS FIRST for DESC
+    const nullsFirst =
+      currentOrderBy.nulls !== undefined
+        ? currentOrderBy.nulls === NullsOrdering.FIRST
+        : currentOrderBy.order === OrderByOrdering.DESCENDING;
+
+    if (aField === null && bField === null) {
+      return this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
+    } else if (aField === null) {
+      return nullsFirst ? -1 : 1;
+    } else if (bField === null) {
+      return nullsFirst ? 1 : -1;
+    }
+
     switch (currentOrderBy.order) {
       case OrderByOrdering.DESCENDING: {
-        // simulate NULLS FIRST for DESC
-        if (aField === null && bField === null) {
-          return 0;
-        } else if (aField === null) {
-          return -1;
-        } else if (bField === null) {
-          return 1;
-        }
-
         return aField > bField
           ? -1
           : aField < bField
@@ -137,15 +146,6 @@ export class StubPostgresDatabaseAdapter<
             : this.compareByOrderBys(orderBys.slice(1), objectA, objectB);
       }
       case OrderByOrdering.ASCENDING: {
-        // simulate NULLS LAST for ASC
-        if (aField === null && bField === null) {
-          return 0;
-        } else if (bField === null) {
-          return -1;
-        } else if (aField === null) {
-          return 1;
-        }
-
         return bField > aField
           ? -1
           : bField < aField
