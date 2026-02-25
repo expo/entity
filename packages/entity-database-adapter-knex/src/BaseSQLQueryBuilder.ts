@@ -1,6 +1,6 @@
 import {
   EntityLoaderOrderByClause,
-  EntityLoaderQuerySelectionModifiersWithOrderByFragment,
+  EntityLoaderQuerySelectionModifiers,
 } from './AuthorizationResultBasedKnexEntityLoader';
 import { OrderByOrdering } from './BasePostgresEntityDatabaseAdapter';
 import { SQLFragment } from './SQLOperator';
@@ -21,7 +21,6 @@ export abstract class BaseSQLQueryBuilder<
       limit?: number;
       offset?: number;
       orderBy?: readonly EntityLoaderOrderByClause<TFields, TSelectedFields>[];
-      orderByFragment?: SQLFragment;
     },
   ) {}
 
@@ -55,31 +54,30 @@ export abstract class BaseSQLQueryBuilder<
    *
    * @example
    * ```ts
-   * import { sql, raw } from '@expo/entity-database-adapter-knex';
-   *
-   * // Safe parameterized ordering
-   * .orderBySQL(sql`CASE WHEN priority = ${1} THEN 0 ELSE 1 END, created_at DESC`)
-   *
-   * // Dynamic column ordering
-   * const sortColumn = 'name';
-   * .orderBySQL(sql`${raw(sortColumn)} DESC NULLS LAST`)
-   *
-   * // Complex expressions
-   * .orderBySQL(sql`array_length(tags, 1) DESC, score * ${multiplier} ASC`)
+   * query.orderByFragment(
+   *   sql`(data->>'createdAt')::timestamp`,
+   *   OrderByOrdering.DESCENDING,
+   * );
+   * // Generates ORDER BY clause that orders by the createdAt field in the JSONB data column, cast to a timestamp, in descending order.
+   * // Note that the SQL fragment is parameterized, so it is safe from SQL injection.
+   * // The generated SQL would look like: ORDER BY (data->>'createdAt')::timestamp DESC
    * ```
+   *
+   * @param fragment - The SQL fragment to order by. Must not include the ASC/DESC keyword, as ordering direction is determined by the `order` parameter.
+   * @param order - The ordering direction (ascending or descending). Defaults to ascending.
    */
-  orderBySQL(fragment: SQLFragment): this {
-    this.modifiers.orderByFragment = fragment;
+  orderBySQL(fragment: SQLFragment, order: OrderByOrdering = OrderByOrdering.ASCENDING): this {
+    this.modifiers.orderBy = [
+      ...(this.modifiers.orderBy ?? []),
+      { fieldFragment: fragment, order },
+    ];
     return this;
   }
 
   /**
    * Get the current modifiers as QuerySelectionModifiersWithOrderByFragment<TFields>
    */
-  protected getModifiers(): EntityLoaderQuerySelectionModifiersWithOrderByFragment<
-    TFields,
-    TSelectedFields
-  > {
+  protected getModifiers(): EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> {
     return this.modifiers;
   }
 

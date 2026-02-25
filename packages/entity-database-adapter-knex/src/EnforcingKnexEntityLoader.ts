@@ -11,8 +11,6 @@ import {
   AuthorizationResultBasedKnexEntityLoader,
   EntityLoaderLoadPageArgs,
   EntityLoaderQuerySelectionModifiers,
-  EntityLoaderQuerySelectionModifiersWithOrderByFragment,
-  EntityLoaderQuerySelectionModifiersWithOrderByRaw,
 } from './AuthorizationResultBasedKnexEntityLoader';
 import { FieldEqualityCondition } from './BasePostgresEntityDatabaseAdapter';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
@@ -130,8 +128,7 @@ export class EnforcingKnexEntityLoader<
    * ```
    * @param rawWhereClause - SQL WHERE clause. Interpolated values should be specified as ?-placeholders or :key_name
    * @param bindings - values to bind to the placeholders in the WHERE clause
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query. If orderBy is specified
-   * as orderByRaw, specify as string orderBy SQL clause with uncheckd literal values or ?-placeholders
+   * @param querySelectionModifiers - limit, offset, and orderBy for the query.
    * @returns entities matching the WHERE clause
    * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
    * @throws Error when rawWhereClause or bindings are invalid
@@ -139,10 +136,7 @@ export class EnforcingKnexEntityLoader<
   async loadManyByRawWhereClauseAsync(
     rawWhereClause: string,
     bindings: any[] | object,
-    querySelectionModifiers: EntityLoaderQuerySelectionModifiersWithOrderByRaw<
-      TFields,
-      TSelectedFields
-    > = {},
+    querySelectionModifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> = {},
   ): Promise<readonly TEntity[]> {
     const entityResults = await this.knexEntityLoader.loadManyByRawWhereClauseAsync(
       rawWhereClause,
@@ -173,10 +167,7 @@ export class EnforcingKnexEntityLoader<
    */
   loadManyBySQL(
     fragment: SQLFragment,
-    modifiers: EntityLoaderQuerySelectionModifiersWithOrderByFragment<
-      TFields,
-      TSelectedFields
-    > = {},
+    modifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> = {},
   ): EnforcingSQLQueryBuilder<
     TFields,
     TIDField,
@@ -247,7 +238,7 @@ export class EnforcingSQLQueryBuilder<
       TSelectedFields
     >,
     sqlFragment: SQLFragment,
-    modifiers: EntityLoaderQuerySelectionModifiersWithOrderByFragment<TFields, TSelectedFields>,
+    modifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields>,
   ) {
     super(sqlFragment, modifiers);
   }
