@@ -5,7 +5,7 @@ import {
   SingleFieldHolder,
   SingleFieldValueHolder,
 } from '@expo/entity';
-import { OrderByOrdering, sql } from '@expo/entity-database-adapter-knex';
+import { NullsOrdering, OrderByOrdering, sql } from '@expo/entity-database-adapter-knex';
 import { describe, expect, it, jest } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 import { validate, version } from 'uuid';
@@ -744,14 +744,15 @@ describe(StubPostgresDatabaseAdapter, () => {
 });
 
 describe('compareByOrderBys', () => {
-  describe('comparison', () => {
+  describe('comparison with default nulls ordering', () => {
     it.each([
+      // Default nulls ordering: NULLS FIRST for DESC, NULLS LAST for ASC
       // nulls compare with 0
       [OrderByOrdering.DESCENDING, null, 0, -1],
       [OrderByOrdering.ASCENDING, null, 0, 1],
       [OrderByOrdering.DESCENDING, 0, null, 1],
       [OrderByOrdering.ASCENDING, 0, null, -1],
-      // nulls compare with nulls
+      // nulls compare with nulls (fall through to next order by, which is empty, so 0)
       [OrderByOrdering.DESCENDING, null, null, 0],
       [OrderByOrdering.ASCENDING, null, null, 0],
       // nulls compare with -1
@@ -771,6 +772,7 @@ describe('compareByOrderBys', () => {
             {
               columnName: 'hello',
               order,
+              nulls: undefined,
             },
           ],
           {
@@ -789,6 +791,7 @@ describe('compareByOrderBys', () => {
             {
               columnFragment: sql`some_function(col)`,
               order: OrderByOrdering.ASCENDING,
+              nulls: undefined,
             },
           ],
           { hello: 'a' },
@@ -810,29 +813,104 @@ describe('compareByOrderBys', () => {
       ).toEqual(0);
     });
   });
+
+  describe('comparison with explicit nulls ordering', () => {
+    it.each([
+      // ASC NULLS FIRST: nulls come before non-nulls
+      [OrderByOrdering.ASCENDING, NullsOrdering.FIRST, null, 0, -1],
+      [OrderByOrdering.ASCENDING, NullsOrdering.FIRST, 0, null, 1],
+      // ASC NULLS LAST: nulls come after non-nulls (same as default ASC)
+      [OrderByOrdering.ASCENDING, NullsOrdering.LAST, null, 0, 1],
+      [OrderByOrdering.ASCENDING, NullsOrdering.LAST, 0, null, -1],
+      // DESC NULLS FIRST: nulls come before non-nulls (same as default DESC)
+      [OrderByOrdering.DESCENDING, NullsOrdering.FIRST, null, 0, -1],
+      [OrderByOrdering.DESCENDING, NullsOrdering.FIRST, 0, null, 1],
+      // DESC NULLS LAST: nulls come after non-nulls
+      [OrderByOrdering.DESCENDING, NullsOrdering.LAST, null, 0, 1],
+      [OrderByOrdering.DESCENDING, NullsOrdering.LAST, 0, null, -1],
+      // Non-null values should not be affected by nulls ordering
+      [OrderByOrdering.ASCENDING, NullsOrdering.FIRST, 'a', 'b', -1],
+      [OrderByOrdering.ASCENDING, NullsOrdering.LAST, 'a', 'b', -1],
+      [OrderByOrdering.DESCENDING, NullsOrdering.FIRST, 'a', 'b', 1],
+      [OrderByOrdering.DESCENDING, NullsOrdering.LAST, 'a', 'b', 1],
+      // Both null should fall through to next order by (which is empty, so 0)
+      [OrderByOrdering.ASCENDING, NullsOrdering.FIRST, null, null, 0],
+      [OrderByOrdering.DESCENDING, NullsOrdering.LAST, null, null, 0],
+    ])('case (%p; nulls %p; %p; %p)', (order, nulls, v1, v2, expectedResult) => {
+      expect(
+        StubPostgresDatabaseAdapter['compareByOrderBys'](
+          [
+            {
+              columnName: 'hello',
+              order,
+              nulls,
+            },
+          ],
+          {
+            hello: v1,
+          },
+          {
+            hello: v2,
+          },
+        ),
+      ).toEqual(expectedResult);
+    });
+  });
+
   describe('recursing', () => {
-    expect(
-      StubPostgresDatabaseAdapter['compareByOrderBys'](
-        [
+    it('recurses to secondary order by on tie', () => {
+      expect(
+        StubPostgresDatabaseAdapter['compareByOrderBys'](
+          [
+            {
+              columnName: 'hello',
+              order: OrderByOrdering.ASCENDING,
+              nulls: undefined,
+            },
+            {
+              columnName: 'world',
+              order: OrderByOrdering.ASCENDING,
+              nulls: undefined,
+            },
+          ],
           {
-            columnName: 'hello',
-            order: OrderByOrdering.ASCENDING,
+            hello: 'a',
+            world: 1,
           },
           {
-            columnName: 'world',
-            order: OrderByOrdering.ASCENDING,
+            hello: 'a',
+            world: 2,
           },
-        ],
-        {
-          hello: 'a',
-          world: 1,
-        },
-        {
-          hello: 'a',
-          world: 2,
-        },
-      ),
-    ).toEqual(-1);
+        ),
+      ).toEqual(-1);
+    });
+
+    it('recurses to secondary order by when both values are null', () => {
+      expect(
+        StubPostgresDatabaseAdapter['compareByOrderBys'](
+          [
+            {
+              columnName: 'hello',
+              order: OrderByOrdering.ASCENDING,
+              nulls: undefined,
+            },
+            {
+              columnName: 'world',
+              order: OrderByOrdering.ASCENDING,
+              nulls: undefined,
+            },
+          ],
+          {
+            hello: null,
+            world: 1,
+          },
+          {
+            hello: null,
+            world: 2,
+          },
+        ),
+      ).toEqual(-1);
+    });
   });
 });
 

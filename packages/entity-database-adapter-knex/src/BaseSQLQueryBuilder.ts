@@ -2,7 +2,7 @@ import {
   EntityLoaderOrderByClause,
   EntityLoaderQuerySelectionModifiers,
 } from './AuthorizationResultBasedKnexEntityLoader';
-import { OrderByOrdering } from './BasePostgresEntityDatabaseAdapter';
+import { NullsOrdering, OrderByOrdering } from './BasePostgresEntityDatabaseAdapter';
 import { SQLFragment } from './SQLOperator';
 
 /**
@@ -43,8 +43,12 @@ export abstract class BaseSQLQueryBuilder<
   /**
    * Order by a field. Can be called multiple times to add multiple order bys.
    */
-  orderBy(fieldName: TSelectedFields, order: OrderByOrdering = OrderByOrdering.ASCENDING): this {
-    this.modifiers.orderBy = [...(this.modifiers.orderBy ?? []), { fieldName, order }];
+  orderBy(
+    fieldName: TSelectedFields,
+    order: OrderByOrdering = OrderByOrdering.ASCENDING,
+    nulls: NullsOrdering | undefined = undefined,
+  ): this {
+    this.modifiers.orderBy = [...(this.modifiers.orderBy ?? []), { fieldName, order, nulls }];
     return this;
   }
 
@@ -66,10 +70,14 @@ export abstract class BaseSQLQueryBuilder<
    * @param fragment - The SQL fragment to order by. Must not include the ASC/DESC keyword, as ordering direction is determined by the `order` parameter.
    * @param order - The ordering direction (ascending or descending). Defaults to ascending.
    */
-  orderBySQL(fragment: SQLFragment, order: OrderByOrdering = OrderByOrdering.ASCENDING): this {
+  orderBySQL(
+    fragment: SQLFragment,
+    order: OrderByOrdering = OrderByOrdering.ASCENDING,
+    nulls: NullsOrdering | undefined = undefined,
+  ): this {
     this.modifiers.orderBy = [
       ...(this.modifiers.orderBy ?? []),
-      { fieldFragment: fragment, order },
+      { fieldFragment: fragment, order, nulls },
     ];
     return this;
   }

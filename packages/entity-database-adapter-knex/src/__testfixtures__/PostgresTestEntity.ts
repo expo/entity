@@ -20,6 +20,7 @@ import { PostgresEntity } from '../PostgresEntity';
 type PostgresTestEntityFields = {
   id: string;
   name: string | null;
+  label: string;
   hasADog: boolean | null;
   hasACat: boolean | null;
   stringArray: string[] | null;
@@ -60,6 +61,7 @@ export class PostgresTestEntity extends PostgresEntity<
       await knex.schema.createTable(tableName, (table) => {
         table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
         table.string('name');
+        table.string('label').notNullable().defaultTo('');
         table.boolean('has_a_dog');
         table.boolean('has_a_cat');
         table.specificType('string_array', 'text[]');
@@ -137,6 +139,9 @@ export const postgresTestEntityConfiguration = new EntityConfiguration<
     }),
     name: new StringField({
       columnName: 'name',
+    }),
+    label: new StringField({
+      columnName: 'label',
     }),
     hasADog: new BooleanField({
       columnName: 'has_a_dog',

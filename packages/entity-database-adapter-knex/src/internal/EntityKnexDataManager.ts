@@ -12,12 +12,14 @@ import assert from 'assert';
 import {
   BasePostgresEntityDatabaseAdapter,
   FieldEqualityCondition,
+  NullsOrdering,
   OrderByOrdering,
   PostgresOrderByClause,
   PostgresQuerySelectionModifiers,
 } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
 import { SQLFragment, SQLFragmentHelpers, identifier, raw, sql } from '../SQLOperator';
+import { DistributiveOmit, NonNullableKeys } from './utilityTypes';
 
 interface DataManagerStandardSpecification<TFields extends Record<string, any>> {
   strategy: PaginationStrategy.STANDARD;
@@ -26,7 +28,7 @@ interface DataManagerStandardSpecification<TFields extends Record<string, any>> 
 
 interface DataManagerSearchSpecificationBase<TFields extends Record<string, any>> {
   term: string;
-  fields: (keyof TFields)[];
+  fields: NonNullableKeys<TFields>[];
 }
 
 interface DataManagerILikeSearchSpecification<
@@ -40,7 +42,7 @@ interface DataManagerTrigramSearchSpecification<
 > extends DataManagerSearchSpecificationBase<TFields> {
   strategy: PaginationStrategy.TRIGRAM_SEARCH;
   threshold: number;
-  extraOrderByFields?: (keyof TFields)[];
+  extraOrderByFields?: NonNullableKeys<TFields>[];
 }
 
 type DataManagerSearchSpecification<TFields extends Record<string, any>> =
@@ -256,7 +258,7 @@ export class EntityKnexDataManager<
       const strategy: PaginationProvider<TFields, TIDField> = {
         whereClause: where,
         buildOrderBy: (direction) => {
-          // For backward pagination, we flip the ORDER BY direction to fetch records
+          // For backward pagination, we flip the ORDER BY and NULLS direction to fetch records
           // in reverse order. This allows us to use a simple "less than" cursor comparison
           // instead of complex SQL. We'll reverse the results array later to restore
           // the original requested order.
@@ -267,13 +269,18 @@ export class EntityKnexDataManager<
           const clauses =
             direction === PaginationDirection.FORWARD
               ? augmentedOrderByClauses
-              : augmentedOrderByClauses.map((clause) => ({
-                  ...clause,
-                  order:
-                    clause.order === OrderByOrdering.ASCENDING
-                      ? OrderByOrdering.DESCENDING
-                      : OrderByOrdering.ASCENDING,
-                }));
+              : augmentedOrderByClauses.map(
+                  (clause): PostgresOrderByClause<TFields> => ({
+                    ...clause,
+                    order:
+                      clause.order === OrderByOrdering.ASCENDING
+                        ? OrderByOrdering.DESCENDING
+                        : OrderByOrdering.ASCENDING,
+                    nulls: clause.nulls
+                      ? EntityKnexDataManager.flipNullsOrderingSpread(clause.nulls)
+                      : undefined,
+                  }),
+                );
           return { clauses };
         },
         buildCursorCondition: (decodedCursorId, direction) =>
@@ -309,13 +316,15 @@ export class EntityKnexDataManager<
           const clauses =
             direction === PaginationDirection.FORWARD
               ? searchOrderByClauses
-              : searchOrderByClauses.map((clause) => ({
-                  ...clause,
-                  order:
-                    clause.order === OrderByOrdering.ASCENDING
-                      ? OrderByOrdering.DESCENDING
-                      : OrderByOrdering.ASCENDING,
-                }));
+              : searchOrderByClauses.map(
+                  (clause): DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'> => ({
+                    ...clause,
+                    order:
+                      clause.order === OrderByOrdering.ASCENDING
+                        ? OrderByOrdering.DESCENDING
+                        : OrderByOrdering.ASCENDING,
+                  }),
+                );
           return { clauses };
         },
         buildCursorCondition: (decodedCursorId, direction) =>
@@ -461,6 +470,12 @@ export class EntityKnexDataManager<
       return [...clauses, { fieldName: idField, order: OrderByOrdering.ASCENDING }];
     }
     return clauses;
+  }
+
+  private static flipNullsOrderingSpread(
+    nulls: NullsOrdering | undefined,
+  ): NullsOrdering | undefined {
+    return nulls === NullsOrdering.FIRST ? NullsOrdering.LAST : NullsOrdering.FIRST;
   }
 
   private static validateOrderByClauses<TFields extends Record<string, any>>(
@@ -664,7 +679,7 @@ export class EntityKnexDataManager<
 
   private buildSearchConditionAndOrderBy(search: DataManagerSearchSpecification<TFields>): {
     searchWhere: SQLFragment;
-    searchOrderByClauses: PostgresOrderByClause<TFields>[];
+    searchOrderByClauses: DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'>[];
   } {
     switch (search.strategy) {
       case PaginationStrategy.ILIKE_SEARCH: {
@@ -709,7 +724,7 @@ export class EntityKnexDataManager<
         // 1. Exact matches first (ILIKE)
         // 2. Then by similarity score
         // 3. Then by extra fields and ID field for stability
-        const searchOrderByClauses: PostgresOrderByClause<TFields>[] = [
+        const searchOrderByClauses: DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'>[] = [
           {
             fieldFragment: this.buildTrigramExactMatchCaseExpression(search),
             order: OrderByOrdering.DESCENDING,
@@ -718,12 +733,10 @@ export class EntityKnexDataManager<
             fieldFragment: this.buildTrigramSimilarityGreatestExpression(search),
             order: OrderByOrdering.DESCENDING,
           },
-          ...(search.extraOrderByFields ?? []).map(
-            (field): PostgresOrderByClause<TFields> => ({
-              fieldName: field,
-              order: OrderByOrdering.DESCENDING,
-            }),
-          ),
+          ...(search.extraOrderByFields ?? []).map((field) => ({
+            fieldName: field,
+            order: OrderByOrdering.DESCENDING,
+          })),
           {
             fieldName: this.entityConfiguration.idField,
             order: OrderByOrdering.DESCENDING,
