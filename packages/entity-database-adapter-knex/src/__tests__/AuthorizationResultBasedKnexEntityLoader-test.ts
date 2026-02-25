@@ -915,7 +915,7 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
           term: 'Johnson',
           fields: ['name'],
           threshold: 0.3,
-          extraOrderByFields: ['score'],
+          extraOrderBy: [{ fieldName: 'score', order: OrderByOrdering.DESCENDING }],
         },
       });
 

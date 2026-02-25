@@ -2020,7 +2020,7 @@ describe('postgres entity integration', () => {
         expect(page2.pageInfo.hasNextPage).toBe(false);
       });
 
-      it('supports forward pagination with NULLS FIRST on ASC', async () => {
+      it('supports forward cursor pagination with NULLS FIRST on ASC across NULL boundaries', async () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
@@ -2034,18 +2034,17 @@ describe('postgres entity integration', () => {
 
         // ASC NULLS FIRST means nulls come first, then ascending values.
         // This overrides the PostgreSQL default of NULLS LAST for ASC.
+        const orderBy = [
+          {
+            fieldName: 'name' as const,
+            order: OrderByOrdering.ASCENDING,
+            nulls: NullsOrdering.FIRST,
+          },
+        ];
+
         const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
-          pagination: {
-            strategy: PaginationStrategy.STANDARD,
-            orderBy: [
-              {
-                fieldName: 'name',
-                order: OrderByOrdering.ASCENDING,
-                nulls: NullsOrdering.FIRST,
-              },
-            ],
-          },
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
         });
 
         expect(firstPage.edges).toHaveLength(3);
@@ -2053,9 +2052,22 @@ describe('postgres entity integration', () => {
         expect(firstPage.edges[1]?.node.getField('name')).toBeNull();
         expect(firstPage.edges[2]?.node.getField('name')).toBe('Alice');
         expect(firstPage.pageInfo.hasNextPage).toBe(true);
+
+        // Cursor pagination across the NULL→non-NULL boundary.
+        // With the NULL-aware cursor condition, this correctly fetches the remaining items.
+        const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          after: firstPage.pageInfo.endCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(secondPage.edges).toHaveLength(2);
+        expect(secondPage.edges[0]?.node.getField('name')).toBe('Bob');
+        expect(secondPage.edges[1]?.node.getField('name')).toBe('Charlie');
+        expect(secondPage.pageInfo.hasNextPage).toBe(false);
       });
 
-      it('supports forward pagination with NULLS LAST on DESC', async () => {
+      it('supports forward cursor pagination with NULLS LAST on DESC across NULL boundaries', async () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
@@ -2069,18 +2081,17 @@ describe('postgres entity integration', () => {
 
         // DESC NULLS LAST means descending values first, then nulls last.
         // This overrides the PostgreSQL default of NULLS FIRST for DESC.
+        const orderBy = [
+          {
+            fieldName: 'name' as const,
+            order: OrderByOrdering.DESCENDING,
+            nulls: NullsOrdering.LAST,
+          },
+        ];
+
         const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
-          pagination: {
-            strategy: PaginationStrategy.STANDARD,
-            orderBy: [
-              {
-                fieldName: 'name',
-                order: OrderByOrdering.DESCENDING,
-                nulls: NullsOrdering.LAST,
-              },
-            ],
-          },
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
         });
 
         expect(firstPage.edges).toHaveLength(3);
@@ -2088,38 +2099,50 @@ describe('postgres entity integration', () => {
         expect(firstPage.edges[1]?.node.getField('name')).toBe('Bob');
         expect(firstPage.edges[2]?.node.getField('name')).toBe('Alice');
         expect(firstPage.pageInfo.hasNextPage).toBe(true);
+
+        // Cursor pagination across the non-NULL→NULL boundary.
+        const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          after: firstPage.pageInfo.endCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(secondPage.edges).toHaveLength(2);
+        expect(secondPage.edges[0]?.node.getField('name')).toBeNull();
+        expect(secondPage.edges[1]?.node.getField('name')).toBeNull();
+        expect(secondPage.pageInfo.hasNextPage).toBe(false);
       });
 
-      it('supports backward pagination with nulls ordering by flipping nulls direction', async () => {
+      it('supports backward cursor pagination with nulls ordering across NULL boundaries', async () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
 
-        // Use non-null entities only to avoid the pre-existing limitation where
-        // PostgreSQL tuple comparison evaluates to NULL when any element is NULL,
-        // breaking cursor-based pagination across NULL boundaries.
+        // Include NULL values to verify that the NULL-aware cursor condition
+        // works correctly for backward pagination across NULL boundaries.
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
         for (const name of ['Alice', 'Bob', 'Charlie', 'David', 'Eve']) {
           await PostgresTestEntity.creator(vc).setField('name', name).createAsync();
         }
+
+        const orderBy = [
+          {
+            fieldName: 'name' as const,
+            order: OrderByOrdering.ASCENDING,
+            nulls: NullsOrdering.FIRST,
+          },
+        ];
 
         // Backward pagination with ASC NULLS FIRST.
         // Internally this flips to DESC NULLS LAST (via flipNullsOrderingSpread),
         // fetches in that order, then reverses to present ASC NULLS FIRST order.
         const lastPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 3,
-          pagination: {
-            strategy: PaginationStrategy.STANDARD,
-            orderBy: [
-              {
-                fieldName: 'name',
-                order: OrderByOrdering.ASCENDING,
-                nulls: NullsOrdering.FIRST,
-              },
-            ],
-          },
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
         });
 
-        // Last 3 in ASC order: Charlie, David, Eve
+        // Last 3 in ASC NULLS FIRST order: Charlie, David, Eve
         expect(lastPage.edges).toHaveLength(3);
         expect(lastPage.edges[0]?.node.getField('name')).toBe('Charlie');
         expect(lastPage.edges[1]?.node.getField('name')).toBe('David');
@@ -2127,49 +2150,370 @@ describe('postgres entity integration', () => {
         expect(lastPage.pageInfo.hasPreviousPage).toBe(true);
 
         // Continue backward with cursor: get the previous page before Charlie.
-        // Cursor is on a non-null row so tuple comparison works correctly.
         const previousPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 3,
           before: lastPage.pageInfo.startCursor!,
-          pagination: {
-            strategy: PaginationStrategy.STANDARD,
-            orderBy: [
-              {
-                fieldName: 'name',
-                order: OrderByOrdering.ASCENDING,
-                nulls: NullsOrdering.FIRST,
-              },
-            ],
-          },
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
         });
 
-        expect(previousPage.edges).toHaveLength(2);
-        expect(previousPage.edges[0]?.node.getField('name')).toBe('Alice');
-        expect(previousPage.edges[1]?.node.getField('name')).toBe('Bob');
-        expect(previousPage.pageInfo.hasPreviousPage).toBe(false);
+        expect(previousPage.edges).toHaveLength(3);
+        expect(previousPage.edges[0]?.node.getField('name')).toBeNull();
+        expect(previousPage.edges[1]?.node.getField('name')).toBe('Alice');
+        expect(previousPage.edges[2]?.node.getField('name')).toBe('Bob');
+        expect(previousPage.pageInfo.hasPreviousPage).toBe(true);
 
-        // Also test DESC NULLS LAST backward pagination (without cursor).
+        // Continue backward with cursor: get the page before the previous page.
+        // This crosses the non-NULL→NULL boundary going backward.
+        const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 3,
+          before: previousPage.pageInfo.startCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(firstPage.edges).toHaveLength(1);
+        expect(firstPage.edges[0]?.node.getField('name')).toBeNull();
+        expect(firstPage.pageInfo.hasPreviousPage).toBe(false);
+
+        // Also test DESC NULLS LAST backward pagination.
         // This exercises flipNullsOrderingSpread: DESC NULLS LAST flips to ASC NULLS FIRST.
+        const orderByDesc = [
+          {
+            fieldName: 'name' as const,
+            order: OrderByOrdering.DESCENDING,
+            nulls: NullsOrdering.LAST,
+          },
+        ];
+
         const lastPageDesc = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 3,
-          pagination: {
-            strategy: PaginationStrategy.STANDARD,
-            orderBy: [
-              {
-                fieldName: 'name',
-                order: OrderByOrdering.DESCENDING,
-                nulls: NullsOrdering.LAST,
-              },
-            ],
-          },
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy: orderByDesc },
         });
 
-        // Last 3 in DESC order: Charlie, Bob, Alice
+        // Last 3 in DESC NULLS LAST order: Alice, null, null
         expect(lastPageDesc.edges).toHaveLength(3);
-        expect(lastPageDesc.edges[0]?.node.getField('name')).toBe('Charlie');
-        expect(lastPageDesc.edges[1]?.node.getField('name')).toBe('Bob');
-        expect(lastPageDesc.edges[2]?.node.getField('name')).toBe('Alice');
+        expect(lastPageDesc.edges[0]?.node.getField('name')).toBe('Alice');
+        expect(lastPageDesc.edges[1]?.node.getField('name')).toBeNull();
+        expect(lastPageDesc.edges[2]?.node.getField('name')).toBeNull();
         expect(lastPageDesc.pageInfo.hasPreviousPage).toBe(true);
+      });
+
+      it('supports cursor pagination with default nulls ordering (ASC NULLS LAST) across NULL boundaries', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Create entities: non-null names first, then nulls
+        await PostgresTestEntity.creator(vc).setField('name', 'Alice').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Bob').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Charlie').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+
+        // ASC without explicit nulls uses PostgreSQL default: NULLS LAST
+        // Expected order: Alice, Bob, Charlie, null, null
+        const orderBy = [
+          {
+            fieldName: 'name' as const,
+            order: OrderByOrdering.ASCENDING,
+          },
+        ];
+
+        const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(firstPage.edges).toHaveLength(3);
+        expect(firstPage.edges[0]?.node.getField('name')).toBe('Alice');
+        expect(firstPage.edges[1]?.node.getField('name')).toBe('Bob');
+        expect(firstPage.edges[2]?.node.getField('name')).toBe('Charlie');
+        expect(firstPage.pageInfo.hasNextPage).toBe(true);
+
+        // Cursor pagination across the non-NULL→NULL boundary
+        const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          after: firstPage.pageInfo.endCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(secondPage.edges).toHaveLength(2);
+        expect(secondPage.edges[0]?.node.getField('name')).toBeNull();
+        expect(secondPage.edges[1]?.node.getField('name')).toBeNull();
+        expect(secondPage.pageInfo.hasNextPage).toBe(false);
+      });
+
+      it('supports cursor pagination with default nulls ordering (DESC NULLS FIRST) across NULL boundaries', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await PostgresTestEntity.creator(vc).setField('name', 'Alice').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Bob').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Charlie').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+
+        // DESC without explicit nulls uses PostgreSQL default: NULLS FIRST
+        // Expected order: null, null, Charlie, Bob, Alice
+        const orderBy = [
+          {
+            fieldName: 'name' as const,
+            order: OrderByOrdering.DESCENDING,
+          },
+        ];
+
+        const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(firstPage.edges).toHaveLength(3);
+        expect(firstPage.edges[0]?.node.getField('name')).toBeNull();
+        expect(firstPage.edges[1]?.node.getField('name')).toBeNull();
+        expect(firstPage.edges[2]?.node.getField('name')).toBe('Charlie');
+        expect(firstPage.pageInfo.hasNextPage).toBe(true);
+
+        // Cursor pagination across the NULL→non-NULL boundary
+        const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          after: firstPage.pageInfo.endCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(secondPage.edges).toHaveLength(2);
+        expect(secondPage.edges[0]?.node.getField('name')).toBe('Bob');
+        expect(secondPage.edges[1]?.node.getField('name')).toBe('Alice');
+        expect(secondPage.pageInfo.hasNextPage).toBe(false);
+      });
+
+      it('supports full forward-then-backward round-trip across NULL boundaries', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', null).createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Alice').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Bob').createAsync();
+        await PostgresTestEntity.creator(vc).setField('name', 'Charlie').createAsync();
+
+        const orderBy = [
+          {
+            fieldName: 'name' as const,
+            order: OrderByOrdering.ASCENDING,
+            nulls: NullsOrdering.FIRST,
+          },
+        ];
+
+        // Forward: page 1
+        const page1 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 2,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(page1.edges).toHaveLength(2);
+        expect(page1.edges[0]?.node.getField('name')).toBeNull();
+        expect(page1.edges[1]?.node.getField('name')).toBeNull();
+
+        // Forward: page 2 (crosses NULL→non-NULL boundary)
+        const page2 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 2,
+          after: page1.pageInfo.endCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(page2.edges).toHaveLength(2);
+        expect(page2.edges[0]?.node.getField('name')).toBe('Alice');
+        expect(page2.edges[1]?.node.getField('name')).toBe('Bob');
+
+        // Forward: page 3
+        const page3 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 2,
+          after: page2.pageInfo.endCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(page3.edges).toHaveLength(1);
+        expect(page3.edges[0]?.node.getField('name')).toBe('Charlie');
+        expect(page3.pageInfo.hasNextPage).toBe(false);
+
+        // Backward from page 3 cursor: should get page 2 items
+        const backFromPage3 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 2,
+          before: page3.pageInfo.startCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(backFromPage3.edges).toHaveLength(2);
+        expect(backFromPage3.edges[0]?.node.getField('name')).toBe('Alice');
+        expect(backFromPage3.edges[1]?.node.getField('name')).toBe('Bob');
+
+        // Backward from page 2 cursor: should cross non-NULL→NULL boundary
+        const backFromPage2 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 2,
+          before: backFromPage3.pageInfo.startCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(backFromPage2.edges).toHaveLength(2);
+        expect(backFromPage2.edges[0]?.node.getField('name')).toBeNull();
+        expect(backFromPage2.edges[1]?.node.getField('name')).toBeNull();
+        expect(backFromPage2.pageInfo.hasPreviousPage).toBe(false);
+
+        // Collect all IDs from forward traversal
+        const forwardIDs = [
+          ...page1.edges.map((e) => e.node.getID()),
+          ...page2.edges.map((e) => e.node.getID()),
+          ...page3.edges.map((e) => e.node.getID()),
+        ];
+
+        // Collect all IDs from backward traversal (backFromPage2 + backFromPage3 + page3)
+        const backwardIDs = [
+          ...backFromPage2.edges.map((e) => e.node.getID()),
+          ...backFromPage3.edges.map((e) => e.node.getID()),
+          ...page3.edges.map((e) => e.node.getID()),
+        ];
+
+        // Forward and backward should yield the same entities in the same order
+        expect(forwardIDs).toEqual(backwardIDs);
+      });
+
+      it('supports cursor pagination with mixed ASC/DESC column ordering', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Create entities with varying hasACat (boolean) and name values
+        const testData = [
+          { hasACat: true, name: 'Alice' },
+          { hasACat: true, name: 'Bob' },
+          { hasACat: true, name: 'Charlie' },
+          { hasACat: false, name: 'Dave' },
+          { hasACat: false, name: 'Eve' },
+        ];
+
+        for (const data of testData) {
+          await PostgresTestEntity.creator(vc)
+            .setField('hasACat', data.hasACat)
+            .setField('name', data.name)
+            .createAsync();
+        }
+
+        // Mixed ordering: hasACat DESC (true first), then name ASC
+        const orderBy = [
+          { fieldName: 'hasACat' as const, order: OrderByOrdering.DESCENDING },
+          { fieldName: 'name' as const, order: OrderByOrdering.ASCENDING },
+        ];
+
+        // Expected order: [true,Alice], [true,Bob], [true,Charlie], [false,Dave], [false,Eve]
+        const page1 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(page1.edges).toHaveLength(3);
+        expect(page1.edges[0]?.node.getField('hasACat')).toBe(true);
+        expect(page1.edges[0]?.node.getField('name')).toBe('Alice');
+        expect(page1.edges[1]?.node.getField('name')).toBe('Bob');
+        expect(page1.edges[2]?.node.getField('name')).toBe('Charlie');
+        expect(page1.pageInfo.hasNextPage).toBe(true);
+
+        // Cursor should cross the true→false boundary for hasACat
+        const page2 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          after: page1.pageInfo.endCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(page2.edges).toHaveLength(2);
+        expect(page2.edges[0]?.node.getField('hasACat')).toBe(false);
+        expect(page2.edges[0]?.node.getField('name')).toBe('Dave');
+        expect(page2.edges[1]?.node.getField('name')).toBe('Eve');
+        expect(page2.pageInfo.hasNextPage).toBe(false);
+
+        // Backward from page 2 should get page 1 items
+        const backPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 3,
+          before: page2.pageInfo.startCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(backPage.edges).toHaveLength(3);
+        expect(backPage.edges[0]?.node.getField('name')).toBe('Alice');
+        expect(backPage.edges[1]?.node.getField('name')).toBe('Bob');
+        expect(backPage.edges[2]?.node.getField('name')).toBe('Charlie');
+      });
+
+      it('supports cursor pagination with mixed ASC/DESC and NULLs in multiple columns', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Create entities where hasACat is nullable and name is nullable
+        const testData: { hasACat: boolean | null; name: string | null }[] = [
+          { hasACat: true, name: 'Alice' },
+          { hasACat: true, name: null },
+          { hasACat: null, name: 'Bob' },
+          { hasACat: null, name: null },
+          { hasACat: false, name: 'Charlie' },
+        ];
+
+        for (const data of testData) {
+          await PostgresTestEntity.creator(vc)
+            .setField('hasACat', data.hasACat)
+            .setField('name', data.name)
+            .createAsync();
+        }
+
+        // ORDER BY hasACat DESC NULLS LAST, name ASC NULLS FIRST
+        // Expected sort: true values first (DESC), then false, then NULL (NULLS LAST)
+        // Within each group: NULL names first (NULLS FIRST), then ascending
+        // So: [true,null], [true,Alice], [false,Charlie], [null,null], [null,Bob]
+        const orderBy = [
+          {
+            fieldName: 'hasACat' as const,
+            order: OrderByOrdering.DESCENDING,
+            nulls: NullsOrdering.LAST,
+          },
+          {
+            fieldName: 'name' as const,
+            order: OrderByOrdering.ASCENDING,
+            nulls: NullsOrdering.FIRST,
+          },
+        ];
+
+        const page1 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(page1.edges).toHaveLength(3);
+        // First: hasACat=true, name=null (NULLS FIRST within ASC name)
+        expect(page1.edges[0]?.node.getField('hasACat')).toBe(true);
+        expect(page1.edges[0]?.node.getField('name')).toBeNull();
+        // Second: hasACat=true, name=Alice
+        expect(page1.edges[1]?.node.getField('hasACat')).toBe(true);
+        expect(page1.edges[1]?.node.getField('name')).toBe('Alice');
+        // Third: hasACat=false, name=Charlie
+        expect(page1.edges[2]?.node.getField('hasACat')).toBe(false);
+        expect(page1.edges[2]?.node.getField('name')).toBe('Charlie');
+        expect(page1.pageInfo.hasNextPage).toBe(true);
+
+        // Page 2 crosses into hasACat=null rows
+        const page2 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          after: page1.pageInfo.endCursor!,
+          pagination: { strategy: PaginationStrategy.STANDARD, orderBy },
+        });
+
+        expect(page2.edges).toHaveLength(2);
+        // Fourth: hasACat=null, name=null
+        expect(page2.edges[0]?.node.getField('hasACat')).toBeNull();
+        expect(page2.edges[0]?.node.getField('name')).toBeNull();
+        // Fifth: hasACat=null, name=Bob
+        expect(page2.edges[1]?.node.getField('hasACat')).toBeNull();
+        expect(page2.edges[1]?.node.getField('name')).toBe('Bob');
+        expect(page2.pageInfo.hasNextPage).toBe(false);
       });
 
       it('performs paginated search with both loader types', async () => {
@@ -2890,8 +3234,8 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['label'],
-            extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
+            fields: ['name'],
+            extraOrderBy: [{ fieldName: 'createdAt', order: OrderByOrdering.DESCENDING }], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
         });
@@ -2911,8 +3255,8 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['label'],
-            extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
+            fields: ['name'],
+            extraOrderBy: [{ fieldName: 'createdAt', order: OrderByOrdering.DESCENDING }], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
         });
@@ -2933,8 +3277,8 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['label'],
-            extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
+            fields: ['name'],
+            extraOrderBy: [{ fieldName: 'createdAt', order: OrderByOrdering.DESCENDING }], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
         });
@@ -2953,8 +3297,8 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['label'],
-            extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
+            fields: ['name'],
+            extraOrderBy: [{ fieldName: 'createdAt', order: OrderByOrdering.DESCENDING }], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
         });
@@ -2980,8 +3324,8 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['label'],
-            extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
+            fields: ['name'],
+            extraOrderBy: [{ fieldName: 'createdAt', order: OrderByOrdering.DESCENDING }], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
         });
@@ -3000,8 +3344,8 @@ describe('postgres entity integration', () => {
           pagination: {
             strategy: PaginationStrategy.TRIGRAM_SEARCH,
             term: 'Johnson',
-            fields: ['label'],
-            extraOrderByFields: ['createdAt'], // Ensure stable ordering for similar scores since ID is uuidv4
+            fields: ['name'],
+            extraOrderBy: [{ fieldName: 'createdAt', order: OrderByOrdering.DESCENDING }], // Ensure stable ordering for similar scores since ID is uuidv4
             threshold: 0.2,
           },
         });
@@ -3022,7 +3366,7 @@ describe('postgres entity integration', () => {
         expect(overlapBackwardCursor).toHaveLength(0);
       });
 
-      it('supports extraOrderByFields with TRIGRAM search for stable cursor pagination', async () => {
+      it('supports extraOrderBy with TRIGRAM search for stable cursor pagination', async () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
         );
@@ -3050,7 +3394,7 @@ describe('postgres entity integration', () => {
             .createAsync();
         }
 
-        // Test TRIGRAM search with extraOrderByFields for stable pagination
+        // Test TRIGRAM search with extraOrderBy for stable pagination
         const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           pagination: {
@@ -3058,7 +3402,7 @@ describe('postgres entity integration', () => {
             term: 'Johnson',
             fields: ['label'],
             threshold: 0.2,
-            extraOrderByFields: ['createdAt'], // Add extra stable ordering
+            extraOrderBy: [{ fieldName: 'hasACat', order: OrderByOrdering.DESCENDING }], // Add extra stable ordering
           },
         });
 
@@ -3069,7 +3413,7 @@ describe('postgres entity integration', () => {
         expect(firstPageCursor).not.toBeNull();
 
         // Get second page using cursor
-        // With extraOrderByFields, cursor includes hasACat field which provides more stable pagination
+        // With extraOrderBy, cursor includes hasACat field which provides more stable pagination
         const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 3,
           after: firstPageCursor!,
@@ -3078,7 +3422,7 @@ describe('postgres entity integration', () => {
             term: 'Johnson',
             fields: ['label'],
             threshold: 0.2,
-            extraOrderByFields: ['createdAt'],
+            extraOrderBy: [{ fieldName: 'hasACat', order: OrderByOrdering.DESCENDING }],
           },
         });
 
@@ -3090,7 +3434,7 @@ describe('postgres entity integration', () => {
         const overlap = firstPageNames.filter((name) => secondPageNames.includes(name));
         expect(overlap).toHaveLength(0);
 
-        // Test backward pagination with extraOrderByFields
+        // Test backward pagination with extraOrderBy
         const lastPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           last: 2,
           pagination: {
@@ -3098,13 +3442,13 @@ describe('postgres entity integration', () => {
             term: 'Johnson',
             fields: ['label'],
             threshold: 0.2,
-            extraOrderByFields: ['createdAt'],
+            extraOrderBy: [{ fieldName: 'hasACat', order: OrderByOrdering.DESCENDING }],
           },
         });
 
         expect(lastPage.edges.length).toBeGreaterThan(0);
 
-        // Test that extraOrderByFields provides consistent ordering
+        // Test that extraOrderBy provides consistent ordering
         // Get all results in one go for comparison
         const allResultsPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
           first: 10,
@@ -3113,7 +3457,7 @@ describe('postgres entity integration', () => {
             term: 'Johnson',
             fields: ['label'],
             threshold: 0.2,
-            extraOrderByFields: ['createdAt'],
+            extraOrderBy: [{ fieldName: 'hasACat', order: OrderByOrdering.DESCENDING }],
           },
         });
 
@@ -3125,6 +3469,126 @@ describe('postgres entity integration', () => {
 
         // Johnson (exact match) should be first
         expect(allNames[0]?.name).toBe('Johnson');
+      });
+
+      it('supports extraOrderBy with ASC ordering in TRIGRAM search', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await knexInstance.raw('CREATE EXTENSION IF NOT EXISTS pg_trgm');
+
+        const testData = [
+          { name: 'Johnson', hasACat: false },
+          { name: 'Jonson', hasACat: true },
+          { name: 'Johnsen', hasACat: false },
+          { name: 'Johnston', hasACat: true },
+          { name: 'Johan', hasACat: false },
+          { name: 'John', hasACat: true },
+        ];
+
+        for (const data of testData) {
+          await PostgresTestEntity.creator(vc)
+            .setField('name', data.name)
+            .setField('hasACat', data.hasACat)
+            .createAsync();
+        }
+
+        // Use ASC ordering for extraOrderBy (false before true)
+        const pagination = {
+          strategy: PaginationStrategy.TRIGRAM_SEARCH as const,
+          term: 'Johnson',
+          fields: ['name' as const],
+          threshold: 0.2,
+          extraOrderBy: [{ fieldName: 'hasACat' as const, order: OrderByOrdering.ASCENDING }],
+        };
+
+        const page1 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          pagination,
+        });
+
+        expect(page1.edges.length).toBeGreaterThan(0);
+        expect(page1.edges[0]?.node.getField('name')).toBe('Johnson');
+        expect(page1.pageInfo.hasNextPage).toBe(true);
+
+        const page2 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          after: page1.pageInfo.endCursor!,
+          pagination,
+        });
+
+        // No overlap between pages
+        const page1IDs = page1.edges.map((e) => e.node.getID());
+        const page2IDs = page2.edges.map((e) => e.node.getID());
+        const overlap = page1IDs.filter((id) => page2IDs.includes(id));
+        expect(overlap).toHaveLength(0);
+      });
+
+      it('supports extraOrderBy with nulls specification in TRIGRAM search', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await knexInstance.raw('CREATE EXTENSION IF NOT EXISTS pg_trgm');
+
+        // Create test data with some NULL hasACat values
+        const testData: { name: string; hasACat: boolean | null }[] = [
+          { name: 'Johnson', hasACat: true },
+          { name: 'Jonson', hasACat: null },
+          { name: 'Johnsen', hasACat: false },
+          { name: 'Johnston', hasACat: null },
+          { name: 'Johan', hasACat: true },
+          { name: 'John', hasACat: null },
+        ];
+
+        for (const data of testData) {
+          await PostgresTestEntity.creator(vc)
+            .setField('name', data.name)
+            .setField('hasACat', data.hasACat)
+            .createAsync();
+        }
+
+        // extraOrderBy with explicit NULLS LAST on DESC
+        const pagination = {
+          strategy: PaginationStrategy.TRIGRAM_SEARCH as const,
+          term: 'Johnson',
+          fields: ['name' as const],
+          threshold: 0.2,
+          extraOrderBy: [
+            {
+              fieldName: 'hasACat' as const,
+              order: OrderByOrdering.DESCENDING,
+              nulls: NullsOrdering.LAST,
+            },
+          ],
+        };
+
+        const page1 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          pagination,
+        });
+
+        expect(page1.edges.length).toBeGreaterThan(0);
+        expect(page1.edges[0]?.node.getField('name')).toBe('Johnson');
+        expect(page1.pageInfo.hasNextPage).toBe(true);
+
+        // Cursor pagination should work correctly even with NULL hasACat values
+        const page2 = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          after: page1.pageInfo.endCursor!,
+          pagination,
+        });
+
+        // No overlap between pages
+        const page1IDs = page1.edges.map((e) => e.node.getID());
+        const page2IDs = page2.edges.map((e) => e.node.getID());
+        const overlap = page1IDs.filter((id) => page2IDs.includes(id));
+        expect(overlap).toHaveLength(0);
+
+        // All results should be present across both pages
+        const totalResults = page1.edges.length + page2.edges.length;
+        expect(totalResults).toBe(testData.length);
       });
     });
   });

@@ -80,41 +80,37 @@ export enum OrderByOrdering {
   DESCENDING = 'desc',
 }
 
+export type PostgresBaseOrderByClause = {
+  /**
+   * The OrderByOrdering to order by.
+   */
+  order: OrderByOrdering;
+
+  /**
+   * Optional nulls ordering. If not provided, the database default is used
+   * (NULLS LAST for ASC, NULLS FIRST for DESC in PostgreSQL).
+   */
+  nulls?: NullsOrdering | undefined;
+};
+
+export type PostgresFieldOrderByClause<TFields extends Record<string, any>> =
+  PostgresBaseOrderByClause & {
+    /**
+     * The field name to order by.
+     */
+    fieldName: keyof TFields;
+  };
+
+export type PostgresFragmentOrderByClause = PostgresBaseOrderByClause & {
+  /**
+   * A raw SQL fragment to order by. Must not contain ASC or DESC, as ordering direction is determined by the `order` property.
+   */
+  fieldFragment: SQLFragment;
+};
+
 export type PostgresOrderByClause<TFields extends Record<string, any>> =
-  | {
-      /**
-       * The field name to order by.
-       */
-      fieldName: keyof TFields;
-
-      /**
-       * The OrderByOrdering to order by.
-       */
-      order: OrderByOrdering;
-
-      /**
-       * Optional nulls ordering. If not provided, the database default is used
-       * (NULLS LAST for ASC, NULLS FIRST for DESC in PostgreSQL).
-       */
-      nulls?: NullsOrdering | undefined;
-    }
-  | {
-      /**
-       * A raw SQL fragment to order by. May not contain ASC or DESC, as ordering direction is determined by the `order` property.
-       */
-      fieldFragment: SQLFragment;
-
-      /**
-       * The OrderByOrdering to order by.
-       */
-      order: OrderByOrdering;
-
-      /**
-       * Optional nulls ordering. If not provided, the database default is used
-       * (NULLS LAST for ASC, NULLS FIRST for DESC in PostgreSQL).
-       */
-      nulls?: NullsOrdering | undefined;
-    };
+  | PostgresFieldOrderByClause<TFields>
+  | PostgresFragmentOrderByClause;
 
 /**
  * SQL modifiers that only affect the selection but not the projection.

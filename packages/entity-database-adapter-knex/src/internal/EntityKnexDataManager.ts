@@ -14,12 +14,12 @@ import {
   FieldEqualityCondition,
   NullsOrdering,
   OrderByOrdering,
+  PostgresBaseOrderByClause,
   PostgresOrderByClause,
   PostgresQuerySelectionModifiers,
 } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
 import { SQLFragment, SQLFragmentHelpers, identifier, raw, sql } from '../SQLOperator';
-import { DistributiveOmit, NonNullableKeys } from './utilityTypes';
 
 interface DataManagerStandardSpecification<TFields extends Record<string, any>> {
   strategy: PaginationStrategy.STANDARD;
@@ -28,7 +28,7 @@ interface DataManagerStandardSpecification<TFields extends Record<string, any>> 
 
 interface DataManagerSearchSpecificationBase<TFields extends Record<string, any>> {
   term: string;
-  fields: NonNullableKeys<TFields>[];
+  fields: (keyof TFields)[];
 }
 
 interface DataManagerILikeSearchSpecification<
@@ -42,7 +42,7 @@ interface DataManagerTrigramSearchSpecification<
 > extends DataManagerSearchSpecificationBase<TFields> {
   strategy: PaginationStrategy.TRIGRAM_SEARCH;
   threshold: number;
-  extraOrderByFields?: NonNullableKeys<TFields>[];
+  extraOrderBy?: PostgresOrderByClause<TFields>[];
 }
 
 type DataManagerSearchSpecification<TFields extends Record<string, any>> =
@@ -108,17 +108,6 @@ enum PaginationDirection {
 }
 
 const CURSOR_ROW_TABLE_ALIAS = 'cursor_row';
-
-interface PaginationProvider<TFields extends Record<string, any>, TIDField extends keyof TFields> {
-  whereClause: SQLFragment | undefined;
-  buildOrderBy: (direction: PaginationDirection) => {
-    clauses?: PostgresOrderByClause<TFields>[];
-  };
-  buildCursorCondition: (
-    decodedCursorId: TFields[TIDField],
-    direction: PaginationDirection,
-  ) => SQLFragment;
-}
 
 /**
  * A knex data manager is responsible for handling non-dataloader-based
@@ -247,47 +236,9 @@ export class EntityKnexDataManager<
       EntityKnexDataManager.validateOrderByClauses(pagination.orderBy);
 
       const idField = this.entityConfiguration.idField;
-      const augmentedOrderByClauses = this.augmentOrderByIfNecessary(pagination.orderBy, idField);
+      const orderByClauses = this.augmentOrderByIfNecessary(pagination.orderBy, idField);
 
-      const fieldsToUseInPostgresTupleCursor: (keyof TFields | SQLFragment)[] =
-        augmentedOrderByClauses.map((order) =>
-          'fieldName' in order ? order.fieldName : order.fieldFragment,
-        );
-
-      // Create strategy for regular pagination
-      const strategy: PaginationProvider<TFields, TIDField> = {
-        whereClause: where,
-        buildOrderBy: (direction) => {
-          // For backward pagination, we flip the ORDER BY and NULLS direction to fetch records
-          // in reverse order. This allows us to use a simple "less than" cursor comparison
-          // instead of complex SQL. We'll reverse the results array later to restore
-          // the original requested order.
-          // Example: If user wants last 3 items ordered by name ASC, we:
-          // 1. Flip to name DESC to get the last items first
-          // 2. Apply cursor with < comparison
-          // 3. Reverse the final array to present items in name ASC order
-          const clauses =
-            direction === PaginationDirection.FORWARD
-              ? augmentedOrderByClauses
-              : augmentedOrderByClauses.map(
-                  (clause): PostgresOrderByClause<TFields> => ({
-                    ...clause,
-                    order:
-                      clause.order === OrderByOrdering.ASCENDING
-                        ? OrderByOrdering.DESCENDING
-                        : OrderByOrdering.ASCENDING,
-                    nulls: clause.nulls
-                      ? EntityKnexDataManager.flipNullsOrderingSpread(clause.nulls)
-                      : undefined,
-                  }),
-                );
-          return { clauses };
-        },
-        buildCursorCondition: (decodedCursorId, direction) =>
-          this.buildCursorCondition(decodedCursorId, fieldsToUseInPostgresTupleCursor, direction),
-      };
-
-      return await this.loadPageInternalAsync(queryContext, args, strategy);
+      return await this.loadPageInternalAsync(queryContext, args, where, orderByClauses);
     } else {
       // Search pagination (ILIKE or TRIGRAM)
       const search = pagination;
@@ -302,53 +253,28 @@ export class EntityKnexDataManager<
       const whereClause =
         where && searchWhere ? SQLFragmentHelpers.and(where, searchWhere) : (where ?? searchWhere);
 
-      const fieldsToUseInPostgresTupleCursor =
-        search.strategy === PaginationStrategy.TRIGRAM_SEARCH
-          ? // For trigram search, cursor includes extra order by fields (if specified) + ID to ensure stable ordering that matches ORDER BY clause
-            [...(search.extraOrderByFields ?? []), this.entityConfiguration.idField]
-          : // For ILIKE search, cursor includes search fields + ID to ensure stable ordering that matches ORDER BY clause
-            [...search.fields, this.entityConfiguration.idField];
-
-      // Create strategy for search pagination
-      const strategy: PaginationProvider<TFields, TIDField> = {
+      return await this.loadPageInternalAsync(
+        queryContext,
+        args,
         whereClause,
-        buildOrderBy: (direction) => {
-          const clauses =
-            direction === PaginationDirection.FORWARD
-              ? searchOrderByClauses
-              : searchOrderByClauses.map(
-                  (clause): DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'> => ({
-                    ...clause,
-                    order:
-                      clause.order === OrderByOrdering.ASCENDING
-                        ? OrderByOrdering.DESCENDING
-                        : OrderByOrdering.ASCENDING,
-                  }),
-                );
-          return { clauses };
-        },
-        buildCursorCondition: (decodedCursorId, direction) =>
-          search.strategy === PaginationStrategy.TRIGRAM_SEARCH
-            ? this.buildTrigramCursorCondition(search, decodedCursorId, direction)
-            : this.buildCursorCondition(
-                decodedCursorId,
-                fieldsToUseInPostgresTupleCursor,
-                direction,
-              ),
-      };
-
-      return await this.loadPageInternalAsync(queryContext, args, strategy);
+        searchOrderByClauses,
+      );
     }
   }
 
   /**
    * Internal method for loading a page with cursor-based pagination.
    * Shared logic for both regular and search pagination.
+   *
+   * Handles ORDER BY flipping for backward pagination internally:
+   * backward pagination flips the ORDER BY direction and nulls ordering,
+   * fetches results, then reverses to restore the original order.
    */
   private async loadPageInternalAsync(
     queryContext: EntityQueryContext,
     args: LoadPageArgs<TFields>,
-    paginationProvider: PaginationProvider<TFields, TIDField>,
+    baseWhere: SQLFragment | undefined,
+    orderByClauses: PostgresOrderByClause<TFields>[],
   ): Promise<Connection<Readonly<TFields>>> {
     const idField = this.entityConfiguration.idField;
 
@@ -383,23 +309,42 @@ export class EntityKnexDataManager<
     const limit = isForward ? args.first : args.last;
     const cursor = isForward ? args.after : args.before;
 
+    // For backward pagination, flip ORDER BY so the seek method works correctly
+    const effectiveOrderBy =
+      direction === PaginationDirection.BACKWARD
+        ? EntityKnexDataManager.flipOrderByClauses(orderByClauses)
+        : orderByClauses;
+
     // Decode cursor
     const decodedExternalCursorEntityID = cursor ? this.decodeOpaqueCursor(cursor) : null;
 
-    // Build WHERE clause with cursor condition
-    const baseWhere = paginationProvider.whereClause;
+    // Build cursor condition using the effective (potentially flipped) ORDER BY
     const cursorCondition = decodedExternalCursorEntityID
-      ? paginationProvider.buildCursorCondition(decodedExternalCursorEntityID, direction)
+      ? this.buildNullAwareCursorCondition(
+          effectiveOrderBy.map((clause) => {
+            const currentExpr =
+              'fieldName' in clause
+                ? sql`${identifier(getDatabaseFieldForEntityField(this.entityConfiguration, clause.fieldName))}`
+                : clause.fieldFragment;
+            const cursorExpr =
+              'fieldName' in clause
+                ? sql`${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(getDatabaseFieldForEntityField(this.entityConfiguration, clause.fieldName))}`
+                : clause.fieldFragment;
+            return {
+              currentExpr,
+              cursorExpr,
+              ordering: { order: clause.order, nulls: clause.nulls },
+            };
+          }),
+          decodedExternalCursorEntityID,
+        )
       : null;
 
     const whereClause = this.combineWhereConditions(baseWhere, cursorCondition);
 
-    // Get ordering from strategy
-    const { clauses: orderByClauses } = paginationProvider.buildOrderBy(direction);
-
     // Determine query modifiers
     const queryModifiers: PostgresQuerySelectionModifiers<TFields> = {
-      ...(orderByClauses !== undefined && { orderBy: orderByClauses }),
+      orderBy: effectiveOrderBy,
       limit: limit + 1, // Fetch data with limit + 1 to check for more pages
     };
 
@@ -472,10 +417,22 @@ export class EntityKnexDataManager<
     return clauses;
   }
 
-  private static flipNullsOrderingSpread(
-    nulls: NullsOrdering | undefined,
-  ): NullsOrdering | undefined {
-    return nulls === NullsOrdering.FIRST ? NullsOrdering.LAST : NullsOrdering.FIRST;
+  private static flipOrderByClauses<TFields extends Record<string, any>>(
+    clauses: PostgresOrderByClause<TFields>[],
+  ): PostgresOrderByClause<TFields>[] {
+    return clauses.map((clause) => ({
+      ...clause,
+      order:
+        clause.order === OrderByOrdering.ASCENDING
+          ? OrderByOrdering.DESCENDING
+          : OrderByOrdering.ASCENDING,
+      nulls:
+        clause.nulls === undefined
+          ? undefined
+          : clause.nulls === NullsOrdering.FIRST
+            ? NullsOrdering.LAST
+            : NullsOrdering.FIRST,
+    }));
   }
 
   private static validateOrderByClauses<TFields extends Record<string, any>>(
@@ -520,166 +477,161 @@ export class EntityKnexDataManager<
     return parsedCursor.id;
   }
 
-  private buildCursorCondition(
-    decodedExternalCursorEntityID: TFields[TIDField],
-    fieldsToUseInPostgresTupleCursor: readonly (keyof TFields | SQLFragment)[],
-    direction: PaginationDirection,
+  /**
+   * Builds a NULL-aware cursor condition for pagination.
+   *
+   * Instead of using PostgreSQL tuple comparison (which evaluates to NULL when any element is NULL,
+   * breaking cursor pagination across NULL boundaries), this generates an expanded per-column
+   * comparison that correctly handles NULLs according to each column's nulls ordering specification.
+   *
+   * For columns [c1, c2, c3] the expanded form is:
+   *   null_after(c1, cursor_c1)
+   *   OR (null_eq(c1, cursor_c1) AND null_after(c2, cursor_c2))
+   *   OR (null_eq(c1, cursor_c1) AND null_eq(c2, cursor_c2) AND null_after(c3, cursor_c3))
+   *
+   * Where null_after and null_eq handle NULL values according to the column's ordering specification.
+   * This also correctly handles mixed ASC/DESC columns (which tuple comparison does not).
+   */
+  private buildNullAwareCursorCondition(
+    columns: {
+      currentExpr: SQLFragment;
+      cursorExpr: SQLFragment;
+      ordering: PostgresBaseOrderByClause;
+    }[],
+    cursorEntityId: TFields[TIDField],
   ): SQLFragment {
-    // We build a tuple comparison for fieldsToUseInPostgresTupleCursor fields of the
-    // entity identified by the external cursor to ensure correct pagination behavior
-    // even in cases where multiple rows have the same value all fields other than id.
-    // If the cursor entity has been deleted, the subquery returns no rows and the
-    // comparison evaluates to NULL, filtering out all results (empty page).
-    const operator = direction === PaginationDirection.FORWARD ? '>' : '<';
-
     const idField = getDatabaseFieldForEntityField(
       this.entityConfiguration,
       this.entityConfiguration.idField,
     );
     const tableName = this.entityConfiguration.tableName;
 
-    const postgresCursorFieldIdentifiers = fieldsToUseInPostgresTupleCursor.map((f) => {
-      if (f instanceof SQLFragment) {
-        return f;
-      }
-      const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, f);
-      return sql`${identifier(dbField)}`;
-    });
+    // Build the SELECT fields for the cursor subquery, aliasing each as c0, c1, c2, ...
+    const selectFields = columns.map((col, i) => sql`${col.cursorExpr} AS ${raw(`c${i}`)}`);
 
-    // Build left side of comparison (current row's computed values)
-    const leftSide = SQLFragment.join(postgresCursorFieldIdentifiers, ', ');
-
-    // Build right side using subquery to get computed values for cursor entity.
-    // For field names, qualify with the cursor row alias. For SQL fragments,
-    // use as-is since unqualified column names resolve to the only table in the subquery.
-    const postgresCursorRowFieldIdentifiers = fieldsToUseInPostgresTupleCursor.map((f) => {
-      if (f instanceof SQLFragment) {
-        return f;
-      }
-      const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, f);
-      return sql`${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(dbField)}`;
-    });
-
-    // Build SELECT fields for subquery
-    const rightSideSubquery = sql`
-      SELECT ${SQLFragment.join(postgresCursorRowFieldIdentifiers, ', ')}
+    const subquery = sql`
+      SELECT ${SQLFragment.join(selectFields, ', ')}
       FROM ${identifier(tableName)} AS ${raw(CURSOR_ROW_TABLE_ALIAS)}
-      WHERE ${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)} = ${decodedExternalCursorEntityID}
+      WHERE ${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)} = ${cursorEntityId}
     `;
-    return sql`(${leftSide}) ${raw(operator)} (${rightSideSubquery})`;
+
+    // Build the expanded comparison
+    // For each level i, we need: eq(c0) AND eq(c1) AND ... AND eq(c_{i-1}) AND after(c_i)
+    const orClauses: SQLFragment[] = [];
+
+    for (let i = 0; i < columns.length; i++) {
+      const parts: SQLFragment[] = [];
+
+      // Add equality conditions for all preceding columns
+      for (let j = 0; j < i; j++) {
+        parts.push(
+          EntityKnexDataManager.buildNullAwareEq(columns[j]!.currentExpr, sql`cr.${raw(`c${j}`)}`),
+        );
+      }
+
+      // Add "comes after" condition for column i
+      parts.push(
+        EntityKnexDataManager.buildNullAwareAfter(
+          columns[i]!.currentExpr,
+          sql`cr.${raw(`c${i}`)}`,
+          columns[i]!.ordering,
+        ),
+      );
+
+      if (parts.length === 1) {
+        orClauses.push(parts[0]!);
+      } else {
+        orClauses.push(sql`(${SQLFragment.join(parts, ' AND ')})`);
+      }
+    }
+
+    const comparison = SQLFragment.join(orClauses, ' OR ');
+
+    // Wrap in a subquery: (SELECT <comparison> FROM (<cursor subquery>) AS cr)
+    // When the cursor entity doesn't exist, the subquery returns no rows,
+    // so the outer SELECT returns NULL, filtering out all results (empty page).
+    return sql`(SELECT ${comparison} FROM (${subquery}) AS cr)`;
   }
 
-  private buildILikeConditions(
-    search: DataManagerSearchSpecification<TFields>,
-    tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
-  ): SQLFragment[] {
+  /**
+   * NULL-aware equality: returns TRUE when both values are equal (including both NULL).
+   */
+  private static buildNullAwareEq(currentExpr: SQLFragment, cursorExpr: SQLFragment): SQLFragment {
+    return sql`((${currentExpr}) IS NOT DISTINCT FROM (${cursorExpr}))`;
+  }
+
+  /**
+   * NULL-aware "comes after" comparison for a single column.
+   *
+   * Given a column's ORDER BY specification, determines if the current row's value
+   * sorts strictly after the cursor row's value in that ordering.
+   *
+   * For NULLS FIRST (nulls sort at the beginning):
+   *   - Both NULL → FALSE (equal, not after)
+   *   - cursor NULL, current NOT NULL → TRUE (current after null cursor)
+   *   - cursor NOT NULL, current NULL → FALSE (current before non-null cursor)
+   *   - Both NOT NULL → standard comparison (ASC: \>, DESC: \<)
+   *
+   * For NULLS LAST (nulls sort at the end):
+   *   - Both NULL → FALSE (equal, not after)
+   *   - cursor NULL, current NOT NULL → FALSE (cursor at end, current before)
+   *   - cursor NOT NULL, current NULL → TRUE (current at end, after non-null cursor)
+   *   - Both NOT NULL → standard comparison (ASC: \>, DESC: \<)
+   */
+  private static buildNullAwareAfter(
+    currentExpr: SQLFragment,
+    cursorExpr: SQLFragment,
+    ordering: PostgresBaseOrderByClause,
+  ): SQLFragment {
+    // Determine effective nulls ordering (use PostgreSQL defaults if not specified)
+    const effectiveNulls =
+      ordering.nulls ??
+      (ordering.order === OrderByOrdering.ASCENDING ? NullsOrdering.LAST : NullsOrdering.FIRST);
+
+    // Determine comparison operator for non-NULL values
+    const op = ordering.order === OrderByOrdering.ASCENDING ? '>' : '<';
+
+    // For NULLS FIRST: current NULL → before cursor (FALSE), cursor NULL → current after (TRUE)
+    // For NULLS LAST: current NULL → after cursor (TRUE), cursor NULL → current before (FALSE)
+    const currentNullResult = effectiveNulls === NullsOrdering.FIRST ? 'FALSE' : 'TRUE';
+    const cursorNullResult = effectiveNulls === NullsOrdering.FIRST ? 'TRUE' : 'FALSE';
+
+    return sql`CASE WHEN (${cursorExpr}) IS NULL AND (${currentExpr}) IS NULL THEN FALSE WHEN (${cursorExpr}) IS NULL THEN ${raw(cursorNullResult)} WHEN (${currentExpr}) IS NULL THEN ${raw(currentNullResult)} ELSE (${currentExpr}) ${raw(op)} (${cursorExpr}) END`;
+  }
+
+  private buildILikeConditions(search: DataManagerSearchSpecification<TFields>): SQLFragment[] {
     return search.fields.map((field) => {
       const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, field);
-      const fieldIdentifier = tableAlias
-        ? sql`${raw(tableAlias)}.${identifier(dbField)}`
-        : sql`${identifier(dbField)}`;
-      return sql`${fieldIdentifier} ILIKE ${'%' + EntityKnexDataManager.escapeILikePattern(search.term) + '%'}`;
+      return sql`${identifier(dbField)} ILIKE ${'%' + EntityKnexDataManager.escapeILikePattern(search.term) + '%'}`;
     });
   }
 
   private buildTrigramSimilarityExpressions(
     search: DataManagerSearchSpecification<TFields>,
-    tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
   ): SQLFragment[] {
     return search.fields.map((field) => {
       const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, field);
-      const fieldIdentifier = tableAlias
-        ? sql`${raw(tableAlias)}.${identifier(dbField)}`
-        : sql`${identifier(dbField)}`;
-      return sql`similarity(${fieldIdentifier}, ${search.term})`;
+      return sql`similarity(${identifier(dbField)}, ${search.term})`;
     });
   }
 
   private buildTrigramExactMatchCaseExpression(
     search: DataManagerSearchSpecification<TFields>,
-    tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
   ): SQLFragment {
-    const ilikeConditions = this.buildILikeConditions(search, tableAlias);
+    const ilikeConditions = this.buildILikeConditions(search);
     return sql`CASE WHEN ${SQLFragment.join(ilikeConditions, ' OR ')} THEN 1 ELSE 0 END`;
   }
 
   private buildTrigramSimilarityGreatestExpression(
     search: DataManagerSearchSpecification<TFields>,
-    tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
   ): SQLFragment {
-    const similarityExprs = this.buildTrigramSimilarityExpressions(search, tableAlias);
+    const similarityExprs = this.buildTrigramSimilarityExpressions(search);
     return sql`GREATEST(${SQLFragment.join(similarityExprs, ', ')})`;
-  }
-
-  private buildTrigramCursorCondition(
-    search: DataManagerTrigramSearchSpecification<TFields>,
-    decodedExternalCursorEntityID: TFields[TIDField],
-    direction: PaginationDirection,
-  ): SQLFragment {
-    // For TRIGRAM search, we compute the similarity values using a subquery, similar to normal cursor.
-    // If the cursor entity has been deleted, the subquery returns no rows and the
-    // comparison evaluates to NULL, filtering out all results (empty page).
-    const operator = direction === PaginationDirection.FORWARD ? '<' : '>';
-    const idField = getDatabaseFieldForEntityField(
-      this.entityConfiguration,
-      this.entityConfiguration.idField,
-    );
-
-    const exactMatchExpr = this.buildTrigramExactMatchCaseExpression(search);
-    const similarityExpr = this.buildTrigramSimilarityGreatestExpression(search);
-
-    // Build extra order by fields
-    const extraOrderByFields = search.extraOrderByFields;
-    const extraFields =
-      extraOrderByFields?.map((f) => {
-        const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, f);
-        return sql`${identifier(dbField)}`;
-      }) ?? [];
-
-    // Build left side of comparison (current row's computed values)
-    const leftSide = SQLFragment.join(
-      [exactMatchExpr, similarityExpr, ...extraFields, sql`${identifier(idField)}`],
-      ', ',
-    );
-
-    // Build right side using subquery to get computed values for cursor entity
-    // We need to rebuild the same expressions for the cursor row
-
-    const cursorExactMatchExpr = this.buildTrigramExactMatchCaseExpression(
-      search,
-      CURSOR_ROW_TABLE_ALIAS,
-    );
-    const cursorSimilarityExpr = this.buildTrigramSimilarityGreatestExpression(
-      search,
-      CURSOR_ROW_TABLE_ALIAS,
-    );
-
-    const cursorExtraFields =
-      extraOrderByFields?.map((f) => {
-        const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, f);
-        return sql`${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(dbField)}`;
-      }) ?? [];
-
-    // Build SELECT fields for subquery
-    const selectFields = [
-      cursorExactMatchExpr,
-      cursorSimilarityExpr,
-      ...cursorExtraFields,
-      sql`${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)}`,
-    ];
-
-    const rightSideSubquery = sql`
-      SELECT ${SQLFragment.join(selectFields, ', ')}
-      FROM ${identifier(this.entityConfiguration.tableName)} AS ${raw(CURSOR_ROW_TABLE_ALIAS)}
-      WHERE ${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)} = ${decodedExternalCursorEntityID}
-    `;
-
-    return sql`(${leftSide}) ${raw(operator)} (${rightSideSubquery})`;
   }
 
   private buildSearchConditionAndOrderBy(search: DataManagerSearchSpecification<TFields>): {
     searchWhere: SQLFragment;
-    searchOrderByClauses: DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'>[];
+    searchOrderByClauses: PostgresOrderByClause<TFields>[];
   } {
     switch (search.strategy) {
       case PaginationStrategy.ILIKE_SEARCH: {
@@ -724,7 +676,7 @@ export class EntityKnexDataManager<
         // 1. Exact matches first (ILIKE)
         // 2. Then by similarity score
         // 3. Then by extra fields and ID field for stability
-        const searchOrderByClauses: DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'>[] = [
+        const searchOrderByClauses: PostgresOrderByClause<TFields>[] = [
           {
             fieldFragment: this.buildTrigramExactMatchCaseExpression(search),
             order: OrderByOrdering.DESCENDING,
@@ -733,10 +685,7 @@ export class EntityKnexDataManager<
             fieldFragment: this.buildTrigramSimilarityGreatestExpression(search),
             order: OrderByOrdering.DESCENDING,
           },
-          ...(search.extraOrderByFields ?? []).map((field) => ({
-            fieldName: field,
-            order: OrderByOrdering.DESCENDING,
-          })),
+          ...(search.extraOrderBy ?? []),
           {
             fieldName: this.entityConfiguration.idField,
             order: OrderByOrdering.DESCENDING,

@@ -19,7 +19,6 @@ import { PaginationStrategy } from './PaginationStrategy';
 import { SQLFragment } from './SQLOperator';
 import type { Connection, PageInfo } from './internal/EntityKnexDataManager';
 import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
-import { NonNullableKeys } from './internal/utilityTypes';
 
 export type EntityLoaderBaseOrderByClause = {
   /**
@@ -93,7 +92,7 @@ interface SearchSpecificationBase<
   /**
    * The fields to search within. Must be a non-empty array.
    */
-  fields: (TSelectedFields & NonNullableKeys<TFields>)[];
+  fields: TSelectedFields[];
 }
 
 interface ILikeSearchSpecification<
@@ -132,11 +131,13 @@ interface TrigramSearchSpecification<
   threshold: number;
 
   /**
-   * Optional additional fields to order by after similarity score and before ID for tie-breaking.
-   * These fields are independent of search fields and can be used to provide meaningful
+   * Optional additional order by clauses to apply after similarity score and before ID for tie-breaking.
+   * These clauses are independent of search fields and can be used to provide meaningful
    * ordering when multiple results have the same similarity score.
+   *
+   * Each clause specifies a field name or SQL fragment, ordering direction, and optional nulls ordering.
    */
-  extraOrderByFields?: (TSelectedFields & NonNullableKeys<TFields>)[];
+  extraOrderBy?: EntityLoaderOrderByClause<TFields, TSelectedFields>[];
 }
 
 interface StandardPaginationSpecification<
