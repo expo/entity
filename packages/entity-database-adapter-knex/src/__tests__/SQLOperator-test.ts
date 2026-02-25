@@ -209,7 +209,7 @@ describe('SQLOperator', () => {
       });
     });
 
-    describe('toDebugString', () => {
+    describe('getDebugString', () => {
       it('generates debug text with values inline', () => {
         const fragment = new SQLFragment(
           'SELECT * FROM users WHERE name = ? AND age > ? AND active = ? AND created_at > ?',
@@ -221,7 +221,7 @@ describe('SQLOperator', () => {
           ],
         );
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         expect(text).toContain("'Alice'");
         expect(text).toContain('18');
         expect(text).toContain('TRUE');
@@ -235,13 +235,13 @@ describe('SQLOperator', () => {
           { type: 'value', value: { key: 'value' } },
         ]);
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         expect(text).toContain('NULL');
         expect(text).toContain("O''Reilly"); // SQL escaped single quote
         expect(text).toContain(`'{"key":"value"}'::jsonb`);
       });
 
-      it('handles all SupportedSQLValue types in toDebugString', () => {
+      it('handles all SupportedSQLValue types in getDebugString', () => {
         const fragment = new SQLFragment('INSERT INTO test VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [
           { type: 'value', value: 'string' },
           { type: 'value', value: 123 },
@@ -254,18 +254,18 @@ describe('SQLOperator', () => {
           { type: 'value', value: [1, 2, 3] },
         ]);
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         expect(text).toBe(
           "INSERT INTO test VALUES ('string', 123, TRUE, NULL, NULL, '2024-01-01T00:00:00.000Z', '\\x68656c6c6f', 999, ARRAY[1, 2, 3])",
         );
       });
 
-      it('handles nested arrays in toDebugString', () => {
+      it('handles nested arrays in getDebugString', () => {
         const fragment = new SQLFragment('SELECT * FROM test WHERE tags = ?', [
           { type: 'value', value: ['tag1', 'tag2', null] },
         ]);
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         expect(text).toBe("SELECT * FROM test WHERE tags = ARRAY['tag1', 'tag2', NULL]");
       });
 
@@ -274,7 +274,7 @@ describe('SQLOperator', () => {
           { type: 'value', value: 'value1' },
         ]);
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         expect(text).toBe("SELECT * FROM test WHERE field1 = 'value1' AND field2 = ?");
       });
 
@@ -284,13 +284,13 @@ describe('SQLOperator', () => {
           { type: 'value', value: Object.create(null) },
         ]);
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         expect(text).toBe(
           `SELECT * FROM test WHERE field = UnsupportedSQLValue[Error: wat] AND field2 = '{}'::jsonb`,
         );
       });
 
-      it('handles identifiers in toDebugString', () => {
+      it('handles identifiers in getDebugString', () => {
         const fragment = new SQLFragment('SELECT ?? FROM ?? WHERE ?? = ?', [
           { type: 'identifier', name: 'user_name' },
           { type: 'identifier', name: 'users' },
@@ -298,7 +298,7 @@ describe('SQLOperator', () => {
           { type: 'value', value: 'active' },
         ]);
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         expect(text).toBe('SELECT "user_name" FROM "users" WHERE "status" = \'active\'');
       });
 
@@ -308,7 +308,7 @@ describe('SQLOperator', () => {
           undefined as any, // Simulate an edge case with undefined binding
         ]);
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         expect(text).toBe('SELECT * FROM users WHERE id = 1 AND name = ?');
       });
 
@@ -319,7 +319,7 @@ describe('SQLOperator', () => {
           { type: 'value', value: 'test' },
         ]);
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         // When a binding is null, it leaves the placeholder unchanged and doesn't advance the index
         expect(text).toBe('SELECT * FROM "users" WHERE ?? = ?');
       });
@@ -330,7 +330,7 @@ describe('SQLOperator', () => {
           { type: 'value', value: 1 },
         ]);
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         // Mismatched binding type leaves the placeholder unchanged
         expect(text).toBe('SELECT * FROM ?? WHERE id = 1');
       });
@@ -341,7 +341,7 @@ describe('SQLOperator', () => {
           { type: 'value', value: 'active' },
         ]);
 
-        const text = fragment.toDebugString;
+        const text = fragment.getDebugString();
         // Mismatched binding type leaves the placeholder unchanged
         expect(text).toBe("SELECT * FROM users WHERE ? = 'active'");
       });
