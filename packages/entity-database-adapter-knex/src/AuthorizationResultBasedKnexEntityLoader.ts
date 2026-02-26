@@ -261,9 +261,21 @@ export interface EntityLoaderForwardUnifiedPaginationArgs<
   first: number;
 
   /**
+   * The number of entities to return starting from the entity before the cursor. Must be a positive integer.
+   * Not allowed with forward pagination.
+   */
+  last?: never;
+
+  /**
    * The cursor to paginate after for forward pagination.
    */
   after?: string;
+
+  /**
+   * The cursor to paginate before for backward pagination.
+   * Not allowed with forward pagination.
+   */
+  before?: never;
 }
 
 /**
@@ -274,9 +286,21 @@ export interface EntityLoaderBackwardUnifiedPaginationArgs<
   TSelectedFields extends keyof TFields = keyof TFields,
 > extends EntityLoaderBaseUnifiedPaginationArgs<TFields, TSelectedFields> {
   /**
+   * The number of entities to return starting from the entity after the cursor. Must be a positive integer.
+   * Not allowed with backward pagination.
+   */
+  first?: never;
+
+  /**
    * The number of entities to return starting from the entity before the cursor. Must be a positive integer.
    */
   last: number;
+
+  /**
+   * The cursor to paginate after for forward pagination.
+   * Not allowed with backward pagination.
+   */
+  after?: never;
 
   /**
    * The cursor to paginate before for backward pagination.
