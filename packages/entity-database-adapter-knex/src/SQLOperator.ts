@@ -48,19 +48,18 @@ export class SQLFragment {
    * Combine SQL fragments
    */
   append(other: SQLFragment): SQLFragment {
-    return SQLFragment.join([this, other], ' ');
+    return joinSQLFragments([this, other], ' ');
   }
 
   /**
-   * Join multiple SQL fragments into a single fragment with a separator.
+   * Join multiple SQL fragments with a comma separator.
+   * Useful for combining column lists, value lists, etc.
+   *
    * @param fragments - Array of SQL fragments to join
-   * @param separator - Separator string (default: ', ')
+   * @returns - A new SQLFragment with the fragments joined by a comma and space
    */
-  static join(fragments: readonly SQLFragment[], separator = ', '): SQLFragment {
-    return new SQLFragment(
-      fragments.map((f) => f.sql).join(separator),
-      fragments.flatMap((f) => f.bindings),
-    );
+  static joinWithCommaSeparator(...fragments: readonly SQLFragment[]): SQLFragment {
+    return joinSQLFragments(fragments, ', ');
   }
 
   /**
@@ -75,8 +74,8 @@ export class SQLFragment {
    * // Generates: "SELECT * FROM users WHERE age > ? ORDER BY name"
    * ```
    */
-  static concat(...fragments: SQLFragment[]): SQLFragment {
-    return SQLFragment.join(fragments, ' ');
+  static concat(...fragments: readonly SQLFragment[]): SQLFragment {
+    return joinSQLFragments(fragments, ' ');
   }
 
   /**
@@ -432,34 +431,40 @@ export const SQLFragmentHelpers = {
    * JSON path extraction helper (-\>)
    */
   jsonPath(column: string, path: string): SQLFragment {
-    return new SQLFragment(`"${column}"->'${path}'`, []);
+    return sql`${identifier(column)}->${path}`;
   },
 
   /**
    * JSON path text extraction helper (-\>\>)
    */
   jsonPathText(column: string, path: string): SQLFragment {
-    return new SQLFragment(`"${column}"->>'${path}'`, []);
+    return sql`${identifier(column)}->>${path}`;
   },
 
   /**
    * Logical AND of multiple fragments
    */
-  and(...conditions: SQLFragment[]): SQLFragment {
+  and(...conditions: readonly SQLFragment[]): SQLFragment {
     if (conditions.length === 0) {
       return sql`1 = 1`;
     }
-    return SQLFragment.join(conditions, ' AND ');
+    return joinSQLFragments(
+      conditions.map((c) => SQLFragmentHelpers.group(c)),
+      ' AND ',
+    );
   },
 
   /**
    * Logical OR of multiple fragments
    */
-  or(...conditions: SQLFragment[]): SQLFragment {
+  or(...conditions: readonly SQLFragment[]): SQLFragment {
     if (conditions.length === 0) {
       return sql`1 = 0`;
     }
-    return SQLFragment.join(conditions, ' OR ');
+    return joinSQLFragments(
+      conditions.map((c) => SQLFragmentHelpers.group(c)),
+      ' OR ',
+    );
   },
 
   /**
@@ -476,3 +481,11 @@ export const SQLFragmentHelpers = {
     return new SQLFragment('(' + condition.sql + ')', condition.bindings);
   },
 };
+
+// Internal helper function to join SQL fragments with a specified separator
+function joinSQLFragments(fragments: readonly SQLFragment[], separator: string): SQLFragment {
+  return new SQLFragment(
+    fragments.map((f) => f.sql).join(separator),
+    fragments.flatMap((f) => f.bindings),
+  );
+}

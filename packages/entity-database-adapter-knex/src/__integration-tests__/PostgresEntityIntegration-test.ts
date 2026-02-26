@@ -13,7 +13,7 @@ import { setTimeout } from 'timers/promises';
 import { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader';
 import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
-import { raw, sql, SQLFragment, SQLFragmentHelpers } from '../SQLOperator';
+import { raw, sql, SQLFragmentHelpers } from '../SQLOperator';
 import {
   PostgresTestEntity,
   PostgresTestEntityFields,
@@ -695,7 +695,7 @@ describe('postgres entity integration', () => {
         sql`(has_a_cat = ${true} AND has_a_dog = ${true})`,
       ];
       const joinedResults = await PostgresTestEntity.knexLoader(vc1)
-        .loadManyBySQL(SQLFragment.join(conditions, ' OR '))
+        .loadManyBySQL(SQLFragmentHelpers.or(...conditions))
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
 

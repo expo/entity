@@ -109,45 +109,25 @@ describe('SQLOperator', () => {
       });
     });
 
-    describe(SQLFragment.join, () => {
-      it('joins fragments with custom separator', () => {
-        const fragments = [
-          new SQLFragment('name = ?', [{ type: 'value', value: 'Alice' }]),
-          new SQLFragment('age = ?', [{ type: 'value', value: 30 }]),
-          new SQLFragment('city = ?', [{ type: 'value', value: 'NYC' }]),
-        ];
-        const joined = SQLFragment.join(fragments, ' AND ');
-
-        expect(joined.sql).toBe('name = ? AND age = ? AND city = ?');
-        expect(joined.getKnexBindings()).toEqual(['Alice', 30, 'NYC']);
-      });
-
+    describe(SQLFragment.joinWithCommaSeparator, () => {
       it('handles empty array in join', () => {
-        const joined = SQLFragment.join([]);
+        const joined = SQLFragment.joinWithCommaSeparator();
 
         expect(joined.sql).toBe('');
         expect(joined.getKnexBindings()).toEqual([]);
       });
 
-      it('joins SQL fragments with default separator', () => {
+      it('joins SQL fragments with comma', () => {
         const columns = [sql`name`, sql`age`, sql`email`];
-        const joined = SQLFragment.join(columns);
+        const joined = SQLFragment.joinWithCommaSeparator(...columns);
 
         expect(joined.sql).toBe('name, age, email');
         expect(joined.getKnexBindings()).toEqual([]);
       });
 
-      it('joins SQL fragments with custom separator', () => {
-        const conditions = [sql`age > ${18}`, sql`status = ${'active'}`, sql`verified = ${true}`];
-        const joined = SQLFragment.join(conditions, ' AND ');
-
-        expect(joined.sql).toBe('age > ? AND status = ? AND verified = ?');
-        expect(joined.getKnexBindings()).toEqual([18, 'active', true]);
-      });
-
       it('handles single fragment', () => {
         const single = [sql`name = ${'Alice'}`];
-        const joined = SQLFragment.join(single);
+        const joined = SQLFragment.joinWithCommaSeparator(...single);
 
         expect(joined.sql).toBe('name = ?');
         expect(joined.getKnexBindings()).toEqual(['Alice']);
@@ -191,7 +171,7 @@ describe('SQLOperator', () => {
         filters.push(sql`category = ${'electronics'}`);
 
         if (filters.length > 0) {
-          fragments.push(sql`WHERE ${SQLFragment.join(filters, ' AND ')}`);
+          fragments.push(sql`WHERE ${SQLFragmentHelpers.and(...filters)}`);
         }
 
         // Add ORDER BY
@@ -203,7 +183,7 @@ describe('SQLOperator', () => {
         const query = SQLFragment.concat(...fragments);
 
         expect(query.sql).toBe(
-          'SELECT * FROM products WHERE price > ? AND category = ? ORDER BY created_at DESC LIMIT ?',
+          'SELECT * FROM products WHERE (price > ?) AND (category = ?) ORDER BY created_at DESC LIMIT ?',
         );
         expect(query.getKnexBindings()).toEqual([100, 'electronics', 10]);
       });
@@ -632,8 +612,8 @@ describe('SQLOperator', () => {
       it('generates JSON path access', () => {
         const fragment = SQLFragmentHelpers.jsonPath('data', 'user');
 
-        expect(fragment.sql).toBe(`"data"->'user'`);
-        expect(fragment.getKnexBindings()).toEqual([]);
+        expect(fragment.sql).toBe(`??->?`);
+        expect(fragment.getKnexBindings()).toEqual(['data', 'user']);
       });
     });
 
@@ -641,8 +621,8 @@ describe('SQLOperator', () => {
       it('generates JSON path text access', () => {
         const fragment = SQLFragmentHelpers.jsonPathText('data', 'email');
 
-        expect(fragment.sql).toBe(`"data"->>'email'`);
-        expect(fragment.getKnexBindings()).toEqual([]);
+        expect(fragment.sql).toBe(`??->>?`);
+        expect(fragment.getKnexBindings()).toEqual(['data', 'email']);
       });
     });
 
@@ -652,7 +632,7 @@ describe('SQLOperator', () => {
         const cond2 = sql`status = ${'active'}`;
         const fragment = SQLFragmentHelpers.and(cond1, cond2);
 
-        expect(fragment.sql).toBe('age >= ? AND status = ?');
+        expect(fragment.sql).toBe('(age >= ?) AND (status = ?)');
         expect(fragment.getKnexBindings()).toEqual([18, 'active']);
       });
 
@@ -660,7 +640,7 @@ describe('SQLOperator', () => {
         const cond = sql`age >= ${18}`;
         const fragment = SQLFragmentHelpers.and(cond);
 
-        expect(fragment.sql).toBe('age >= ?');
+        expect(fragment.sql).toBe('(age >= ?)');
         expect(fragment.getKnexBindings()).toEqual([18]);
       });
 
@@ -678,7 +658,7 @@ describe('SQLOperator', () => {
         const cond2 = sql`status = ${'pending'}`;
         const fragment = SQLFragmentHelpers.or(cond1, cond2);
 
-        expect(fragment.sql).toBe('status = ? OR status = ?');
+        expect(fragment.sql).toBe('(status = ?) OR (status = ?)');
         expect(fragment.getKnexBindings()).toEqual(['active', 'pending']);
       });
 
@@ -686,7 +666,7 @@ describe('SQLOperator', () => {
         const cond = sql`status = ${'active'}`;
         const fragment = SQLFragmentHelpers.or(cond);
 
-        expect(fragment.sql).toBe('status = ?');
+        expect(fragment.sql).toBe('(status = ?)');
         expect(fragment.getKnexBindings()).toEqual(['active']);
       });
 
@@ -729,7 +709,7 @@ describe('SQLOperator', () => {
         );
 
         expect(fragment.sql).toBe(
-          '?? BETWEEN ? AND ? AND (?? IN (?, ?) OR role = ?) AND ?? IS NOT NULL',
+          '(?? BETWEEN ? AND ?) AND (((?? IN (?, ?)) OR (role = ?))) AND (?? IS NOT NULL)',
         );
         expect(fragment.getKnexBindings()).toEqual([
           'age',

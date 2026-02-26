@@ -594,7 +594,7 @@ export class EntityKnexDataManager<
     );
 
     // Build left side of comparison (current row's computed values)
-    const leftSide = SQLFragment.join(postgresCursorFieldIdentifiers, ', ');
+    const leftSide = SQLFragment.joinWithCommaSeparator(...postgresCursorFieldIdentifiers);
 
     // Build right side using subquery to get computed values for cursor entity.
     // For field names, qualify with the cursor row alias. For SQL fragments,
@@ -605,7 +605,7 @@ export class EntityKnexDataManager<
 
     // Build SELECT fields for subquery
     const rightSideSubquery = sql`
-      SELECT ${SQLFragment.join(postgresCursorRowFieldIdentifiers, ', ')}
+      SELECT ${SQLFragment.joinWithCommaSeparator(...postgresCursorRowFieldIdentifiers)}
       FROM ${identifier(tableName)} AS ${raw(CURSOR_ROW_TABLE_ALIAS)}
       WHERE ${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)} = ${decodedExternalCursorEntityID}
     `;
@@ -637,7 +637,7 @@ export class EntityKnexDataManager<
     tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
   ): SQLFragment {
     const ilikeConditions = this.buildILikeConditions(search, tableAlias);
-    return sql`CASE WHEN ${SQLFragment.join(ilikeConditions, ' OR ')} THEN 1 ELSE 0 END`;
+    return sql`CASE WHEN ${SQLFragmentHelpers.or(...ilikeConditions)} THEN 1 ELSE 0 END`;
   }
 
   private buildTrigramSimilarityGreatestExpression(
@@ -645,7 +645,7 @@ export class EntityKnexDataManager<
     tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
   ): SQLFragment {
     const similarityExprs = this.buildTrigramSimilarityExpressions(search, tableAlias);
-    return sql`GREATEST(${SQLFragment.join(similarityExprs, ', ')})`;
+    return sql`GREATEST(${SQLFragment.joinWithCommaSeparator(...similarityExprs)})`;
   }
 
   private buildTrigramCursorCondition(
@@ -671,9 +671,11 @@ export class EntityKnexDataManager<
       extraOrderByFields?.map((f) => this.resolveSearchFieldToSQLFragment(f)) ?? [];
 
     // Build left side of comparison (current row's computed values)
-    const leftSide = SQLFragment.join(
-      [exactMatchExpr, similarityExpr, ...extraFields, sql`${identifier(idField)}`],
-      ', ',
+    const leftSide = SQLFragment.joinWithCommaSeparator(
+      exactMatchExpr,
+      similarityExpr,
+      ...extraFields,
+      sql`${identifier(idField)}`,
     );
 
     // Build right side using subquery to get computed values for cursor entity
@@ -702,7 +704,7 @@ export class EntityKnexDataManager<
     ];
 
     const rightSideSubquery = sql`
-      SELECT ${SQLFragment.join(selectFields, ', ')}
+      SELECT ${SQLFragment.joinWithCommaSeparator(...selectFields)}
       FROM ${identifier(this.entityConfiguration.tableName)} AS ${raw(CURSOR_ROW_TABLE_ALIAS)}
       WHERE ${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)} = ${decodedExternalCursorEntityID}
     `;
@@ -733,7 +735,7 @@ export class EntityKnexDataManager<
         ];
 
         return {
-          searchWhere: conditions.length > 0 ? SQLFragment.join(conditions, ' OR ') : sql`1 = 0`,
+          searchWhere: conditions.length > 0 ? SQLFragmentHelpers.or(...conditions) : sql`1 = 0`,
           searchOrderByClauses,
         };
       }
@@ -777,7 +779,7 @@ export class EntityKnexDataManager<
         ];
 
         return {
-          searchWhere: SQLFragment.join(allConditions, ' OR '),
+          searchWhere: SQLFragmentHelpers.or(...allConditions),
           searchOrderByClauses,
         };
       }
