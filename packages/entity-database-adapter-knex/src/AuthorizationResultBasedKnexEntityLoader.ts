@@ -477,6 +477,14 @@ export class AuthorizationResultBasedKnexEntityLoader<
       pageInfo,
     };
   }
+
+  /**
+   * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
+   * @returns The pagination cursor for the given entity.
+   */
+  getPaginationCursorForEntity(entity: TEntity): string {
+    return this.knexDataManager.getCursorForEntityID(entity.getID());
+  }
 }
 
 /**

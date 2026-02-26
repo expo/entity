@@ -210,6 +210,18 @@ export class EnforcingKnexEntityLoader<
       pageInfo: pageResult.pageInfo,
     };
   }
+
+  /**
+   * Get cursor for a given entity that matches what loadPageAsync would produce.
+   * Useful for constructing pagination cursors for entities returned from other loader methods that can then be passed to loadPageAsync for pagination.
+   * Most commonly used for testing pagination behavior.
+   *
+   * @param entity - The entity to get the pagination cursor for.
+   * @returns The pagination cursor for the given entity.
+   */
+  getPaginationCursorForEntity(entity: TEntity): string {
+    return this.knexEntityLoader.getPaginationCursorForEntity(entity);
+  }
 }
 
 /**

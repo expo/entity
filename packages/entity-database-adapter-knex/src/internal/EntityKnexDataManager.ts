@@ -361,6 +361,10 @@ export class EntityKnexDataManager<
     }
   }
 
+  getCursorForEntityID(entityID: TFields[TIDField]): string {
+    return this.encodeOpaqueCursor(entityID);
+  }
+
   /**
    * Internal method for loading a page with cursor-based pagination.
    * Shared logic for both regular and search pagination.

@@ -1504,6 +1504,52 @@ describe('postgres entity integration', () => {
           expect(secondPage.pageInfo.hasPreviousPage).toBe(false);
         });
 
+        it('getPaginationCursorForEntity produces cursor usable with loadPageAsync', async () => {
+          const vc = new ViewerContext(
+            createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+          );
+
+          // Load first page to get the third entity (Charlie)
+          const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+            first: 3,
+            pagination: {
+              strategy: PaginationStrategy.STANDARD,
+              orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+            },
+          });
+
+          const charlieEntity = firstPage.edges[2]!.node;
+          const cursorFromPage = firstPage.edges[2]!.cursor;
+
+          // Get cursor using getPaginationCursorForEntity
+          const cursorFromMethod =
+            PostgresTestEntity.knexLoader(vc).getPaginationCursorForEntity(charlieEntity);
+
+          // cursors should be equal for both loaders
+          expect(cursorFromMethod).toEqual(
+            PostgresTestEntity.knexLoaderWithAuthorizationResults(vc).getPaginationCursorForEntity(
+              charlieEntity,
+            ),
+          );
+
+          expect(cursorFromMethod).toBe(cursorFromPage);
+
+          // Use the cursor from getPaginationCursorForEntity to paginate
+          const nextPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+            first: 3,
+            after: cursorFromMethod,
+            pagination: {
+              strategy: PaginationStrategy.STANDARD,
+              orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+            },
+          });
+
+          expect(nextPage.edges).toHaveLength(3);
+          expect(nextPage.edges[0]?.node.getField('name')).toBe('David');
+          expect(nextPage.edges[1]?.node.getField('name')).toBe('Eve');
+          expect(nextPage.edges[2]?.node.getField('name')).toBe('Frank');
+        });
+
         it('performs backward pagination with last/before', async () => {
           const vc = new ViewerContext(
             createKnexIntegrationTestEntityCompanionProvider(knexInstance),
