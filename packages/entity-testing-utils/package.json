@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@jest/globals": "30.2.0",
-    "@types/lodash": "4.17.23",
+    "@types/lodash": "4.17.24",
     "@types/node": "24.10.13",
     "typescript": "5.9.3"
   }
