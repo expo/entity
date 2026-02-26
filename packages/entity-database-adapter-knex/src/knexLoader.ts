@@ -20,6 +20,7 @@ export function knexLoader<
   TMFields extends object,
   TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
   TMViewerContext extends ViewerContext,
+  TMViewerContext2 extends TMViewerContext,
   TMEntity extends ReadonlyEntity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
   TMPrivacyPolicy extends EntityPrivacyPolicy<
     TMFields,
@@ -38,7 +39,7 @@ export function knexLoader<
     TMPrivacyPolicy,
     TMSelectedFields
   >,
-  viewerContext: TMViewerContext,
+  viewerContext: TMViewerContext2,
   queryContext: EntityQueryContext = viewerContext
     .getViewerScopedEntityCompanionForClass(entityClass)
     .getQueryContextProvider()
@@ -69,6 +70,7 @@ export function knexLoaderWithAuthorizationResults<
   TMFields extends object,
   TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
   TMViewerContext extends ViewerContext,
+  TMViewerContext2 extends TMViewerContext,
   TMEntity extends ReadonlyEntity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
   TMPrivacyPolicy extends EntityPrivacyPolicy<
     TMFields,
@@ -87,7 +89,7 @@ export function knexLoaderWithAuthorizationResults<
     TMPrivacyPolicy,
     TMSelectedFields
   >,
-  viewerContext: TMViewerContext,
+  viewerContext: TMViewerContext2,
   queryContext: EntityQueryContext = viewerContext
     .getViewerScopedEntityCompanionForClass(entityClass)
     .getQueryContextProvider()
