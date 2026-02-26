@@ -56,7 +56,7 @@ export class SQLFragment {
    * @param fragments - Array of SQL fragments to join
    * @param separator - Separator string (default: ', ')
    */
-  static join(fragments: SQLFragment[], separator = ', '): SQLFragment {
+  static join(fragments: readonly SQLFragment[], separator = ', '): SQLFragment {
     return new SQLFragment(
       fragments.map((f) => f.sql).join(separator),
       fragments.flatMap((f) => f.bindings),

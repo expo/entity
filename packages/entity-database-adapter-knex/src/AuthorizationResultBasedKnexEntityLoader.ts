@@ -81,6 +81,71 @@ export interface EntityLoaderQuerySelectionModifiers<
   limit?: number;
 }
 
+/**
+ * Function to be used for constructing search fields based on field names.
+ * The function takes a field name and returns a SQLFragment that can be used in the search field portion.
+ */
+export type EntityLoaderFieldNameConstructorFn<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields = keyof TFields,
+> = (fieldName: TSelectedFields) => SQLFragment;
+
+/**
+ * Specification for a search field that is a manually constructed SQLFragment. Useful for complex search fields that require
+ * transformations or combinations of multiple fields, such as `COALESCE(NULLIF(display_name, ''), split_part(full_name, '/', 2))`
+ * to search by display name with fallback to full name.
+ */
+export type EntityLoaderSearchFieldSQLFragmentFnSpecification<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields = keyof TFields,
+> = {
+  /**
+   * Function that constructs the SQLFragment for the search field.
+   *
+   * @param getFragmentForFieldName - A helper function that takes a field name and returns a SQLFragment for that field, which should be used
+   *                                  to construct the final SQLFragment for the search field.
+   * @returns a SQLFragment representing the search field, which must reference selected fields through the provided helper function.
+   *
+   * @example
+   * For example, to construct a search field that searches by display name (nullable column) with fallback to full name,
+   * the fieldConstructor function could be implemented as follows:
+   * ```
+   * fieldConstructor: (getFragmentForFieldName) => {
+   *   const displayNameFragment = getFragmentForFieldName('display_name');
+   *   const fullNameFragment = getFragmentForFieldName('full_name');
+   *   return sql`COALESCE(NULLIF(${displayNameFragment}, ''), split_part(${fullNameFragment}, '/', 2))`;
+   * }
+   * ```
+   */
+  fieldConstructor: (
+    /**
+     * Helper function to get a SQLFragment for a given field name, which should be used to construct the final SQLFragment for the search field.
+     */
+    getFragmentForFieldName: EntityLoaderFieldNameConstructorFn<TFields, TSelectedFields>,
+  ) => SQLFragment;
+};
+
+/**
+ * Set of selected fields that are non-nullable, which can be used for search fields that require non-nullable fields.
+ * To use a nullable field as a search field, use an EntityLoaderSearchFieldSQLFragmentFnSpecification with appropriate SQL
+ * to handle null values, such as `COALESCE(field_name, '')` to treat nulls as empty strings for searching.
+ */
+export type NonNullableSelectedFields<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields,
+> = TSelectedFields & NonNullableKeys<TFields>;
+
+/**
+ * Specification for a search field that can be either a simple selected field name (which must be non-nullable) or a manually constructed
+ * SQLFragment using EntityLoaderSearchFieldSQLFragmentFnSpecification.
+ */
+export type EntityLoaderSearchFieldSpecification<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields = keyof TFields,
+> =
+  | NonNullableSelectedFields<TFields, TSelectedFields>
+  | EntityLoaderSearchFieldSQLFragmentFnSpecification<TFields, TSelectedFields>;
+
 interface SearchSpecificationBase<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields = keyof TFields,
@@ -91,9 +156,9 @@ interface SearchSpecificationBase<
   term: string;
 
   /**
-   * The fields to search within. Must be a non-empty array.
+   * The fields to search within.
    */
-  fields: (TSelectedFields & NonNullableKeys<TFields>)[];
+  fields: readonly EntityLoaderSearchFieldSpecification<TFields, TSelectedFields>[];
 }
 
 interface ILikeSearchSpecification<
@@ -136,7 +201,7 @@ interface TrigramSearchSpecification<
    * These fields are independent of search fields and can be used to provide meaningful
    * ordering when multiple results have the same similarity score.
    */
-  extraOrderByFields?: (TSelectedFields & NonNullableKeys<TFields>)[];
+  extraOrderByFields?: readonly EntityLoaderSearchFieldSpecification<TFields, TSelectedFields>[];
 }
 
 interface StandardPaginationSpecification<
@@ -151,7 +216,7 @@ interface StandardPaginationSpecification<
   /**
    * Order the entities by specified columns and orders. If the ID field is not included, it will be automatically added for stable pagination.
    */
-  orderBy: EntityLoaderOrderByClause<TFields, TSelectedFields>[];
+  orderBy: readonly EntityLoaderOrderByClause<TFields, TSelectedFields>[];
 }
 
 /**
@@ -269,7 +334,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
    *  UnauthorizedError
    */
   async loadFirstByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
+    fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: Omit<
       EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields>,
       'limit'
@@ -288,7 +353,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
    * @returns array of entity results that match the query, where result error can be UnauthorizedError
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
+    fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> = {},
   ): Promise<readonly Result<TEntity>[]> {
     for (const fieldEqualityOperand of fieldEqualityOperands) {

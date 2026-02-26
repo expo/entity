@@ -176,7 +176,7 @@ export abstract class BasePostgresEntityDatabaseAdapter<
    */
   async fetchManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
     queryContext: EntityQueryContext,
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
+    fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     const tableFieldSingleValueOperands: TableFieldSingleValueEqualityCondition[] = [];
