@@ -1641,22 +1641,22 @@ describe('postgres entity integration', () => {
               strategy: PaginationStrategy.STANDARD,
               orderBy: [
                 { fieldName: 'hasACat', order: OrderByOrdering.DESCENDING }, // true comes before false
-                { fieldName: 'name', order: OrderByOrdering.ASCENDING },
-                { fieldName: 'id', order: OrderByOrdering.ASCENDING },
+                { fieldName: 'name', order: OrderByOrdering.DESCENDING },
+                { fieldName: 'id', order: OrderByOrdering.DESCENDING },
               ],
             },
           });
 
-          // Entities with cats (true) come first, then sorted by name
+          // Entities with cats (true) come first, then sorted by name descending
           expect(page.edges).toHaveLength(4);
           expect(page.edges[0]?.node.getField('hasACat')).toBe(true);
-          expect(page.edges[0]?.node.getField('name')).toBe('Alice');
+          expect(page.edges[0]?.node.getField('name')).toBe('Grace');
           expect(page.edges[1]?.node.getField('hasACat')).toBe(true);
-          expect(page.edges[1]?.node.getField('name')).toBe('Charlie');
+          expect(page.edges[1]?.node.getField('name')).toBe('Eve');
           expect(page.edges[2]?.node.getField('hasACat')).toBe(true);
-          expect(page.edges[2]?.node.getField('name')).toBe('Eve');
+          expect(page.edges[2]?.node.getField('name')).toBe('Charlie');
           expect(page.edges[3]?.node.getField('hasACat')).toBe(true);
-          expect(page.edges[3]?.node.getField('name')).toBe('Grace');
+          expect(page.edges[3]?.node.getField('name')).toBe('Alice');
         });
 
         it('supports pagination with fieldFragment orderBy', async () => {
@@ -1817,6 +1817,156 @@ describe('postgres entity integration', () => {
         });
       });
 
+      it('performs forward pagination with ascending order', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Create test data with names that sort in a specific order
+        const entities = [];
+        for (let i = 1; i <= 5; i++) {
+          const entity = await PostgresTestEntity.creator(vc)
+            .setField('name', `Z_Item_${i}`) // Z_Item_1, Z_Item_2, Z_Item_3, Z_Item_4, Z_Item_5
+            .createAsync();
+          entities.push(entity);
+        }
+
+        // Get first page with ASCENDING order
+        // Sorted ascending: Z_Item_1, Z_Item_2, Z_Item_3, Z_Item_4, Z_Item_5
+        const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+          },
+        });
+
+        expect(firstPage.edges).toHaveLength(3);
+        expect(firstPage.edges[0]?.node.getField('name')).toBe('Z_Item_1');
+        expect(firstPage.edges[1]?.node.getField('name')).toBe('Z_Item_2');
+        expect(firstPage.edges[2]?.node.getField('name')).toBe('Z_Item_3');
+        expect(firstPage.pageInfo.hasNextPage).toBe(true);
+        expect(firstPage.pageInfo.hasPreviousPage).toBe(false);
+
+        // Get second page using cursor
+        const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          after: firstPage.pageInfo.endCursor!,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+          },
+        });
+
+        // Remaining items in ascending order: Z_Item_4, Z_Item_5
+        expect(secondPage.edges).toHaveLength(2);
+        expect(secondPage.edges[0]?.node.getField('name')).toBe('Z_Item_4');
+        expect(secondPage.edges[1]?.node.getField('name')).toBe('Z_Item_5');
+        expect(secondPage.pageInfo.hasNextPage).toBe(false);
+        expect(secondPage.pageInfo.hasPreviousPage).toBe(false);
+      });
+
+      it('performs backward pagination with ascending order', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Create test data with names that sort in a specific order
+        const entities = [];
+        for (let i = 1; i <= 5; i++) {
+          const entity = await PostgresTestEntity.creator(vc)
+            .setField('name', `Z_Item_${i}`) // Z_Item_1, Z_Item_2, Z_Item_3, Z_Item_4, Z_Item_5
+            .createAsync();
+          entities.push(entity);
+        }
+
+        // Test backward pagination with ASCENDING order
+        // This internally flips ASCENDING to DESCENDING for the query
+        const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 3,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+          },
+        });
+
+        // With `last: 3` and ASCENDING order, we get the last 3 items when sorted ascending
+        // Sorted ascending: Z_Item_1, Z_Item_2, Z_Item_3, Z_Item_4, Z_Item_5
+        // Last 3: Z_Item_3, Z_Item_4, Z_Item_5
+        expect(page.edges).toHaveLength(3);
+        expect(page.edges[0]?.node.getField('name')).toBe('Z_Item_3');
+        expect(page.edges[1]?.node.getField('name')).toBe('Z_Item_4');
+        expect(page.edges[2]?.node.getField('name')).toBe('Z_Item_5');
+        expect(page.pageInfo.hasPreviousPage).toBe(true);
+        expect(page.pageInfo.hasNextPage).toBe(false);
+
+        // Get previous page using cursor
+        const previousPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 3,
+          before: page.pageInfo.startCursor!,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+          },
+        });
+
+        // Remaining items in ascending order: Z_Item_1, Z_Item_2
+        expect(previousPage.edges).toHaveLength(2);
+        expect(previousPage.edges[0]?.node.getField('name')).toBe('Z_Item_1');
+        expect(previousPage.edges[1]?.node.getField('name')).toBe('Z_Item_2');
+        expect(previousPage.pageInfo.hasPreviousPage).toBe(false);
+        expect(previousPage.pageInfo.hasNextPage).toBe(false);
+      });
+
+      it('performs forward pagination with descending order', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Create test data with names that sort in a specific order
+        const entities = [];
+        for (let i = 1; i <= 5; i++) {
+          const entity = await PostgresTestEntity.creator(vc)
+            .setField('name', `Z_Item_${i}`) // Z_Item_1, Z_Item_2, Z_Item_3, Z_Item_4, Z_Item_5
+            .createAsync();
+          entities.push(entity);
+        }
+
+        // Get first page with DESCENDING order
+        // Sorted descending: Z_Item_5, Z_Item_4, Z_Item_3, Z_Item_2, Z_Item_1
+        const firstPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [{ fieldName: 'name', order: OrderByOrdering.DESCENDING }],
+          },
+        });
+
+        expect(firstPage.edges).toHaveLength(3);
+        expect(firstPage.edges[0]?.node.getField('name')).toBe('Z_Item_5');
+        expect(firstPage.edges[1]?.node.getField('name')).toBe('Z_Item_4');
+        expect(firstPage.edges[2]?.node.getField('name')).toBe('Z_Item_3');
+        expect(firstPage.pageInfo.hasNextPage).toBe(true);
+        expect(firstPage.pageInfo.hasPreviousPage).toBe(false);
+
+        // Get second page using cursor
+        const secondPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 3,
+          after: firstPage.pageInfo.endCursor!,
+          pagination: {
+            strategy: PaginationStrategy.STANDARD,
+            orderBy: [{ fieldName: 'name', order: OrderByOrdering.DESCENDING }],
+          },
+        });
+
+        // Remaining items in descending order: Z_Item_2, Z_Item_1
+        expect(secondPage.edges).toHaveLength(2);
+        expect(secondPage.edges[0]?.node.getField('name')).toBe('Z_Item_2');
+        expect(secondPage.edges[1]?.node.getField('name')).toBe('Z_Item_1');
+        expect(secondPage.pageInfo.hasNextPage).toBe(false);
+        expect(secondPage.pageInfo.hasPreviousPage).toBe(false);
+      });
+
       it('performs backward pagination with descending order', async () => {
         const vc = new ViewerContext(
           createKnexIntegrationTestEntityCompanionProvider(knexInstance),
@@ -1852,22 +2002,22 @@ describe('postgres entity integration', () => {
         expect(page.pageInfo.hasPreviousPage).toBe(true);
         expect(page.pageInfo.hasNextPage).toBe(false);
 
-        // Verify the order is maintained correctly with forward pagination too
-        const forwardPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
-          first: 3,
+        // Get previous page using cursor
+        const previousPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 3,
+          before: page.pageInfo.startCursor!,
           pagination: {
             strategy: PaginationStrategy.STANDARD,
             orderBy: [{ fieldName: 'name', order: OrderByOrdering.DESCENDING }],
           },
         });
 
-        // First 3 in descending order
-        expect(forwardPage.edges).toHaveLength(3);
-        expect(forwardPage.edges[0]?.node.getField('name')).toBe('Z_Item_5');
-        expect(forwardPage.edges[1]?.node.getField('name')).toBe('Z_Item_4');
-        expect(forwardPage.edges[2]?.node.getField('name')).toBe('Z_Item_3');
-        expect(forwardPage.pageInfo.hasNextPage).toBe(true);
-        expect(forwardPage.pageInfo.hasPreviousPage).toBe(false);
+        // Remaining items in descending order: Z_Item_5, Z_Item_4
+        expect(previousPage.edges).toHaveLength(2);
+        expect(previousPage.edges[0]?.node.getField('name')).toBe('Z_Item_5');
+        expect(previousPage.edges[1]?.node.getField('name')).toBe('Z_Item_4');
+        expect(previousPage.pageInfo.hasPreviousPage).toBe(false);
+        expect(previousPage.pageInfo.hasNextPage).toBe(false);
       });
 
       it('always includes ID field in orderBy for stability', async () => {

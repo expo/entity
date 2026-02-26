@@ -131,12 +131,11 @@ const CURSOR_ROW_TABLE_ALIAS = 'cursor_row';
 
 interface PaginationProvider<TFields extends Record<string, any>, TIDField extends keyof TFields> {
   whereClause: SQLFragment | undefined;
-  buildOrderBy: (direction: PaginationDirection) => {
-    clauses?: readonly PostgresOrderByClause<TFields>[];
-  };
+  buildOrderBy: (direction: PaginationDirection) => readonly PostgresOrderByClause<TFields>[];
   buildCursorCondition: (
     decodedCursorId: TFields[TIDField],
     direction: PaginationDirection,
+    orderByClauses: readonly PostgresOrderByClause<TFields>[],
   ) => SQLFragment;
 }
 
@@ -265,6 +264,7 @@ export class EntityKnexDataManager<
     if (pagination.strategy === PaginationStrategy.STANDARD) {
       // Standard pagination
       EntityKnexDataManager.validateOrderByClauses(pagination.orderBy);
+      EntityKnexDataManager.validateOrderByClausesHaveConsistentDirection(pagination.orderBy);
 
       const idField = this.entityConfiguration.idField;
       const augmentedOrderByClauses = this.augmentOrderByIfNecessary(pagination.orderBy, idField);
@@ -277,7 +277,7 @@ export class EntityKnexDataManager<
       // Create strategy for regular pagination
       const strategy: PaginationProvider<TFields, TIDField> = {
         whereClause: where,
-        buildOrderBy: (direction) => {
+        buildOrderBy: (direction: PaginationDirection) => {
           // For backward pagination, we flip the ORDER BY and NULLS direction to fetch records
           // in reverse order. This allows us to use a simple "less than" cursor comparison
           // instead of complex SQL. We'll reverse the results array later to restore
@@ -286,25 +286,30 @@ export class EntityKnexDataManager<
           // 1. Flip to name DESC to get the last items first
           // 2. Apply cursor with < comparison
           // 3. Reverse the final array to present items in name ASC order
-          const clauses =
-            direction === PaginationDirection.FORWARD
-              ? augmentedOrderByClauses
-              : augmentedOrderByClauses.map(
-                  (clause): PostgresOrderByClause<TFields> => ({
-                    ...clause,
-                    order:
-                      clause.order === OrderByOrdering.ASCENDING
-                        ? OrderByOrdering.DESCENDING
-                        : OrderByOrdering.ASCENDING,
-                    nulls: clause.nulls
-                      ? EntityKnexDataManager.flipNullsOrderingSpread(clause.nulls)
-                      : undefined,
-                  }),
-                );
-          return { clauses };
+          return direction === PaginationDirection.FORWARD
+            ? augmentedOrderByClauses
+            : augmentedOrderByClauses.map(
+                (clause): PostgresOrderByClause<TFields> => ({
+                  ...clause,
+                  order:
+                    clause.order === OrderByOrdering.ASCENDING
+                      ? OrderByOrdering.DESCENDING
+                      : OrderByOrdering.ASCENDING,
+                  nulls: clause.nulls
+                    ? EntityKnexDataManager.flipNullsOrderingSpread(clause.nulls)
+                    : undefined,
+                }),
+              );
         },
-        buildCursorCondition: (decodedCursorId, direction) =>
-          this.buildCursorCondition(decodedCursorId, fieldsToUseInPostgresTupleCursor, direction),
+        buildCursorCondition: (decodedCursorId, _direction, orderByClauses) => {
+          // all clauses are guaranteed to have the same order due to validation, so we can just look at the first one for effective ordering
+          const effectiveOrdering = orderByClauses[0]?.order ?? OrderByOrdering.ASCENDING;
+          return this.buildCursorCondition(
+            decodedCursorId,
+            fieldsToUseInPostgresTupleCursor,
+            effectiveOrdering,
+          );
+        },
       };
 
       return await this.loadPageInternalAsync(queryContext, args, strategy);
@@ -333,19 +338,17 @@ export class EntityKnexDataManager<
       const strategy: PaginationProvider<TFields, TIDField> = {
         whereClause,
         buildOrderBy: (direction) => {
-          const clauses =
-            direction === PaginationDirection.FORWARD
-              ? searchOrderByClauses
-              : searchOrderByClauses.map(
-                  (clause): DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'> => ({
-                    ...clause,
-                    order:
-                      clause.order === OrderByOrdering.ASCENDING
-                        ? OrderByOrdering.DESCENDING
-                        : OrderByOrdering.ASCENDING,
-                  }),
-                );
-          return { clauses };
+          return direction === PaginationDirection.FORWARD
+            ? searchOrderByClauses
+            : searchOrderByClauses.map(
+                (clause): DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'> => ({
+                  ...clause,
+                  order:
+                    clause.order === OrderByOrdering.ASCENDING
+                      ? OrderByOrdering.DESCENDING
+                      : OrderByOrdering.ASCENDING,
+                }),
+              );
         },
         buildCursorCondition: (decodedCursorId, direction) =>
           search.strategy === PaginationStrategy.TRIGRAM_SEARCH
@@ -353,7 +356,10 @@ export class EntityKnexDataManager<
             : this.buildCursorCondition(
                 decodedCursorId,
                 fieldsToUseInPostgresTupleCursor,
-                direction,
+                // ILIKE search always orders ASC, so effective ordering matches direction
+                direction === PaginationDirection.FORWARD
+                  ? OrderByOrdering.ASCENDING
+                  : OrderByOrdering.DESCENDING,
               ),
       };
 
@@ -410,16 +416,20 @@ export class EntityKnexDataManager<
     // Decode cursor
     const decodedExternalCursorEntityID = cursor ? this.decodeOpaqueCursor(cursor) : null;
 
+    // Get ordering from strategy
+    const orderByClauses = paginationProvider.buildOrderBy(direction);
+
     // Build WHERE clause with cursor condition
     const baseWhere = paginationProvider.whereClause;
     const cursorCondition = decodedExternalCursorEntityID
-      ? paginationProvider.buildCursorCondition(decodedExternalCursorEntityID, direction)
+      ? paginationProvider.buildCursorCondition(
+          decodedExternalCursorEntityID,
+          direction,
+          orderByClauses,
+        )
       : null;
 
     const whereClause = this.combineWhereConditions(baseWhere, cursorCondition);
-
-    // Get ordering from strategy
-    const { clauses: orderByClauses } = paginationProvider.buildOrderBy(direction);
 
     // Determine query modifiers
     const queryModifiers: PostgresQuerySelectionModifiers<TFields> = {
@@ -491,7 +501,9 @@ export class EntityKnexDataManager<
     // if ID is already included as a fragment, but that is preferable to the risk of incorrect pagination behavior.
     const hasId = clauses.some((spec) => 'fieldName' in spec && spec.fieldName === idField);
     if (!hasId) {
-      return [...clauses, { fieldName: idField, order: OrderByOrdering.ASCENDING }];
+      const lastClauseOrder =
+        clauses.length > 0 ? clauses[clauses.length - 1]!.order : OrderByOrdering.ASCENDING;
+      return [...clauses, { fieldName: idField, order: lastClauseOrder }];
     }
     return clauses;
   }
@@ -517,6 +529,24 @@ export class EntityKnexDataManager<
         );
       }
     }
+  }
+
+  /**
+   * Cursor-based pagination uses Postgres tuple comparison (e.g., (a, b) \> (x, y)) which
+   * applies a single comparison direction to all columns. Mixed ordering directions would
+   * produce incorrect pagination results.
+   */
+  private static validateOrderByClausesHaveConsistentDirection<TFields extends Record<string, any>>(
+    orderBy: readonly PostgresOrderByClause<TFields>[] | undefined,
+  ): void {
+    if (orderBy === undefined || orderBy.length <= 1) {
+      return;
+    }
+    const firstOrder = orderBy[0]!.order;
+    assert(
+      orderBy.every((clause) => clause.order === firstOrder),
+      'All orderBy clauses must have the same ordering direction. Mixed ordering directions are not supported with cursor-based pagination.',
+    );
   }
 
   private encodeOpaqueCursor(idField: TFields[TIDField]): string {
@@ -574,14 +604,14 @@ export class EntityKnexDataManager<
       | SQLFragment
       | DataManagerSearchFieldSQLFragmentFnSpecification<TFields>
     )[],
-    direction: PaginationDirection,
+    effectiveOrdering: OrderByOrdering,
   ): SQLFragment {
     // We build a tuple comparison for fieldsToUseInPostgresTupleCursor fields of the
     // entity identified by the external cursor to ensure correct pagination behavior
     // even in cases where multiple rows have the same value all fields other than id.
     // If the cursor entity has been deleted, the subquery returns no rows and the
     // comparison evaluates to NULL, filtering out all results (empty page).
-    const operator = direction === PaginationDirection.FORWARD ? '>' : '<';
+    const operator = effectiveOrdering === OrderByOrdering.ASCENDING ? '>' : '<';
 
     const idField = getDatabaseFieldForEntityField(
       this.entityConfiguration,
