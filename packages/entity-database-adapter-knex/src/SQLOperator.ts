@@ -112,6 +112,9 @@ export class SQLFragment<TFields extends Record<string, any>> {
       if (match === '??' && binding.type === 'identifier') {
         // For identifiers, show them quoted as they would appear
         return `"${binding.name.replace(/"/g, '""')}"`;
+      } else if (match === '??' && binding.type === 'entityField') {
+        // For entity fields, show the entity field name as the identifier for debugging
+        return `"${binding.fieldName.toString()}"`;
       } else if (match === '?' && binding.type === 'value') {
         return SQLFragment.formatDebugValue(binding.value);
       } else {
@@ -309,6 +312,18 @@ type PickSupportedSQLValueKeys<T> = {
   [K in keyof T]: T[K] extends SupportedSQLValue ? K : never;
 }[keyof T];
 
+type PickStringValueKeys<T> = {
+  [K in keyof T]: T[K] extends string | null | undefined ? K : never;
+}[keyof T];
+
+type JsonSerializable =
+  | string
+  | number
+  | boolean
+  | null
+  | readonly JsonSerializable[]
+  | { readonly [key: string]: JsonSerializable };
+
 /**
  * Common SQL helper functions for building queries
  */
@@ -385,7 +400,7 @@ export const SQLFragmentHelpers = {
    * ```
    */
   like<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
+    fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
     return sql`${entityField(fieldName)} LIKE ${pattern}`;
@@ -395,7 +410,7 @@ export const SQLFragmentHelpers = {
    * NOT LIKE helper
    */
   notLike<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
+    fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
     return sql`${entityField(fieldName)} NOT LIKE ${pattern}`;
@@ -405,7 +420,7 @@ export const SQLFragmentHelpers = {
    * ILIKE helper for case-insensitive matching
    */
   ilike<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
+    fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
     return sql`${entityField(fieldName)} ILIKE ${pattern}`;
@@ -415,7 +430,7 @@ export const SQLFragmentHelpers = {
    * NOT ILIKE helper for case-insensitive non-matching
    */
   notIlike<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
+    fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
     return sql`${entityField(fieldName)} NOT ILIKE ${pattern}`;
@@ -506,9 +521,13 @@ export const SQLFragmentHelpers = {
    */
   jsonContains<TFields extends Record<string, any>>(
     fieldName: keyof TFields,
-    value: unknown,
+    value: JsonSerializable,
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} @> ${JSON.stringify(value)}::jsonb`;
+    const serialized = JSON.stringify(value);
+    if (serialized === undefined) {
+      throw new Error('jsonContains: value is not JSON-serializable');
+    }
+    return sql`${entityField(fieldName)} @> ${serialized}::jsonb`;
   },
 
   /**
@@ -516,9 +535,13 @@ export const SQLFragmentHelpers = {
    */
   jsonContainedBy<TFields extends Record<string, any>>(
     fieldName: keyof TFields,
-    value: unknown,
+    value: JsonSerializable,
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} <@ ${JSON.stringify(value)}::jsonb`;
+    const serialized = JSON.stringify(value);
+    if (serialized === undefined) {
+      throw new Error('jsonContainedBy: value is not JSON-serializable');
+    }
+    return sql`${entityField(fieldName)} <@ ${serialized}::jsonb`;
   },
 
   /**

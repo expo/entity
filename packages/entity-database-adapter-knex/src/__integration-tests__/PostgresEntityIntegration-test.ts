@@ -3668,9 +3668,9 @@ describe('postgres entity integration', () => {
         }
 
         const paginationSpec: PaginationSpecification<PostgresTestEntityFields> = {
-          strategy: PaginationStrategy.TRIGRAM_SEARCH as const,
+          strategy: PaginationStrategy.TRIGRAM_SEARCH,
           term: 'Johnson',
-          fields: ['label' as const],
+          fields: ['label'],
           threshold: 0.2,
           extraOrderByFields: [
             {

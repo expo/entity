@@ -95,8 +95,7 @@ export type EntityLoaderFieldNameConstructorFn<
 
 /**
  * Specification for a search field that is a manually constructed SQLFragment. Useful for complex search fields that require
- * transformations or combinations of multiple fields, such as `COALESCE(NULLIF(display_name, ''), split_part(full_name, '/', 2))`
- * to search by display name with fallback to full name.
+ * transformations to make nullable fields non-null or to make combinations of multiple fields.
  */
 export type EntityLoaderSearchFieldSQLFragmentFnSpecification<
   TFields extends Record<string, any>,
