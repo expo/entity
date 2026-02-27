@@ -30,7 +30,7 @@
     "@koa/cors": "5.0.0",
     "@koa/router": "15.3.0",
     "graphql": "16.13.0",
-    "koa": "3.1.1"
+    "koa": "3.1.2"
   },
   "devDependencies": {
     "@jest/globals": "30.2.0",
