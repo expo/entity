@@ -16,7 +16,7 @@ export abstract class BaseSQLQueryBuilder<
   private executed = false;
 
   constructor(
-    private readonly sqlFragment: SQLFragment,
+    private readonly sqlFragment: SQLFragment<Pick<TFields, TSelectedFields>>,
     private readonly modifiers: {
       limit?: number;
       offset?: number;
@@ -71,7 +71,7 @@ export abstract class BaseSQLQueryBuilder<
    * @param order - The ordering direction (ascending or descending). Defaults to ascending.
    */
   orderBySQL(
-    fragment: SQLFragment,
+    fragment: SQLFragment<Pick<TFields, TSelectedFields>>,
     order: OrderByOrdering = OrderByOrdering.ASCENDING,
     nulls: NullsOrdering | undefined = undefined,
   ): this {
@@ -92,7 +92,7 @@ export abstract class BaseSQLQueryBuilder<
   /**
    * Get the SQL fragment
    */
-  protected getSQLFragment(): SQLFragment {
+  protected getSQLFragment(): SQLFragment<Pick<TFields, TSelectedFields>> {
     return this.sqlFragment;
   }
 

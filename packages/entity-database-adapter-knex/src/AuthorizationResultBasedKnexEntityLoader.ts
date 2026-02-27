@@ -43,12 +43,15 @@ export type EntityLoaderFieldNameOrderByClause<
   fieldName: TSelectedFields;
 };
 
-export type EntityLoaderFieldFragmentOrderByClause = EntityLoaderBaseOrderByClause & {
+export type EntityLoaderFieldFragmentOrderByClause<
+  TFields extends Record<string, any>,
+  TSelectedFields extends keyof TFields = keyof TFields,
+> = EntityLoaderBaseOrderByClause & {
   /**
    * The SQL fragment to order by, which can reference selected fields. Example: `COALESCE(NULLIF(display_name, ''), split_part(full_name, '/', 2))`.
    * May not contain ASC or DESC, as ordering direction is controlled by the `order` property.
    */
-  fieldFragment: SQLFragment;
+  fieldFragment: SQLFragment<Pick<TFields, TSelectedFields>>;
 };
 
 export type EntityLoaderOrderByClause<
@@ -56,7 +59,7 @@ export type EntityLoaderOrderByClause<
   TSelectedFields extends keyof TFields = keyof TFields,
 > =
   | EntityLoaderFieldNameOrderByClause<TFields, TSelectedFields>
-  | EntityLoaderFieldFragmentOrderByClause;
+  | EntityLoaderFieldFragmentOrderByClause<TFields, TSelectedFields>;
 
 /**
  * SQL modifiers that only affect the selection but not the projection.
@@ -88,7 +91,7 @@ export interface EntityLoaderQuerySelectionModifiers<
 export type EntityLoaderFieldNameConstructorFn<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields = keyof TFields,
-> = (fieldName: TSelectedFields) => SQLFragment;
+> = (fieldName: TSelectedFields) => SQLFragment<TFields>;
 
 /**
  * Specification for a search field that is a manually constructed SQLFragment. Useful for complex search fields that require
@@ -122,7 +125,7 @@ export type EntityLoaderSearchFieldSQLFragmentFnSpecification<
      * Helper function to get a SQLFragment for a given field name, which should be used to construct the final SQLFragment for the search field.
      */
     getFragmentForFieldName: EntityLoaderFieldNameConstructorFn<TFields, TSelectedFields>,
-  ) => SQLFragment;
+  ) => SQLFragment<Pick<TFields, TSelectedFields>>;
 };
 
 /**
@@ -240,7 +243,7 @@ interface EntityLoaderBaseUnifiedPaginationArgs<
   /**
    * SQLFragment representing the WHERE clause to filter the entities being paginated.
    */
-  where?: SQLFragment;
+  where?: SQLFragment<Pick<TFields, TSelectedFields>>;
 
   /**
    * Pagination specification determining how to order and paginate results.
@@ -421,7 +424,7 @@ export class AuthorizationResultBasedKnexEntityLoader<
    * @returns SQL query builder for building and executing SQL queries that when executed returns entity results where result error can be UnauthorizedError.
    */
   loadManyBySQL(
-    fragment: SQLFragment,
+    fragment: SQLFragment<Pick<TFields, TSelectedFields>>,
     modifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> = {},
   ): AuthorizationResultBasedSQLQueryBuilder<
     TFields,
@@ -515,7 +518,7 @@ export class AuthorizationResultBasedSQLQueryBuilder<
       TSelectedFields
     >,
     private readonly queryContext: EntityQueryContext,
-    sqlFragment: SQLFragment,
+    sqlFragment: SQLFragment<Pick<TFields, TSelectedFields>>,
     modifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields>,
   ) {
     super(sqlFragment, modifiers);
