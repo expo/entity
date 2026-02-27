@@ -10,10 +10,14 @@ import { knex, Knex } from 'knex';
 import nullthrows from 'nullthrows';
 import { setTimeout } from 'timers/promises';
 
+import { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader';
 import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
 import { raw, sql, SQLFragment, SQLFragmentHelpers } from '../SQLOperator';
-import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity';
+import {
+  PostgresTestEntity,
+  PostgresTestEntityFields,
+} from '../__testfixtures__/PostgresTestEntity';
 import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity';
 import { PostgresValidatorTestEntity } from '../__testfixtures__/PostgresValidatorTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
@@ -3125,6 +3129,332 @@ describe('postgres entity integration', () => {
 
         // Johnson (exact match) should be first
         expect(allNames[0]?.name).toBe('Johnson');
+      });
+    });
+
+    describe('postgresTransform search field specification', () => {
+      it('supports ILIKE search with postgresTransform on a nullable field', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Create test data with mix of null and non-null name fields
+        const testData = [
+          { name: 'Alice Johnson', label: 'alice' },
+          { name: null, label: 'bob' },
+          { name: 'Charlie Johnson', label: 'charlie' },
+          { name: null, label: 'david' },
+          { name: 'Eve Thompson', label: 'eve' },
+        ];
+
+        for (const data of testData) {
+          const creator = PostgresTestEntity.creator(vc).setField('label', data.label);
+          if (data.name !== null) {
+            creator.setField('name', data.name);
+          }
+          await creator.createAsync();
+        }
+
+        // Search using a nullable field with COALESCE transform
+        const searchResults = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 10,
+          pagination: {
+            strategy: PaginationStrategy.ILIKE_SEARCH,
+            term: 'Johnson',
+            fields: [
+              {
+                fieldConstructor(getFragmentForFieldName) {
+                  return sql`COALESCE(${getFragmentForFieldName('name')}, '')`;
+                },
+              },
+            ],
+          },
+        });
+
+        // Only entities with non-null name containing 'Johnson' should match
+        expect(searchResults.edges).toHaveLength(2);
+        expect(searchResults.edges[0]?.node.getField('name')).toBe('Alice Johnson');
+        expect(searchResults.edges[1]?.node.getField('name')).toBe('Charlie Johnson');
+      });
+
+      it('supports ILIKE search cursor pagination with postgresTransform', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        // Create enough test data to require multiple pages
+        const names = [
+          'Pattern_01',
+          'Pattern_02',
+          'Pattern_03',
+          'Pattern_04',
+          'Pattern_05',
+          'Pattern_06',
+        ];
+
+        for (let i = 0; i < names.length; i++) {
+          const creator = PostgresTestEntity.creator(vc).setField('label', `label_${i}`);
+          // Alternate between setting name and leaving it null
+          if (i % 3 !== 0) {
+            creator.setField('name', names[i]!);
+          }
+          await creator.createAsync();
+        }
+
+        // Paginate through results using transform on nullable field
+        const allNames: string[] = [];
+        let cursor: string | undefined;
+
+        while (true) {
+          const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+            first: 2,
+            ...(cursor && { after: cursor }),
+            pagination: {
+              strategy: PaginationStrategy.ILIKE_SEARCH,
+              term: 'Pattern',
+              fields: [
+                {
+                  fieldConstructor(getFragmentForFieldName) {
+                    return sql`COALESCE(${getFragmentForFieldName('name')}, '')`;
+                  },
+                },
+              ],
+            },
+          });
+
+          allNames.push(
+            ...page.edges
+              .map((e) => e.node.getField('name'))
+              .filter((n): n is string => n !== null),
+          );
+
+          if (!page.pageInfo.hasNextPage) {
+            break;
+          }
+          cursor = page.pageInfo.endCursor!;
+        }
+
+        // Should find only the entities with non-null names matching 'Pattern'
+        // Indices 1, 2, 4, 5 have names set (indices 0, 3 are null)
+        expect(allNames).toHaveLength(4);
+        expect(new Set(allNames).size).toBe(4); // No duplicates
+      });
+
+      it('supports ILIKE search with mix of plain fields and postgresTransform fields', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        const testData = [
+          { name: null, label: 'SearchTarget_Alpha' },
+          { name: 'SearchTarget_Beta', label: 'other' },
+          { name: null, label: 'unrelated' },
+          { name: 'SearchTarget_Gamma', label: 'SearchTarget_Gamma' },
+        ];
+
+        for (const data of testData) {
+          const creator = PostgresTestEntity.creator(vc).setField('label', data.label);
+          if (data.name !== null) {
+            creator.setField('name', data.name);
+          }
+          await creator.createAsync();
+        }
+
+        // Search across both a non-nullable field (label) and a nullable field with transform (name)
+        const searchResults = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 10,
+          pagination: {
+            strategy: PaginationStrategy.ILIKE_SEARCH,
+            term: 'SearchTarget',
+            fields: [
+              'label',
+              {
+                fieldConstructor(getFragmentForFieldName) {
+                  return sql`COALESCE(${getFragmentForFieldName('name')}, '')`;
+                },
+              },
+            ],
+          },
+        });
+
+        // Should find:
+        // - Entity with label='SearchTarget_Alpha' (matches on label, name is null)
+        // - Entity with name='SearchTarget_Beta' (matches on name, label is 'other')
+        // - Entity with name='SearchTarget_Gamma' and label='SearchTarget_Gamma' (matches on both)
+        expect(searchResults.edges).toHaveLength(3);
+        const foundLabels = searchResults.edges.map((e) => e.node.getField('label'));
+        expect(foundLabels).toContain('SearchTarget_Alpha');
+        expect(foundLabels).toContain('other');
+        expect(foundLabels).toContain('SearchTarget_Gamma');
+      });
+
+      it('supports TRIGRAM search with postgresTransform on fields', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await knexInstance.raw('CREATE EXTENSION IF NOT EXISTS pg_trgm');
+
+        const testData = [
+          { name: 'Johnson', label: 'a' },
+          { name: null, label: 'b' },
+          { name: 'Jonson', label: 'c' },
+          { name: null, label: 'd' },
+          { name: 'Johnsen', label: 'e' },
+        ];
+
+        for (const data of testData) {
+          const creator = PostgresTestEntity.creator(vc).setField('label', data.label);
+          if (data.name !== null) {
+            creator.setField('name', data.name);
+          }
+          await creator.createAsync();
+        }
+
+        const searchResults = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 10,
+          pagination: {
+            strategy: PaginationStrategy.TRIGRAM_SEARCH,
+            term: 'Johnson',
+            fields: [
+              {
+                fieldConstructor(getFragmentForFieldName) {
+                  return sql`COALESCE(${getFragmentForFieldName('name')}, '')`;
+                },
+              },
+            ],
+            threshold: 0.3,
+          },
+        });
+
+        // Should find similar names, null-name entities have similarity 0 (below threshold)
+        expect(searchResults.edges.length).toBeGreaterThan(0);
+        expect(searchResults.edges[0]?.node.getField('name')).toBe('Johnson'); // Exact match first
+        const foundNames = searchResults.edges.map((e) => e.node.getField('name'));
+        expect(foundNames).toContain('Jonson');
+        expect(foundNames).toContain('Johnsen');
+        // Null-name entities should not appear
+        foundNames.forEach((name) => {
+          expect(name).not.toBeNull();
+        });
+      });
+
+      it('supports TRIGRAM search with postgresTransform on extraOrderByFields with cursor pagination', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await knexInstance.raw('CREATE EXTENSION IF NOT EXISTS pg_trgm');
+
+        // Create test data where the extra order by field (name) is nullable
+        const testData = [
+          { name: 'ZZZ', label: 'Johnson' },
+          { name: null, label: 'Jonson' },
+          { name: 'AAA', label: 'Johnsen' },
+          { name: null, label: 'Johnston' },
+          { name: 'MMM', label: 'Johan' },
+          { name: 'BBB', label: 'John' },
+        ];
+
+        for (const data of testData) {
+          const creator = PostgresTestEntity.creator(vc).setField('label', data.label);
+          if (data.name !== null) {
+            creator.setField('name', data.name);
+          }
+          await creator.createAsync();
+        }
+
+        // Paginate through trigram results with postgresTransform on extraOrderByFields
+        const allLabels: string[] = [];
+        let cursor: string | undefined;
+
+        while (true) {
+          const page = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+            first: 2,
+            ...(cursor && { after: cursor }),
+            pagination: {
+              strategy: PaginationStrategy.TRIGRAM_SEARCH,
+              term: 'Johnson',
+              fields: ['label'],
+              threshold: 0.2,
+              extraOrderByFields: [
+                {
+                  fieldConstructor(getFragmentForFieldName) {
+                    return sql`COALESCE(${getFragmentForFieldName('name')}, '')`;
+                  },
+                },
+              ],
+            },
+          });
+
+          allLabels.push(...page.edges.map((e) => e.node.getField('label')));
+
+          if (!page.pageInfo.hasNextPage) {
+            break;
+          }
+          cursor = page.pageInfo.endCursor!;
+        }
+
+        // Should have paginated through all matching results with no duplicates
+        expect(allLabels.length).toBeGreaterThan(0);
+        expect(new Set(allLabels).size).toBe(allLabels.length);
+      });
+
+      it('supports backward pagination with postgresTransform on extraOrderByFields', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await knexInstance.raw('CREATE EXTENSION IF NOT EXISTS pg_trgm');
+
+        const testData = [
+          { name: 'ZZZ', label: 'Johnson' },
+          { name: null, label: 'Jonson' },
+          { name: 'AAA', label: 'Johnsen' },
+          { name: null, label: 'Johnston' },
+          { name: 'MMM', label: 'Johan' },
+        ];
+
+        for (const data of testData) {
+          const creator = PostgresTestEntity.creator(vc).setField('label', data.label);
+          if (data.name !== null) {
+            creator.setField('name', data.name);
+          }
+          await creator.createAsync();
+        }
+
+        const paginationSpec: PaginationSpecification<PostgresTestEntityFields> = {
+          strategy: PaginationStrategy.TRIGRAM_SEARCH as const,
+          term: 'Johnson',
+          fields: ['label' as const],
+          threshold: 0.2,
+          extraOrderByFields: [
+            {
+              fieldConstructor(getFragmentForFieldName) {
+                return sql`COALESCE(${getFragmentForFieldName('name')}, '')`;
+              },
+            },
+          ],
+        };
+
+        // Get all results forward
+        const allForward = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          first: 10,
+          pagination: paginationSpec,
+        });
+
+        // Get last 2 results backward
+        const lastPage = await PostgresTestEntity.knexLoader(vc).loadPageAsync({
+          last: 2,
+          pagination: paginationSpec,
+        });
+
+        expect(lastPage.edges).toHaveLength(2);
+
+        // The last 2 from backward pagination should match the last 2 from forward pagination
+        const forwardLastTwo = allForward.edges.slice(-2).map((e) => e.node.getID());
+        const backwardResults = lastPage.edges.map((e) => e.node.getID());
+        expect(backwardResults).toEqual(forwardLastTwo);
       });
     });
   });

@@ -23,12 +23,32 @@ import { DistributiveOmit, NonNullableKeys } from './utilityTypes';
 
 interface DataManagerStandardSpecification<TFields extends Record<string, any>> {
   strategy: PaginationStrategy.STANDARD;
-  orderBy: PostgresOrderByClause<TFields>[];
+  orderBy: readonly PostgresOrderByClause<TFields>[];
 }
+
+type DataManagerFieldNameConstructorFn<TFields extends Record<string, any>> = (
+  fieldName: keyof TFields,
+) => SQLFragment;
+
+type DataManagerSearchFieldSQLFragmentFnSpecification<TFields extends Record<string, any>> = {
+  fieldConstructor: (
+    getFragmentForFieldName: DataManagerFieldNameConstructorFn<TFields>,
+  ) => SQLFragment;
+};
+
+function isDataManagerSearchFieldSQLFragmentFnSpecification<TFields extends Record<string, any>>(
+  obj: keyof TFields | SQLFragment | DataManagerSearchFieldSQLFragmentFnSpecification<TFields>,
+): obj is DataManagerSearchFieldSQLFragmentFnSpecification<TFields> {
+  return typeof obj === 'object' && obj !== null && 'fieldConstructor' in obj;
+}
+
+type DataManagerSearchFieldSpecification<TFields extends Record<string, any>> =
+  | NonNullableKeys<TFields>
+  | DataManagerSearchFieldSQLFragmentFnSpecification<TFields>;
 
 interface DataManagerSearchSpecificationBase<TFields extends Record<string, any>> {
   term: string;
-  fields: NonNullableKeys<TFields>[];
+  fields: readonly DataManagerSearchFieldSpecification<TFields>[];
 }
 
 interface DataManagerILikeSearchSpecification<
@@ -42,7 +62,7 @@ interface DataManagerTrigramSearchSpecification<
 > extends DataManagerSearchSpecificationBase<TFields> {
   strategy: PaginationStrategy.TRIGRAM_SEARCH;
   threshold: number;
-  extraOrderByFields?: NonNullableKeys<TFields>[];
+  extraOrderByFields?: readonly DataManagerSearchFieldSpecification<TFields>[];
 }
 
 type DataManagerSearchSpecification<TFields extends Record<string, any>> =
@@ -98,7 +118,7 @@ export interface PageInfo {
  * Relay-style Connection type
  */
 export interface Connection<TNode> {
-  edges: Edge<TNode>[];
+  edges: readonly Edge<TNode>[];
   pageInfo: PageInfo;
 }
 
@@ -112,7 +132,7 @@ const CURSOR_ROW_TABLE_ALIAS = 'cursor_row';
 interface PaginationProvider<TFields extends Record<string, any>, TIDField extends keyof TFields> {
   whereClause: SQLFragment | undefined;
   buildOrderBy: (direction: PaginationDirection) => {
-    clauses?: PostgresOrderByClause<TFields>[];
+    clauses?: readonly PostgresOrderByClause<TFields>[];
   };
   buildCursorCondition: (
     decodedCursorId: TFields[TIDField],
@@ -148,7 +168,7 @@ export class EntityKnexDataManager<
    */
   async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
     queryContext: EntityQueryContext,
-    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
+    fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
@@ -179,7 +199,7 @@ export class EntityKnexDataManager<
   async loadManyByRawWhereClauseAsync(
     queryContext: EntityQueryContext,
     rawWhereClause: string,
-    bindings: any[] | object,
+    bindings: readonly any[] | object,
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
@@ -249,7 +269,7 @@ export class EntityKnexDataManager<
       const idField = this.entityConfiguration.idField;
       const augmentedOrderByClauses = this.augmentOrderByIfNecessary(pagination.orderBy, idField);
 
-      const fieldsToUseInPostgresTupleCursor: (keyof TFields | SQLFragment)[] =
+      const fieldsToUseInPostgresTupleCursor: readonly (keyof TFields | SQLFragment)[] =
         augmentedOrderByClauses.map((order) =>
           'fieldName' in order ? order.fieldName : order.fieldFragment,
         );
@@ -458,9 +478,9 @@ export class EntityKnexDataManager<
   }
 
   private augmentOrderByIfNecessary(
-    orderBy: PostgresOrderByClause<TFields>[] | undefined,
+    orderBy: readonly PostgresOrderByClause<TFields>[] | undefined,
     idField: TIDField,
-  ): PostgresOrderByClause<TFields>[] {
+  ): readonly PostgresOrderByClause<TFields>[] {
     const clauses = orderBy ?? [];
 
     // Always ensure ID is included for stability and cursor correctness. Note that this may add a redundant order by
@@ -520,9 +540,36 @@ export class EntityKnexDataManager<
     return parsedCursor.id;
   }
 
+  private resolveSearchFieldToSQLFragment(
+    field: keyof TFields | SQLFragment | DataManagerSearchFieldSQLFragmentFnSpecification<TFields>,
+    tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
+  ): SQLFragment {
+    if (field instanceof SQLFragment) {
+      return field;
+    }
+
+    if (isDataManagerSearchFieldSQLFragmentFnSpecification<TFields>(field)) {
+      return field.fieldConstructor((fieldName) => {
+        const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, fieldName);
+        return tableAlias
+          ? sql`${raw(tableAlias)}.${identifier(dbField)}`
+          : sql`${identifier(dbField)}`;
+      });
+    }
+
+    const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, field);
+    return tableAlias
+      ? sql`${raw(tableAlias)}.${identifier(dbField)}`
+      : sql`${identifier(dbField)}`;
+  }
+
   private buildCursorCondition(
     decodedExternalCursorEntityID: TFields[TIDField],
-    fieldsToUseInPostgresTupleCursor: readonly (keyof TFields | SQLFragment)[],
+    fieldsToUseInPostgresTupleCursor: readonly (
+      | keyof TFields
+      | SQLFragment
+      | DataManagerSearchFieldSQLFragmentFnSpecification<TFields>
+    )[],
     direction: PaginationDirection,
   ): SQLFragment {
     // We build a tuple comparison for fieldsToUseInPostgresTupleCursor fields of the
@@ -538,13 +585,9 @@ export class EntityKnexDataManager<
     );
     const tableName = this.entityConfiguration.tableName;
 
-    const postgresCursorFieldIdentifiers = fieldsToUseInPostgresTupleCursor.map((f) => {
-      if (f instanceof SQLFragment) {
-        return f;
-      }
-      const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, f);
-      return sql`${identifier(dbField)}`;
-    });
+    const postgresCursorFieldIdentifiers = fieldsToUseInPostgresTupleCursor.map((f) =>
+      this.resolveSearchFieldToSQLFragment(f),
+    );
 
     // Build left side of comparison (current row's computed values)
     const leftSide = SQLFragment.join(postgresCursorFieldIdentifiers, ', ');
@@ -552,13 +595,9 @@ export class EntityKnexDataManager<
     // Build right side using subquery to get computed values for cursor entity.
     // For field names, qualify with the cursor row alias. For SQL fragments,
     // use as-is since unqualified column names resolve to the only table in the subquery.
-    const postgresCursorRowFieldIdentifiers = fieldsToUseInPostgresTupleCursor.map((f) => {
-      if (f instanceof SQLFragment) {
-        return f;
-      }
-      const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, f);
-      return sql`${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(dbField)}`;
-    });
+    const postgresCursorRowFieldIdentifiers = fieldsToUseInPostgresTupleCursor.map((f) =>
+      this.resolveSearchFieldToSQLFragment(f, CURSOR_ROW_TABLE_ALIAS),
+    );
 
     // Build SELECT fields for subquery
     const rightSideSubquery = sql`
@@ -572,26 +611,20 @@ export class EntityKnexDataManager<
   private buildILikeConditions(
     search: DataManagerSearchSpecification<TFields>,
     tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
-  ): SQLFragment[] {
+  ): readonly SQLFragment[] {
     return search.fields.map((field) => {
-      const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, field);
-      const fieldIdentifier = tableAlias
-        ? sql`${raw(tableAlias)}.${identifier(dbField)}`
-        : sql`${identifier(dbField)}`;
-      return sql`${fieldIdentifier} ILIKE ${'%' + EntityKnexDataManager.escapeILikePattern(search.term) + '%'}`;
+      const fieldFragment = this.resolveSearchFieldToSQLFragment(field, tableAlias);
+      return sql`${fieldFragment} ILIKE ${'%' + EntityKnexDataManager.escapeILikePattern(search.term) + '%'}`;
     });
   }
 
   private buildTrigramSimilarityExpressions(
     search: DataManagerSearchSpecification<TFields>,
     tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
-  ): SQLFragment[] {
+  ): readonly SQLFragment[] {
     return search.fields.map((field) => {
-      const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, field);
-      const fieldIdentifier = tableAlias
-        ? sql`${raw(tableAlias)}.${identifier(dbField)}`
-        : sql`${identifier(dbField)}`;
-      return sql`similarity(${fieldIdentifier}, ${search.term})`;
+      const fieldFragment = this.resolveSearchFieldToSQLFragment(field, tableAlias);
+      return sql`similarity(${fieldFragment}, ${search.term})`;
     });
   }
 
@@ -631,10 +664,7 @@ export class EntityKnexDataManager<
     // Build extra order by fields
     const extraOrderByFields = search.extraOrderByFields;
     const extraFields =
-      extraOrderByFields?.map((f) => {
-        const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, f);
-        return sql`${identifier(dbField)}`;
-      }) ?? [];
+      extraOrderByFields?.map((f) => this.resolveSearchFieldToSQLFragment(f)) ?? [];
 
     // Build left side of comparison (current row's computed values)
     const leftSide = SQLFragment.join(
@@ -655,10 +685,9 @@ export class EntityKnexDataManager<
     );
 
     const cursorExtraFields =
-      extraOrderByFields?.map((f) => {
-        const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, f);
-        return sql`${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(dbField)}`;
-      }) ?? [];
+      extraOrderByFields?.map((f) =>
+        this.resolveSearchFieldToSQLFragment(f, CURSOR_ROW_TABLE_ALIAS),
+      ) ?? [];
 
     // Build SELECT fields for subquery
     const selectFields = [
@@ -679,7 +708,7 @@ export class EntityKnexDataManager<
 
   private buildSearchConditionAndOrderBy(search: DataManagerSearchSpecification<TFields>): {
     searchWhere: SQLFragment;
-    searchOrderByClauses: DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'>[];
+    searchOrderByClauses: readonly DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'>[];
   } {
     switch (search.strategy) {
       case PaginationStrategy.ILIKE_SEARCH: {
@@ -689,7 +718,7 @@ export class EntityKnexDataManager<
         const searchOrderByClauses: PostgresOrderByClause<TFields>[] = [
           ...search.fields.map(
             (field): PostgresOrderByClause<TFields> => ({
-              fieldName: field,
+              fieldFragment: this.resolveSearchFieldToSQLFragment(field),
               order: OrderByOrdering.ASCENDING,
             }),
           ),
@@ -734,7 +763,7 @@ export class EntityKnexDataManager<
             order: OrderByOrdering.DESCENDING,
           },
           ...(search.extraOrderByFields ?? []).map((field) => ({
-            fieldName: field,
+            fieldFragment: this.resolveSearchFieldToSQLFragment(field),
             order: OrderByOrdering.DESCENDING,
           })),
           {
