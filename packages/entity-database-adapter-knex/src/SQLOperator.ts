@@ -180,7 +180,7 @@ export class SQLIdentifier {
  * Helper for raw SQL that should not be parameterized
  * WARNING: Only use this with trusted input to avoid SQL injection
  */
-export class SQLRaw {
+export class SQLUnsafeRaw {
   constructor(public readonly rawSql: string) {}
 }
 
@@ -207,14 +207,14 @@ export function identifier(name: string): SQLIdentifier {
  * ```ts
  * // Dynamic column names
  * const sortColumn = 'created_at';
- * const query = sql`ORDER BY ${raw(sortColumn)} DESC`;
+ * const query = sql`ORDER BY ${unsafeRaw(sortColumn)} DESC`;
  *
  * // Dynamic SQL expressions
- * const query = sql`WHERE ${raw('EXTRACT(year FROM created_at)')} = ${2024}`;
+ * const query = sql`WHERE ${unsafeRaw('EXTRACT(year FROM created_at)')} = ${2024}`;
  * ```
  */
-export function raw(sqlString: string): SQLRaw {
-  return new SQLRaw(sqlString);
+export function unsafeRaw(sqlString: string): SQLUnsafeRaw {
+  return new SQLUnsafeRaw(sqlString);
 }
 
 /**
@@ -228,7 +228,7 @@ export function raw(sqlString: string): SQLRaw {
  */
 export function sql(
   strings: TemplateStringsArray,
-  ...values: readonly (SupportedSQLValue | SQLFragment | SQLIdentifier | SQLRaw)[]
+  ...values: readonly (SupportedSQLValue | SQLFragment | SQLIdentifier | SQLUnsafeRaw)[]
 ): SQLFragment {
   let sqlString = '';
   const bindings: SQLBinding[] = [];
@@ -246,7 +246,7 @@ export function sql(
         // Handle identifiers (table/column names) with ?? placeholder
         sqlString += '??';
         bindings.push({ type: 'identifier', name: value.name });
-      } else if (value instanceof SQLRaw) {
+      } else if (value instanceof SQLUnsafeRaw) {
         // Handle raw SQL (WARNING: no parameterization)
         sqlString += value.rawSql;
       } else if (Array.isArray(value)) {

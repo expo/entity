@@ -13,7 +13,7 @@ import { setTimeout } from 'timers/promises';
 import { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader';
 import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
-import { raw, sql, SQLFragmentHelpers } from '../SQLOperator';
+import { unsafeRaw, sql, SQLFragmentHelpers } from '../SQLOperator';
 import {
   PostgresTestEntity,
   PostgresTestEntityFields,
@@ -631,8 +631,8 @@ describe('postgres entity integration', () => {
       // Test raw SQL for dynamic column names with orderBySQL
       const sortColumn = 'name';
       const rawResults = await PostgresTestEntity.knexLoader(vc1)
-        .loadManyBySQL(sql`${raw('name')} LIKE ${'RawTest%'}`)
-        .orderBySQL(sql`${raw(sortColumn)}`, OrderByOrdering.DESCENDING)
+        .loadManyBySQL(sql`${unsafeRaw('name')} LIKE ${'RawTest%'}`)
+        .orderBySQL(sql`${unsafeRaw(sortColumn)}`, OrderByOrdering.DESCENDING)
         .executeAsync();
 
       expect(rawResults).toHaveLength(3);
@@ -651,7 +651,7 @@ describe('postgres entity integration', () => {
           END`,
           OrderByOrdering.ASCENDING,
         )
-        .orderBySQL(sql`${raw('name')}`, OrderByOrdering.ASCENDING)
+        .orderBySQL(sql`${unsafeRaw('name')}`, OrderByOrdering.ASCENDING)
         .executeAsync();
 
       expect(priorityResults).toHaveLength(3);
@@ -662,7 +662,7 @@ describe('postgres entity integration', () => {
       // Test raw SQL with complex expressions - using CASE statement
       const complexExpression = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(
-          sql`${raw('CASE WHEN has_a_cat THEN 1 ELSE 0 END')} + ${raw(
+          sql`${unsafeRaw('CASE WHEN has_a_cat THEN 1 ELSE 0 END')} + ${unsafeRaw(
             'CASE WHEN has_a_dog THEN 1 ELSE 0 END',
           )} >= 1 AND name LIKE ${'RawTest%'}`,
         )
@@ -766,7 +766,7 @@ describe('postgres entity integration', () => {
       // Test 1: Simple orderBySQL with raw column
       const simpleOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
-        .orderBySQL(sql`${raw('name')}`, OrderByOrdering.DESCENDING)
+        .orderBySQL(sql`${unsafeRaw('name')}`, OrderByOrdering.DESCENDING)
         .executeAsync();
 
       expect(simpleOrder).toHaveLength(4);
@@ -790,7 +790,7 @@ describe('postgres entity integration', () => {
             ELSE ${priority4}
           END`,
         )
-        .orderBySQL(sql`${raw('name')}`, OrderByOrdering.ASCENDING)
+        .orderBySQL(sql`${unsafeRaw('name')}`, OrderByOrdering.ASCENDING)
         .executeAsync();
 
       expect(caseOrder).toHaveLength(4);
@@ -803,7 +803,7 @@ describe('postgres entity integration', () => {
       const arrayLengthOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
         .orderBySQL(sql`COALESCE(array_length(string_array, 1), 0)`, OrderByOrdering.DESCENDING)
-        .orderBySQL(sql`${raw('name')}`, OrderByOrdering.ASCENDING)
+        .orderBySQL(sql`${unsafeRaw('name')}`, OrderByOrdering.ASCENDING)
         .executeAsync();
 
       expect(arrayLengthOrder).toHaveLength(4);
@@ -815,7 +815,7 @@ describe('postgres entity integration', () => {
       // Test 4: Combining orderBySQL with limit and offset
       const limitedOrder = await PostgresTestEntity.knexLoader(vc1)
         .loadManyBySQL(sql`name LIKE ${'OrderTest%'}`)
-        .orderBySQL(sql`${raw('name')}`, OrderByOrdering.ASCENDING)
+        .orderBySQL(sql`${unsafeRaw('name')}`, OrderByOrdering.ASCENDING)
         .limit(2)
         .offset(1)
         .executeAsync();
@@ -1017,7 +1017,7 @@ describe('postgres entity integration', () => {
         PostgresTestEntity.knexLoader(vc1).loadManyByFieldEqualityConjunctionAsync([], {
           orderBy: [
             {
-              fieldFragment: sql`${raw('name')} ASC`,
+              fieldFragment: sql`${unsafeRaw('name')} ASC`,
               order: OrderByOrdering.ASCENDING,
             },
           ],
@@ -1028,7 +1028,7 @@ describe('postgres entity integration', () => {
         PostgresTestEntity.knexLoader(vc1).loadManyByFieldEqualityConjunctionAsync([], {
           orderBy: [
             {
-              fieldFragment: sql`${raw('name')} desc`,
+              fieldFragment: sql`${unsafeRaw('name')} desc`,
               order: OrderByOrdering.DESCENDING,
             },
           ],
