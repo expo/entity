@@ -28,16 +28,19 @@ interface DataManagerStandardSpecification<TFields extends Record<string, any>> 
 
 type DataManagerFieldNameConstructorFn<TFields extends Record<string, any>> = (
   fieldName: keyof TFields,
-) => SQLFragment;
+) => SQLFragment<TFields>;
 
 type DataManagerSearchFieldSQLFragmentFnSpecification<TFields extends Record<string, any>> = {
   fieldConstructor: (
     getFragmentForFieldName: DataManagerFieldNameConstructorFn<TFields>,
-  ) => SQLFragment;
+  ) => SQLFragment<TFields>;
 };
 
 function isDataManagerSearchFieldSQLFragmentFnSpecification<TFields extends Record<string, any>>(
-  obj: keyof TFields | SQLFragment | DataManagerSearchFieldSQLFragmentFnSpecification<TFields>,
+  obj:
+    | keyof TFields
+    | SQLFragment<TFields>
+    | DataManagerSearchFieldSQLFragmentFnSpecification<TFields>,
 ): obj is DataManagerSearchFieldSQLFragmentFnSpecification<TFields> {
   return typeof obj === 'object' && obj !== null && 'fieldConstructor' in obj;
 }
@@ -74,7 +77,7 @@ type DataManagerPaginationSpecification<TFields extends Record<string, any>> =
   | DataManagerSearchSpecification<TFields>;
 
 interface BaseUnifiedPaginationArgs<TFields extends Record<string, any>> {
-  where?: SQLFragment;
+  where?: SQLFragment<TFields>;
   pagination: DataManagerPaginationSpecification<TFields>;
 }
 
@@ -82,14 +85,18 @@ interface ForwardUnifiedPaginationArgs<
   TFields extends Record<string, any>,
 > extends BaseUnifiedPaginationArgs<TFields> {
   first: number;
+  last?: never;
+  before?: never;
   after?: string;
 }
 
 interface BackwardUnifiedPaginationArgs<
   TFields extends Record<string, any>,
 > extends BaseUnifiedPaginationArgs<TFields> {
+  first?: never;
   last: number;
   before?: string;
+  after?: never;
 }
 
 type LoadPageArgs<TFields extends Record<string, any>> =
@@ -130,13 +137,13 @@ enum PaginationDirection {
 const CURSOR_ROW_TABLE_ALIAS = 'cursor_row';
 
 interface PaginationProvider<TFields extends Record<string, any>, TIDField extends keyof TFields> {
-  whereClause: SQLFragment | undefined;
+  whereClause: SQLFragment<TFields> | undefined;
   buildOrderBy: (direction: PaginationDirection) => readonly PostgresOrderByClause<TFields>[];
   buildCursorCondition: (
     decodedCursorId: TFields[TIDField],
     direction: PaginationDirection,
     orderByClauses: readonly PostgresOrderByClause<TFields>[],
-  ) => SQLFragment;
+  ) => SQLFragment<TFields>;
 }
 
 /**
@@ -220,7 +227,7 @@ export class EntityKnexDataManager<
 
   async loadManyBySQLFragmentAsync(
     queryContext: EntityQueryContext,
-    sqlFragment: SQLFragment,
+    sqlFragment: SQLFragment<TFields>,
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
@@ -269,7 +276,7 @@ export class EntityKnexDataManager<
       const idField = this.entityConfiguration.idField;
       const augmentedOrderByClauses = this.augmentOrderByIfNecessary(pagination.orderBy, idField);
 
-      const fieldsToUseInPostgresTupleCursor: readonly (keyof TFields | SQLFragment)[] =
+      const fieldsToUseInPostgresTupleCursor: readonly (keyof TFields | SQLFragment<TFields>)[] =
         augmentedOrderByClauses.map((order) =>
           'fieldName' in order ? order.fieldName : order.fieldFragment,
         );
@@ -384,7 +391,7 @@ export class EntityKnexDataManager<
 
     // Validate pagination arguments
     const maxPageSize = this.databaseAdapter.paginationMaxPageSize;
-    const isForward = 'first' in args;
+    const isForward = 'first' in args && args.first !== undefined;
     if (isForward) {
       assert(
         Number.isInteger(args.first) && args.first > 0,
@@ -475,9 +482,9 @@ export class EntityKnexDataManager<
   }
 
   private combineWhereConditions(
-    baseWhere: SQLFragment | undefined,
-    cursorCondition: SQLFragment | null,
-  ): SQLFragment {
+    baseWhere: SQLFragment<TFields> | undefined,
+    cursorCondition: SQLFragment<TFields> | null,
+  ): SQLFragment<TFields> {
     const conditions = [baseWhere, cursorCondition].filter((it) => !!it);
     if (conditions.length === 0) {
       return sql`1 = 1`;
@@ -575,9 +582,12 @@ export class EntityKnexDataManager<
   }
 
   private resolveSearchFieldToSQLFragment(
-    field: keyof TFields | SQLFragment | DataManagerSearchFieldSQLFragmentFnSpecification<TFields>,
+    field:
+      | keyof TFields
+      | SQLFragment<TFields>
+      | DataManagerSearchFieldSQLFragmentFnSpecification<TFields>,
     tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
-  ): SQLFragment {
+  ): SQLFragment<TFields> {
     if (field instanceof SQLFragment) {
       return field;
     }
@@ -601,11 +611,11 @@ export class EntityKnexDataManager<
     decodedExternalCursorEntityID: TFields[TIDField],
     fieldsToUseInPostgresTupleCursor: readonly (
       | keyof TFields
-      | SQLFragment
+      | SQLFragment<TFields>
       | DataManagerSearchFieldSQLFragmentFnSpecification<TFields>
     )[],
     effectiveOrdering: OrderByOrdering,
-  ): SQLFragment {
+  ): SQLFragment<TFields> {
     // We build a tuple comparison for fieldsToUseInPostgresTupleCursor fields of the
     // entity identified by the external cursor to ensure correct pagination behavior
     // even in cases where multiple rows have the same value all fields other than id.
@@ -645,7 +655,7 @@ export class EntityKnexDataManager<
   private buildILikeConditions(
     search: DataManagerSearchSpecification<TFields>,
     tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
-  ): readonly SQLFragment[] {
+  ): readonly SQLFragment<TFields>[] {
     return search.fields.map((field) => {
       const fieldFragment = this.resolveSearchFieldToSQLFragment(field, tableAlias);
       return sql`${fieldFragment} ILIKE ${'%' + EntityKnexDataManager.escapeILikePattern(search.term) + '%'}`;
@@ -655,7 +665,7 @@ export class EntityKnexDataManager<
   private buildTrigramSimilarityExpressions(
     search: DataManagerSearchSpecification<TFields>,
     tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
-  ): readonly SQLFragment[] {
+  ): readonly SQLFragment<TFields>[] {
     return search.fields.map((field) => {
       const fieldFragment = this.resolveSearchFieldToSQLFragment(field, tableAlias);
       return sql`similarity(${fieldFragment}, ${search.term})`;
@@ -665,7 +675,7 @@ export class EntityKnexDataManager<
   private buildTrigramExactMatchCaseExpression(
     search: DataManagerSearchSpecification<TFields>,
     tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
-  ): SQLFragment {
+  ): SQLFragment<TFields> {
     const ilikeConditions = this.buildILikeConditions(search, tableAlias);
     return sql`CASE WHEN ${SQLFragmentHelpers.or(...ilikeConditions)} THEN 1 ELSE 0 END`;
   }
@@ -673,7 +683,7 @@ export class EntityKnexDataManager<
   private buildTrigramSimilarityGreatestExpression(
     search: DataManagerSearchSpecification<TFields>,
     tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
-  ): SQLFragment {
+  ): SQLFragment<TFields> {
     const similarityExprs = this.buildTrigramSimilarityExpressions(search, tableAlias);
     return sql`GREATEST(${SQLFragment.joinWithCommaSeparator(...similarityExprs)})`;
   }
@@ -682,7 +692,7 @@ export class EntityKnexDataManager<
     search: DataManagerTrigramSearchSpecification<TFields>,
     decodedExternalCursorEntityID: TFields[TIDField],
     direction: PaginationDirection,
-  ): SQLFragment {
+  ): SQLFragment<TFields> {
     // For TRIGRAM search, we compute the similarity values using a subquery, similar to normal cursor.
     // If the cursor entity has been deleted, the subquery returns no rows and the
     // comparison evaluates to NULL, filtering out all results (empty page).
@@ -726,7 +736,7 @@ export class EntityKnexDataManager<
       ) ?? [];
 
     // Build SELECT fields for subquery
-    const selectFields = [
+    const selectFields: SQLFragment<TFields>[] = [
       cursorExactMatchExpr,
       cursorSimilarityExpr,
       ...cursorExtraFields,
@@ -743,7 +753,7 @@ export class EntityKnexDataManager<
   }
 
   private buildSearchConditionAndOrderBy(search: DataManagerSearchSpecification<TFields>): {
-    searchWhere: SQLFragment;
+    searchWhere: SQLFragment<TFields>;
     searchOrderByClauses: readonly DistributiveOmit<PostgresOrderByClause<TFields>, 'nulls'>[];
   } {
     switch (search.strategy) {

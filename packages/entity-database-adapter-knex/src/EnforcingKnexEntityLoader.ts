@@ -168,7 +168,7 @@ export class EnforcingKnexEntityLoader<
    * ```
    */
   loadManyBySQL(
-    fragment: SQLFragment,
+    fragment: SQLFragment<Pick<TFields, TSelectedFields>>,
     modifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> = {},
   ): EnforcingSQLQueryBuilder<
     TFields,
@@ -251,7 +251,7 @@ export class EnforcingSQLQueryBuilder<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    sqlFragment: SQLFragment,
+    sqlFragment: SQLFragment<Pick<TFields, TSelectedFields>>,
     modifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields>,
   ) {
     super(sqlFragment, modifiers);
