@@ -1,33 +1,9 @@
 import invariant from 'invariant';
 
 import { EntityConfiguration } from '../EntityConfiguration';
-import { IEntityCacheAdapter } from '../IEntityCacheAdapter';
-import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
+import { IEntityLoadKey, IEntityLoadValue } from '../EntityLoadInterfaces';
+import { CacheStatus, IEntityCacheAdapter } from '../IEntityCacheAdapter';
 import { filterMap } from '../utils/collections/maps';
-
-/**
- * @internal
- */
-export enum CacheStatus {
-  HIT,
-  MISS,
-  NEGATIVE,
-}
-
-/**
- * @internal
- */
-export type CacheLoadResult<TFields extends Record<string, any>> =
-  | {
-      status: CacheStatus.HIT;
-      item: Readonly<TFields>;
-    }
-  | {
-      status: CacheStatus.MISS;
-    }
-  | {
-      status: CacheStatus.NEGATIVE;
-    };
 
 /**
  * A read-through entity cache is responsible for coordinating EntityDatabaseAdapter and

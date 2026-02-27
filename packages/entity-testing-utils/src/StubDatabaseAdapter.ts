@@ -1,14 +1,16 @@
 import {
   EntityConfiguration,
   EntityDatabaseAdapter,
-  FieldTransformerMap,
   IntField,
   StringField,
   computeIfAbsent,
-  getDatabaseFieldForEntityField,
   mapMap,
-  transformFieldsToDatabaseObject,
 } from '@expo/entity';
+import {
+  type FieldTransformerMap,
+  getDatabaseFieldForEntityField,
+  transformFieldsToDatabaseObject,
+} from '@expo/entity/internal';
 import invariant from 'invariant';
 import { v7 as uuidv7 } from 'uuid';
 

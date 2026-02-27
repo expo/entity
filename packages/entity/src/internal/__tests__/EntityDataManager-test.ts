@@ -31,7 +31,7 @@ import {
 } from '../../utils/__testfixtures__/TestEntity';
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder';
 import { EntityDataManager } from '../EntityDataManager';
-import { EntityLoadMethodType } from '../EntityLoadInterfaces';
+import { EntityLoadMethodType } from '../../EntityLoadInterfaces';
 import { ReadThroughEntityCache } from '../ReadThroughEntityCache';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../SingleFieldHolder';
 

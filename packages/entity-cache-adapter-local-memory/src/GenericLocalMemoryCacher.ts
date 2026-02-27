@@ -1,10 +1,10 @@
 import {
-  CacheLoadResult,
-  CacheStatus,
   EntityConfiguration,
   IEntityGenericCacher,
-  IEntityLoadKey,
-  IEntityLoadValue,
+  type CacheLoadResult,
+  CacheStatus,
+  type IEntityLoadKey,
+  type IEntityLoadValue,
 } from '@expo/entity';
 
 // Sentinel value we store in local memory to negatively cache a database miss.

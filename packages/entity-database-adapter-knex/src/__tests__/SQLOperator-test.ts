@@ -1,4 +1,4 @@
-import { getDatabaseFieldForEntityField } from '@expo/entity';
+import { getDatabaseFieldForEntityField } from '@expo/entity/internal';
 import { describe, expect, it } from '@jest/globals';
 
 import {

@@ -1,7 +1,22 @@
-/* c8 ignore start - interface only */
+import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
 
-import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
-import { CacheLoadResult } from './internal/ReadThroughEntityCache';
+export enum CacheStatus {
+  HIT,
+  MISS,
+  NEGATIVE,
+}
+
+export type CacheLoadResult<TFields extends Record<string, any>> =
+  | {
+      status: CacheStatus.HIT;
+      item: Readonly<TFields>;
+    }
+  | {
+      status: CacheStatus.MISS;
+    }
+  | {
+      status: CacheStatus.NEGATIVE;
+    };
 
 /**
  * A cache adapter is an interface by which objects can be
@@ -69,5 +84,3 @@ export interface IEntityCacheAdapter<
     values: readonly TLoadValue[],
   ): Promise<void>;
 }
-
-/* c8 ignore stop - interface only */

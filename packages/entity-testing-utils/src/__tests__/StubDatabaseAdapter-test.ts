@@ -1,10 +1,10 @@
+import { EntityQueryContext } from '@expo/entity';
 import {
   CompositeFieldHolder,
   CompositeFieldValueHolder,
-  EntityQueryContext,
   SingleFieldHolder,
   SingleFieldValueHolder,
-} from '@expo/entity';
+} from '@expo/entity/internal';
 import { describe, expect, it, jest } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 import { validate, version } from 'uuid';

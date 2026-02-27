@@ -1,13 +1,12 @@
 import {
-  CacheLoadResult,
-  CacheStatus,
   EntityConfiguration,
   IEntityGenericCacher,
-  IEntityLoadKey,
-  IEntityLoadValue,
-  transformCacheObjectToFields,
-  transformFieldsToCacheObject,
+  type CacheLoadResult,
+  CacheStatus,
+  type IEntityLoadKey,
+  type IEntityLoadValue,
 } from '@expo/entity';
+import { transformCacheObjectToFields, transformFieldsToCacheObject } from '@expo/entity/internal';
 
 import { redisTransformerMap } from './RedisCommon';
 import { wrapNativeRedisCallAsync } from './errors/wrapNativeRedisCallAsync';

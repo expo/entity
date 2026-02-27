@@ -1,4 +1,8 @@
-import { SingleFieldHolder, SingleFieldValueHolder, SingleFieldValueHolderMap } from '@expo/entity';
+import {
+  SingleFieldHolder,
+  SingleFieldValueHolder,
+  SingleFieldValueHolderMap,
+} from '@expo/entity/internal';
 import { describe, expect, it } from '@jest/globals';
 
 import {

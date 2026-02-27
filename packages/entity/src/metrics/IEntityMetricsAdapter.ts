@@ -2,7 +2,7 @@ import {
   EntityAuthorizationAction,
   EntityPrivacyPolicyEvaluationMode,
 } from '../EntityPrivacyPolicy';
-import { EntityLoadMethodType } from '../internal/EntityLoadInterfaces';
+import { EntityLoadMethodType } from '../EntityLoadInterfaces';
 
 export enum EntityMetricsLoadType {
   LOAD_MANY,

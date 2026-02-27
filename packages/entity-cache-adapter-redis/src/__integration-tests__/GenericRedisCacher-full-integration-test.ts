@@ -1,11 +1,10 @@
+import { GenericEntityCacheAdapter, ViewerContext } from '@expo/entity';
 import {
   CompositeFieldHolder,
   CompositeFieldValueHolder,
-  GenericEntityCacheAdapter,
   SingleFieldHolder,
   SingleFieldValueHolder,
-  ViewerContext,
-} from '@expo/entity';
+} from '@expo/entity/internal';
 import { enforceAsyncResult } from '@expo/results';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import Redis from 'ioredis';

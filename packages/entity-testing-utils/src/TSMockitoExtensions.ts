@@ -1,10 +1,10 @@
+import { SerializableKeyMap } from '@expo/entity';
 import {
-  SerializableKeyMap,
   CompositeFieldHolder,
   CompositeFieldValueHolder,
   SingleFieldHolder,
   SingleFieldValueHolder,
-} from '@expo/entity';
+} from '@expo/entity/internal';
 import isEqualWith from 'lodash/isEqualWith';
 import { Matcher } from 'ts-mockito/lib/matcher/type/Matcher';
 

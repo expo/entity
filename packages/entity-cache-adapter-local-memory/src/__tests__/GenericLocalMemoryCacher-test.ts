@@ -2,11 +2,13 @@ import {
   CacheStatus,
   EntityConfiguration,
   GenericEntityCacheAdapter,
+  UUIDField,
+} from '@expo/entity';
+import {
   SingleFieldHolder,
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
-  UUIDField,
-} from '@expo/entity';
+} from '@expo/entity/internal';
 import { TTLCache } from '@isaacs/ttlcache';
 import { describe, expect, it } from '@jest/globals';
 

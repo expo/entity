@@ -10,6 +10,16 @@
   ],
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/src/index.d.ts",
+      "default": "./build/src/index.js"
+    },
+    "./internal": {
+      "types": "./build/src/internal.d.ts",
+      "default": "./build/src/internal.js"
+    }
+  },
   "scripts": {
     "build": "tsc --build",
     "prepack": "rm -rf build && yarn build",

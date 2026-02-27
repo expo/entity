@@ -3,7 +3,7 @@ import {
   type IEntityMetricsAdapter,
   NoOpEntityMetricsAdapter,
 } from '@expo/entity';
-import { InMemoryFullCacheStubCacheAdapterProvider } from '@expo/entity-testing-utils/build/src/StubCacheAdapter.js';
+import { InMemoryFullCacheStubCacheAdapterProvider } from '@expo/entity-testing-utils';
 
 import { InMemoryDatabaseAdapterProvider } from './adapters/InMemoryDatabaseAdapter.ts';
 import { InMemoryQueryContextProvider } from './adapters/InMemoryQueryContextProvider.ts';

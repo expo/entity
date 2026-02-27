@@ -1,11 +1,10 @@
 import {
-  CacheStatus,
   GenericEntityCacheAdapter,
   IEntityGenericCacher,
-  SingleFieldHolder,
-  SingleFieldValueHolder,
   ViewerContext,
+  CacheStatus,
 } from '@expo/entity';
+import { SingleFieldHolder, SingleFieldValueHolder } from '@expo/entity/internal';
 import { describe, expect, it } from '@jest/globals';
 import { v4 as uuidv4 } from 'uuid';
 

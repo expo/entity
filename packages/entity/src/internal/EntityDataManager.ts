@@ -9,7 +9,7 @@ import {
 } from '../EntityQueryContext';
 import { EntityQueryContextProvider } from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
-import { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces';
+import { IEntityLoadKey, IEntityLoadValue, LoadPair } from '../EntityLoadInterfaces';
 import { ReadThroughEntityCache } from './ReadThroughEntityCache';
 import {
   timeAndLogLoadMapEventAsync,

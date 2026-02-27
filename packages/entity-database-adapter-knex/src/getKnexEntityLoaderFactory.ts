@@ -6,9 +6,9 @@ import {
   ViewerContext,
 } from '@expo/entity';
 
-import { KnexEntityLoaderFactory } from '../KnexEntityLoaderFactory';
-import { getKnexDataManager } from './getKnexDataManager';
-import { computeIfAbsentInWeakMap } from './weakMaps';
+import { KnexEntityLoaderFactory } from './KnexEntityLoaderFactory';
+import { getKnexDataManager } from './internal/getKnexDataManager';
+import { computeIfAbsentInWeakMap } from './internal/weakMaps';
 
 const knexEntityLoaderFactoryCache = new WeakMap<
   EntityCompanion<any, any, any, any, any, any>,

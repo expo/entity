@@ -3,12 +3,12 @@ import nullthrows from 'nullthrows';
 
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
 import { EntityConstructionUtils } from '../EntityConstructionUtils';
+import { IEntityLoadKey, IEntityLoadValue } from '../EntityLoadInterfaces';
 import { EntitySecondaryCacheLoader } from '../EntitySecondaryCacheLoader';
 import { GenericSecondaryEntityCache } from '../GenericSecondaryEntityCache';
+import { CacheLoadResult, CacheStatus } from '../IEntityCacheAdapter';
 import { IEntityGenericCacher } from '../IEntityGenericCacher';
 import { ViewerContext } from '../ViewerContext';
-import { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces';
-import { CacheLoadResult, CacheStatus } from '../internal/ReadThroughEntityCache';
 import {
   TestEntity,
   TestEntityPrivacyPolicy,

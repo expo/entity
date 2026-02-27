@@ -1,10 +1,5 @@
-import {
-  CacheStatus,
-  EntityConfiguration,
-  SingleFieldHolder,
-  SingleFieldValueHolder,
-  UUIDField,
-} from '@expo/entity';
+import { CacheStatus, EntityConfiguration, UUIDField } from '@expo/entity';
+import { SingleFieldHolder, SingleFieldValueHolder } from '@expo/entity/internal';
 import { describe, expect, it } from '@jest/globals';
 import { Pipeline, Redis } from 'ioredis';
 import { anything, instance, mock, verify, when } from 'ts-mockito';

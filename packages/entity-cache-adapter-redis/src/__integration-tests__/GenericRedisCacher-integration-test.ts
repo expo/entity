@@ -1,4 +1,4 @@
-import { CacheStatus, ViewerContext } from '@expo/entity';
+import { ViewerContext, CacheStatus } from '@expo/entity';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import Redis from 'ioredis';
 import { URL } from 'url';

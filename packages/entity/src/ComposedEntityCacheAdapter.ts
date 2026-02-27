@@ -1,8 +1,7 @@
 import nullthrows from 'nullthrows';
 
-import { IEntityCacheAdapter } from './IEntityCacheAdapter';
-import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
-import { CacheLoadResult, CacheStatus } from './internal/ReadThroughEntityCache';
+import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
+import { CacheLoadResult, CacheStatus, IEntityCacheAdapter } from './IEntityCacheAdapter';
 
 /**
  * A IEntityCacheAdapter that composes other IEntityCacheAdapter instances.

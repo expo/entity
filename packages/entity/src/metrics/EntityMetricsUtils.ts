@@ -4,7 +4,7 @@ import {
   EntityMetricsMutationType,
   IEntityMetricsAdapter,
 } from './IEntityMetricsAdapter';
-import { IEntityLoadValue } from '../internal/EntityLoadInterfaces';
+import { IEntityLoadValue } from '../EntityLoadInterfaces';
 import { reduceMap } from '../utils/collections/maps';
 
 export const timeAndLogLoadEventAsync =

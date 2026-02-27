@@ -10,6 +10,12 @@
   ],
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/src/index.d.ts",
+      "default": "./build/src/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc --build",
     "prepack": "rm -rf build && yarn build",

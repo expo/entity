@@ -12,7 +12,7 @@ import {
   IEntityLoadKey,
   IEntityLoadValue,
   LoadValueMap,
-} from '../internal/EntityLoadInterfaces';
+} from '../EntityLoadInterfaces';
 
 declare const CompositeFieldHolderSerializedBrand: unique symbol;
 

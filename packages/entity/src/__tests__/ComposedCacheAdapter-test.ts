@@ -3,9 +3,8 @@ import { describe, expect, it } from '@jest/globals';
 import { ComposedEntityCacheAdapter } from '../ComposedEntityCacheAdapter';
 import { EntityConfiguration } from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
-import { IEntityCacheAdapter } from '../IEntityCacheAdapter';
-import { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces';
-import { CacheLoadResult, CacheStatus } from '../internal/ReadThroughEntityCache';
+import { IEntityLoadKey, IEntityLoadValue } from '../EntityLoadInterfaces';
+import { CacheLoadResult, CacheStatus, IEntityCacheAdapter } from '../IEntityCacheAdapter';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
 
 type BlahFields = {

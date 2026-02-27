@@ -1,9 +1,8 @@
+import { EntityDatabaseAdapter, EntityQueryContext } from '@expo/entity';
 import {
-  EntityDatabaseAdapter,
-  EntityQueryContext,
   getDatabaseFieldForEntityField,
   transformDatabaseObjectToFields,
-} from '@expo/entity';
+} from '@expo/entity/internal';
 import { Knex } from 'knex';
 
 import { SQLFragment } from './SQLOperator';

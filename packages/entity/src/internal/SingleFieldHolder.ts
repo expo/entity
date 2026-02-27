@@ -7,7 +7,7 @@ import {
   IEntityLoadKey,
   IEntityLoadValue,
   LoadValueMap,
-} from './EntityLoadInterfaces';
+} from '../EntityLoadInterfaces';
 
 /**
  * A load key that represents a single field (fieldName) on an entity.

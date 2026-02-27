@@ -1,9 +1,9 @@
+import { EntityConfiguration } from '@expo/entity';
 import {
-  EntityConfiguration,
-  FieldTransformer,
-  FieldTransformerMap,
+  type FieldTransformer,
+  type FieldTransformerMap,
   getDatabaseFieldForEntityField,
-} from '@expo/entity';
+} from '@expo/entity/internal';
 import { Knex } from 'knex';
 
 import {

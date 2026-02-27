@@ -4,9 +4,9 @@ import {
   EntityMetricsLoadType,
   IEntityMetricsAdapter,
   EntityConfiguration,
-  getDatabaseFieldForEntityField,
   EntityDatabaseAdapterPaginationCursorInvalidError,
 } from '@expo/entity';
+import { getDatabaseFieldForEntityField } from '@expo/entity/internal';
 import assert from 'assert';
 
 import {

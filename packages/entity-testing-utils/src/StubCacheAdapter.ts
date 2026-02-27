@@ -2,10 +2,10 @@ import {
   EntityConfiguration,
   IEntityCacheAdapter,
   IEntityCacheAdapterProvider,
-  IEntityLoadKey,
-  IEntityLoadValue,
+  type IEntityLoadKey,
+  type IEntityLoadValue,
   CacheStatus,
-  CacheLoadResult,
+  type CacheLoadResult,
 } from '@expo/entity';
 import invariant from 'invariant';
 

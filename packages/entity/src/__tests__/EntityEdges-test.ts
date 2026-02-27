@@ -14,7 +14,7 @@ import {
   EntityPrivacyPolicyEvaluationContext,
 } from '../EntityPrivacyPolicy';
 import { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
-import { CacheStatus } from '../internal/ReadThroughEntityCache';
+import { CacheStatus } from '../IEntityCacheAdapter';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
 import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
 import { InMemoryFullCacheStubCacheAdapter } from '../utils/__testfixtures__/StubCacheAdapter';

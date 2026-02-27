@@ -15,7 +15,7 @@ import {
   transformDatabaseObjectToFields,
   transformFieldsToDatabaseObject,
 } from './internal/EntityFieldTransformationUtils';
-import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
+import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
 
 /**
  * A database adapter is an interface by which entity objects can be

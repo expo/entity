@@ -1,4 +1,5 @@
-import { EntityQueryContext, FieldTransformerMap } from '@expo/entity';
+import { EntityQueryContext } from '@expo/entity';
+import { type FieldTransformerMap } from '@expo/entity/internal';
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 

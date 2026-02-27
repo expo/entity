@@ -1,13 +1,9 @@
+import { computeIfAbsent, EntityConfiguration, IntField, mapMap, StringField } from '@expo/entity';
 import {
-  computeIfAbsent,
-  EntityConfiguration,
-  FieldTransformerMap,
+  type FieldTransformerMap,
   getDatabaseFieldForEntityField,
-  IntField,
-  mapMap,
-  StringField,
   transformFieldsToDatabaseObject,
-} from '@expo/entity';
+} from '@expo/entity/internal';
 import {
   BasePostgresEntityDatabaseAdapter,
   NullsOrdering,

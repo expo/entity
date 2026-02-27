@@ -5,7 +5,7 @@ import { EntityTransactionalQueryContext } from './EntityQueryContext';
 import { ReadonlyEntity } from './ReadonlyEntity';
 import { ViewerContext } from './ViewerContext';
 import { EntityDataManager } from './internal/EntityDataManager';
-import { LoadPair } from './internal/EntityLoadInterfaces';
+import { LoadPair } from './EntityLoadInterfaces';
 import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
 import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 

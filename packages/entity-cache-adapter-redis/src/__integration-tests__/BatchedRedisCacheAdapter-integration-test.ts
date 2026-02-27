@@ -1,11 +1,6 @@
 import { Batcher } from '@expo/batcher';
-import {
-  GenericEntityCacheAdapter,
-  SingleFieldHolder,
-  SingleFieldValueHolder,
-  ViewerContext,
-  zipToMap,
-} from '@expo/entity';
+import { GenericEntityCacheAdapter, ViewerContext, zipToMap } from '@expo/entity';
+import { SingleFieldHolder, SingleFieldValueHolder } from '@expo/entity/internal';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import invariant from 'invariant';
 import Redis from 'ioredis';

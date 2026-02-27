@@ -1,3 +1,4 @@
+import { CacheStatus } from '@expo/entity';
 import {
   CompositeFieldHolder,
   CompositeFieldValueHolder,
@@ -5,8 +6,7 @@ import {
   SingleFieldHolder,
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
-  CacheStatus,
-} from '@expo/entity';
+} from '@expo/entity/internal';
 import { describe, expect, it } from '@jest/globals';
 
 import {

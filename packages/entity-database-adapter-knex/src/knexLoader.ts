@@ -8,7 +8,7 @@ import {
 
 import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
 import { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
-import { getKnexEntityLoaderFactory } from './internal/getKnexEntityLoaderFactory';
+import { getKnexEntityLoaderFactory } from './getKnexEntityLoaderFactory';
 
 /**
  * Vend knex loader for loading entities via non-data-loader methods in a given query context.

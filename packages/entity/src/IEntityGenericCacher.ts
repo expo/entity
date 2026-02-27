@@ -1,7 +1,7 @@
 /* c8 ignore start - interface only */
 
-import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
-import { CacheLoadResult } from './internal/ReadThroughEntityCache';
+import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
+import { CacheLoadResult } from './IEntityCacheAdapter';
 
 /**
  * A generic cacher stores and loads key-value pairs. It also supports negative caching - it stores the absence

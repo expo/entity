@@ -3,12 +3,12 @@ import { anything, instance, mock, verify, when } from 'ts-mockito';
 
 import { EntityConfiguration } from '../../EntityConfiguration';
 import { UUIDField } from '../../EntityFields';
-import { IEntityCacheAdapter } from '../../IEntityCacheAdapter';
+import { CacheStatus, IEntityCacheAdapter } from '../../IEntityCacheAdapter';
 import {
   deepEqualEntityAware,
   isEqualWithEntityAware,
 } from '../../utils/__testfixtures__/TSMockitoExtensions';
-import { CacheStatus, ReadThroughEntityCache } from '../ReadThroughEntityCache';
+import { ReadThroughEntityCache } from '../ReadThroughEntityCache';
 import {
   SingleFieldHolder,
   SingleFieldValueHolder,
