@@ -1,4 +1,9 @@
-import { EntityConfiguration, FieldTransformer, FieldTransformerMap } from '@expo/entity';
+import {
+  EntityConfiguration,
+  FieldTransformer,
+  FieldTransformerMap,
+  getDatabaseFieldForEntityField,
+} from '@expo/entity';
 import { Knex } from 'knex';
 
 import {
@@ -119,7 +124,7 @@ export class PostgresEntityDatabaseAdapter<
 
   private applyQueryModifiersToQuery(
     query: Knex.QueryBuilder,
-    querySelectionModifiers: TableQuerySelectionModifiers,
+    querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Knex.QueryBuilder {
     const { orderBy, offset, limit } = querySelectionModifiers;
 
@@ -139,7 +144,9 @@ export class PostgresEntityDatabaseAdapter<
             : '';
           ret = ret.orderByRaw(
             `(${orderBySpecification.columnFragment.sql}) ${orderBySpecification.order}${nullsSuffix}`,
-            orderBySpecification.columnFragment.getKnexBindings(),
+            orderBySpecification.columnFragment.getKnexBindings((fieldName) =>
+              getDatabaseFieldForEntityField(this.entityConfiguration, fieldName),
+            ),
           );
         }
       }
@@ -161,7 +168,7 @@ export class PostgresEntityDatabaseAdapter<
     tableName: string,
     tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
     tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
-    querySelectionModifiers: TableQuerySelectionModifiers,
+    querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Promise<object[]> {
     let query = queryInterface.select().from(tableName);
 
@@ -207,7 +214,7 @@ export class PostgresEntityDatabaseAdapter<
     tableName: string,
     rawWhereClause: string,
     bindings: object | any[],
-    querySelectionModifiers: TableQuerySelectionModifiers,
+    querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Promise<object[]> {
     let query = queryInterface.select().from(tableName).whereRaw(rawWhereClause, bindings);
     query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
@@ -217,13 +224,18 @@ export class PostgresEntityDatabaseAdapter<
   protected async fetchManyBySQLFragmentInternalAsync(
     queryInterface: Knex,
     tableName: string,
-    sqlFragment: SQLFragment,
-    querySelectionModifiers: TableQuerySelectionModifiers,
+    sqlFragment: SQLFragment<TFields>,
+    querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Promise<object[]> {
     let query = queryInterface
       .select()
       .from(tableName)
-      .whereRaw(sqlFragment.sql, sqlFragment.getKnexBindings());
+      .whereRaw(
+        sqlFragment.sql,
+        sqlFragment.getKnexBindings((fieldName) =>
+          getDatabaseFieldForEntityField(this.entityConfiguration, fieldName),
+        ),
+      );
     query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
     return await wrapNativePostgresCallAsync(() => query);
   }

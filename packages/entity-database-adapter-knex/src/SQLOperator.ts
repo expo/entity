@@ -17,29 +17,37 @@ export type SupportedSQLValue =
 /**
  * Types of bindings that can be used in SQL queries.
  */
-export type SQLBinding =
+export type SQLBinding<TFields extends Record<string, any>> =
   | { type: 'value'; value: SupportedSQLValue }
-  | { type: 'identifier'; name: string };
+  | { type: 'identifier'; name: string }
+  | { type: 'entityField'; fieldName: keyof TFields };
 
 /**
  * SQL Fragment class that safely handles parameterized queries.
  */
-export class SQLFragment {
+export class SQLFragment<TFields extends Record<string, any>> {
   constructor(
     public readonly sql: string,
-    public readonly bindings: readonly SQLBinding[],
+    public readonly bindings: readonly SQLBinding<TFields>[],
   ) {}
 
   /**
    * Get bindings in the format expected by Knex.
    * Knex expects a flat array where both identifiers and values are mixed in order.
+   *
+   * @param getColumnForField - function that resolves an entity field name to its database column name
    */
-  getKnexBindings(): readonly (string | SupportedSQLValue)[] {
+  getKnexBindings(
+    getColumnForField: (fieldName: keyof TFields) => string,
+  ): readonly (string | SupportedSQLValue)[] {
     return this.bindings.map((b) => {
-      if (b.type === 'identifier') {
-        return b.name;
-      } else {
-        return b.value;
+      switch (b.type) {
+        case 'entityField':
+          return getColumnForField(b.fieldName);
+        case 'identifier':
+          return b.name;
+        case 'value':
+          return b.value;
       }
     });
   }
@@ -47,7 +55,7 @@ export class SQLFragment {
   /**
    * Combine SQL fragments
    */
-  append(other: SQLFragment): SQLFragment {
+  append(other: SQLFragment<TFields>): SQLFragment<TFields> {
     return joinSQLFragments([this, other], ' ');
   }
 
@@ -58,7 +66,9 @@ export class SQLFragment {
    * @param fragments - Array of SQL fragments to join
    * @returns - A new SQLFragment with the fragments joined by a comma and space
    */
-  static joinWithCommaSeparator(...fragments: readonly SQLFragment[]): SQLFragment {
+  static joinWithCommaSeparator<TFields extends Record<string, any>>(
+    ...fragments: readonly SQLFragment<TFields>[]
+  ): SQLFragment<TFields> {
     return joinSQLFragments(fragments, ', ');
   }
 
@@ -74,7 +84,9 @@ export class SQLFragment {
    * // Generates: "SELECT * FROM users WHERE age > ? ORDER BY name"
    * ```
    */
-  static concat(...fragments: readonly SQLFragment[]): SQLFragment {
+  static concat<TFields extends Record<string, any>>(
+    ...fragments: readonly SQLFragment<TFields>[]
+  ): SQLFragment<TFields> {
     return joinSQLFragments(fragments, ' ');
   }
 
@@ -177,6 +189,14 @@ export class SQLIdentifier {
 }
 
 /**
+ * Helper for referencing entity fields that can be used in SQL queries. This allows for type-safe references to fields of an entity
+ * and does automatic translation to DB field names.
+ */
+export class SQLEntityField<TFields extends Record<string, any>> {
+  constructor(public readonly fieldName: keyof TFields) {}
+}
+
+/**
  * Helper for raw SQL that should not be parameterized
  * WARNING: Only use this with trusted input to avoid SQL injection
  */
@@ -186,7 +206,6 @@ export class SQLUnsafeRaw {
 
 /**
  * Create a SQL identifier (table/column name) that will be escaped by Knex using ??.
- * The escaping is delegated to Knex which will handle it based on the database type.
  *
  * @example
  * ```ts
@@ -197,6 +216,18 @@ export class SQLUnsafeRaw {
  */
 export function identifier(name: string): SQLIdentifier {
   return new SQLIdentifier(name);
+}
+
+/**
+ * Create a reference to an entity field that can be used in SQL queries. This allows for type-safe references to fields of an entity
+ * and does automatic translation to DB field names and will be escaped by Knex using ??.
+ *
+ * @param fieldName - The entity field name to reference.
+ */
+export function entityField<TFields extends Record<string, any>>(
+  fieldName: keyof TFields,
+): SQLEntityField<TFields> {
+  return new SQLEntityField(fieldName);
 }
 
 /**
@@ -226,12 +257,18 @@ export function unsafeRaw(sqlString: string): SQLUnsafeRaw {
  * const query = sql`age >= ${age} AND status = ${'active'}`;
  * ```
  */
-export function sql(
+export function sql<TFields extends Record<string, any>>(
   strings: TemplateStringsArray,
-  ...values: readonly (SupportedSQLValue | SQLFragment | SQLIdentifier | SQLUnsafeRaw)[]
-): SQLFragment {
+  ...values: readonly (
+    | SupportedSQLValue
+    | SQLFragment<TFields>
+    | SQLIdentifier
+    | SQLUnsafeRaw
+    | SQLEntityField<TFields>
+  )[]
+): SQLFragment<TFields> {
   let sqlString = '';
-  const bindings: SQLBinding[] = [];
+  const bindings: SQLBinding<TFields>[] = [];
 
   strings.forEach((string, i) => {
     sqlString += string;
@@ -246,13 +283,17 @@ export function sql(
         // Handle identifiers (table/column names) with ?? placeholder
         sqlString += '??';
         bindings.push({ type: 'identifier', name: value.name });
+      } else if (value instanceof SQLEntityField) {
+        // Handle entity field references by treating them as identifiers
+        sqlString += '??';
+        bindings.push({ type: 'entityField', fieldName: value.fieldName });
       } else if (value instanceof SQLUnsafeRaw) {
         // Handle raw SQL (WARNING: no parameterization)
         sqlString += value.rawSql;
       } else if (Array.isArray(value)) {
         // Handle IN clauses
         sqlString += `(${value.map(() => '?').join(', ')})`;
-        bindings.push(...value.map((v) => ({ type: 'value' as const, value: v })));
+        bindings.push(...value.map((v): SQLBinding<TFields> => ({ type: 'value', value: v })));
       } else {
         // Regular value binding
         sqlString += '?';
@@ -264,6 +305,10 @@ export function sql(
   return new SQLFragment(sqlString, bindings);
 }
 
+type PickSupportedSQLValueKeys<T> = {
+  [K in keyof T]: T[K] extends SupportedSQLValue ? K : never;
+}[keyof T];
+
 /**
  * Common SQL helper functions for building queries
  */
@@ -273,28 +318,33 @@ export const SQLFragmentHelpers = {
    *
    * @example
    * ```ts
-   * const query = SQLFragmentHelpers.inArray('status', ['active', 'pending']);
-   * // Generates: ?? IN (?, ?) with bindings ['status', 'active', 'pending']
+   * const query = SQLFragmentHelpers.inArray<MyFields, 'id'>('status', ['active', 'pending']);
+   * // Generates: ?? IN (?, ?) with entityField binding for 'status' and value bindings
    * ```
    */
-  inArray<T extends SupportedSQLValue>(column: string, values: readonly T[]): SQLFragment {
+  inArray<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    values: readonly TFields[N][],
+  ): SQLFragment<TFields> {
     if (values.length === 0) {
       // Handle empty array case - always false
       return sql`1 = 0`;
     }
-    // The array is already correctly typed, just needs to be seen as SupportedSQLValue for the template
-    return sql`${identifier(column)} IN ${values as readonly SupportedSQLValue[]}`;
+    return sql`${entityField(fieldName)} IN ${values}`;
   },
 
   /**
    * NOT IN clause helper
    */
-  notInArray<T extends SupportedSQLValue>(column: string, values: readonly T[]): SQLFragment {
+  notInArray<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    values: readonly TFields[N][],
+  ): SQLFragment<TFields> {
     if (values.length === 0) {
       // Handle empty array case - always true
       return sql`1 = 1`;
     }
-    return sql`${identifier(column)} NOT IN ${values as readonly SupportedSQLValue[]}`;
+    return sql`${entityField(fieldName)} NOT IN ${values}`;
   },
 
   /**
@@ -302,19 +352,27 @@ export const SQLFragmentHelpers = {
    *
    * @example
    * ```ts
-   * const query = SQLFragmentHelpers.between('age', 18, 65);
-   * // Generates: "age" BETWEEN ? AND ? with values [18, 65]
+   * const query = SQLFragmentHelpers.between<MyFields, 'id'>('age', 18, 65);
+   * // Generates: ?? BETWEEN ? AND ? with entityField binding for 'age' and value bindings
    * ```
    */
-  between<T extends string | number | Date>(column: string, min: T, max: T): SQLFragment {
-    return sql`${identifier(column)} BETWEEN ${min} AND ${max}`;
+  between<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    min: TFields[N],
+    max: TFields[N],
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} BETWEEN ${min} AND ${max}`;
   },
 
   /**
    * NOT BETWEEN helper
    */
-  notBetween<T extends string | number | Date>(column: string, min: T, max: T): SQLFragment {
-    return sql`${identifier(column)} NOT BETWEEN ${min} AND ${max}`;
+  notBetween<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    min: TFields[N],
+    max: TFields[N],
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} NOT BETWEEN ${min} AND ${max}`;
   },
 
   /**
@@ -322,129 +380,173 @@ export const SQLFragmentHelpers = {
    *
    * @example
    * ```ts
-   * const query = SQLFragmentHelpers.like('name', '%John%');
-   * // Generates: "name" LIKE ? with value '%John%'
+   * const query = SQLFragmentHelpers.like<MyFields, 'id'>('name', '%John%');
+   * // Generates: ?? LIKE ? with entityField binding for 'name' and value binding
    * ```
    */
-  like(column: string, pattern: string): SQLFragment {
-    return sql`${identifier(column)} LIKE ${pattern}`;
+  like<TFields extends Record<string, any>>(
+    fieldName: keyof TFields,
+    pattern: string,
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} LIKE ${pattern}`;
   },
 
   /**
    * NOT LIKE helper
    */
-  notLike(column: string, pattern: string): SQLFragment {
-    return sql`${identifier(column)} NOT LIKE ${pattern}`;
+  notLike<TFields extends Record<string, any>>(
+    fieldName: keyof TFields,
+    pattern: string,
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} NOT LIKE ${pattern}`;
   },
 
   /**
    * ILIKE helper for case-insensitive matching
    */
-  ilike(column: string, pattern: string): SQLFragment {
-    return sql`${identifier(column)} ILIKE ${pattern}`;
+  ilike<TFields extends Record<string, any>>(
+    fieldName: keyof TFields,
+    pattern: string,
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} ILIKE ${pattern}`;
   },
 
   /**
    * NOT ILIKE helper for case-insensitive non-matching
    */
-  notIlike(column: string, pattern: string): SQLFragment {
-    return sql`${identifier(column)} NOT ILIKE ${pattern}`;
+  notIlike<TFields extends Record<string, any>>(
+    fieldName: keyof TFields,
+    pattern: string,
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} NOT ILIKE ${pattern}`;
   },
 
   /**
    * NULL check helper
    */
-  isNull(column: string): SQLFragment {
-    return sql`${identifier(column)} IS NULL`;
+  isNull<TFields extends Record<string, any>>(fieldName: keyof TFields): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} IS NULL`;
   },
 
   /**
    * NOT NULL check helper
    */
-  isNotNull(column: string): SQLFragment {
-    return sql`${identifier(column)} IS NOT NULL`;
+  isNotNull<TFields extends Record<string, any>>(fieldName: keyof TFields): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} IS NOT NULL`;
   },
 
   /**
    * Single-equals-equality operator
    */
-  eq(column: string, value: SupportedSQLValue): SQLFragment {
+  eq<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    value: TFields[N],
+  ): SQLFragment<TFields> {
     if (value === null || value === undefined) {
-      return SQLFragmentHelpers.isNull(column);
+      return SQLFragmentHelpers.isNull(fieldName);
     }
-    return sql`${identifier(column)} = ${value}`;
+    return sql`${entityField(fieldName)} = ${value}`;
   },
 
   /**
    * Single-equals-inequality operator
    */
-  neq(column: string, value: SupportedSQLValue): SQLFragment {
+  neq<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    value: TFields[N],
+  ): SQLFragment<TFields> {
     if (value === null || value === undefined) {
-      return SQLFragmentHelpers.isNotNull(column);
+      return SQLFragmentHelpers.isNotNull(fieldName);
     }
-    return sql`${identifier(column)} != ${value}`;
+    return sql`${entityField(fieldName)} != ${value}`;
   },
 
   /**
    * Greater-than comparison operator
    */
-  gt(column: string, value: SupportedSQLValue): SQLFragment {
-    return sql`${identifier(column)} > ${value}`;
+  gt<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    value: TFields[N],
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} > ${value}`;
   },
 
   /**
    * Greater-than-or-equal-to comparison operator
    */
-  gte(column: string, value: SupportedSQLValue): SQLFragment {
-    return sql`${identifier(column)} >= ${value}`;
+  gte<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    value: TFields[N],
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} >= ${value}`;
   },
 
   /**
    * Less-than comparison operator
    */
-  lt(column: string, value: SupportedSQLValue): SQLFragment {
-    return sql`${identifier(column)} < ${value}`;
+  lt<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    value: TFields[N],
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} < ${value}`;
   },
 
   /**
    * Less-than-or-equal-to comparison operator
    */
-  lte(column: string, value: SupportedSQLValue): SQLFragment {
-    return sql`${identifier(column)} <= ${value}`;
+  lte<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    value: TFields[N],
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} <= ${value}`;
   },
 
   /**
    * JSON contains operator (\@\>)
    */
-  jsonContains(column: string, value: unknown): SQLFragment {
-    return sql`${identifier(column)} @> ${JSON.stringify(value)}::jsonb`;
+  jsonContains<TFields extends Record<string, any>>(
+    fieldName: keyof TFields,
+    value: unknown,
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} @> ${JSON.stringify(value)}::jsonb`;
   },
 
   /**
    * JSON contained by operator (\<\@\)
    */
-  jsonContainedBy(column: string, value: unknown): SQLFragment {
-    return sql`${identifier(column)} <@ ${JSON.stringify(value)}::jsonb`;
+  jsonContainedBy<TFields extends Record<string, any>>(
+    fieldName: keyof TFields,
+    value: unknown,
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)} <@ ${JSON.stringify(value)}::jsonb`;
   },
 
   /**
    * JSON path extraction helper (-\>)
    */
-  jsonPath(column: string, path: string): SQLFragment {
-    return sql`${identifier(column)}->${path}`;
+  jsonPath<TFields extends Record<string, any>>(
+    fieldName: keyof TFields,
+    path: string,
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)}->${path}`;
   },
 
   /**
    * JSON path text extraction helper (-\>\>)
    */
-  jsonPathText(column: string, path: string): SQLFragment {
-    return sql`${identifier(column)}->>${path}`;
+  jsonPathText<TFields extends Record<string, any>>(
+    fieldName: keyof TFields,
+    path: string,
+  ): SQLFragment<TFields> {
+    return sql`${entityField(fieldName)}->>${path}`;
   },
 
   /**
    * Logical AND of multiple fragments
    */
-  and(...conditions: readonly SQLFragment[]): SQLFragment {
+  and<TFields extends Record<string, any>>(
+    ...conditions: readonly SQLFragment<TFields>[]
+  ): SQLFragment<TFields> {
     if (conditions.length === 0) {
       return sql`1 = 1`;
     }
@@ -457,7 +559,9 @@ export const SQLFragmentHelpers = {
   /**
    * Logical OR of multiple fragments
    */
-  or(...conditions: readonly SQLFragment[]): SQLFragment {
+  or<TFields extends Record<string, any>>(
+    ...conditions: readonly SQLFragment<TFields>[]
+  ): SQLFragment<TFields> {
     if (conditions.length === 0) {
       return sql`1 = 0`;
     }
@@ -470,20 +574,25 @@ export const SQLFragmentHelpers = {
   /**
    * Logical NOT of a fragment
    */
-  not(condition: SQLFragment): SQLFragment {
+  not<TFields extends Record<string, any>>(condition: SQLFragment<TFields>): SQLFragment<TFields> {
     return new SQLFragment('NOT (' + condition.sql + ')', condition.bindings);
   },
 
   /**
    * Parentheses helper for grouping conditions
    */
-  group(condition: SQLFragment): SQLFragment {
+  group<TFields extends Record<string, any>>(
+    condition: SQLFragment<TFields>,
+  ): SQLFragment<TFields> {
     return new SQLFragment('(' + condition.sql + ')', condition.bindings);
   },
 };
 
 // Internal helper function to join SQL fragments with a specified separator
-function joinSQLFragments(fragments: readonly SQLFragment[], separator: string): SQLFragment {
+function joinSQLFragments<TFields extends Record<string, any>>(
+  fragments: readonly SQLFragment<TFields>[],
+  separator: string,
+): SQLFragment<TFields> {
   return new SQLFragment(
     fragments.map((f) => f.sql).join(separator),
     fragments.flatMap((f) => f.bindings),

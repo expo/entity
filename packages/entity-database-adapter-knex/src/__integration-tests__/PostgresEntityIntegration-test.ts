@@ -13,7 +13,7 @@ import { setTimeout } from 'timers/promises';
 import { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader';
 import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
-import { unsafeRaw, sql, SQLFragmentHelpers } from '../SQLOperator';
+import { entityField, unsafeRaw, sql, SQLFragmentHelpers, SQLFragment } from '../SQLOperator';
 import {
   PostgresTestEntity,
   PostgresTestEntityFields,
@@ -484,7 +484,7 @@ describe('postgres entity integration', () => {
 
       // Test AND condition
       const bothPets = await PostgresTestEntity.knexLoader(vc1)
-        .loadManyBySQL(and(eq('has_a_cat', true), eq('has_a_dog', true)))
+        .loadManyBySQL(and(eq('hasACat', true), eq('hasADog', true)))
         .executeAsync();
 
       expect(bothPets).toHaveLength(1);
@@ -492,7 +492,7 @@ describe('postgres entity integration', () => {
 
       // Test OR condition
       const eitherPet = await PostgresTestEntity.knexLoader(vc1)
-        .loadManyBySQL(or(eq('has_a_cat', false), eq('has_a_dog', false)))
+        .loadManyBySQL(or(eq('hasACat', false), eq('hasADog', false)))
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
 
@@ -512,13 +512,61 @@ describe('postgres entity integration', () => {
 
       // Test complex condition
       const complexQuery = await PostgresTestEntity.knexLoader(vc1)
-        .loadManyBySQL(and(or(eq('has_a_cat', true), eq('has_a_dog', true)), neq('name', 'User2')))
+        .loadManyBySQL(and(or(eq('hasACat', true), eq('hasADog', true)), neq('name', 'User2')))
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
 
       expect(complexQuery).toHaveLength(2);
       expect(complexQuery[0]!.getField('name')).toBe('User1');
       expect(complexQuery[1]!.getField('name')).toBe('User3');
+    });
+
+    it('supports entityField for entity-to-DB field name translation', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'EntityFieldUser1')
+          .setField('hasACat', true)
+          .setField('hasADog', false)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'EntityFieldUser2')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'EntityFieldUser3')
+          .setField('hasACat', true)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      // Use entityField to reference fields by entity name instead of DB column name
+      const catOwners = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(sql`${entityField('hasACat')} = ${true}`)
+        .orderBy('name', OrderByOrdering.ASCENDING)
+        .executeAsync();
+
+      expect(catOwners).toHaveLength(2);
+      expect(catOwners[0]!.getField('name')).toBe('EntityFieldUser1');
+      expect(catOwners[1]!.getField('name')).toBe('EntityFieldUser3');
+
+      // Combine entityField with other SQL constructs
+      const bothPets = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(
+          sql`${entityField('hasACat')} = ${true} AND ${entityField('hasADog')} = ${true}`,
+        )
+        .executeAsync();
+
+      expect(bothPets).toHaveLength(1);
+      expect(bothPets[0]!.getField('name')).toBe('EntityFieldUser3');
     });
 
     it('supports executeFirstAsync', async () => {
@@ -690,12 +738,12 @@ describe('postgres entity integration', () => {
       );
 
       // Test join with OR conditions
-      const conditions = [
+      const conditions: SQLFragment<PostgresTestEntityFields>[] = [
         sql`name = ${'JoinTest1'}`,
         sql`(has_a_cat = ${true} AND has_a_dog = ${true})`,
       ];
       const joinedResults = await PostgresTestEntity.knexLoader(vc1)
-        .loadManyBySQL(SQLFragmentHelpers.or(...conditions))
+        .loadManyBySQL(SQLFragmentHelpers.or<PostgresTestEntityFields>(...conditions))
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
 

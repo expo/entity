@@ -106,8 +106,8 @@ export class StubPostgresDatabaseAdapter<
     return results[0] ?? null;
   }
 
-  private static compareByOrderBys(
-    orderBys: TableOrderByClause[],
+  private static compareByOrderBys<TFields extends Record<string, any>>(
+    orderBys: TableOrderByClause<TFields>[],
     objectA: { [key: string]: any },
     objectB: { [key: string]: any },
   ): 0 | 1 | -1 {
@@ -161,7 +161,7 @@ export class StubPostgresDatabaseAdapter<
     tableName: string,
     tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
     tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
-    querySelectionModifiers: TableQuerySelectionModifiers,
+    querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Promise<object[]> {
     let filteredObjects = this.getObjectCollectionForTable(tableName);
     for (const { tableField, tableValue } of tableFieldSingleValueEqualityOperands) {
@@ -197,7 +197,7 @@ export class StubPostgresDatabaseAdapter<
     _tableName: string,
     _rawWhereClause: string,
     _bindings: object | any[],
-    _querySelectionModifiers: TableQuerySelectionModifiers,
+    _querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Promise<object[]> {
     throw new Error('Raw WHERE clauses not supported for StubDatabaseAdapter');
   }
@@ -205,8 +205,8 @@ export class StubPostgresDatabaseAdapter<
   protected fetchManyBySQLFragmentInternalAsync(
     _queryInterface: any,
     _tableName: string,
-    _sqlFragment: SQLFragment,
-    _querySelectionModifiers: TableQuerySelectionModifiers,
+    _sqlFragment: SQLFragment<TFields>,
+    _querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Promise<object[]> {
     throw new Error('SQL fragments not supported for StubDatabaseAdapter');
   }
