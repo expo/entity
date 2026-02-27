@@ -9,6 +9,7 @@ import { Knex } from 'knex';
 import {
   BasePostgresEntityDatabaseAdapter,
   NullsOrdering,
+  OrderByOrdering,
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableQuerySelectionModifiers,
@@ -139,11 +140,13 @@ export class PostgresEntityDatabaseAdapter<
             orderBySpecification.nulls,
           );
         } else {
+          const orderDirection =
+            orderBySpecification.order === OrderByOrdering.ASCENDING ? 'ASC' : 'DESC';
           const nullsSuffix = orderBySpecification.nulls
             ? ` NULLS ${orderBySpecification.nulls === NullsOrdering.FIRST ? 'FIRST' : 'LAST'}`
             : '';
           ret = ret.orderByRaw(
-            `(${orderBySpecification.columnFragment.sql}) ${orderBySpecification.order}${nullsSuffix}`,
+            `(${orderBySpecification.columnFragment.sql}) ${orderDirection}${nullsSuffix}`,
             orderBySpecification.columnFragment.getKnexBindings((fieldName) =>
               getDatabaseFieldForEntityField(this.entityConfiguration, fieldName),
             ),
