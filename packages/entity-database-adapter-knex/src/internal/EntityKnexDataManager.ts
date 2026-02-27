@@ -18,7 +18,7 @@ import {
   PostgresQuerySelectionModifiers,
 } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
-import { SQLFragment, SQLFragmentHelpers, identifier, raw, sql } from '../SQLOperator';
+import { SQLFragment, SQLFragmentHelpers, identifier, unsafeRaw, sql } from '../SQLOperator';
 import { DistributiveOmit, NonNullableKeys } from './utilityTypes';
 
 interface DataManagerStandardSpecification<TFields extends Record<string, any>> {
@@ -586,14 +586,14 @@ export class EntityKnexDataManager<
       return field.fieldConstructor((fieldName) => {
         const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, fieldName);
         return tableAlias
-          ? sql`${raw(tableAlias)}.${identifier(dbField)}`
+          ? sql`${unsafeRaw(tableAlias)}.${identifier(dbField)}`
           : sql`${identifier(dbField)}`;
       });
     }
 
     const dbField = getDatabaseFieldForEntityField(this.entityConfiguration, field);
     return tableAlias
-      ? sql`${raw(tableAlias)}.${identifier(dbField)}`
+      ? sql`${unsafeRaw(tableAlias)}.${identifier(dbField)}`
       : sql`${identifier(dbField)}`;
   }
 
@@ -636,10 +636,10 @@ export class EntityKnexDataManager<
     // Build SELECT fields for subquery
     const rightSideSubquery = sql`
       SELECT ${SQLFragment.joinWithCommaSeparator(...postgresCursorRowFieldIdentifiers)}
-      FROM ${identifier(tableName)} AS ${raw(CURSOR_ROW_TABLE_ALIAS)}
-      WHERE ${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)} = ${decodedExternalCursorEntityID}
+      FROM ${identifier(tableName)} AS ${unsafeRaw(CURSOR_ROW_TABLE_ALIAS)}
+      WHERE ${unsafeRaw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)} = ${decodedExternalCursorEntityID}
     `;
-    return sql`(${leftSide}) ${raw(operator)} (${rightSideSubquery})`;
+    return sql`(${leftSide}) ${unsafeRaw(operator)} (${rightSideSubquery})`;
   }
 
   private buildILikeConditions(
@@ -730,16 +730,16 @@ export class EntityKnexDataManager<
       cursorExactMatchExpr,
       cursorSimilarityExpr,
       ...cursorExtraFields,
-      sql`${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)}`,
+      sql`${unsafeRaw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)}`,
     ];
 
     const rightSideSubquery = sql`
       SELECT ${SQLFragment.joinWithCommaSeparator(...selectFields)}
-      FROM ${identifier(this.entityConfiguration.tableName)} AS ${raw(CURSOR_ROW_TABLE_ALIAS)}
-      WHERE ${raw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)} = ${decodedExternalCursorEntityID}
+      FROM ${identifier(this.entityConfiguration.tableName)} AS ${unsafeRaw(CURSOR_ROW_TABLE_ALIAS)}
+      WHERE ${unsafeRaw(CURSOR_ROW_TABLE_ALIAS)}.${identifier(idField)} = ${decodedExternalCursorEntityID}
     `;
 
-    return sql`(${leftSide}) ${raw(operator)} (${rightSideSubquery})`;
+    return sql`(${leftSide}) ${unsafeRaw(operator)} (${rightSideSubquery})`;
   }
 
   private buildSearchConditionAndOrderBy(search: DataManagerSearchSpecification<TFields>): {

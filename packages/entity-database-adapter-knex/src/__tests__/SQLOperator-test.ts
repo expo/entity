@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 
 import {
   identifier,
-  raw,
+  unsafeRaw,
   sql,
   SQLFragment,
   SQLFragmentHelpers,
@@ -75,14 +75,14 @@ describe('SQLOperator', () => {
 
     it('handles raw SQL', () => {
       const columnName = 'created_at';
-      const fragment = sql`ORDER BY ${raw(columnName)} DESC`;
+      const fragment = sql`ORDER BY ${unsafeRaw(columnName)} DESC`;
 
       expect(fragment.sql).toBe('ORDER BY created_at DESC');
       expect(fragment.getKnexBindings()).toEqual([]);
     });
 
     it('handles complex raw SQL expressions', () => {
-      const fragment = sql`WHERE ${raw('EXTRACT(year FROM created_at)')} = ${2024}`;
+      const fragment = sql`WHERE ${unsafeRaw('EXTRACT(year FROM created_at)')} = ${2024}`;
 
       expect(fragment.sql).toBe('WHERE EXTRACT(year FROM created_at) = ?');
       expect(fragment.getKnexBindings()).toEqual([2024]);
@@ -90,7 +90,7 @@ describe('SQLOperator', () => {
 
     it('combines raw SQL with regular parameters', () => {
       const sortColumn = 'name';
-      const fragment = sql`SELECT * FROM users WHERE age > ${18} ORDER BY ${raw(sortColumn)} ${raw('DESC')}`;
+      const fragment = sql`SELECT * FROM users WHERE age > ${18} ORDER BY ${unsafeRaw(sortColumn)} ${unsafeRaw('DESC')}`;
 
       expect(fragment.sql).toBe('SELECT * FROM users WHERE age > ? ORDER BY name DESC');
       expect(fragment.getKnexBindings()).toEqual([18]);
