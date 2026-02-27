@@ -35,6 +35,7 @@ export abstract class PostgresEntity<
     TMFields extends object,
     TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
+    TMViewerContext2 extends TMViewerContext,
     TMEntity extends ReadonlyEntity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
@@ -53,7 +54,7 @@ export abstract class PostgresEntity<
       TMPrivacyPolicy,
       TMSelectedFields
     >,
-    viewerContext: TMViewerContext,
+    viewerContext: TMViewerContext2,
     queryContext: EntityQueryContext = viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()
@@ -80,6 +81,7 @@ export abstract class PostgresEntity<
     TMFields extends object,
     TMIDField extends keyof NonNullable<Pick<TMFields, TMSelectedFields>>,
     TMViewerContext extends ViewerContext,
+    TMViewerContext2 extends TMViewerContext,
     TMEntity extends ReadonlyEntity<TMFields, TMIDField, TMViewerContext, TMSelectedFields>,
     TMPrivacyPolicy extends EntityPrivacyPolicy<
       TMFields,
@@ -98,7 +100,7 @@ export abstract class PostgresEntity<
       TMPrivacyPolicy,
       TMSelectedFields
     >,
-    viewerContext: TMViewerContext,
+    viewerContext: TMViewerContext2,
     queryContext: EntityQueryContext = viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getQueryContextProvider()

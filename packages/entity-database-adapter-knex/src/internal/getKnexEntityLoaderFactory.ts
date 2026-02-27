@@ -19,6 +19,7 @@ export function getKnexEntityLoaderFactory<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
+  TViewerContext2 extends TViewerContext,
   TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
   TPrivacyPolicy extends EntityPrivacyPolicy<
     TFields,
@@ -37,7 +38,7 @@ export function getKnexEntityLoaderFactory<
     TPrivacyPolicy,
     TSelectedFields
   >,
-  viewerContext: TViewerContext,
+  viewerContext: TViewerContext2,
 ): KnexEntityLoaderFactory<
   TFields,
   TIDField,
