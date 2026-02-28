@@ -107,7 +107,7 @@ describe('Entity integrity', () => {
       makeKeyFn(...parts: string[]): string {
         const delimiter = ':';
         const escapedParts = parts.map((part) =>
-          part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`),
+          part.replaceAll('\\', '\\\\').replaceAll(delimiter, `\\${delimiter}`),
         );
         return escapedParts.join(delimiter);
       },
