@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.56.0](https://github.com/expo/entity/compare/v0.55.0...v0.56.0) (2026-02-28)
+
+### Bug Fixes
+
+- Reorganize constructionUtils to make non-public ([#454](https://github.com/expo/entity/issues/454)) ([d9377a2](https://github.com/expo/entity/commit/d9377a290b7e0c6803f9e83537eddb7204bc9320)), closes [#410](https://github.com/expo/entity/issues/410)
+
 # [0.55.0](https://github.com/expo/entity/compare/v0.54.0...v0.55.0) (2026-01-27)
 
 **Note:** Version bump only for package @expo/entity-secondary-cache-local-memory

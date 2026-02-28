@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.56.0](https://github.com/expo/entity/compare/v0.55.0...v0.56.0) (2026-02-28)
+
+### Bug Fixes
+
+- eliminate some unnecessary any casts ([#448](https://github.com/expo/entity/issues/448)) ([cc78029](https://github.com/expo/entity/commit/cc78029117c14510b0934b5e0d19876a45570f8d))
+- move EntityPrivacyUtils back into core package ([#429](https://github.com/expo/entity/issues/429)) ([56ec27d](https://github.com/expo/entity/commit/56ec27d5f201d83930a2cc05dfc380a054bff1e1))
+- pass in augmentable classes to installation ([#437](https://github.com/expo/entity/issues/437)) ([f5c728b](https://github.com/expo/entity/commit/f5c728be565e01c0a8ace9ef51f6de8f49184dab)), closes [/github.com/expo/entity/pull/410#pullrequestreview-3765893898](https://github.com//github.com/expo/entity/pull/410/issues/pullrequestreview-3765893898)
+- refactor install method to instead be free functions ([#441](https://github.com/expo/entity/issues/441)) ([51d632d](https://github.com/expo/entity/commit/51d632da1619dc039d5c41ce6533f63254ec4337)), closes [#410](https://github.com/expo/entity/issues/410)
+- Reorganize constructionUtils to make non-public ([#454](https://github.com/expo/entity/issues/454)) ([d9377a2](https://github.com/expo/entity/commit/d9377a290b7e0c6803f9e83537eddb7204bc9320)), closes [#410](https://github.com/expo/entity/issues/410)
+- Type idField in EntityConfiguration as TIDField ([#425](https://github.com/expo/entity/issues/425)) ([be40bcf](https://github.com/expo/entity/commit/be40bcffa6e7db9b7ad75e1a80bbb48ff417c6c5))
+
+### Features
+
+- Add authorization action to EntityPrivacyPolicyRuleEvaluationContext ([#464](https://github.com/expo/entity/issues/464)) ([e71ae5f](https://github.com/expo/entity/commit/e71ae5fcbae95096e0d6a42a8c960896ab83ccfb))
+- Add paginated loader to entity-database-adapter-knex ([#422](https://github.com/expo/entity/issues/422)) ([58deffd](https://github.com/expo/entity/commit/58deffd426b0214073ede608cd47c04db2596d60))
+
 # [0.55.0](https://github.com/expo/entity/compare/v0.54.0...v0.55.0) (2026-01-27)
 
 ### Features

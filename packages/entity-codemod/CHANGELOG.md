@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.56.0](https://github.com/expo/entity/compare/v0.55.0...v0.56.0) (2026-02-28)
+
+### Bug Fixes
+
+- refactor install method to instead be free functions ([#441](https://github.com/expo/entity/issues/441)) ([51d632d](https://github.com/expo/entity/commit/51d632da1619dc039d5c41ce6533f63254ec4337)), closes [#410](https://github.com/expo/entity/issues/410)
+- revert change to codemod now that Entity.knexLoader is supported again via subclass ([#443](https://github.com/expo/entity/issues/443)) ([ed6b2e0](https://github.com/expo/entity/commit/ed6b2e05539c77ee2abd2c6da74e2a451967d06e)), closes [#441](https://github.com/expo/entity/issues/441)
+
+### Features
+
+- add codemod for upcoming v0.55.0-v0.56.0 ([#413](https://github.com/expo/entity/issues/413)) ([aba0ce5](https://github.com/expo/entity/commit/aba0ce5b5f38cb7b01956cde14a4714e2a03abb4)), closes [#407](https://github.com/expo/entity/issues/407) [-#410](https://github.com/-/issues/410)
+
 # [0.55.0](https://github.com/expo/entity/compare/v0.54.0...v0.55.0) (2026-01-27)
 
 **Note:** Version bump only for package @expo/entity-codemod

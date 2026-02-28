@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.56.0](https://github.com/expo/entity/compare/v0.55.0...v0.56.0) (2026-02-28)
+
+### Bug Fixes
+
+- Add default for TSelectedFields for application-instantiated types ([#438](https://github.com/expo/entity/issues/438)) ([3d4aa0e](https://github.com/expo/entity/commit/3d4aa0e9efa519a36f3db69bd8f117a993c100fa))
+- Apply same viewer context subclass type mechanism to knexLoader and related methods ([#472](https://github.com/expo/entity/issues/472)) ([018a40b](https://github.com/expo/entity/commit/018a40bc01d579ffbf88f308e641921e6fc39097))
+- correct discriminated union type for forward/backward pagination ([#474](https://github.com/expo/entity/issues/474)) ([90ae6e2](https://github.com/expo/entity/commit/90ae6e299bda26ac9a80d83e83334d4152c022dd))
+- correct pagination behavior for standard pagination with descending ordering clauses ([#477](https://github.com/expo/entity/issues/477)) ([e32c4c2](https://github.com/expo/entity/commit/e32c4c2bcc05f225a556f95c90f1ee0f4e24de74))
+- correct precedence parentheses for SQLFragment joins ([#476](https://github.com/expo/entity/issues/476)) ([2c4c649](https://github.com/expo/entity/commit/2c4c649a4bca5bc9ffdc41eb3135b2dfe4db5e57)), closes [/github.com/expo/entity/blob/main/packages/entity-database-adapter-knex/src/internal/EntityKnexDataManager.ts#L303](https://github.com//github.com/expo/entity/blob/main/packages/entity-database-adapter-knex/src/internal/EntityKnexDataManager.ts/issues/L303)
+- **deps:** update dependency @apollo/server to v5.4.0 [security] ([#420](https://github.com/expo/entity/issues/420)) ([cd81c5a](https://github.com/expo/entity/commit/cd81c5a5b6be43ef60248eeea4031a883dd1eae8))
+- **deps:** update dependency @koa/bodyparser to v6.1.0 ([#405](https://github.com/expo/entity/issues/405)) ([2dda22d](https://github.com/expo/entity/commit/2dda22d761f87851e3fcccc8443597daf8ac42e8))
+- **deps:** update dependency @koa/router to v15.3.0 ([#406](https://github.com/expo/entity/issues/406)) ([9e88cf6](https://github.com/expo/entity/commit/9e88cf6aab76902c65994d28de8dab73f1267021))
+- **deps:** update dependency graphql to v16.13.0 ([#479](https://github.com/expo/entity/issues/479)) ([976e2c3](https://github.com/expo/entity/commit/976e2c33867da71a2920d050c4086e2af8f6d54d))
+- **deps:** update dependency koa to v3.1.2 [security] ([#484](https://github.com/expo/entity/issues/484)) ([b258dad](https://github.com/expo/entity/commit/b258dad2ed69c473f04d57d26910eab2032d142c))
+- eliminate some unnecessary any casts ([#448](https://github.com/expo/entity/issues/448)) ([cc78029](https://github.com/expo/entity/commit/cc78029117c14510b0934b5e0d19876a45570f8d))
+- explicitly document behavior when cursor entity no longer exists ([#453](https://github.com/expo/entity/issues/453)) ([4dc156c](https://github.com/expo/entity/commit/4dc156c7a8dc50bc9e2802be133b9e258b289f54)), closes [#422](https://github.com/expo/entity/issues/422) [#431](https://github.com/expo/entity/issues/431)
+- move EntityPrivacyUtils back into core package ([#429](https://github.com/expo/entity/issues/429)) ([56ec27d](https://github.com/expo/entity/commit/56ec27d5f201d83930a2cc05dfc380a054bff1e1))
+- pass in augmentable classes to installation ([#437](https://github.com/expo/entity/issues/437)) ([f5c728b](https://github.com/expo/entity/commit/f5c728be565e01c0a8ace9ef51f6de8f49184dab)), closes [/github.com/expo/entity/pull/410#pullrequestreview-3765893898](https://github.com//github.com/expo/entity/pull/410/issues/pullrequestreview-3765893898)
+- refactor install method to instead be free functions ([#441](https://github.com/expo/entity/issues/441)) ([51d632d](https://github.com/expo/entity/commit/51d632da1619dc039d5c41ce6533f63254ec4337)), closes [#410](https://github.com/expo/entity/issues/410)
+- Reorganize constructionUtils to make non-public ([#454](https://github.com/expo/entity/issues/454)) ([d9377a2](https://github.com/expo/entity/commit/d9377a290b7e0c6803f9e83537eddb7204bc9320)), closes [#410](https://github.com/expo/entity/issues/410)
+- revert change to codemod now that Entity.knexLoader is supported again via subclass ([#443](https://github.com/expo/entity/issues/443)) ([ed6b2e0](https://github.com/expo/entity/commit/ed6b2e05539c77ee2abd2c6da74e2a451967d06e)), closes [#441](https://github.com/expo/entity/issues/441)
+- Type idField in EntityConfiguration as TIDField ([#425](https://github.com/expo/entity/issues/425)) ([be40bcf](https://github.com/expo/entity/commit/be40bcffa6e7db9b7ad75e1a80bbb48ff417c6c5))
+- update integration test to use BlahEntity.knexLoader syntax ([#444](https://github.com/expo/entity/issues/444)) ([457f58a](https://github.com/expo/entity/commit/457f58ad2c4e1cf09f3132f3b9af5008ba0290c7)), closes [#441](https://github.com/expo/entity/issues/441)
+- Use TSelectedFields for knex loader order by method ([#424](https://github.com/expo/entity/issues/424)) ([a9d09f4](https://github.com/expo/entity/commit/a9d09f42b67378d06133bcfb5b99c9afb17aac0d))
+
+### Features
+
+- Add authorization action to EntityPrivacyPolicyRuleEvaluationContext ([#464](https://github.com/expo/entity/issues/464)) ([e71ae5f](https://github.com/expo/entity/commit/e71ae5fcbae95096e0d6a42a8c960896ab83ccfb))
+- add codemod for upcoming v0.55.0-v0.56.0 ([#413](https://github.com/expo/entity/issues/413)) ([aba0ce5](https://github.com/expo/entity/commit/aba0ce5b5f38cb7b01956cde14a4714e2a03abb4)), closes [#407](https://github.com/expo/entity/issues/407) [-#410](https://github.com/-/issues/410)
+- add entity-database-adapter-knex-testing-utils containing StubPostgresDatabaseAdapter ([#412](https://github.com/expo/entity/issues/412)) ([eeccf59](https://github.com/expo/entity/commit/eeccf594c11bf090aa83bbf71fb4ead8668aec7d))
+- add entityField SQL helper ([#481](https://github.com/expo/entity/issues/481)) ([459a5ff](https://github.com/expo/entity/commit/459a5ff85014a8c7396c0856dffacb1491ccb963))
+- Add ilike and trigram similarity search to pagination ([#431](https://github.com/expo/entity/issues/431)) ([f72cbca](https://github.com/expo/entity/commit/f72cbcaf5a722e6bb8299644ec32b07f1d3362a9)), closes [#422](https://github.com/expo/entity/issues/422)
+- add method to get pagination cursor for single entity ([#475](https://github.com/expo/entity/issues/475)) ([898f71c](https://github.com/expo/entity/commit/898f71ce082c2593585575b60bd6ef2546717124))
+- Add paginated loader to entity-database-adapter-knex ([#422](https://github.com/expo/entity/issues/422)) ([58deffd](https://github.com/expo/entity/commit/58deffd426b0214073ede608cd47c04db2596d60))
+- Add pagination max page size configuration ([#436](https://github.com/expo/entity/issues/436)) ([3ec4b5f](https://github.com/expo/entity/commit/3ec4b5f0cd53bf18d6bcfa27dd29b70d3f4d5f19))
+- add PostgresEntity/ReadonlyPostgresEntity classes that expose knexLoader methods ([#442](https://github.com/expo/entity/issues/442)) ([40b409f](https://github.com/expo/entity/commit/40b409f6f889febf8b90b8837caecac26ff64174)), closes [#441](https://github.com/expo/entity/issues/441)
+- Add raw sqlfragment orderBy capability for pagination ([#457](https://github.com/expo/entity/issues/457)) ([0615ffa](https://github.com/expo/entity/commit/0615ffacffbe9e903a9bf03b171c102f0554b992))
+- add support for nulls ordering in order by clauses ([#468](https://github.com/expo/entity/issues/468)) ([6c0838d](https://github.com/expo/entity/commit/6c0838dc577a3b6190e3551ee834925d7bd53bc6))
+- support nullable search fields with postgres transforms ([#470](https://github.com/expo/entity/issues/470)) ([53b0604](https://github.com/expo/entity/commit/53b0604152b8ca5ad9fc616d18478f93473c7eb0))
+
 # [0.55.0](https://github.com/expo/entity/compare/v0.54.0...v0.55.0) (2026-01-27)
 
 ### Bug Fixes

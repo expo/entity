@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.56.0](https://github.com/expo/entity/compare/v0.55.0...v0.56.0) (2026-02-28)
+
+**Note:** Version bump only for package @expo/entity-cache-adapter-local-memory
+
 # [0.55.0](https://github.com/expo/entity/compare/v0.54.0...v0.55.0) (2026-01-27)
 
 **Note:** Version bump only for package @expo/entity-cache-adapter-local-memory

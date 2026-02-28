@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.56.0](https://github.com/expo/entity/compare/v0.55.0...v0.56.0) (2026-02-28)
+
+### Bug Fixes
+
+- **deps:** update dependency @apollo/server to v5.4.0 [security] ([#420](https://github.com/expo/entity/issues/420)) ([cd81c5a](https://github.com/expo/entity/commit/cd81c5a5b6be43ef60248eeea4031a883dd1eae8))
+- **deps:** update dependency @koa/bodyparser to v6.1.0 ([#405](https://github.com/expo/entity/issues/405)) ([2dda22d](https://github.com/expo/entity/commit/2dda22d761f87851e3fcccc8443597daf8ac42e8))
+- **deps:** update dependency @koa/router to v15.3.0 ([#406](https://github.com/expo/entity/issues/406)) ([9e88cf6](https://github.com/expo/entity/commit/9e88cf6aab76902c65994d28de8dab73f1267021))
+- **deps:** update dependency graphql to v16.13.0 ([#479](https://github.com/expo/entity/issues/479)) ([976e2c3](https://github.com/expo/entity/commit/976e2c33867da71a2920d050c4086e2af8f6d54d))
+- **deps:** update dependency koa to v3.1.2 [security] ([#484](https://github.com/expo/entity/issues/484)) ([b258dad](https://github.com/expo/entity/commit/b258dad2ed69c473f04d57d26910eab2032d142c))
+- eliminate some unnecessary any casts ([#448](https://github.com/expo/entity/issues/448)) ([cc78029](https://github.com/expo/entity/commit/cc78029117c14510b0934b5e0d19876a45570f8d))
+- move EntityPrivacyUtils back into core package ([#429](https://github.com/expo/entity/issues/429)) ([56ec27d](https://github.com/expo/entity/commit/56ec27d5f201d83930a2cc05dfc380a054bff1e1))
+- refactor install method to instead be free functions ([#441](https://github.com/expo/entity/issues/441)) ([51d632d](https://github.com/expo/entity/commit/51d632da1619dc039d5c41ce6533f63254ec4337)), closes [#410](https://github.com/expo/entity/issues/410)
+
 # [0.55.0](https://github.com/expo/entity/compare/v0.54.0...v0.55.0) (2026-01-27)
 
 ### Bug Fixes
