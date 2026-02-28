@@ -212,7 +212,7 @@ describe(GenericRedisCacher, () => {
         new SingleFieldValueHolder('wat'),
       );
       expect(cacheKeys).toHaveLength(1);
-      expect(cacheKeys[0]).toBe('hello-:single:blah:v2.2:id:wat');
+      expect(cacheKeys[0]).toBe('hello-:single:blah:v3.2:id:wat');
 
       await genericCacher.invalidateManyAsync(cacheKeys);
       verify(mockRedisClient.del(...cacheKeys)).once();
@@ -240,9 +240,9 @@ describe(GenericRedisCacher, () => {
         new SingleFieldValueHolder('wat'),
       );
       expect(cacheKeys).toHaveLength(3);
-      expect(cacheKeys[0]).toBe('hello-:single:blah:v2.1:id:wat');
-      expect(cacheKeys[1]).toBe('hello-:single:blah:v2.2:id:wat');
-      expect(cacheKeys[2]).toBe('hello-:single:blah:v2.3:id:wat');
+      expect(cacheKeys[0]).toBe('hello-:single:blah:v3.1:id:wat');
+      expect(cacheKeys[1]).toBe('hello-:single:blah:v3.2:id:wat');
+      expect(cacheKeys[2]).toBe('hello-:single:blah:v3.3:id:wat');
 
       await genericCacher.invalidateManyAsync(cacheKeys);
       verify(mockRedisClient.del(...cacheKeys)).once();
@@ -278,10 +278,10 @@ describe(GenericRedisCacher, () => {
         new SingleFieldValueHolder('wat'),
       );
       expect(cacheKeys).toHaveLength(4);
-      expect(cacheKeys[0]).toBe('hello-:single:blah:v2.2:id:wat');
-      expect(cacheKeys[1]).toBe('hello-:single:blah:v2.3:id:wat');
-      expect(cacheKeys[2]).toBe('hello-:single:blah:v2.4:id:wat');
-      expect(cacheKeys[3]).toBe('hello-:single:blah:v2.5:id:wat');
+      expect(cacheKeys[0]).toBe('hello-:single:blah:v3.2:id:wat');
+      expect(cacheKeys[1]).toBe('hello-:single:blah:v3.3:id:wat');
+      expect(cacheKeys[2]).toBe('hello-:single:blah:v3.4:id:wat');
+      expect(cacheKeys[3]).toBe('hello-:single:blah:v3.5:id:wat');
 
       await genericCacher.invalidateManyAsync(cacheKeys);
       verify(mockRedisClient.del(...cacheKeys)).once();

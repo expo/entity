@@ -215,7 +215,7 @@ export class GenericRedisCacher<
       this.context.cacheKeyPrefix,
       cacheKeyType,
       this.entityConfiguration.tableName,
-      `v2.${cacheKeyVersion}`,
+      `v3.${cacheKeyVersion}`,
       ...parts,
     );
   }

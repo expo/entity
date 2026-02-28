@@ -115,7 +115,7 @@ class TestLocalCacheAdapter<
       cacheKeyType,
       `${this.entityConfiguration.cacheKeyVersion}`,
       ...parts,
-    ].map((part) => part.replace('\\', '\\\\').replace(delimiter, `\\${delimiter}`));
+    ].map((part) => part.replaceAll('\\', '\\\\').replaceAll(delimiter, `\\${delimiter}`));
     return escapedParts.join(delimiter);
   }
 }
