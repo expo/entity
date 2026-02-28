@@ -1,7 +1,7 @@
 {
   "name": "@expo/entity-full-integration-tests",
   "private": true,
-  "version": "0.56.0",
+  "version": "0.57.0",
   "description": "Full redis and knex integration tests for the entity framework",
   "scripts": {
     "build": "tsc --build",
