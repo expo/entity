@@ -1,3 +1,5 @@
+import assert from 'assert';
+
 /**
  * Supported SQL value types that can be safely parameterized.
  * This ensures type safety and prevents passing unsupported types to SQL queries.
@@ -39,7 +41,7 @@ export class SQLFragment<TFields extends Record<string, any>> {
    */
   getKnexBindings(
     getColumnForField: (fieldName: keyof TFields) => string,
-  ): readonly (string | SupportedSQLValue)[] {
+  ): readonly SupportedSQLValue[] {
     return this.bindings.map((b) => {
       switch (b.type) {
         case 'entityField':
@@ -312,6 +314,19 @@ type PickSupportedSQLValueKeys<T> = {
   [K in keyof T]: T[K] extends SupportedSQLValue ? K : never;
 }[keyof T];
 
+type PickStringValueKeys<T> = {
+  [K in keyof T]: T[K] extends string | null | undefined ? K : never;
+}[keyof T];
+
+type JsonSerializable =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | readonly JsonSerializable[]
+  | { readonly [key: string]: JsonSerializable };
+
 /**
  * Common SQL helper functions for building queries
  */
@@ -388,7 +403,7 @@ export const SQLFragmentHelpers = {
    * ```
    */
   like<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
+    fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
     return sql`${entityField(fieldName)} LIKE ${pattern}`;
@@ -398,7 +413,7 @@ export const SQLFragmentHelpers = {
    * NOT LIKE helper
    */
   notLike<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
+    fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
     return sql`${entityField(fieldName)} NOT LIKE ${pattern}`;
@@ -408,7 +423,7 @@ export const SQLFragmentHelpers = {
    * ILIKE helper for case-insensitive matching
    */
   ilike<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
+    fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
     return sql`${entityField(fieldName)} ILIKE ${pattern}`;
@@ -418,7 +433,7 @@ export const SQLFragmentHelpers = {
    * NOT ILIKE helper for case-insensitive non-matching
    */
   notIlike<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
+    fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
     return sql`${entityField(fieldName)} NOT ILIKE ${pattern}`;
@@ -509,9 +524,15 @@ export const SQLFragmentHelpers = {
    */
   jsonContains<TFields extends Record<string, any>>(
     fieldName: keyof TFields,
-    value: unknown,
+    value: JsonSerializable,
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} @> ${JSON.stringify(value)}::jsonb`;
+    const serialized = JSON.stringify(value);
+    // JSON.stringify returns undefined for unsupported types, but we also want to allow undefined as a value
+    assert(
+      serialized !== undefined || value === undefined,
+      'jsonContains: value is not JSON-serializable',
+    );
+    return sql`${entityField(fieldName)} @> ${serialized}::jsonb`;
   },
 
   /**
@@ -519,9 +540,15 @@ export const SQLFragmentHelpers = {
    */
   jsonContainedBy<TFields extends Record<string, any>>(
     fieldName: keyof TFields,
-    value: unknown,
+    value: JsonSerializable,
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} <@ ${JSON.stringify(value)}::jsonb`;
+    const serialized = JSON.stringify(value);
+    // JSON.stringify returns undefined for unsupported types, but we also want to allow undefined as a value
+    assert(
+      serialized !== undefined || value === undefined,
+      'jsonContainedBy: value is not JSON-serializable',
+    );
+    return sql`${entityField(fieldName)} <@ ${serialized}::jsonb`;
   },
 
   /**

@@ -692,6 +692,26 @@ describe('SQLOperator', () => {
           '{"premium":true}',
         ]);
       });
+
+      it('generates JSON contains for null and undefined values', () => {
+        const fragmentNull = SQLFragmentHelpers.jsonContains('stringField', null);
+        const fragmentUndefined = SQLFragmentHelpers.jsonContains('stringField', undefined);
+
+        expect(fragmentNull.sql).toBe('?? @> ?::jsonb');
+        expect(fragmentNull.getKnexBindings(getColumnForField)).toEqual(['string_field', 'null']);
+
+        expect(fragmentUndefined.sql).toBe('?? @> ?::jsonb');
+        expect(fragmentUndefined.getKnexBindings(getColumnForField)).toEqual([
+          'string_field',
+          undefined,
+        ]);
+      });
+
+      it('throws when value is not JSON-serializable', () => {
+        expect(() => SQLFragmentHelpers.jsonContains('stringField', (() => {}) as any)).toThrow(
+          'jsonContains: value is not JSON-serializable',
+        );
+      });
     });
 
     describe(SQLFragmentHelpers.jsonContainedBy, () => {
@@ -706,6 +726,26 @@ describe('SQLOperator', () => {
           'string_field',
           '{"theme":"dark","lang":"en"}',
         ]);
+      });
+
+      it('generates JSON contained by for null and undefined values', () => {
+        const fragmentNull = SQLFragmentHelpers.jsonContainedBy('stringField', null);
+        const fragmentUndefined = SQLFragmentHelpers.jsonContainedBy('stringField', undefined);
+
+        expect(fragmentNull.sql).toBe('?? <@ ?::jsonb');
+        expect(fragmentNull.getKnexBindings(getColumnForField)).toEqual(['string_field', 'null']);
+
+        expect(fragmentUndefined.sql).toBe('?? <@ ?::jsonb');
+        expect(fragmentUndefined.getKnexBindings(getColumnForField)).toEqual([
+          'string_field',
+          undefined,
+        ]);
+      });
+
+      it('throws when value is not JSON-serializable', () => {
+        expect(() => SQLFragmentHelpers.jsonContainedBy('stringField', (() => {}) as any)).toThrow(
+          'jsonContainedBy: value is not JSON-serializable',
+        );
       });
     });
 
