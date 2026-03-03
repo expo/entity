@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.59.0](https://github.com/expo/entity/compare/v0.58.0...v0.59.0) (2026-03-03)
+
+### Bug Fixes
+
+- **deps:** update dependency @koa/router to v15.3.1 ([#497](https://github.com/expo/entity/issues/497)) ([72b3c80](https://github.com/expo/entity/commit/72b3c80d12a1afa3c5593bcf6d7ad233c3524341))
+
 # [0.58.0](https://github.com/expo/entity/compare/v0.57.0...v0.58.0) (2026-03-02)
 
 **Note:** Version bump only for package @expo/entity-example

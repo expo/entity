@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.59.0](https://github.com/expo/entity/compare/v0.58.0...v0.59.0) (2026-03-03)
+
+### Features
+
+- add support to SQLFragment for `= ANY(?)` ([#498](https://github.com/expo/entity/issues/498)) ([b931daa](https://github.com/expo/entity/commit/b931daa9a082cdb33f4559d6d32e1655f0459b79))
+
 # [0.58.0](https://github.com/expo/entity/compare/v0.57.0...v0.58.0) (2026-03-02)
 
 ### Bug Fixes
