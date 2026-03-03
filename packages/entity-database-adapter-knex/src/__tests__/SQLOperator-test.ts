@@ -2,6 +2,7 @@ import { getDatabaseFieldForEntityField } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 
 import {
+  arrayValue,
   entityField,
   identifier,
   unsafeRaw,
@@ -53,6 +54,27 @@ describe('SQLOperator', () => {
         'active',
         'pending',
         'approved',
+      ]);
+    });
+
+    it('handles arrayValue as a single bound parameter', () => {
+      const values = ['active', 'pending', 'approved'];
+      const fragment = sql`status = ANY(${arrayValue(values)})`;
+
+      expect(fragment.sql).toBe('status = ANY(?)');
+      expect(fragment.getKnexBindings(getColumnForField)).toEqual([
+        ['active', 'pending', 'approved'],
+      ]);
+    });
+
+    it('handles arrayValue with entity field for = ANY()', () => {
+      const values = ['active', 'pending'];
+      const fragment = sql`${entityField<TestFields>('stringField')} = ANY(${arrayValue(values)})`;
+
+      expect(fragment.sql).toBe('?? = ANY(?)');
+      expect(fragment.getKnexBindings(getColumnForField)).toEqual([
+        'string_field',
+        ['active', 'pending'],
       ]);
     });
 
@@ -496,6 +518,25 @@ describe('SQLOperator', () => {
         const fragment = SQLFragmentHelpers.notInArray('stringField', []);
 
         expect(fragment.sql).toBe('1 = 1'); // Always true
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual([]);
+      });
+    });
+
+    describe(SQLFragmentHelpers.anyArray, () => {
+      it('generates = ANY() clause with values', () => {
+        const fragment = SQLFragmentHelpers.anyArray('stringField', ['active', 'pending']);
+
+        expect(fragment.sql).toBe('?? = ANY(?)');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual([
+          'string_field',
+          ['active', 'pending'],
+        ]);
+      });
+
+      it('handles empty array', () => {
+        const fragment = SQLFragmentHelpers.anyArray('stringField', []);
+
+        expect(fragment.sql).toBe('1 = 0'); // Always false
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([]);
       });
     });
