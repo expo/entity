@@ -202,6 +202,15 @@ export class SQLEntityField<TFields extends Record<string, any>> {
 }
 
 /**
+ * Helper for passing an array as a single bound parameter (e.g. for PostgreSQL's = ANY(?)).
+ * Unlike bare arrays interpolated in the sql template (which expand to (?, ?, ?) for IN clauses),
+ * this binds the entire array as one parameter, letting knex handle the array encoding.
+ */
+export class SQLArrayValue {
+  constructor(public readonly values: readonly SupportedSQLValue[]) {}
+}
+
+/**
  * Helper for raw SQL that should not be parameterized
  * WARNING: Only use this with trusted input to avoid SQL injection
  */
@@ -233,6 +242,21 @@ export function entityField<TFields extends Record<string, any>>(
   fieldName: keyof TFields,
 ): SQLEntityField<TFields> {
   return new SQLEntityField(fieldName);
+}
+
+/**
+ * Wrap an array so it is bound as a single parameter rather than expanded for IN clauses.
+ * Generates PostgreSQL's = ANY(?) syntax.
+ *
+ * @example
+ * ```ts
+ * const statuses = ['active', 'pending'];
+ * const query = sql`${entityField('status')} = ANY(${arrayValue(statuses)})`;
+ * // Generates: ?? = ANY(?) with the array bound as a single parameter
+ * ```
+ */
+export function arrayValue(values: readonly SupportedSQLValue[]): SQLArrayValue {
+  return new SQLArrayValue(values);
 }
 
 /**
@@ -270,6 +294,7 @@ export function sql<TFields extends Record<string, any>>(
     | SQLIdentifier
     | SQLUnsafeRaw
     | SQLEntityField<TFields>
+    | SQLArrayValue
   )[]
 ): SQLFragment<TFields> {
   let sqlString = '';
@@ -292,6 +317,10 @@ export function sql<TFields extends Record<string, any>>(
         // Handle entity field references by treating them as identifiers
         sqlString += '??';
         bindings.push({ type: 'entityField', fieldName: value.fieldName });
+      } else if (value instanceof SQLArrayValue) {
+        // Handle array as a single bound parameter (for = ANY(?), etc.)
+        sqlString += '?';
+        bindings.push({ type: 'value', value: value.values as SupportedSQLValue });
       } else if (value instanceof SQLUnsafeRaw) {
         // Handle raw SQL (WARNING: no parameterization)
         sqlString += value.rawSql;
@@ -349,6 +378,28 @@ export const SQLFragmentHelpers = {
       return sql`1 = 0`;
     }
     return sql`${entityField(fieldName)} IN ${values}`;
+  },
+
+  /**
+   * = ANY() clause helper. Binds the array as a single parameter instead of expanding it.
+   * Semantically equivalent to IN for most cases, but retains a consistent query shape for
+   * query metrics.
+   *
+   * @example
+   * ```ts
+   * const query = SQLFragmentHelpers.anyArray('status', ['active', 'pending']);
+   * // Generates: ?? = ANY(?) with entityField binding for 'status' and a single array value binding
+   * ```
+   */
+  anyArray<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
+    fieldName: N,
+    values: readonly TFields[N][],
+  ): SQLFragment<TFields> {
+    if (values.length === 0) {
+      // Handle empty array case - always false
+      return sql`1 = 0`;
+    }
+    return sql`${entityField(fieldName)} = ANY(${arrayValue(values)})`;
   },
 
   /**
