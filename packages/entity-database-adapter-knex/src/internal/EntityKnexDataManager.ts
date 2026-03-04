@@ -487,7 +487,7 @@ export class EntityKnexDataManager<
   ): SQLFragment<TFields> {
     const conditions = [baseWhere, cursorCondition].filter((it) => !!it);
     if (conditions.length === 0) {
-      return sql`1 = 1`;
+      return sql`TRUE`;
     }
     if (conditions.length === 1) {
       return conditions[0]!;
@@ -775,7 +775,7 @@ export class EntityKnexDataManager<
         ];
 
         return {
-          searchWhere: conditions.length > 0 ? SQLFragmentHelpers.or(...conditions) : sql`1 = 0`,
+          searchWhere: conditions.length > 0 ? SQLFragmentHelpers.or(...conditions) : sql`FALSE`,
           searchOrderByClauses,
         };
       }

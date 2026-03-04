@@ -278,6 +278,26 @@ export function unsafeRaw(sqlString: string): SQLUnsafeRaw {
 }
 
 /**
+ * Wraps a SQLFragment or entity field name into an SQLExpression for fluent comparison usage.
+ *
+ * @example
+ * ```ts
+ * expression<MyFields>('age').gte(18)
+ * expression<MyFields>('name').ilike('%john%')
+ * expression(sql`${entityField('status')}`).eq('active')
+ * ```
+ */
+export function expression<TFields extends Record<string, any>>(
+  fragmentOrFieldName: SQLFragment<TFields> | keyof TFields,
+): SQLExpression<TFields> {
+  if (fragmentOrFieldName instanceof SQLFragment) {
+    return new SQLExpression(fragmentOrFieldName.sql, fragmentOrFieldName.bindings);
+  }
+  const fragment = sql`${entityField(fragmentOrFieldName)}`;
+  return new SQLExpression(fragment.sql, fragment.bindings);
+}
+
+/**
  * Tagged template literal function for SQL queries
  *
  * @example
@@ -320,7 +340,7 @@ export function sql<TFields extends Record<string, any>>(
       } else if (value instanceof SQLArrayValue) {
         // Handle array as a single bound parameter (for = ANY(?), etc.)
         sqlString += '?';
-        bindings.push({ type: 'value', value: value.values as SupportedSQLValue });
+        bindings.push({ type: 'value', value: value.values });
       } else if (value instanceof SQLUnsafeRaw) {
         // Handle raw SQL (WARNING: no parameterization)
         sqlString += value.rawSql;
@@ -357,6 +377,141 @@ type JsonSerializable =
   | { readonly [key: string]: JsonSerializable };
 
 /**
+ * An SQL expression that supports fluent comparison methods.
+ * Extends SQLFragment so it can be used anywhere a SQLFragment is accepted.
+ * The fluent methods return plain SQLFragment instances since they produce
+ * complete conditions, not further chainable expressions.
+ */
+export class SQLExpression<TFields extends Record<string, any>> extends SQLFragment<TFields> {
+  eq(value: SupportedSQLValue): SQLFragment<TFields> {
+    if (value === null || value === undefined) {
+      return this.isNull();
+    }
+    return sql`${this} = ${value}`;
+  }
+
+  neq(value: SupportedSQLValue): SQLFragment<TFields> {
+    if (value === null || value === undefined) {
+      return this.isNotNull();
+    }
+    return sql`${this} != ${value}`;
+  }
+
+  gt(value: SupportedSQLValue): SQLFragment<TFields> {
+    return sql`${this} > ${value}`;
+  }
+
+  gte(value: SupportedSQLValue): SQLFragment<TFields> {
+    return sql`${this} >= ${value}`;
+  }
+
+  lt(value: SupportedSQLValue): SQLFragment<TFields> {
+    return sql`${this} < ${value}`;
+  }
+
+  lte(value: SupportedSQLValue): SQLFragment<TFields> {
+    return sql`${this} <= ${value}`;
+  }
+
+  isNull(): SQLFragment<TFields> {
+    return sql`${this} IS NULL`;
+  }
+
+  isNotNull(): SQLFragment<TFields> {
+    return sql`${this} IS NOT NULL`;
+  }
+
+  like(pattern: string): SQLFragment<TFields> {
+    return sql`${this} LIKE ${pattern}`;
+  }
+
+  notLike(pattern: string): SQLFragment<TFields> {
+    return sql`${this} NOT LIKE ${pattern}`;
+  }
+
+  ilike(pattern: string): SQLFragment<TFields> {
+    return sql`${this} ILIKE ${pattern}`;
+  }
+
+  notIlike(pattern: string): SQLFragment<TFields> {
+    return sql`${this} NOT ILIKE ${pattern}`;
+  }
+
+  inArray(values: readonly SupportedSQLValue[]): SQLFragment<TFields> {
+    if (values.length === 0) {
+      return sql`FALSE`;
+    }
+    return sql`${this} IN ${values}`;
+  }
+
+  notInArray(values: readonly SupportedSQLValue[]): SQLFragment<TFields> {
+    if (values.length === 0) {
+      return sql`TRUE`;
+    }
+    return sql`${this} NOT IN ${values}`;
+  }
+
+  anyArray(values: readonly SupportedSQLValue[]): SQLFragment<TFields> {
+    if (values.length === 0) {
+      return sql`FALSE`;
+    }
+    return sql`${this} = ANY(${arrayValue(values)})`;
+  }
+
+  between(min: SupportedSQLValue, max: SupportedSQLValue): SQLFragment<TFields> {
+    return sql`${this} BETWEEN ${min} AND ${max}`;
+  }
+
+  notBetween(min: SupportedSQLValue, max: SupportedSQLValue): SQLFragment<TFields> {
+    return sql`${this} NOT BETWEEN ${min} AND ${max}`;
+  }
+}
+
+/**
+ * Allowed PostgreSQL type names for the cast() helper.
+ * Only these types can be used to prevent SQL injection through type name interpolation.
+ */
+const ALLOWED_CAST_TYPES = [
+  'int',
+  'integer',
+  'int2',
+  'int4',
+  'int8',
+  'smallint',
+  'bigint',
+  'numeric',
+  'decimal',
+  'real',
+  'double precision',
+  'float',
+  'float4',
+  'float8',
+  'text',
+  'varchar',
+  'char',
+  'character varying',
+  'boolean',
+  'bool',
+  'date',
+  'time',
+  'timestamp',
+  'timestamptz',
+  'interval',
+  'json',
+  'jsonb',
+  'uuid',
+  'bytea',
+] as const;
+
+/**
+ * Allowed PostgreSQL type names for the cast() helper.
+ * Only these types can be used to prevent SQL injection through type name interpolation.
+ */
+export type PostgresCastType = (typeof ALLOWED_CAST_TYPES)[number];
+
+const ALLOWED_CAST_TYPES_SET: ReadonlySet<string> = new Set<PostgresCastType>(ALLOWED_CAST_TYPES);
+
+/**
  * Common SQL helper functions for building queries
  */
 export const SQLFragmentHelpers = {
@@ -373,11 +528,7 @@ export const SQLFragmentHelpers = {
     fieldName: N,
     values: readonly TFields[N][],
   ): SQLFragment<TFields> {
-    if (values.length === 0) {
-      // Handle empty array case - always false
-      return sql`1 = 0`;
-    }
-    return sql`${entityField(fieldName)} IN ${values}`;
+    return expression<TFields>(fieldName).inArray(values);
   },
 
   /**
@@ -395,11 +546,7 @@ export const SQLFragmentHelpers = {
     fieldName: N,
     values: readonly TFields[N][],
   ): SQLFragment<TFields> {
-    if (values.length === 0) {
-      // Handle empty array case - always false
-      return sql`1 = 0`;
-    }
-    return sql`${entityField(fieldName)} = ANY(${arrayValue(values)})`;
+    return expression<TFields>(fieldName).anyArray(values);
   },
 
   /**
@@ -409,11 +556,7 @@ export const SQLFragmentHelpers = {
     fieldName: N,
     values: readonly TFields[N][],
   ): SQLFragment<TFields> {
-    if (values.length === 0) {
-      // Handle empty array case - always true
-      return sql`1 = 1`;
-    }
-    return sql`${entityField(fieldName)} NOT IN ${values}`;
+    return expression<TFields>(fieldName).notInArray(values);
   },
 
   /**
@@ -430,7 +573,7 @@ export const SQLFragmentHelpers = {
     min: TFields[N],
     max: TFields[N],
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} BETWEEN ${min} AND ${max}`;
+    return expression<TFields>(fieldName).between(min, max);
   },
 
   /**
@@ -441,7 +584,7 @@ export const SQLFragmentHelpers = {
     min: TFields[N],
     max: TFields[N],
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} NOT BETWEEN ${min} AND ${max}`;
+    return expression<TFields>(fieldName).notBetween(min, max);
   },
 
   /**
@@ -457,7 +600,7 @@ export const SQLFragmentHelpers = {
     fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} LIKE ${pattern}`;
+    return expression<TFields>(fieldName).like(pattern);
   },
 
   /**
@@ -467,7 +610,7 @@ export const SQLFragmentHelpers = {
     fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} NOT LIKE ${pattern}`;
+    return expression<TFields>(fieldName).notLike(pattern);
   },
 
   /**
@@ -477,7 +620,7 @@ export const SQLFragmentHelpers = {
     fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} ILIKE ${pattern}`;
+    return expression<TFields>(fieldName).ilike(pattern);
   },
 
   /**
@@ -487,21 +630,21 @@ export const SQLFragmentHelpers = {
     fieldName: PickStringValueKeys<TFields>,
     pattern: string,
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} NOT ILIKE ${pattern}`;
+    return expression<TFields>(fieldName).notIlike(pattern);
   },
 
   /**
    * NULL check helper
    */
   isNull<TFields extends Record<string, any>>(fieldName: keyof TFields): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} IS NULL`;
+    return expression<TFields>(fieldName).isNull();
   },
 
   /**
    * NOT NULL check helper
    */
   isNotNull<TFields extends Record<string, any>>(fieldName: keyof TFields): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} IS NOT NULL`;
+    return expression<TFields>(fieldName).isNotNull();
   },
 
   /**
@@ -511,10 +654,7 @@ export const SQLFragmentHelpers = {
     fieldName: N,
     value: TFields[N],
   ): SQLFragment<TFields> {
-    if (value === null || value === undefined) {
-      return SQLFragmentHelpers.isNull(fieldName);
-    }
-    return sql`${entityField(fieldName)} = ${value}`;
+    return expression<TFields>(fieldName).eq(value);
   },
 
   /**
@@ -524,10 +664,7 @@ export const SQLFragmentHelpers = {
     fieldName: N,
     value: TFields[N],
   ): SQLFragment<TFields> {
-    if (value === null || value === undefined) {
-      return SQLFragmentHelpers.isNotNull(fieldName);
-    }
-    return sql`${entityField(fieldName)} != ${value}`;
+    return expression<TFields>(fieldName).neq(value);
   },
 
   /**
@@ -537,7 +674,7 @@ export const SQLFragmentHelpers = {
     fieldName: N,
     value: TFields[N],
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} > ${value}`;
+    return expression<TFields>(fieldName).gt(value);
   },
 
   /**
@@ -547,7 +684,7 @@ export const SQLFragmentHelpers = {
     fieldName: N,
     value: TFields[N],
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} >= ${value}`;
+    return expression<TFields>(fieldName).gte(value);
   },
 
   /**
@@ -557,7 +694,7 @@ export const SQLFragmentHelpers = {
     fieldName: N,
     value: TFields[N],
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} < ${value}`;
+    return expression<TFields>(fieldName).lt(value);
   },
 
   /**
@@ -567,7 +704,7 @@ export const SQLFragmentHelpers = {
     fieldName: N,
     value: TFields[N],
   ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)} <= ${value}`;
+    return expression<TFields>(fieldName).lte(value);
   },
 
   /**
@@ -604,22 +741,138 @@ export const SQLFragmentHelpers = {
 
   /**
    * JSON path extraction helper (-\>)
+   * Returns an SQLExpression so that fluent comparison methods can be chained.
    */
   jsonPath<TFields extends Record<string, any>>(
     fieldName: keyof TFields,
     path: string,
-  ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)}->${path}`;
+  ): SQLExpression<TFields> {
+    return expression(sql`${entityField(fieldName)}->${path}`);
   },
 
   /**
    * JSON path text extraction helper (-\>\>)
+   * Returns an SQLExpression so that fluent comparison methods can be chained.
    */
   jsonPathText<TFields extends Record<string, any>>(
     fieldName: keyof TFields,
     path: string,
-  ): SQLFragment<TFields> {
-    return sql`${entityField(fieldName)}->>${path}`;
+  ): SQLExpression<TFields> {
+    return expression(sql`${entityField(fieldName)}->>${path}`);
+  },
+
+  /**
+   * JSON deep path extraction helper (#\>)
+   * Extracts a JSON sub-object at the specified key path, returning jsonb.
+   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   *
+   * @param fieldName - The entity field containing JSON/JSONB data
+   * @param path - Array of keys forming the path (e.g., ['user', 'address', 'city'])
+   */
+  jsonDeepPath<TFields extends Record<string, any>>(
+    fieldName: keyof TFields,
+    path: readonly string[],
+  ): SQLExpression<TFields> {
+    const pathLiteral = `{${path.map(quotePostgresArrayElement).join(',')}}`;
+    return expression(sql`${entityField(fieldName)} #> ${pathLiteral}`);
+  },
+
+  /**
+   * JSON deep path text extraction helper (#\>\>)
+   * Extracts a JSON sub-object at the specified key path as text.
+   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   *
+   * @param fieldName - The entity field containing JSON/JSONB data
+   * @param path - Array of keys forming the path (e.g., ['user', 'address', 'city'])
+   */
+  jsonDeepPathText<TFields extends Record<string, any>>(
+    fieldName: keyof TFields,
+    path: readonly string[],
+  ): SQLExpression<TFields> {
+    const pathLiteral = `{${path.map(quotePostgresArrayElement).join(',')}}`;
+    return expression(sql`${entityField(fieldName)} #>> ${pathLiteral}`);
+  },
+
+  /**
+   * SQL type cast helper (::type)
+   * Casts an expression to a PostgreSQL type.
+   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   *
+   * @param fragment - An SQLFragment or SQLExpression to cast
+   * @param typeName - The PostgreSQL type name (e.g., 'int', 'text', 'timestamptz')
+   */
+  cast<TFields extends Record<string, any>>(
+    fragmentOrExpression: SQLFragment<TFields>,
+    typeName: PostgresCastType,
+  ): SQLExpression<TFields> {
+    assert(
+      ALLOWED_CAST_TYPES_SET.has(typeName),
+      `cast: unsupported type name "${typeName}". Allowed types: ${[...ALLOWED_CAST_TYPES_SET].join(', ')}`,
+    );
+    return expression(sql`(${fragmentOrExpression})::${unsafeRaw(typeName)}`);
+  },
+
+  /**
+   * COALESCE helper
+   * Returns the first non-null value from the given expressions/values.
+   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   */
+  coalesce<TFields extends Record<string, any>>(
+    ...args: readonly (SQLFragment<TFields> | SupportedSQLValue)[]
+  ): SQLExpression<TFields> {
+    const fragments = args.map((arg) => {
+      if (arg instanceof SQLFragment) {
+        return arg;
+      }
+      return sql`${arg}`;
+    });
+    const inner = SQLFragment.joinWithCommaSeparator(...fragments);
+    return expression(sql`COALESCE(${inner})`);
+  },
+
+  /**
+   * LOWER helper
+   * Converts a string expression to lowercase.
+   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   */
+  lower<TFields extends Record<string, any>>(
+    expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  ): SQLExpression<TFields> {
+    const inner =
+      expressionOrFieldName instanceof SQLFragment
+        ? expressionOrFieldName
+        : sql`${entityField(expressionOrFieldName)}`;
+    return expression(sql`LOWER(${inner})`);
+  },
+
+  /**
+   * UPPER helper
+   * Converts a string expression to uppercase.
+   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   */
+  upper<TFields extends Record<string, any>>(
+    expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  ): SQLExpression<TFields> {
+    const inner =
+      expressionOrFieldName instanceof SQLFragment
+        ? expressionOrFieldName
+        : sql`${entityField(expressionOrFieldName)}`;
+    return expression(sql`UPPER(${inner})`);
+  },
+
+  /**
+   * TRIM helper
+   * Removes leading and trailing whitespace from a string expression.
+   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   */
+  trim<TFields extends Record<string, any>>(
+    expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  ): SQLExpression<TFields> {
+    const inner =
+      expressionOrFieldName instanceof SQLFragment
+        ? expressionOrFieldName
+        : sql`${entityField(expressionOrFieldName)}`;
+    return expression(sql`TRIM(${inner})`);
   },
 
   /**
@@ -629,7 +882,7 @@ export const SQLFragmentHelpers = {
     ...conditions: readonly SQLFragment<TFields>[]
   ): SQLFragment<TFields> {
     if (conditions.length === 0) {
-      return sql`1 = 1`;
+      return sql`TRUE`;
     }
     return joinSQLFragments(
       conditions.map((c) => SQLFragmentHelpers.group(c)),
@@ -644,7 +897,7 @@ export const SQLFragmentHelpers = {
     ...conditions: readonly SQLFragment<TFields>[]
   ): SQLFragment<TFields> {
     if (conditions.length === 0) {
-      return sql`1 = 0`;
+      return sql`FALSE`;
     }
     return joinSQLFragments(
       conditions.map((c) => SQLFragmentHelpers.group(c)),
@@ -656,7 +909,7 @@ export const SQLFragmentHelpers = {
    * Logical NOT of a fragment
    */
   not<TFields extends Record<string, any>>(condition: SQLFragment<TFields>): SQLFragment<TFields> {
-    return new SQLFragment('NOT (' + condition.sql + ')', condition.bindings);
+    return sql`NOT (${condition})`;
   },
 
   /**
@@ -665,7 +918,7 @@ export const SQLFragmentHelpers = {
   group<TFields extends Record<string, any>>(
     condition: SQLFragment<TFields>,
   ): SQLFragment<TFields> {
-    return new SQLFragment('(' + condition.sql + ')', condition.bindings);
+    return sql`(${condition})`;
   },
 };
 
@@ -678,4 +931,14 @@ function joinSQLFragments<TFields extends Record<string, any>>(
     fragments.map((f) => f.sql).join(separator),
     fragments.flatMap((f) => f.bindings),
   );
+}
+
+// Internal helper to properly quote elements for PostgreSQL array literals.
+// Elements containing special characters (commas, braces, quotes, backslashes, whitespace)
+// or empty strings must be double-quoted with internal escaping.
+function quotePostgresArrayElement(element: string): string {
+  if (element === '' || /[,{}"\\\s]/.test(element)) {
+    return `"${element.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+  }
+  return element;
 }

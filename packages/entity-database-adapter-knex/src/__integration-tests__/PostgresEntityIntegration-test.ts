@@ -521,6 +521,33 @@ describe('postgres entity integration', () => {
       expect(complexQuery[1]!.getField('name')).toBe('User3');
     });
 
+    it('handles empty-array and empty-condition edge cases with TRUE/FALSE', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const { and, or, inArray } = SQLFragmentHelpers;
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'TrueFalseUser')
+          .setField('hasACat', true)
+          .setField('hasADog', false)
+          .createAsync(),
+      );
+
+      // inArray([]) produces FALSE — should return no results
+      const emptyIn = await PostgresTestEntity.knexLoader(vc1)
+        .loadManyBySQL(inArray('name', []))
+        .executeAsync();
+      expect(emptyIn).toHaveLength(0);
+
+      // and() with no conditions produces TRUE — should return all results
+      const emptyAnd = await PostgresTestEntity.knexLoader(vc1).loadManyBySQL(and()).executeAsync();
+      expect(emptyAnd.length).toBeGreaterThanOrEqual(1);
+
+      // or() with no conditions produces FALSE — should return no results
+      const emptyOr = await PostgresTestEntity.knexLoader(vc1).loadManyBySQL(or()).executeAsync();
+      expect(emptyOr).toHaveLength(0);
+    });
+
     it('supports entityField for entity-to-DB field name translation', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
