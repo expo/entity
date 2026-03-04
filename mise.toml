@@ -1,5 +1,5 @@
 [tools]
-node = "24.12.0"
+node = "24.14.0"
 yarn = "4.12.0"
 
 [tasks.yarn]
