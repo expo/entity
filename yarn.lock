@@ -5725,9 +5725,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ctix@npm:2.7.2":
-  version: 2.7.2
-  resolution: "ctix@npm:2.7.2"
+"ctix@npm:2.7.5":
+  version: 2.7.5
+  resolution: "ctix@npm:2.7.5"
   dependencies:
     chalk: "npm:^4.1.2"
     change-case: "npm:^4.1.2"
@@ -5766,7 +5766,7 @@ __metadata:
     typescript: ">=5"
   bin:
     ctix: dist/cjs/cli.cjs
-  checksum: 10c0/d0c3ffa73e58a90d84abe1f243a5b4298b60a878a66f7243c9ca407e8bf484b35d1b42fb3ec47dc8655b06fb2385d8bc8909ff4c5fe806d51ccda2f00e68705a
+  checksum: 10c0/62ee888f3101bf4ef96d8f2a9fc708e3363342d48ac7bf97ad2d1374eb9400fedb140361bd2e65a71f4193c47702415859b8db5e5eadb7c4381d809a65fe0481
   languageName: node
   linkType: hard
 
@@ -11938,7 +11938,7 @@ __metadata:
     "@types/babel__core": "npm:7.20.5"
     "@types/babel__preset-env": "npm:7.10.0"
     "@types/node": "npm:24.11.0"
-    ctix: "npm:2.7.2"
+    ctix: "npm:2.7.5"
     eslint: "npm:9.39.3"
     eslint-config-universe: "npm:15.0.3"
     eslint-plugin-tsdoc: "npm:0.5.2"
