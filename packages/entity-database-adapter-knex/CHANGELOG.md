@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.60.0](https://github.com/expo/entity/compare/v0.59.0...v0.60.0) (2026-03-06)
+
+### Features
+
+- Add SQLExpression class that supports fluent comparison method API ([#506](https://github.com/expo/entity/issues/506)) ([535b681](https://github.com/expo/entity/commit/535b6811e08578aba1aadb095f3e401cfe7eaa26))
+
 # [0.59.0](https://github.com/expo/entity/compare/v0.58.0...v0.59.0) (2026-03-03)
 
 ### Features
