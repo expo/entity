@@ -1,13 +1,16 @@
-import type { EntityCompanionDefinition, EntityCompanionProvider } from './EntityCompanionProvider';
-import { EntityLoaderFactory } from './EntityLoaderFactory';
-import { EntityMutatorFactory } from './EntityMutatorFactory';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContextProvider } from './EntityQueryContextProvider';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import type { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
-import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
-import { mergeEntityMutationTriggerConfigurations } from './utils/mergeEntityMutationTriggerConfigurations';
+import type {
+  EntityCompanionDefinition,
+  EntityCompanionProvider,
+} from './EntityCompanionProvider.ts';
+import { EntityLoaderFactory } from './EntityLoaderFactory.ts';
+import { EntityMutatorFactory } from './EntityMutatorFactory.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContextProvider } from './EntityQueryContextProvider.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import type { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator.ts';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
+import { mergeEntityMutationTriggerConfigurations } from './utils/mergeEntityMutationTriggerConfigurations.ts';
 
 export interface IPrivacyPolicyClass<TPrivacyPolicy> {
   new (): TPrivacyPolicy;

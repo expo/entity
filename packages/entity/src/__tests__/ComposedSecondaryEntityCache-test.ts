@@ -2,8 +2,8 @@ import nullthrows from '@expo/nullthrows';
 import { describe, expect, it } from '@jest/globals';
 import invariant from 'invariant';
 
-import { ComposedSecondaryEntityCache } from '../ComposedSecondaryEntityCache';
-import type { ISecondaryEntityCache } from '../EntitySecondaryCacheLoader';
+import { ComposedSecondaryEntityCache } from '../ComposedSecondaryEntityCache.ts';
+import type { ISecondaryEntityCache } from '../EntitySecondaryCacheLoader.ts';
 
 type TestFields = { id: string };
 type TestLoadParams = { lp: string };

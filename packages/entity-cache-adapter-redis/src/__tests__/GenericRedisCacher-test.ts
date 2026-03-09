@@ -9,7 +9,7 @@ import { describe, expect, it } from '@jest/globals';
 import type { Pipeline, Redis } from 'ioredis';
 import { anything, instance, mock, verify, when } from 'ts-mockito';
 
-import { GenericRedisCacher, RedisCacheInvalidationStrategy } from '../GenericRedisCacher';
+import { GenericRedisCacher, RedisCacheInvalidationStrategy } from '../GenericRedisCacher.ts';
 
 type BlahFields = {
   id: string;

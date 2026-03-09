@@ -1,11 +1,11 @@
-import type { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
-import type { EntityCompositeField, EntityCompositeFieldValue } from './EntityConfiguration';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import { CompositeFieldValueHolder } from './internal/CompositeFieldHolder';
-import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap';
-import { mapMap } from './utils/collections/maps';
+import type { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader.ts';
+import type { EntityCompositeField, EntityCompositeFieldValue } from './EntityConfiguration.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import { CompositeFieldValueHolder } from './internal/CompositeFieldHolder.ts';
+import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap.ts';
+import { mapMap } from './utils/collections/maps.ts';
 
 /**
  * Enforcing entity loader. All normal loads are batched,

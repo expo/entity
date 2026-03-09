@@ -5,8 +5,8 @@ import type {
 } from '@expo/entity';
 import { GenericEntityCacheAdapter } from '@expo/entity';
 
-import type { GenericRedisCacheContext } from './GenericRedisCacher';
-import { GenericRedisCacher } from './GenericRedisCacher';
+import type { GenericRedisCacheContext } from './GenericRedisCacher.ts';
+import { GenericRedisCacher } from './GenericRedisCacher.ts';
 
 export class RedisCacheAdapterProvider implements IEntityCacheAdapterProvider {
   constructor(private readonly context: GenericRedisCacheContext) {}

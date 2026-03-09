@@ -1,21 +1,21 @@
 import {
+  CacheStatus,
   CompositeFieldHolder,
   CompositeFieldValueHolder,
   CompositeFieldValueHolderMap,
   SingleFieldHolder,
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
-  CacheStatus,
 } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 
 import {
-  InMemoryFullCacheStubCacheAdapterProvider,
   InMemoryFullCacheStubCacheAdapter,
+  InMemoryFullCacheStubCacheAdapterProvider,
   NoCacheStubCacheAdapter,
-} from '../StubCacheAdapter';
-import type { TestFields } from '../__testfixtures__/TestEntity';
-import { testEntityConfiguration } from '../__testfixtures__/TestEntity';
+} from '../StubCacheAdapter.ts';
+import type { TestFields } from '../__testfixtures__/TestEntity.ts';
+import { testEntityConfiguration } from '../__testfixtures__/TestEntity.ts';
 
 describe(NoCacheStubCacheAdapter, () => {
   describe('loadManyAsync', () => {

@@ -2,23 +2,23 @@ import { enforceAsyncResult } from '@expo/results';
 import { expect, it } from '@jest/globals';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Entity } from '../Entity';
+import { Entity } from '../Entity.ts';
 import type {
   EntityCompanionDefinition,
   EntityCompanionProvider,
-} from '../EntityCompanionProvider';
-import { EntityConfiguration } from '../EntityConfiguration';
-import { UUIDField } from '../EntityFields';
-import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
-import type { EntityQueryContext } from '../EntityQueryContext';
-import { ViewerContext } from '../ViewerContext';
-import { enforceResultsAsync } from '../entityUtils';
-import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';
-import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
-import { AlwaysDenyPrivacyPolicyRule } from '../rules/AlwaysDenyPrivacyPolicyRule';
-import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+} from '../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../EntityConfiguration.ts';
+import { UUIDField } from '../EntityFields.ts';
+import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy.ts';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from '../EntityQueryContext.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { enforceResultsAsync } from '../entityUtils.ts';
+import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule.ts';
+import { AlwaysDenyPrivacyPolicyRule } from '../rules/AlwaysDenyPrivacyPolicyRule.ts';
+import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 class TestUserViewerContext extends ViewerContext {
   constructor(

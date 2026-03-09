@@ -1,16 +1,16 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import { AuthorizationResultBasedEntityAssociationLoader } from '../AuthorizationResultBasedEntityAssociationLoader';
-import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
-import { EnforcingEntityAssociationLoader } from '../EnforcingEntityAssociationLoader';
-import { EnforcingEntityLoader } from '../EnforcingEntityLoader';
-import { EntityInvalidationUtils } from '../EntityInvalidationUtils';
-import { ReadonlyEntity } from '../ReadonlyEntity';
-import { ViewerContext } from '../ViewerContext';
-import { SimpleTestEntity } from '../utils/__testfixtures__/SimpleTestEntity';
-import { TestEntity } from '../utils/__testfixtures__/TestEntity';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+import { AuthorizationResultBasedEntityAssociationLoader } from '../AuthorizationResultBasedEntityAssociationLoader.ts';
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader.ts';
+import { EnforcingEntityAssociationLoader } from '../EnforcingEntityAssociationLoader.ts';
+import { EnforcingEntityLoader } from '../EnforcingEntityLoader.ts';
+import { EntityInvalidationUtils } from '../EntityInvalidationUtils.ts';
+import { ReadonlyEntity } from '../ReadonlyEntity.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { SimpleTestEntity } from '../utils/__testfixtures__/SimpleTestEntity.ts';
+import { TestEntity } from '../utils/__testfixtures__/TestEntity.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 describe(ReadonlyEntity, () => {
   describe('getID', () => {

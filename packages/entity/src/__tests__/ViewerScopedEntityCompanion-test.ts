@@ -1,16 +1,16 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import type { EntityCompanion } from '../EntityCompanion';
-import { ViewerContext } from '../ViewerContext';
-import { ViewerScopedEntityCompanion } from '../ViewerScopedEntityCompanion';
-import { ViewerScopedEntityLoaderFactory } from '../ViewerScopedEntityLoaderFactory';
-import { ViewerScopedEntityMutatorFactory } from '../ViewerScopedEntityMutatorFactory';
+import type { EntityCompanion } from '../EntityCompanion.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { ViewerScopedEntityCompanion } from '../ViewerScopedEntityCompanion.ts';
+import { ViewerScopedEntityLoaderFactory } from '../ViewerScopedEntityLoaderFactory.ts';
+import { ViewerScopedEntityMutatorFactory } from '../ViewerScopedEntityMutatorFactory.ts';
 import type {
   TestEntity,
   TestEntityPrivacyPolicy,
   TestFields,
-} from '../utils/__testfixtures__/TestEntity';
+} from '../utils/__testfixtures__/TestEntity.ts';
 
 describe(ViewerScopedEntityCompanion, () => {
   it('returns viewer scoped loader and mutator factory', () => {

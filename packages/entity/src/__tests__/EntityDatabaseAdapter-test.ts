@@ -1,20 +1,23 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
-import { EntityQueryContext } from '../EntityQueryContext';
+import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter.ts';
+import { EntityQueryContext } from '../EntityQueryContext.ts';
 import {
   EntityDatabaseAdapterEmptyInsertResultError,
   EntityDatabaseAdapterEmptyUpdateResultError,
   EntityDatabaseAdapterExcessiveDeleteResultError,
   EntityDatabaseAdapterExcessiveInsertResultError,
   EntityDatabaseAdapterExcessiveUpdateResultError,
-} from '../errors/EntityDatabaseAdapterError';
-import { CompositeFieldHolder, CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
-import type { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils';
-import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
-import type { TestFields } from '../utils/__testfixtures__/TestEntity';
-import { testEntityConfiguration } from '../utils/__testfixtures__/TestEntity';
+} from '../errors/EntityDatabaseAdapterError.ts';
+import {
+  CompositeFieldHolder,
+  CompositeFieldValueHolder,
+} from '../internal/CompositeFieldHolder.ts';
+import type { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils.ts';
+import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder.ts';
+import type { TestFields } from '../utils/__testfixtures__/TestEntity.ts';
+import { testEntityConfiguration } from '../utils/__testfixtures__/TestEntity.ts';
 
 class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'customIdField'> {
   private readonly fetchResults: object[];

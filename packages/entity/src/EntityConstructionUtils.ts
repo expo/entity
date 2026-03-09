@@ -3,19 +3,19 @@ import type { Result } from '@expo/results';
 import { asyncResult, result } from '@expo/results';
 import invariant from 'invariant';
 
-import type { IEntityClass } from './Entity';
-import type { EntityConfiguration } from './EntityConfiguration';
+import type { IEntityClass } from './Entity.ts';
+import type { EntityConfiguration } from './EntityConfiguration.ts';
 import type {
   EntityPrivacyPolicy,
   EntityPrivacyPolicyEvaluationContext,
-} from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import { pick } from './entityUtils';
-import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError';
-import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
-import { mapMapAsync } from './utils/collections/maps';
+} from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import { pick } from './entityUtils.ts';
+import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError.ts';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
+import { mapMapAsync } from './utils/collections/maps.ts';
 
 /**
  * Common entity loader utilities for entity construction and authorization.

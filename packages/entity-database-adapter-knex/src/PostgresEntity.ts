@@ -7,12 +7,12 @@ import type {
 } from '@expo/entity';
 import { Entity } from '@expo/entity';
 
-import type { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
-import type { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
+import type { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader.ts';
+import type { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader.ts';
 import {
   knexLoader as knexLoaderFn,
   knexLoaderWithAuthorizationResults as knexLoaderWithAuthorizationResultsFn,
-} from './knexLoader';
+} from './knexLoader.ts';
 
 /**
  * Abstract base class for mutable entities backed by Postgres.

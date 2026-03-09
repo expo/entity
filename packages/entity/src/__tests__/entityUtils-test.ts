@@ -3,13 +3,13 @@ import { describe, expect, it } from '@jest/globals';
 
 import {
   enforceResultsAsync,
-  successfulResults,
   failedResults,
-  successfulResultsFilterMap,
   failedResultsFilterMap,
-  pick,
   partitionArray,
-} from '../entityUtils';
+  pick,
+  successfulResults,
+  successfulResultsFilterMap,
+} from '../entityUtils.ts';
 
 describe(enforceResultsAsync, () => {
   it('throws when any result is an error', async () => {

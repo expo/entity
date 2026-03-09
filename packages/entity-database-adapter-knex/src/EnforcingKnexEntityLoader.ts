@@ -11,11 +11,11 @@ import type {
   AuthorizationResultBasedKnexEntityLoader,
   EntityLoaderLoadPageArgs,
   EntityLoaderQuerySelectionModifiers,
-} from './AuthorizationResultBasedKnexEntityLoader';
-import type { FieldEqualityCondition } from './BasePostgresEntityDatabaseAdapter';
-import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
-import type { SQLFragment } from './SQLOperator';
-import type { Connection, EntityKnexDataManager } from './internal/EntityKnexDataManager';
+} from './AuthorizationResultBasedKnexEntityLoader.ts';
+import type { FieldEqualityCondition } from './BasePostgresEntityDatabaseAdapter.ts';
+import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder.ts';
+import type { SQLFragment } from './SQLOperator.ts';
+import type { Connection, EntityKnexDataManager } from './internal/EntityKnexDataManager.ts';
 
 /**
  * Enforcing knex entity loader for non-data-loader-based load methods.

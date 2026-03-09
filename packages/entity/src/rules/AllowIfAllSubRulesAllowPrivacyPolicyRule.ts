@@ -1,8 +1,8 @@
-import type { EntityPrivacyPolicyRuleEvaluationContext } from '../EntityPrivacyPolicy';
-import type { EntityQueryContext } from '../EntityQueryContext';
-import type { ReadonlyEntity } from '../ReadonlyEntity';
-import type { ViewerContext } from '../ViewerContext';
-import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule';
+import type { EntityPrivacyPolicyRuleEvaluationContext } from '../EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from '../EntityQueryContext.ts';
+import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
+import type { ViewerContext } from '../ViewerContext.ts';
+import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule.ts';
 
 export class AllowIfAllSubRulesAllowPrivacyPolicyRule<
   TFields extends object,

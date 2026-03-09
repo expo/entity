@@ -4,7 +4,7 @@ import type {
   IEntityDatabaseAdapterProvider,
 } from '@expo/entity';
 
-import { StubDatabaseAdapter } from './StubDatabaseAdapter';
+import { StubDatabaseAdapter } from './StubDatabaseAdapter.ts';
 
 export class StubDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
   private readonly objectCollection = new Map();

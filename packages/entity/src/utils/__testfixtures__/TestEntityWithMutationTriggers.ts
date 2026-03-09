@@ -1,16 +1,16 @@
-import { Entity } from '../../Entity';
-import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import { EntityConfiguration } from '../../EntityConfiguration';
-import { StringField, UUIDField } from '../../EntityFields';
-import type { EntityTriggerMutationInfo } from '../../EntityMutationInfo';
+import { Entity } from '../../Entity.ts';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../../EntityConfiguration.ts';
+import { StringField, UUIDField } from '../../EntityFields.ts';
+import type { EntityTriggerMutationInfo } from '../../EntityMutationInfo.ts';
 import {
   EntityMutationTrigger,
   EntityNonTransactionalMutationTrigger,
-} from '../../EntityMutationTriggerConfiguration';
-import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
-import type { EntityQueryContext } from '../../EntityQueryContext';
-import type { ViewerContext } from '../../ViewerContext';
-import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
+} from '../../EntityMutationTriggerConfiguration.ts';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from '../../EntityQueryContext.ts';
+import type { ViewerContext } from '../../ViewerContext.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule.ts';
 
 export type TestMTFields = {
   id: string;

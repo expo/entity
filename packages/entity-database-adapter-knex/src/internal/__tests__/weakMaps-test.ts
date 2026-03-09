@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { computeIfAbsentInWeakMap } from '../weakMaps';
+import { computeIfAbsentInWeakMap } from '../weakMaps.ts';
 
 describe(computeIfAbsentInWeakMap, () => {
   it('computes a value when absent', () => {

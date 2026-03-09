@@ -11,9 +11,9 @@ import {
   transformFieldsToCacheObject,
 } from '@expo/entity';
 
-import { redisTransformerMap } from './RedisCommon';
-import { wrapNativeRedisCallAsync } from './errors/wrapNativeRedisCallAsync';
-import { getSurroundingCacheKeyVersionsForInvalidation } from './utils/getSurroundingCacheKeyVersionsForInvalidation';
+import { redisTransformerMap } from './RedisCommon.ts';
+import { wrapNativeRedisCallAsync } from './errors/wrapNativeRedisCallAsync.ts';
+import { getSurroundingCacheKeyVersionsForInvalidation } from './utils/getSurroundingCacheKeyVersionsForInvalidation.ts';
 
 // Sentinel value we store in Redis to negatively cache a database miss.
 // The sentinel value is distinct from any (positively) cached value.

@@ -1,7 +1,7 @@
 import nullthrows from '@expo/nullthrows';
 import invariant from 'invariant';
 
-import type { EntityConfiguration } from '../EntityConfiguration';
+import type { EntityConfiguration } from '../EntityConfiguration.ts';
 
 /**
  * @internal

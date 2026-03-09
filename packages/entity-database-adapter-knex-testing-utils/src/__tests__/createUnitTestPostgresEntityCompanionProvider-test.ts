@@ -1,8 +1,8 @@
 import { EntityCompanionProvider, ViewerContext } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 
-import { TestEntity } from '../__testfixtures__/TestEntity';
-import { createUnitTestPostgresEntityCompanionProvider } from '../createUnitTestPostgresEntityCompanionProvider';
+import { TestEntity } from '../__testfixtures__/TestEntity.ts';
+import { createUnitTestPostgresEntityCompanionProvider } from '../createUnitTestPostgresEntityCompanionProvider.ts';
 
 describe(createUnitTestPostgresEntityCompanionProvider, () => {
   it('creates a new EntityCompanionProvider', async () => {

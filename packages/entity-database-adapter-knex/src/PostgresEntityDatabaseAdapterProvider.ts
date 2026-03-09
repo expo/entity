@@ -4,7 +4,7 @@ import type {
   IEntityDatabaseAdapterProvider,
 } from '@expo/entity';
 
-import { PostgresEntityDatabaseAdapter } from './PostgresEntityDatabaseAdapter';
+import { PostgresEntityDatabaseAdapter } from './PostgresEntityDatabaseAdapter.ts';
 
 export interface PostgresEntityDatabaseAdapterConfiguration {
   /**

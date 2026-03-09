@@ -1,6 +1,6 @@
 import { describeFieldTestCase } from '@expo/entity-testing-utils';
 
-import { IPAddressField } from '../EntityFields';
+import { IPAddressField } from '../EntityFields.ts';
 
 describeFieldTestCase(
   new IPAddressField({ columnName: 'wat' }),

@@ -1,9 +1,9 @@
 import invariant from 'invariant';
 
-import type { EntityConfiguration } from '../EntityConfiguration';
-import { getDatabaseFieldForEntityField } from './EntityFieldTransformationUtils';
-import type { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
-import { EntityLoadMethodType, LoadValueMap } from './EntityLoadInterfaces';
+import type { EntityConfiguration } from '../EntityConfiguration.ts';
+import { getDatabaseFieldForEntityField } from './EntityFieldTransformationUtils.ts';
+import type { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces.ts';
+import { EntityLoadMethodType, LoadValueMap } from './EntityLoadInterfaces.ts';
 
 /**
  * A load key that represents a single field (fieldName) on an entity.

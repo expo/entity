@@ -4,9 +4,9 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from '@je
 import type { Knex } from 'knex';
 import { knex } from 'knex';
 
-import { PostgresEntityQueryContextProvider } from '../PostgresEntityQueryContextProvider';
-import { PostgresUniqueTestEntity } from '../__testfixtures__/PostgresUniqueTestEntity';
-import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
+import { PostgresEntityQueryContextProvider } from '../PostgresEntityQueryContextProvider.ts';
+import { PostgresUniqueTestEntity } from '../__testfixtures__/PostgresUniqueTestEntity.ts';
+import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider.ts';
 
 describe(PostgresEntityQueryContextProvider, () => {
   let knexInstance: Knex;

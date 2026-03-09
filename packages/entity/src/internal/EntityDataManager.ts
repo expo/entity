@@ -1,23 +1,23 @@
 import DataLoader from 'dataloader';
 import invariant from 'invariant';
 
-import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
-import type { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
-import { TransactionalDataLoaderMode } from '../EntityQueryContext';
-import type { EntityQueryContextProvider } from '../EntityQueryContextProvider';
-import { partitionErrors } from '../entityUtils';
-import type { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces';
-import type { ReadThroughEntityCache } from './ReadThroughEntityCache';
+import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter.ts';
+import type { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext.ts';
+import { TransactionalDataLoaderMode } from '../EntityQueryContext.ts';
+import type { EntityQueryContextProvider } from '../EntityQueryContextProvider.ts';
+import { partitionErrors } from '../entityUtils.ts';
+import type { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces.ts';
+import type { ReadThroughEntityCache } from './ReadThroughEntityCache.ts';
 import {
   timeAndLogLoadMapEventAsync,
   timeAndLogLoadOneEventAsync,
-} from '../metrics/EntityMetricsUtils';
-import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+} from '../metrics/EntityMetricsUtils.ts';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
 import {
   EntityMetricsLoadType,
   IncrementLoadCountEventType,
-} from '../metrics/IEntityMetricsAdapter';
-import { computeIfAbsent } from '../utils/collections/maps';
+} from '../metrics/IEntityMetricsAdapter.ts';
+import { computeIfAbsent } from '../utils/collections/maps.ts';
 
 type DataLoaderMap<TFields extends Record<string, any>> = Map<
   string,

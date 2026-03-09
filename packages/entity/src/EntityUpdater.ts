@@ -1,10 +1,10 @@
-import type { AuthorizationResultBasedUpdateMutator } from './AuthorizationResultBasedEntityMutator';
-import { EnforcingEntityUpdater } from './EnforcingEntityUpdater';
-import type { IEntityClass } from './Entity';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
+import type { AuthorizationResultBasedUpdateMutator } from './AuthorizationResultBasedEntityMutator.ts';
+import { EnforcingEntityUpdater } from './EnforcingEntityUpdater.ts';
+import type { IEntityClass } from './Entity.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
 
 /**
  * The primary interface for updating entities.

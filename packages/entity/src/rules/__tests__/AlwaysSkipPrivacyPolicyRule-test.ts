@@ -1,10 +1,10 @@
 import { anything, instance, mock } from 'ts-mockito';
 
-import type { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../../EntityQueryContext';
-import { ViewerContext } from '../../ViewerContext';
-import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils';
-import { AlwaysSkipPrivacyPolicyRule } from '../AlwaysSkipPrivacyPolicyRule';
+import type { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy.ts';
+import { EntityQueryContext } from '../../EntityQueryContext.ts';
+import { ViewerContext } from '../../ViewerContext.ts';
+import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils.ts';
+import { AlwaysSkipPrivacyPolicyRule } from '../AlwaysSkipPrivacyPolicyRule.ts';
 
 describePrivacyPolicyRule(new AlwaysSkipPrivacyPolicyRule(), {
   skipCases: [

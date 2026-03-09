@@ -1,12 +1,12 @@
 import { EntityCacheAdapterTransientError, ViewerContext } from '@expo/entity';
 import { beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { URL } from 'url';
 
-import type { GenericRedisCacheContext } from '../GenericRedisCacher';
-import { GenericRedisCacher, RedisCacheInvalidationStrategy } from '../GenericRedisCacher';
-import { RedisTestEntity } from '../__testfixtures__/RedisTestEntity';
-import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
+import type { GenericRedisCacheContext } from '../GenericRedisCacher.ts';
+import { GenericRedisCacher, RedisCacheInvalidationStrategy } from '../GenericRedisCacher.ts';
+import { RedisTestEntity } from '../__testfixtures__/RedisTestEntity.ts';
+import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider.ts';
 
 class TestViewerContext extends ViewerContext {}
 

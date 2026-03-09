@@ -2,13 +2,13 @@ import type {
   AuthorizationResultBasedCreateMutator,
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
-} from './AuthorizationResultBasedEntityMutator';
-import type { EntityCascadingDeletionInfo } from './EntityMutationInfo';
-import type { EntityMutatorFactory } from './EntityMutatorFactory';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
+} from './AuthorizationResultBasedEntityMutator.ts';
+import type { EntityCascadingDeletionInfo } from './EntityMutationInfo.ts';
+import type { EntityMutatorFactory } from './EntityMutatorFactory.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
 
 /**
  * Provides a cleaner API for mutating entities by passing through the ViewerContext.

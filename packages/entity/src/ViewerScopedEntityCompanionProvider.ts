@@ -1,9 +1,9 @@
-import type { IEntityClass } from './Entity';
-import type { EntityCompanionProvider } from './EntityCompanionProvider';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import { ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';
+import type { IEntityClass } from './Entity.ts';
+import type { EntityCompanionProvider } from './EntityCompanionProvider.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import { ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion.ts';
 
 /**
  * Provides viewer-scoped entity companions providers for a simpler API.

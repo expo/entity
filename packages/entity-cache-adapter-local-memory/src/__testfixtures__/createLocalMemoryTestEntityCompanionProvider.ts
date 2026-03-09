@@ -3,8 +3,8 @@ import { EntityCompanionProvider, NoOpEntityMetricsAdapter } from '@expo/entity'
 import { StubDatabaseAdapterProvider, StubQueryContextProvider } from '@expo/entity-testing-utils';
 import { TTLCache } from '@isaacs/ttlcache';
 
-import type { ILocalMemoryCache, LocalMemoryCacheValue } from '../GenericLocalMemoryCacher';
-import { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider';
+import type { ILocalMemoryCache, LocalMemoryCacheValue } from '../GenericLocalMemoryCacher.ts';
+import { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider.ts';
 
 const queryContextProvider = new StubQueryContextProvider();
 

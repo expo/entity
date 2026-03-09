@@ -2,10 +2,10 @@ import { result } from '@expo/results';
 import { describe, expect, it } from '@jest/globals';
 import { anything, instance, mock, when } from 'ts-mockito';
 
-import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
-import { EnforcingEntityLoader } from '../EnforcingEntityLoader';
-import { CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
-import { CompositeFieldValueMap } from '../internal/CompositeFieldValueMap';
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader.ts';
+import { EnforcingEntityLoader } from '../EnforcingEntityLoader.ts';
+import { CompositeFieldValueHolder } from '../internal/CompositeFieldHolder.ts';
+import { CompositeFieldValueMap } from '../internal/CompositeFieldValueMap.ts';
 
 describe(EnforcingEntityLoader, () => {
   describe('loadManyByFieldEqualingManyAsync', () => {

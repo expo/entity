@@ -1,11 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import { EntityCompanionProvider } from '../EntityCompanionProvider';
-import { ViewerContext } from '../ViewerContext';
-import { ViewerScopedEntityCompanion } from '../ViewerScopedEntityCompanion';
-import { ViewerScopedEntityCompanionProvider } from '../ViewerScopedEntityCompanionProvider';
-import { TestEntity } from '../utils/__testfixtures__/TestEntity';
+import { EntityCompanionProvider } from '../EntityCompanionProvider.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { ViewerScopedEntityCompanion } from '../ViewerScopedEntityCompanion.ts';
+import { ViewerScopedEntityCompanionProvider } from '../ViewerScopedEntityCompanionProvider.ts';
+import { TestEntity } from '../utils/__testfixtures__/TestEntity.ts';
 
 describe(ViewerScopedEntityCompanionProvider, () => {
   it('returns viewer scoped entity companion', () => {

@@ -1,14 +1,14 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Entity } from '../../Entity';
-import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import { EntityConfiguration } from '../../EntityConfiguration';
-import { StrictEnumField, StringField, UUIDField } from '../../EntityFields';
-import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
-import { ViewerContext } from '../../ViewerContext';
-import { failedResults, successfulResults } from '../../entityUtils';
-import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
-import { createUnitTestEntityCompanionProvider } from '../../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+import { Entity } from '../../Entity.ts';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../../EntityConfiguration.ts';
+import { StrictEnumField, StringField, UUIDField } from '../../EntityFields.ts';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy.ts';
+import { ViewerContext } from '../../ViewerContext.ts';
+import { failedResults, successfulResults } from '../../entityUtils.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule.ts';
+import { createUnitTestEntityCompanionProvider } from '../../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 describe('Two entities backed by the same table', () => {
   test('load by different types', async () => {

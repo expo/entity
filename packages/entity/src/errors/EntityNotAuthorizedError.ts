@@ -1,7 +1,7 @@
-import { EntityAuthorizationAction } from '../EntityPrivacyPolicy';
-import type { ReadonlyEntity } from '../ReadonlyEntity';
-import type { ViewerContext } from '../ViewerContext';
-import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
+import { EntityAuthorizationAction } from '../EntityPrivacyPolicy.ts';
+import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
+import type { ViewerContext } from '../ViewerContext.ts';
+import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError.ts';
 
 /**
  * Error thrown when viewer context is not authorized to perform an action on an entity.

@@ -1,13 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { ComposedEntityCacheAdapter } from '../ComposedEntityCacheAdapter';
-import { EntityConfiguration } from '../EntityConfiguration';
-import { UUIDField } from '../EntityFields';
-import type { IEntityCacheAdapter } from '../IEntityCacheAdapter';
-import type { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces';
-import type { CacheLoadResult } from '../internal/ReadThroughEntityCache';
-import { CacheStatus } from '../internal/ReadThroughEntityCache';
-import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
+import { ComposedEntityCacheAdapter } from '../ComposedEntityCacheAdapter.ts';
+import { EntityConfiguration } from '../EntityConfiguration.ts';
+import { UUIDField } from '../EntityFields.ts';
+import type { IEntityCacheAdapter } from '../IEntityCacheAdapter.ts';
+import type { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces.ts';
+import type { CacheLoadResult } from '../internal/ReadThroughEntityCache.ts';
+import { CacheStatus } from '../internal/ReadThroughEntityCache.ts';
+import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder.ts';
 
 type BlahFields = {
   id: string;

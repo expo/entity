@@ -4,7 +4,7 @@ import type {
   EntityMetricsMutationEvent,
   IEntityMetricsAdapter,
   IncrementLoadCountEvent,
-} from './IEntityMetricsAdapter';
+} from './IEntityMetricsAdapter.ts';
 
 export class NoOpEntityMetricsAdapter implements IEntityMetricsAdapter {
   logAuthorizationEvent(_authorizationEvent: EntityMetricsAuthorizationEvent): void {}

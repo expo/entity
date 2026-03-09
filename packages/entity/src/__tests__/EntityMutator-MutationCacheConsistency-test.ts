@@ -1,17 +1,17 @@
 import { describe, test } from '@jest/globals';
 
-import { Entity } from '../Entity';
-import type { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import { EntityConfiguration } from '../EntityConfiguration';
-import { UUIDField } from '../EntityFields';
-import type { EntityTriggerMutationInfo } from '../EntityMutationInfo';
-import { EntityMutationType } from '../EntityMutationInfo';
-import { EntityNonTransactionalMutationTrigger } from '../EntityMutationTriggerConfiguration';
-import { EntityMutatorFactory } from '../EntityMutatorFactory';
-import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
-import { ViewerContext } from '../ViewerContext';
-import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+import { Entity } from '../Entity.ts';
+import type { EntityCompanionDefinition } from '../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../EntityConfiguration.ts';
+import { UUIDField } from '../EntityFields.ts';
+import type { EntityTriggerMutationInfo } from '../EntityMutationInfo.ts';
+import { EntityMutationType } from '../EntityMutationInfo.ts';
+import { EntityNonTransactionalMutationTrigger } from '../EntityMutationTriggerConfiguration.ts';
+import { EntityMutatorFactory } from '../EntityMutatorFactory.ts';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 type BlahFields = {
   id: string;

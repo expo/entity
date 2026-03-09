@@ -1,17 +1,17 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { Entity } from '../Entity';
-import type { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import { EntityConfiguration } from '../EntityConfiguration';
-import { EntityEdgeDeletionBehavior } from '../EntityFieldDefinition';
-import { UUIDField } from '../EntityFields';
-import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
-import { CacheStatus } from '../internal/ReadThroughEntityCache';
-import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
-import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
-import type { InMemoryFullCacheStubCacheAdapter } from '../utils/__testfixtures__/StubCacheAdapter';
-import { TestViewerContext } from '../utils/__testfixtures__/TestViewerContext';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+import { Entity } from '../Entity.ts';
+import type { EntityCompanionDefinition } from '../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../EntityConfiguration.ts';
+import { EntityEdgeDeletionBehavior } from '../EntityFieldDefinition.ts';
+import { UUIDField } from '../EntityFields.ts';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy.ts';
+import { CacheStatus } from '../internal/ReadThroughEntityCache.ts';
+import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule.ts';
+import type { InMemoryFullCacheStubCacheAdapter } from '../utils/__testfixtures__/StubCacheAdapter.ts';
+import { TestViewerContext } from '../utils/__testfixtures__/TestViewerContext.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 interface CategoryFields {
   id: string;

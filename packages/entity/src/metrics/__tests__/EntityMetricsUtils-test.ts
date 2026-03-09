@@ -1,14 +1,14 @@
 import { describe, expect, it } from '@jest/globals';
 import { anyNumber, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 
-import type { EntityQueryContext } from '../../EntityQueryContext';
+import type { EntityQueryContext } from '../../EntityQueryContext.ts';
 import {
   timeAndLogLoadEventAsync,
   timeAndLogLoadMapEventAsync,
   timeAndLogMutationEventAsync,
-} from '../EntityMetricsUtils';
-import type { IEntityMetricsAdapter } from '../IEntityMetricsAdapter';
-import { EntityMetricsLoadType, EntityMetricsMutationType } from '../IEntityMetricsAdapter';
+} from '../EntityMetricsUtils.ts';
+import type { IEntityMetricsAdapter } from '../IEntityMetricsAdapter.ts';
+import { EntityMetricsLoadType, EntityMetricsMutationType } from '../IEntityMetricsAdapter.ts';
 
 describe(timeAndLogLoadEventAsync, () => {
   it('returns the result from the wrapped promise and logs', async () => {

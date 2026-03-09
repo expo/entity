@@ -27,7 +27,7 @@ import nullthrows from '@expo/nullthrows';
 import { TTLCache } from '@isaacs/ttlcache';
 import { describe, expect, it } from '@jest/globals';
 
-import { LocalMemorySecondaryEntityCache } from '../LocalMemorySecondaryEntityCache';
+import { LocalMemorySecondaryEntityCache } from '../LocalMemorySecondaryEntityCache.ts';
 
 export type LocalMemoryTestEntityFields = {
   id: string;

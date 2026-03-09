@@ -1,8 +1,8 @@
 import type {
   EntityAuthorizationAction,
   EntityPrivacyPolicyEvaluationMode,
-} from '../EntityPrivacyPolicy';
-import type { EntityLoadMethodType } from '../internal/EntityLoadInterfaces';
+} from '../EntityPrivacyPolicy.ts';
+import type { EntityLoadMethodType } from '../internal/EntityLoadInterfaces.ts';
 
 export enum EntityMetricsLoadType {
   LOAD_MANY,

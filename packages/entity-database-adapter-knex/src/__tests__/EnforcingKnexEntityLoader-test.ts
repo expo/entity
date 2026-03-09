@@ -7,11 +7,11 @@ import { anything, instance, mock, when } from 'ts-mockito';
 import {
   AuthorizationResultBasedKnexEntityLoader,
   AuthorizationResultBasedSQLQueryBuilder,
-} from '../AuthorizationResultBasedKnexEntityLoader';
-import { EnforcingKnexEntityLoader } from '../EnforcingKnexEntityLoader';
-import { PaginationStrategy } from '../PaginationStrategy';
-import { sql } from '../SQLOperator';
-import { EntityKnexDataManager } from '../internal/EntityKnexDataManager';
+} from '../AuthorizationResultBasedKnexEntityLoader.ts';
+import { EnforcingKnexEntityLoader } from '../EnforcingKnexEntityLoader.ts';
+import { PaginationStrategy } from '../PaginationStrategy.ts';
+import { sql } from '../SQLOperator.ts';
+import { EntityKnexDataManager } from '../internal/EntityKnexDataManager.ts';
 
 describe(EnforcingKnexEntityLoader, () => {
   describe('loadFirstByFieldEqualityConjunction', () => {

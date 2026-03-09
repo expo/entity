@@ -1,9 +1,9 @@
 import type { IEntityMetricsAdapter } from '@expo/entity';
 import { EntityCompanionProvider, NoOpEntityMetricsAdapter } from '@expo/entity';
 
-import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter';
-import { StubDatabaseAdapterProvider } from './StubDatabaseAdapterProvider';
-import { StubQueryContextProvider } from './StubQueryContextProvider';
+import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter.ts';
+import { StubDatabaseAdapterProvider } from './StubDatabaseAdapterProvider.ts';
+import { StubQueryContextProvider } from './StubQueryContextProvider.ts';
 
 const queryContextProvider = new StubQueryContextProvider();
 

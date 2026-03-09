@@ -1,8 +1,8 @@
 import { describe, expect, it, test } from '@jest/globals';
 
-import { EntityConfiguration } from '../EntityConfiguration';
-import { StringField, UUIDField } from '../EntityFields';
-import { CompositeFieldHolder } from '../internal/CompositeFieldHolder';
+import { EntityConfiguration } from '../EntityConfiguration.ts';
+import { StringField, UUIDField } from '../EntityFields.ts';
+import { CompositeFieldHolder } from '../internal/CompositeFieldHolder.ts';
 
 describe(EntityConfiguration, () => {
   describe('when valid', () => {

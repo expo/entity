@@ -19,13 +19,14 @@
     "test": "yarn test:all --rootDir $(pwd)"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "keywords": [
     "entity"
   ],
   "author": "Expo",
   "license": "MIT",
+  "type": "module",
   "devDependencies": {
     "@jest/globals": "30.2.0",
     "@types/jscodeshift": "17.3.0",

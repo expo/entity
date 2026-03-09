@@ -1,6 +1,6 @@
 import { describeFieldTestCase } from '@expo/entity-testing-utils';
 
-import { BigIntField, JSONArrayField, MaybeJSONArrayField } from '../EntityFields';
+import { BigIntField, JSONArrayField, MaybeJSONArrayField } from '../EntityFields.ts';
 
 describeFieldTestCase(
   new JSONArrayField({ columnName: 'wat' }),

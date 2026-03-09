@@ -1,14 +1,14 @@
 import type { EntityPrivacyPolicyRuleEvaluationContext } from '@expo/entity';
 import {
-  EntityQueryContext,
-  ViewerContext,
   AlwaysAllowPrivacyPolicyRule,
   AlwaysDenyPrivacyPolicyRule,
+  EntityQueryContext,
+  ViewerContext,
 } from '@expo/entity';
 import { describe } from '@jest/globals';
 import { anything, instance, mock } from 'ts-mockito';
 
-import { describePrivacyPolicyRuleWithAsyncTestCase } from '../PrivacyPolicyRuleTestUtils';
+import { describePrivacyPolicyRuleWithAsyncTestCase } from '../PrivacyPolicyRuleTestUtils.ts';
 
 describe(describePrivacyPolicyRuleWithAsyncTestCase, () => {
   describe('default args do not execute', () => {

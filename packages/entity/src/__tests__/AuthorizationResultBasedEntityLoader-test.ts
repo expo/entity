@@ -3,32 +3,35 @@ import { describe, expect, it } from '@jest/globals';
 import { anyOfClass, anything, instance, mock, spy, verify, when } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
-import { EntityConstructionUtils } from '../EntityConstructionUtils';
-import { EntityInvalidationUtils } from '../EntityInvalidationUtils';
-import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { ViewerContext } from '../ViewerContext';
-import { enforceResultsAsync } from '../entityUtils';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError';
-import { CompositeFieldHolder, CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
-import { EntityDataManager } from '../internal/EntityDataManager';
-import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache';
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader.ts';
+import { EntityConstructionUtils } from '../EntityConstructionUtils.ts';
+import { EntityInvalidationUtils } from '../EntityInvalidationUtils.ts';
+import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { enforceResultsAsync } from '../entityUtils.ts';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError.ts';
+import {
+  CompositeFieldHolder,
+  CompositeFieldValueHolder,
+} from '../internal/CompositeFieldHolder.ts';
+import { EntityDataManager } from '../internal/EntityDataManager.ts';
+import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache.ts';
 import {
   SingleFieldHolder,
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
-} from '../internal/SingleFieldHolder';
-import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
-import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
-import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
-import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
-import { deepEqualEntityAware } from '../utils/__testfixtures__/TSMockitoExtensions';
-import type { TestFields } from '../utils/__testfixtures__/TestEntity';
+} from '../internal/SingleFieldHolder.ts';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
+import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter.ts';
+import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter.ts';
+import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider.ts';
+import { deepEqualEntityAware } from '../utils/__testfixtures__/TSMockitoExtensions.ts';
+import type { TestFields } from '../utils/__testfixtures__/TestEntity.ts';
 import {
   TestEntity,
   TestEntityPrivacyPolicy,
   testEntityConfiguration,
-} from '../utils/__testfixtures__/TestEntity';
+} from '../utils/__testfixtures__/TestEntity.ts';
 
 describe(AuthorizationResultBasedEntityLoader, () => {
   it('loads entities', async () => {

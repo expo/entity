@@ -1,9 +1,9 @@
-import { PrivacyPolicyRule, RuleEvaluationResult } from '@expo/entity';
 import type {
   EntityQueryContext,
   ReadonlyEntity,
   EntityPrivacyPolicyEvaluationContext,
 } from '@expo/entity';
+import { PrivacyPolicyRule, RuleEvaluationResult } from '@expo/entity';
 
 import type { ExampleViewerContext } from '../viewerContexts.ts';
 

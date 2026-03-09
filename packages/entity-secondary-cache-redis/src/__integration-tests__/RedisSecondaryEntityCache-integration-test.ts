@@ -4,16 +4,19 @@ import type { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis'
 import { RedisCacheInvalidationStrategy } from '@expo/entity-cache-adapter-redis';
 import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { URL } from 'url';
 
-import { RedisSecondaryEntityCache } from '../RedisSecondaryEntityCache';
+import { RedisSecondaryEntityCache } from '../RedisSecondaryEntityCache.ts';
 import type {
   RedisTestEntityFields,
   RedisTestEntityPrivacyPolicy,
-} from '../__testfixtures__/RedisTestEntity';
-import { RedisTestEntity, redisTestEntityConfiguration } from '../__testfixtures__/RedisTestEntity';
-import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
+} from '../__testfixtures__/RedisTestEntity.ts';
+import {
+  RedisTestEntity,
+  redisTestEntityConfiguration,
+} from '../__testfixtures__/RedisTestEntity.ts';
+import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider.ts';
 
 class TestViewerContext extends ViewerContext {}
 

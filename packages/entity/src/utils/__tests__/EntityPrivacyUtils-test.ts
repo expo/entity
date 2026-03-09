@@ -1,30 +1,30 @@
 import nullthrows from '@expo/nullthrows';
 import { describe, expect, it } from '@jest/globals';
 
-import { Entity } from '../../Entity';
-import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import { EntityConfiguration } from '../../EntityConfiguration';
-import { EntityEdgeDeletionBehavior } from '../../EntityFieldDefinition';
-import { UUIDField } from '../../EntityFields';
-import type { EntityPrivacyPolicyEvaluationContext } from '../../EntityPrivacyPolicy';
-import { EntityAuthorizationAction, EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
-import type { EntityQueryContext } from '../../EntityQueryContext';
-import type { ReadonlyEntity } from '../../ReadonlyEntity';
-import { ViewerContext } from '../../ViewerContext';
-import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
-import { AlwaysDenyPrivacyPolicyRule } from '../../rules/AlwaysDenyPrivacyPolicyRule';
-import { RuleEvaluationResult } from '../../rules/PrivacyPolicyRule';
+import { Entity } from '../../Entity.ts';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../../EntityConfiguration.ts';
+import { EntityEdgeDeletionBehavior } from '../../EntityFieldDefinition.ts';
+import { UUIDField } from '../../EntityFields.ts';
+import type { EntityPrivacyPolicyEvaluationContext } from '../../EntityPrivacyPolicy.ts';
+import { EntityAuthorizationAction, EntityPrivacyPolicy } from '../../EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from '../../EntityQueryContext.ts';
+import type { ReadonlyEntity } from '../../ReadonlyEntity.ts';
+import { ViewerContext } from '../../ViewerContext.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule.ts';
+import { AlwaysDenyPrivacyPolicyRule } from '../../rules/AlwaysDenyPrivacyPolicyRule.ts';
+import { RuleEvaluationResult } from '../../rules/PrivacyPolicyRule.ts';
 import type {
   EntityPrivacyEvaluationResult,
   EntityPrivacyEvaluationResultFailure,
-} from '../EntityPrivacyUtils';
+} from '../EntityPrivacyUtils.ts';
 import {
   canViewerDeleteAsync,
   canViewerUpdateAsync,
   getCanViewerDeleteResultAsync,
   getCanViewerUpdateResultAsync,
-} from '../EntityPrivacyUtils';
-import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider';
+} from '../EntityPrivacyUtils.ts';
+import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 function assertEntityPrivacyEvaluationResultFailure(
   evaluationResult: EntityPrivacyEvaluationResult,

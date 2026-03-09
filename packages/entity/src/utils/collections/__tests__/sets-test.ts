@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { areSetsEqual } from '../sets';
+import { areSetsEqual } from '../sets.ts';
 
 describe(areSetsEqual, () => {
   it.each([

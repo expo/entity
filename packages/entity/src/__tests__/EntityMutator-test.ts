@@ -13,48 +13,48 @@ import {
 } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
-import { EntityCompanionProvider } from '../EntityCompanionProvider';
-import type { EntityConfiguration } from '../EntityConfiguration';
-import { EntityConstructionUtils } from '../EntityConstructionUtils';
-import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
-import { EntityLoaderFactory } from '../EntityLoaderFactory';
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader.ts';
+import { EntityCompanionProvider } from '../EntityCompanionProvider.ts';
+import type { EntityConfiguration } from '../EntityConfiguration.ts';
+import { EntityConstructionUtils } from '../EntityConstructionUtils.ts';
+import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter.ts';
+import { EntityLoaderFactory } from '../EntityLoaderFactory.ts';
 import type {
   EntityCascadingDeletionInfo,
   EntityTriggerMutationInfo,
   EntityValidatorMutationInfo,
-} from '../EntityMutationInfo';
-import { EntityMutationType } from '../EntityMutationInfo';
-import type { EntityMutationTriggerConfiguration } from '../EntityMutationTriggerConfiguration';
+} from '../EntityMutationInfo.ts';
+import { EntityMutationType } from '../EntityMutationInfo.ts';
+import type { EntityMutationTriggerConfiguration } from '../EntityMutationTriggerConfiguration.ts';
 import {
   EntityMutationTrigger,
   EntityNonTransactionalMutationTrigger,
-} from '../EntityMutationTriggerConfiguration';
-import type { EntityMutationValidatorConfiguration } from '../EntityMutationValidatorConfiguration';
-import { EntityMutationValidator } from '../EntityMutationValidatorConfiguration';
-import { EntityMutatorFactory } from '../EntityMutatorFactory';
-import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import type { EntityQueryContext } from '../EntityQueryContext';
-import { EntityTransactionalQueryContext } from '../EntityQueryContext';
-import type { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider';
-import { ViewerContext } from '../ViewerContext';
-import { enforceResultsAsync } from '../entityUtils';
-import { EntityDataManager } from '../internal/EntityDataManager';
-import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache';
-import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
-import { EntityMetricsMutationType } from '../metrics/IEntityMetricsAdapter';
-import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter';
-import type { SimpleTestFields } from '../utils/__testfixtures__/SimpleTestEntity';
+} from '../EntityMutationTriggerConfiguration.ts';
+import type { EntityMutationValidatorConfiguration } from '../EntityMutationValidatorConfiguration.ts';
+import { EntityMutationValidator } from '../EntityMutationValidatorConfiguration.ts';
+import { EntityMutatorFactory } from '../EntityMutatorFactory.ts';
+import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from '../EntityQueryContext.ts';
+import { EntityTransactionalQueryContext } from '../EntityQueryContext.ts';
+import type { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { enforceResultsAsync } from '../entityUtils.ts';
+import { EntityDataManager } from '../internal/EntityDataManager.ts';
+import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache.ts';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
+import { EntityMetricsMutationType } from '../metrics/IEntityMetricsAdapter.ts';
+import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter.ts';
+import type { SimpleTestFields } from '../utils/__testfixtures__/SimpleTestEntity.ts';
 import {
   SimpleTestEntity,
   simpleTestEntityConfiguration,
   SimpleTestEntityPrivacyPolicy,
-} from '../utils/__testfixtures__/SimpleTestEntity';
-import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
-import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
-import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
-import type { TestEntityPrivacyPolicy, TestFields } from '../utils/__testfixtures__/TestEntity';
-import { TestEntity, testEntityConfiguration } from '../utils/__testfixtures__/TestEntity';
+} from '../utils/__testfixtures__/SimpleTestEntity.ts';
+import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter.ts';
+import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter.ts';
+import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider.ts';
+import type { TestEntityPrivacyPolicy, TestFields } from '../utils/__testfixtures__/TestEntity.ts';
+import { TestEntity, testEntityConfiguration } from '../utils/__testfixtures__/TestEntity.ts';
 
 class TestMutationValidator extends EntityMutationValidator<
   TestFields,
