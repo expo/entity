@@ -3,6 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "${configDir}/build",
-    "sourceMap": true
+    "sourceMap": true,
+    "rewriteRelativeImportExtensions": true
   }
 }
