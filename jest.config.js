@@ -1,5 +1,7 @@
 export default {
-  transform: { '\\.[jt]sx?$': ['babel-jest', { rootMode: 'upward' }] },
+  // This is an absolute path determined at runtime so that running `yarn test`
+  // both from each package's directory and from root works correctly.
+  transform: { '\\.[jt]sx?$': new URL('./jest-transform.js', import.meta.url).toString() },
   extensionsToTreatAsEsm: ['.ts'],
   collectCoverageFrom: [
     'packages/*/src/**',
