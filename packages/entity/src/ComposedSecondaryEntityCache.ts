@@ -1,4 +1,4 @@
-import nullthrows from 'nullthrows';
+import nullthrows from '@expo/nullthrows';
 
 import { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
 

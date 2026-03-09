@@ -1,5 +1,5 @@
-import { describe, it, expect } from '@jest/globals';
-import nullthrows from 'nullthrows';
+import nullthrows from '@expo/nullthrows';
+import { describe, expect, it } from '@jest/globals';
 
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
 import { EntityConstructionUtils } from '../EntityConstructionUtils';

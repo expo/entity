@@ -1,7 +1,7 @@
 module.exports = {
   transform: { '\\.[jt]sx?$': ['babel-jest', { rootMode: 'upward' }] },
   // ESM modules that need to be transformed
-  transformIgnorePatterns: ['node_modules/(?!(uuid)/)'],
+  transformIgnorePatterns: ['node_modules/(?!(uuid|@expo)/)'],
   collectCoverageFrom: [
     'packages/*/src/**',
     '!packages/*/src/index.ts',

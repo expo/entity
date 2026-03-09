@@ -1828,9 +1828,9 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-local-memory": "workspace:^"
+    "@expo/nullthrows": "npm:2.1.0"
     "@isaacs/ttlcache": "npm:2.1.4"
     "@jest/globals": "npm:30.2.0"
-    nullthrows: "npm:1.1.1"
     typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
@@ -1841,9 +1841,9 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-redis": "workspace:^"
+    "@expo/nullthrows": "npm:2.1.0"
     "@jest/globals": "npm:30.2.0"
     ioredis: "npm:5.10.0"
-    nullthrows: "npm:1.1.1"
     typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
@@ -1881,6 +1881,13 @@ __metadata:
     uuid: "npm:13.0.0"
   languageName: unknown
   linkType: soft
+
+"@expo/nullthrows@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@expo/nullthrows@npm:2.1.0"
+  checksum: 10c0/9f0b7f8ebcf5932ecc9bd2c55a4892ad35e009d21448881455b3f491bb96751586041fb852577c6c43b89c5df74a14b0693e9f2156093ffa1073be5d0670054f
+  languageName: node
+  linkType: hard
 
 "@expo/results@npm:^1.0.0":
   version: 1.0.0
@@ -10461,13 +10468,6 @@ __metadata:
   dependencies:
     path-key: "npm:^3.0.0"
   checksum: 10c0/6f9353a95288f8455cf64cbeb707b28826a7f29690244c1e4bb61ec573256e021b6ad6651b394eb1ccfd00d6ec50147253aba2c5fe58a57ceb111fad62c519ac
-  languageName: node
-  linkType: hard
-
-"nullthrows@npm:1.1.1":
-  version: 1.1.1
-  resolution: "nullthrows@npm:1.1.1"
-  checksum: 10c0/56f34bd7c3dcb3bd23481a277fa22918120459d3e9d95ca72976c72e9cac33a97483f0b95fc420e2eb546b9fe6db398273aba9a938650cdb8c98ee8f159dcb30
   languageName: node
   linkType: hard
 

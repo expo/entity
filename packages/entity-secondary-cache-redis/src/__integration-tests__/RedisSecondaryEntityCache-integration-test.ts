@@ -9,9 +9,9 @@ import {
   GenericRedisCacheContext,
   RedisCacheInvalidationStrategy,
 } from '@expo/entity-cache-adapter-redis';
+import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import Redis from 'ioredis';
-import nullthrows from 'nullthrows';
 import { URL } from 'url';
 
 import { RedisSecondaryEntityCache } from '../RedisSecondaryEntityCache';

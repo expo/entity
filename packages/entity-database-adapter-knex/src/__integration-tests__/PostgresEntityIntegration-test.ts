@@ -4,16 +4,16 @@ import {
   ViewerContext,
 } from '@expo/entity';
 import { createUnitTestEntityCompanionProvider } from '@expo/entity-testing-utils';
+import nullthrows from '@expo/nullthrows';
 import { enforceAsyncResult } from '@expo/results';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from '@jest/globals';
 import { knex, Knex } from 'knex';
-import nullthrows from 'nullthrows';
 import { setTimeout } from 'timers/promises';
 
 import { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader';
 import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
-import { entityField, unsafeRaw, sql, SQLFragmentHelpers, SQLFragment } from '../SQLOperator';
+import { entityField, sql, SQLFragment, SQLFragmentHelpers, unsafeRaw } from '../SQLOperator';
 import {
   PostgresTestEntity,
   PostgresTestEntityFields,
