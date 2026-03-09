@@ -2,7 +2,7 @@ import { TransactionalDataLoaderMode, ViewerContext } from '@expo/entity';
 import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from '@jest/globals';
 import type { Knex } from 'knex';
-import { knex } from 'knex';
+import knex from 'knex';
 
 import { PostgresEntityQueryContextProvider } from '../PostgresEntityQueryContextProvider.ts';
 import { PostgresUniqueTestEntity } from '../__testfixtures__/PostgresUniqueTestEntity.ts';

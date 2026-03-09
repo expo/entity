@@ -11,7 +11,7 @@ import {
 import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import type { Knex } from 'knex';
-import { knex } from 'knex';
+import knex from 'knex';
 
 import { ErrorsTestEntity } from '../__testfixtures__/ErrorsTestEntity.ts';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider.ts';
