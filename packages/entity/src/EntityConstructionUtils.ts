@@ -1,6 +1,6 @@
+import nullthrows from '@expo/nullthrows';
 import { Result, asyncResult, result } from '@expo/results';
 import invariant from 'invariant';
-import nullthrows from 'nullthrows';
 
 import { IEntityClass } from './Entity';
 import { EntityConfiguration } from './EntityConfiguration';

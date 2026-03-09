@@ -1,5 +1,5 @@
+import nullthrows from '@expo/nullthrows';
 import invariant from 'invariant';
-import nullthrows from 'nullthrows';
 
 import { EntityConfiguration } from '../EntityConfiguration';
 

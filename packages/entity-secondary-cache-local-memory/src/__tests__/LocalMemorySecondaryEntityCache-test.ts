@@ -21,9 +21,9 @@ import {
   LocalMemoryCacheValue,
 } from '@expo/entity-cache-adapter-local-memory';
 import { StubDatabaseAdapterProvider, StubQueryContextProvider } from '@expo/entity-testing-utils';
+import nullthrows from '@expo/nullthrows';
 import { TTLCache } from '@isaacs/ttlcache';
 import { describe, expect, it } from '@jest/globals';
-import nullthrows from 'nullthrows';
 
 import { LocalMemorySecondaryEntityCache } from '../LocalMemorySecondaryEntityCache';
 

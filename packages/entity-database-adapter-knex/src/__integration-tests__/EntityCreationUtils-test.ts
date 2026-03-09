@@ -1,7 +1,7 @@
 import { createWithUniqueConstraintRecoveryAsync, ViewerContext } from '@expo/entity';
+import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import knex, { Knex } from 'knex';
-import nullthrows from 'nullthrows';
 
 import { PostgresUniqueTestEntity } from '../__testfixtures__/PostgresUniqueTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';

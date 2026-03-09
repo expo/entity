@@ -1,21 +1,21 @@
 import {
-  EntityPrivacyPolicy,
-  ViewerContext,
   AlwaysAllowPrivacyPolicyRule,
   Entity,
   EntityCompanionDefinition,
   EntityConfiguration,
-  UUIDField,
   EntityEdgeDeletionBehavior,
+  EntityPrivacyPolicy,
+  UUIDField,
+  ViewerContext,
 } from '@expo/entity';
 import {
   GenericRedisCacheContext,
   RedisCacheInvalidationStrategy,
 } from '@expo/entity-cache-adapter-redis';
+import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import Redis from 'ioredis';
 import { knex, Knex } from 'knex';
-import nullthrows from 'nullthrows';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
