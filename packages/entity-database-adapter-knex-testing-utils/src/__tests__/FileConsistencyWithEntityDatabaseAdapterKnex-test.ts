@@ -1,6 +1,5 @@
 import { expect, it } from '@jest/globals';
 import { readFile } from 'fs/promises';
-import path from 'path';
 
 it.each([
   'StubPostgresDatabaseAdapter',
@@ -12,14 +11,14 @@ it.each([
   // Therefore, we duplicate them and ensure they stay in sync.
 
   const fileContentsFromEntityDatabaseAdapterKnex = await readFile(
-    path.resolve(
-      __dirname,
+    new URL(
       `../../../entity-database-adapter-knex/src/__tests__/fixtures/${fileName}.ts`,
+      import.meta.url,
     ),
     'utf-8',
   );
   const fileContentsFromTestingUtils = await readFile(
-    path.resolve(__dirname, `../${fileName}.ts`),
+    new URL(`../${fileName}.ts`, import.meta.url),
     'utf-8',
   );
 

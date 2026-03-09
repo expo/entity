@@ -1,9 +1,9 @@
-const { defineConfig, globalIgnores } = require('eslint/config');
-const universeNodeConfig = require('eslint-config-universe/flat/node');
-const universeSharedTypescriptAnalysisConfig = require('eslint-config-universe/flat/shared/typescript-analysis');
-const tsdoc = require('eslint-plugin-tsdoc');
+import { defineConfig, globalIgnores } from 'eslint/config';
+import universeNodeConfig from 'eslint-config-universe/flat/node.js';
+import universeSharedTypescriptAnalysisConfig from 'eslint-config-universe/flat/shared/typescript-analysis.js';
+import tsdoc from 'eslint-plugin-tsdoc';
 
-module.exports = defineConfig([
+export default defineConfig([
   globalIgnores([
     'packages/entity-codemod/**/__testfixtures__/**',
     'packages/*/build',
@@ -17,7 +17,6 @@ module.exports = defineConfig([
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: __dirname,
       },
     },
     plugins: {

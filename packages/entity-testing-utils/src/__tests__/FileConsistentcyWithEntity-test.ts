@@ -1,6 +1,5 @@
 import { expect, it } from '@jest/globals';
 import { readFile } from 'fs/promises';
-import path from 'path';
 
 it.each([
   'createUnitTestEntityCompanionProvider',
@@ -16,11 +15,11 @@ it.each([
   // and entity would want to use it for testing. Therefore, we duplicate it and ensure it stays in sync.
 
   const fileContentsFromEntity = await readFile(
-    path.resolve(__dirname, `../../../entity/src/utils/__testfixtures__/${fileName}.ts`),
+    new URL(`../../../entity/src/utils/__testfixtures__/${fileName}.ts`, import.meta.url),
     'utf-8',
   );
   const fileContentsFromEntityTestingUtils = await readFile(
-    path.resolve(__dirname, `../${fileName}.ts`),
+    new URL(`../${fileName}.ts`, import.meta.url),
     'utf-8',
   );
 

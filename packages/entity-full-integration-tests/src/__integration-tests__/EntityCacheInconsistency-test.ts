@@ -14,7 +14,7 @@ import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
 import { Redis } from 'ioredis';
 import type { Knex } from 'knex';
-import { knex } from 'knex';
+import knex from 'knex';
 import { URL } from 'url';
 
 import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider.ts';

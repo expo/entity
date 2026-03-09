@@ -1,6 +1,6 @@
-const unitConfig = require('./jest.config.js');
+import unitConfig from './jest.config.js';
 
-module.exports = {
+export default {
   ...unitConfig,
   coverageDirectory: 'coverage-integration',
   testMatch: ['**/__integration-tests__/**/*-test.ts'],

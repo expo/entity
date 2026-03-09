@@ -8,7 +8,7 @@ import {
   EntityDatabaseAdapterUniqueConstraintError,
   EntityDatabaseAdapterUnknownError,
 } from '@expo/entity';
-import { knex } from 'knex';
+import knex from 'knex';
 
 function wrapNativePostgresError(
   error: Error & { code?: string },

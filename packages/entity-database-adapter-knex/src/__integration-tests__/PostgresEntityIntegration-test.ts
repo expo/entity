@@ -8,7 +8,7 @@ import nullthrows from '@expo/nullthrows';
 import { enforceAsyncResult } from '@expo/results';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from '@jest/globals';
 import type { Knex } from 'knex';
-import { knex } from 'knex';
+import knex from 'knex';
 import { setTimeout } from 'timers/promises';
 
 import type { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader.ts';
