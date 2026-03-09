@@ -1,5 +1,6 @@
 {
   "mode": "bundle",
+  "fileExt": "keep",
   "overwrite": true,
   "backup": false,
   "generationStyle": "default-alias-named-star",

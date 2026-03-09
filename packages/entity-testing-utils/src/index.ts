@@ -4,11 +4,11 @@
  * @module @expo/entity-testing-utils
  */
 
-export * from './createUnitTestEntityCompanionProvider';
-export * from './describeFieldTestCase';
-export * from './PrivacyPolicyRuleTestUtils';
-export * from './StubCacheAdapter';
-export * from './StubDatabaseAdapter';
-export * from './StubDatabaseAdapterProvider';
-export * from './StubQueryContextProvider';
-export * from './TSMockitoExtensions';
+export * from './createUnitTestEntityCompanionProvider.ts';
+export * from './describeFieldTestCase.ts';
+export * from './PrivacyPolicyRuleTestUtils.ts';
+export * from './StubCacheAdapter.ts';
+export * from './StubDatabaseAdapter.ts';
+export * from './StubDatabaseAdapterProvider.ts';
+export * from './StubQueryContextProvider.ts';
+export * from './TSMockitoExtensions.ts';
