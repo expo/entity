@@ -1,6 +1,5 @@
 [tools]
 node = "24.14.0"
-yarn = "4.12.0"
 
 [tasks.yarn]
 run = "yarn install --immutable"
@@ -35,3 +34,14 @@ run = "yarn integration --coverage"
 
 [tasks.ci]
 run = { task = "checks:*" }
+
+[settings]
+experimental = true # needed for postinstall hook
+
+[hooks]
+postinstall = [
+  # Enable yarn shim.  Version controlled by package.json#packageManager
+  # NOTE: mise can install yarn directly, but renovate does not use mise, so we
+  # control yarn versions using the packageManager field.
+  "corepack enable yarn"
+]
