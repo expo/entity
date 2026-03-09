@@ -1,14 +1,14 @@
-import type { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
-import type { EntityConstructionUtils } from './EntityConstructionUtils';
-import type { EntityInvalidationUtils } from './EntityInvalidationUtils';
-import type { EntityLoaderFactory } from './EntityLoaderFactory';
+import type { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader.ts';
+import type { EntityConstructionUtils } from './EntityConstructionUtils.ts';
+import type { EntityInvalidationUtils } from './EntityInvalidationUtils.ts';
+import type { EntityLoaderFactory } from './EntityLoaderFactory.ts';
 import type {
   EntityPrivacyPolicy,
   EntityPrivacyPolicyEvaluationContext,
-} from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
+} from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
 
 /**
  * Provides a cleaner API for loading entities by passing through the ViewerContext.

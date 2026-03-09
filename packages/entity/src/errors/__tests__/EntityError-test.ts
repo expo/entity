@@ -1,13 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import { ViewerContext } from '../../ViewerContext';
-import { SimpleTestEntity } from '../../utils/__testfixtures__/SimpleTestEntity';
-import { EntityCacheAdapterTransientError } from '../EntityCacheAdapterError';
-import { EntityErrorCode, EntityErrorState } from '../EntityError';
-import { EntityInvalidFieldValueError } from '../EntityInvalidFieldValueError';
-import { EntityNotAuthorizedError } from '../EntityNotAuthorizedError';
-import { EntityNotFoundError } from '../EntityNotFoundError';
+import { ViewerContext } from '../../ViewerContext.ts';
+import { SimpleTestEntity } from '../../utils/__testfixtures__/SimpleTestEntity.ts';
+import { EntityCacheAdapterTransientError } from '../EntityCacheAdapterError.ts';
+import { EntityErrorCode, EntityErrorState } from '../EntityError.ts';
+import { EntityInvalidFieldValueError } from '../EntityInvalidFieldValueError.ts';
+import { EntityNotAuthorizedError } from '../EntityNotAuthorizedError.ts';
+import { EntityNotFoundError } from '../EntityNotFoundError.ts';
 
 describe('EntityError subclasses', () => {
   it('EntityNotFoundError has correct state and code', () => {

@@ -13,8 +13,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/glo
 import type { Knex } from 'knex';
 import { knex } from 'knex';
 
-import { ErrorsTestEntity } from '../__testfixtures__/ErrorsTestEntity';
-import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
+import { ErrorsTestEntity } from '../__testfixtures__/ErrorsTestEntity.ts';
+import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider.ts';
 
 describe('postgres errors', () => {
   let knexInstance: Knex;

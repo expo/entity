@@ -15,8 +15,8 @@ import {
   EntityDatabaseAdapterTransientError,
   EntityDatabaseAdapterUniqueConstraintError,
   EntityDatabaseAdapterUnknownError,
-} from '../EntityDatabaseAdapterError';
-import { EntityErrorCode, EntityErrorState } from '../EntityError';
+} from '../EntityDatabaseAdapterError.ts';
+import { EntityErrorCode, EntityErrorState } from '../EntityError.ts';
 
 describe(EntityDatabaseAdapterError, () => {
   // necessary for coverage within the entity package since these errors are

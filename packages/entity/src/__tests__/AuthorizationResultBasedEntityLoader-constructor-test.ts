@@ -1,22 +1,22 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
-import { Entity } from '../Entity';
-import type { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import { EntityConfiguration } from '../EntityConfiguration';
-import { EntityConstructionUtils } from '../EntityConstructionUtils';
-import { StringField } from '../EntityFields';
-import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
-import { ViewerContext } from '../ViewerContext';
-import { EntityDataManager } from '../internal/EntityDataManager';
-import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache';
-import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
-import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
-import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
-import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
-import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
+import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader.ts';
+import { Entity } from '../Entity.ts';
+import type { EntityCompanionDefinition } from '../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../EntityConfiguration.ts';
+import { EntityConstructionUtils } from '../EntityConstructionUtils.ts';
+import { StringField } from '../EntityFields.ts';
+import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy.ts';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { EntityDataManager } from '../internal/EntityDataManager.ts';
+import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache.ts';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule.ts';
+import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter.ts';
+import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter.ts';
+import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider.ts';
 
 export type TestFields = {
   id: string;

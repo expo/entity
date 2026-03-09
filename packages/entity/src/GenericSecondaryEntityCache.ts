@@ -1,9 +1,9 @@
 import invariant from 'invariant';
 
-import type { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
-import type { IEntityGenericCacher } from './IEntityGenericCacher';
-import { CacheStatus } from './internal/ReadThroughEntityCache';
-import { filterMap, zipToMap } from './utils/collections/maps';
+import type { ISecondaryEntityCache } from './EntitySecondaryCacheLoader.ts';
+import type { IEntityGenericCacher } from './IEntityGenericCacher.ts';
+import { CacheStatus } from './internal/ReadThroughEntityCache.ts';
+import { filterMap, zipToMap } from './utils/collections/maps.ts';
 
 /**
  * A custom secondary read-through entity cache is a way to add a custom second layer of caching for a particular

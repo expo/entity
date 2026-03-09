@@ -1,14 +1,14 @@
-import type { IEntityClass } from './Entity';
-import type { DatabaseAdapterFlavor, EntityCompanionProvider } from './EntityCompanionProvider';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { IEntityClass } from './Entity.ts';
+import type { DatabaseAdapterFlavor, EntityCompanionProvider } from './EntityCompanionProvider.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
 import type {
   EntityQueryContext,
   EntityTransactionalQueryContext,
   TransactionConfig,
-} from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';
-import { ViewerScopedEntityCompanionProvider } from './ViewerScopedEntityCompanionProvider';
+} from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion.ts';
+import { ViewerScopedEntityCompanionProvider } from './ViewerScopedEntityCompanionProvider.ts';
 
 /**
  * A viewer context encapsulates all information necessary to evaluate an EntityPrivacyPolicy.

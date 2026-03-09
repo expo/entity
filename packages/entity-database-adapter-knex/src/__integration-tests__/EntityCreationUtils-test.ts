@@ -4,8 +4,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/glo
 import type { Knex } from 'knex';
 import knex from 'knex';
 
-import { PostgresUniqueTestEntity } from '../__testfixtures__/PostgresUniqueTestEntity';
-import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
+import { PostgresUniqueTestEntity } from '../__testfixtures__/PostgresUniqueTestEntity.ts';
+import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider.ts';
 
 describe(createWithUniqueConstraintRecoveryAsync, () => {
   let knexInstance: Knex;

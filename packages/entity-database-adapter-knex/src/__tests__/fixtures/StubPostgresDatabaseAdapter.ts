@@ -15,13 +15,13 @@ import type {
   TableFieldSingleValueEqualityCondition,
   TableOrderByClause,
   TableQuerySelectionModifiers,
-} from '../../BasePostgresEntityDatabaseAdapter';
+} from '../../BasePostgresEntityDatabaseAdapter.ts';
 import {
   BasePostgresEntityDatabaseAdapter,
   NullsOrdering,
   OrderByOrdering,
-} from '../../BasePostgresEntityDatabaseAdapter';
-import type { SQLFragment } from '../../SQLOperator';
+} from '../../BasePostgresEntityDatabaseAdapter.ts';
+import type { SQLFragment } from '../../SQLOperator.ts';
 
 export class StubPostgresDatabaseAdapter<
   TFields extends Record<string, any>,

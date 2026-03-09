@@ -1,4 +1,4 @@
-import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
+import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError.ts';
 
 /**
  * Base class for errors thrown by the entity cache adapter.

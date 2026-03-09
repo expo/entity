@@ -1,5 +1,5 @@
-import type { TransactionConfig } from '../../EntityQueryContext';
-import { EntityQueryContextProvider } from '../../EntityQueryContextProvider';
+import type { TransactionConfig } from '../../EntityQueryContext.ts';
+import { EntityQueryContextProvider } from '../../EntityQueryContextProvider.ts';
 
 export class StubQueryContextProvider extends EntityQueryContextProvider {
   protected getQueryInterface(): any {

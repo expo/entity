@@ -3,25 +3,25 @@ import type { Result } from '@expo/results';
 import { result } from '@expo/results';
 import invariant from 'invariant';
 
-import type { IEntityClass } from './Entity';
+import type { IEntityClass } from './Entity.ts';
 import type {
   EntityCompositeField,
   EntityCompositeFieldValue,
   EntityConfiguration,
-} from './EntityConfiguration';
-import type { EntityConstructionUtils } from './EntityConstructionUtils';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import { EntityNotFoundError } from './errors/EntityNotFoundError';
-import type { CompositeFieldHolder } from './internal/CompositeFieldHolder';
-import { CompositeFieldValueHolder } from './internal/CompositeFieldHolder';
-import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap';
-import type { EntityDataManager } from './internal/EntityDataManager';
-import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
-import { mapKeys, mapMap } from './utils/collections/maps';
-import { areSetsEqual } from './utils/collections/sets';
+} from './EntityConfiguration.ts';
+import type { EntityConstructionUtils } from './EntityConstructionUtils.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import { EntityNotFoundError } from './errors/EntityNotFoundError.ts';
+import type { CompositeFieldHolder } from './internal/CompositeFieldHolder.ts';
+import { CompositeFieldValueHolder } from './internal/CompositeFieldHolder.ts';
+import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap.ts';
+import type { EntityDataManager } from './internal/EntityDataManager.ts';
+import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder.ts';
+import { mapKeys, mapMap } from './utils/collections/maps.ts';
+import { areSetsEqual } from './utils/collections/sets.ts';
 
 /**
  * Authorization-result-based entity loader. All normal loads are batched,

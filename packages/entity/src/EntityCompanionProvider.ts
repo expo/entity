@@ -1,20 +1,20 @@
 import invariant from 'invariant';
 
-import type { IEntityClass } from './Entity';
-import type { IPrivacyPolicyClass } from './EntityCompanion';
-import { EntityCompanion } from './EntityCompanion';
-import type { EntityConfiguration } from './EntityConfiguration';
-import type { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
-import type { EntityMutationValidatorConfiguration } from './EntityMutationValidatorConfiguration';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContextProvider } from './EntityQueryContextProvider';
-import type { IEntityCacheAdapterProvider } from './IEntityCacheAdapterProvider';
-import type { IEntityDatabaseAdapterProvider } from './IEntityDatabaseAdapterProvider';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
-import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
-import { computeIfAbsent } from './utils/collections/maps';
+import type { IEntityClass } from './Entity.ts';
+import type { IPrivacyPolicyClass } from './EntityCompanion.ts';
+import { EntityCompanion } from './EntityCompanion.ts';
+import type { EntityConfiguration } from './EntityConfiguration.ts';
+import type { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration.ts';
+import type { EntityMutationValidatorConfiguration } from './EntityMutationValidatorConfiguration.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContextProvider } from './EntityQueryContextProvider.ts';
+import type { IEntityCacheAdapterProvider } from './IEntityCacheAdapterProvider.ts';
+import type { IEntityDatabaseAdapterProvider } from './IEntityDatabaseAdapterProvider.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator.ts';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
+import { computeIfAbsent } from './utils/collections/maps.ts';
 
 /**
  * Backing database and transaction type for an entity. The definitions and implementations

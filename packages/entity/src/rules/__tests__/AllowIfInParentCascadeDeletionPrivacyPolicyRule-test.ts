@@ -1,12 +1,12 @@
 import { anything, instance, mock, when } from 'ts-mockito';
 
-import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../../EntityQueryContext';
-import { ReadonlyEntity } from '../../ReadonlyEntity';
-import { ViewerContext } from '../../ViewerContext';
-import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils';
-import { AllowIfInParentCascadeDeletionPrivacyPolicyRule } from '../AllowIfInParentCascadeDeletionPrivacyPolicyRule';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider.ts';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy.ts';
+import { EntityQueryContext } from '../../EntityQueryContext.ts';
+import { ReadonlyEntity } from '../../ReadonlyEntity.ts';
+import { ViewerContext } from '../../ViewerContext.ts';
+import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils.ts';
+import { AllowIfInParentCascadeDeletionPrivacyPolicyRule } from '../AllowIfInParentCascadeDeletionPrivacyPolicyRule.ts';
 
 // Define test field types
 type ParentFields = {

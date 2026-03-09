@@ -1,30 +1,30 @@
 import type {
   EntityPrivacyPolicyEvaluationContext,
-  IEntityMetricsAdapter,
   EntityQueryContext,
+  IEntityMetricsAdapter,
 } from '@expo/entity';
-import { ViewerContext, enforceResultsAsync, EntityConstructionUtils } from '@expo/entity';
+import { enforceResultsAsync, EntityConstructionUtils, ViewerContext } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 import { anyOfClass, anything, instance, mock, spy, verify, when } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader';
-import { OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
-import { PaginationStrategy } from '../PaginationStrategy';
-import { sql } from '../SQLOperator';
-import type { TestFields } from './fixtures/TestEntity';
+import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader.ts';
+import { OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter.ts';
+import { PaginationStrategy } from '../PaginationStrategy.ts';
+import { sql } from '../SQLOperator.ts';
+import { EntityKnexDataManager } from '../internal/EntityKnexDataManager.ts';
+import type { TestFields } from './fixtures/TestEntity.ts';
 import {
   TestEntity,
   testEntityConfiguration,
   TestEntityPrivacyPolicy,
-} from './fixtures/TestEntity';
-import type { TestPaginationFields } from './fixtures/TestPaginationEntity';
+} from './fixtures/TestEntity.ts';
+import type { TestPaginationFields } from './fixtures/TestPaginationEntity.ts';
 import {
   TestPaginationEntity,
   testPaginationEntityConfiguration,
   TestPaginationPrivacyPolicy,
-} from './fixtures/TestPaginationEntity';
-import { EntityKnexDataManager } from '../internal/EntityKnexDataManager';
+} from './fixtures/TestPaginationEntity.ts';
 
 describe(AuthorizationResultBasedKnexEntityLoader, () => {
   it('loads entities with loadManyByFieldEqualityConjunction', async () => {

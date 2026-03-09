@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { TestMutationTrigger } from '../__testfixtures__/TestEntityWithMutationTriggers';
-import { mergeEntityMutationTriggerConfigurations } from '../mergeEntityMutationTriggerConfigurations';
+import { TestMutationTrigger } from '../__testfixtures__/TestEntityWithMutationTriggers.ts';
+import { mergeEntityMutationTriggerConfigurations } from '../mergeEntityMutationTriggerConfigurations.ts';
 
 describe(mergeEntityMutationTriggerConfigurations, () => {
   it('successfully merges triggers', async () => {

@@ -1,16 +1,16 @@
 import { describe, expect, it } from '@jest/globals';
 import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 
-import { GenericEntityCacheAdapter } from '../GenericEntityCacheAdapter';
-import type { IEntityGenericCacher } from '../IEntityGenericCacher';
-import { EntityCacheAdapterTransientError } from '../errors/EntityCacheAdapterError';
-import { CacheStatus } from '../internal/ReadThroughEntityCache';
+import { GenericEntityCacheAdapter } from '../GenericEntityCacheAdapter.ts';
+import type { IEntityGenericCacher } from '../IEntityGenericCacher.ts';
+import { EntityCacheAdapterTransientError } from '../errors/EntityCacheAdapterError.ts';
+import { CacheStatus } from '../internal/ReadThroughEntityCache.ts';
 import {
   SingleFieldHolder,
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
-} from '../internal/SingleFieldHolder';
-import { deepEqualEntityAware } from '../utils/__testfixtures__/TSMockitoExtensions';
+} from '../internal/SingleFieldHolder.ts';
+import { deepEqualEntityAware } from '../utils/__testfixtures__/TSMockitoExtensions.ts';
 
 type BlahFields = {
   id: string;

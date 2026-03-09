@@ -2,6 +2,7 @@ import type { EntityCompanionDefinition, ViewerContext } from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
   BooleanField,
+  BufferField,
   DateField,
   EntityConfiguration,
   EntityPrivacyPolicy,
@@ -9,12 +10,11 @@ import {
   StringArrayField,
   StringField,
   UUIDField,
-  BufferField,
 } from '@expo/entity';
 import type { Knex } from 'knex';
 
-import { BigIntField, JSONArrayField, MaybeJSONArrayField } from '../EntityFields';
-import { PostgresEntity } from '../PostgresEntity';
+import { BigIntField, JSONArrayField, MaybeJSONArrayField } from '../EntityFields.ts';
+import { PostgresEntity } from '../PostgresEntity.ts';
 
 export type PostgresTestEntityFields = {
   id: string;

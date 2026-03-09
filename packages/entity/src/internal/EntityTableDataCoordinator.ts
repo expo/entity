@@ -1,12 +1,12 @@
-import type { EntityConfiguration } from '../EntityConfiguration';
-import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
-import type { EntityQueryContextProvider } from '../EntityQueryContextProvider';
-import type { IEntityCacheAdapter } from '../IEntityCacheAdapter';
-import type { IEntityCacheAdapterProvider } from '../IEntityCacheAdapterProvider';
-import type { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider';
-import { EntityDataManager } from './EntityDataManager';
-import { ReadThroughEntityCache } from './ReadThroughEntityCache';
-import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+import type { EntityConfiguration } from '../EntityConfiguration.ts';
+import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter.ts';
+import type { EntityQueryContextProvider } from '../EntityQueryContextProvider.ts';
+import type { IEntityCacheAdapter } from '../IEntityCacheAdapter.ts';
+import type { IEntityCacheAdapterProvider } from '../IEntityCacheAdapterProvider.ts';
+import type { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider.ts';
+import { EntityDataManager } from './EntityDataManager.ts';
+import { ReadThroughEntityCache } from './ReadThroughEntityCache.ts';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
 
 /**
  * Responsible for orchestrating fetching and caching of entity data from a

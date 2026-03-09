@@ -1,7 +1,7 @@
-import type { IEntityClass } from './Entity';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
+import type { IEntityClass } from './Entity.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
 
 export enum EntityEdgeDeletionBehavior {
   /**

@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
 
-import type { TransactionConfig } from './EntityQueryContext';
+import type { TransactionConfig } from './EntityQueryContext.ts';
 import {
   EntityNestedTransactionalQueryContext,
   EntityNonTransactionalQueryContext,
   EntityTransactionalQueryContext,
   TransactionalDataLoaderMode,
-} from './EntityQueryContext';
+} from './EntityQueryContext.ts';
 
 /**
  * A query context provider vends transactional and non-transactional query contexts.

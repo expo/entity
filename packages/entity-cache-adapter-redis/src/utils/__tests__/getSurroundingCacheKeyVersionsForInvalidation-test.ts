@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { getSurroundingCacheKeyVersionsForInvalidation } from '../getSurroundingCacheKeyVersionsForInvalidation';
+import { getSurroundingCacheKeyVersionsForInvalidation } from '../getSurroundingCacheKeyVersionsForInvalidation.ts';
 
 describe(getSurroundingCacheKeyVersionsForInvalidation, () => {
   it('returns the correct cache key versions to invalidate', () => {

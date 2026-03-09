@@ -3,7 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "${configDir}/build",
-    "sourceMap": true,
-    "rewriteRelativeImportExtensions": true
+    "rewriteRelativeImportExtensions": true,
+    "verbatimModuleSyntax": true
   }
 }

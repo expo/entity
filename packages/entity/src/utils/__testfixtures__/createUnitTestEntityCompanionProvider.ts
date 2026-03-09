@@ -1,9 +1,9 @@
-import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter';
-import { StubDatabaseAdapterProvider } from './StubDatabaseAdapterProvider';
-import { StubQueryContextProvider } from './StubQueryContextProvider';
-import { EntityCompanionProvider } from '../../EntityCompanionProvider';
-import type { IEntityMetricsAdapter } from '../../metrics/IEntityMetricsAdapter';
-import { NoOpEntityMetricsAdapter } from '../../metrics/NoOpEntityMetricsAdapter';
+import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter.ts';
+import { StubDatabaseAdapterProvider } from './StubDatabaseAdapterProvider.ts';
+import { StubQueryContextProvider } from './StubQueryContextProvider.ts';
+import { EntityCompanionProvider } from '../../EntityCompanionProvider.ts';
+import type { IEntityMetricsAdapter } from '../../metrics/IEntityMetricsAdapter.ts';
+import { NoOpEntityMetricsAdapter } from '../../metrics/NoOpEntityMetricsAdapter.ts';
 
 const queryContextProvider = new StubQueryContextProvider();
 

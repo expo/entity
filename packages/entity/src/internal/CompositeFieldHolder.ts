@@ -4,11 +4,11 @@ import type {
   EntityCompositeField,
   EntityCompositeFieldValue,
   EntityConfiguration,
-} from '../EntityConfiguration';
-import { pick } from '../entityUtils';
-import { getDatabaseFieldForEntityField } from './EntityFieldTransformationUtils';
-import type { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces';
-import { EntityLoadMethodType, LoadValueMap } from '../internal/EntityLoadInterfaces';
+} from '../EntityConfiguration.ts';
+import { pick } from '../entityUtils.ts';
+import { getDatabaseFieldForEntityField } from './EntityFieldTransformationUtils.ts';
+import type { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces.ts';
+import { EntityLoadMethodType, LoadValueMap } from '../internal/EntityLoadInterfaces.ts';
 
 declare const CompositeFieldHolderSerializedBrand: unique symbol;
 

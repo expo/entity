@@ -1,9 +1,9 @@
 import nullthrows from '@expo/nullthrows';
 
-import type { IEntityCacheAdapter } from './IEntityCacheAdapter';
-import type { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
-import type { CacheLoadResult } from './internal/ReadThroughEntityCache';
-import { CacheStatus } from './internal/ReadThroughEntityCache';
+import type { IEntityCacheAdapter } from './IEntityCacheAdapter.ts';
+import type { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces.ts';
+import type { CacheLoadResult } from './internal/ReadThroughEntityCache.ts';
+import { CacheStatus } from './internal/ReadThroughEntityCache.ts';
 
 /**
  * A IEntityCacheAdapter that composes other IEntityCacheAdapter instances.

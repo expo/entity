@@ -1,13 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { Entity } from '../Entity';
-import type { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import { EntityCompanionProvider } from '../EntityCompanionProvider';
-import { EntityConfiguration } from '../EntityConfiguration';
-import { StringField } from '../EntityFields';
-import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
-import type { ViewerContext } from '../ViewerContext';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+import { Entity } from '../Entity.ts';
+import type { EntityCompanionDefinition } from '../EntityCompanionProvider.ts';
+import { EntityCompanionProvider } from '../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../EntityConfiguration.ts';
+import { StringField } from '../EntityFields.ts';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy.ts';
+import type { ViewerContext } from '../ViewerContext.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 type BlahFields = {
   hello: string;

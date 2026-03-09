@@ -9,11 +9,11 @@ import {
 } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 
-import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader';
-import { EnforcingKnexEntityLoader } from '../EnforcingKnexEntityLoader';
-import { PostgresEntity } from '../PostgresEntity';
-import { ReadonlyPostgresEntity } from '../ReadonlyPostgresEntity';
-import { createUnitTestPostgresEntityCompanionProvider } from './fixtures/createUnitTestPostgresEntityCompanionProvider';
+import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader.ts';
+import { EnforcingKnexEntityLoader } from '../EnforcingKnexEntityLoader.ts';
+import { PostgresEntity } from '../PostgresEntity.ts';
+import { ReadonlyPostgresEntity } from '../ReadonlyPostgresEntity.ts';
+import { createUnitTestPostgresEntityCompanionProvider } from './fixtures/createUnitTestPostgresEntityCompanionProvider.ts';
 
 type TestPostgresFields = {
   id: string;

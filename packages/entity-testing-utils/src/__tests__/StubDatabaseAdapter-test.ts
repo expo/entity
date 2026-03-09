@@ -9,15 +9,15 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 import { validate, version } from 'uuid';
 
-import { StubDatabaseAdapter } from '../StubDatabaseAdapter';
-import type { DateIDTestFields } from '../__testfixtures__/DateIDTestEntity';
-import { dateIDTestEntityConfiguration } from '../__testfixtures__/DateIDTestEntity';
-import type { SimpleTestFields } from '../__testfixtures__/SimpleTestEntity';
-import { simpleTestEntityConfiguration } from '../__testfixtures__/SimpleTestEntity';
-import type { TestFields } from '../__testfixtures__/TestEntity';
-import { testEntityConfiguration } from '../__testfixtures__/TestEntity';
-import type { NumberKeyFields } from '../__testfixtures__/TestEntityNumberKey';
-import { numberKeyEntityConfiguration } from '../__testfixtures__/TestEntityNumberKey';
+import { StubDatabaseAdapter } from '../StubDatabaseAdapter.ts';
+import type { DateIDTestFields } from '../__testfixtures__/DateIDTestEntity.ts';
+import { dateIDTestEntityConfiguration } from '../__testfixtures__/DateIDTestEntity.ts';
+import type { SimpleTestFields } from '../__testfixtures__/SimpleTestEntity.ts';
+import { simpleTestEntityConfiguration } from '../__testfixtures__/SimpleTestEntity.ts';
+import type { TestFields } from '../__testfixtures__/TestEntity.ts';
+import { testEntityConfiguration } from '../__testfixtures__/TestEntity.ts';
+import type { NumberKeyFields } from '../__testfixtures__/TestEntityNumberKey.ts';
+import { numberKeyEntityConfiguration } from '../__testfixtures__/TestEntityNumberKey.ts';
 
 // uuid keeps state internally for v7 generation, so we fix the time for all tests for consistent test results
 const expectedTime = new Date('2024-06-03T20:16:33.761Z');

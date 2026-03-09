@@ -11,16 +11,16 @@ import type { Knex } from 'knex';
 import { knex } from 'knex';
 import { setTimeout } from 'timers/promises';
 
-import type { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader';
-import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
-import { PaginationStrategy } from '../PaginationStrategy';
-import type { SQLFragment } from '../SQLOperator';
-import { entityField, sql, SQLFragmentHelpers, unsafeRaw } from '../SQLOperator';
-import type { PostgresTestEntityFields } from '../__testfixtures__/PostgresTestEntity';
-import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity';
-import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity';
-import { PostgresValidatorTestEntity } from '../__testfixtures__/PostgresValidatorTestEntity';
-import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
+import type { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader.ts';
+import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter.ts';
+import { PaginationStrategy } from '../PaginationStrategy.ts';
+import type { SQLFragment } from '../SQLOperator.ts';
+import { entityField, sql, SQLFragmentHelpers, unsafeRaw } from '../SQLOperator.ts';
+import type { PostgresTestEntityFields } from '../__testfixtures__/PostgresTestEntity.ts';
+import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity.ts';
+import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity.ts';
+import { PostgresValidatorTestEntity } from '../__testfixtures__/PostgresValidatorTestEntity.ts';
+import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider.ts';
 
 describe('postgres entity integration', () => {
   let knexInstance: Knex;

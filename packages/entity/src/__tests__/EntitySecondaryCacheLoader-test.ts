@@ -1,16 +1,16 @@
 import { describe, expect, it } from '@jest/globals';
 import { anyOfClass, anything, deepEqual, instance, mock, spy, verify, when } from 'ts-mockito';
 
-import { EntityNonTransactionalQueryContext } from '../EntityQueryContext';
-import type { ISecondaryEntityCache } from '../EntitySecondaryCacheLoader';
-import { EntitySecondaryCacheLoader } from '../EntitySecondaryCacheLoader';
-import { ViewerContext } from '../ViewerContext';
+import { EntityNonTransactionalQueryContext } from '../EntityQueryContext.ts';
+import type { ISecondaryEntityCache } from '../EntitySecondaryCacheLoader.ts';
+import { EntitySecondaryCacheLoader } from '../EntitySecondaryCacheLoader.ts';
+import { ViewerContext } from '../ViewerContext.ts';
 import type {
   SimpleTestEntityPrivacyPolicy,
   SimpleTestFields,
-} from '../utils/__testfixtures__/SimpleTestEntity';
-import { SimpleTestEntity } from '../utils/__testfixtures__/SimpleTestEntity';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+} from '../utils/__testfixtures__/SimpleTestEntity.ts';
+import { SimpleTestEntity } from '../utils/__testfixtures__/SimpleTestEntity.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 type TestLoadParams = { id: string };
 

@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import type { EntityFieldDefinition } from '../../EntityFieldDefinition';
+import type { EntityFieldDefinition } from '../../EntityFieldDefinition.ts';
 
 export function describeFieldTestCase<T>(
   fieldDefinition: EntityFieldDefinition<T, any>,

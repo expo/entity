@@ -1,15 +1,15 @@
 import { describe, it } from '@jest/globals';
 import { instance, mock, verify } from 'ts-mockito';
 
-import { EntityMutatorFactory } from '../EntityMutatorFactory';
-import { EntityQueryContext } from '../EntityQueryContext';
-import { ViewerContext } from '../ViewerContext';
-import { ViewerScopedEntityMutatorFactory } from '../ViewerScopedEntityMutatorFactory';
+import { EntityMutatorFactory } from '../EntityMutatorFactory.ts';
+import { EntityQueryContext } from '../EntityQueryContext.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { ViewerScopedEntityMutatorFactory } from '../ViewerScopedEntityMutatorFactory.ts';
 import type {
   TestEntity,
   TestEntityPrivacyPolicy,
   TestFields,
-} from '../utils/__testfixtures__/TestEntity';
+} from '../utils/__testfixtures__/TestEntity.ts';
 
 describe(ViewerScopedEntityMutatorFactory, () => {
   it('correctly scopes viewer to entity mutations', async () => {

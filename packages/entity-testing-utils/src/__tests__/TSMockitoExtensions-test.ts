@@ -5,7 +5,7 @@ import {
   deepEqualEntityAware,
   DeepEqualEntityAwareMatcher,
   isEqualWithEntityAware,
-} from '../TSMockitoExtensions';
+} from '../TSMockitoExtensions.ts';
 
 describe(deepEqualEntityAware, () => {
   it('should return a DeepEqualEntityAwareMatcher', () => {

@@ -1,15 +1,15 @@
 import invariant from 'invariant';
 import { v7 as uuidv7 } from 'uuid';
 
-import type { EntityConfiguration } from '../../EntityConfiguration';
-import { EntityDatabaseAdapter } from '../../EntityDatabaseAdapter';
-import { IntField, StringField } from '../../EntityFields';
-import type { FieldTransformerMap } from '../../internal/EntityFieldTransformationUtils';
+import type { EntityConfiguration } from '../../EntityConfiguration.ts';
+import { EntityDatabaseAdapter } from '../../EntityDatabaseAdapter.ts';
+import { IntField, StringField } from '../../EntityFields.ts';
+import type { FieldTransformerMap } from '../../internal/EntityFieldTransformationUtils.ts';
 import {
   getDatabaseFieldForEntityField,
   transformFieldsToDatabaseObject,
-} from '../../internal/EntityFieldTransformationUtils';
-import { computeIfAbsent, mapMap } from '../collections/maps';
+} from '../../internal/EntityFieldTransformationUtils.ts';
+import { computeIfAbsent, mapMap } from '../collections/maps.ts';
 
 export class StubDatabaseAdapter<
   TFields extends Record<string, any>,

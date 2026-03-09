@@ -1,23 +1,23 @@
 import { describe, expect, it } from '@jest/globals';
 import invariant from 'invariant';
 
-import { Entity } from '../Entity';
-import type { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import { EntityConfiguration } from '../EntityConfiguration';
-import { EntityEdgeDeletionBehavior } from '../EntityFieldDefinition';
-import { UUIDField } from '../EntityFields';
-import type { EntityTriggerMutationInfo } from '../EntityMutationInfo';
-import { EntityMutationType } from '../EntityMutationInfo';
-import { EntityMutationTrigger } from '../EntityMutationTriggerConfiguration';
-import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { EntityAuthorizationAction, EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
-import type { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
-import { CacheStatus } from '../internal/ReadThroughEntityCache';
-import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
-import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
-import type { InMemoryFullCacheStubCacheAdapter } from '../utils/__testfixtures__/StubCacheAdapter';
-import { TestViewerContext } from '../utils/__testfixtures__/TestViewerContext';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+import { Entity } from '../Entity.ts';
+import type { EntityCompanionDefinition } from '../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../EntityConfiguration.ts';
+import { EntityEdgeDeletionBehavior } from '../EntityFieldDefinition.ts';
+import { UUIDField } from '../EntityFields.ts';
+import type { EntityTriggerMutationInfo } from '../EntityMutationInfo.ts';
+import { EntityMutationType } from '../EntityMutationInfo.ts';
+import { EntityMutationTrigger } from '../EntityMutationTriggerConfiguration.ts';
+import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy.ts';
+import { EntityAuthorizationAction, EntityPrivacyPolicy } from '../EntityPrivacyPolicy.ts';
+import type { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext.ts';
+import { CacheStatus } from '../internal/ReadThroughEntityCache.ts';
+import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder.ts';
+import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule.ts';
+import type { InMemoryFullCacheStubCacheAdapter } from '../utils/__testfixtures__/StubCacheAdapter.ts';
+import { TestViewerContext } from '../utils/__testfixtures__/TestViewerContext.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 interface OtherFields {
   id: string;

@@ -5,8 +5,8 @@ import type {
 } from '@expo/entity';
 import { computeIfAbsent, GenericEntityCacheAdapter } from '@expo/entity';
 
-import type { ILocalMemoryCache } from './GenericLocalMemoryCacher';
-import { GenericLocalMemoryCacher } from './GenericLocalMemoryCacher';
+import type { ILocalMemoryCache } from './GenericLocalMemoryCacher.ts';
+import { GenericLocalMemoryCacher } from './GenericLocalMemoryCacher.ts';
 
 export type LocalMemoryCacheCreator = <
   TFields extends Record<string, any>,

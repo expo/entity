@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { wrapNativePostgresCallAsync } from '../wrapNativePostgresCallAsync';
+import { wrapNativePostgresCallAsync } from '../wrapNativePostgresCallAsync.ts';
 
 describe(wrapNativePostgresCallAsync, () => {
   it('rethrows literals', async () => {

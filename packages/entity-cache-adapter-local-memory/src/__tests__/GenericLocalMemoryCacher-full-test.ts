@@ -8,14 +8,14 @@ import {
 import { describe, expect, it } from '@jest/globals';
 import { v4 as uuidv4 } from 'uuid';
 
-import { GenericLocalMemoryCacher } from '../GenericLocalMemoryCacher';
-import type { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider';
-import type { LocalMemoryTestEntityFields } from '../__testfixtures__/LocalMemoryTestEntity';
-import { LocalMemoryTestEntity } from '../__testfixtures__/LocalMemoryTestEntity';
+import { GenericLocalMemoryCacher } from '../GenericLocalMemoryCacher.ts';
+import type { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider.ts';
+import type { LocalMemoryTestEntityFields } from '../__testfixtures__/LocalMemoryTestEntity.ts';
+import { LocalMemoryTestEntity } from '../__testfixtures__/LocalMemoryTestEntity.ts';
 import {
   createLocalMemoryTestEntityCompanionProvider,
   createNoOpLocalMemoryIntegrationTestEntityCompanionProvider,
-} from '../__testfixtures__/createLocalMemoryTestEntityCompanionProvider';
+} from '../__testfixtures__/createLocalMemoryTestEntityCompanionProvider.ts';
 
 describe(GenericLocalMemoryCacher, () => {
   it('has correct caching behavior', async () => {

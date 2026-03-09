@@ -1,21 +1,21 @@
 import invariant from 'invariant';
 
-import type { EntityConfiguration } from './EntityConfiguration';
-import type { EntityQueryContext } from './EntityQueryContext';
+import type { EntityConfiguration } from './EntityConfiguration.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
 import {
   EntityDatabaseAdapterEmptyInsertResultError,
   EntityDatabaseAdapterEmptyUpdateResultError,
   EntityDatabaseAdapterExcessiveDeleteResultError,
   EntityDatabaseAdapterExcessiveInsertResultError,
   EntityDatabaseAdapterExcessiveUpdateResultError,
-} from './errors/EntityDatabaseAdapterError';
-import type { FieldTransformerMap } from './internal/EntityFieldTransformationUtils';
+} from './errors/EntityDatabaseAdapterError.ts';
+import type { FieldTransformerMap } from './internal/EntityFieldTransformationUtils.ts';
 import {
   getDatabaseFieldForEntityField,
   transformDatabaseObjectToFields,
   transformFieldsToDatabaseObject,
-} from './internal/EntityFieldTransformationUtils';
-import type { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
+} from './internal/EntityFieldTransformationUtils.ts';
+import type { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces.ts';
 
 /**
  * A database adapter is an interface by which entity objects can be

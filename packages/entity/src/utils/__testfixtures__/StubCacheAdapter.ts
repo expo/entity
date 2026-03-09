@@ -1,11 +1,11 @@
 import invariant from 'invariant';
 
-import type { EntityConfiguration } from '../../EntityConfiguration';
-import type { IEntityCacheAdapter } from '../../IEntityCacheAdapter';
-import type { IEntityCacheAdapterProvider } from '../../IEntityCacheAdapterProvider';
-import type { IEntityLoadKey, IEntityLoadValue } from '../../internal/EntityLoadInterfaces';
-import type { CacheLoadResult } from '../../internal/ReadThroughEntityCache';
-import { CacheStatus } from '../../internal/ReadThroughEntityCache';
+import type { EntityConfiguration } from '../../EntityConfiguration.ts';
+import type { IEntityCacheAdapter } from '../../IEntityCacheAdapter.ts';
+import type { IEntityCacheAdapterProvider } from '../../IEntityCacheAdapterProvider.ts';
+import type { IEntityLoadKey, IEntityLoadValue } from '../../internal/EntityLoadInterfaces.ts';
+import type { CacheLoadResult } from '../../internal/ReadThroughEntityCache.ts';
+import { CacheStatus } from '../../internal/ReadThroughEntityCache.ts';
 
 export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {
   getCacheAdapter<TFields extends Record<string, any>, TIDField extends keyof TFields>(

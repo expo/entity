@@ -1,13 +1,13 @@
-import type { IEntityClass } from './Entity';
-import type { EntityConfiguration } from './EntityConfiguration';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityTransactionalQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import type { EntityDataManager } from './internal/EntityDataManager';
-import type { LoadPair } from './internal/EntityLoadInterfaces';
-import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
-import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+import type { IEntityClass } from './Entity.ts';
+import type { EntityConfiguration } from './EntityConfiguration.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityTransactionalQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import type { EntityDataManager } from './internal/EntityDataManager.ts';
+import type { LoadPair } from './internal/EntityLoadInterfaces.ts';
+import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder.ts';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
 
 /**
  * Entity invalidation utilities.

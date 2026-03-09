@@ -1,8 +1,8 @@
 import type {
   EntityFieldDefinitionOptions,
   EntityFieldDefinitionOptionsExplicitCache,
-} from './EntityFieldDefinition';
-import { EntityFieldDefinition } from './EntityFieldDefinition';
+} from './EntityFieldDefinition.ts';
+import { EntityFieldDefinition } from './EntityFieldDefinition.ts';
 
 // Use our own regex since the `uuid` package doesn't support validating UUIDv6/7/8 yet
 const UUID_REGEX =

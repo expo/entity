@@ -1,11 +1,11 @@
 import { ViewerContext } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 
-import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader';
-import { EnforcingKnexEntityLoader } from '../EnforcingKnexEntityLoader';
-import { knexLoader, knexLoaderWithAuthorizationResults } from '../knexLoader';
-import { TestEntity } from './fixtures/TestEntity';
-import { createUnitTestPostgresEntityCompanionProvider } from './fixtures/createUnitTestPostgresEntityCompanionProvider';
+import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader.ts';
+import { EnforcingKnexEntityLoader } from '../EnforcingKnexEntityLoader.ts';
+import { knexLoader, knexLoaderWithAuthorizationResults } from '../knexLoader.ts';
+import { TestEntity } from './fixtures/TestEntity.ts';
+import { createUnitTestPostgresEntityCompanionProvider } from './fixtures/createUnitTestPostgresEntityCompanionProvider.ts';
 
 describe('knexLoader', () => {
   describe('knexLoader', () => {

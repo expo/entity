@@ -1,4 +1,4 @@
-import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
+import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError.ts';
 
 /**
  * Base class for all errors related to the database adapter.

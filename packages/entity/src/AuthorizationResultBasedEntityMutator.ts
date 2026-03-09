@@ -2,36 +2,36 @@ import type { Result } from '@expo/results';
 import { asyncResult, enforceAsyncResult, result } from '@expo/results';
 import invariant from 'invariant';
 
-import type { Entity, IEntityClass } from './Entity';
-import type { EntityCompanionProvider } from './EntityCompanionProvider';
-import type { EntityConfiguration } from './EntityConfiguration';
-import type { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
-import { EntityEdgeDeletionBehavior } from './EntityFieldDefinition';
-import type { EntityLoaderFactory } from './EntityLoaderFactory';
+import type { Entity, IEntityClass } from './Entity.ts';
+import type { EntityCompanionProvider } from './EntityCompanionProvider.ts';
+import type { EntityConfiguration } from './EntityConfiguration.ts';
+import type { EntityDatabaseAdapter } from './EntityDatabaseAdapter.ts';
+import { EntityEdgeDeletionBehavior } from './EntityFieldDefinition.ts';
+import type { EntityLoaderFactory } from './EntityLoaderFactory.ts';
 import type {
   EntityCascadingDeletionInfo,
   EntityTriggerMutationInfo,
   EntityValidatorMutationInfo,
-} from './EntityMutationInfo';
-import { EntityMutationType } from './EntityMutationInfo';
+} from './EntityMutationInfo.ts';
+import { EntityMutationType } from './EntityMutationInfo.ts';
 import type {
   EntityMutationTrigger,
   EntityMutationTriggerConfiguration,
   EntityNonTransactionalMutationTrigger,
-} from './EntityMutationTriggerConfiguration';
+} from './EntityMutationTriggerConfiguration.ts';
 import type {
   EntityMutationValidator,
   EntityMutationValidatorConfiguration,
-} from './EntityMutationValidatorConfiguration';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
-import type { ViewerContext } from './ViewerContext';
-import { enforceResultsAsync } from './entityUtils';
-import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError';
-import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
-import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
-import { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter';
-import { mapMapAsync } from './utils/collections/maps';
+} from './EntityMutationValidatorConfiguration.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import { enforceResultsAsync } from './entityUtils.ts';
+import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError.ts';
+import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils.ts';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
+import { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter.ts';
+import { mapMapAsync } from './utils/collections/maps.ts';
 
 /**
  * Base class for entity mutators. Mutators are builder-like class instances that are

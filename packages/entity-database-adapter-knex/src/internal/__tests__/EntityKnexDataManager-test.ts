@@ -14,12 +14,12 @@ import {
   when,
 } from 'ts-mockito';
 
-import { OrderByOrdering } from '../../BasePostgresEntityDatabaseAdapter';
-import { PaginationStrategy } from '../../PaginationStrategy';
-import { PostgresEntityDatabaseAdapter } from '../../PostgresEntityDatabaseAdapter';
-import type { TestFields } from '../../__tests__/fixtures/TestEntity';
-import { TestEntity, testEntityConfiguration } from '../../__tests__/fixtures/TestEntity';
-import { EntityKnexDataManager } from '../EntityKnexDataManager';
+import { OrderByOrdering } from '../../BasePostgresEntityDatabaseAdapter.ts';
+import { PaginationStrategy } from '../../PaginationStrategy.ts';
+import { PostgresEntityDatabaseAdapter } from '../../PostgresEntityDatabaseAdapter.ts';
+import type { TestFields } from '../../__tests__/fixtures/TestEntity.ts';
+import { TestEntity, testEntityConfiguration } from '../../__tests__/fixtures/TestEntity.ts';
+import { EntityKnexDataManager } from '../EntityKnexDataManager.ts';
 
 describe(EntityKnexDataManager, () => {
   it('loads by field equality conjunction and does not cache', async () => {
