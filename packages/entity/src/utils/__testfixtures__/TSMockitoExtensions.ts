@@ -1,4 +1,4 @@
-import { isEqualWith } from 'lodash';
+import { isEqualWith } from 'lodash-es';
 import { Matcher } from 'ts-mockito/lib/matcher/type/Matcher.js';
 
 import {

@@ -5,7 +5,7 @@ import {
   SingleFieldHolder,
   SingleFieldValueHolder,
 } from '@expo/entity';
-import { isEqualWith } from 'lodash';
+import { isEqualWith } from 'lodash-es';
 import { Matcher } from 'ts-mockito/lib/matcher/type/Matcher.js';
 
 export function isEqualWithEntityAware(expected: any, actual: any): boolean {
