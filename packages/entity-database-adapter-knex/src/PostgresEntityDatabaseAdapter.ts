@@ -6,16 +6,16 @@ import type {
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableQuerySelectionModifiers,
-} from './BasePostgresEntityDatabaseAdapter';
+} from './BasePostgresEntityDatabaseAdapter.ts';
 import {
   BasePostgresEntityDatabaseAdapter,
   NullsOrdering,
   OrderByOrdering,
-} from './BasePostgresEntityDatabaseAdapter';
-import { JSONArrayField, MaybeJSONArrayField } from './EntityFields';
-import type { PostgresEntityDatabaseAdapterConfiguration } from './PostgresEntityDatabaseAdapterProvider';
-import type { SQLFragment } from './SQLOperator';
-import { wrapNativePostgresCallAsync } from './errors/wrapNativePostgresCallAsync';
+} from './BasePostgresEntityDatabaseAdapter.ts';
+import { JSONArrayField, MaybeJSONArrayField } from './EntityFields.ts';
+import type { PostgresEntityDatabaseAdapterConfiguration } from './PostgresEntityDatabaseAdapterProvider.ts';
+import type { SQLFragment } from './SQLOperator.ts';
+import { wrapNativePostgresCallAsync } from './errors/wrapNativePostgresCallAsync.ts';
 
 export class PostgresEntityDatabaseAdapter<
   TFields extends Record<string, any>,

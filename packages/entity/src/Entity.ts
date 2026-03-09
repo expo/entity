@@ -2,18 +2,18 @@ import type {
   AuthorizationResultBasedCreateMutator,
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
-} from './AuthorizationResultBasedEntityMutator';
-import type { EnforcingEntityCreator } from './EnforcingEntityCreator';
-import type { EnforcingEntityDeleter } from './EnforcingEntityDeleter';
-import type { EnforcingEntityUpdater } from './EnforcingEntityUpdater';
-import type { EntityCompanionDefinition } from './EntityCompanionProvider';
-import { EntityCreator } from './EntityCreator';
-import { EntityDeleter } from './EntityDeleter';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import { EntityUpdater } from './EntityUpdater';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
+} from './AuthorizationResultBasedEntityMutator.ts';
+import type { EnforcingEntityCreator } from './EnforcingEntityCreator.ts';
+import type { EnforcingEntityDeleter } from './EnforcingEntityDeleter.ts';
+import type { EnforcingEntityUpdater } from './EnforcingEntityUpdater.ts';
+import type { EntityCompanionDefinition } from './EntityCompanionProvider.ts';
+import { EntityCreator } from './EntityCreator.ts';
+import { EntityDeleter } from './EntityDeleter.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import { EntityUpdater } from './EntityUpdater.ts';
+import { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
 
 /**
  * Entity is a privacy-first data model.

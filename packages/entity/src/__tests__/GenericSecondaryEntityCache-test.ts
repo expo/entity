@@ -1,19 +1,19 @@
 import nullthrows from '@expo/nullthrows';
 import { describe, expect, it } from '@jest/globals';
 
-import type { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
-import type { EntityConstructionUtils } from '../EntityConstructionUtils';
-import { EntitySecondaryCacheLoader } from '../EntitySecondaryCacheLoader';
-import { GenericSecondaryEntityCache } from '../GenericSecondaryEntityCache';
-import type { IEntityGenericCacher } from '../IEntityGenericCacher';
-import { ViewerContext } from '../ViewerContext';
-import type { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces';
-import type { CacheLoadResult } from '../internal/ReadThroughEntityCache';
-import { CacheStatus } from '../internal/ReadThroughEntityCache';
-import type { TestEntityPrivacyPolicy, TestFields } from '../utils/__testfixtures__/TestEntity';
-import { TestEntity } from '../utils/__testfixtures__/TestEntity';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
-import { mapMapAsync } from '../utils/collections/maps';
+import type { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader.ts';
+import type { EntityConstructionUtils } from '../EntityConstructionUtils.ts';
+import { EntitySecondaryCacheLoader } from '../EntitySecondaryCacheLoader.ts';
+import { GenericSecondaryEntityCache } from '../GenericSecondaryEntityCache.ts';
+import type { IEntityGenericCacher } from '../IEntityGenericCacher.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import type { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces.ts';
+import type { CacheLoadResult } from '../internal/ReadThroughEntityCache.ts';
+import { CacheStatus } from '../internal/ReadThroughEntityCache.ts';
+import type { TestEntityPrivacyPolicy, TestFields } from '../utils/__testfixtures__/TestEntity.ts';
+import { TestEntity } from '../utils/__testfixtures__/TestEntity.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
+import { mapMapAsync } from '../utils/collections/maps.ts';
 
 type TestLoadParams = { intValue: number };
 

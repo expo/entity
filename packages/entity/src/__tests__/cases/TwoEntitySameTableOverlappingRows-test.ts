@@ -1,13 +1,13 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Entity } from '../../Entity';
-import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import { EntityConfiguration } from '../../EntityConfiguration';
-import { StringField, UUIDField } from '../../EntityFields';
-import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
-import { ViewerContext } from '../../ViewerContext';
-import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
-import { createUnitTestEntityCompanionProvider } from '../../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+import { Entity } from '../../Entity.ts';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../../EntityConfiguration.ts';
+import { StringField, UUIDField } from '../../EntityFields.ts';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy.ts';
+import { ViewerContext } from '../../ViewerContext.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule.ts';
+import { createUnitTestEntityCompanionProvider } from '../../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 describe('Two entities backed by the same table', () => {
   test('mutate through different types and keep consistent cache and dataloader', async () => {

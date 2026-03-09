@@ -3,15 +3,15 @@ import type {
   EntityPrivacyPolicy,
   EntityPrivacyPolicyEvaluationContext,
   EntityQueryContext,
+  IEntityMetricsAdapter,
   ReadonlyEntity,
   ViewerContext,
-  IEntityMetricsAdapter,
 } from '@expo/entity';
 import { EntityConstructionUtils } from '@expo/entity';
 
-import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
-import { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
-import type { EntityKnexDataManager } from './internal/EntityKnexDataManager';
+import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader.ts';
+import { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader.ts';
+import type { EntityKnexDataManager } from './internal/EntityKnexDataManager.ts';
 
 /**
  * The primary entry point for loading entities via knex queries (non-data-loader methods).

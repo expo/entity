@@ -7,7 +7,7 @@ import {
   UUIDField,
 } from '@expo/entity';
 
-import ChildEntity from './ChildEntity';
+import ChildEntity from './ChildEntity.ts';
 
 interface ParentFields {
   id: string;

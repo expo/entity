@@ -1,29 +1,29 @@
 import { describe, expect, it } from '@jest/globals';
 import { anyOfClass, anything, instance, mock, objectContaining, spy, verify } from 'ts-mockito';
 
-import { Entity } from '../Entity';
-import type { EntityCompanionDefinition } from '../EntityCompanionProvider';
-import { EntityConfiguration } from '../EntityConfiguration';
-import { UUIDField } from '../EntityFields';
+import { Entity } from '../Entity.ts';
+import type { EntityCompanionDefinition } from '../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../EntityConfiguration.ts';
+import { UUIDField } from '../EntityFields.ts';
 import type {
   EntityPrivacyPolicyEvaluationContext,
   EntityPrivacyPolicyEvaluator,
   EntityPrivacyPolicyRuleEvaluationContext,
-} from '../EntityPrivacyPolicy';
+} from '../EntityPrivacyPolicy.ts';
 import {
   EntityAuthorizationAction,
   EntityPrivacyPolicy,
   EntityPrivacyPolicyEvaluationMode,
-} from '../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../EntityQueryContext';
-import { ViewerContext } from '../ViewerContext';
-import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';
-import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
-import { EntityMetricsAuthorizationResult } from '../metrics/IEntityMetricsAdapter';
-import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
-import { AlwaysDenyPrivacyPolicyRule } from '../rules/AlwaysDenyPrivacyPolicyRule';
-import { AlwaysSkipPrivacyPolicyRule } from '../rules/AlwaysSkipPrivacyPolicyRule';
-import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule';
+} from '../EntityPrivacyPolicy.ts';
+import { EntityQueryContext } from '../EntityQueryContext.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError.ts';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
+import { EntityMetricsAuthorizationResult } from '../metrics/IEntityMetricsAdapter.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule.ts';
+import { AlwaysDenyPrivacyPolicyRule } from '../rules/AlwaysDenyPrivacyPolicyRule.ts';
+import { AlwaysSkipPrivacyPolicyRule } from '../rules/AlwaysSkipPrivacyPolicyRule.ts';
+import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule.ts';
 
 type BlahFields = {
   id: string;

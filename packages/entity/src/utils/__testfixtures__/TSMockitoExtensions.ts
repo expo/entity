@@ -1,12 +1,12 @@
-import isEqualWith from 'lodash/isEqualWith';
-import { Matcher } from 'ts-mockito/lib/matcher/type/Matcher';
+import { isEqualWith } from 'lodash';
+import { Matcher } from 'ts-mockito/lib/matcher/type/Matcher.js';
 
 import {
   CompositeFieldHolder,
   CompositeFieldValueHolder,
-} from '../../internal/CompositeFieldHolder';
-import { SingleFieldHolder, SingleFieldValueHolder } from '../../internal/SingleFieldHolder';
-import { SerializableKeyMap } from '../collections/SerializableKeyMap';
+} from '../../internal/CompositeFieldHolder.ts';
+import { SingleFieldHolder, SingleFieldValueHolder } from '../../internal/SingleFieldHolder.ts';
+import { SerializableKeyMap } from '../collections/SerializableKeyMap.ts';
 
 export function isEqualWithEntityAware(expected: any, actual: any): boolean {
   return isEqualWith(expected, actual, (expected: any, actual: any): boolean | undefined => {

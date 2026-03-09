@@ -2,19 +2,19 @@ import { describe, expect, it, jest } from '@jest/globals';
 import assert from 'assert';
 import invariant from 'invariant';
 
-import { EntityCompanionProvider } from '../EntityCompanionProvider';
-import type { TransactionConfig } from '../EntityQueryContext';
+import { EntityCompanionProvider } from '../EntityCompanionProvider.ts';
+import type { TransactionConfig } from '../EntityQueryContext.ts';
 import {
   EntityQueryContext,
   TransactionalDataLoaderMode,
   TransactionIsolationLevel,
-} from '../EntityQueryContext';
-import { EntityQueryContextProvider } from '../EntityQueryContextProvider';
-import { ViewerContext } from '../ViewerContext';
-import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter';
-import { InMemoryFullCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
-import { StubDatabaseAdapterProvider } from '../utils/__testfixtures__/StubDatabaseAdapterProvider';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+} from '../EntityQueryContext.ts';
+import { EntityQueryContextProvider } from '../EntityQueryContextProvider.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter.ts';
+import { InMemoryFullCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter.ts';
+import { StubDatabaseAdapterProvider } from '../utils/__testfixtures__/StubDatabaseAdapterProvider.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 describe(EntityQueryContext, () => {
   describe('callbacks', () => {

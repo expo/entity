@@ -6,9 +6,9 @@ import type {
   ViewerContext,
 } from '@expo/entity';
 
-import type { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
-import type { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
-import { getKnexEntityLoaderFactory } from './internal/getKnexEntityLoaderFactory';
+import type { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader.ts';
+import type { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader.ts';
+import { getKnexEntityLoaderFactory } from './internal/getKnexEntityLoaderFactory.ts';
 
 /**
  * Vend knex loader for loading entities via non-data-loader methods in a given query context.

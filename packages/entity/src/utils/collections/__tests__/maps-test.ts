@@ -2,15 +2,15 @@ import { describe, expect, it } from '@jest/globals';
 
 import {
   computeIfAbsent,
+  filterMap,
+  invertMap,
+  mapKeys,
   mapMap,
   mapMapAsync,
-  zipToMap,
-  invertMap,
   reduceMap,
-  filterMap,
   reduceMapAsync,
-  mapKeys,
-} from '../maps';
+  zipToMap,
+} from '../maps.ts';
 
 describe(computeIfAbsent, () => {
   it('computes a value when absent', () => {

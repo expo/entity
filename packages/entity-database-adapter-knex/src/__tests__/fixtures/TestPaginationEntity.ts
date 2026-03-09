@@ -1,20 +1,20 @@
 import type {
   EntityCompanionDefinition,
-  ViewerContext,
   EntityPrivacyPolicyEvaluationContext,
   EntityQueryContext,
+  ViewerContext,
 } from '@expo/entity';
 import {
+  DateField,
   EntityConfiguration,
   EntityPrivacyPolicy,
-  UUIDField,
-  StringField,
-  DateField,
   IntField,
   RuleEvaluationResult,
+  StringField,
+  UUIDField,
 } from '@expo/entity';
 
-import { PostgresEntity } from '../../PostgresEntity';
+import { PostgresEntity } from '../../PostgresEntity.ts';
 
 export interface TestPaginationFields {
   id: string;

@@ -12,13 +12,13 @@ import type { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis'
 import { RedisCacheInvalidationStrategy } from '@expo/entity-cache-adapter-redis';
 import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import type { Knex } from 'knex';
 import { knex } from 'knex';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider';
+import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider.ts';
 
 interface CategoryFields {
   id: string;

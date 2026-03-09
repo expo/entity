@@ -5,8 +5,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/glo
 import type { Knex } from 'knex';
 import { knex } from 'knex';
 
-import { InvalidTestEntity } from '../__testfixtures__/InvalidTestEntity';
-import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';
+import { InvalidTestEntity } from '../__testfixtures__/InvalidTestEntity.ts';
+import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider.ts';
 
 describe('postgres entity integration', () => {
   let knexInstance: Knex;

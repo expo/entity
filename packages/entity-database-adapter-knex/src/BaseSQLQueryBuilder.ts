@@ -1,10 +1,10 @@
 import type {
   EntityLoaderOrderByClause,
   EntityLoaderQuerySelectionModifiers,
-} from './AuthorizationResultBasedKnexEntityLoader';
-import type { NullsOrdering } from './BasePostgresEntityDatabaseAdapter';
-import { OrderByOrdering } from './BasePostgresEntityDatabaseAdapter';
-import type { SQLFragment } from './SQLOperator';
+} from './AuthorizationResultBasedKnexEntityLoader.ts';
+import type { NullsOrdering } from './BasePostgresEntityDatabaseAdapter.ts';
+import { OrderByOrdering } from './BasePostgresEntityDatabaseAdapter.ts';
+import type { SQLFragment } from './SQLOperator.ts';
 
 /**
  * Base SQL query builder that provides common functionality for building SQL queries.

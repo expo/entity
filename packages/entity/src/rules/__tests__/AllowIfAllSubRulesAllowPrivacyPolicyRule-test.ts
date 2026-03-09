@@ -1,13 +1,13 @@
 import { anything, instance, mock } from 'ts-mockito';
 
-import type { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../../EntityQueryContext';
-import { ViewerContext } from '../../ViewerContext';
-import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils';
-import { AllowIfAllSubRulesAllowPrivacyPolicyRule } from '../AllowIfAllSubRulesAllowPrivacyPolicyRule';
-import { AlwaysAllowPrivacyPolicyRule } from '../AlwaysAllowPrivacyPolicyRule';
-import { AlwaysDenyPrivacyPolicyRule } from '../AlwaysDenyPrivacyPolicyRule';
-import { AlwaysSkipPrivacyPolicyRule } from '../AlwaysSkipPrivacyPolicyRule';
+import type { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy.ts';
+import { EntityQueryContext } from '../../EntityQueryContext.ts';
+import { ViewerContext } from '../../ViewerContext.ts';
+import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils.ts';
+import { AllowIfAllSubRulesAllowPrivacyPolicyRule } from '../AllowIfAllSubRulesAllowPrivacyPolicyRule.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../AlwaysAllowPrivacyPolicyRule.ts';
+import { AlwaysDenyPrivacyPolicyRule } from '../AlwaysDenyPrivacyPolicyRule.ts';
+import { AlwaysSkipPrivacyPolicyRule } from '../AlwaysSkipPrivacyPolicyRule.ts';
 
 describePrivacyPolicyRule(
   new AllowIfAllSubRulesAllowPrivacyPolicyRule([

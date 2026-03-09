@@ -4,18 +4,18 @@ import { describe, expect, it } from '@jest/globals';
 import {
   arrayValue,
   entityField,
+  expression,
   identifier,
-  unsafeRaw,
   sql,
   SQLEntityField,
   SQLExpression,
   SQLFragment,
   SQLFragmentHelpers,
   SQLIdentifier,
-  expression,
-} from '../SQLOperator';
-import type { TestFields } from './fixtures/TestEntity';
-import { testEntityConfiguration } from './fixtures/TestEntity';
+  unsafeRaw,
+} from '../SQLOperator.ts';
+import type { TestFields } from './fixtures/TestEntity.ts';
+import { testEntityConfiguration } from './fixtures/TestEntity.ts';
 
 const getColumnForField = (fieldName: string): string =>
   getDatabaseFieldForEntityField(testEntityConfiguration, fieldName as keyof TestFields);

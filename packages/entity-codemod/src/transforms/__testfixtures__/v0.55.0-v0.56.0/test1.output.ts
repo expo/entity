@@ -1,6 +1,6 @@
 import { ViewerContext } from '@expo/entity';
-import { UserEntity } from './entities/UserEntity';
-import { PostEntity } from './entities/PostEntity';
+import { PostEntity } from './entities/PostEntity.ts';
+import { UserEntity } from './entities/UserEntity.ts';
 
 async function loadUser(viewerContext: ViewerContext) {
   // Basic loader calls - only transformed when using knex-specific methods

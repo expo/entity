@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder';
+import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder.ts';
 
 type TestFields = {
   id: string;

@@ -1,16 +1,16 @@
-import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
-import type { EntityCompanion } from './EntityCompanion';
-import { EntityConstructionUtils } from './EntityConstructionUtils';
-import { EntityInvalidationUtils } from './EntityInvalidationUtils';
+import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader.ts';
+import type { EntityCompanion } from './EntityCompanion.ts';
+import { EntityConstructionUtils } from './EntityConstructionUtils.ts';
+import { EntityInvalidationUtils } from './EntityInvalidationUtils.ts';
 import type {
   EntityPrivacyPolicy,
   EntityPrivacyPolicyEvaluationContext,
-} from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import type { EntityDataManager } from './internal/EntityDataManager';
-import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+} from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import type { EntityDataManager } from './internal/EntityDataManager.ts';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
 
 /**
  * The primary entry point for loading entities.

@@ -10,27 +10,27 @@ import {
   when,
 } from 'ts-mockito';
 
-import type { EntityDatabaseAdapter } from '../../EntityDatabaseAdapter';
-import { TransactionalDataLoaderMode } from '../../EntityQueryContext';
-import type { IEntityMetricsAdapter } from '../../metrics/IEntityMetricsAdapter';
+import type { EntityDatabaseAdapter } from '../../EntityDatabaseAdapter.ts';
+import { TransactionalDataLoaderMode } from '../../EntityQueryContext.ts';
+import type { IEntityMetricsAdapter } from '../../metrics/IEntityMetricsAdapter.ts';
 import {
   EntityMetricsLoadType,
   IncrementLoadCountEventType,
-} from '../../metrics/IEntityMetricsAdapter';
-import { NoOpEntityMetricsAdapter } from '../../metrics/NoOpEntityMetricsAdapter';
+} from '../../metrics/IEntityMetricsAdapter.ts';
+import { NoOpEntityMetricsAdapter } from '../../metrics/NoOpEntityMetricsAdapter.ts';
 import {
   InMemoryFullCacheStubCacheAdapterProvider,
   NoCacheStubCacheAdapterProvider,
-} from '../../utils/__testfixtures__/StubCacheAdapter';
-import { StubDatabaseAdapter } from '../../utils/__testfixtures__/StubDatabaseAdapter';
-import { StubQueryContextProvider } from '../../utils/__testfixtures__/StubQueryContextProvider';
-import type { TestFields } from '../../utils/__testfixtures__/TestEntity';
-import { TestEntity, testEntityConfiguration } from '../../utils/__testfixtures__/TestEntity';
-import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder';
-import { EntityDataManager } from '../EntityDataManager';
-import { EntityLoadMethodType } from '../EntityLoadInterfaces';
-import { ReadThroughEntityCache } from '../ReadThroughEntityCache';
-import { SingleFieldHolder, SingleFieldValueHolder } from '../SingleFieldHolder';
+} from '../../utils/__testfixtures__/StubCacheAdapter.ts';
+import { StubDatabaseAdapter } from '../../utils/__testfixtures__/StubDatabaseAdapter.ts';
+import { StubQueryContextProvider } from '../../utils/__testfixtures__/StubQueryContextProvider.ts';
+import type { TestFields } from '../../utils/__testfixtures__/TestEntity.ts';
+import { TestEntity, testEntityConfiguration } from '../../utils/__testfixtures__/TestEntity.ts';
+import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder.ts';
+import { EntityDataManager } from '../EntityDataManager.ts';
+import { EntityLoadMethodType } from '../EntityLoadInterfaces.ts';
+import { ReadThroughEntityCache } from '../ReadThroughEntityCache.ts';
+import { SingleFieldHolder, SingleFieldValueHolder } from '../SingleFieldHolder.ts';
 
 const getObjects = (): Map<string, TestFields[]> =>
   new Map([

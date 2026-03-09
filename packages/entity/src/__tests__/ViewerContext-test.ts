@@ -1,8 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { EntityQueryContext } from '../EntityQueryContext';
-import { ViewerContext } from '../ViewerContext';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+import { EntityQueryContext } from '../EntityQueryContext.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 describe(ViewerContext, () => {
   describe('getQueryContextForDatabaseAdapterFlavor', () => {

@@ -1,12 +1,12 @@
 import type { Result } from '@expo/results';
 
-import type { IEntityClass } from './Entity';
-import type { EntityConstructionUtils } from './EntityConstructionUtils';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import { mapMap } from './utils/collections/maps';
+import type { IEntityClass } from './Entity.ts';
+import type { EntityConstructionUtils } from './EntityConstructionUtils.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import { mapMap } from './utils/collections/maps.ts';
 
 /**
  * An interface that knows how to load many objects from a cache by load params and invalidate

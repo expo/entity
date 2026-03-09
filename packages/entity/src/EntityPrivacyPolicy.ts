@@ -1,12 +1,12 @@
-import type { EntityCascadingDeletionInfo } from './EntityMutationInfo';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import { EntityNotAuthorizedError } from './errors/EntityNotAuthorizedError';
-import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
-import { EntityMetricsAuthorizationResult } from './metrics/IEntityMetricsAdapter';
-import type { PrivacyPolicyRule } from './rules/PrivacyPolicyRule';
-import { RuleEvaluationResult } from './rules/PrivacyPolicyRule';
+import type { EntityCascadingDeletionInfo } from './EntityMutationInfo.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import { EntityNotAuthorizedError } from './errors/EntityNotAuthorizedError.ts';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
+import { EntityMetricsAuthorizationResult } from './metrics/IEntityMetricsAdapter.ts';
+import type { PrivacyPolicyRule } from './rules/PrivacyPolicyRule.ts';
+import { RuleEvaluationResult } from './rules/PrivacyPolicyRule.ts';
 
 /**
  * Information about the reason this privacy policy is being evaluated.

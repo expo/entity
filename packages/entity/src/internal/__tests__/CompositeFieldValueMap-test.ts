@@ -1,8 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
 
-import type { EntityCompositeFieldValue } from '../../EntityConfiguration';
-import { CompositeFieldValueHolder } from '../CompositeFieldHolder';
-import { CompositeFieldValueMap } from '../CompositeFieldValueMap';
+import type { EntityCompositeFieldValue } from '../../EntityConfiguration.ts';
+import { CompositeFieldValueHolder } from '../CompositeFieldHolder.ts';
+import { CompositeFieldValueMap } from '../CompositeFieldValueMap.ts';
 
 describe(CompositeFieldValueMap, () => {
   it('behaves like a ReadonlyMap', () => {

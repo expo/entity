@@ -1,9 +1,9 @@
 import invariant from 'invariant';
 
-import type { EntityConfiguration } from '../EntityConfiguration';
-import type { IEntityCacheAdapter } from '../IEntityCacheAdapter';
-import type { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
-import { filterMap } from '../utils/collections/maps';
+import type { EntityConfiguration } from '../EntityConfiguration.ts';
+import type { IEntityCacheAdapter } from '../IEntityCacheAdapter.ts';
+import type { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces.ts';
+import { filterMap } from '../utils/collections/maps.ts';
 
 /**
  * @internal

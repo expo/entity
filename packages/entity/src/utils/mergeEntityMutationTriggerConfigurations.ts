@@ -1,6 +1,6 @@
-import type { EntityMutationTriggerConfiguration } from '../EntityMutationTriggerConfiguration';
-import type { ReadonlyEntity } from '../ReadonlyEntity';
-import type { ViewerContext } from '../ViewerContext';
+import type { EntityMutationTriggerConfiguration } from '../EntityMutationTriggerConfiguration.ts';
+import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
+import type { ViewerContext } from '../ViewerContext.ts';
 
 function nonNullish<TValue>(value: TValue | null | undefined): value is NonNullable<TValue> {
   return value !== null && value !== undefined;

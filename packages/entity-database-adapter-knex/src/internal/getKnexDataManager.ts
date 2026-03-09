@@ -1,9 +1,9 @@
 import type { EntityDatabaseAdapter, EntityTableDataCoordinator } from '@expo/entity';
 import assert from 'assert';
 
-import { BasePostgresEntityDatabaseAdapter } from '../BasePostgresEntityDatabaseAdapter';
-import { EntityKnexDataManager } from './EntityKnexDataManager';
-import { computeIfAbsentInWeakMap } from './weakMaps';
+import { BasePostgresEntityDatabaseAdapter } from '../BasePostgresEntityDatabaseAdapter.ts';
+import { EntityKnexDataManager } from './EntityKnexDataManager.ts';
+import { computeIfAbsentInWeakMap } from './weakMaps.ts';
 
 const knexDataManagerCache = new WeakMap<
   EntityTableDataCoordinator<any, any>,

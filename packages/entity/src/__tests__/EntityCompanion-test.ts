@@ -1,21 +1,21 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock, when } from 'ts-mockito';
 
-import { EntityCompanion } from '../EntityCompanion';
-import { EntityCompanionProvider } from '../EntityCompanionProvider';
-import { EntityLoaderFactory } from '../EntityLoaderFactory';
-import type { EntityMutationTriggerConfiguration } from '../EntityMutationTriggerConfiguration';
-import { EntityMutatorFactory } from '../EntityMutatorFactory';
-import type { ViewerContext } from '../ViewerContext';
-import type { EntityTableDataCoordinator } from '../internal/EntityTableDataCoordinator';
-import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
-import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter';
-import type { TestMTFields } from '../utils/__testfixtures__/TestEntityWithMutationTriggers';
+import { EntityCompanion } from '../EntityCompanion.ts';
+import { EntityCompanionProvider } from '../EntityCompanionProvider.ts';
+import { EntityLoaderFactory } from '../EntityLoaderFactory.ts';
+import type { EntityMutationTriggerConfiguration } from '../EntityMutationTriggerConfiguration.ts';
+import { EntityMutatorFactory } from '../EntityMutatorFactory.ts';
+import type { ViewerContext } from '../ViewerContext.ts';
+import type { EntityTableDataCoordinator } from '../internal/EntityTableDataCoordinator.ts';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
+import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter.ts';
+import type { TestMTFields } from '../utils/__testfixtures__/TestEntityWithMutationTriggers.ts';
 import {
   testEntityMTConfiguration,
   TestEntityWithMutationTriggers,
   TestMutationTrigger,
-} from '../utils/__testfixtures__/TestEntityWithMutationTriggers';
+} from '../utils/__testfixtures__/TestEntityWithMutationTriggers.ts';
 
 describe(EntityCompanion, () => {
   it('correctly instantiates mutator and loader factories', () => {

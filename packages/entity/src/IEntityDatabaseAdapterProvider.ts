@@ -1,7 +1,7 @@
 /* c8 ignore start - interface only */
 
-import type { EntityConfiguration } from './EntityConfiguration';
-import type { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
+import type { EntityConfiguration } from './EntityConfiguration.ts';
+import type { EntityDatabaseAdapter } from './EntityDatabaseAdapter.ts';
 
 /**
  * A database adapter provider vends database adapters for a particular database adapter type.

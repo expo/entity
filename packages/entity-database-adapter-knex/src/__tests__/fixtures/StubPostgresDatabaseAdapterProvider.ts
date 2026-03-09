@@ -4,7 +4,7 @@ import type {
   IEntityDatabaseAdapterProvider,
 } from '@expo/entity';
 
-import { StubPostgresDatabaseAdapter } from './StubPostgresDatabaseAdapter';
+import { StubPostgresDatabaseAdapter } from './StubPostgresDatabaseAdapter.ts';
 
 export class StubPostgresDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {
   private readonly objectCollection = new Map();

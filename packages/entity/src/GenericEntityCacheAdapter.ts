@@ -1,10 +1,10 @@
 import invariant from 'invariant';
 
-import type { IEntityCacheAdapter } from './IEntityCacheAdapter';
-import type { IEntityGenericCacher } from './IEntityGenericCacher';
-import type { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
-import type { CacheLoadResult } from './internal/ReadThroughEntityCache';
-import { mapKeys } from './utils/collections/maps';
+import type { IEntityCacheAdapter } from './IEntityCacheAdapter.ts';
+import type { IEntityGenericCacher } from './IEntityGenericCacher.ts';
+import type { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces.ts';
+import type { CacheLoadResult } from './internal/ReadThroughEntityCache.ts';
+import { mapKeys } from './utils/collections/maps.ts';
 
 /**
  * A standard IEntityCacheAdapter that coordinates caching through an IEntityGenericCacher.

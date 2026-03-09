@@ -1,7 +1,7 @@
 /* c8 ignore start - interface only */
 
-import type { EntityConfiguration } from './EntityConfiguration';
-import type { IEntityCacheAdapter } from './IEntityCacheAdapter';
+import type { EntityConfiguration } from './EntityConfiguration.ts';
+import type { IEntityCacheAdapter } from './IEntityCacheAdapter.ts';
 
 /**
  * A cache adapter provider vends cache adapters for a particular cache adapter type.

@@ -1,5 +1,5 @@
-import type { Entity } from './Entity';
-import type { ViewerContext } from './ViewerContext';
+import type { Entity } from './Entity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
 
 export enum EntityMutationType {
   CREATE,

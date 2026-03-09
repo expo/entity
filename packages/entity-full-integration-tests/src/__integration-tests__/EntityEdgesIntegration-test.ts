@@ -3,14 +3,14 @@ import type { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis'
 import { RedisCacheInvalidationStrategy } from '@expo/entity-cache-adapter-redis';
 import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import type { Knex } from 'knex';
 import { knex } from 'knex';
 import { URL } from 'url';
 
-import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider';
-import ChildEntity from './entities/ChildEntity';
-import ParentEntity from './entities/ParentEntity';
+import { createFullIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createFullIntegrationTestEntityCompanionProvider.ts';
+import ChildEntity from './entities/ChildEntity.ts';
+import ParentEntity from './entities/ParentEntity.ts';
 
 async function createOrTruncatePostgresTablesAsync(knex: Knex): Promise<void> {
   await knex.schema.createTable('parents', (table) => {

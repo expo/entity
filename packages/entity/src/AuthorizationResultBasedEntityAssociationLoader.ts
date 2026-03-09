@@ -1,11 +1,11 @@
 import type { Result } from '@expo/results';
 import { result } from '@expo/results';
 
-import type { IEntityClass } from './Entity';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
+import type { IEntityClass } from './Entity.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
 
 /**
  * An association loader is a set of convenience methods for loading entities

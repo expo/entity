@@ -1,17 +1,17 @@
 import type { EntityCompanionDefinition, ViewerContext } from '@expo/entity';
 import {
-  EntityConfiguration,
+  AlwaysAllowPrivacyPolicyRule,
   DateField,
+  EntityConfiguration,
+  EntityPrivacyPolicy,
   IntField,
   StringField,
   UUIDField,
-  EntityPrivacyPolicy,
-  AlwaysAllowPrivacyPolicyRule,
 } from '@expo/entity';
 import type { Result } from '@expo/results';
 import { result } from '@expo/results';
 
-import { PostgresEntity } from '../../PostgresEntity';
+import { PostgresEntity } from '../../PostgresEntity.ts';
 
 export type TestFields = {
   customIdField: string;

@@ -1,11 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { AuthorizationResultBasedEntityAssociationLoader } from '../AuthorizationResultBasedEntityAssociationLoader';
-import { EnforcingEntityAssociationLoader } from '../EnforcingEntityAssociationLoader';
-import { EntityAssociationLoader } from '../EntityAssociationLoader';
-import { ViewerContext } from '../ViewerContext';
-import { SimpleTestEntity } from '../utils/__testfixtures__/SimpleTestEntity';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+import { AuthorizationResultBasedEntityAssociationLoader } from '../AuthorizationResultBasedEntityAssociationLoader.ts';
+import { EnforcingEntityAssociationLoader } from '../EnforcingEntityAssociationLoader.ts';
+import { EntityAssociationLoader } from '../EntityAssociationLoader.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { SimpleTestEntity } from '../utils/__testfixtures__/SimpleTestEntity.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 describe(EntityAssociationLoader, () => {
   describe('enforcing', () => {

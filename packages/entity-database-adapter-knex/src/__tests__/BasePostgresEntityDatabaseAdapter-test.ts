@@ -6,10 +6,10 @@ import { instance, mock } from 'ts-mockito';
 import type {
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
-} from '../BasePostgresEntityDatabaseAdapter';
-import { BasePostgresEntityDatabaseAdapter } from '../BasePostgresEntityDatabaseAdapter';
-import type { TestFields } from './fixtures/TestEntity';
-import { testEntityConfiguration } from './fixtures/TestEntity';
+} from '../BasePostgresEntityDatabaseAdapter.ts';
+import { BasePostgresEntityDatabaseAdapter } from '../BasePostgresEntityDatabaseAdapter.ts';
+import type { TestFields } from './fixtures/TestEntity.ts';
+import { testEntityConfiguration } from './fixtures/TestEntity.ts';
 
 class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
   TestFields,

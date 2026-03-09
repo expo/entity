@@ -1,8 +1,8 @@
-import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import type { EntityQueryContext } from '../EntityQueryContext';
-import type { ReadonlyEntity } from '../ReadonlyEntity';
-import type { ViewerContext } from '../ViewerContext';
-import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule';
+import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from '../EntityQueryContext.ts';
+import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
+import type { ViewerContext } from '../ViewerContext.ts';
+import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule.ts';
 
 /**
  * Privacy policy rule that always allows.

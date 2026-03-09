@@ -1,13 +1,13 @@
-import { mock, instance, when } from 'ts-mockito';
+import { instance, mock, when } from 'ts-mockito';
 
-import type { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../../EntityQueryContext';
-import { ViewerContext } from '../../ViewerContext';
-import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils';
-import type { TestFields } from '../../utils/__testfixtures__/TestEntity';
-import { TestEntity } from '../../utils/__testfixtures__/TestEntity';
-import { AlwaysAllowPrivacyPolicyRule } from '../AlwaysAllowPrivacyPolicyRule';
-import { EvaluateIfEntityFieldPredicatePrivacyPolicyRule } from '../EvaluateIfEntityFieldPredicatePrivacyPolicyRule';
+import type { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy.ts';
+import { EntityQueryContext } from '../../EntityQueryContext.ts';
+import { ViewerContext } from '../../ViewerContext.ts';
+import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils.ts';
+import type { TestFields } from '../../utils/__testfixtures__/TestEntity.ts';
+import { TestEntity } from '../../utils/__testfixtures__/TestEntity.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../AlwaysAllowPrivacyPolicyRule.ts';
+import { EvaluateIfEntityFieldPredicatePrivacyPolicyRule } from '../EvaluateIfEntityFieldPredicatePrivacyPolicyRule.ts';
 
 const entityBlahMock = mock(TestEntity);
 when(entityBlahMock.getField('testIndexedField')).thenReturn('1');

@@ -1,19 +1,19 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { anything, instance, mock, verify, when } from 'ts-mockito';
 
-import { EntityConfiguration } from '../../EntityConfiguration';
-import { UUIDField } from '../../EntityFields';
-import type { IEntityCacheAdapter } from '../../IEntityCacheAdapter';
+import { EntityConfiguration } from '../../EntityConfiguration.ts';
+import { UUIDField } from '../../EntityFields.ts';
+import type { IEntityCacheAdapter } from '../../IEntityCacheAdapter.ts';
 import {
   deepEqualEntityAware,
   isEqualWithEntityAware,
-} from '../../utils/__testfixtures__/TSMockitoExtensions';
-import { CacheStatus, ReadThroughEntityCache } from '../ReadThroughEntityCache';
+} from '../../utils/__testfixtures__/TSMockitoExtensions.ts';
+import { CacheStatus, ReadThroughEntityCache } from '../ReadThroughEntityCache.ts';
 import {
   SingleFieldHolder,
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
-} from '../SingleFieldHolder';
+} from '../SingleFieldHolder.ts';
 
 type BlahFields = {
   id: string;

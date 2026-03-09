@@ -1,16 +1,16 @@
 import invariant from 'invariant';
 
-import type { AuthorizationResultBasedEntityAssociationLoader } from './AuthorizationResultBasedEntityAssociationLoader';
-import type { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
-import type { EnforcingEntityAssociationLoader } from './EnforcingEntityAssociationLoader';
-import type { EnforcingEntityLoader } from './EnforcingEntityLoader';
-import type { IEntityClass } from './Entity';
-import { EntityAssociationLoader } from './EntityAssociationLoader';
-import type { EntityInvalidationUtils } from './EntityInvalidationUtils';
-import { EntityLoader } from './EntityLoader';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ViewerContext } from './ViewerContext';
+import type { AuthorizationResultBasedEntityAssociationLoader } from './AuthorizationResultBasedEntityAssociationLoader.ts';
+import type { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader.ts';
+import type { EnforcingEntityAssociationLoader } from './EnforcingEntityAssociationLoader.ts';
+import type { EnforcingEntityLoader } from './EnforcingEntityLoader.ts';
+import type { IEntityClass } from './Entity.ts';
+import { EntityAssociationLoader } from './EntityAssociationLoader.ts';
+import type { EntityInvalidationUtils } from './EntityInvalidationUtils.ts';
+import { EntityLoader } from './EntityLoader.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ViewerContext } from './ViewerContext.ts';
 
 /**
  * A readonly entity exposes only the read functionality of an Entity. Used as the base

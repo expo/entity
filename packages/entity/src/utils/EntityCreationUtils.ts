@@ -1,10 +1,10 @@
-import type { IEntityClass } from '../Entity';
-import type { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
-import type { EntityTransactionalQueryContext } from '../EntityQueryContext';
-import type { ReadonlyEntity } from '../ReadonlyEntity';
-import type { ViewerContext } from '../ViewerContext';
-import { EntityDatabaseAdapterUniqueConstraintError } from '../errors/EntityDatabaseAdapterError';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError';
+import type { IEntityClass } from '../Entity.ts';
+import type { EntityPrivacyPolicy } from '../EntityPrivacyPolicy.ts';
+import type { EntityTransactionalQueryContext } from '../EntityQueryContext.ts';
+import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
+import type { ViewerContext } from '../ViewerContext.ts';
+import { EntityDatabaseAdapterUniqueConstraintError } from '../errors/EntityDatabaseAdapterError.ts';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError.ts';
 
 /**
  * Create an entity if it doesn't exist, or get the existing entity if it does.

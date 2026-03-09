@@ -19,13 +19,14 @@
     "test": "yarn test:all --rootDir $(pwd)"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "keywords": [
     "entity"
   ],
   "author": "Expo",
   "license": "MIT",
+  "type": "module",
   "dependencies": {
     "@expo/entity": "workspace:^",
     "@expo/entity-database-adapter-knex": "workspace:^",

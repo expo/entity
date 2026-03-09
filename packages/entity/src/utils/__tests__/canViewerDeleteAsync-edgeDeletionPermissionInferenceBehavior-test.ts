@@ -1,20 +1,20 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { Entity } from '../../Entity';
-import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
-import { EntityConfiguration } from '../../EntityConfiguration';
+import { Entity } from '../../Entity.ts';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider.ts';
+import { EntityConfiguration } from '../../EntityConfiguration.ts';
 import {
   EntityEdgeDeletionAuthorizationInferenceBehavior,
   EntityEdgeDeletionBehavior,
-} from '../../EntityFieldDefinition';
-import { UUIDField } from '../../EntityFields';
-import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
-import type { ReadonlyEntity } from '../../ReadonlyEntity';
-import { ViewerContext } from '../../ViewerContext';
-import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
-import { AlwaysDenyPrivacyPolicyRule } from '../../rules/AlwaysDenyPrivacyPolicyRule';
-import { canViewerDeleteAsync } from '../EntityPrivacyUtils';
-import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider';
+} from '../../EntityFieldDefinition.ts';
+import { UUIDField } from '../../EntityFields.ts';
+import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy.ts';
+import type { ReadonlyEntity } from '../../ReadonlyEntity.ts';
+import { ViewerContext } from '../../ViewerContext.ts';
+import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule.ts';
+import { AlwaysDenyPrivacyPolicyRule } from '../../rules/AlwaysDenyPrivacyPolicyRule.ts';
+import { canViewerDeleteAsync } from '../EntityPrivacyUtils.ts';
+import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 describe(canViewerDeleteAsync, () => {
   describe('edgeDeletionPermissionInferenceBehavior', () => {

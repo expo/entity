@@ -1,5 +1,5 @@
 import { ViewerContext } from '@expo/entity';
-import { CommentEntity } from './entities/CommentEntity';
+import { CommentEntity } from './entities/CommentEntity.ts';
 
 // Chained calls
 const loadComments = async (viewerContext: ViewerContext) => {

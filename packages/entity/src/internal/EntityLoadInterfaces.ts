@@ -1,6 +1,6 @@
-import type { EntityConfiguration } from '../EntityConfiguration';
-import type { ISerializable } from '../utils/collections/SerializableKeyMap';
-import { SerializableKeyMap } from '../utils/collections/SerializableKeyMap';
+import type { EntityConfiguration } from '../EntityConfiguration.ts';
+import type { ISerializable } from '../utils/collections/SerializableKeyMap.ts';
+import { SerializableKeyMap } from '../utils/collections/SerializableKeyMap.ts';
 
 /**
  * Load method type identifier of a load key. Used for keying data loaders and identification in metrics.

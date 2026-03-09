@@ -1,10 +1,10 @@
-import type { AuthorizationResultBasedCreateMutator } from './AuthorizationResultBasedEntityMutator';
-import { EnforcingEntityCreator } from './EnforcingEntityCreator';
-import type { IEntityClass } from './Entity';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
+import type { AuthorizationResultBasedCreateMutator } from './AuthorizationResultBasedEntityMutator.ts';
+import { EnforcingEntityCreator } from './EnforcingEntityCreator.ts';
+import type { IEntityClass } from './Entity.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
 
 /**
  * The primary interface for creating entities.

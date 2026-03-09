@@ -1,11 +1,11 @@
 import invariant from 'invariant';
 
-import type { IEntityClass } from './Entity';
-import type { CacheAdapterFlavor, DatabaseAdapterFlavor } from './EntityCompanionProvider';
-import type { EntityFieldDefinition } from './EntityFieldDefinition';
-import type { SerializedCompositeFieldHolder } from './internal/CompositeFieldHolder';
-import { CompositeFieldHolder } from './internal/CompositeFieldHolder';
-import { invertMap, mapMap, reduceMap } from './utils/collections/maps';
+import type { IEntityClass } from './Entity.ts';
+import type { CacheAdapterFlavor, DatabaseAdapterFlavor } from './EntityCompanionProvider.ts';
+import type { EntityFieldDefinition } from './EntityFieldDefinition.ts';
+import type { SerializedCompositeFieldHolder } from './internal/CompositeFieldHolder.ts';
+import { CompositeFieldHolder } from './internal/CompositeFieldHolder.ts';
+import { invertMap, mapMap, reduceMap } from './utils/collections/maps.ts';
 
 /**
  * A composite field is an unordered set of fields by which entities can be loaded in a batched

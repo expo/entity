@@ -1,9 +1,9 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { EntityMutatorFactory } from '../EntityMutatorFactory';
-import { ViewerContext } from '../ViewerContext';
-import { TestEntity } from '../utils/__testfixtures__/TestEntity';
-import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
+import { EntityMutatorFactory } from '../EntityMutatorFactory.ts';
+import { ViewerContext } from '../ViewerContext.ts';
+import { TestEntity } from '../utils/__testfixtures__/TestEntity.ts';
+import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 describe(EntityMutatorFactory, () => {
   test('cache consistency across single and composite field mutations', async () => {

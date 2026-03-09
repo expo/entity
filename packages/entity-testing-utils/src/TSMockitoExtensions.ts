@@ -5,8 +5,8 @@ import {
   SingleFieldHolder,
   SingleFieldValueHolder,
 } from '@expo/entity';
-import isEqualWith from 'lodash/isEqualWith';
-import { Matcher } from 'ts-mockito/lib/matcher/type/Matcher';
+import { isEqualWith } from 'lodash';
+import { Matcher } from 'ts-mockito/lib/matcher/type/Matcher.js';
 
 export function isEqualWithEntityAware(expected: any, actual: any): boolean {
   return isEqualWith(expected, actual, (expected: any, actual: any): boolean | undefined => {

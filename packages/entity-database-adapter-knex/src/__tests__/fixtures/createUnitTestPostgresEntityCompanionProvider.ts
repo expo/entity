@@ -5,7 +5,7 @@ import {
   StubQueryContextProvider,
 } from '@expo/entity-testing-utils';
 
-import { StubPostgresDatabaseAdapterProvider } from './StubPostgresDatabaseAdapterProvider';
+import { StubPostgresDatabaseAdapterProvider } from './StubPostgresDatabaseAdapterProvider.ts';
 
 const queryContextProvider = new StubQueryContextProvider();
 

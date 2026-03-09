@@ -3,12 +3,12 @@ import { enforceAsyncResult } from '@expo/results';
 import type {
   AuthorizationResultBasedEntityAssociationLoader,
   EntityLoadThroughDirective,
-} from './AuthorizationResultBasedEntityAssociationLoader';
-import type { IEntityClass } from './Entity';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
-import { enforceResultsAsync } from './entityUtils';
+} from './AuthorizationResultBasedEntityAssociationLoader.ts';
+import type { IEntityClass } from './Entity.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import { enforceResultsAsync } from './entityUtils.ts';
 
 /**
  * An association loader is a set of convenience methods for loading entities

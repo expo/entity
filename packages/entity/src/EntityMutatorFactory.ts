@@ -2,19 +2,19 @@ import {
   AuthorizationResultBasedCreateMutator,
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
-} from './AuthorizationResultBasedEntityMutator';
-import type { Entity, IEntityClass } from './Entity';
-import type { EntityCompanionProvider } from './EntityCompanionProvider';
-import type { EntityConfiguration } from './EntityConfiguration';
-import type { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
-import type { EntityLoaderFactory } from './EntityLoaderFactory';
-import type { EntityCascadingDeletionInfo } from './EntityMutationInfo';
-import type { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
-import type { EntityMutationValidatorConfiguration } from './EntityMutationValidatorConfiguration';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import type { EntityQueryContext } from './EntityQueryContext';
-import type { ViewerContext } from './ViewerContext';
-import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+} from './AuthorizationResultBasedEntityMutator.ts';
+import type { Entity, IEntityClass } from './Entity.ts';
+import type { EntityCompanionProvider } from './EntityCompanionProvider.ts';
+import type { EntityConfiguration } from './EntityConfiguration.ts';
+import type { EntityDatabaseAdapter } from './EntityDatabaseAdapter.ts';
+import type { EntityLoaderFactory } from './EntityLoaderFactory.ts';
+import type { EntityCascadingDeletionInfo } from './EntityMutationInfo.ts';
+import type { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration.ts';
+import type { EntityMutationValidatorConfiguration } from './EntityMutationValidatorConfiguration.ts';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from './EntityQueryContext.ts';
+import type { ViewerContext } from './ViewerContext.ts';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
 
 /**
  * The primary interface for creating, mutating, and deleting entities.

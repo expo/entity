@@ -1,7 +1,7 @@
-import type { EntityValidatorMutationInfo } from './EntityMutationInfo';
-import type { EntityTransactionalQueryContext } from './EntityQueryContext';
-import type { ReadonlyEntity } from './ReadonlyEntity';
-import type { ViewerContext } from './ViewerContext';
+import type { EntityValidatorMutationInfo } from './EntityMutationInfo.ts';
+import type { EntityTransactionalQueryContext } from './EntityQueryContext.ts';
+import type { ReadonlyEntity } from './ReadonlyEntity.ts';
+import type { ViewerContext } from './ViewerContext.ts';
 
 /**
  * Interface to define validator behavior for entities.

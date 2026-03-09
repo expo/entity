@@ -1,12 +1,12 @@
-import type { IEntityClass } from '../Entity';
+import type { IEntityClass } from '../Entity.ts';
 import type {
   EntityPrivacyPolicy,
   EntityPrivacyPolicyEvaluationContext,
-} from '../EntityPrivacyPolicy';
-import type { EntityQueryContext } from '../EntityQueryContext';
-import type { ReadonlyEntity } from '../ReadonlyEntity';
-import type { ViewerContext } from '../ViewerContext';
-import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule';
+} from '../EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from '../EntityQueryContext.ts';
+import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
+import type { ViewerContext } from '../ViewerContext.ts';
+import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule.ts';
 
 /**
  * Directive for specifying the parent relationship in AllowIfInParentCascadeDeletionPrivacyPolicyRule.

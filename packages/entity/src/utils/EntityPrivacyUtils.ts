@@ -1,20 +1,20 @@
 import type { Result } from '@expo/results';
 import { asyncResult } from '@expo/results';
 
-import type { Entity, IEntityClass } from '../Entity';
+import type { Entity, IEntityClass } from '../Entity.ts';
 import {
   EntityEdgeDeletionAuthorizationInferenceBehavior,
   EntityEdgeDeletionBehavior,
-} from '../EntityFieldDefinition';
+} from '../EntityFieldDefinition.ts';
 import type {
   EntityPrivacyPolicy,
   EntityPrivacyPolicyEvaluationContext,
-} from '../EntityPrivacyPolicy';
-import type { EntityQueryContext } from '../EntityQueryContext';
-import type { ReadonlyEntity } from '../ReadonlyEntity';
-import type { ViewerContext } from '../ViewerContext';
-import { failedResults, partitionArray } from '../entityUtils';
-import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';
+} from '../EntityPrivacyPolicy.ts';
+import type { EntityQueryContext } from '../EntityQueryContext.ts';
+import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
+import type { ViewerContext } from '../ViewerContext.ts';
+import { failedResults, partitionArray } from '../entityUtils.ts';
+import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError.ts';
 
 export type EntityPrivacyEvaluationResultSuccess = {
   allowed: true;

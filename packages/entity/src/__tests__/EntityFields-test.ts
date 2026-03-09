@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from '@jest/globals';
 import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5, v7 as uuidv7 } from 'uuid';
 
-import { EntityFieldDefinition } from '../EntityFieldDefinition';
+import { EntityFieldDefinition } from '../EntityFieldDefinition.ts';
 import {
   BooleanField,
   BufferField,
@@ -14,8 +14,8 @@ import {
   StringArrayField,
   StringField,
   UUIDField,
-} from '../EntityFields';
-import { describeFieldTestCase } from '../utils/__testfixtures__/describeFieldTestCase';
+} from '../EntityFields.ts';
+import { describeFieldTestCase } from '../utils/__testfixtures__/describeFieldTestCase.ts';
 
 class TestFieldDefinition extends EntityFieldDefinition<string, false> {
   protected validateInputValueInternal(value: string): boolean {
