@@ -4,6 +4,6 @@
  * @module @expo/entity-database-adapter-knex-testing-utils
  */
 
-export * from './createUnitTestPostgresEntityCompanionProvider';
-export * from './StubPostgresDatabaseAdapter';
-export * from './StubPostgresDatabaseAdapterProvider';
+export * from './createUnitTestPostgresEntityCompanionProvider.ts';
+export * from './StubPostgresDatabaseAdapter.ts';
+export * from './StubPostgresDatabaseAdapterProvider.ts';
