@@ -1,7 +1,7 @@
 import type { IObjectTypeResolver, IResolvers } from '@graphql-tools/utils';
 
 import { NoteEntity } from './entities/NoteEntity.ts';
-import { ExampleViewerContext } from './viewerContexts.ts';
+import type { ExampleViewerContext } from './viewerContexts.ts';
 
 type GraphqlContext = {
   viewerContext: ExampleViewerContext;

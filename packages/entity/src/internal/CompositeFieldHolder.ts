@@ -1,18 +1,14 @@
 import invariant from 'invariant';
 
-import {
+import type {
   EntityCompositeField,
   EntityCompositeFieldValue,
   EntityConfiguration,
 } from '../EntityConfiguration';
 import { pick } from '../entityUtils';
 import { getDatabaseFieldForEntityField } from './EntityFieldTransformationUtils';
-import {
-  EntityLoadMethodType,
-  IEntityLoadKey,
-  IEntityLoadValue,
-  LoadValueMap,
-} from '../internal/EntityLoadInterfaces';
+import type { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces';
+import { EntityLoadMethodType, LoadValueMap } from '../internal/EntityLoadInterfaces';
 
 declare const CompositeFieldHolderSerializedBrand: unique symbol;
 

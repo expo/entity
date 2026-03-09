@@ -1,8 +1,8 @@
 import { AlwaysAllowPrivacyPolicyRule, EntityPrivacyPolicy } from '@expo/entity';
 
-import { ExampleViewerContext } from '../viewerContexts.ts';
+import type { ExampleViewerContext } from '../viewerContexts.ts';
 import { AllowIfUserOwnerPrivacyRule } from './AllowIfUserOwnerPrivacyRule.ts';
-import { NoteEntity, type NoteFields } from './NoteEntity.ts';
+import type { NoteEntity, NoteFields } from './NoteEntity.ts';
 
 /**
  * For purposes of this demonstration, notes are considered public and can only be mutated by the owner.

@@ -1,4 +1,4 @@
-import {
+import type {
   EntityConstructionUtils,
   EntityPrivacyPolicy,
   EntityQueryContext,
@@ -7,14 +7,14 @@ import {
   ViewerContext,
 } from '@expo/entity';
 
-import {
+import type {
   AuthorizationResultBasedKnexEntityLoader,
   EntityLoaderLoadPageArgs,
   EntityLoaderQuerySelectionModifiers,
 } from './AuthorizationResultBasedKnexEntityLoader';
-import { FieldEqualityCondition } from './BasePostgresEntityDatabaseAdapter';
+import type { FieldEqualityCondition } from './BasePostgresEntityDatabaseAdapter';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
-import { SQLFragment } from './SQLOperator';
+import type { SQLFragment } from './SQLOperator';
 import type { Connection, EntityKnexDataManager } from './internal/EntityKnexDataManager';
 
 /**

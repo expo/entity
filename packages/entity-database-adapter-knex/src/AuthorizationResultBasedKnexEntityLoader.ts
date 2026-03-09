@@ -1,4 +1,4 @@
-import {
+import type {
   EntityConstructionUtils,
   EntityPrivacyPolicy,
   EntityQueryContext,
@@ -6,20 +6,19 @@ import {
   ViewerContext,
   IEntityMetricsAdapter,
 } from '@expo/entity';
-import { Result } from '@expo/results';
+import type { Result } from '@expo/results';
 
-import {
+import type {
   FieldEqualityCondition,
-  isSingleValueFieldEqualityCondition,
   NullsOrdering,
   OrderByOrdering,
 } from './BasePostgresEntityDatabaseAdapter';
+import { isSingleValueFieldEqualityCondition } from './BasePostgresEntityDatabaseAdapter';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder';
-import { PaginationStrategy } from './PaginationStrategy';
-import { SQLFragment } from './SQLOperator';
-import type { Connection, PageInfo } from './internal/EntityKnexDataManager';
-import { EntityKnexDataManager } from './internal/EntityKnexDataManager';
-import { NonNullableKeys } from './internal/utilityTypes';
+import type { PaginationStrategy } from './PaginationStrategy';
+import type { SQLFragment } from './SQLOperator';
+import type { Connection, PageInfo, EntityKnexDataManager } from './internal/EntityKnexDataManager';
+import type { NonNullableKeys } from './internal/utilityTypes';
 
 export type EntityLoaderBaseOrderByClause = {
   /**

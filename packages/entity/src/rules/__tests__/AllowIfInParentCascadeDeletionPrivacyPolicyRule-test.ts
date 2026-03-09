@@ -1,6 +1,6 @@
 import { anything, instance, mock, when } from 'ts-mockito';
 
-import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../../EntityQueryContext';
 import { ReadonlyEntity } from '../../ReadonlyEntity';

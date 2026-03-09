@@ -3,16 +3,10 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/glo
 import Redis from 'ioredis';
 import { URL } from 'url';
 
-import {
-  GenericRedisCacheContext,
-  GenericRedisCacher,
-  RedisCacheInvalidationStrategy,
-} from '../GenericRedisCacher';
-import {
-  RedisTestEntity,
-  redisTestEntityConfiguration,
-  RedisTestEntityFields,
-} from '../__testfixtures__/RedisTestEntity';
+import type { GenericRedisCacheContext } from '../GenericRedisCacher';
+import { GenericRedisCacher, RedisCacheInvalidationStrategy } from '../GenericRedisCacher';
+import type { RedisTestEntityFields } from '../__testfixtures__/RedisTestEntity';
+import { RedisTestEntity, redisTestEntityConfiguration } from '../__testfixtures__/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}

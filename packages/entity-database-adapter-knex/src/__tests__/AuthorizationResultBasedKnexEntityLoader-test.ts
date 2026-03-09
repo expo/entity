@@ -1,11 +1,9 @@
-import {
+import type {
   EntityPrivacyPolicyEvaluationContext,
-  ViewerContext,
-  enforceResultsAsync,
   IEntityMetricsAdapter,
-  EntityConstructionUtils,
   EntityQueryContext,
 } from '@expo/entity';
+import { ViewerContext, enforceResultsAsync, EntityConstructionUtils } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 import { anyOfClass, anything, instance, mock, spy, verify, when } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,17 +12,17 @@ import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResult
 import { OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
 import { sql } from '../SQLOperator';
+import type { TestFields } from './fixtures/TestEntity';
 import {
   TestEntity,
   testEntityConfiguration,
   TestEntityPrivacyPolicy,
-  TestFields,
 } from './fixtures/TestEntity';
+import type { TestPaginationFields } from './fixtures/TestPaginationEntity';
 import {
   TestPaginationEntity,
   testPaginationEntityConfiguration,
   TestPaginationPrivacyPolicy,
-  TestPaginationFields,
 } from './fixtures/TestPaginationEntity';
 import { EntityKnexDataManager } from '../internal/EntityKnexDataManager';
 

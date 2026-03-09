@@ -1,7 +1,7 @@
-import { IEntityClass } from '../Entity';
-import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
-import { ReadonlyEntity } from '../ReadonlyEntity';
-import { ViewerContext } from '../ViewerContext';
+import type { IEntityClass } from '../Entity';
+import type { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
+import type { ReadonlyEntity } from '../ReadonlyEntity';
+import type { ViewerContext } from '../ViewerContext';
 import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
 
 type EntityNotFoundOptions<

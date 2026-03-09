@@ -1,4 +1,4 @@
-import { EntityDatabaseAdapter, EntityTableDataCoordinator } from '@expo/entity';
+import type { EntityDatabaseAdapter, EntityTableDataCoordinator } from '@expo/entity';
 import assert from 'assert';
 
 import { BasePostgresEntityDatabaseAdapter } from '../BasePostgresEntityDatabaseAdapter';

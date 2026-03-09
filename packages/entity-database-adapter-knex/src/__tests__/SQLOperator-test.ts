@@ -14,7 +14,8 @@ import {
   SQLIdentifier,
   expression,
 } from '../SQLOperator';
-import { TestFields, testEntityConfiguration } from './fixtures/TestEntity';
+import type { TestFields } from './fixtures/TestEntity';
+import { testEntityConfiguration } from './fixtures/TestEntity';
 
 const getColumnForField = (fieldName: string): string =>
   getDatabaseFieldForEntityField(testEntityConfiguration, fieldName as keyof TestFields);

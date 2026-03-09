@@ -1,10 +1,9 @@
-import {
+import type {
   EntityConfiguration,
-  EntityDatabaseAdapter,
-  type FieldTransformerMap,
-  type IEntityDatabaseAdapterProvider,
-  getDatabaseFieldForEntityField,
+  FieldTransformerMap,
+  IEntityDatabaseAdapterProvider,
 } from '@expo/entity';
+import { EntityDatabaseAdapter, getDatabaseFieldForEntityField } from '@expo/entity';
 import { v4 as uuidv4 } from 'uuid';
 
 const dbObjects: Readonly<{ [key: string]: any }>[] = [];

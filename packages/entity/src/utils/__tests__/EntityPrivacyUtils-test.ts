@@ -2,26 +2,25 @@ import nullthrows from '@expo/nullthrows';
 import { describe, expect, it } from '@jest/globals';
 
 import { Entity } from '../../Entity';
-import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import { EntityConfiguration } from '../../EntityConfiguration';
 import { EntityEdgeDeletionBehavior } from '../../EntityFieldDefinition';
 import { UUIDField } from '../../EntityFields';
-import {
-  EntityAuthorizationAction,
-  EntityPrivacyPolicy,
-  EntityPrivacyPolicyEvaluationContext,
-} from '../../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../../EntityQueryContext';
-import { ReadonlyEntity } from '../../ReadonlyEntity';
+import type { EntityPrivacyPolicyEvaluationContext } from '../../EntityPrivacyPolicy';
+import { EntityAuthorizationAction, EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
+import type { EntityQueryContext } from '../../EntityQueryContext';
+import type { ReadonlyEntity } from '../../ReadonlyEntity';
 import { ViewerContext } from '../../ViewerContext';
 import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
 import { AlwaysDenyPrivacyPolicyRule } from '../../rules/AlwaysDenyPrivacyPolicyRule';
 import { RuleEvaluationResult } from '../../rules/PrivacyPolicyRule';
+import type {
+  EntityPrivacyEvaluationResult,
+  EntityPrivacyEvaluationResultFailure,
+} from '../EntityPrivacyUtils';
 import {
   canViewerDeleteAsync,
   canViewerUpdateAsync,
-  EntityPrivacyEvaluationResult,
-  EntityPrivacyEvaluationResultFailure,
   getCanViewerDeleteResultAsync,
   getCanViewerUpdateResultAsync,
 } from '../EntityPrivacyUtils';

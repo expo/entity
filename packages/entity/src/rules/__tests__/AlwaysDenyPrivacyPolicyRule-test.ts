@@ -1,6 +1,6 @@
 import { anything, instance, mock } from 'ts-mockito';
 
-import { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy';
+import type { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../../EntityQueryContext';
 import { ViewerContext } from '../../ViewerContext';
 import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils';

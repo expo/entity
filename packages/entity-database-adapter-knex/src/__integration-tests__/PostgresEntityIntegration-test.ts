@@ -7,17 +7,17 @@ import { createUnitTestEntityCompanionProvider } from '@expo/entity-testing-util
 import nullthrows from '@expo/nullthrows';
 import { enforceAsyncResult } from '@expo/results';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from '@jest/globals';
-import { knex, Knex } from 'knex';
+import type { Knex } from 'knex';
+import { knex } from 'knex';
 import { setTimeout } from 'timers/promises';
 
-import { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader';
+import type { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader';
 import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
-import { entityField, sql, SQLFragment, SQLFragmentHelpers, unsafeRaw } from '../SQLOperator';
-import {
-  PostgresTestEntity,
-  PostgresTestEntityFields,
-} from '../__testfixtures__/PostgresTestEntity';
+import type { SQLFragment } from '../SQLOperator';
+import { entityField, sql, SQLFragmentHelpers, unsafeRaw } from '../SQLOperator';
+import type { PostgresTestEntityFields } from '../__testfixtures__/PostgresTestEntity';
+import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity';
 import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity';
 import { PostgresValidatorTestEntity } from '../__testfixtures__/PostgresValidatorTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';

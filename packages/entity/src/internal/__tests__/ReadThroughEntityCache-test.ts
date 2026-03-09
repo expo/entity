@@ -3,7 +3,7 @@ import { anything, instance, mock, verify, when } from 'ts-mockito';
 
 import { EntityConfiguration } from '../../EntityConfiguration';
 import { UUIDField } from '../../EntityFields';
-import { IEntityCacheAdapter } from '../../IEntityCacheAdapter';
+import type { IEntityCacheAdapter } from '../../IEntityCacheAdapter';
 import {
   deepEqualEntityAware,
   isEqualWithEntityAware,

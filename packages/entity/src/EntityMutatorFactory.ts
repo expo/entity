@@ -3,18 +3,18 @@ import {
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
 } from './AuthorizationResultBasedEntityMutator';
-import { Entity, IEntityClass } from './Entity';
-import { EntityCompanionProvider } from './EntityCompanionProvider';
-import { EntityConfiguration } from './EntityConfiguration';
-import { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
-import { EntityLoaderFactory } from './EntityLoaderFactory';
-import { EntityCascadingDeletionInfo } from './EntityMutationInfo';
-import { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
-import { EntityMutationValidatorConfiguration } from './EntityMutationValidatorConfiguration';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ViewerContext } from './ViewerContext';
-import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+import type { Entity, IEntityClass } from './Entity';
+import type { EntityCompanionProvider } from './EntityCompanionProvider';
+import type { EntityConfiguration } from './EntityConfiguration';
+import type { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
+import type { EntityLoaderFactory } from './EntityLoaderFactory';
+import type { EntityCascadingDeletionInfo } from './EntityMutationInfo';
+import type { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
+import type { EntityMutationValidatorConfiguration } from './EntityMutationValidatorConfiguration';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { EntityQueryContext } from './EntityQueryContext';
+import type { ViewerContext } from './ViewerContext';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
  * The primary interface for creating, mutating, and deleting entities.

@@ -1,11 +1,11 @@
-import { EntityCompanion } from './EntityCompanion';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContextProvider } from './EntityQueryContextProvider';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { EntityCompanion } from './EntityCompanion';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { EntityQueryContextProvider } from './EntityQueryContextProvider';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 import { ViewerScopedEntityLoaderFactory } from './ViewerScopedEntityLoaderFactory';
 import { ViewerScopedEntityMutatorFactory } from './ViewerScopedEntityMutatorFactory';
-import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
  * Provides a simpler API for loading and mutating entities by injecting the ViewerContext

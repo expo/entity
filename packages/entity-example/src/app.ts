@@ -1,6 +1,6 @@
 import { ApolloServer, type BaseContext } from '@apollo/server';
 import { koaMiddleware } from '@as-integrations/koa';
-import { EntityCompanionProvider } from '@expo/entity';
+import type { EntityCompanionProvider } from '@expo/entity';
 import { bodyParser } from '@koa/bodyparser';
 import cors from '@koa/cors';
 import Router from '@koa/router';
@@ -9,7 +9,7 @@ import Koa from 'koa';
 import { entityCompanionMiddleware, viewerContextMiddleware } from './middleware.ts';
 import { notesRouter } from './routers/notesRouter.ts';
 import { resolvers, typeDefs } from './schema.ts';
-import { ExampleViewerContext } from './viewerContexts.ts';
+import type { ExampleViewerContext } from './viewerContexts.ts';
 
 export type ExampleContext = Koa.ParameterizedContext<ExampleState>;
 

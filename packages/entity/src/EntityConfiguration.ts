@@ -1,12 +1,10 @@
 import invariant from 'invariant';
 
-import { IEntityClass } from './Entity';
-import { CacheAdapterFlavor, DatabaseAdapterFlavor } from './EntityCompanionProvider';
-import { EntityFieldDefinition } from './EntityFieldDefinition';
-import {
-  CompositeFieldHolder,
-  SerializedCompositeFieldHolder,
-} from './internal/CompositeFieldHolder';
+import type { IEntityClass } from './Entity';
+import type { CacheAdapterFlavor, DatabaseAdapterFlavor } from './EntityCompanionProvider';
+import type { EntityFieldDefinition } from './EntityFieldDefinition';
+import type { SerializedCompositeFieldHolder } from './internal/CompositeFieldHolder';
+import { CompositeFieldHolder } from './internal/CompositeFieldHolder';
 import { invertMap, mapMap, reduceMap } from './utils/collections/maps';
 
 /**

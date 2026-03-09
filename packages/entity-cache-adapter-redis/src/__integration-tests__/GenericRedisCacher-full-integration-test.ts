@@ -1,7 +1,7 @@
+import type { GenericEntityCacheAdapter } from '@expo/entity';
 import {
   CompositeFieldHolder,
   CompositeFieldValueHolder,
-  GenericEntityCacheAdapter,
   SingleFieldHolder,
   SingleFieldValueHolder,
   ViewerContext,
@@ -12,12 +12,10 @@ import Redis from 'ioredis';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-  GenericRedisCacheContext,
-  GenericRedisCacher,
-  RedisCacheInvalidationStrategy,
-} from '../GenericRedisCacher';
-import { RedisTestEntity, RedisTestEntityFields } from '../__testfixtures__/RedisTestEntity';
+import type { GenericRedisCacheContext } from '../GenericRedisCacher';
+import { GenericRedisCacher, RedisCacheInvalidationStrategy } from '../GenericRedisCacher';
+import type { RedisTestEntityFields } from '../__testfixtures__/RedisTestEntity';
+import { RedisTestEntity } from '../__testfixtures__/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}

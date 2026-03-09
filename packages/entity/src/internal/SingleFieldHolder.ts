@@ -1,13 +1,9 @@
 import invariant from 'invariant';
 
-import { EntityConfiguration } from '../EntityConfiguration';
+import type { EntityConfiguration } from '../EntityConfiguration';
 import { getDatabaseFieldForEntityField } from './EntityFieldTransformationUtils';
-import {
-  EntityLoadMethodType,
-  IEntityLoadKey,
-  IEntityLoadValue,
-  LoadValueMap,
-} from './EntityLoadInterfaces';
+import type { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
+import { EntityLoadMethodType, LoadValueMap } from './EntityLoadInterfaces';
 
 /**
  * A load key that represents a single field (fieldName) on an entity.

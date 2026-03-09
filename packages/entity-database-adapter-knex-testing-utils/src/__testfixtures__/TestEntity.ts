@@ -1,16 +1,16 @@
+import type { EntityCompanionDefinition, ViewerContext } from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
   DateField,
   Entity,
-  EntityCompanionDefinition,
   EntityConfiguration,
   EntityPrivacyPolicy,
   IntField,
   StringField,
   UUIDField,
-  ViewerContext,
 } from '@expo/entity';
-import { result, Result } from '@expo/results';
+import type { Result } from '@expo/results';
+import { result } from '@expo/results';
 
 export type TestFields = {
   customIdField: string;

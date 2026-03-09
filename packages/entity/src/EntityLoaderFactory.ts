@@ -1,13 +1,16 @@
 import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
-import { EntityCompanion } from './EntityCompanion';
+import type { EntityCompanion } from './EntityCompanion';
 import { EntityConstructionUtils } from './EntityConstructionUtils';
 import { EntityInvalidationUtils } from './EntityInvalidationUtils';
-import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
-import { EntityDataManager } from './internal/EntityDataManager';
-import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+import type {
+  EntityPrivacyPolicy,
+  EntityPrivacyPolicyEvaluationContext,
+} from './EntityPrivacyPolicy';
+import type { EntityQueryContext } from './EntityQueryContext';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
+import type { EntityDataManager } from './internal/EntityDataManager';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 
 /**
  * The primary entry point for loading entities.

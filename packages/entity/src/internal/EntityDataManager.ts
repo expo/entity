@@ -1,23 +1,20 @@
 import DataLoader from 'dataloader';
 import invariant from 'invariant';
 
-import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
-import {
-  EntityQueryContext,
-  EntityTransactionalQueryContext,
-  TransactionalDataLoaderMode,
-} from '../EntityQueryContext';
-import { EntityQueryContextProvider } from '../EntityQueryContextProvider';
+import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
+import type { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
+import { TransactionalDataLoaderMode } from '../EntityQueryContext';
+import type { EntityQueryContextProvider } from '../EntityQueryContextProvider';
 import { partitionErrors } from '../entityUtils';
-import { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces';
-import { ReadThroughEntityCache } from './ReadThroughEntityCache';
+import type { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces';
+import type { ReadThroughEntityCache } from './ReadThroughEntityCache';
 import {
   timeAndLogLoadMapEventAsync,
   timeAndLogLoadOneEventAsync,
 } from '../metrics/EntityMetricsUtils';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
 import {
   EntityMetricsLoadType,
-  IEntityMetricsAdapter,
   IncrementLoadCountEventType,
 } from '../metrics/IEntityMetricsAdapter';
 import { computeIfAbsent } from '../utils/collections/maps';

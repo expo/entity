@@ -3,7 +3,7 @@ import { describe, expect, it } from '@jest/globals';
 import invariant from 'invariant';
 
 import { ComposedSecondaryEntityCache } from '../ComposedSecondaryEntityCache';
-import { ISecondaryEntityCache } from '../EntitySecondaryCacheLoader';
+import type { ISecondaryEntityCache } from '../EntitySecondaryCacheLoader';
 
 type TestFields = { id: string };
 type TestLoadParams = { lp: string };

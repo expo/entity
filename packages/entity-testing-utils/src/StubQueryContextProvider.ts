@@ -1,4 +1,5 @@
-import { EntityQueryContextProvider, TransactionConfig } from '@expo/entity';
+import type { TransactionConfig } from '@expo/entity';
+import { EntityQueryContextProvider } from '@expo/entity';
 
 export class StubQueryContextProvider extends EntityQueryContextProvider {
   protected getQueryInterface(): any {

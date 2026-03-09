@@ -1,6 +1,6 @@
+import type { EntityCompanionDefinition } from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
-  EntityCompanionDefinition,
   EntityConfiguration,
   EntityPrivacyPolicy,
   StringField,

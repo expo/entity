@@ -2,7 +2,7 @@ import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter';
 import { StubDatabaseAdapterProvider } from './StubDatabaseAdapterProvider';
 import { StubQueryContextProvider } from './StubQueryContextProvider';
 import { EntityCompanionProvider } from '../../EntityCompanionProvider';
-import { IEntityMetricsAdapter } from '../../metrics/IEntityMetricsAdapter';
+import type { IEntityMetricsAdapter } from '../../metrics/IEntityMetricsAdapter';
 import { NoOpEntityMetricsAdapter } from '../../metrics/NoOpEntityMetricsAdapter';
 
 const queryContextProvider = new StubQueryContextProvider();

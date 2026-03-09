@@ -1,6 +1,6 @@
-import { EntityConfiguration } from '../../EntityConfiguration';
-import { EntityDatabaseAdapter } from '../../EntityDatabaseAdapter';
-import { IEntityDatabaseAdapterProvider } from '../../IEntityDatabaseAdapterProvider';
+import type { EntityConfiguration } from '../../EntityConfiguration';
+import type { EntityDatabaseAdapter } from '../../EntityDatabaseAdapter';
+import type { IEntityDatabaseAdapterProvider } from '../../IEntityDatabaseAdapterProvider';
 import { StubDatabaseAdapter } from '../__testfixtures__/StubDatabaseAdapter';
 
 export class StubDatabaseAdapterProvider implements IEntityDatabaseAdapterProvider {

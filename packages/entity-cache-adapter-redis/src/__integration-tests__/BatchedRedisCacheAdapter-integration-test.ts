@@ -1,11 +1,6 @@
 import { Batcher } from '@expo/batcher';
-import {
-  GenericEntityCacheAdapter,
-  SingleFieldHolder,
-  SingleFieldValueHolder,
-  ViewerContext,
-  zipToMap,
-} from '@expo/entity';
+import type { GenericEntityCacheAdapter } from '@expo/entity';
+import { SingleFieldHolder, SingleFieldValueHolder, ViewerContext, zipToMap } from '@expo/entity';
 import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import invariant from 'invariant';
@@ -13,14 +8,10 @@ import Redis from 'ioredis';
 import { URL } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-  GenericRedisCacheContext,
-  GenericRedisCacher,
-  IRedis,
-  IRedisTransaction,
-  RedisCacheInvalidationStrategy,
-} from '../GenericRedisCacher';
-import { RedisTestEntity, RedisTestEntityFields } from '../__testfixtures__/RedisTestEntity';
+import type { GenericRedisCacheContext, IRedis, IRedisTransaction } from '../GenericRedisCacher';
+import { GenericRedisCacher, RedisCacheInvalidationStrategy } from '../GenericRedisCacher';
+import type { RedisTestEntityFields } from '../__testfixtures__/RedisTestEntity';
+import { RedisTestEntity } from '../__testfixtures__/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
 
 class BatchedRedis implements IRedis {

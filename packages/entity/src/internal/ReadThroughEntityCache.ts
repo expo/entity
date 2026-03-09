@@ -1,8 +1,8 @@
 import invariant from 'invariant';
 
-import { EntityConfiguration } from '../EntityConfiguration';
-import { IEntityCacheAdapter } from '../IEntityCacheAdapter';
-import { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
+import type { EntityConfiguration } from '../EntityConfiguration';
+import type { IEntityCacheAdapter } from '../IEntityCacheAdapter';
+import type { IEntityLoadKey, IEntityLoadValue } from './EntityLoadInterfaces';
 import { filterMap } from '../utils/collections/maps';
 
 /**

@@ -1,4 +1,4 @@
-import {
+import type {
   EntityMetricsAuthorizationEvent,
   EntityMetricsLoadEvent,
   EntityMetricsMutationEvent,

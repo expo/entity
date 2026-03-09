@@ -15,50 +15,46 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
 import { EntityCompanionProvider } from '../EntityCompanionProvider';
-import { EntityConfiguration } from '../EntityConfiguration';
+import type { EntityConfiguration } from '../EntityConfiguration';
 import { EntityConstructionUtils } from '../EntityConstructionUtils';
-import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
+import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
 import { EntityLoaderFactory } from '../EntityLoaderFactory';
-import {
+import type {
   EntityCascadingDeletionInfo,
-  EntityMutationType,
   EntityTriggerMutationInfo,
   EntityValidatorMutationInfo,
 } from '../EntityMutationInfo';
+import { EntityMutationType } from '../EntityMutationInfo';
+import type { EntityMutationTriggerConfiguration } from '../EntityMutationTriggerConfiguration';
 import {
   EntityMutationTrigger,
-  EntityMutationTriggerConfiguration,
   EntityNonTransactionalMutationTrigger,
 } from '../EntityMutationTriggerConfiguration';
-import {
-  EntityMutationValidator,
-  EntityMutationValidatorConfiguration,
-} from '../EntityMutationValidatorConfiguration';
+import type { EntityMutationValidatorConfiguration } from '../EntityMutationValidatorConfiguration';
+import { EntityMutationValidator } from '../EntityMutationValidatorConfiguration';
 import { EntityMutatorFactory } from '../EntityMutatorFactory';
-import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext';
-import { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider';
+import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import type { EntityQueryContext } from '../EntityQueryContext';
+import { EntityTransactionalQueryContext } from '../EntityQueryContext';
+import type { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider';
 import { ViewerContext } from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import { EntityDataManager } from '../internal/EntityDataManager';
 import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache';
-import { EntityMetricsMutationType, IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+import { EntityMetricsMutationType } from '../metrics/IEntityMetricsAdapter';
 import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter';
+import type { SimpleTestFields } from '../utils/__testfixtures__/SimpleTestEntity';
 import {
   SimpleTestEntity,
   simpleTestEntityConfiguration,
   SimpleTestEntityPrivacyPolicy,
-  SimpleTestFields,
 } from '../utils/__testfixtures__/SimpleTestEntity';
 import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
 import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
 import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
-import {
-  TestEntity,
-  testEntityConfiguration,
-  TestEntityPrivacyPolicy,
-  TestFields,
-} from '../utils/__testfixtures__/TestEntity';
+import type { TestEntityPrivacyPolicy, TestFields } from '../utils/__testfixtures__/TestEntity';
+import { TestEntity, testEntityConfiguration } from '../utils/__testfixtures__/TestEntity';
 
 class TestMutationValidator extends EntityMutationValidator<
   TestFields,

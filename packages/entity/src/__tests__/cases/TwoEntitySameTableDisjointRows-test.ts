@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
 import { Entity } from '../../Entity';
-import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import { EntityConfiguration } from '../../EntityConfiguration';
 import { StrictEnumField, StringField, UUIDField } from '../../EntityFields';
 import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';

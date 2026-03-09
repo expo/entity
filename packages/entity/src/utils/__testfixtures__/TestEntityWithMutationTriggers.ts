@@ -1,15 +1,15 @@
 import { Entity } from '../../Entity';
-import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import { EntityConfiguration } from '../../EntityConfiguration';
 import { StringField, UUIDField } from '../../EntityFields';
-import { EntityTriggerMutationInfo } from '../../EntityMutationInfo';
+import type { EntityTriggerMutationInfo } from '../../EntityMutationInfo';
 import {
   EntityMutationTrigger,
   EntityNonTransactionalMutationTrigger,
 } from '../../EntityMutationTriggerConfiguration';
 import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../../EntityQueryContext';
-import { ViewerContext } from '../../ViewerContext';
+import type { EntityQueryContext } from '../../EntityQueryContext';
+import type { ViewerContext } from '../../ViewerContext';
 import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type TestMTFields = {

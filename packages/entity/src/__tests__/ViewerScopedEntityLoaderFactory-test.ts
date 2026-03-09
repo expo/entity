@@ -2,7 +2,7 @@ import { describe, it } from '@jest/globals';
 import { instance, mock, verify } from 'ts-mockito';
 
 import { EntityLoaderFactory } from '../EntityLoaderFactory';
-import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { ViewerContext } from '../ViewerContext';
 import { ViewerScopedEntityLoaderFactory } from '../ViewerScopedEntityLoaderFactory';

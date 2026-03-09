@@ -1,11 +1,11 @@
-import {
+import type {
   EntityQueryContext,
   ReadonlyEntity,
   ViewerContext,
   PrivacyPolicyRule,
-  RuleEvaluationResult,
   EntityPrivacyPolicyRuleEvaluationContext,
 } from '@expo/entity';
+import { RuleEvaluationResult } from '@expo/entity';
 import { describe, expect, test } from '@jest/globals';
 
 export interface Case<

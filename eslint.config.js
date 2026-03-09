@@ -80,6 +80,7 @@ module.exports = defineConfig([
           allowAsStatement: true,
         },
       ],
+      '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/explicit-function-return-type': [
         'warn',
         {

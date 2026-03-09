@@ -2,7 +2,8 @@ import { ViewerContext } from '@expo/entity';
 import nullthrows from '@expo/nullthrows';
 import { enforceAsyncResult } from '@expo/results';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import { knex, Knex } from 'knex';
+import type { Knex } from 'knex';
+import { knex } from 'knex';
 
 import { InvalidTestEntity } from '../__testfixtures__/InvalidTestEntity';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider';

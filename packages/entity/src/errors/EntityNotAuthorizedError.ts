@@ -1,6 +1,6 @@
 import { EntityAuthorizationAction } from '../EntityPrivacyPolicy';
-import { ReadonlyEntity } from '../ReadonlyEntity';
-import { ViewerContext } from '../ViewerContext';
+import type { ReadonlyEntity } from '../ReadonlyEntity';
+import type { ViewerContext } from '../ViewerContext';
 import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError';
 
 /**

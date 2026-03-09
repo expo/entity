@@ -1,10 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
+import type { TransactionConfig } from './EntityQueryContext';
 import {
   EntityNestedTransactionalQueryContext,
   EntityNonTransactionalQueryContext,
   EntityTransactionalQueryContext,
-  TransactionConfig,
   TransactionalDataLoaderMode,
 } from './EntityQueryContext';
 

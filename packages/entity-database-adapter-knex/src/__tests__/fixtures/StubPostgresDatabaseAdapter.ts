@@ -1,7 +1,6 @@
+import type { EntityConfiguration, FieldTransformerMap } from '@expo/entity';
 import {
   computeIfAbsent,
-  EntityConfiguration,
-  FieldTransformerMap,
   getDatabaseFieldForEntityField,
   IntField,
   mapMap,
@@ -11,16 +10,18 @@ import {
 import invariant from 'invariant';
 import { v7 as uuidv7 } from 'uuid';
 
-import {
-  BasePostgresEntityDatabaseAdapter,
-  NullsOrdering,
-  OrderByOrdering,
+import type {
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableOrderByClause,
   TableQuerySelectionModifiers,
 } from '../../BasePostgresEntityDatabaseAdapter';
-import { SQLFragment } from '../../SQLOperator';
+import {
+  BasePostgresEntityDatabaseAdapter,
+  NullsOrdering,
+  OrderByOrdering,
+} from '../../BasePostgresEntityDatabaseAdapter';
+import type { SQLFragment } from '../../SQLOperator';
 
 export class StubPostgresDatabaseAdapter<
   TFields extends Record<string, any>,

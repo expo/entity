@@ -1,19 +1,19 @@
-import {
+import type {
   AuthorizationResultBasedCreateMutator,
   AuthorizationResultBasedDeleteMutator,
   AuthorizationResultBasedUpdateMutator,
 } from './AuthorizationResultBasedEntityMutator';
-import { EnforcingEntityCreator } from './EnforcingEntityCreator';
-import { EnforcingEntityDeleter } from './EnforcingEntityDeleter';
-import { EnforcingEntityUpdater } from './EnforcingEntityUpdater';
-import { EntityCompanionDefinition } from './EntityCompanionProvider';
+import type { EnforcingEntityCreator } from './EnforcingEntityCreator';
+import type { EnforcingEntityDeleter } from './EnforcingEntityDeleter';
+import type { EnforcingEntityUpdater } from './EnforcingEntityUpdater';
+import type { EntityCompanionDefinition } from './EntityCompanionProvider';
 import { EntityCreator } from './EntityCreator';
 import { EntityDeleter } from './EntityDeleter';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { EntityQueryContext } from './EntityQueryContext';
 import { EntityUpdater } from './EntityUpdater';
 import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { ViewerContext } from './ViewerContext';
 
 /**
  * Entity is a privacy-first data model.

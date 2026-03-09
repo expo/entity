@@ -1,17 +1,19 @@
+import type {
+  EntityCompanionDefinition,
+  EntityQueryContext,
+  EntityValidatorMutationInfo,
+  ViewerContext,
+} from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
   Entity,
-  EntityCompanionDefinition,
   EntityConfiguration,
   EntityMutationTrigger,
   EntityPrivacyPolicy,
-  EntityQueryContext,
-  EntityValidatorMutationInfo,
   StringField,
   UUIDField,
-  ViewerContext,
 } from '@expo/entity';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
 type PostgresValidatorTestEntityFields = {
   id: string;

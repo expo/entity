@@ -1,25 +1,27 @@
+import type {
+  AuthorizationResultBasedEntityLoader,
+  EntityCompanionDefinition,
+  EntityConstructionUtils,
+  IEntityMetricsAdapter,
+} from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
-  AuthorizationResultBasedEntityLoader,
   Entity,
-  EntityCompanionDefinition,
   EntityCompanionProvider,
   EntityConfiguration,
-  EntityConstructionUtils,
   EntityPrivacyPolicy,
   EntitySecondaryCacheLoader,
-  IEntityMetricsAdapter,
   mapMapAsync,
   NoOpEntityMetricsAdapter,
   StringField,
   UUIDField,
   ViewerContext,
 } from '@expo/entity';
-import {
+import type {
   ILocalMemoryCache,
-  LocalMemoryCacheAdapterProvider,
   LocalMemoryCacheValue,
 } from '@expo/entity-cache-adapter-local-memory';
+import { LocalMemoryCacheAdapterProvider } from '@expo/entity-cache-adapter-local-memory';
 import { StubDatabaseAdapterProvider, StubQueryContextProvider } from '@expo/entity-testing-utils';
 import nullthrows from '@expo/nullthrows';
 import { TTLCache } from '@isaacs/ttlcache';

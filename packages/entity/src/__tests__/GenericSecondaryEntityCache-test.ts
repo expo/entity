@@ -1,19 +1,17 @@
 import nullthrows from '@expo/nullthrows';
 import { describe, expect, it } from '@jest/globals';
 
-import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
-import { EntityConstructionUtils } from '../EntityConstructionUtils';
+import type { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
+import type { EntityConstructionUtils } from '../EntityConstructionUtils';
 import { EntitySecondaryCacheLoader } from '../EntitySecondaryCacheLoader';
 import { GenericSecondaryEntityCache } from '../GenericSecondaryEntityCache';
-import { IEntityGenericCacher } from '../IEntityGenericCacher';
+import type { IEntityGenericCacher } from '../IEntityGenericCacher';
 import { ViewerContext } from '../ViewerContext';
-import { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces';
-import { CacheLoadResult, CacheStatus } from '../internal/ReadThroughEntityCache';
-import {
-  TestEntity,
-  TestEntityPrivacyPolicy,
-  TestFields,
-} from '../utils/__testfixtures__/TestEntity';
+import type { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces';
+import type { CacheLoadResult } from '../internal/ReadThroughEntityCache';
+import { CacheStatus } from '../internal/ReadThroughEntityCache';
+import type { TestEntityPrivacyPolicy, TestFields } from '../utils/__testfixtures__/TestEntity';
+import { TestEntity } from '../utils/__testfixtures__/TestEntity';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 import { mapMapAsync } from '../utils/collections/maps';
 

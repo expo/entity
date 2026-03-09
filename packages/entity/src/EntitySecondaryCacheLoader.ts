@@ -1,11 +1,11 @@
-import { Result } from '@expo/results';
+import type { Result } from '@expo/results';
 
-import { IEntityClass } from './Entity';
-import { EntityConstructionUtils } from './EntityConstructionUtils';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { IEntityClass } from './Entity';
+import type { EntityConstructionUtils } from './EntityConstructionUtils';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { EntityQueryContext } from './EntityQueryContext';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 import { mapMap } from './utils/collections/maps';
 
 /**

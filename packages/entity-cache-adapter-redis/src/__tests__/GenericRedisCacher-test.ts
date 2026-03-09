@@ -6,7 +6,7 @@ import {
   UUIDField,
 } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
-import { Pipeline, Redis } from 'ioredis';
+import type { Pipeline, Redis } from 'ioredis';
 import { anything, instance, mock, verify, when } from 'ts-mockito';
 
 import { GenericRedisCacher, RedisCacheInvalidationStrategy } from '../GenericRedisCacher';

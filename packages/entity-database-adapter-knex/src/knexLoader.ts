@@ -1,4 +1,4 @@
-import {
+import type {
   EntityPrivacyPolicy,
   EntityQueryContext,
   IEntityClass,
@@ -6,8 +6,8 @@ import {
   ViewerContext,
 } from '@expo/entity';
 
-import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
-import { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
+import type { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
+import type { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
 import { getKnexEntityLoaderFactory } from './internal/getKnexEntityLoaderFactory';
 
 /**

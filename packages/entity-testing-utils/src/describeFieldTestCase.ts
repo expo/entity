@@ -1,4 +1,4 @@
-import { EntityFieldDefinition } from '@expo/entity';
+import type { EntityFieldDefinition } from '@expo/entity';
 import { describe, expect, test } from '@jest/globals';
 
 export function describeFieldTestCase<T>(

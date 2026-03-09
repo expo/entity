@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { EntityCompositeFieldValue } from '../../EntityConfiguration';
+import type { EntityCompositeFieldValue } from '../../EntityConfiguration';
 import { CompositeFieldValueHolder } from '../CompositeFieldHolder';
 import { CompositeFieldValueMap } from '../CompositeFieldValueMap';
 

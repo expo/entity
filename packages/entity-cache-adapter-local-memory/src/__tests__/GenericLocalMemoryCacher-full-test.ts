@@ -1,7 +1,6 @@
+import type { GenericEntityCacheAdapter, IEntityGenericCacher } from '@expo/entity';
 import {
   CacheStatus,
-  GenericEntityCacheAdapter,
-  IEntityGenericCacher,
   SingleFieldHolder,
   SingleFieldValueHolder,
   ViewerContext,
@@ -10,11 +9,9 @@ import { describe, expect, it } from '@jest/globals';
 import { v4 as uuidv4 } from 'uuid';
 
 import { GenericLocalMemoryCacher } from '../GenericLocalMemoryCacher';
-import { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider';
-import {
-  LocalMemoryTestEntity,
-  LocalMemoryTestEntityFields,
-} from '../__testfixtures__/LocalMemoryTestEntity';
+import type { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider';
+import type { LocalMemoryTestEntityFields } from '../__testfixtures__/LocalMemoryTestEntity';
+import { LocalMemoryTestEntity } from '../__testfixtures__/LocalMemoryTestEntity';
 import {
   createLocalMemoryTestEntityCompanionProvider,
   createNoOpLocalMemoryIntegrationTestEntityCompanionProvider,

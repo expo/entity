@@ -4,16 +4,16 @@ import { instance, mock, when } from 'ts-mockito';
 import { EntityCompanion } from '../EntityCompanion';
 import { EntityCompanionProvider } from '../EntityCompanionProvider';
 import { EntityLoaderFactory } from '../EntityLoaderFactory';
-import { EntityMutationTriggerConfiguration } from '../EntityMutationTriggerConfiguration';
+import type { EntityMutationTriggerConfiguration } from '../EntityMutationTriggerConfiguration';
 import { EntityMutatorFactory } from '../EntityMutatorFactory';
-import { ViewerContext } from '../ViewerContext';
-import { EntityTableDataCoordinator } from '../internal/EntityTableDataCoordinator';
-import { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+import type { ViewerContext } from '../ViewerContext';
+import type { EntityTableDataCoordinator } from '../internal/EntityTableDataCoordinator';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
 import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter';
+import type { TestMTFields } from '../utils/__testfixtures__/TestEntityWithMutationTriggers';
 import {
   testEntityMTConfiguration,
   TestEntityWithMutationTriggers,
-  TestMTFields,
   TestMutationTrigger,
 } from '../utils/__testfixtures__/TestEntityWithMutationTriggers';
 

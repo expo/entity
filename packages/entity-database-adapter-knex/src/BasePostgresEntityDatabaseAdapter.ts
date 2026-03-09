@@ -1,12 +1,12 @@
+import type { EntityQueryContext } from '@expo/entity';
 import {
   EntityDatabaseAdapter,
-  EntityQueryContext,
   getDatabaseFieldForEntityField,
   transformDatabaseObjectToFields,
 } from '@expo/entity';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
-import { SQLFragment } from './SQLOperator';
+import type { SQLFragment } from './SQLOperator';
 
 /**
  * Equality operand that is used for selecting entities with a field with a single value.
