@@ -1,22 +1,23 @@
+import type { EntityConfiguration, FieldTransformerMap } from '@expo/entity';
 import {
   computeIfAbsent,
-  EntityConfiguration,
-  FieldTransformerMap,
   getDatabaseFieldForEntityField,
   IntField,
   mapMap,
   StringField,
   transformFieldsToDatabaseObject,
 } from '@expo/entity';
-import {
-  BasePostgresEntityDatabaseAdapter,
-  NullsOrdering,
-  OrderByOrdering,
+import type {
   SQLFragment,
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableOrderByClause,
   TableQuerySelectionModifiers,
+} from '@expo/entity-database-adapter-knex';
+import {
+  BasePostgresEntityDatabaseAdapter,
+  NullsOrdering,
+  OrderByOrdering,
 } from '@expo/entity-database-adapter-knex';
 import invariant from 'invariant';
 import { v7 as uuidv7 } from 'uuid';

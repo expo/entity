@@ -1,9 +1,9 @@
 import { enforceAsyncResult } from '@expo/results';
 
-import { AuthorizationResultBasedUpdateMutator } from './AuthorizationResultBasedEntityMutator';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { AuthorizationResultBasedUpdateMutator } from './AuthorizationResultBasedEntityMutator';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 
 /**
  * Enforcing entity updater. All updates

@@ -1,18 +1,17 @@
+import type { EntityCompanionDefinition, ViewerContext } from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
   BooleanField,
   DateField,
-  EntityCompanionDefinition,
   EntityConfiguration,
   EntityPrivacyPolicy,
   JSONObjectField,
   StringArrayField,
   StringField,
   UUIDField,
-  ViewerContext,
   BufferField,
 } from '@expo/entity';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
 import { BigIntField, JSONArrayField, MaybeJSONArrayField } from '../EntityFields';
 import { PostgresEntity } from '../PostgresEntity';

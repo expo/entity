@@ -1,12 +1,11 @@
+import type { EntityCompanionDefinition, ViewerContext } from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
   Entity,
-  EntityCompanionDefinition,
   EntityConfiguration,
   EntityEdgeDeletionBehavior,
   EntityPrivacyPolicy,
   UUIDField,
-  ViewerContext,
 } from '@expo/entity';
 
 import ParentEntity from './ParentEntity';

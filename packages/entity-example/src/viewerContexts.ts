@@ -1,4 +1,5 @@
-import { EntityCompanionProvider, ViewerContext } from '@expo/entity';
+import type { EntityCompanionProvider } from '@expo/entity';
+import { ViewerContext } from '@expo/entity';
 
 /**
  * A base class for better typing Entities and Privacy Policies specific to this application.

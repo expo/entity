@@ -3,10 +3,10 @@ import assert from 'assert';
 import invariant from 'invariant';
 
 import { EntityCompanionProvider } from '../EntityCompanionProvider';
+import type { TransactionConfig } from '../EntityQueryContext';
 import {
   EntityQueryContext,
   TransactionalDataLoaderMode,
-  TransactionConfig,
   TransactionIsolationLevel,
 } from '../EntityQueryContext';
 import { EntityQueryContextProvider } from '../EntityQueryContextProvider';

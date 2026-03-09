@@ -10,11 +10,11 @@ import {
   when,
 } from 'ts-mockito';
 
-import { EntityDatabaseAdapter } from '../../EntityDatabaseAdapter';
+import type { EntityDatabaseAdapter } from '../../EntityDatabaseAdapter';
 import { TransactionalDataLoaderMode } from '../../EntityQueryContext';
+import type { IEntityMetricsAdapter } from '../../metrics/IEntityMetricsAdapter';
 import {
   EntityMetricsLoadType,
-  IEntityMetricsAdapter,
   IncrementLoadCountEventType,
 } from '../../metrics/IEntityMetricsAdapter';
 import { NoOpEntityMetricsAdapter } from '../../metrics/NoOpEntityMetricsAdapter';
@@ -24,11 +24,8 @@ import {
 } from '../../utils/__testfixtures__/StubCacheAdapter';
 import { StubDatabaseAdapter } from '../../utils/__testfixtures__/StubDatabaseAdapter';
 import { StubQueryContextProvider } from '../../utils/__testfixtures__/StubQueryContextProvider';
-import {
-  TestEntity,
-  testEntityConfiguration,
-  TestFields,
-} from '../../utils/__testfixtures__/TestEntity';
+import type { TestFields } from '../../utils/__testfixtures__/TestEntity';
+import { TestEntity, testEntityConfiguration } from '../../utils/__testfixtures__/TestEntity';
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../CompositeFieldHolder';
 import { EntityDataManager } from '../EntityDataManager';
 import { EntityLoadMethodType } from '../EntityLoadInterfaces';

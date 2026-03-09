@@ -1,4 +1,4 @@
-import { TransactionConfig } from '../../EntityQueryContext';
+import type { TransactionConfig } from '../../EntityQueryContext';
 import { EntityQueryContextProvider } from '../../EntityQueryContextProvider';
 
 export class StubQueryContextProvider extends EntityQueryContextProvider {

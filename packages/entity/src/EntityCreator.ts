@@ -1,10 +1,10 @@
-import { AuthorizationResultBasedCreateMutator } from './AuthorizationResultBasedEntityMutator';
+import type { AuthorizationResultBasedCreateMutator } from './AuthorizationResultBasedEntityMutator';
 import { EnforcingEntityCreator } from './EnforcingEntityCreator';
-import { IEntityClass } from './Entity';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { IEntityClass } from './Entity';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { EntityQueryContext } from './EntityQueryContext';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 
 /**
  * The primary interface for creating entities.

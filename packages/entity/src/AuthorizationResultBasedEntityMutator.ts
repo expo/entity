@@ -1,34 +1,36 @@
-import { Result, asyncResult, enforceAsyncResult, result } from '@expo/results';
+import type { Result } from '@expo/results';
+import { asyncResult, enforceAsyncResult, result } from '@expo/results';
 import invariant from 'invariant';
 
-import { Entity, IEntityClass } from './Entity';
-import { EntityCompanionProvider } from './EntityCompanionProvider';
-import { EntityConfiguration } from './EntityConfiguration';
-import { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
+import type { Entity, IEntityClass } from './Entity';
+import type { EntityCompanionProvider } from './EntityCompanionProvider';
+import type { EntityConfiguration } from './EntityConfiguration';
+import type { EntityDatabaseAdapter } from './EntityDatabaseAdapter';
 import { EntityEdgeDeletionBehavior } from './EntityFieldDefinition';
-import { EntityLoaderFactory } from './EntityLoaderFactory';
-import {
+import type { EntityLoaderFactory } from './EntityLoaderFactory';
+import type {
   EntityCascadingDeletionInfo,
-  EntityMutationType,
   EntityTriggerMutationInfo,
   EntityValidatorMutationInfo,
 } from './EntityMutationInfo';
-import {
+import { EntityMutationType } from './EntityMutationInfo';
+import type {
   EntityMutationTrigger,
   EntityMutationTriggerConfiguration,
   EntityNonTransactionalMutationTrigger,
 } from './EntityMutationTriggerConfiguration';
-import {
+import type {
   EntityMutationValidator,
   EntityMutationValidatorConfiguration,
 } from './EntityMutationValidatorConfiguration';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
-import { ViewerContext } from './ViewerContext';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { EntityQueryContext, EntityTransactionalQueryContext } from './EntityQueryContext';
+import type { ViewerContext } from './ViewerContext';
 import { enforceResultsAsync } from './entityUtils';
 import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError';
 import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils';
-import { EntityMetricsMutationType, IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+import { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
 
 /**

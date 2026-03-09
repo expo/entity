@@ -1,8 +1,8 @@
-import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
-import { EntityCompositeField, EntityCompositeFieldValue } from './EntityConfiguration';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
+import type { EntityCompositeField, EntityCompositeFieldValue } from './EntityConfiguration';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 import { CompositeFieldValueHolder } from './internal/CompositeFieldHolder';
 import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap';
 import { mapMap } from './utils/collections/maps';

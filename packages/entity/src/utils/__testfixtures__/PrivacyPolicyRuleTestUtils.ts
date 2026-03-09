@@ -1,10 +1,11 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../../EntityQueryContext';
-import { ReadonlyEntity } from '../../ReadonlyEntity';
-import { ViewerContext } from '../../ViewerContext';
-import { PrivacyPolicyRule, RuleEvaluationResult } from '../../rules/PrivacyPolicyRule';
+import type { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy';
+import type { EntityQueryContext } from '../../EntityQueryContext';
+import type { ReadonlyEntity } from '../../ReadonlyEntity';
+import type { ViewerContext } from '../../ViewerContext';
+import type { PrivacyPolicyRule } from '../../rules/PrivacyPolicyRule';
+import { RuleEvaluationResult } from '../../rules/PrivacyPolicyRule';
 
 export interface Case<
   TFields extends Record<string, any>,

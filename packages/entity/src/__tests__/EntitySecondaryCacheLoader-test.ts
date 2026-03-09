@@ -2,13 +2,14 @@ import { describe, expect, it } from '@jest/globals';
 import { anyOfClass, anything, deepEqual, instance, mock, spy, verify, when } from 'ts-mockito';
 
 import { EntityNonTransactionalQueryContext } from '../EntityQueryContext';
-import { EntitySecondaryCacheLoader, ISecondaryEntityCache } from '../EntitySecondaryCacheLoader';
+import type { ISecondaryEntityCache } from '../EntitySecondaryCacheLoader';
+import { EntitySecondaryCacheLoader } from '../EntitySecondaryCacheLoader';
 import { ViewerContext } from '../ViewerContext';
-import {
-  SimpleTestEntity,
+import type {
   SimpleTestEntityPrivacyPolicy,
   SimpleTestFields,
 } from '../utils/__testfixtures__/SimpleTestEntity';
+import { SimpleTestEntity } from '../utils/__testfixtures__/SimpleTestEntity';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider';
 
 type TestLoadParams = { id: string };

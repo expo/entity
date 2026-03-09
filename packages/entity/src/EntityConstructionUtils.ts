@@ -1,16 +1,20 @@
 import nullthrows from '@expo/nullthrows';
-import { Result, asyncResult, result } from '@expo/results';
+import type { Result } from '@expo/results';
+import { asyncResult, result } from '@expo/results';
 import invariant from 'invariant';
 
-import { IEntityClass } from './Entity';
-import { EntityConfiguration } from './EntityConfiguration';
-import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { IEntityClass } from './Entity';
+import type { EntityConfiguration } from './EntityConfiguration';
+import type {
+  EntityPrivacyPolicy,
+  EntityPrivacyPolicyEvaluationContext,
+} from './EntityPrivacyPolicy';
+import type { EntityQueryContext } from './EntityQueryContext';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 import { pick } from './entityUtils';
 import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError';
-import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { mapMapAsync } from './utils/collections/maps';
 
 /**

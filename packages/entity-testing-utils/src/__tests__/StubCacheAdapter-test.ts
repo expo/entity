@@ -14,7 +14,8 @@ import {
   InMemoryFullCacheStubCacheAdapter,
   NoCacheStubCacheAdapter,
 } from '../StubCacheAdapter';
-import { testEntityConfiguration, TestFields } from '../__testfixtures__/TestEntity';
+import type { TestFields } from '../__testfixtures__/TestEntity';
+import { testEntityConfiguration } from '../__testfixtures__/TestEntity';
 
 describe(NoCacheStubCacheAdapter, () => {
   describe('loadManyAsync', () => {

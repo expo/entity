@@ -1,13 +1,12 @@
-import { EntityCascadingDeletionInfo } from './EntityMutationInfo';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { EntityCascadingDeletionInfo } from './EntityMutationInfo';
+import type { EntityQueryContext } from './EntityQueryContext';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 import { EntityNotAuthorizedError } from './errors/EntityNotAuthorizedError';
-import {
-  EntityMetricsAuthorizationResult,
-  IEntityMetricsAdapter,
-} from './metrics/IEntityMetricsAdapter';
-import { PrivacyPolicyRule, RuleEvaluationResult } from './rules/PrivacyPolicyRule';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+import { EntityMetricsAuthorizationResult } from './metrics/IEntityMetricsAdapter';
+import type { PrivacyPolicyRule } from './rules/PrivacyPolicyRule';
+import { RuleEvaluationResult } from './rules/PrivacyPolicyRule';
 
 /**
  * Information about the reason this privacy policy is being evaluated.

@@ -1,11 +1,12 @@
-import {
+import type {
   EntityConfiguration,
-  GenericEntityCacheAdapter,
   IEntityCacheAdapter,
   IEntityCacheAdapterProvider,
 } from '@expo/entity';
+import { GenericEntityCacheAdapter } from '@expo/entity';
 
-import { GenericRedisCacheContext, GenericRedisCacher } from './GenericRedisCacher';
+import type { GenericRedisCacheContext } from './GenericRedisCacher';
+import { GenericRedisCacher } from './GenericRedisCacher';
 
 export class RedisCacheAdapterProvider implements IEntityCacheAdapterProvider {
   constructor(private readonly context: GenericRedisCacheContext) {}

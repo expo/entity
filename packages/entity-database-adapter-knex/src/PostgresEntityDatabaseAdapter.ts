@@ -1,22 +1,20 @@
-import {
-  EntityConfiguration,
-  FieldTransformer,
-  FieldTransformerMap,
-  getDatabaseFieldForEntityField,
-} from '@expo/entity';
-import { Knex } from 'knex';
+import type { EntityConfiguration, FieldTransformer, FieldTransformerMap } from '@expo/entity';
+import { getDatabaseFieldForEntityField } from '@expo/entity';
+import type { Knex } from 'knex';
 
-import {
-  BasePostgresEntityDatabaseAdapter,
-  NullsOrdering,
-  OrderByOrdering,
+import type {
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
   TableQuerySelectionModifiers,
 } from './BasePostgresEntityDatabaseAdapter';
+import {
+  BasePostgresEntityDatabaseAdapter,
+  NullsOrdering,
+  OrderByOrdering,
+} from './BasePostgresEntityDatabaseAdapter';
 import { JSONArrayField, MaybeJSONArrayField } from './EntityFields';
-import { PostgresEntityDatabaseAdapterConfiguration } from './PostgresEntityDatabaseAdapterProvider';
-import { SQLFragment } from './SQLOperator';
+import type { PostgresEntityDatabaseAdapterConfiguration } from './PostgresEntityDatabaseAdapterProvider';
+import type { SQLFragment } from './SQLOperator';
 import { wrapNativePostgresCallAsync } from './errors/wrapNativePostgresCallAsync';
 
 export class PostgresEntityDatabaseAdapter<

@@ -1,12 +1,11 @@
-import {
-  type EntityPrivacyPolicyEvaluationContext,
+import { PrivacyPolicyRule, RuleEvaluationResult } from '@expo/entity';
+import type {
   EntityQueryContext,
-  PrivacyPolicyRule,
   ReadonlyEntity,
-  RuleEvaluationResult,
+  EntityPrivacyPolicyEvaluationContext,
 } from '@expo/entity';
 
-import { ExampleViewerContext } from '../viewerContexts.ts';
+import type { ExampleViewerContext } from '../viewerContexts.ts';
 
 /**
  * Example privacy rule that makes use of the types of ViewerContexts specific

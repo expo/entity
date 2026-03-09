@@ -1,9 +1,6 @@
-import {
-  EntityQueryContextProvider,
-  TransactionConfig,
-  TransactionIsolationLevel,
-} from '@expo/entity';
-import { Knex } from 'knex';
+import type { TransactionConfig } from '@expo/entity';
+import { EntityQueryContextProvider, TransactionIsolationLevel } from '@expo/entity';
+import type { Knex } from 'knex';
 
 /**
  * Query context provider for knex (postgres).

@@ -1,9 +1,9 @@
 import { enforceAsyncResult } from '@expo/results';
 
-import { AuthorizationResultBasedCreateMutator } from './AuthorizationResultBasedEntityMutator';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { AuthorizationResultBasedCreateMutator } from './AuthorizationResultBasedEntityMutator';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 
 /**
  * Enforcing entity creator. All creates

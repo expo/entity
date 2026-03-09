@@ -2,24 +2,24 @@ import { describe, expect, it } from '@jest/globals';
 import { anyOfClass, anything, instance, mock, objectContaining, spy, verify } from 'ts-mockito';
 
 import { Entity } from '../Entity';
-import { EntityCompanionDefinition } from '../EntityCompanionProvider';
+import type { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import { EntityConfiguration } from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
+import type {
+  EntityPrivacyPolicyEvaluationContext,
+  EntityPrivacyPolicyEvaluator,
+  EntityPrivacyPolicyRuleEvaluationContext,
+} from '../EntityPrivacyPolicy';
 import {
   EntityAuthorizationAction,
   EntityPrivacyPolicy,
-  EntityPrivacyPolicyEvaluationContext,
   EntityPrivacyPolicyEvaluationMode,
-  EntityPrivacyPolicyEvaluator,
-  EntityPrivacyPolicyRuleEvaluationContext,
 } from '../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { ViewerContext } from '../ViewerContext';
 import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';
-import {
-  EntityMetricsAuthorizationResult,
-  IEntityMetricsAdapter,
-} from '../metrics/IEntityMetricsAdapter';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+import { EntityMetricsAuthorizationResult } from '../metrics/IEntityMetricsAdapter';
 import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule';
 import { AlwaysDenyPrivacyPolicyRule } from '../rules/AlwaysDenyPrivacyPolicyRule';
 import { AlwaysSkipPrivacyPolicyRule } from '../rules/AlwaysSkipPrivacyPolicyRule';

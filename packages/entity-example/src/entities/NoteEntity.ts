@@ -6,7 +6,7 @@ import {
   UUIDField,
 } from '@expo/entity';
 
-import { ExampleViewerContext } from '../viewerContexts.ts';
+import type { ExampleViewerContext } from '../viewerContexts.ts';
 import { NotePrivacyPolicy } from './NotePrivacyPolicy.ts';
 
 export interface NoteFields {

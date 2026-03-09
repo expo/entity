@@ -1,22 +1,24 @@
 import nullthrows from '@expo/nullthrows';
-import { Result, result } from '@expo/results';
+import type { Result } from '@expo/results';
+import { result } from '@expo/results';
 import invariant from 'invariant';
 
-import { IEntityClass } from './Entity';
-import {
+import type { IEntityClass } from './Entity';
+import type {
   EntityCompositeField,
   EntityCompositeFieldValue,
   EntityConfiguration,
 } from './EntityConfiguration';
-import { EntityConstructionUtils } from './EntityConstructionUtils';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { EntityConstructionUtils } from './EntityConstructionUtils';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { EntityQueryContext } from './EntityQueryContext';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 import { EntityNotFoundError } from './errors/EntityNotFoundError';
-import { CompositeFieldHolder, CompositeFieldValueHolder } from './internal/CompositeFieldHolder';
+import type { CompositeFieldHolder } from './internal/CompositeFieldHolder';
+import { CompositeFieldValueHolder } from './internal/CompositeFieldHolder';
 import { CompositeFieldValueMap } from './internal/CompositeFieldValueMap';
-import { EntityDataManager } from './internal/EntityDataManager';
+import type { EntityDataManager } from './internal/EntityDataManager';
 import { SingleFieldHolder, SingleFieldValueHolder } from './internal/SingleFieldHolder';
 import { mapKeys, mapMap } from './utils/collections/maps';
 import { areSetsEqual } from './utils/collections/sets';

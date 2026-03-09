@@ -1,13 +1,12 @@
+import type { EntityCompanionDefinition, ViewerContext } from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
   DateField,
   Entity,
-  EntityCompanionDefinition,
   EntityConfiguration,
   EntityPrivacyPolicy,
   StringField,
   UUIDField,
-  ViewerContext,
 } from '@expo/entity';
 
 export type LocalMemoryTestEntityFields = {

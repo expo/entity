@@ -1,7 +1,7 @@
-import { EntityTriggerMutationInfo } from './EntityMutationInfo';
-import { EntityTransactionalQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { EntityTriggerMutationInfo } from './EntityMutationInfo';
+import type { EntityTransactionalQueryContext } from './EntityQueryContext';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 
 /**
  * Interface to define trigger behavior for entities.

@@ -1,12 +1,7 @@
-import {
-  NoOpEntityMetricsAdapter,
-  IEntityMetricsAdapter,
-  EntityCompanionProvider,
-} from '@expo/entity';
-import {
-  GenericRedisCacheContext,
-  RedisCacheAdapterProvider,
-} from '@expo/entity-cache-adapter-redis';
+import type { IEntityMetricsAdapter } from '@expo/entity';
+import { NoOpEntityMetricsAdapter, EntityCompanionProvider } from '@expo/entity';
+import type { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis';
+import { RedisCacheAdapterProvider } from '@expo/entity-cache-adapter-redis';
 import { StubDatabaseAdapterProvider, StubQueryContextProvider } from '@expo/entity-testing-utils';
 
 const queryContextProvider = new StubQueryContextProvider();

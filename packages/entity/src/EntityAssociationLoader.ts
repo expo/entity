@@ -1,9 +1,9 @@
 import { AuthorizationResultBasedEntityAssociationLoader } from './AuthorizationResultBasedEntityAssociationLoader';
 import { EnforcingEntityAssociationLoader } from './EnforcingEntityAssociationLoader';
-import { IEntityClass } from './Entity';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { IEntityClass } from './Entity';
+import type { EntityQueryContext } from './EntityQueryContext';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 
 /**
  * An association loader is a set of convenience methods for loading entities

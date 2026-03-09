@@ -1,12 +1,12 @@
-import { EntityConfiguration } from '../EntityConfiguration';
-import { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
-import { EntityQueryContextProvider } from '../EntityQueryContextProvider';
-import { IEntityCacheAdapter } from '../IEntityCacheAdapter';
-import { IEntityCacheAdapterProvider } from '../IEntityCacheAdapterProvider';
-import { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider';
+import type { EntityConfiguration } from '../EntityConfiguration';
+import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter';
+import type { EntityQueryContextProvider } from '../EntityQueryContextProvider';
+import type { IEntityCacheAdapter } from '../IEntityCacheAdapter';
+import type { IEntityCacheAdapterProvider } from '../IEntityCacheAdapterProvider';
+import type { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider';
 import { EntityDataManager } from './EntityDataManager';
 import { ReadThroughEntityCache } from './ReadThroughEntityCache';
-import { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
 
 /**
  * Responsible for orchestrating fetching and caching of entity data from a

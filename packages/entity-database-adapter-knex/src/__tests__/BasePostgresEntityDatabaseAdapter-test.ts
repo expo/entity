@@ -1,13 +1,15 @@
-import { EntityQueryContext, FieldTransformerMap } from '@expo/entity';
+import type { FieldTransformerMap } from '@expo/entity';
+import { EntityQueryContext } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import {
-  BasePostgresEntityDatabaseAdapter,
+import type {
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
 } from '../BasePostgresEntityDatabaseAdapter';
-import { testEntityConfiguration, TestFields } from './fixtures/TestEntity';
+import { BasePostgresEntityDatabaseAdapter } from '../BasePostgresEntityDatabaseAdapter';
+import type { TestFields } from './fixtures/TestEntity';
+import { testEntityConfiguration } from './fixtures/TestEntity';
 
 class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
   TestFields,

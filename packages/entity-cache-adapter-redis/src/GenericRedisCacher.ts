@@ -1,10 +1,12 @@
-import {
+import type {
   CacheLoadResult,
-  CacheStatus,
   EntityConfiguration,
   IEntityGenericCacher,
   IEntityLoadKey,
   IEntityLoadValue,
+} from '@expo/entity';
+import {
+  CacheStatus,
   transformCacheObjectToFields,
   transformFieldsToCacheObject,
 } from '@expo/entity';

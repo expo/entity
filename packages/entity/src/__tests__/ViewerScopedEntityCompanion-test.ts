@@ -1,12 +1,12 @@
 import { describe, expect, it } from '@jest/globals';
 import { instance, mock } from 'ts-mockito';
 
-import { EntityCompanion } from '../EntityCompanion';
+import type { EntityCompanion } from '../EntityCompanion';
 import { ViewerContext } from '../ViewerContext';
 import { ViewerScopedEntityCompanion } from '../ViewerScopedEntityCompanion';
 import { ViewerScopedEntityLoaderFactory } from '../ViewerScopedEntityLoaderFactory';
 import { ViewerScopedEntityMutatorFactory } from '../ViewerScopedEntityMutatorFactory';
-import {
+import type {
   TestEntity,
   TestEntityPrivacyPolicy,
   TestFields,

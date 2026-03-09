@@ -1,6 +1,6 @@
+import type { EntityDatabaseAdapterError } from '@expo/entity';
 import {
   EntityDatabaseAdapterCheckConstraintError,
-  EntityDatabaseAdapterError,
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
   EntityDatabaseAdapterNotNullConstraintError,

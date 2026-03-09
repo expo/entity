@@ -1,12 +1,12 @@
-import {
+import type {
   EntityConfiguration,
   IEntityCacheAdapter,
   IEntityCacheAdapterProvider,
   IEntityLoadKey,
   IEntityLoadValue,
-  CacheStatus,
   CacheLoadResult,
 } from '@expo/entity';
+import { CacheStatus } from '@expo/entity';
 import invariant from 'invariant';
 
 export class NoCacheStubCacheAdapterProvider implements IEntityCacheAdapterProvider {

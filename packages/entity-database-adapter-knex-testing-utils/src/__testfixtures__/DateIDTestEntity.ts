@@ -1,11 +1,10 @@
+import type { EntityCompanionDefinition, ViewerContext } from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
   DateField,
   Entity,
-  EntityCompanionDefinition,
   EntityConfiguration,
   EntityPrivacyPolicy,
-  ViewerContext,
 } from '@expo/entity';
 
 export type DateIDTestFields = {

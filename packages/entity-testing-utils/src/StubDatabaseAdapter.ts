@@ -1,7 +1,6 @@
+import type { EntityConfiguration, FieldTransformerMap } from '@expo/entity';
 import {
-  EntityConfiguration,
   EntityDatabaseAdapter,
-  FieldTransformerMap,
   IntField,
   StringField,
   computeIfAbsent,

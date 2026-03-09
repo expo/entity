@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { EntityTransactionalQueryContext } from '../../EntityQueryContext';
+import type { EntityTransactionalQueryContext } from '../../EntityQueryContext';
 import { ViewerContext } from '../../ViewerContext';
 import { EntityDatabaseAdapterUniqueConstraintError } from '../../errors/EntityDatabaseAdapterError';
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError';

@@ -5,7 +5,7 @@ import { EntityMutatorFactory } from '../EntityMutatorFactory';
 import { EntityQueryContext } from '../EntityQueryContext';
 import { ViewerContext } from '../ViewerContext';
 import { ViewerScopedEntityMutatorFactory } from '../ViewerScopedEntityMutatorFactory';
-import {
+import type {
   TestEntity,
   TestEntityPrivacyPolicy,
   TestFields,

@@ -1,14 +1,14 @@
-import {
-  Entity,
+import type {
   EntityPrivacyPolicy,
   EntityQueryContext,
   IEntityClass,
   ReadonlyEntity,
   ViewerContext,
 } from '@expo/entity';
+import { Entity } from '@expo/entity';
 
-import { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
-import { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
+import type { AuthorizationResultBasedKnexEntityLoader } from './AuthorizationResultBasedKnexEntityLoader';
+import type { EnforcingKnexEntityLoader } from './EnforcingKnexEntityLoader';
 import {
   knexLoader as knexLoaderFn,
   knexLoaderWithAuthorizationResults as knexLoaderWithAuthorizationResultsFn,

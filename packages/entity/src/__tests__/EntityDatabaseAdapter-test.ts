@@ -11,9 +11,10 @@ import {
   EntityDatabaseAdapterExcessiveUpdateResultError,
 } from '../errors/EntityDatabaseAdapterError';
 import { CompositeFieldHolder, CompositeFieldValueHolder } from '../internal/CompositeFieldHolder';
-import { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils';
+import type { FieldTransformerMap } from '../internal/EntityFieldTransformationUtils';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder';
-import { TestFields, testEntityConfiguration } from '../utils/__testfixtures__/TestEntity';
+import type { TestFields } from '../utils/__testfixtures__/TestEntity';
+import { testEntityConfiguration } from '../utils/__testfixtures__/TestEntity';
 
 class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'customIdField'> {
   private readonly fetchResults: object[];

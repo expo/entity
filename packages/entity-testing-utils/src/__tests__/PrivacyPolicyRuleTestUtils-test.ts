@@ -1,9 +1,9 @@
+import type { EntityPrivacyPolicyRuleEvaluationContext } from '@expo/entity';
 import {
   EntityQueryContext,
   ViewerContext,
   AlwaysAllowPrivacyPolicyRule,
   AlwaysDenyPrivacyPolicyRule,
-  EntityPrivacyPolicyRuleEvaluationContext,
 } from '@expo/entity';
 import { describe } from '@jest/globals';
 import { anything, instance, mock } from 'ts-mockito';

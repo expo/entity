@@ -10,11 +10,10 @@ import {
 import { TTLCache } from '@isaacs/ttlcache';
 import { describe, expect, it } from '@jest/globals';
 
+import type { ILocalMemoryCache, LocalMemoryCacheValue } from '../GenericLocalMemoryCacher';
 import {
   DOES_NOT_EXIST_LOCAL_MEMORY_CACHE,
   GenericLocalMemoryCacher,
-  ILocalMemoryCache,
-  LocalMemoryCacheValue,
 } from '../GenericLocalMemoryCacher';
 
 type BlahFields = {

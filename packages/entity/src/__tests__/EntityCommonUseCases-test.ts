@@ -3,11 +3,15 @@ import { expect, it } from '@jest/globals';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Entity } from '../Entity';
-import { EntityCompanionDefinition, EntityCompanionProvider } from '../EntityCompanionProvider';
+import type {
+  EntityCompanionDefinition,
+  EntityCompanionProvider,
+} from '../EntityCompanionProvider';
 import { EntityConfiguration } from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
-import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../EntityQueryContext';
+import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
+import type { EntityQueryContext } from '../EntityQueryContext';
 import { ViewerContext } from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError';

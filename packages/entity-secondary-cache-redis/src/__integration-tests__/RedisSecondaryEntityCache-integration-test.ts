@@ -1,26 +1,18 @@
-import {
-  AuthorizationResultBasedEntityLoader,
-  EntityConstructionUtils,
-  EntitySecondaryCacheLoader,
-  mapMapAsync,
-  ViewerContext,
-} from '@expo/entity';
-import {
-  GenericRedisCacheContext,
-  RedisCacheInvalidationStrategy,
-} from '@expo/entity-cache-adapter-redis';
+import type { AuthorizationResultBasedEntityLoader, EntityConstructionUtils } from '@expo/entity';
+import { EntitySecondaryCacheLoader, mapMapAsync, ViewerContext } from '@expo/entity';
+import type { GenericRedisCacheContext } from '@expo/entity-cache-adapter-redis';
+import { RedisCacheInvalidationStrategy } from '@expo/entity-cache-adapter-redis';
 import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import Redis from 'ioredis';
 import { URL } from 'url';
 
 import { RedisSecondaryEntityCache } from '../RedisSecondaryEntityCache';
-import {
-  RedisTestEntity,
-  redisTestEntityConfiguration,
+import type {
   RedisTestEntityFields,
   RedisTestEntityPrivacyPolicy,
 } from '../__testfixtures__/RedisTestEntity';
+import { RedisTestEntity, redisTestEntityConfiguration } from '../__testfixtures__/RedisTestEntity';
 import { createRedisIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createRedisIntegrationTestEntityCompanionProvider';
 
 class TestViewerContext extends ViewerContext {}

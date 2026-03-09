@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader';
 import { EntityConstructionUtils } from '../EntityConstructionUtils';
 import { EntityInvalidationUtils } from '../EntityInvalidationUtils';
-import { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
+import type { EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
 import { ViewerContext } from '../ViewerContext';
 import { enforceResultsAsync } from '../entityUtils';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError';
@@ -18,15 +18,15 @@ import {
   SingleFieldValueHolder,
   SingleFieldValueHolderMap,
 } from '../internal/SingleFieldHolder';
-import { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter';
 import { NoCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter';
 import { StubDatabaseAdapter } from '../utils/__testfixtures__/StubDatabaseAdapter';
 import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider';
 import { deepEqualEntityAware } from '../utils/__testfixtures__/TSMockitoExtensions';
+import type { TestFields } from '../utils/__testfixtures__/TestEntity';
 import {
   TestEntity,
   TestEntityPrivacyPolicy,
-  TestFields,
   testEntityConfiguration,
 } from '../utils/__testfixtures__/TestEntity';
 

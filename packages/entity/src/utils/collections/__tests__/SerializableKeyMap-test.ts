@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { ISerializable, SerializableKeyMap } from '../SerializableKeyMap';
+import type { ISerializable } from '../SerializableKeyMap';
+import { SerializableKeyMap } from '../SerializableKeyMap';
 
 describe(SerializableKeyMap, () => {
   it('behaves as a Map/ReadonlyMap', () => {

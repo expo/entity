@@ -1,9 +1,9 @@
 import invariant from 'invariant';
 
-import { IEntityCacheAdapter } from './IEntityCacheAdapter';
-import { IEntityGenericCacher } from './IEntityGenericCacher';
-import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
-import { CacheLoadResult } from './internal/ReadThroughEntityCache';
+import type { IEntityCacheAdapter } from './IEntityCacheAdapter';
+import type { IEntityGenericCacher } from './IEntityGenericCacher';
+import type { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
+import type { CacheLoadResult } from './internal/ReadThroughEntityCache';
 import { mapKeys } from './utils/collections/maps';
 
 /**

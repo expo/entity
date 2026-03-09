@@ -1,8 +1,5 @@
-import {
-  EntityCompanionProvider,
-  IEntityMetricsAdapter,
-  NoOpEntityMetricsAdapter,
-} from '@expo/entity';
+import type { IEntityMetricsAdapter } from '@expo/entity';
+import { EntityCompanionProvider, NoOpEntityMetricsAdapter } from '@expo/entity';
 
 import { InMemoryFullCacheStubCacheAdapterProvider } from './StubCacheAdapter';
 import { StubDatabaseAdapterProvider } from './StubDatabaseAdapterProvider';

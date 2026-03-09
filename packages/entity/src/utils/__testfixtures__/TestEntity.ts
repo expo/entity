@@ -1,11 +1,12 @@
-import { result, Result } from '@expo/results';
+import type { Result } from '@expo/results';
+import { result } from '@expo/results';
 
 import { Entity } from '../../Entity';
-import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import { EntityConfiguration } from '../../EntityConfiguration';
 import { DateField, IntField, StringField, UUIDField } from '../../EntityFields';
 import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
-import { ViewerContext } from '../../ViewerContext';
+import type { ViewerContext } from '../../ViewerContext';
 import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
 
 export type TestFields = {

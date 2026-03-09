@@ -1,4 +1,4 @@
-import { API, Collection, FileInfo, Options } from 'jscodeshift';
+import type { API, Collection, FileInfo, Options } from 'jscodeshift';
 
 function transformWithAuthorizationResultsEntityChainMethod(
   j: API['jscodeshift'],

@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
 import { Entity } from '../../Entity';
-import { EntityCompanionDefinition } from '../../EntityCompanionProvider';
+import type { EntityCompanionDefinition } from '../../EntityCompanionProvider';
 import { EntityConfiguration } from '../../EntityConfiguration';
 import {
   EntityEdgeDeletionAuthorizationInferenceBehavior,
@@ -9,7 +9,7 @@ import {
 } from '../../EntityFieldDefinition';
 import { UUIDField } from '../../EntityFields';
 import { EntityPrivacyPolicy } from '../../EntityPrivacyPolicy';
-import { ReadonlyEntity } from '../../ReadonlyEntity';
+import type { ReadonlyEntity } from '../../ReadonlyEntity';
 import { ViewerContext } from '../../ViewerContext';
 import { AlwaysAllowPrivacyPolicyRule } from '../../rules/AlwaysAllowPrivacyPolicyRule';
 import { AlwaysDenyPrivacyPolicyRule } from '../../rules/AlwaysDenyPrivacyPolicyRule';

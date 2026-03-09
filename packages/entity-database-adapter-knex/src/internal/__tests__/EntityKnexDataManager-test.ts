@@ -1,9 +1,5 @@
-import {
-  EntityMetricsLoadType,
-  EntityQueryContext,
-  IEntityMetricsAdapter,
-  NoOpEntityMetricsAdapter,
-} from '@expo/entity';
+import type { EntityQueryContext, IEntityMetricsAdapter } from '@expo/entity';
+import { EntityMetricsLoadType, NoOpEntityMetricsAdapter } from '@expo/entity';
 import { StubQueryContextProvider } from '@expo/entity-testing-utils';
 import { describe, expect, it } from '@jest/globals';
 import {
@@ -21,11 +17,8 @@ import {
 import { OrderByOrdering } from '../../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../../PaginationStrategy';
 import { PostgresEntityDatabaseAdapter } from '../../PostgresEntityDatabaseAdapter';
-import {
-  TestEntity,
-  TestFields,
-  testEntityConfiguration,
-} from '../../__tests__/fixtures/TestEntity';
+import type { TestFields } from '../../__tests__/fixtures/TestEntity';
+import { TestEntity, testEntityConfiguration } from '../../__tests__/fixtures/TestEntity';
 import { EntityKnexDataManager } from '../EntityKnexDataManager';
 
 describe(EntityKnexDataManager, () => {

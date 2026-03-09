@@ -1,11 +1,11 @@
-import {
+import type {
   CacheLoadResult,
-  CacheStatus,
   EntityConfiguration,
   IEntityGenericCacher,
   IEntityLoadKey,
   IEntityLoadValue,
 } from '@expo/entity';
+import { CacheStatus } from '@expo/entity';
 
 // Sentinel value we store in local memory to negatively cache a database miss.
 // The sentinel value is distinct from any (positively) cached value.

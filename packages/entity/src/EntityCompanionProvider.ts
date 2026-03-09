@@ -1,18 +1,19 @@
 import invariant from 'invariant';
 
-import { IEntityClass } from './Entity';
-import { EntityCompanion, IPrivacyPolicyClass } from './EntityCompanion';
-import { EntityConfiguration } from './EntityConfiguration';
-import { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
-import { EntityMutationValidatorConfiguration } from './EntityMutationValidatorConfiguration';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContextProvider } from './EntityQueryContextProvider';
-import { IEntityCacheAdapterProvider } from './IEntityCacheAdapterProvider';
-import { IEntityDatabaseAdapterProvider } from './IEntityDatabaseAdapterProvider';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { IEntityClass } from './Entity';
+import type { IPrivacyPolicyClass } from './EntityCompanion';
+import { EntityCompanion } from './EntityCompanion';
+import type { EntityConfiguration } from './EntityConfiguration';
+import type { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration';
+import type { EntityMutationValidatorConfiguration } from './EntityMutationValidatorConfiguration';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { EntityQueryContextProvider } from './EntityQueryContextProvider';
+import type { IEntityCacheAdapterProvider } from './IEntityCacheAdapterProvider';
+import type { IEntityDatabaseAdapterProvider } from './IEntityDatabaseAdapterProvider';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 import { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
-import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { computeIfAbsent } from './utils/collections/maps';
 
 /**

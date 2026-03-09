@@ -1,10 +1,11 @@
 import { describe, test } from '@jest/globals';
 
 import { Entity } from '../Entity';
-import { EntityCompanionDefinition } from '../EntityCompanionProvider';
+import type { EntityCompanionDefinition } from '../EntityCompanionProvider';
 import { EntityConfiguration } from '../EntityConfiguration';
 import { UUIDField } from '../EntityFields';
-import { EntityMutationType, EntityTriggerMutationInfo } from '../EntityMutationInfo';
+import type { EntityTriggerMutationInfo } from '../EntityMutationInfo';
+import { EntityMutationType } from '../EntityMutationInfo';
 import { EntityNonTransactionalMutationTrigger } from '../EntityMutationTriggerConfiguration';
 import { EntityMutatorFactory } from '../EntityMutatorFactory';
 import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';

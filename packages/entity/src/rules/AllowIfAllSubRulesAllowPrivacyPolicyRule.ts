@@ -1,7 +1,7 @@
-import { EntityPrivacyPolicyRuleEvaluationContext } from '../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../EntityQueryContext';
-import { ReadonlyEntity } from '../ReadonlyEntity';
-import { ViewerContext } from '../ViewerContext';
+import type { EntityPrivacyPolicyRuleEvaluationContext } from '../EntityPrivacyPolicy';
+import type { EntityQueryContext } from '../EntityQueryContext';
+import type { ReadonlyEntity } from '../ReadonlyEntity';
+import type { ViewerContext } from '../ViewerContext';
 import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule';
 
 export class AllowIfAllSubRulesAllowPrivacyPolicyRule<

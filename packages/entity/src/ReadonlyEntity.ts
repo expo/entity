@@ -1,16 +1,16 @@
 import invariant from 'invariant';
 
-import { AuthorizationResultBasedEntityAssociationLoader } from './AuthorizationResultBasedEntityAssociationLoader';
-import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
-import { EnforcingEntityAssociationLoader } from './EnforcingEntityAssociationLoader';
-import { EnforcingEntityLoader } from './EnforcingEntityLoader';
-import { IEntityClass } from './Entity';
+import type { AuthorizationResultBasedEntityAssociationLoader } from './AuthorizationResultBasedEntityAssociationLoader';
+import type { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
+import type { EnforcingEntityAssociationLoader } from './EnforcingEntityAssociationLoader';
+import type { EnforcingEntityLoader } from './EnforcingEntityLoader';
+import type { IEntityClass } from './Entity';
 import { EntityAssociationLoader } from './EntityAssociationLoader';
-import { EntityInvalidationUtils } from './EntityInvalidationUtils';
+import type { EntityInvalidationUtils } from './EntityInvalidationUtils';
 import { EntityLoader } from './EntityLoader';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ViewerContext } from './ViewerContext';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { EntityQueryContext } from './EntityQueryContext';
+import type { ViewerContext } from './ViewerContext';
 
 /**
  * A readonly entity exposes only the read functionality of an Entity. Used as the base

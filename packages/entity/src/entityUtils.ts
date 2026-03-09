@@ -1,4 +1,4 @@
-import { Result, Success, Failure } from '@expo/results';
+import type { Result, Success, Failure } from '@expo/results';
 
 /**
  * Enforce an array of results resolved from supplied promise.

@@ -1,10 +1,12 @@
-import {
+import type {
   EntityCompanionDefinition,
-  EntityConfiguration,
-  EntityPrivacyPolicy,
   ViewerContext,
   EntityPrivacyPolicyEvaluationContext,
   EntityQueryContext,
+} from '@expo/entity';
+import {
+  EntityConfiguration,
+  EntityPrivacyPolicy,
   UUIDField,
   StringField,
   DateField,

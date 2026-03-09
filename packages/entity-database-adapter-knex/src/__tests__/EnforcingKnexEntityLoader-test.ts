@@ -1,4 +1,5 @@
-import { EntityConstructionUtils, EntityQueryContext, IEntityMetricsAdapter } from '@expo/entity';
+import type { IEntityMetricsAdapter } from '@expo/entity';
+import { EntityConstructionUtils, EntityQueryContext } from '@expo/entity';
 import { result } from '@expo/results';
 import { describe, expect, it } from '@jest/globals';
 import { anything, instance, mock, when } from 'ts-mockito';

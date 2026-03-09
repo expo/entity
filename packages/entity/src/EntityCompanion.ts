@@ -1,12 +1,12 @@
-import { EntityCompanionDefinition, EntityCompanionProvider } from './EntityCompanionProvider';
+import type { EntityCompanionDefinition, EntityCompanionProvider } from './EntityCompanionProvider';
 import { EntityLoaderFactory } from './EntityLoaderFactory';
 import { EntityMutatorFactory } from './EntityMutatorFactory';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import { EntityQueryContextProvider } from './EntityQueryContextProvider';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
-import { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
-import { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type { EntityQueryContextProvider } from './EntityQueryContextProvider';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
+import type { EntityTableDataCoordinator } from './internal/EntityTableDataCoordinator';
+import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter';
 import { mergeEntityMutationTriggerConfigurations } from './utils/mergeEntityMutationTriggerConfigurations';
 
 export interface IPrivacyPolicyClass<TPrivacyPolicy> {

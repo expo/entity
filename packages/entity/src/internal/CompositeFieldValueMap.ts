@@ -1,8 +1,6 @@
-import { EntityCompositeField, EntityCompositeFieldValue } from '../EntityConfiguration';
-import {
-  SerializedCompositeFieldValueHolder,
-  CompositeFieldValueHolder,
-} from './CompositeFieldHolder';
+import type { EntityCompositeField, EntityCompositeFieldValue } from '../EntityConfiguration';
+import type { SerializedCompositeFieldValueHolder } from './CompositeFieldHolder';
+import { CompositeFieldValueHolder } from './CompositeFieldHolder';
 
 /**
  * @internal

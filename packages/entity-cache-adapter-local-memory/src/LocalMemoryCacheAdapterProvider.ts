@@ -1,12 +1,12 @@
-import {
-  computeIfAbsent,
+import type {
   EntityConfiguration,
-  GenericEntityCacheAdapter,
   IEntityCacheAdapter,
   IEntityCacheAdapterProvider,
 } from '@expo/entity';
+import { computeIfAbsent, GenericEntityCacheAdapter } from '@expo/entity';
 
-import { GenericLocalMemoryCacher, ILocalMemoryCache } from './GenericLocalMemoryCacher';
+import type { ILocalMemoryCache } from './GenericLocalMemoryCacher';
+import { GenericLocalMemoryCacher } from './GenericLocalMemoryCacher';
 
 export type LocalMemoryCacheCreator = <
   TFields extends Record<string, any>,

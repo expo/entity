@@ -1,14 +1,13 @@
+import type { EntityCompanionDefinition, ViewerContext } from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
   Entity,
-  EntityCompanionDefinition,
   EntityConfiguration,
   EntityPrivacyPolicy,
   IntField,
   StringField,
-  ViewerContext,
 } from '@expo/entity';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
 type ErrorsTestEntityFields = {
   id: number;

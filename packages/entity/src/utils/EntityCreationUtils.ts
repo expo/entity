@@ -1,8 +1,8 @@
-import { IEntityClass } from '../Entity';
-import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
-import { EntityTransactionalQueryContext } from '../EntityQueryContext';
-import { ReadonlyEntity } from '../ReadonlyEntity';
-import { ViewerContext } from '../ViewerContext';
+import type { IEntityClass } from '../Entity';
+import type { EntityPrivacyPolicy } from '../EntityPrivacyPolicy';
+import type { EntityTransactionalQueryContext } from '../EntityQueryContext';
+import type { ReadonlyEntity } from '../ReadonlyEntity';
+import type { ViewerContext } from '../ViewerContext';
 import { EntityDatabaseAdapterUniqueConstraintError } from '../errors/EntityDatabaseAdapterError';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError';
 

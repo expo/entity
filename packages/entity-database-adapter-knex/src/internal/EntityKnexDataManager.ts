@@ -1,25 +1,22 @@
+import type { EntityQueryContext, IEntityMetricsAdapter, EntityConfiguration } from '@expo/entity';
 import {
-  EntityQueryContext,
   timeAndLogLoadEventAsync,
   EntityMetricsLoadType,
-  IEntityMetricsAdapter,
-  EntityConfiguration,
   getDatabaseFieldForEntityField,
   EntityDatabaseAdapterPaginationCursorInvalidError,
 } from '@expo/entity';
 import assert from 'assert';
 
-import {
+import type {
   BasePostgresEntityDatabaseAdapter,
   FieldEqualityCondition,
-  NullsOrdering,
-  OrderByOrdering,
   PostgresOrderByClause,
   PostgresQuerySelectionModifiers,
 } from '../BasePostgresEntityDatabaseAdapter';
+import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter';
 import { PaginationStrategy } from '../PaginationStrategy';
 import { SQLFragment, SQLFragmentHelpers, identifier, unsafeRaw, sql } from '../SQLOperator';
-import { DistributiveOmit, NonNullableKeys } from './utilityTypes';
+import type { DistributiveOmit, NonNullableKeys } from './utilityTypes';
 
 interface DataManagerStandardSpecification<TFields extends Record<string, any>> {
   strategy: PaginationStrategy.STANDARD;

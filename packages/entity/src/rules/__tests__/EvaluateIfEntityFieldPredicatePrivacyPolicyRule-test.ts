@@ -1,10 +1,11 @@
 import { mock, instance, when } from 'ts-mockito';
 
-import { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy';
+import type { EntityPrivacyPolicyRuleEvaluationContext } from '../../EntityPrivacyPolicy';
 import { EntityQueryContext } from '../../EntityQueryContext';
 import { ViewerContext } from '../../ViewerContext';
 import { describePrivacyPolicyRule } from '../../utils/__testfixtures__/PrivacyPolicyRuleTestUtils';
-import { TestEntity, TestFields } from '../../utils/__testfixtures__/TestEntity';
+import type { TestFields } from '../../utils/__testfixtures__/TestEntity';
+import { TestEntity } from '../../utils/__testfixtures__/TestEntity';
 import { AlwaysAllowPrivacyPolicyRule } from '../AlwaysAllowPrivacyPolicyRule';
 import { EvaluateIfEntityFieldPredicatePrivacyPolicyRule } from '../EvaluateIfEntityFieldPredicatePrivacyPolicyRule';
 

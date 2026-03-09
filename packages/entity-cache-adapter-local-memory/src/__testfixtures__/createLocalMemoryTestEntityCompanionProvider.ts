@@ -1,12 +1,9 @@
-import {
-  EntityCompanionProvider,
-  IEntityMetricsAdapter,
-  NoOpEntityMetricsAdapter,
-} from '@expo/entity';
+import type { IEntityMetricsAdapter } from '@expo/entity';
+import { EntityCompanionProvider, NoOpEntityMetricsAdapter } from '@expo/entity';
 import { StubDatabaseAdapterProvider, StubQueryContextProvider } from '@expo/entity-testing-utils';
 import { TTLCache } from '@isaacs/ttlcache';
 
-import { ILocalMemoryCache, LocalMemoryCacheValue } from '../GenericLocalMemoryCacher';
+import type { ILocalMemoryCache, LocalMemoryCacheValue } from '../GenericLocalMemoryCacher';
 import { LocalMemoryCacheAdapterProvider } from '../LocalMemoryCacheAdapterProvider';
 
 const queryContextProvider = new StubQueryContextProvider();

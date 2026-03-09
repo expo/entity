@@ -1,15 +1,15 @@
+import type { EntityCompanionDefinition, ViewerContext } from '@expo/entity';
 import {
-  EntityCompanionDefinition,
   EntityConfiguration,
   DateField,
   IntField,
   StringField,
   UUIDField,
   EntityPrivacyPolicy,
-  ViewerContext,
   AlwaysAllowPrivacyPolicyRule,
 } from '@expo/entity';
-import { result, Result } from '@expo/results';
+import type { Result } from '@expo/results';
+import { result } from '@expo/results';
 
 import { PostgresEntity } from '../../PostgresEntity';
 

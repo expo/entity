@@ -1,6 +1,6 @@
 import nullthrows from '@expo/nullthrows';
 
-import { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
+import type { ISecondaryEntityCache } from './EntitySecondaryCacheLoader';
 
 /**
  * A ISecondaryEntityCache that composes other ISecondaryEntityCache instances.

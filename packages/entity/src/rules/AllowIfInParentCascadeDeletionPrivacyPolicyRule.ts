@@ -1,8 +1,11 @@
-import { IEntityClass } from '../Entity';
-import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from '../EntityPrivacyPolicy';
-import { EntityQueryContext } from '../EntityQueryContext';
-import { ReadonlyEntity } from '../ReadonlyEntity';
-import { ViewerContext } from '../ViewerContext';
+import type { IEntityClass } from '../Entity';
+import type {
+  EntityPrivacyPolicy,
+  EntityPrivacyPolicyEvaluationContext,
+} from '../EntityPrivacyPolicy';
+import type { EntityQueryContext } from '../EntityQueryContext';
+import type { ReadonlyEntity } from '../ReadonlyEntity';
+import type { ViewerContext } from '../ViewerContext';
 import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule';
 
 /**

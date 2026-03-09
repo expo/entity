@@ -1,11 +1,14 @@
-import { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
-import { EntityConstructionUtils } from './EntityConstructionUtils';
-import { EntityInvalidationUtils } from './EntityInvalidationUtils';
-import { EntityLoaderFactory } from './EntityLoaderFactory';
-import { EntityPrivacyPolicy, EntityPrivacyPolicyEvaluationContext } from './EntityPrivacyPolicy';
-import { EntityQueryContext } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerContext } from './ViewerContext';
+import type { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader';
+import type { EntityConstructionUtils } from './EntityConstructionUtils';
+import type { EntityInvalidationUtils } from './EntityInvalidationUtils';
+import type { EntityLoaderFactory } from './EntityLoaderFactory';
+import type {
+  EntityPrivacyPolicy,
+  EntityPrivacyPolicyEvaluationContext,
+} from './EntityPrivacyPolicy';
+import type { EntityQueryContext } from './EntityQueryContext';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerContext } from './ViewerContext';
 
 /**
  * Provides a cleaner API for loading entities by passing through the ViewerContext.

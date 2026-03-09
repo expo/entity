@@ -1,11 +1,11 @@
 import invariant from 'invariant';
 import { v7 as uuidv7 } from 'uuid';
 
-import { EntityConfiguration } from '../../EntityConfiguration';
+import type { EntityConfiguration } from '../../EntityConfiguration';
 import { EntityDatabaseAdapter } from '../../EntityDatabaseAdapter';
 import { IntField, StringField } from '../../EntityFields';
+import type { FieldTransformerMap } from '../../internal/EntityFieldTransformationUtils';
 import {
-  FieldTransformerMap,
   getDatabaseFieldForEntityField,
   transformFieldsToDatabaseObject,
 } from '../../internal/EntityFieldTransformationUtils';

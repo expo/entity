@@ -1,7 +1,7 @@
 import invariant from 'invariant';
 
-import { EntityConfiguration } from './EntityConfiguration';
-import { EntityQueryContext } from './EntityQueryContext';
+import type { EntityConfiguration } from './EntityConfiguration';
+import type { EntityQueryContext } from './EntityQueryContext';
 import {
   EntityDatabaseAdapterEmptyInsertResultError,
   EntityDatabaseAdapterEmptyUpdateResultError,
@@ -9,13 +9,13 @@ import {
   EntityDatabaseAdapterExcessiveInsertResultError,
   EntityDatabaseAdapterExcessiveUpdateResultError,
 } from './errors/EntityDatabaseAdapterError';
+import type { FieldTransformerMap } from './internal/EntityFieldTransformationUtils';
 import {
-  FieldTransformerMap,
   getDatabaseFieldForEntityField,
   transformDatabaseObjectToFields,
   transformFieldsToDatabaseObject,
 } from './internal/EntityFieldTransformationUtils';
-import { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
+import type { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces';
 
 /**
  * A database adapter is an interface by which entity objects can be

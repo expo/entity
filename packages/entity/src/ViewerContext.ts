@@ -1,13 +1,13 @@
-import { IEntityClass } from './Entity';
-import { DatabaseAdapterFlavor, EntityCompanionProvider } from './EntityCompanionProvider';
-import { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
-import {
+import type { IEntityClass } from './Entity';
+import type { DatabaseAdapterFlavor, EntityCompanionProvider } from './EntityCompanionProvider';
+import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy';
+import type {
   EntityQueryContext,
   EntityTransactionalQueryContext,
   TransactionConfig,
 } from './EntityQueryContext';
-import { ReadonlyEntity } from './ReadonlyEntity';
-import { ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';
+import type { ReadonlyEntity } from './ReadonlyEntity';
+import type { ViewerScopedEntityCompanion } from './ViewerScopedEntityCompanion';
 import { ViewerScopedEntityCompanionProvider } from './ViewerScopedEntityCompanionProvider';
 
 /**

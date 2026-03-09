@@ -1,8 +1,7 @@
-import { EntityConfiguration, GenericSecondaryEntityCache } from '@expo/entity';
-import {
-  GenericLocalMemoryCacher,
-  ILocalMemoryCache,
-} from '@expo/entity-cache-adapter-local-memory';
+import type { EntityConfiguration } from '@expo/entity';
+import { GenericSecondaryEntityCache } from '@expo/entity';
+import type { ILocalMemoryCache } from '@expo/entity-cache-adapter-local-memory';
+import { GenericLocalMemoryCacher } from '@expo/entity-cache-adapter-local-memory';
 
 /**
  * A local memory GenericSecondaryEntityCache.
