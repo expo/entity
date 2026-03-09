@@ -3,8 +3,6 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     "noEmit": true,
-    // Support running in development with `node --experimental-transform-types`
-    "rewriteRelativeImportExtensions": true,
     "verbatimModuleSyntax": true
   },
   "references": [{ "path": "../entity" }, { "path": "../entity-testing-utils" }]
