@@ -4,4 +4,4 @@
  * @module @expo/entity-secondary-cache-redis
  */
 
-export * from './RedisSecondaryEntityCache';
+export * from './RedisSecondaryEntityCache.ts';

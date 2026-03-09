@@ -4,5 +4,5 @@
  * @module @expo/entity-cache-adapter-local-memory
  */
 
-export * from './GenericLocalMemoryCacher';
-export * from './LocalMemoryCacheAdapterProvider';
+export * from './GenericLocalMemoryCacher.ts';
+export * from './LocalMemoryCacheAdapterProvider.ts';
