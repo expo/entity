@@ -197,8 +197,8 @@ export class SQLIdentifier {
  * Helper for referencing entity fields that can be used in SQL queries. This allows for type-safe references to fields of an entity
  * and does automatic translation to DB field names.
  */
-export class SQLEntityField<TFields extends Record<string, any>> {
-  constructor(public readonly fieldName: keyof TFields) {}
+export class SQLEntityField<TFields extends Record<string, any>, N extends keyof TFields> {
+  constructor(public readonly fieldName: N) {}
 }
 
 /**
@@ -238,9 +238,9 @@ export function identifier(name: string): SQLIdentifier {
  *
  * @param fieldName - The entity field name to reference.
  */
-export function entityField<TFields extends Record<string, any>>(
-  fieldName: keyof TFields,
-): SQLEntityField<TFields> {
+export function entityField<TFields extends Record<string, any>, N extends keyof TFields>(
+  fieldName: N,
+): SQLEntityField<TFields, N> {
   return new SQLEntityField(fieldName);
 }
 
@@ -278,26 +278,6 @@ export function unsafeRaw(sqlString: string): SQLUnsafeRaw {
 }
 
 /**
- * Wraps a SQLFragment or entity field name into an SQLExpression for fluent comparison usage.
- *
- * @example
- * ```ts
- * expression<MyFields>('age').gte(18)
- * expression<MyFields>('name').ilike('%john%')
- * expression(sql`${entityField('status')}`).eq('active')
- * ```
- */
-export function expression<TFields extends Record<string, any>>(
-  fragmentOrFieldName: SQLFragment<TFields> | keyof TFields,
-): SQLExpression<TFields> {
-  if (fragmentOrFieldName instanceof SQLFragment) {
-    return new SQLExpression(fragmentOrFieldName.sql, fragmentOrFieldName.bindings);
-  }
-  const fragment = sql`${entityField(fragmentOrFieldName)}`;
-  return new SQLExpression(fragment.sql, fragment.bindings);
-}
-
-/**
  * Tagged template literal function for SQL queries
  *
  * @example
@@ -313,7 +293,7 @@ export function sql<TFields extends Record<string, any>>(
     | SQLFragment<TFields>
     | SQLIdentifier
     | SQLUnsafeRaw
-    | SQLEntityField<TFields>
+    | SQLEntityField<TFields, keyof TFields>
     | SQLArrayValue
   )[]
 ): SQLFragment<TFields> {
@@ -382,87 +362,200 @@ type JsonSerializable =
  * The fluent methods return plain SQLFragment instances since they produce
  * complete conditions, not further chainable expressions.
  */
-export class SQLExpression<TFields extends Record<string, any>> extends SQLFragment<TFields> {
-  eq(value: SupportedSQLValue): SQLFragment<TFields> {
+export class SQLChainableFragment<
+  TFields extends Record<string, any>,
+  TValue extends SupportedSQLValue,
+> extends SQLFragment<TFields> {
+  /**
+   * Generates an equality condition (`= value`).
+   * Automatically converts `null`/`undefined` to `IS NULL`.
+   *
+   * @param value - The value to compare against
+   * @returns A {@link SQLFragment} representing the equality condition
+   */
+  eq(value: TValue | null | undefined): SQLFragment<TFields> {
     if (value === null || value === undefined) {
       return this.isNull();
     }
     return sql`${this} = ${value}`;
   }
 
-  neq(value: SupportedSQLValue): SQLFragment<TFields> {
+  /**
+   * Generates an inequality condition (`!= value`).
+   * Automatically converts `null`/`undefined` to `IS NOT NULL`.
+   *
+   * @param value - The value to compare against
+   * @returns A {@link SQLFragment} representing the inequality condition
+   */
+  neq(value: TValue | null | undefined): SQLFragment<TFields> {
     if (value === null || value === undefined) {
       return this.isNotNull();
     }
     return sql`${this} != ${value}`;
   }
 
-  gt(value: SupportedSQLValue): SQLFragment<TFields> {
+  /**
+   * Generates a greater-than condition (`> value`).
+   *
+   * @param value - The value to compare against
+   * @returns A {@link SQLFragment} representing the condition
+   */
+  gt(value: TValue): SQLFragment<TFields> {
     return sql`${this} > ${value}`;
   }
 
-  gte(value: SupportedSQLValue): SQLFragment<TFields> {
+  /**
+   * Generates a greater-than-or-equal-to condition (`>= value`).
+   *
+   * @param value - The value to compare against
+   * @returns A {@link SQLFragment} representing the condition
+   */
+  gte(value: TValue): SQLFragment<TFields> {
     return sql`${this} >= ${value}`;
   }
 
-  lt(value: SupportedSQLValue): SQLFragment<TFields> {
+  /**
+   * Generates a less-than condition (`< value`).
+   *
+   * @param value - The value to compare against
+   * @returns A {@link SQLFragment} representing the condition
+   */
+  lt(value: TValue): SQLFragment<TFields> {
     return sql`${this} < ${value}`;
   }
 
-  lte(value: SupportedSQLValue): SQLFragment<TFields> {
+  /**
+   * Generates a less-than-or-equal-to condition (`<= value`).
+   *
+   * @param value - The value to compare against
+   * @returns A {@link SQLFragment} representing the condition
+   */
+  lte(value: TValue): SQLFragment<TFields> {
     return sql`${this} <= ${value}`;
   }
 
+  /**
+   * Generates an `IS NULL` condition.
+   *
+   * @returns A {@link SQLFragment} representing the IS NULL check
+   */
   isNull(): SQLFragment<TFields> {
     return sql`${this} IS NULL`;
   }
 
+  /**
+   * Generates an `IS NOT NULL` condition.
+   *
+   * @returns A {@link SQLFragment} representing the IS NOT NULL check
+   */
   isNotNull(): SQLFragment<TFields> {
     return sql`${this} IS NOT NULL`;
   }
 
+  /**
+   * Generates a case-sensitive `LIKE` condition for pattern matching.
+   *
+   * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+   * @returns A {@link SQLFragment} representing the LIKE condition
+   */
   like(pattern: string): SQLFragment<TFields> {
     return sql`${this} LIKE ${pattern}`;
   }
 
+  /**
+   * Generates a case-sensitive `NOT LIKE` condition.
+   *
+   * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+   * @returns A {@link SQLFragment} representing the NOT LIKE condition
+   */
   notLike(pattern: string): SQLFragment<TFields> {
     return sql`${this} NOT LIKE ${pattern}`;
   }
 
+  /**
+   * Generates a case-insensitive `ILIKE` condition (PostgreSQL-specific).
+   *
+   * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+   * @returns A {@link SQLFragment} representing the ILIKE condition
+   */
   ilike(pattern: string): SQLFragment<TFields> {
     return sql`${this} ILIKE ${pattern}`;
   }
 
+  /**
+   * Generates a case-insensitive `NOT ILIKE` condition (PostgreSQL-specific).
+   *
+   * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+   * @returns A {@link SQLFragment} representing the NOT ILIKE condition
+   */
   notIlike(pattern: string): SQLFragment<TFields> {
     return sql`${this} NOT ILIKE ${pattern}`;
   }
 
-  inArray(values: readonly SupportedSQLValue[]): SQLFragment<TFields> {
+  /**
+   * Generates an `IN (...)` condition. Each array element becomes a separate
+   * bound parameter (`IN (?, ?, ?)`).
+   * Returns `FALSE` when the values array is empty.
+   *
+   * @param values - The values to check membership against
+   * @returns A {@link SQLFragment} representing the IN condition
+   */
+  inArray(values: readonly TValue[]): SQLFragment<TFields> {
     if (values.length === 0) {
       return sql`FALSE`;
     }
     return sql`${this} IN ${values}`;
   }
 
-  notInArray(values: readonly SupportedSQLValue[]): SQLFragment<TFields> {
+  /**
+   * Generates a `NOT IN (...)` condition. Each array element becomes a separate
+   * bound parameter.
+   * Returns `TRUE` when the values array is empty.
+   *
+   * @param values - The values to check non-membership against
+   * @returns A {@link SQLFragment} representing the NOT IN condition
+   */
+  notInArray(values: readonly TValue[]): SQLFragment<TFields> {
     if (values.length === 0) {
       return sql`TRUE`;
     }
     return sql`${this} NOT IN ${values}`;
   }
 
-  anyArray(values: readonly SupportedSQLValue[]): SQLFragment<TFields> {
+  /**
+   * Generates an `= ANY(?)` condition. Unlike {@link inArray}, the array is bound
+   * as a single parameter, producing a consistent query shape for query metrics.
+   * Returns `FALSE` when the values array is empty.
+   *
+   * @param values - The values to check membership against
+   * @returns A {@link SQLFragment} representing the = ANY condition
+   */
+  anyArray(values: readonly TValue[]): SQLFragment<TFields> {
     if (values.length === 0) {
       return sql`FALSE`;
     }
     return sql`${this} = ANY(${arrayValue(values)})`;
   }
 
-  between(min: SupportedSQLValue, max: SupportedSQLValue): SQLFragment<TFields> {
+  /**
+   * Generates a `BETWEEN min AND max` condition (inclusive on both ends).
+   *
+   * @param min - The lower bound
+   * @param max - The upper bound
+   * @returns A {@link SQLFragment} representing the BETWEEN condition
+   */
+  between(min: TValue, max: TValue): SQLFragment<TFields> {
     return sql`${this} BETWEEN ${min} AND ${max}`;
   }
 
-  notBetween(min: SupportedSQLValue, max: SupportedSQLValue): SQLFragment<TFields> {
+  /**
+   * Generates a `NOT BETWEEN min AND max` condition.
+   *
+   * @param min - The lower bound
+   * @param max - The upper bound
+   * @returns A {@link SQLFragment} representing the NOT BETWEEN condition
+   */
+  notBetween(min: TValue, max: TValue): SQLFragment<TFields> {
     return sql`${this} NOT BETWEEN ${min} AND ${max}`;
   }
 }
@@ -511,25 +604,505 @@ export type PostgresCastType = (typeof ALLOWED_CAST_TYPES)[number];
 
 const ALLOWED_CAST_TYPES_SET: ReadonlySet<string> = new Set<PostgresCastType>(ALLOWED_CAST_TYPES);
 
+// Helper to resolve expressionOrFieldName to a SQLFragment
+function resolveInner<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+): SQLFragment<TFields> {
+  return expressionOrFieldName instanceof SQLFragment
+    ? expressionOrFieldName
+    : sql`${entityField<TFields, keyof TFields>(expressionOrFieldName)}`;
+}
+
+// Helper to resolve expressionOrFieldName to a SQLChainableFragment for fluent chaining
+function resolveInnerExpr<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+): SQLChainableFragment<TFields, SupportedSQLValue> {
+  if (expressionOrFieldName instanceof SQLChainableFragment) {
+    return expressionOrFieldName;
+  }
+  const inner = resolveInner(expressionOrFieldName);
+  return new SQLChainableFragment(inner.sql, inner.bindings);
+}
+
+// --- Standalone overloaded helper functions ---
+// For methods with value params, the expression overload uses a conditional type to preserve
+// TValue from SQLChainableFragment (for type-safe value checking) while falling back to
+// SupportedSQLValue for plain SQLFragment inputs.
+
+// Extract TFields from a SQLFragment type
+type ExtractFields<T> = T extends SQLFragment<infer F> ? F : never;
+
+// Conditional value types for expression overloads.
+// Uses SQLChainableFragment<any, ...> so that TExpr alone drives inference (single type param).
+type ExprValueNullable<TExpr> =
+  TExpr extends SQLChainableFragment<any, infer TValue>
+    ? TValue | null | undefined
+    : SupportedSQLValue;
+
+type ExprValue<TExpr> =
+  TExpr extends SQLChainableFragment<any, infer TValue> ? TValue : SupportedSQLValue;
+
+type ExprValueArray<TExpr> =
+  TExpr extends SQLChainableFragment<any, infer TValue>
+    ? readonly TValue[]
+    : readonly SupportedSQLValue[];
+
+function inArrayHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  values: ExprValueArray<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function inArrayHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, values: readonly TFields[N][]): SQLFragment<TFields>;
+function inArrayHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  values: readonly SupportedSQLValue[],
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).inArray(values);
+}
+
+function anyArrayHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  values: ExprValueArray<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function anyArrayHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, values: readonly TFields[N][]): SQLFragment<TFields>;
+function anyArrayHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  values: readonly SupportedSQLValue[],
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).anyArray(values);
+}
+
+function notInArrayHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  values: ExprValueArray<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function notInArrayHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, values: readonly TFields[N][]): SQLFragment<TFields>;
+function notInArrayHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  values: readonly SupportedSQLValue[],
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).notInArray(values);
+}
+
+function betweenHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  min: ExprValue<TExpr>,
+  max: ExprValue<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function betweenHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, min: TFields[N], max: TFields[N]): SQLFragment<TFields>;
+function betweenHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  min: SupportedSQLValue,
+  max: SupportedSQLValue,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).between(min, max);
+}
+
+function notBetweenHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  min: ExprValue<TExpr>,
+  max: ExprValue<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function notBetweenHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, min: TFields[N], max: TFields[N]): SQLFragment<TFields>;
+function notBetweenHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  min: SupportedSQLValue,
+  max: SupportedSQLValue,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).notBetween(min, max);
+}
+
+function likeHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  pattern: string,
+): SQLFragment<ExtractFields<TExpr>>;
+function likeHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
+  fieldName: N,
+  pattern: string,
+): SQLFragment<TFields>;
+function likeHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  pattern: string,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).like(pattern);
+}
+
+function notLikeHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  pattern: string,
+): SQLFragment<ExtractFields<TExpr>>;
+function notLikeHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
+  fieldName: N,
+  pattern: string,
+): SQLFragment<TFields>;
+function notLikeHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  pattern: string,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).notLike(pattern);
+}
+
+function ilikeHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  pattern: string,
+): SQLFragment<ExtractFields<TExpr>>;
+function ilikeHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
+  fieldName: N,
+  pattern: string,
+): SQLFragment<TFields>;
+function ilikeHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  pattern: string,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).ilike(pattern);
+}
+
+function notIlikeHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  pattern: string,
+): SQLFragment<ExtractFields<TExpr>>;
+function notIlikeHelper<
+  TFields extends Record<string, any>,
+  N extends PickStringValueKeys<TFields>,
+>(fieldName: N, pattern: string): SQLFragment<TFields>;
+function notIlikeHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  pattern: string,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).notIlike(pattern);
+}
+
+function isNullHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+): SQLFragment<ExtractFields<TExpr>>;
+function isNullHelper<TFields extends Record<string, any>, N extends keyof TFields>(
+  fieldName: N,
+): SQLFragment<TFields>;
+function isNullHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).isNull();
+}
+
+function isNotNullHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+): SQLFragment<ExtractFields<TExpr>>;
+function isNotNullHelper<TFields extends Record<string, any>, N extends keyof TFields>(
+  fieldName: N,
+): SQLFragment<TFields>;
+function isNotNullHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).isNotNull();
+}
+
+function eqHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  value: ExprValueNullable<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function eqHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, value: TFields[N]): SQLFragment<TFields>;
+function eqHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  value: SupportedSQLValue,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).eq(value);
+}
+
+function neqHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  value: ExprValueNullable<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function neqHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, value: TFields[N]): SQLFragment<TFields>;
+function neqHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  value: SupportedSQLValue,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).neq(value);
+}
+
+function gtHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  value: ExprValue<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function gtHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, value: TFields[N]): SQLFragment<TFields>;
+function gtHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  value: SupportedSQLValue,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).gt(value);
+}
+
+function gteHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  value: ExprValue<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function gteHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, value: TFields[N]): SQLFragment<TFields>;
+function gteHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  value: SupportedSQLValue,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).gte(value);
+}
+
+function ltHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  value: ExprValue<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function ltHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, value: TFields[N]): SQLFragment<TFields>;
+function ltHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  value: SupportedSQLValue,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).lt(value);
+}
+
+function lteHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  value: ExprValue<TExpr>,
+): SQLFragment<ExtractFields<TExpr>>;
+function lteHelper<
+  TFields extends Record<string, any>,
+  N extends PickSupportedSQLValueKeys<TFields>,
+>(fieldName: N, value: TFields[N]): SQLFragment<TFields>;
+function lteHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  value: SupportedSQLValue,
+): SQLFragment<TFields> {
+  return resolveInnerExpr(expressionOrFieldName).lte(value);
+}
+
+function jsonContainsHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  value: JsonSerializable,
+): SQLFragment<ExtractFields<TExpr>>;
+function jsonContainsHelper<TFields extends Record<string, any>, N extends keyof TFields>(
+  fieldName: N,
+  value: JsonSerializable,
+): SQLFragment<TFields>;
+function jsonContainsHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  value: JsonSerializable,
+): SQLFragment<TFields> {
+  const serialized = JSON.stringify(value);
+  assert(
+    serialized !== undefined || value === undefined,
+    'jsonContains: value is not JSON-serializable',
+  );
+  const inner = resolveInner(expressionOrFieldName);
+  return sql`${inner} @> ${serialized}::jsonb`;
+}
+
+function jsonContainedByHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  value: JsonSerializable,
+): SQLFragment<ExtractFields<TExpr>>;
+function jsonContainedByHelper<TFields extends Record<string, any>, N extends keyof TFields>(
+  fieldName: N,
+  value: JsonSerializable,
+): SQLFragment<TFields>;
+function jsonContainedByHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  value: JsonSerializable,
+): SQLFragment<TFields> {
+  const serialized = JSON.stringify(value);
+  assert(
+    serialized !== undefined || value === undefined,
+    'jsonContainedBy: value is not JSON-serializable',
+  );
+  const inner = resolveInner(expressionOrFieldName);
+  return sql`${inner} <@ ${serialized}::jsonb`;
+}
+
+function jsonPathHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  path: string,
+): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+function jsonPathHelper<TFields extends Record<string, any>, N extends keyof TFields>(
+  fieldName: N,
+  path: string,
+): SQLChainableFragment<TFields, SupportedSQLValue>;
+function jsonPathHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  path: string,
+): SQLChainableFragment<TFields, SupportedSQLValue> {
+  const inner = resolveInner(expressionOrFieldName);
+  const wrapped = sql`${inner}->${path}`;
+  return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
+}
+
+function jsonPathTextHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  path: string,
+): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+function jsonPathTextHelper<TFields extends Record<string, any>, N extends keyof TFields>(
+  fieldName: N,
+  path: string,
+): SQLChainableFragment<TFields, SupportedSQLValue>;
+function jsonPathTextHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  path: string,
+): SQLChainableFragment<TFields, SupportedSQLValue> {
+  const inner = resolveInner(expressionOrFieldName);
+  const wrapped = sql`${inner}->>${path}`;
+  return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
+}
+
+function jsonDeepPathHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  path: readonly string[],
+): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+function jsonDeepPathHelper<TFields extends Record<string, any>, N extends keyof TFields>(
+  fieldName: N,
+  path: readonly string[],
+): SQLChainableFragment<TFields, SupportedSQLValue>;
+function jsonDeepPathHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  path: readonly string[],
+): SQLChainableFragment<TFields, SupportedSQLValue> {
+  const pathLiteral = `{${path.map(quotePostgresArrayElement).join(',')}}`;
+  const inner = resolveInner(expressionOrFieldName);
+  const wrapped = sql`${inner} #> ${pathLiteral}`;
+  return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
+}
+
+function jsonDeepPathTextHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  path: readonly string[],
+): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+function jsonDeepPathTextHelper<TFields extends Record<string, any>, N extends keyof TFields>(
+  fieldName: N,
+  path: readonly string[],
+): SQLChainableFragment<TFields, SupportedSQLValue>;
+function jsonDeepPathTextHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  path: readonly string[],
+): SQLChainableFragment<TFields, SupportedSQLValue> {
+  const pathLiteral = `{${path.map(quotePostgresArrayElement).join(',')}}`;
+  const inner = resolveInner(expressionOrFieldName);
+  const wrapped = sql`${inner} #>> ${pathLiteral}`;
+  return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
+}
+
+function castHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+  typeName: PostgresCastType,
+): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+function castHelper<TFields extends Record<string, any>, N extends keyof TFields>(
+  fieldName: N,
+  typeName: PostgresCastType,
+): SQLChainableFragment<TFields, SupportedSQLValue>;
+function castHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+  typeName: PostgresCastType,
+): SQLChainableFragment<TFields, SupportedSQLValue> {
+  assert(
+    ALLOWED_CAST_TYPES_SET.has(typeName),
+    `cast: unsupported type name "${typeName}". Allowed types: ${[...ALLOWED_CAST_TYPES_SET].join(', ')}`,
+  );
+  const inner = resolveInner(expressionOrFieldName);
+  const wrapped = sql`(${inner})::${unsafeRaw(typeName)}`;
+  return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
+}
+
+function lowerHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+function lowerHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
+  fieldName: N,
+): SQLChainableFragment<TFields, TFields[N]>;
+function lowerHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+): SQLChainableFragment<TFields, SupportedSQLValue> {
+  const inner = resolveInner(expressionOrFieldName);
+  const wrapped = sql`LOWER(${inner})`;
+  return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
+}
+
+function upperHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+function upperHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
+  fieldName: N,
+): SQLChainableFragment<TFields, TFields[N]>;
+function upperHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+): SQLChainableFragment<TFields, SupportedSQLValue> {
+  const inner = resolveInner(expressionOrFieldName);
+  const wrapped = sql`UPPER(${inner})`;
+  return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
+}
+
+function trimHelper<TExpr extends SQLFragment<any>>(
+  expression: TExpr,
+): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+function trimHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
+  fieldName: N,
+): SQLChainableFragment<TFields, TFields[N]>;
+function trimHelper<TFields extends Record<string, any>>(
+  expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
+): SQLChainableFragment<TFields, SupportedSQLValue> {
+  const inner = resolveInner(expressionOrFieldName);
+  const wrapped = sql`TRIM(${inner})`;
+  return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
+}
+
 /**
- * Common SQL helper functions for building queries
+ * Common SQL helper functions for building queries.
+ *
+ * All methods accept either a field name (string) or a SQLFragment/SQLChainableFragment as the
+ * first argument. When a SQLChainableFragment with a known TValue is passed (e.g. from trim, lower),
+ * value parameters are type-checked against that TValue.
+ *
+ * @example
+ * ```ts
+ * // Field name usage
+ * SQLExpression.eq('status', 'active')
+ *
+ * // SQLFragment/SQLChainableFragment usage
+ * SQLExpression.eq(sql`${entityField('status')}`, 'active')
+ * SQLExpression.eq(SQLExpression.trim('name'), 'hello') // value constrained to string
+ * ```
  */
-export const SQLFragmentHelpers = {
+export const SQLExpression = {
   /**
-   * IN clause helper
+   * IN clause helper.
    *
    * @example
    * ```ts
-   * const query = SQLFragmentHelpers.inArray<MyFields, 'id'>('status', ['active', 'pending']);
-   * // Generates: ?? IN (?, ?) with entityField binding for 'status' and value bindings
+   * SQLExpression.inArray('status', ['active', 'pending'])
+   * SQLExpression.inArray(SQLExpression.lower('status'), ['active', 'pending'])
    * ```
    */
-  inArray<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    values: readonly TFields[N][],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).inArray(values);
-  },
+  inArray: inArrayHelper,
 
   /**
    * = ANY() clause helper. Binds the array as a single parameter instead of expanding it.
@@ -538,342 +1111,187 @@ export const SQLFragmentHelpers = {
    *
    * @example
    * ```ts
-   * const query = SQLFragmentHelpers.anyArray('status', ['active', 'pending']);
-   * // Generates: ?? = ANY(?) with entityField binding for 'status' and a single array value binding
+   * SQLExpression.anyArray('status', ['active', 'pending'])
    * ```
    */
-  anyArray<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    values: readonly TFields[N][],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).anyArray(values);
-  },
+  anyArray: anyArrayHelper,
 
   /**
-   * NOT IN clause helper
+   * NOT IN clause helper.
    */
-  notInArray<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    values: readonly TFields[N][],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).notInArray(values);
-  },
+  notInArray: notInArrayHelper,
 
   /**
-   * BETWEEN helper
+   * BETWEEN helper.
    *
    * @example
    * ```ts
-   * const query = SQLFragmentHelpers.between<MyFields, 'id'>('age', 18, 65);
-   * // Generates: ?? BETWEEN ? AND ? with entityField binding for 'age' and value bindings
+   * SQLExpression.between('age', 18, 65)
+   * SQLExpression.between(SQLExpression.cast('age', 'int'), 18, 65)
    * ```
    */
-  between<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    min: TFields[N],
-    max: TFields[N],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).between(min, max);
-  },
+  between: betweenHelper,
 
   /**
-   * NOT BETWEEN helper
+   * NOT BETWEEN helper.
    */
-  notBetween<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    min: TFields[N],
-    max: TFields[N],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).notBetween(min, max);
-  },
+  notBetween: notBetweenHelper,
 
   /**
-   * LIKE helper with automatic escaping
+   * LIKE helper for case-sensitive pattern matching.
    *
    * @example
    * ```ts
-   * const query = SQLFragmentHelpers.like<MyFields, 'id'>('name', '%John%');
-   * // Generates: ?? LIKE ? with entityField binding for 'name' and value binding
+   * SQLExpression.like('name', '%John%')
    * ```
    */
-  like<TFields extends Record<string, any>>(
-    fieldName: PickStringValueKeys<TFields>,
-    pattern: string,
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).like(pattern);
-  },
+  like: likeHelper,
 
   /**
-   * NOT LIKE helper
+   * NOT LIKE helper.
    */
-  notLike<TFields extends Record<string, any>>(
-    fieldName: PickStringValueKeys<TFields>,
-    pattern: string,
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).notLike(pattern);
-  },
+  notLike: notLikeHelper,
 
   /**
-   * ILIKE helper for case-insensitive matching
+   * ILIKE helper for case-insensitive matching (PostgreSQL-specific).
    */
-  ilike<TFields extends Record<string, any>>(
-    fieldName: PickStringValueKeys<TFields>,
-    pattern: string,
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).ilike(pattern);
-  },
+  ilike: ilikeHelper,
 
   /**
-   * NOT ILIKE helper for case-insensitive non-matching
+   * NOT ILIKE helper for case-insensitive non-matching (PostgreSQL-specific).
    */
-  notIlike<TFields extends Record<string, any>>(
-    fieldName: PickStringValueKeys<TFields>,
-    pattern: string,
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).notIlike(pattern);
-  },
+  notIlike: notIlikeHelper,
 
   /**
-   * NULL check helper
+   * IS NULL check helper.
    */
-  isNull<TFields extends Record<string, any>>(fieldName: keyof TFields): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).isNull();
-  },
+  isNull: isNullHelper,
 
   /**
-   * NOT NULL check helper
+   * IS NOT NULL check helper.
    */
-  isNotNull<TFields extends Record<string, any>>(fieldName: keyof TFields): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).isNotNull();
-  },
+  isNotNull: isNotNullHelper,
 
   /**
-   * Single-equals-equality operator
+   * Equality operator. Automatically converts null/undefined to IS NULL.
    */
-  eq<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    value: TFields[N],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).eq(value);
-  },
+  eq: eqHelper,
 
   /**
-   * Single-equals-inequality operator
+   * Inequality operator. Automatically converts null/undefined to IS NOT NULL.
    */
-  neq<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    value: TFields[N],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).neq(value);
-  },
+  neq: neqHelper,
 
   /**
-   * Greater-than comparison operator
+   * Greater-than comparison operator.
    */
-  gt<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    value: TFields[N],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).gt(value);
-  },
+  gt: gtHelper,
 
   /**
-   * Greater-than-or-equal-to comparison operator
+   * Greater-than-or-equal-to comparison operator.
    */
-  gte<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    value: TFields[N],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).gte(value);
-  },
+  gte: gteHelper,
 
   /**
-   * Less-than comparison operator
+   * Less-than comparison operator.
    */
-  lt<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    value: TFields[N],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).lt(value);
-  },
+  lt: ltHelper,
 
   /**
-   * Less-than-or-equal-to comparison operator
+   * Less-than-or-equal-to comparison operator.
    */
-  lte<TFields extends Record<string, any>, N extends PickSupportedSQLValueKeys<TFields>>(
-    fieldName: N,
-    value: TFields[N],
-  ): SQLFragment<TFields> {
-    return expression<TFields>(fieldName).lte(value);
-  },
+  lte: lteHelper,
 
   /**
-   * JSON contains operator (\@\>)
+   * JSON contains operator (\@\>).
    */
-  jsonContains<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
-    value: JsonSerializable,
-  ): SQLFragment<TFields> {
-    const serialized = JSON.stringify(value);
-    // JSON.stringify returns undefined for unsupported types, but we also want to allow undefined as a value
-    assert(
-      serialized !== undefined || value === undefined,
-      'jsonContains: value is not JSON-serializable',
-    );
-    return sql`${entityField(fieldName)} @> ${serialized}::jsonb`;
-  },
+  jsonContains: jsonContainsHelper,
 
   /**
-   * JSON contained by operator (\<\@\)
+   * JSON contained by operator (\<\@\).
    */
-  jsonContainedBy<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
-    value: JsonSerializable,
-  ): SQLFragment<TFields> {
-    const serialized = JSON.stringify(value);
-    // JSON.stringify returns undefined for unsupported types, but we also want to allow undefined as a value
-    assert(
-      serialized !== undefined || value === undefined,
-      'jsonContainedBy: value is not JSON-serializable',
-    );
-    return sql`${entityField(fieldName)} <@ ${serialized}::jsonb`;
-  },
+  jsonContainedBy: jsonContainedByHelper,
 
   /**
-   * JSON path extraction helper (-\>)
-   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   * JSON path extraction helper (-\>).
+   * Returns an SQLChainableFragment so that fluent comparison methods can be chained.
    */
-  jsonPath<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
-    path: string,
-  ): SQLExpression<TFields> {
-    return expression(sql`${entityField(fieldName)}->${path}`);
-  },
+  jsonPath: jsonPathHelper,
 
   /**
-   * JSON path text extraction helper (-\>\>)
-   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   * JSON path text extraction helper (-\>\>).
+   * Returns an SQLChainableFragment so that fluent comparison methods can be chained.
    */
-  jsonPathText<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
-    path: string,
-  ): SQLExpression<TFields> {
-    return expression(sql`${entityField(fieldName)}->>${path}`);
-  },
+  jsonPathText: jsonPathTextHelper,
 
   /**
-   * JSON deep path extraction helper (#\>)
+   * JSON deep path extraction helper (#\>).
    * Extracts a JSON sub-object at the specified key path, returning jsonb.
-   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   * Returns an SQLChainableFragment so that fluent comparison methods can be chained.
    *
-   * @param fieldName - The entity field containing JSON/JSONB data
+   * @param expressionOrFieldName - A SQLFragment/SQLChainableFragment or entity field name
    * @param path - Array of keys forming the path (e.g., ['user', 'address', 'city'])
    */
-  jsonDeepPath<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
-    path: readonly string[],
-  ): SQLExpression<TFields> {
-    const pathLiteral = `{${path.map(quotePostgresArrayElement).join(',')}}`;
-    return expression(sql`${entityField(fieldName)} #> ${pathLiteral}`);
-  },
+  jsonDeepPath: jsonDeepPathHelper,
 
   /**
-   * JSON deep path text extraction helper (#\>\>)
+   * JSON deep path text extraction helper (#\>\>).
    * Extracts a JSON sub-object at the specified key path as text.
-   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   * Returns an SQLChainableFragment so that fluent comparison methods can be chained.
    *
-   * @param fieldName - The entity field containing JSON/JSONB data
+   * @param expressionOrFieldName - A SQLFragment/SQLChainableFragment or entity field name
    * @param path - Array of keys forming the path (e.g., ['user', 'address', 'city'])
    */
-  jsonDeepPathText<TFields extends Record<string, any>>(
-    fieldName: keyof TFields,
-    path: readonly string[],
-  ): SQLExpression<TFields> {
-    const pathLiteral = `{${path.map(quotePostgresArrayElement).join(',')}}`;
-    return expression(sql`${entityField(fieldName)} #>> ${pathLiteral}`);
-  },
+  jsonDeepPathText: jsonDeepPathTextHelper,
 
   /**
-   * SQL type cast helper (::type)
-   * Casts an expression to a PostgreSQL type.
-   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   * SQL type cast helper (::type).
+   * Casts an expression or field to a PostgreSQL type.
+   * Returns an SQLChainableFragment so that fluent comparison methods can be chained.
    *
-   * @param fragment - An SQLFragment or SQLExpression to cast
+   * @param expressionOrFieldName - A SQLFragment/SQLChainableFragment or entity field name to cast
    * @param typeName - The PostgreSQL type name (e.g., 'int', 'text', 'timestamptz')
    */
-  cast<TFields extends Record<string, any>>(
-    fragmentOrExpression: SQLFragment<TFields>,
-    typeName: PostgresCastType,
-  ): SQLExpression<TFields> {
-    assert(
-      ALLOWED_CAST_TYPES_SET.has(typeName),
-      `cast: unsupported type name "${typeName}". Allowed types: ${[...ALLOWED_CAST_TYPES_SET].join(', ')}`,
-    );
-    return expression(sql`(${fragmentOrExpression})::${unsafeRaw(typeName)}`);
-  },
+  cast: castHelper,
 
   /**
-   * COALESCE helper
+   * COALESCE helper.
    * Returns the first non-null value from the given expressions/values.
-   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   * Returns an SQLChainableFragment so that fluent comparison methods can be chained.
    */
   coalesce<TFields extends Record<string, any>>(
     ...args: readonly (SQLFragment<TFields> | SupportedSQLValue)[]
-  ): SQLExpression<TFields> {
+  ): SQLChainableFragment<TFields, SupportedSQLValue> {
     const fragments = args.map((arg) => {
       if (arg instanceof SQLFragment) {
         return arg;
       }
       return sql`${arg}`;
     });
-    const inner = SQLFragment.joinWithCommaSeparator(...fragments);
-    return expression(sql`COALESCE(${inner})`);
+    const inner = sql`COALESCE(${SQLFragment.joinWithCommaSeparator(...fragments)})`;
+    return new SQLChainableFragment(inner.sql, inner.bindings);
   },
 
   /**
    * LOWER helper
    * Converts a string expression to lowercase.
-   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   * Returns an SQLChainableFragment so that fluent comparison methods can be chained.
    */
-  lower<TFields extends Record<string, any>>(
-    expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
-  ): SQLExpression<TFields> {
-    const inner =
-      expressionOrFieldName instanceof SQLFragment
-        ? expressionOrFieldName
-        : sql`${entityField(expressionOrFieldName)}`;
-    return expression(sql`LOWER(${inner})`);
-  },
+  lower: lowerHelper,
 
   /**
    * UPPER helper
    * Converts a string expression to uppercase.
-   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   * Returns an SQLChainableFragment so that fluent comparison methods can be chained.
    */
-  upper<TFields extends Record<string, any>>(
-    expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
-  ): SQLExpression<TFields> {
-    const inner =
-      expressionOrFieldName instanceof SQLFragment
-        ? expressionOrFieldName
-        : sql`${entityField(expressionOrFieldName)}`;
-    return expression(sql`UPPER(${inner})`);
-  },
+  upper: upperHelper,
 
   /**
    * TRIM helper
    * Removes leading and trailing whitespace from a string expression.
-   * Returns an SQLExpression so that fluent comparison methods can be chained.
+   * Returns an SQLChainableFragment so that fluent comparison methods can be chained.
    */
-  trim<TFields extends Record<string, any>>(
-    expressionOrFieldName: SQLFragment<TFields> | keyof TFields,
-  ): SQLExpression<TFields> {
-    const inner =
-      expressionOrFieldName instanceof SQLFragment
-        ? expressionOrFieldName
-        : sql`${entityField(expressionOrFieldName)}`;
-    return expression(sql`TRIM(${inner})`);
-  },
+  trim: trimHelper,
 
   /**
    * Logical AND of multiple fragments
@@ -885,7 +1303,7 @@ export const SQLFragmentHelpers = {
       return sql`TRUE`;
     }
     return joinSQLFragments(
-      conditions.map((c) => SQLFragmentHelpers.group(c)),
+      conditions.map((c) => SQLExpression.group(c)),
       ' AND ',
     );
   },
@@ -900,7 +1318,7 @@ export const SQLFragmentHelpers = {
       return sql`FALSE`;
     }
     return joinSQLFragments(
-      conditions.map((c) => SQLFragmentHelpers.group(c)),
+      conditions.map((c) => SQLExpression.group(c)),
       ' OR ',
     );
   },

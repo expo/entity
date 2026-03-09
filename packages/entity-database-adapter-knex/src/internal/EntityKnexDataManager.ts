@@ -15,7 +15,7 @@ import type {
 } from '../BasePostgresEntityDatabaseAdapter.ts';
 import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter.ts';
 import { PaginationStrategy } from '../PaginationStrategy.ts';
-import { SQLFragment, SQLFragmentHelpers, identifier, sql, unsafeRaw } from '../SQLOperator.ts';
+import { SQLFragment, SQLExpression, identifier, sql, unsafeRaw } from '../SQLOperator.ts';
 import type { DistributiveOmit, NonNullableKeys } from './utilityTypes.ts';
 
 interface DataManagerStandardSpecification<TFields extends Record<string, any>> {
@@ -329,7 +329,7 @@ export class EntityKnexDataManager<
 
       // Combine WHERE conditions: base where + search where
       const whereClause =
-        where && searchWhere ? SQLFragmentHelpers.and(where, searchWhere) : (where ?? searchWhere);
+        where && searchWhere ? SQLExpression.and(where, searchWhere) : (where ?? searchWhere);
 
       const fieldsToUseInPostgresTupleCursor =
         search.strategy === PaginationStrategy.TRIGRAM_SEARCH
@@ -674,7 +674,7 @@ export class EntityKnexDataManager<
     tableAlias?: typeof CURSOR_ROW_TABLE_ALIAS,
   ): SQLFragment<TFields> {
     const ilikeConditions = this.buildILikeConditions(search, tableAlias);
-    return sql`CASE WHEN ${SQLFragmentHelpers.or(...ilikeConditions)} THEN 1 ELSE 0 END`;
+    return sql`CASE WHEN ${SQLExpression.or(...ilikeConditions)} THEN 1 ELSE 0 END`;
   }
 
   private buildTrigramSimilarityGreatestExpression(
@@ -772,7 +772,7 @@ export class EntityKnexDataManager<
         ];
 
         return {
-          searchWhere: conditions.length > 0 ? SQLFragmentHelpers.or(...conditions) : sql`FALSE`,
+          searchWhere: conditions.length > 0 ? SQLExpression.or(...conditions) : sql`FALSE`,
           searchOrderByClauses,
         };
       }
@@ -816,7 +816,7 @@ export class EntityKnexDataManager<
         ];
 
         return {
-          searchWhere: SQLFragmentHelpers.or(...allConditions),
+          searchWhere: SQLExpression.or(...allConditions),
           searchOrderByClauses,
         };
       }

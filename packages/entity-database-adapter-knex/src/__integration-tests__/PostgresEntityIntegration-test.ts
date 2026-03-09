@@ -15,7 +15,7 @@ import type { PaginationSpecification } from '../AuthorizationResultBasedKnexEnt
 import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter.ts';
 import { PaginationStrategy } from '../PaginationStrategy.ts';
 import type { SQLFragment } from '../SQLOperator.ts';
-import { entityField, sql, SQLFragmentHelpers, unsafeRaw } from '../SQLOperator.ts';
+import { entityField, sql, SQLExpression, unsafeRaw } from '../SQLOperator.ts';
 import type { PostgresTestEntityFields } from '../__testfixtures__/PostgresTestEntity.ts';
 import { PostgresTestEntity } from '../__testfixtures__/PostgresTestEntity.ts';
 import { PostgresTriggerTestEntity } from '../__testfixtures__/PostgresTriggerTestEntity.ts';
@@ -456,7 +456,7 @@ describe('postgres entity integration', () => {
 
     it('supports SQL helper functions', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-      const { and, or, eq, neq, inArray } = SQLFragmentHelpers;
+      const { and, or, eq, neq, inArray } = SQLExpression;
 
       await enforceAsyncResult(
         PostgresTestEntity.creatorWithAuthorizationResults(vc1)
@@ -523,7 +523,7 @@ describe('postgres entity integration', () => {
 
     it('handles empty-array and empty-condition edge cases with TRUE/FALSE', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-      const { and, or, inArray } = SQLFragmentHelpers;
+      const { and, or, inArray } = SQLExpression;
 
       await enforceAsyncResult(
         PostgresTestEntity.creatorWithAuthorizationResults(vc1)
@@ -770,7 +770,7 @@ describe('postgres entity integration', () => {
         sql`(has_a_cat = ${true} AND has_a_dog = ${true})`,
       ];
       const joinedResults = await PostgresTestEntity.knexLoader(vc1)
-        .loadManyBySQL(SQLFragmentHelpers.or<PostgresTestEntityFields>(...conditions))
+        .loadManyBySQL(SQLExpression.or<PostgresTestEntityFields>(...conditions))
         .orderBy('name', OrderByOrdering.ASCENDING)
         .executeAsync();
 
