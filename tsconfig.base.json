@@ -1,5 +1,5 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node24/tsconfig"],
+  "extends": ["@tsconfig/bases/strictest", "@tsconfig/bases/node24"],
   "compilerOptions": {
     "composite": true,
     "outDir": "${configDir}/build",
