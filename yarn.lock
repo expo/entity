@@ -4462,17 +4462,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node24@npm:24.0.4":
-  version: 24.0.4
-  resolution: "@tsconfig/node24@npm:24.0.4"
-  checksum: 10c0/9c5d4173204c6935c45d3ff0584fd423bd7d8bc3f6b246e646320ae584e4226b34ea1c66ec67cd16769c73e7e80f4cc562287b0acaa4ec81aa482463972ff83f
-  languageName: node
-  linkType: hard
-
-"@tsconfig/strictest@npm:2.0.8":
-  version: 2.0.8
-  resolution: "@tsconfig/strictest@npm:2.0.8"
-  checksum: 10c0/96d7f1c6988c284886e7f2caea87415a6ebc779dc24c3f102cfa83b7d924da1363176b09c4600d11a1205bf2d819f35515c542a4bbcbe2fe13c1d7833376d203
+"@tsconfig/bases@npm:1.0.23":
+  version: 1.0.23
+  resolution: "@tsconfig/bases@npm:1.0.23"
+  checksum: 10c0/6d0ba46b5f683e67fee15b870898f6f445f8c047f90dbbe02f8a1166d831f3ebf910054f7d5e85b7c8b8818ac226bfccca635a7bb8695c00825ec837317ab19e
   languageName: node
   linkType: hard
 
@@ -13195,8 +13188,7 @@ __metadata:
     "@babel/core": "npm:7.29.0"
     "@babel/preset-env": "npm:7.29.0"
     "@babel/preset-typescript": "npm:7.28.5"
-    "@tsconfig/node24": "npm:24.0.4"
-    "@tsconfig/strictest": "npm:2.0.8"
+    "@tsconfig/bases": "npm:1.0.23"
     "@types/babel__core": "npm:7.20.5"
     "@types/babel__preset-env": "npm:7.10.0"
     "@types/node": "npm:24.12.0"
