@@ -6,13 +6,34 @@
     "customManagers:githubActionsVersions",
     "helpers:pinGitHubActionDigestsToSemver"
   ],
+  "schedule": ["before 9am on monday"],
+  "vulnerabilityAlerts": {
+    "schedule": ["at any time"]
+  },
   "packageRules": [
     {
       "matchFileNames": [
         "packages/entity-example/**",
         "packages/entity-full-integration-tests/**"
       ],
-      "extends": [ ":pinAllExceptPeerDependencies" ]
+      "extends": [":pinAllExceptPeerDependencies"]
+    },
+    {
+      "matchManagers": ["github-actions", "custom.regex"],
+      "matchFileNames": [".github/**"],
+      "groupName": "CI workflows"
+    },
+    {
+      "matchPackagePatterns": ["^eslint"],
+      "groupName": "eslint"
+    },
+    {
+      "matchPackagePatterns": ["^@types/"],
+      "groupName": "type definitions"
+    },
+    {
+      "matchPackagePatterns": ["^jest", "^ts-jest", "^@jest/"],
+      "groupName": "jest"
     }
   ]
 }
