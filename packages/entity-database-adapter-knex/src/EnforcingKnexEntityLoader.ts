@@ -159,7 +159,7 @@ export class EnforcingKnexEntityLoader<
    *   .limit(10)
    *   .executeAsync();
    *
-   * const { between, inArray } = SQLFragmentHelpers;
+   * const { between, inArray } = SQLExpression;
    * const filtered = await ExampleEntity.loader(vc)
    *   .loadManyBySQL(
    *     sql`${between('age', 18, 65)} AND ${inArray('role', ['admin', 'moderator'])}`

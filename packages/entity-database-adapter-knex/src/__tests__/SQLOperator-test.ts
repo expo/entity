@@ -4,15 +4,15 @@ import { describe, expect, it } from '@jest/globals';
 import {
   arrayValue,
   entityField,
-  expression,
   identifier,
   sql,
   SQLEntityField,
-  SQLExpression,
+  SQLChainableFragment,
   SQLFragment,
-  SQLFragmentHelpers,
+  SQLExpression,
   SQLIdentifier,
   unsafeRaw,
+  type SupportedSQLValue,
 } from '../SQLOperator.ts';
 import type { TestFields } from './fixtures/TestEntity.ts';
 import { testEntityConfiguration } from './fixtures/TestEntity.ts';
@@ -72,7 +72,7 @@ describe('SQLOperator', () => {
 
     it('handles arrayValue with entity field for = ANY()', () => {
       const values = ['active', 'pending'];
-      const fragment = sql`${entityField<TestFields>('stringField')} = ANY(${arrayValue(values)})`;
+      const fragment = sql`${entityField('stringField')} = ANY(${arrayValue(values)})`;
 
       expect(fragment.sql).toBe('?? = ANY(?)');
       expect(fragment.getKnexBindings(getColumnForField)).toEqual([
@@ -207,7 +207,7 @@ describe('SQLOperator', () => {
         filters.push(sql`category = ${'electronics'}`);
 
         if (filters.length > 0) {
-          fragments.push(sql`WHERE ${SQLFragmentHelpers.and(...filters)}`);
+          fragments.push(sql`WHERE ${SQLExpression.and(...filters)}`);
         }
 
         // Add ORDER BY
@@ -427,33 +427,33 @@ describe('SQLOperator', () => {
 
   describe(SQLEntityField, () => {
     it('stores the entity field name', () => {
-      const field = entityField<TestFields>('stringField');
+      const field = entityField('stringField');
       expect(field.fieldName).toBe('stringField');
     });
 
     it('uses ?? placeholder in SQL fragments', () => {
-      const fragment = sql`SELECT ${entityField<TestFields>('stringField')} FROM users`;
+      const fragment = sql`SELECT ${entityField('stringField')} FROM users`;
 
       expect(fragment.sql).toBe('SELECT ?? FROM users');
       expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
     });
 
     it('translates entity field name to database column name via getKnexBindings', () => {
-      const fragment = sql`WHERE ${entityField<TestFields>('intField')} = ${42}`;
+      const fragment = sql`WHERE ${entityField('intField')} = ${42}`;
 
       expect(fragment.sql).toBe('WHERE ?? = ?');
       expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 42]);
     });
 
     it('translates the id field correctly', () => {
-      const fragment = sql`WHERE ${entityField<TestFields>('customIdField')} = ${'some-id'}`;
+      const fragment = sql`WHERE ${entityField('customIdField')} = ${'some-id'}`;
 
       expect(fragment.sql).toBe('WHERE ?? = ?');
       expect(fragment.getKnexBindings(getColumnForField)).toEqual(['custom_id', 'some-id']);
     });
 
     it('works alongside identifiers and values', () => {
-      const fragment = sql`SELECT ${identifier('table_name')}.${entityField<TestFields>('stringField')} WHERE ${entityField<TestFields>('intField')} > ${10}`;
+      const fragment = sql`SELECT ${identifier('table_name')}.${entityField('stringField')} WHERE ${entityField('intField')} > ${10}`;
 
       expect(fragment.sql).toBe('SELECT ??.?? WHERE ?? > ?');
       expect(fragment.getKnexBindings(getColumnForField)).toEqual([
@@ -465,7 +465,7 @@ describe('SQLOperator', () => {
     });
 
     it('works with multiple entity fields', () => {
-      const fragment = sql`SELECT ${entityField<TestFields>('stringField')}, ${entityField<TestFields>('intField')}, ${entityField<TestFields>('dateField')} FROM test`;
+      const fragment = sql`SELECT ${entityField('stringField')}, ${entityField('intField')}, ${entityField('dateField')} FROM test`;
 
       expect(fragment.sql).toBe('SELECT ??, ??, ?? FROM test');
       expect(fragment.getKnexBindings(getColumnForField)).toEqual([
@@ -476,7 +476,7 @@ describe('SQLOperator', () => {
     });
 
     it('works in nested SQL fragments', () => {
-      const inner = sql`${entityField<TestFields>('stringField')} = ${'hello'}`;
+      const inner = sql`${entityField('stringField')} = ${'hello'}`;
       const outer = sql`SELECT * FROM test WHERE ${inner}`;
 
       expect(outer.sql).toBe('SELECT * FROM test WHERE ?? = ?');
@@ -484,10 +484,10 @@ describe('SQLOperator', () => {
     });
   });
 
-  describe('SQLFragmentHelpers', () => {
-    describe(SQLFragmentHelpers.inArray, () => {
+  describe('SQLExpression', () => {
+    describe(SQLExpression.inArray, () => {
       it('generates IN clause with values', () => {
-        const fragment = SQLFragmentHelpers.inArray('stringField', ['active', 'pending']);
+        const fragment = SQLExpression.inArray('stringField', ['active', 'pending']);
 
         expect(fragment.sql).toBe('?? IN (?, ?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([
@@ -498,16 +498,34 @@ describe('SQLOperator', () => {
       });
 
       it('handles empty array', () => {
-        const fragment = SQLFragmentHelpers.inArray('stringField', []);
+        const fragment = SQLExpression.inArray('stringField', []);
 
         expect(fragment.sql).toBe('FALSE'); // Always false
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([]);
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.inArray(sql<TestFields>`${entityField('stringField')}`, [
+          'a',
+          'b',
+        ]);
+        expect(fragment.sql).toBe('?? IN (?, ?)');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'a', 'b']);
+      });
+
+      it('accepts a SQLChainableFragment and constrains value type', () => {
+        const fragment = SQLExpression.inArray(
+          SQLExpression.trim<TestFields, 'stringField'>('stringField'),
+          ['a', 'b'],
+        );
+        expect(fragment.sql).toBe('TRIM(??) IN (?, ?)');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'a', 'b']);
+      });
     });
 
-    describe(SQLFragmentHelpers.notInArray, () => {
+    describe(SQLExpression.notInArray, () => {
       it('generates NOT IN clause with values', () => {
-        const fragment = SQLFragmentHelpers.notInArray('stringField', ['deleted', 'archived']);
+        const fragment = SQLExpression.notInArray('stringField', ['deleted', 'archived']);
 
         expect(fragment.sql).toBe('?? NOT IN (?, ?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([
@@ -518,16 +536,24 @@ describe('SQLOperator', () => {
       });
 
       it('handles empty array', () => {
-        const fragment = SQLFragmentHelpers.notInArray('stringField', []);
+        const fragment = SQLExpression.notInArray('stringField', []);
 
         expect(fragment.sql).toBe('TRUE'); // Always true
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([]);
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.notInArray(sql<TestFields>`${entityField('stringField')}`, [
+          'x',
+        ]);
+        expect(fragment.sql).toBe('?? NOT IN (?)');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'x']);
+      });
     });
 
-    describe(SQLFragmentHelpers.anyArray, () => {
+    describe(SQLExpression.anyArray, () => {
       it('generates = ANY() clause with values', () => {
-        const fragment = SQLFragmentHelpers.anyArray('stringField', ['active', 'pending']);
+        const fragment = SQLExpression.anyArray('stringField', ['active', 'pending']);
 
         expect(fragment.sql).toBe('?? = ANY(?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([
@@ -537,16 +563,25 @@ describe('SQLOperator', () => {
       });
 
       it('handles empty array', () => {
-        const fragment = SQLFragmentHelpers.anyArray('stringField', []);
+        const fragment = SQLExpression.anyArray('stringField', []);
 
         expect(fragment.sql).toBe('FALSE'); // Always false
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([]);
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.anyArray(sql<TestFields>`${entityField('stringField')}`, [
+          'a',
+          'b',
+        ]);
+        expect(fragment.sql).toBe('?? = ANY(?)');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', ['a', 'b']]);
+      });
     });
 
-    describe(SQLFragmentHelpers.between, () => {
+    describe(SQLExpression.between, () => {
       it('generates BETWEEN clause with numbers', () => {
-        const fragment = SQLFragmentHelpers.between('intField', 18, 65);
+        const fragment = SQLExpression.between('intField', 18, 65);
 
         expect(fragment.sql).toBe('?? BETWEEN ? AND ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 18, 65]);
@@ -555,23 +590,29 @@ describe('SQLOperator', () => {
       it('generates BETWEEN clause with dates', () => {
         const date1 = new Date('2024-01-01');
         const date2 = new Date('2024-12-31');
-        const fragment = SQLFragmentHelpers.between('dateField', date1, date2);
+        const fragment = SQLExpression.between('dateField', date1, date2);
 
         expect(fragment.sql).toBe('?? BETWEEN ? AND ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['date_field', date1, date2]);
       });
 
       it('generates BETWEEN clause with strings', () => {
-        const fragment = SQLFragmentHelpers.between('stringField', 'A', 'Z');
+        const fragment = SQLExpression.between('stringField', 'A', 'Z');
 
         expect(fragment.sql).toBe('?? BETWEEN ? AND ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'A', 'Z']);
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.between(sql<TestFields>`${entityField('intField')}`, 1, 100);
+        expect(fragment.sql).toBe('?? BETWEEN ? AND ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 1, 100]);
+      });
     });
 
-    describe(SQLFragmentHelpers.notBetween, () => {
+    describe(SQLExpression.notBetween, () => {
       it('generates NOT BETWEEN clause with numbers', () => {
-        const fragment = SQLFragmentHelpers.notBetween('intField', 18, 65);
+        const fragment = SQLExpression.notBetween('intField', 18, 65);
 
         expect(fragment.sql).toBe('?? NOT BETWEEN ? AND ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 18, 65]);
@@ -580,35 +621,75 @@ describe('SQLOperator', () => {
       it('generates NOT BETWEEN clause with dates', () => {
         const date1 = new Date('2024-01-01');
         const date2 = new Date('2024-12-31');
-        const fragment = SQLFragmentHelpers.notBetween('dateField', date1, date2);
+        const fragment = SQLExpression.notBetween('dateField', date1, date2);
 
         expect(fragment.sql).toBe('?? NOT BETWEEN ? AND ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['date_field', date1, date2]);
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.notBetween(
+          sql<TestFields>`${entityField('intField')}`,
+          1,
+          100,
+        );
+        expect(fragment.sql).toBe('?? NOT BETWEEN ? AND ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 1, 100]);
+      });
     });
 
-    describe(SQLFragmentHelpers.like, () => {
+    describe(SQLExpression.like, () => {
       it('generates LIKE clause', () => {
-        const fragment = SQLFragmentHelpers.like('stringField', '%John%');
+        const fragment = SQLExpression.like('stringField', '%John%');
 
+        expect(fragment.sql).toBe('?? LIKE ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', '%John%']);
+      });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.like(
+          sql<TestFields>`${entityField('stringField')}`,
+          '%John%',
+        );
         expect(fragment.sql).toBe('?? LIKE ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', '%John%']);
       });
     });
 
-    describe(SQLFragmentHelpers.notLike, () => {
+    describe(SQLExpression.notLike, () => {
       it('generates NOT LIKE clause', () => {
-        const fragment = SQLFragmentHelpers.notLike('stringField', '%test%');
+        const fragment = SQLExpression.notLike('stringField', '%test%');
 
+        expect(fragment.sql).toBe('?? NOT LIKE ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', '%test%']);
+      });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.notLike(
+          sql<TestFields>`${entityField('stringField')}`,
+          '%test%',
+        );
         expect(fragment.sql).toBe('?? NOT LIKE ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', '%test%']);
       });
     });
 
-    describe(SQLFragmentHelpers.ilike, () => {
+    describe(SQLExpression.ilike, () => {
       it('generates ILIKE clause for case-insensitive matching', () => {
-        const fragment = SQLFragmentHelpers.ilike('testIndexedField', '%@example.com');
+        const fragment = SQLExpression.ilike('testIndexedField', '%@example.com');
 
+        expect(fragment.sql).toBe('?? ILIKE ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual([
+          'test_index',
+          '%@example.com',
+        ]);
+      });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.ilike(
+          sql<TestFields>`${entityField('testIndexedField')}`,
+          '%@example.com',
+        );
         expect(fragment.sql).toBe('?? ILIKE ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([
           'test_index',
@@ -617,118 +698,189 @@ describe('SQLOperator', () => {
       });
     });
 
-    describe(SQLFragmentHelpers.notIlike, () => {
+    describe(SQLExpression.notIlike, () => {
       it('generates NOT ILIKE clause for case-insensitive non-matching', () => {
-        const fragment = SQLFragmentHelpers.notIlike('testIndexedField', '%@spam.com');
+        const fragment = SQLExpression.notIlike('testIndexedField', '%@spam.com');
 
+        expect(fragment.sql).toBe('?? NOT ILIKE ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['test_index', '%@spam.com']);
+      });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.notIlike(
+          sql<TestFields>`${entityField('testIndexedField')}`,
+          '%@spam.com',
+        );
         expect(fragment.sql).toBe('?? NOT ILIKE ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['test_index', '%@spam.com']);
       });
     });
 
-    describe(SQLFragmentHelpers.isNull, () => {
+    describe(SQLExpression.isNull, () => {
       it('generates IS NULL', () => {
-        const fragment = SQLFragmentHelpers.isNull('nullableField');
+        const fragment = SQLExpression.isNull('nullableField');
 
+        expect(fragment.sql).toBe('?? IS NULL');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['nullable_field']);
+      });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.isNull(sql<TestFields>`${entityField('nullableField')}`);
         expect(fragment.sql).toBe('?? IS NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['nullable_field']);
       });
     });
 
-    describe(SQLFragmentHelpers.isNotNull, () => {
+    describe(SQLExpression.isNotNull, () => {
       it('generates IS NOT NULL', () => {
-        const fragment = SQLFragmentHelpers.isNotNull('testIndexedField');
+        const fragment = SQLExpression.isNotNull('testIndexedField');
 
+        expect(fragment.sql).toBe('?? IS NOT NULL');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['test_index']);
+      });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.isNotNull(
+          sql<TestFields>`${entityField('testIndexedField')}`,
+        );
         expect(fragment.sql).toBe('?? IS NOT NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['test_index']);
       });
     });
 
-    describe(SQLFragmentHelpers.eq, () => {
+    describe(SQLExpression.eq, () => {
       it('generates equality check', () => {
-        const fragment = SQLFragmentHelpers.eq('stringField', 'active');
+        const fragment = SQLExpression.eq('stringField', 'active');
 
         expect(fragment.sql).toBe('?? = ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'active']);
       });
 
       it('handles null in equality check', () => {
-        const fragment = SQLFragmentHelpers.eq('nullableField', null);
+        const fragment = SQLExpression.eq('nullableField', null);
 
         expect(fragment.sql).toBe('?? IS NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['nullable_field']);
       });
 
       it('handles undefined in equality check', () => {
-        const fragment = SQLFragmentHelpers.eq('nullableField', undefined);
+        const fragment = SQLExpression.eq('nullableField', undefined);
 
         expect(fragment.sql).toBe('?? IS NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['nullable_field']);
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.eq(sql<TestFields>`${entityField('stringField')}`, 'active');
+        expect(fragment.sql).toBe('?? = ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'active']);
+      });
+
+      it('accepts a SQLChainableFragment and constrains value type', () => {
+        const fragment = SQLExpression.eq(
+          SQLExpression.trim<TestFields, 'stringField'>('stringField'),
+          'trimmed',
+        );
+        expect(fragment.sql).toBe('TRIM(??) = ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'trimmed']);
+      });
     });
 
-    describe(SQLFragmentHelpers.neq, () => {
+    describe(SQLExpression.neq, () => {
       it('generates inequality check', () => {
-        const fragment = SQLFragmentHelpers.neq('stringField', 'deleted');
+        const fragment = SQLExpression.neq('stringField', 'deleted');
 
         expect(fragment.sql).toBe('?? != ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'deleted']);
       });
 
       it('handles null in inequality check', () => {
-        const fragment = SQLFragmentHelpers.neq('nullableField', null);
+        const fragment = SQLExpression.neq('nullableField', null);
 
         expect(fragment.sql).toBe('?? IS NOT NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['nullable_field']);
       });
 
       it('handles undefined in inequality check', () => {
-        const fragment = SQLFragmentHelpers.neq('nullableField', undefined);
+        const fragment = SQLExpression.neq('nullableField', undefined);
 
         expect(fragment.sql).toBe('?? IS NOT NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['nullable_field']);
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.neq(
+          sql<TestFields>`${entityField('stringField')}`,
+          'deleted',
+        );
+        expect(fragment.sql).toBe('?? != ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'deleted']);
+      });
     });
 
-    describe(SQLFragmentHelpers.gt, () => {
+    describe(SQLExpression.gt, () => {
       it('generates greater than', () => {
-        const fragment = SQLFragmentHelpers.gt('intField', 18);
+        const fragment = SQLExpression.gt('intField', 18);
 
+        expect(fragment.sql).toBe('?? > ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 18]);
+      });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.gt(sql<TestFields>`${entityField('intField')}`, 18);
         expect(fragment.sql).toBe('?? > ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 18]);
       });
     });
 
-    describe(SQLFragmentHelpers.gte, () => {
+    describe(SQLExpression.gte, () => {
       it('generates greater than or equal', () => {
-        const fragment = SQLFragmentHelpers.gte('intField', 18);
+        const fragment = SQLExpression.gte('intField', 18);
 
+        expect(fragment.sql).toBe('?? >= ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 18]);
+      });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.gte(sql<TestFields>`${entityField('intField')}`, 18);
         expect(fragment.sql).toBe('?? >= ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 18]);
       });
     });
 
-    describe(SQLFragmentHelpers.lt, () => {
+    describe(SQLExpression.lt, () => {
       it('generates less than', () => {
-        const fragment = SQLFragmentHelpers.lt('intField', 65);
+        const fragment = SQLExpression.lt('intField', 65);
 
+        expect(fragment.sql).toBe('?? < ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 65]);
+      });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.lt(sql<TestFields>`${entityField('intField')}`, 65);
         expect(fragment.sql).toBe('?? < ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 65]);
       });
     });
 
-    describe(SQLFragmentHelpers.lte, () => {
+    describe(SQLExpression.lte, () => {
       it('generates less than or equal', () => {
-        const fragment = SQLFragmentHelpers.lte('intField', 65);
+        const fragment = SQLExpression.lte('intField', 65);
 
+        expect(fragment.sql).toBe('?? <= ?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 65]);
+      });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.lte(sql<TestFields>`${entityField('intField')}`, 65);
         expect(fragment.sql).toBe('?? <= ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 65]);
       });
     });
 
-    describe(SQLFragmentHelpers.jsonContains, () => {
+    describe(SQLExpression.jsonContains, () => {
       it('generates JSON contains', () => {
-        const fragment = SQLFragmentHelpers.jsonContains('stringField', { premium: true });
+        const fragment = SQLExpression.jsonContains('stringField', { premium: true });
 
         expect(fragment.sql).toBe('?? @> ?::jsonb');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([
@@ -738,8 +890,8 @@ describe('SQLOperator', () => {
       });
 
       it('generates JSON contains for null and undefined values', () => {
-        const fragmentNull = SQLFragmentHelpers.jsonContains('stringField', null);
-        const fragmentUndefined = SQLFragmentHelpers.jsonContains('stringField', undefined);
+        const fragmentNull = SQLExpression.jsonContains('stringField', null);
+        const fragmentUndefined = SQLExpression.jsonContains('stringField', undefined);
 
         expect(fragmentNull.sql).toBe('?? @> ?::jsonb');
         expect(fragmentNull.getKnexBindings(getColumnForField)).toEqual(['string_field', 'null']);
@@ -752,15 +904,27 @@ describe('SQLOperator', () => {
       });
 
       it('throws when value is not JSON-serializable', () => {
-        expect(() => SQLFragmentHelpers.jsonContains('stringField', (() => {}) as any)).toThrow(
+        expect(() => SQLExpression.jsonContains('stringField', (() => {}) as any)).toThrow(
           'jsonContains: value is not JSON-serializable',
         );
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.jsonContains(
+          sql<TestFields>`${entityField('stringField')}`,
+          { premium: true },
+        );
+        expect(fragment.sql).toBe('?? @> ?::jsonb');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual([
+          'string_field',
+          '{"premium":true}',
+        ]);
+      });
     });
 
-    describe(SQLFragmentHelpers.jsonContainedBy, () => {
+    describe(SQLExpression.jsonContainedBy, () => {
       it('generates JSON contained by', () => {
-        const fragment = SQLFragmentHelpers.jsonContainedBy('stringField', {
+        const fragment = SQLExpression.jsonContainedBy('stringField', {
           theme: 'dark',
           lang: 'en',
         });
@@ -773,8 +937,8 @@ describe('SQLOperator', () => {
       });
 
       it('generates JSON contained by for null and undefined values', () => {
-        const fragmentNull = SQLFragmentHelpers.jsonContainedBy('stringField', null);
-        const fragmentUndefined = SQLFragmentHelpers.jsonContainedBy('stringField', undefined);
+        const fragmentNull = SQLExpression.jsonContainedBy('stringField', null);
+        const fragmentUndefined = SQLExpression.jsonContainedBy('stringField', undefined);
 
         expect(fragmentNull.sql).toBe('?? <@ ?::jsonb');
         expect(fragmentNull.getKnexBindings(getColumnForField)).toEqual(['string_field', 'null']);
@@ -787,35 +951,65 @@ describe('SQLOperator', () => {
       });
 
       it('throws when value is not JSON-serializable', () => {
-        expect(() => SQLFragmentHelpers.jsonContainedBy('stringField', (() => {}) as any)).toThrow(
+        expect(() => SQLExpression.jsonContainedBy('stringField', (() => {}) as any)).toThrow(
           'jsonContainedBy: value is not JSON-serializable',
         );
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.jsonContainedBy(
+          sql<TestFields>`${entityField('stringField')}`,
+          { theme: 'dark' },
+        );
+        expect(fragment.sql).toBe('?? <@ ?::jsonb');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual([
+          'string_field',
+          '{"theme":"dark"}',
+        ]);
+      });
     });
 
-    describe(SQLFragmentHelpers.jsonPath, () => {
+    describe(SQLExpression.jsonPath, () => {
       it('generates JSON path access', () => {
-        const fragment = SQLFragmentHelpers.jsonPath('stringField', 'user');
+        const fragment = SQLExpression.jsonPath('stringField', 'user');
 
         expect(fragment.sql).toBe(`??->?`);
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'user']);
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.jsonPath(
+          sql<TestFields>`${entityField('stringField')}`,
+          'user',
+        );
+        expect(fragment.sql).toBe('??->?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'user']);
+      });
     });
 
-    describe(SQLFragmentHelpers.jsonPathText, () => {
+    describe(SQLExpression.jsonPathText, () => {
       it('generates JSON path text access', () => {
-        const fragment = SQLFragmentHelpers.jsonPathText('stringField', 'email');
+        const fragment = SQLExpression.jsonPathText('stringField', 'email');
 
         expect(fragment.sql).toBe(`??->>?`);
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'email']);
       });
+
+      it('accepts a SQLFragment expression', () => {
+        const fragment = SQLExpression.jsonPathText(
+          sql<TestFields>`${entityField('stringField')}`,
+          'email',
+        );
+        expect(fragment.sql).toBe('??->>?');
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'email']);
+      });
     });
 
-    describe(SQLFragmentHelpers.and, () => {
+    describe(SQLExpression.and, () => {
       it('combines conditions with AND', () => {
         const cond1 = sql`age >= ${18}`;
         const cond2 = sql`status = ${'active'}`;
-        const fragment = SQLFragmentHelpers.and(cond1, cond2);
+        const fragment = SQLExpression.and(cond1, cond2);
 
         expect(fragment.sql).toBe('(age >= ?) AND (status = ?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([18, 'active']);
@@ -823,25 +1017,25 @@ describe('SQLOperator', () => {
 
       it('handles single condition in AND', () => {
         const cond = sql`age >= ${18}`;
-        const fragment = SQLFragmentHelpers.and(cond);
+        const fragment = SQLExpression.and(cond);
 
         expect(fragment.sql).toBe('(age >= ?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([18]);
       });
 
       it('handles empty conditions in AND', () => {
-        const fragment = SQLFragmentHelpers.and();
+        const fragment = SQLExpression.and();
 
         expect(fragment.sql).toBe('TRUE');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([]);
       });
     });
 
-    describe(SQLFragmentHelpers.or, () => {
+    describe(SQLExpression.or, () => {
       it('combines conditions with OR', () => {
         const cond1 = sql`status = ${'active'}`;
         const cond2 = sql`status = ${'pending'}`;
-        const fragment = SQLFragmentHelpers.or(cond1, cond2);
+        const fragment = SQLExpression.or(cond1, cond2);
 
         expect(fragment.sql).toBe('(status = ?) OR (status = ?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['active', 'pending']);
@@ -849,34 +1043,34 @@ describe('SQLOperator', () => {
 
       it('handles single condition in OR', () => {
         const cond = sql`status = ${'active'}`;
-        const fragment = SQLFragmentHelpers.or(cond);
+        const fragment = SQLExpression.or(cond);
 
         expect(fragment.sql).toBe('(status = ?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['active']);
       });
 
       it('handles empty conditions in OR', () => {
-        const fragment = SQLFragmentHelpers.or();
+        const fragment = SQLExpression.or();
 
         expect(fragment.sql).toBe('FALSE');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([]);
       });
     });
 
-    describe(SQLFragmentHelpers.not, () => {
+    describe(SQLExpression.not, () => {
       it('negates conditions with NOT', () => {
         const cond = sql`status = ${'deleted'}`;
-        const fragment = SQLFragmentHelpers.not(cond);
+        const fragment = SQLExpression.not(cond);
 
         expect(fragment.sql).toBe('NOT (status = ?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['deleted']);
       });
     });
 
-    describe(SQLFragmentHelpers.group, () => {
+    describe(SQLExpression.group, () => {
       it('groups conditions with parentheses', () => {
         const cond = sql`age >= ${18} AND age <= ${65}`;
-        const fragment = SQLFragmentHelpers.group(cond);
+        const fragment = SQLExpression.group(cond);
 
         expect(fragment.sql).toBe('(age >= ? AND age <= ?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([18, 65]);
@@ -885,15 +1079,15 @@ describe('SQLOperator', () => {
 
     describe('complex combinations', () => {
       it('builds complex queries with multiple helpers', () => {
-        const fragment = SQLFragmentHelpers.and(
-          SQLFragmentHelpers.between('intField', 18, 65),
-          SQLFragmentHelpers.group(
-            SQLFragmentHelpers.or(
-              SQLFragmentHelpers.inArray('stringField', ['active', 'premium']),
+        const fragment = SQLExpression.and<TestFields>(
+          SQLExpression.between('intField', 18, 65),
+          SQLExpression.group(
+            SQLExpression.or(
+              SQLExpression.inArray('stringField', ['active', 'premium']),
               sql`role = ${'admin'}`,
             ),
           ),
-          SQLFragmentHelpers.isNotNull('testIndexedField'),
+          SQLExpression.isNotNull('testIndexedField'),
         );
 
         expect(fragment.sql).toBe(
@@ -911,101 +1105,88 @@ describe('SQLOperator', () => {
         ]);
       });
     });
-
-    describe(expression, () => {
-      it('wraps a field name into an SQLExpression', () => {
-        const fragment = expression<TestFields>('stringField').eq('active');
-
-        expect(fragment.sql).toBe('?? = ?');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'active']);
-      });
-
-      it('wraps a SQLFragment into an SQLExpression', () => {
-        const raw = sql<TestFields>`LOWER(${entityField<TestFields>('stringField')})`;
-        const fragment = expression(raw).eq('test');
-
-        expect(fragment.sql).toBe('LOWER(??) = ?');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'test']);
-      });
-    });
   });
 
-  describe(SQLExpression, () => {
-    // Use a simple expression for testing all fluent methods.
-    // Since fluent methods live on SQLExpression and behave identically regardless of
-    // how the expression was constructed, we only need to test them once.
-    const makeStringFieldExpr = (): SQLExpression<TestFields> =>
-      expression<TestFields>('stringField');
+  describe(SQLChainableFragment, () => {
+    // Use direct SQLChainableFragment construction to test fluent methods in isolation,
+    // without going through helpers like trim() or cast().
+    const makeExpr = <TValue extends SupportedSQLValue>(
+      fragment: SQLFragment<TestFields>,
+    ): SQLChainableFragment<TestFields, TValue> =>
+      new SQLChainableFragment(fragment.sql, fragment.bindings);
+
+    const stringFieldFragment = (): SQLFragment<TestFields> => sql`${entityField('stringField')}`;
+    const intFieldFragment = (): SQLFragment<TestFields> => sql`${entityField('intField')}`;
 
     describe('comparison methods', () => {
       it('eq(value)', () => {
-        const fragment = makeStringFieldExpr().eq('active');
+        const fragment = makeExpr<string>(stringFieldFragment()).eq('active');
         expect(fragment.sql).toBe('?? = ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'active']);
       });
 
       it('eq(null) uses IS NULL', () => {
-        const fragment = makeStringFieldExpr().eq(null);
+        const fragment = makeExpr<string>(stringFieldFragment()).eq(null);
         expect(fragment.sql).toBe('?? IS NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });
 
       it('eq(undefined) uses IS NULL', () => {
-        const fragment = makeStringFieldExpr().eq(undefined);
+        const fragment = makeExpr<string>(stringFieldFragment()).eq(undefined);
         expect(fragment.sql).toBe('?? IS NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });
 
       it('neq(value)', () => {
-        const fragment = makeStringFieldExpr().neq('deleted');
+        const fragment = makeExpr<string>(stringFieldFragment()).neq('deleted');
         expect(fragment.sql).toBe('?? != ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'deleted']);
       });
 
       it('neq(null) uses IS NOT NULL', () => {
-        const fragment = makeStringFieldExpr().neq(null);
+        const fragment = makeExpr<string>(stringFieldFragment()).neq(null);
         expect(fragment.sql).toBe('?? IS NOT NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });
 
       it('neq(undefined) uses IS NOT NULL', () => {
-        const fragment = makeStringFieldExpr().neq(undefined);
+        const fragment = makeExpr<string>(stringFieldFragment()).neq(undefined);
         expect(fragment.sql).toBe('?? IS NOT NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });
 
       it('gt(value)', () => {
-        const fragment = makeStringFieldExpr().gt(10);
+        const fragment = makeExpr<number>(intFieldFragment()).gt(10);
         expect(fragment.sql).toBe('?? > ?');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 10]);
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 10]);
       });
 
       it('gte(value)', () => {
-        const fragment = makeStringFieldExpr().gte(10);
+        const fragment = makeExpr<number>(intFieldFragment()).gte(10);
         expect(fragment.sql).toBe('?? >= ?');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 10]);
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 10]);
       });
 
       it('lt(value)', () => {
-        const fragment = makeStringFieldExpr().lt(100);
+        const fragment = makeExpr<number>(intFieldFragment()).lt(100);
         expect(fragment.sql).toBe('?? < ?');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 100]);
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 100]);
       });
 
       it('lte(value)', () => {
-        const fragment = makeStringFieldExpr().lte(100);
+        const fragment = makeExpr<number>(intFieldFragment()).lte(100);
         expect(fragment.sql).toBe('?? <= ?');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 100]);
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 100]);
       });
 
       it('isNull()', () => {
-        const fragment = makeStringFieldExpr().isNull();
+        const fragment = makeExpr<string>(stringFieldFragment()).isNull();
         expect(fragment.sql).toBe('?? IS NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });
 
       it('isNotNull()', () => {
-        const fragment = makeStringFieldExpr().isNotNull();
+        const fragment = makeExpr<string>(stringFieldFragment()).isNotNull();
         expect(fragment.sql).toBe('?? IS NOT NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });
@@ -1013,25 +1194,25 @@ describe('SQLOperator', () => {
 
     describe('pattern matching methods', () => {
       it('like(pattern)', () => {
-        const fragment = makeStringFieldExpr().like('%test%');
+        const fragment = makeExpr<string>(stringFieldFragment()).like('%test%');
         expect(fragment.sql).toBe('?? LIKE ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', '%test%']);
       });
 
       it('notLike(pattern)', () => {
-        const fragment = makeStringFieldExpr().notLike('%test%');
+        const fragment = makeExpr<string>(stringFieldFragment()).notLike('%test%');
         expect(fragment.sql).toBe('?? NOT LIKE ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', '%test%']);
       });
 
       it('ilike(pattern)', () => {
-        const fragment = makeStringFieldExpr().ilike('%test%');
+        const fragment = makeExpr<string>(stringFieldFragment()).ilike('%test%');
         expect(fragment.sql).toBe('?? ILIKE ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', '%test%']);
       });
 
       it('notIlike(pattern)', () => {
-        const fragment = makeStringFieldExpr().notIlike('%test%');
+        const fragment = makeExpr<string>(stringFieldFragment()).notIlike('%test%');
         expect(fragment.sql).toBe('?? NOT ILIKE ?');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', '%test%']);
       });
@@ -1039,75 +1220,71 @@ describe('SQLOperator', () => {
 
     describe('collection methods', () => {
       it('inArray(values)', () => {
-        const fragment = makeStringFieldExpr().inArray(['a', 'b']);
+        const fragment = makeExpr<string>(stringFieldFragment()).inArray(['a', 'b']);
         expect(fragment.sql).toBe('?? IN (?, ?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'a', 'b']);
       });
 
       it('inArray([]) returns always-false', () => {
-        const fragment = makeStringFieldExpr().inArray([]);
+        const fragment = makeExpr<string>(stringFieldFragment()).inArray([]);
         expect(fragment.sql).toBe('FALSE');
       });
 
       it('notInArray(values)', () => {
-        const fragment = makeStringFieldExpr().notInArray(['x']);
+        const fragment = makeExpr<string>(stringFieldFragment()).notInArray(['x']);
         expect(fragment.sql).toBe('?? NOT IN (?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'x']);
       });
 
       it('notInArray([]) returns always-true', () => {
-        const fragment = makeStringFieldExpr().notInArray([]);
+        const fragment = makeExpr<string>(stringFieldFragment()).notInArray([]);
         expect(fragment.sql).toBe('TRUE');
       });
 
       it('anyArray(values)', () => {
-        const fragment = makeStringFieldExpr().anyArray(['a', 'b']);
+        const fragment = makeExpr<string>(stringFieldFragment()).anyArray(['a', 'b']);
         expect(fragment.sql).toBe('?? = ANY(?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', ['a', 'b']]);
       });
 
       it('anyArray([]) returns always-false', () => {
-        const fragment = makeStringFieldExpr().anyArray([]);
+        const fragment = makeExpr<string>(stringFieldFragment()).anyArray([]);
         expect(fragment.sql).toBe('FALSE');
       });
     });
 
     describe('range methods', () => {
       it('between(min, max)', () => {
-        const fragment = makeStringFieldExpr().between(1, 100);
+        const fragment = makeExpr<number>(intFieldFragment()).between(1, 100);
         expect(fragment.sql).toBe('?? BETWEEN ? AND ?');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 1, 100]);
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 1, 100]);
       });
 
       it('notBetween(min, max)', () => {
-        const fragment = makeStringFieldExpr().notBetween(1, 100);
+        const fragment = makeExpr<number>(intFieldFragment()).notBetween(1, 100);
         expect(fragment.sql).toBe('?? NOT BETWEEN ? AND ?');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 1, 100]);
+        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['number_field', 1, 100]);
       });
     });
 
-    describe('helpers that return SQLExpression', () => {
-      it('jsonPath returns an SQLExpression with correct base SQL', () => {
-        const expr = SQLFragmentHelpers.jsonPath<TestFields>('stringField', 'key');
-        expect(expr).toBeInstanceOf(SQLExpression);
+    describe('helpers that return SQLChainableFragment', () => {
+      it('jsonPath returns an SQLChainableFragment with correct base SQL', () => {
+        const expr = SQLExpression.jsonPath('stringField', 'key');
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
         expect(expr.sql).toBe('??->?');
         expect(expr.getKnexBindings(getColumnForField)).toEqual(['string_field', 'key']);
       });
 
-      it('jsonPathText returns an SQLExpression with correct base SQL', () => {
-        const expr = SQLFragmentHelpers.jsonPathText<TestFields>('stringField', 'email');
-        expect(expr).toBeInstanceOf(SQLExpression);
+      it('jsonPathText returns an SQLChainableFragment with correct base SQL', () => {
+        const expr = SQLExpression.jsonPathText('stringField', 'email');
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
         expect(expr.sql).toBe('??->>?');
         expect(expr.getKnexBindings(getColumnForField)).toEqual(['string_field', 'email']);
       });
 
-      it('jsonDeepPath returns an SQLExpression with correct base SQL', () => {
-        const expr = SQLFragmentHelpers.jsonDeepPath<TestFields>('stringField', [
-          'user',
-          'address',
-          'city',
-        ]);
-        expect(expr).toBeInstanceOf(SQLExpression);
+      it('jsonDeepPath returns an SQLChainableFragment with correct base SQL', () => {
+        const expr = SQLExpression.jsonDeepPath('stringField', ['user', 'address', 'city']);
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
         expect(expr.sql).toBe('?? #> ?');
         expect(expr.getKnexBindings(getColumnForField)).toEqual([
           'string_field',
@@ -1116,11 +1293,7 @@ describe('SQLOperator', () => {
       });
 
       it('jsonDeepPath properly quotes path elements with special characters', () => {
-        const fragment = SQLFragmentHelpers.jsonDeepPath<TestFields>('stringField', [
-          'user',
-          'first,last',
-          'na}me',
-        ]);
+        const fragment = SQLExpression.jsonDeepPath('stringField', ['user', 'first,last', 'na}me']);
 
         expect(fragment.getKnexBindings(getColumnForField)).toEqual([
           'string_field',
@@ -1129,13 +1302,13 @@ describe('SQLOperator', () => {
       });
 
       it('jsonDeepPath properly quotes empty path elements', () => {
-        const fragment = SQLFragmentHelpers.jsonDeepPath<TestFields>('stringField', ['user', '']);
+        const fragment = SQLExpression.jsonDeepPath('stringField', ['user', '']);
 
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', '{user,""}']);
       });
 
       it('jsonDeepPath properly escapes quotes and backslashes in path elements', () => {
-        const fragment = SQLFragmentHelpers.jsonDeepPath<TestFields>('stringField', [
+        const fragment = SQLExpression.jsonDeepPath('stringField', [
           'key"with"quotes',
           'back\\slash',
         ]);
@@ -1146,13 +1319,19 @@ describe('SQLOperator', () => {
         ]);
       });
 
-      it('jsonDeepPathText returns an SQLExpression with correct base SQL', () => {
-        const expr = SQLFragmentHelpers.jsonDeepPathText<TestFields>('stringField', [
+      it('jsonDeepPath accepts a SQLFragment expression', () => {
+        const expr = SQLExpression.jsonDeepPath(sql<TestFields>`${entityField('stringField')}`, [
           'user',
-          'address',
           'city',
         ]);
-        expect(expr).toBeInstanceOf(SQLExpression);
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
+        expect(expr.sql).toBe('?? #> ?');
+        expect(expr.getKnexBindings(getColumnForField)).toEqual(['string_field', '{user,city}']);
+      });
+
+      it('jsonDeepPathText returns an SQLChainableFragment with correct base SQL', () => {
+        const expr = SQLExpression.jsonDeepPathText('stringField', ['user', 'address', 'city']);
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
         expect(expr.sql).toBe('?? #>> ?');
         expect(expr.getKnexBindings(getColumnForField)).toEqual([
           'string_field',
@@ -1160,35 +1339,52 @@ describe('SQLOperator', () => {
         ]);
       });
 
-      it('cast returns an SQLExpression with correct base SQL', () => {
-        const jsonExpr = SQLFragmentHelpers.jsonPath<TestFields>('stringField', 'count');
-        const expr = SQLFragmentHelpers.cast(jsonExpr, 'int');
-        expect(expr).toBeInstanceOf(SQLExpression);
+      it('jsonDeepPathText accepts a SQLFragment expression', () => {
+        const expr = SQLExpression.jsonDeepPathText(
+          sql<TestFields>`${entityField('stringField')}`,
+          ['user', 'city'],
+        );
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
+        expect(expr.sql).toBe('?? #>> ?');
+        expect(expr.getKnexBindings(getColumnForField)).toEqual(['string_field', '{user,city}']);
+      });
+
+      it('cast returns an SQLChainableFragment with correct base SQL', () => {
+        const jsonExpr = SQLExpression.jsonPath('stringField', 'count');
+        const expr = SQLExpression.cast(jsonExpr, 'int');
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
         expect(expr.sql).toBe('(??->?)::int');
         expect(expr.getKnexBindings(getColumnForField)).toEqual(['string_field', 'count']);
       });
 
+      it('cast accepts a field name', () => {
+        const expr = SQLExpression.cast('intField', 'text');
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
+        expect(expr.sql).toBe('(??)::text');
+        expect(expr.getKnexBindings(getColumnForField)).toEqual(['number_field']);
+      });
+
       it('cast rejects unsupported type names', () => {
-        const expr = SQLFragmentHelpers.jsonPath<TestFields>('stringField', 'count');
-        expect(() => SQLFragmentHelpers.cast(expr, 'int; DROP TABLE users' as any)).toThrow(
+        const expr = SQLExpression.jsonPath('stringField', 'count');
+        expect(() => SQLExpression.cast(expr, 'int; DROP TABLE users' as any)).toThrow(
           'cast: unsupported type name',
         );
       });
 
-      it('coalesce returns an SQLExpression with correct base SQL', () => {
-        const expr = SQLFragmentHelpers.coalesce<TestFields>(
-          sql`${entityField<TestFields>('nullableField')}`,
+      it('coalesce returns an SQLChainableFragment with correct base SQL', () => {
+        const expr = SQLExpression.coalesce<TestFields>(
+          sql`${entityField('nullableField')}`,
           'default',
         );
-        expect(expr).toBeInstanceOf(SQLExpression);
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
         expect(expr.sql).toBe('COALESCE(??, ?)');
         expect(expr.getKnexBindings(getColumnForField)).toEqual(['nullable_field', 'default']);
       });
 
       it('coalesce with multiple expressions', () => {
-        const fragment = SQLFragmentHelpers.coalesce<TestFields>(
-          sql`${entityField<TestFields>('nullableField')}`,
-          sql`${entityField<TestFields>('stringField')}`,
+        const fragment = SQLExpression.coalesce<TestFields>(
+          sql`${entityField('nullableField')}`,
+          sql`${entityField('stringField')}`,
           'fallback',
         );
         expect(fragment.sql).toBe('COALESCE(??, ??, ?)');
@@ -1199,53 +1395,53 @@ describe('SQLOperator', () => {
         ]);
       });
 
-      it('lower returns an SQLExpression with correct base SQL', () => {
-        const expr = SQLFragmentHelpers.lower<TestFields>('stringField');
-        expect(expr).toBeInstanceOf(SQLExpression);
+      it('lower returns an SQLChainableFragment with correct base SQL', () => {
+        const expr = SQLExpression.lower('stringField');
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
         expect(expr.sql).toBe('LOWER(??)');
         expect(expr.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });
 
       it('lower accepts a SQLFragment', () => {
-        const fragment = SQLFragmentHelpers.lower(
-          SQLFragmentHelpers.jsonPathText<TestFields>('stringField', 'email'),
+        const fragment = SQLExpression.lower(
+          SQLExpression.jsonPathText<TestFields, 'stringField'>('stringField', 'email'),
         );
         expect(fragment.sql).toBe('LOWER(??->>?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'email']);
       });
 
-      it('upper returns an SQLExpression with correct base SQL', () => {
-        const expr = SQLFragmentHelpers.upper<TestFields>('stringField');
-        expect(expr).toBeInstanceOf(SQLExpression);
+      it('upper returns an SQLChainableFragment with correct base SQL', () => {
+        const expr = SQLExpression.upper('stringField');
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
         expect(expr.sql).toBe('UPPER(??)');
         expect(expr.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });
 
       it('upper accepts a SQLFragment', () => {
-        const fragment = SQLFragmentHelpers.upper(
-          SQLFragmentHelpers.jsonPathText<TestFields>('stringField', 'email'),
+        const fragment = SQLExpression.upper(
+          SQLExpression.jsonPathText<TestFields, 'stringField'>('stringField', 'email'),
         );
         expect(fragment.sql).toBe('UPPER(??->>?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'email']);
       });
 
-      it('trim returns an SQLExpression with correct base SQL', () => {
-        const expr = SQLFragmentHelpers.trim<TestFields>('stringField');
-        expect(expr).toBeInstanceOf(SQLExpression);
+      it('trim returns an SQLChainableFragment with correct base SQL', () => {
+        const expr = SQLExpression.trim('stringField');
+        expect(expr).toBeInstanceOf(SQLChainableFragment);
         expect(expr.sql).toBe('TRIM(??)');
         expect(expr.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });
 
       it('trim accepts a SQLFragment', () => {
-        const fragment = SQLFragmentHelpers.trim(
-          SQLFragmentHelpers.jsonPathText<TestFields>('stringField', 'name'),
+        const fragment = SQLExpression.trim(
+          SQLExpression.jsonPathText<TestFields, 'stringField'>('stringField', 'name'),
         );
         expect(fragment.sql).toBe('TRIM(??->>?)');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field', 'name']);
       });
 
-      it('SQLExpression still works as a SQLFragment in sql template', () => {
-        const path = SQLFragmentHelpers.jsonPath<TestFields>('stringField', 'key');
+      it('SQLChainableFragment still works as a SQLFragment in sql template', () => {
+        const path = SQLExpression.jsonPath('stringField', 'key');
         const fragment = sql`${path} IS NOT NULL`;
 
         expect(fragment.sql).toBe('??->? IS NOT NULL');
@@ -1255,8 +1451,8 @@ describe('SQLOperator', () => {
 
     describe('composing multiple expression helpers', () => {
       it('lower(trim(field)).eq(value)', () => {
-        const fragment = SQLFragmentHelpers.lower(
-          SQLFragmentHelpers.trim<TestFields>('stringField'),
+        const fragment = SQLExpression.lower(
+          SQLExpression.trim(sql<TestFields>`${entityField('stringField')}`),
         ).eq('hello');
 
         expect(fragment.sql).toBe('LOWER(TRIM(??)) = ?');
@@ -1264,8 +1460,8 @@ describe('SQLOperator', () => {
       });
 
       it('cast(jsonDeepPath(...), type).gt(value)', () => {
-        const fragment = SQLFragmentHelpers.cast(
-          SQLFragmentHelpers.jsonDeepPath<TestFields>('stringField', ['stats', 'count']),
+        const fragment = SQLExpression.cast(
+          SQLExpression.jsonDeepPath<TestFields, 'stringField'>('stringField', ['stats', 'count']),
           'int',
         ).gt(10);
 
@@ -1278,8 +1474,8 @@ describe('SQLOperator', () => {
       });
 
       it('coalesce(jsonPathText(...), default).ilike(pattern)', () => {
-        const fragment = SQLFragmentHelpers.coalesce(
-          SQLFragmentHelpers.jsonPathText<TestFields>('stringField', 'name'),
+        const fragment = SQLExpression.coalesce(
+          SQLExpression.jsonPathText<TestFields, 'stringField'>('stringField', 'name'),
           '',
         ).ilike('%test%');
 
