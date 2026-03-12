@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.61.0](https://github.com/expo/entity/compare/v0.60.0...v0.61.0) (2026-03-12)
+
+### Bug Fixes
+
+- **deps:** update dependency graphql to v16.13.1 ([#510](https://github.com/expo/entity/issues/510)) ([1a8535f](https://github.com/expo/entity/commit/1a8535f983f38aaa462a8d587e2f62f5fab1043c))
+
+### Features
+
+- update the SQLExpression and SQLFragmentHelpers APIs ([#516](https://github.com/expo/entity/issues/516)) ([112d4dc](https://github.com/expo/entity/commit/112d4dc9b379da5317ff6acaf1d2e9bd597128a6))
+
 # [0.60.0](https://github.com/expo/entity/compare/v0.59.0...v0.60.0) (2026-03-06)
 
 ### Features
