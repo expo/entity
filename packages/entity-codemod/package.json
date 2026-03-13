@@ -28,7 +28,7 @@
   "license": "MIT",
   "type": "module",
   "devDependencies": {
-    "@jest/globals": "30.2.0",
+    "@jest/globals": "30.3.0",
     "@types/jscodeshift": "17.3.0",
     "@types/node": "24.12.0",
     "jscodeshift": "17.3.0",
