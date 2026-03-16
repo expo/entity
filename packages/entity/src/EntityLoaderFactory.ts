@@ -47,12 +47,10 @@ export class EntityLoaderFactory<
     TIDField,
     TViewerContext,
     TEntity,
-    TPrivacyPolicy,
     TSelectedFields
   > {
     return new EntityInvalidationUtils(
       this.entityCompanion.entityCompanionDefinition.entityConfiguration,
-      this.entityCompanion.entityCompanionDefinition.entityClass,
       this.dataManager,
       this.metricsAdapter,
     );

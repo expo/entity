@@ -257,14 +257,7 @@ export abstract class ReadonlyEntity<
       TMSelectedFields
     >,
     viewerContext: TMViewerContext2,
-  ): EntityInvalidationUtils<
-    TMFields,
-    TMIDField,
-    TMViewerContext,
-    TMEntity,
-    TMPrivacyPolicy,
-    TMSelectedFields
-  > {
+  ): EntityInvalidationUtils<TMFields, TMIDField, TMViewerContext, TMEntity, TMSelectedFields> {
     return viewerContext
       .getViewerScopedEntityCompanionForClass(this)
       .getLoaderFactory()

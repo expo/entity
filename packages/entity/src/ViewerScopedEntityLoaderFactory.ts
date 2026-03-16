@@ -44,7 +44,6 @@ export class ViewerScopedEntityLoaderFactory<
     TIDField,
     TViewerContext,
     TEntity,
-    TPrivacyPolicy,
     TSelectedFields
   > {
     return this.entityLoaderFactory.invalidationUtils();
