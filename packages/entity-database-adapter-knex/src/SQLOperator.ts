@@ -630,27 +630,41 @@ function resolveInnerExpr<TFields extends Record<string, any>>(
 // SupportedSQLValue for plain SQLFragment inputs.
 
 // Extract TFields from a SQLFragment type
-type ExtractFields<T> = T extends SQLFragment<infer F> ? F : never;
+type ExtractFragmentFields<T> = T extends SQLFragment<infer F> ? F : never;
 
 // Conditional value types for expression overloads.
 // Uses SQLChainableFragment<any, ...> so that TExpr alone drives inference (single type param).
-type ExprValueNullable<TExpr> =
-  TExpr extends SQLChainableFragment<any, infer TValue>
+type FragmentValueNullable<TFragment> =
+  TFragment extends SQLChainableFragment<any, infer TValue>
     ? TValue | null | undefined
     : SupportedSQLValue;
 
-type ExprValue<TExpr> =
-  TExpr extends SQLChainableFragment<any, infer TValue> ? TValue : SupportedSQLValue;
+type FragmentValue<TFragment> =
+  TFragment extends SQLChainableFragment<any, infer TValue> ? TValue : SupportedSQLValue;
 
-type ExprValueArray<TExpr> =
-  TExpr extends SQLChainableFragment<any, infer TValue>
+type FragmentValueArray<TFragment> =
+  TFragment extends SQLChainableFragment<any, infer TValue>
     ? readonly TValue[]
     : readonly SupportedSQLValue[];
 
-function inArrayHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  values: ExprValueArray<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates an `IN (...)` condition from a fragment and array of values.
+ * Each array element becomes a separate bound parameter. Returns `FALSE` for empty arrays.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to check
+ * @param values - The values to check membership against
+ */
+function inArrayHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  values: FragmentValueArray<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates an `IN (...)` condition from a field name and array of values.
+ * Each array element becomes a separate bound parameter. Returns `FALSE` for empty arrays.
+ *
+ * @param fieldName - The entity field name to check
+ * @param values - The values to check membership against
+ */
 function inArrayHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -662,10 +676,24 @@ function inArrayHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).inArray(values);
 }
 
-function anyArrayHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  values: ExprValueArray<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates an `= ANY(?)` condition from a fragment and array of values.
+ * The array is bound as a single parameter for consistent query shape. Returns `FALSE` for empty arrays.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to check
+ * @param values - The values to check membership against
+ */
+function anyArrayHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  values: FragmentValueArray<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates an `= ANY(?)` condition from a field name and array of values.
+ * The array is bound as a single parameter for consistent query shape. Returns `FALSE` for empty arrays.
+ *
+ * @param fieldName - The entity field name to check
+ * @param values - The values to check membership against
+ */
 function anyArrayHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -677,10 +705,24 @@ function anyArrayHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).anyArray(values);
 }
 
-function notInArrayHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  values: ExprValueArray<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates a `NOT IN (...)` condition from a fragment and array of values.
+ * Each array element becomes a separate bound parameter. Returns `TRUE` for empty arrays.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to check
+ * @param values - The values to check non-membership against
+ */
+function notInArrayHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  values: FragmentValueArray<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a `NOT IN (...)` condition from a field name and array of values.
+ * Each array element becomes a separate bound parameter. Returns `TRUE` for empty arrays.
+ *
+ * @param fieldName - The entity field name to check
+ * @param values - The values to check non-membership against
+ */
 function notInArrayHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -692,11 +734,25 @@ function notInArrayHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).notInArray(values);
 }
 
-function betweenHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  min: ExprValue<TExpr>,
-  max: ExprValue<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates a `BETWEEN min AND max` condition (inclusive) from a fragment.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to check
+ * @param min - The lower bound
+ * @param max - The upper bound
+ */
+function betweenHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  min: FragmentValue<TFragment>,
+  max: FragmentValue<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a `BETWEEN min AND max` condition (inclusive) from a field name.
+ *
+ * @param fieldName - The entity field name to check
+ * @param min - The lower bound
+ * @param max - The upper bound
+ */
 function betweenHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -709,11 +765,25 @@ function betweenHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).between(min, max);
 }
 
-function notBetweenHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  min: ExprValue<TExpr>,
-  max: ExprValue<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates a `NOT BETWEEN min AND max` condition from a fragment.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to check
+ * @param min - The lower bound
+ * @param max - The upper bound
+ */
+function notBetweenHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  min: FragmentValue<TFragment>,
+  max: FragmentValue<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a `NOT BETWEEN min AND max` condition from a field name.
+ *
+ * @param fieldName - The entity field name to check
+ * @param min - The lower bound
+ * @param max - The upper bound
+ */
 function notBetweenHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -726,10 +796,22 @@ function notBetweenHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).notBetween(min, max);
 }
 
-function likeHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * Generates a case-sensitive `LIKE` condition from a fragment.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to match
+ * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+ */
+function likeHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   pattern: string,
-): SQLFragment<ExtractFields<TExpr>>;
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a case-sensitive `LIKE` condition from a field name.
+ *
+ * @param fieldName - The entity field name to match
+ * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+ */
 function likeHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
   fieldName: N,
   pattern: string,
@@ -741,10 +823,22 @@ function likeHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).like(pattern);
 }
 
-function notLikeHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * Generates a case-sensitive `NOT LIKE` condition from a fragment.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to match
+ * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+ */
+function notLikeHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   pattern: string,
-): SQLFragment<ExtractFields<TExpr>>;
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a case-sensitive `NOT LIKE` condition from a field name.
+ *
+ * @param fieldName - The entity field name to match
+ * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+ */
 function notLikeHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
   fieldName: N,
   pattern: string,
@@ -756,10 +850,22 @@ function notLikeHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).notLike(pattern);
 }
 
-function ilikeHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * Generates a case-insensitive `ILIKE` condition from a fragment (PostgreSQL-specific).
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to match
+ * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+ */
+function ilikeHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   pattern: string,
-): SQLFragment<ExtractFields<TExpr>>;
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a case-insensitive `ILIKE` condition from a field name (PostgreSQL-specific).
+ *
+ * @param fieldName - The entity field name to match
+ * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+ */
 function ilikeHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
   fieldName: N,
   pattern: string,
@@ -771,10 +877,22 @@ function ilikeHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).ilike(pattern);
 }
 
-function notIlikeHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * Generates a case-insensitive `NOT ILIKE` condition from a fragment (PostgreSQL-specific).
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to match
+ * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+ */
+function notIlikeHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   pattern: string,
-): SQLFragment<ExtractFields<TExpr>>;
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a case-insensitive `NOT ILIKE` condition from a field name (PostgreSQL-specific).
+ *
+ * @param fieldName - The entity field name to match
+ * @param pattern - The LIKE pattern (use `%` for wildcards, `_` for single character)
+ */
 function notIlikeHelper<
   TFields extends Record<string, any>,
   N extends PickStringValueKeys<TFields>,
@@ -786,9 +904,19 @@ function notIlikeHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).notIlike(pattern);
 }
 
-function isNullHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates an `IS NULL` condition from a fragment.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to check
+ */
+function isNullHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates an `IS NULL` condition from a field name.
+ *
+ * @param fieldName - The entity field name to check
+ */
 function isNullHelper<TFields extends Record<string, any>, N extends keyof TFields>(
   fieldName: N,
 ): SQLFragment<TFields>;
@@ -798,9 +926,19 @@ function isNullHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).isNull();
 }
 
-function isNotNullHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates an `IS NOT NULL` condition from a fragment.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to check
+ */
+function isNotNullHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates an `IS NOT NULL` condition from a field name.
+ *
+ * @param fieldName - The entity field name to check
+ */
 function isNotNullHelper<TFields extends Record<string, any>, N extends keyof TFields>(
   fieldName: N,
 ): SQLFragment<TFields>;
@@ -810,10 +948,24 @@ function isNotNullHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).isNotNull();
 }
 
-function eqHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  value: ExprValueNullable<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates an equality condition (`= value`) from a fragment.
+ * Automatically converts `null`/`undefined` to `IS NULL`.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to compare
+ * @param value - The value to compare against
+ */
+function eqHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  value: FragmentValueNullable<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates an equality condition (`= value`) from a field name.
+ * Automatically converts `null`/`undefined` to `IS NULL`.
+ *
+ * @param fieldName - The entity field name to compare
+ * @param value - The value to compare against
+ */
 function eqHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -825,10 +977,24 @@ function eqHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).eq(value);
 }
 
-function neqHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  value: ExprValueNullable<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates an inequality condition (`!= value`) from a fragment.
+ * Automatically converts `null`/`undefined` to `IS NOT NULL`.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to compare
+ * @param value - The value to compare against
+ */
+function neqHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  value: FragmentValueNullable<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates an inequality condition (`!= value`) from a field name.
+ * Automatically converts `null`/`undefined` to `IS NOT NULL`.
+ *
+ * @param fieldName - The entity field name to compare
+ * @param value - The value to compare against
+ */
 function neqHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -840,10 +1006,22 @@ function neqHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).neq(value);
 }
 
-function gtHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  value: ExprValue<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates a greater-than condition (`> value`) from a fragment.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to compare
+ * @param value - The value to compare against
+ */
+function gtHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  value: FragmentValue<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a greater-than condition (`> value`) from a field name.
+ *
+ * @param fieldName - The entity field name to compare
+ * @param value - The value to compare against
+ */
 function gtHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -855,10 +1033,22 @@ function gtHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).gt(value);
 }
 
-function gteHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  value: ExprValue<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates a greater-than-or-equal-to condition (`>= value`) from a fragment.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to compare
+ * @param value - The value to compare against
+ */
+function gteHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  value: FragmentValue<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a greater-than-or-equal-to condition (`>= value`) from a field name.
+ *
+ * @param fieldName - The entity field name to compare
+ * @param value - The value to compare against
+ */
 function gteHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -870,10 +1060,22 @@ function gteHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).gte(value);
 }
 
-function ltHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  value: ExprValue<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates a less-than condition (`< value`) from a fragment.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to compare
+ * @param value - The value to compare against
+ */
+function ltHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  value: FragmentValue<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a less-than condition (`< value`) from a field name.
+ *
+ * @param fieldName - The entity field name to compare
+ * @param value - The value to compare against
+ */
 function ltHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -885,10 +1087,22 @@ function ltHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).lt(value);
 }
 
-function lteHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-  value: ExprValue<TExpr>,
-): SQLFragment<ExtractFields<TExpr>>;
+/**
+ * Generates a less-than-or-equal-to condition (`<= value`) from a fragment.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to compare
+ * @param value - The value to compare against
+ */
+function lteHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+  value: FragmentValue<TFragment>,
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a less-than-or-equal-to condition (`<= value`) from a field name.
+ *
+ * @param fieldName - The entity field name to compare
+ * @param value - The value to compare against
+ */
 function lteHelper<
   TFields extends Record<string, any>,
   N extends PickSupportedSQLValueKeys<TFields>,
@@ -900,10 +1114,24 @@ function lteHelper<TFields extends Record<string, any>>(
   return resolveInnerExpr(expressionOrFieldName).lte(value);
 }
 
-function jsonContainsHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * Generates a JSON contains condition (`@>`) from a fragment.
+ * Tests whether the JSON value contains the given value.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to check
+ * @param value - The JSON value to check containment of
+ */
+function jsonContainsHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   value: JsonSerializable,
-): SQLFragment<ExtractFields<TExpr>>;
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a JSON contains condition (`@>`) from a field name.
+ * Tests whether the JSON value contains the given value.
+ *
+ * @param fieldName - The entity field name to check
+ * @param value - The JSON value to check containment of
+ */
 function jsonContainsHelper<TFields extends Record<string, any>, N extends keyof TFields>(
   fieldName: N,
   value: JsonSerializable,
@@ -921,10 +1149,24 @@ function jsonContainsHelper<TFields extends Record<string, any>>(
   return sql`${inner} @> ${serialized}::jsonb`;
 }
 
-function jsonContainedByHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * Generates a JSON contained-by condition (`<@`) from a fragment.
+ * Tests whether the JSON value is contained by the given value.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to check
+ * @param value - The JSON value to check containment against
+ */
+function jsonContainedByHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   value: JsonSerializable,
-): SQLFragment<ExtractFields<TExpr>>;
+): SQLFragment<ExtractFragmentFields<TFragment>>;
+/**
+ * Generates a JSON contained-by condition (`<@`) from a field name.
+ * Tests whether the JSON value is contained by the given value.
+ *
+ * @param fieldName - The entity field name to check
+ * @param value - The JSON value to check containment against
+ */
 function jsonContainedByHelper<TFields extends Record<string, any>, N extends keyof TFields>(
   fieldName: N,
   value: JsonSerializable,
@@ -942,10 +1184,24 @@ function jsonContainedByHelper<TFields extends Record<string, any>>(
   return sql`${inner} <@ ${serialized}::jsonb`;
 }
 
-function jsonPathHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * JSON path extraction (`->`) from a fragment. Returns JSON.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to extract from
+ * @param path - The JSON key to extract
+ */
+function jsonPathHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   path: string,
-): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+): SQLChainableFragment<ExtractFragmentFields<TFragment>, SupportedSQLValue>;
+/**
+ * JSON path extraction (`->`) from a field name. Returns JSON.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fieldName - The entity field name to extract from
+ * @param path - The JSON key to extract
+ */
 function jsonPathHelper<TFields extends Record<string, any>, N extends keyof TFields>(
   fieldName: N,
   path: string,
@@ -959,10 +1215,24 @@ function jsonPathHelper<TFields extends Record<string, any>>(
   return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
 }
 
-function jsonPathTextHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * JSON path text extraction (`->>`) from a fragment. Returns text.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to extract from
+ * @param path - The JSON key to extract as text
+ */
+function jsonPathTextHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   path: string,
-): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+): SQLChainableFragment<ExtractFragmentFields<TFragment>, SupportedSQLValue>;
+/**
+ * JSON path text extraction (`->>`) from a field name. Returns text.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fieldName - The entity field name to extract from
+ * @param path - The JSON key to extract as text
+ */
 function jsonPathTextHelper<TFields extends Record<string, any>, N extends keyof TFields>(
   fieldName: N,
   path: string,
@@ -976,10 +1246,24 @@ function jsonPathTextHelper<TFields extends Record<string, any>>(
   return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
 }
 
-function jsonDeepPathHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * JSON deep path extraction (`#>`) from a fragment. Returns JSON at the specified key path.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to extract from
+ * @param path - Array of keys forming the path (e.g., ['user', 'address', 'city'])
+ */
+function jsonDeepPathHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   path: readonly string[],
-): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+): SQLChainableFragment<ExtractFragmentFields<TFragment>, SupportedSQLValue>;
+/**
+ * JSON deep path extraction (`#>`) from a field name. Returns JSON at the specified key path.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fieldName - The entity field name to extract from
+ * @param path - Array of keys forming the path (e.g., ['user', 'address', 'city'])
+ */
 function jsonDeepPathHelper<TFields extends Record<string, any>, N extends keyof TFields>(
   fieldName: N,
   path: readonly string[],
@@ -994,10 +1278,24 @@ function jsonDeepPathHelper<TFields extends Record<string, any>>(
   return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
 }
 
-function jsonDeepPathTextHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * JSON deep path text extraction (`#>>`) from a fragment. Returns text at the specified key path.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to extract from
+ * @param path - Array of keys forming the path (e.g., ['user', 'address', 'city'])
+ */
+function jsonDeepPathTextHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   path: readonly string[],
-): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+): SQLChainableFragment<ExtractFragmentFields<TFragment>, SupportedSQLValue>;
+/**
+ * JSON deep path text extraction (`#>>`) from a field name. Returns text at the specified key path.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fieldName - The entity field name to extract from
+ * @param path - Array of keys forming the path (e.g., ['user', 'address', 'city'])
+ */
 function jsonDeepPathTextHelper<TFields extends Record<string, any>, N extends keyof TFields>(
   fieldName: N,
   path: readonly string[],
@@ -1012,10 +1310,24 @@ function jsonDeepPathTextHelper<TFields extends Record<string, any>>(
   return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
 }
 
-function castHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
+/**
+ * SQL type cast (`::type`) from a fragment.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to cast
+ * @param typeName - The PostgreSQL type name (e.g., 'int', 'text', 'timestamptz')
+ */
+function castHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
   typeName: PostgresCastType,
-): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+): SQLChainableFragment<ExtractFragmentFields<TFragment>, SupportedSQLValue>;
+/**
+ * SQL type cast (`::type`) from a field name.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fieldName - The entity field name to cast
+ * @param typeName - The PostgreSQL type name (e.g., 'int', 'text', 'timestamptz')
+ */
 function castHelper<TFields extends Record<string, any>, N extends keyof TFields>(
   fieldName: N,
   typeName: PostgresCastType,
@@ -1033,9 +1345,21 @@ function castHelper<TFields extends Record<string, any>>(
   return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
 }
 
-function lowerHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+/**
+ * Wraps a fragment in `LOWER()` to convert to lowercase.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to convert
+ */
+function lowerHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+): SQLChainableFragment<ExtractFragmentFields<TFragment>, SupportedSQLValue>;
+/**
+ * Wraps a field in `LOWER()` to convert to lowercase.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fieldName - The entity field name to convert
+ */
 function lowerHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
   fieldName: N,
 ): SQLChainableFragment<TFields, TFields[N]>;
@@ -1047,9 +1371,21 @@ function lowerHelper<TFields extends Record<string, any>>(
   return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
 }
 
-function upperHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+/**
+ * Wraps a fragment in `UPPER()` to convert to uppercase.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to convert
+ */
+function upperHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+): SQLChainableFragment<ExtractFragmentFields<TFragment>, SupportedSQLValue>;
+/**
+ * Wraps a field in `UPPER()` to convert to uppercase.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fieldName - The entity field name to convert
+ */
 function upperHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
   fieldName: N,
 ): SQLChainableFragment<TFields, TFields[N]>;
@@ -1061,9 +1397,21 @@ function upperHelper<TFields extends Record<string, any>>(
   return new SQLChainableFragment(wrapped.sql, wrapped.bindings);
 }
 
-function trimHelper<TExpr extends SQLFragment<any>>(
-  expression: TExpr,
-): SQLChainableFragment<ExtractFields<TExpr>, SupportedSQLValue>;
+/**
+ * Wraps a fragment in `TRIM()` to remove leading and trailing whitespace.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fragment - A SQLFragment or SQLChainableFragment to trim
+ */
+function trimHelper<TFragment extends SQLFragment<any>>(
+  fragment: TFragment,
+): SQLChainableFragment<ExtractFragmentFields<TFragment>, SupportedSQLValue>;
+/**
+ * Wraps a field in `TRIM()` to remove leading and trailing whitespace.
+ * Returns an SQLChainableFragment for fluent chaining.
+ *
+ * @param fieldName - The entity field name to trim
+ */
 function trimHelper<TFields extends Record<string, any>, N extends PickStringValueKeys<TFields>>(
   fieldName: N,
 ): SQLChainableFragment<TFields, TFields[N]>;
