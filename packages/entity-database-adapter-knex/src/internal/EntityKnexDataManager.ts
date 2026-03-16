@@ -559,6 +559,7 @@ export class EntityKnexDataManager<
 
   private decodeOpaqueCursor(cursor: string): TFields[TIDField] {
     let parsedCursor: any;
+
     try {
       const decoded = Buffer.from(cursor, 'base64url').toString();
       parsedCursor = JSON.parse(decoded);
@@ -569,13 +570,13 @@ export class EntityKnexDataManager<
       );
     }
 
-    if (!('id' in parsedCursor)) {
-      throw new EntityDatabaseAdapterPaginationCursorInvalidError(
-        `Cursor is missing required 'id' field. Parsed cursor: ${JSON.stringify(parsedCursor)}`,
-      );
+    if (typeof parsedCursor === 'object' && 'id' in parsedCursor) {
+      return parsedCursor.id;
     }
 
-    return parsedCursor.id;
+    throw new EntityDatabaseAdapterPaginationCursorInvalidError(
+      `Cursor is missing required 'id' field. Parsed cursor: ${JSON.stringify(parsedCursor)}`,
+    );
   }
 
   private resolveSearchFieldToSQLFragment(

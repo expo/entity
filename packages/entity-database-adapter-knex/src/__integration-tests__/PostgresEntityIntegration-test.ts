@@ -2196,6 +2196,32 @@ describe('postgres entity integration', () => {
             },
           }),
         ).rejects.toThrow("Cursor is missing required 'id' field.");
+
+        // Try with valid base64-encoded JSON that decodes to a non-object primitive
+        const primitiveCursor = Buffer.from(JSON.stringify(12345)).toString('base64url');
+        await expect(
+          PostgresTestEntity.knexLoader(vc).loadPageAsync({
+            first: 10,
+            after: primitiveCursor,
+            pagination: {
+              strategy: PaginationStrategy.STANDARD,
+              orderBy: [],
+            },
+          }),
+        ).rejects.toThrow("Cursor is missing required 'id' field.");
+
+        // Try with valid base64-encoded JSON string primitive
+        const stringPrimitiveCursor = Buffer.from(JSON.stringify('hello')).toString('base64url');
+        await expect(
+          PostgresTestEntity.knexLoader(vc).loadPageAsync({
+            first: 10,
+            after: stringPrimitiveCursor,
+            pagination: {
+              strategy: PaginationStrategy.STANDARD,
+              orderBy: [],
+            },
+          }),
+        ).rejects.toThrow("Cursor is missing required 'id' field.");
       });
 
       it('performs pagination with both loader types', async () => {
