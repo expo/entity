@@ -409,7 +409,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     const id1 = uuidv4();
     const invalidationUtils = new EntityInvalidationUtils(
       testEntityConfiguration,
-      TestEntity,
       dataManagerInstance,
       metricsAdapter,
     );
@@ -488,7 +487,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
 
     const invalidationUtils = new EntityInvalidationUtils(
       testEntityConfiguration,
-      TestEntity,
       dataManagerInstance,
       metricsAdapter,
     );
@@ -560,7 +558,6 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     await new StubQueryContextProvider().runInTransactionAsync(async (queryContext) => {
       const invalidationUtils = new EntityInvalidationUtils(
         testEntityConfiguration,
-        TestEntity,
         dataManagerInstance,
         metricsAdapter,
       );
