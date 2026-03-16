@@ -1,6 +1,4 @@
-import type { IEntityClass } from './Entity.ts';
 import type { EntityConfiguration } from './EntityConfiguration.ts';
-import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
 import type { EntityTransactionalQueryContext } from './EntityQueryContext.ts';
 import type { ReadonlyEntity } from './ReadonlyEntity.ts';
 import type { ViewerContext } from './ViewerContext.ts';
@@ -18,25 +16,10 @@ export class EntityInvalidationUtils<
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
   TEntity extends ReadonlyEntity<TFields, TIDField, TViewerContext, TSelectedFields>,
-  TPrivacyPolicy extends EntityPrivacyPolicy<
-    TFields,
-    TIDField,
-    TViewerContext,
-    TEntity,
-    TSelectedFields
-  >,
   TSelectedFields extends keyof TFields,
 > {
   constructor(
     private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
-    _entityClass: IEntityClass<
-      TFields,
-      TIDField,
-      TViewerContext,
-      TEntity,
-      TPrivacyPolicy,
-      TSelectedFields
-    >,
     private readonly dataManager: EntityDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
