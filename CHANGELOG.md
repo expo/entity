@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.62.0](https://github.com/expo/entity/compare/v0.61.0...v0.62.0) (2026-03-16)
+
+### Bug Fixes
+
+- only throw EntityDatabaseAdapterPaginationCursorInvalidError from cursor decoding logic ([#537](https://github.com/expo/entity/issues/537)) ([e3cee07](https://github.com/expo/entity/commit/e3cee07091af8d1e6c5bb2d82f13e837c7658ea9))
+- remove unused arg from EntityInvalidationUtils ([#536](https://github.com/expo/entity/issues/536)) ([0a1d1b5](https://github.com/expo/entity/commit/0a1d1b5972c15c932f5c31015f2519163f882f83))
+
 # [0.61.0](https://github.com/expo/entity/compare/v0.60.0...v0.61.0) (2026-03-12)
 
 ### Bug Fixes
