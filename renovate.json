@@ -24,16 +24,16 @@
       "groupName": "CI workflows"
     },
     {
-      "matchPackagePatterns": ["^eslint"],
-      "groupName": "eslint"
+      "groupName": "eslint",
+      "matchPackageNames": ["/^eslint/"]
     },
     {
-      "matchPackagePatterns": ["^@types/"],
-      "groupName": "type definitions"
+      "groupName": "type definitions",
+      "matchPackageNames": ["/^@types//"]
     },
     {
-      "matchPackagePatterns": ["^jest", "^ts-jest", "^@jest/"],
-      "groupName": "jest"
+      "groupName": "jest",
+      "matchPackageNames": ["/^jest/", "/^ts-jest/", "/^@jest//"]
     }
   ]
 }
