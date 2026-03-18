@@ -4,12 +4,33 @@ import type {
 } from '../EntityPrivacyPolicy.ts';
 import type { EntityLoadMethodType } from '../internal/EntityLoadInterfaces.ts';
 
+/**
+ * The type of the load method being called.
+ */
 export enum EntityMetricsLoadType {
+  /**
+   * Standard EntityLoader load (the methods from EnforcingEntityLoader or AuthorizationResultBasedEntityLoader).
+   */
   LOAD_MANY,
+  /**
+   * Knex loader load using loadManyByFieldEqualityConjunctionAsync.
+   */
   LOAD_MANY_EQUALITY_CONJUNCTION,
+  /**
+   * Knex loader load using loadManyByRawWhereClauseAsync.
+   */
   LOAD_MANY_RAW,
+  /**
+   * Knex loader load using loadManyBySQL.
+   */
   LOAD_MANY_SQL,
+  /**
+   * Internal data manager load via database adapter method loadOneEqualingAsync.
+   */
   LOAD_ONE,
+  /**
+   * Knex loader load using loadPageAsync.
+   */
   LOAD_PAGE,
 }
 
@@ -43,6 +64,9 @@ export interface EntityMetricsLoadEvent {
   count: number;
 }
 
+/**
+ * The type of mutation being performed.
+ */
 export enum EntityMetricsMutationType {
   CREATE,
   UPDATE,
@@ -71,6 +95,9 @@ export interface EntityMetricsMutationEvent {
   duration: number;
 }
 
+/**
+ * Type used to delineate dataloader, cache, and database load counts in EntityDataManager.
+ */
 export enum IncrementLoadCountEventType {
   /**
    * Type for when a dataloader load is initiated via the standard load methods

@@ -1,9 +1,21 @@
 import type { Entity } from './Entity.ts';
 import type { ViewerContext } from './ViewerContext.ts';
 
+/**
+ * The type of mutation that is occurring to an entity.
+ */
 export enum EntityMutationType {
+  /**
+   * Create mutation.
+   */
   CREATE,
+  /**
+   * Update mutation.
+   */
   UPDATE,
+  /**
+   * Delete mutation.
+   */
   DELETE,
 }
 
@@ -30,15 +42,34 @@ type EntityTriggerOrValidatorMutationInfo<
   TSelectedFields extends keyof TFields = keyof TFields,
 > =
   | {
+      /**
+       * The type of mutation that invoked this trigger or validator.
+       */
       type: EntityMutationType.CREATE;
     }
   | {
+      /**
+       * The type of mutation that invoked this trigger or validator.
+       */
       type: EntityMutationType.UPDATE;
+      /**
+       * The previous value of the entity before the update.
+       */
       previousValue: TEntity;
+      /**
+       * If this update is part of a cascading deletion (cascade set null), this field will contain information about the cascade
+       * that caused this update. Otherwise, it will be null.
+       */
       cascadingDeleteCause: EntityCascadingDeletionInfo | null;
     }
   | {
+      /**
+       * The type of mutation that invoked this trigger or validator.
+       */
       type: EntityMutationType.DELETE;
+      /**
+       * If this delete is part of a cascading deletion, this field will contain information about the cascade that caused this cascading delete.
+       */
       cascadingDeleteCause: EntityCascadingDeletionInfo | null;
     };
 

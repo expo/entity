@@ -8,20 +8,55 @@ export type PreCommitCallback = (
   ...args: any
 ) => Promise<any>;
 
+/**
+ * Database transaction isolation level. Controls the visibility of changes made by
+ * concurrent transactions, trading off between consistency and performance.
+ */
 export enum TransactionIsolationLevel {
+  /**
+   * Each statement sees only data committed before it began. Default for most databases.
+   */
   READ_COMMITTED = 'READ_COMMITTED',
+
+  /**
+   * All statements in the transaction see the same snapshot taken at the start of the transaction.
+   */
   REPEATABLE_READ = 'REPEATABLE_READ',
+
+  /**
+   * Transactions execute as if they were run one at a time. Strongest guarantee but lowest throughput.
+   */
   SERIALIZABLE = 'SERIALIZABLE',
 }
 
+/**
+ * Controls DataLoader behavior within a transaction.
+ */
 export enum TransactionalDataLoaderMode {
+  /**
+   * Default mode where DataLoader is fully enabled, providing both batching and caching benefits within the transaction.
+   */
   ENABLED = 'ENABLED',
+
+  /**
+   * DataLoader is enabled for batching queries together but does not cache results. Use this mode when you want to benefit from batching but need to ensure that each load reflects the most current database state, even within the same transaction.
+   */
   ENABLED_BATCH_ONLY = 'ENABLED_BATCH_ONLY',
+
+  /**
+   * DataLoader is completely disabled for the transaction. Each load will directly query the database without any batching or caching. Use this mode when you need to ensure that every load reflects the most current database state and are not concerned about the performance benefits of batching or caching within the transaction.
+   */
   DISABLED = 'DISABLED',
 }
 
 export type TransactionConfig = {
+  /**
+   * Transaction isolation level. When omitted, the database default is used (typically READ_COMMITTED).
+   */
   isolationLevel?: TransactionIsolationLevel;
+  /**
+   * DataLoader mode for the transaction. When omitted, defaults to ENABLED.
+   */
   transactionalDataLoaderMode?: TransactionalDataLoaderMode;
 };
 
