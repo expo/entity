@@ -263,6 +263,18 @@ export class PostgresEntityDatabaseAdapter<
     );
   }
 
+  protected async updateWithoutReturningInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    tableIdField: string,
+    id: any,
+    object: object,
+  ): Promise<number> {
+    return await wrapNativePostgresCallAsync(() =>
+      queryInterface.update(object).into(tableName).where(tableIdField, id),
+    );
+  }
+
   protected async deleteInternalAsync(
     queryInterface: Knex,
     tableName: string,

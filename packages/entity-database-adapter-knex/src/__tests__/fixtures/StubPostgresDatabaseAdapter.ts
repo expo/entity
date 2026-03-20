@@ -279,6 +279,34 @@ export class StubPostgresDatabaseAdapter<
     return [objectCollection[objectIndex]];
   }
 
+  protected async updateWithoutReturningInternalAsync(
+    _queryInterface: any,
+    tableName: string,
+    tableIdField: string,
+    id: any,
+    object: object,
+  ): Promise<number> {
+    if (Object.keys(object).length === 0) {
+      throw new Error(`Empty update (${tableIdField} = ${id})`);
+    }
+
+    const objectCollection = this.getObjectCollectionForTable(tableName);
+
+    const objectIndex = objectCollection.findIndex((obj) => {
+      return obj[tableIdField] === id;
+    });
+
+    if (objectIndex < 0) {
+      return 0;
+    }
+
+    objectCollection[objectIndex] = {
+      ...objectCollection[objectIndex],
+      ...object,
+    };
+    return 1;
+  }
+
   protected async deleteInternalAsync(
     _queryInterface: any,
     tableName: string,

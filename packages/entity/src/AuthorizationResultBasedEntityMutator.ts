@@ -535,6 +535,48 @@ export class AuthorizationResultBasedUpdateMutator<
     )(this.updateInTransactionAsync(false));
   }
 
+  /**
+   * Commit the changes to the entity after authorizing against update privacy rules.
+   * Unlike {@link updateAsync}, this method does not reload the entity from the database
+   * after the update. This is useful for fire-and-forget writes where the caller
+   * discards the result.
+   *
+   * The UPDATE query omits RETURNING *, and the post-update SELECT is skipped.
+   * Authorization, validators, before-triggers, and cache invalidation still run.
+   *
+   * @throws if the entity has `afterUpdate`, `afterAll`, or `afterCommit` triggers,
+   * since those triggers would be silently skipped without a reload
+   * @returns void result, where result error can be UnauthorizedError
+   */
+  async updateWithoutReloadingAsync(): Promise<Result<void>> {
+    const skippedTriggerKinds: string[] = [];
+    if (this.mutationTriggers.afterUpdate?.length) {
+      skippedTriggerKinds.push('afterUpdate');
+    }
+    if (this.mutationTriggers.afterAll?.length) {
+      skippedTriggerKinds.push('afterAll');
+    }
+    if (this.mutationTriggers.afterCommit?.length) {
+      skippedTriggerKinds.push('afterCommit');
+    }
+    if (skippedTriggerKinds.length > 0) {
+      throw new Error(
+        `${this.entityClass.name}.updateWithoutReloadingAsync cannot be used when the entity has triggers that run after an update (${skippedTriggerKinds.join(', ')}). Use updateAsync instead.`,
+      );
+    }
+
+    return await timeAndLogMutationEventAsync(
+      this.metricsAdapter,
+      EntityMetricsMutationType.UPDATE,
+      this.entityClass.name,
+      this.queryContext,
+    )(
+      this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
+        this.updateWithoutReloadingInternalAsync(innerQueryContext),
+      ),
+    );
+  }
+
   private async updateInTransactionAsync(skipDatabaseUpdate: boolean): Promise<Result<TEntity>> {
     return await this.queryContext.runInTransactionIfNotInTransactionAsync((innerQueryContext) =>
       this.updateInternalAsync(innerQueryContext, skipDatabaseUpdate),
@@ -682,6 +724,95 @@ export class AuthorizationResultBasedUpdateMutator<
     );
 
     return result(updatedEntity);
+  }
+
+  private async updateWithoutReloadingInternalAsync(
+    queryContext: EntityTransactionalQueryContext,
+  ): Promise<Result<void>> {
+    this.validateFields(this.updatedFields);
+    this.ensureStableIDField(this.updatedFields);
+
+    const invalidationUtils = this.entityLoaderFactory.invalidationUtils();
+    const constructionUtils = this.entityLoaderFactory.constructionUtils(
+      this.viewerContext,
+      queryContext,
+      {
+        previousValue: this.originalEntity,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
+    );
+
+    const entityAboutToBeUpdated = constructionUtils.constructEntity(this.fieldsForEntity);
+    const authorizeUpdateResult = await asyncResult(
+      this.privacyPolicy.authorizeUpdateAsync(
+        this.viewerContext,
+        queryContext,
+        { previousValue: this.originalEntity, cascadingDeleteCause: this.cascadingDeleteCause },
+        entityAboutToBeUpdated,
+        this.metricsAdapter,
+      ),
+    );
+    if (!authorizeUpdateResult.ok) {
+      return authorizeUpdateResult;
+    }
+
+    await this.executeMutationValidatorsAsync(
+      this.mutationValidators.beforeCreateAndUpdate,
+      queryContext,
+      entityAboutToBeUpdated,
+      {
+        type: EntityMutationType.UPDATE,
+        previousValue: this.originalEntity,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
+    );
+    await this.executeMutationTriggersAsync(
+      this.mutationTriggers.beforeAll,
+      queryContext,
+      entityAboutToBeUpdated,
+      {
+        type: EntityMutationType.UPDATE,
+        previousValue: this.originalEntity,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
+    );
+    await this.executeMutationTriggersAsync(
+      this.mutationTriggers.beforeUpdate,
+      queryContext,
+      entityAboutToBeUpdated,
+      {
+        type: EntityMutationType.UPDATE,
+        previousValue: this.originalEntity,
+        cascadingDeleteCause: this.cascadingDeleteCause,
+      },
+    );
+
+    await this.databaseAdapter.updateWithoutReturningAsync(
+      queryContext,
+      this.entityConfiguration.idField,
+      entityAboutToBeUpdated.getID(),
+      this.updatedFields,
+    );
+
+    queryContext.appendPostCommitInvalidationCallback(async () => {
+      invalidationUtils.invalidateFieldsForTransaction(
+        queryContext,
+        this.originalEntity.getAllDatabaseFields(),
+      );
+      invalidationUtils.invalidateFieldsForTransaction(queryContext, this.fieldsForEntity);
+      await Promise.all([
+        invalidationUtils.invalidateFieldsAsync(this.originalEntity.getAllDatabaseFields()),
+        invalidationUtils.invalidateFieldsAsync(this.fieldsForEntity),
+      ]);
+    });
+
+    invalidationUtils.invalidateFieldsForTransaction(
+      queryContext,
+      this.originalEntity.getAllDatabaseFields(),
+    );
+    invalidationUtils.invalidateFieldsForTransaction(queryContext, this.fieldsForEntity);
+
+    return result(undefined);
   }
 
   private ensureStableIDField(updatedFields: Partial<TFields>): void {

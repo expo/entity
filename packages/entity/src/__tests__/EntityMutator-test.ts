@@ -14,6 +14,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import { AuthorizationResultBasedEntityLoader } from '../AuthorizationResultBasedEntityLoader.ts';
+import { EnforcingEntityUpdater } from '../EnforcingEntityUpdater.ts';
 import { EntityCompanionProvider } from '../EntityCompanionProvider.ts';
 import type { EntityConfiguration } from '../EntityConfiguration.ts';
 import { EntityConstructionUtils } from '../EntityConstructionUtils.ts';
@@ -298,6 +299,13 @@ const verifyTriggerCounts = (
 
 const createEntityMutatorFactory = (
   existingObjects: TestFields[],
+  mutationTriggersOverride?: EntityMutationTriggerConfiguration<
+    TestFields,
+    'customIdField',
+    ViewerContext,
+    TestEntity,
+    keyof TestFields
+  >,
 ): {
   privacyPolicy: TestEntityPrivacyPolicy;
   entityLoaderFactory: EntityLoaderFactory<
@@ -347,7 +355,7 @@ const createEntityMutatorFactory = (
     ViewerContext,
     TestEntity,
     keyof TestFields
-  > = {
+  > = mutationTriggersOverride ?? {
     beforeCreate: [new TestMutationTrigger()],
     afterCreate: [new TestMutationTrigger()],
     beforeUpdate: [new TestMutationTrigger()],
@@ -1043,6 +1051,148 @@ describe(EntityMutatorFactory, () => {
       );
       expect(reloadedEntity.getAllFields()).toMatchObject(existingEntity.getAllFields());
     });
+
+    it('updateWithoutReloadingAsync throws when entity has after-triggers', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              'customIdField',
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
+      const queryContext = new StubQueryContextProvider().getQueryContext();
+
+      const id1 = uuidv4();
+      const { entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory([
+        {
+          customIdField: id1,
+          stringField: 'huh',
+          testIndexedField: '4',
+          intField: 3,
+          dateField: new Date(),
+          nullableField: null,
+        },
+      ]);
+
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory
+          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .loadByIDAsync(id1),
+      );
+
+      await expect(
+        entityMutatorFactory
+          .forUpdate(existingEntity, queryContext, /* cascadingDeleteCause */ null)
+          .setField('stringField', 'huh2')
+          .updateWithoutReloadingAsync(),
+      ).rejects.toThrow(
+        'TestEntity.updateWithoutReloadingAsync cannot be used when the entity has triggers that run after an update (afterUpdate, afterAll, afterCommit)',
+      );
+
+      // Ensure no writes happened
+      const reloadedEntity = await enforceAsyncResult(
+        entityLoaderFactory
+          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .loadByIDAsync(id1),
+      );
+      expect(reloadedEntity.getField('stringField')).toEqual('huh');
+    });
+
+    it('updateWithoutReloadingAsync persists update when entity has no after-triggers', async () => {
+      const viewerContext = mock<ViewerContext>();
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              'customIdField',
+              ViewerContext,
+              TestEntity,
+              keyof TestFields
+            >
+          >(),
+        );
+      const queryContext = new StubQueryContextProvider().getQueryContext();
+
+      const id1 = uuidv4();
+      const id2 = uuidv4();
+      const { entityMutatorFactory, entityLoaderFactory } = createEntityMutatorFactory(
+        [
+          {
+            customIdField: id1,
+            stringField: 'huh',
+            testIndexedField: '4',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+          {
+            customIdField: id2,
+            stringField: 'huh',
+            testIndexedField: '5',
+            intField: 3,
+            dateField: new Date(),
+            nullableField: null,
+          },
+        ],
+        {
+          beforeUpdate: [new TestMutationTrigger()],
+          beforeAll: [new TestMutationTrigger()],
+        },
+      );
+
+      // Test result-based API
+      const existingEntity = await enforceAsyncResult(
+        entityLoaderFactory
+          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .loadByIDAsync(id1),
+      );
+
+      const updateResult = await entityMutatorFactory
+        .forUpdate(existingEntity, queryContext, /* cascadingDeleteCause */ null)
+        .setField('stringField', 'huh2')
+        .updateWithoutReloadingAsync();
+
+      expect(updateResult.ok).toBe(true);
+      expect(updateResult.value).toBeUndefined();
+
+      const reloadedEntity = await enforceAsyncResult(
+        entityLoaderFactory
+          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .loadByIDAsync(id1),
+      );
+      expect(reloadedEntity.getField('stringField')).toEqual('huh2');
+
+      // Test enforcing API
+      const existingEntity2 = await enforceAsyncResult(
+        entityLoaderFactory
+          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .loadByIDAsync(id2),
+      );
+
+      await new EnforcingEntityUpdater(
+        entityMutatorFactory.forUpdate(
+          existingEntity2,
+          queryContext,
+          /* cascadingDeleteCause */ null,
+        ),
+      )
+        .setField('stringField', 'huh3')
+        .updateWithoutReloadingAsync();
+
+      const reloadedEntity2 = await enforceAsyncResult(
+        entityLoaderFactory
+          .forLoad(viewerContext, queryContext, privacyPolicyEvaluationContext)
+          .loadByIDAsync(id2),
+      );
+      expect(reloadedEntity2.getField('stringField')).toEqual('huh3');
+    });
   });
 
   describe('forDelete', () => {
@@ -1592,6 +1742,13 @@ describe(EntityMutatorFactory, () => {
     expect(entityUpdateResult.reason).toEqual(rejectionError);
     expect(entityUpdateResult.value).toBe(undefined);
 
+    const entityUpdateWithoutReloadingResult = await entityMutatorFactory
+      .forUpdate(fakeEntity, queryContext, /* cascadingDeleteCause */ null)
+      .updateWithoutReloadingAsync();
+    expect(entityUpdateWithoutReloadingResult.ok).toBe(false);
+    expect(entityUpdateWithoutReloadingResult.reason).toEqual(rejectionError);
+    expect(entityUpdateWithoutReloadingResult.value).toBe(undefined);
+
     const entityDeleteResult = await entityMutatorFactory
       .forDelete(fakeEntity, queryContext, /* cascadingDeleteCause */ null)
       .deleteAsync();
@@ -1691,6 +1848,14 @@ describe(EntityMutatorFactory, () => {
       ),
     ).thenReject(rejectionError);
     when(
+      databaseAdapterMock.updateWithoutReturningAsync(
+        anyOfClass(EntityTransactionalQueryContext),
+        anything(),
+        anything(),
+        anything(),
+      ),
+    ).thenReject(rejectionError);
+    when(
       databaseAdapterMock.deleteAsync(
         anyOfClass(EntityTransactionalQueryContext),
         anything(),
@@ -1717,6 +1882,11 @@ describe(EntityMutatorFactory, () => {
       entityMutatorFactory
         .forUpdate(fakeEntity, queryContext, /* cascadingDeleteCause */ null)
         .updateAsync(),
+    ).rejects.toEqual(rejectionError);
+    await expect(
+      entityMutatorFactory
+        .forUpdate(fakeEntity, queryContext, /* cascadingDeleteCause */ null)
+        .updateWithoutReloadingAsync(),
     ).rejects.toEqual(rejectionError);
     await expect(
       entityMutatorFactory
