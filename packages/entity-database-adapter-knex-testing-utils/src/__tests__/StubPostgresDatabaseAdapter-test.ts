@@ -646,6 +646,86 @@ describe(StubPostgresDatabaseAdapter, () => {
     });
   });
 
+  describe('updateWithoutReturningAsync', () => {
+    it('updates a record and returns void', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        StubPostgresDatabaseAdapter.convertFieldObjectsToDataStore(
+          testEntityConfiguration,
+          new Map([
+            [
+              testEntityConfiguration.tableName,
+              [
+                {
+                  customIdField: 'hello',
+                  testIndexedField: 'h1',
+                  intField: 3,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+              ],
+            ],
+          ]),
+        ),
+      );
+      await databaseAdapter.updateWithoutReturningAsync(queryContext, 'customIdField', 'hello', {
+        stringField: 'b',
+      });
+
+      const reloaded = await databaseAdapter.fetchManyWhereAsync(
+        queryContext,
+        new SingleFieldHolder<TestFields, 'customIdField', 'customIdField'>('customIdField'),
+        [new SingleFieldValueHolder('hello')],
+      );
+      expect(reloaded.get(new SingleFieldValueHolder('hello'))).toMatchObject([
+        { stringField: 'b' },
+      ]);
+    });
+
+    it('throws error when empty update', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        StubPostgresDatabaseAdapter.convertFieldObjectsToDataStore(
+          testEntityConfiguration,
+          new Map([
+            [
+              testEntityConfiguration.tableName,
+              [
+                {
+                  customIdField: 'hello',
+                  testIndexedField: 'h1',
+                  intField: 3,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+              ],
+            ],
+          ]),
+        ),
+      );
+      await expect(
+        databaseAdapter.updateWithoutReturningAsync(queryContext, 'customIdField', 'hello', {}),
+      ).rejects.toThrow('Empty update (custom_id = hello)');
+    });
+
+    it('throws error when updating nonexistent record', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        new Map(),
+      );
+      await expect(
+        databaseAdapter.updateWithoutReturningAsync(queryContext, 'customIdField', 'nope', {
+          stringField: 'b',
+        }),
+      ).rejects.toThrow('Empty results from database adapter update');
+    });
+  });
+
   describe('deleteAsync', () => {
     it('deletes an object', async () => {
       const queryContext = instance(mock(EntityQueryContext));

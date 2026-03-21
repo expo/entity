@@ -120,6 +120,16 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     return this.updateResults;
   }
 
+  protected async updateWithoutReturningInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableIdField: string,
+    _id: any,
+    _object: object,
+  ): Promise<number> {
+    return this.updateResults.length;
+  }
+
   protected async deleteInternalAsync(
     _queryInterface: any,
     _tableName: string,

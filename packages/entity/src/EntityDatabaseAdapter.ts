@@ -244,6 +244,42 @@ export abstract class EntityDatabaseAdapter<
     );
   }
 
+  /**
+   * Update an object without returning the updated row.
+   *
+   * @param queryContext - query context with which to perform the update
+   * @param idField - the field in the object that is the ID
+   * @param id - the value of the ID field in the object
+   * @param object - the object to update
+   */
+  async updateWithoutReturningAsync<K extends keyof TFields>(
+    queryContext: EntityQueryContext,
+    idField: K,
+    id: any,
+    object: Readonly<Partial<TFields>>,
+  ): Promise<void> {
+    const idColumn = getDatabaseFieldForEntityField(this.entityConfiguration, idField);
+    const dbObject = transformFieldsToDatabaseObject(
+      this.entityConfiguration,
+      this.fieldTransformerMap,
+      object,
+    );
+    const updatedCount = await this.updateWithoutReturningInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      idColumn,
+      id,
+      dbObject,
+    );
+
+    if (updatedCount === 0) {
+      // This happens when the object to update does not exist. It may have been deleted by another process.
+      throw new EntityDatabaseAdapterEmptyUpdateResultError(
+        `Empty results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`,
+      );
+    }
+  }
+
   protected abstract updateInternalAsync(
     queryInterface: any,
     tableName: string,
@@ -251,6 +287,14 @@ export abstract class EntityDatabaseAdapter<
     id: any,
     object: object,
   ): Promise<object[]>;
+
+  protected abstract updateWithoutReturningInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    tableIdField: string,
+    id: any,
+    object: object,
+  ): Promise<number>;
 
   /**
    * Delete an object by ID.

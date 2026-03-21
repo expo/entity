@@ -84,6 +84,21 @@ describe('postgres entity integration', () => {
     ).rejects.toThrow(EntityDatabaseAdapterEmptyUpdateResultError);
   });
 
+  it('supports updateWithoutReloadingAsync', async () => {
+    const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+    const entity = await PostgresTestEntity.creator(vc)
+      .setField('name', 'hello')
+      .setField('hasACat', false)
+      .createAsync();
+
+    await PostgresTestEntity.updater(entity)
+      .setField('hasACat', true)
+      .updateWithoutReloadingAsync();
+
+    const loadedEntity = await PostgresTestEntity.loader(vc).loadByIDAsync(entity.getID());
+    expect(loadedEntity.getField('hasACat')).toBe(true);
+  });
+
   describe('empty creates and updates', () => {
     it('allows empty create', async () => {
       const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));

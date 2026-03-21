@@ -52,4 +52,20 @@ export class EnforcingEntityUpdater<
   async updateAsync(): Promise<TEntity> {
     return await enforceAsyncResult(this.entityUpdater.updateAsync());
   }
+
+  /**
+   * Commit the changes to the entity after authorizing against update privacy rules.
+   * Unlike {@link updateAsync}, this method does not reload the entity from the database
+   * after the update. This is useful for fire-and-forget writes where the caller
+   * discards the result.
+   *
+   * Authorization, validators, before-triggers, and cache invalidation still run.
+   *
+   * @throws if the entity has `afterUpdate`, `afterAll`, or `afterCommit` triggers,
+   * since those triggers would be silently skipped without a reload
+   * @throws upon authorization failure
+   */
+  async updateWithoutReloadingAsync(): Promise<void> {
+    await enforceAsyncResult(this.entityUpdater.updateWithoutReloadingAsync());
+  }
 }

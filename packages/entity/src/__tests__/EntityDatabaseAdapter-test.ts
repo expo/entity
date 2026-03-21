@@ -87,6 +87,16 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'custo
     return this.updateResults;
   }
 
+  protected async updateWithoutReturningInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableIdField: string,
+    _id: any,
+    _object: object,
+  ): Promise<number> {
+    return this.updateResults.length;
+  }
+
   protected async deleteInternalAsync(
     _queryInterface: any,
     _tableName: string,
@@ -279,6 +289,26 @@ describe(EntityDatabaseAdapter, () => {
       await expect(adapter.updateAsync(queryContext, 'customIdField', 'wat', {})).rejects.toThrow(
         EntityDatabaseAdapterExcessiveUpdateResultError,
       );
+    });
+  });
+
+  describe('updateWithoutReturningAsync', () => {
+    it('succeeds when update count is 1', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({
+        updateResults: [{ string_field: 'hello' }],
+      });
+      await expect(
+        adapter.updateWithoutReturningAsync(queryContext, 'customIdField', 'wat', {}),
+      ).resolves.toBeUndefined();
+    });
+
+    it('throws when update count is zero', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({ updateResults: [] });
+      await expect(
+        adapter.updateWithoutReturningAsync(queryContext, 'customIdField', 'wat', {}),
+      ).rejects.toThrow(EntityDatabaseAdapterEmptyUpdateResultError);
     });
   });
 

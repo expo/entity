@@ -108,6 +108,32 @@ class InMemoryDatabaseAdapter<
     return [dbObjects[objectIndex]];
   }
 
+  protected async updateWithoutReturningInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    tableIdField: string,
+    id: any,
+    object: object,
+  ): Promise<number> {
+    if (Object.keys(object).length === 0) {
+      throw new Error(`Empty update (${tableIdField} = ${id})`);
+    }
+
+    const objectIndex = dbObjects.findIndex((obj) => {
+      return obj[tableIdField] === id;
+    });
+
+    if (objectIndex < 0) {
+      return 0;
+    }
+
+    dbObjects[objectIndex] = {
+      ...dbObjects[objectIndex],
+      ...object,
+    };
+    return 1;
+  }
+
   protected async deleteInternalAsync(
     _queryInterface: any,
     _tableName: string,
