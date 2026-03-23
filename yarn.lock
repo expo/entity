@@ -1009,7 +1009,7 @@ __metadata:
     "@koa/bodyparser": "npm:6.1.0"
     "@koa/cors": "npm:5.0.0"
     "@koa/router": "npm:15.3.1"
-    "@types/koa": "npm:3.0.1"
+    "@types/koa": "npm:3.0.2"
     "@types/koa__cors": "npm:5.0.1"
     "@types/koa__router": "npm:12.0.5"
     "@types/supertest": "npm:7.2.0"
@@ -2961,7 +2961,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa@npm:*, @types/koa@npm:3.0.1":
+"@types/koa@npm:*":
   version: 3.0.1
   resolution: "@types/koa@npm:3.0.1"
   dependencies:
@@ -2974,6 +2974,22 @@ __metadata:
     "@types/koa-compose": "npm:*"
     "@types/node": "npm:*"
   checksum: 10c0/c9d44b89591fb319fece4fcb05092e4715be15e748ffbd91f536a2d9c298d42995980262dcb7d8e1dd5ee8d26cc5ff0303bef88f0ab5923f72454fc95ae47def
+  languageName: node
+  linkType: hard
+
+"@types/koa@npm:3.0.2":
+  version: 3.0.2
+  resolution: "@types/koa@npm:3.0.2"
+  dependencies:
+    "@types/accepts": "npm:*"
+    "@types/content-disposition": "npm:*"
+    "@types/cookies": "npm:*"
+    "@types/http-assert": "npm:*"
+    "@types/http-errors": "npm:^2"
+    "@types/keygrip": "npm:*"
+    "@types/koa-compose": "npm:*"
+    "@types/node": "npm:*"
+  checksum: 10c0/a088da1e07ef426d0cb78df86285c0be02a7ca69127d36e1899995a1c9b5e4147a98dee73f98bffb8fa1579e26026e0060b2d3a761345ae5dcfac359a891cb35
   languageName: node
   linkType: hard
 
