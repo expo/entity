@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import type { TransactionConfig } from './EntityQueryContext.ts';
+import type { ResolvedTransactionConfig, TransactionConfig } from './EntityQueryContext.ts';
 import {
   EntityNestedTransactionalQueryContext,
   EntityNonTransactionalQueryContext,
@@ -53,11 +53,17 @@ export abstract class EntityQueryContextProvider {
     const [returnedValue, queryContext] = await this.createTransactionRunner<
       [T, EntityTransactionalQueryContext]
     >(transactionConfig)(async (queryInterface) => {
+      const resolvedTransactionConfig: ResolvedTransactionConfig = {
+        ...transactionConfig,
+        transactionalDataLoaderMode:
+          transactionConfig?.transactionalDataLoaderMode ??
+          this.defaultTransactionalDataLoaderMode(),
+      };
       const queryContext = new EntityTransactionalQueryContext(
         queryInterface,
         this,
         randomUUID(),
-        transactionConfig?.transactionalDataLoaderMode ?? this.defaultTransactionalDataLoaderMode(),
+        resolvedTransactionConfig,
       );
       const result = await transactionScope(queryContext);
       await queryContext.runPreCommitCallbacksAsync();
@@ -85,7 +91,7 @@ export abstract class EntityQueryContextProvider {
         outerQueryContext,
         this,
         randomUUID(),
-        outerQueryContext.transactionalDataLoaderMode,
+        outerQueryContext.transactionConfig,
       );
       const result = await transactionScope(innerQueryContext);
       await innerQueryContext.runPreCommitCallbacksAsync();
