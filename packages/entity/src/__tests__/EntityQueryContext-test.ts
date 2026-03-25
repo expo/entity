@@ -203,6 +203,90 @@ describe(EntityQueryContext, () => {
         },
       );
     });
+
+    it('exposes isolationLevel on the query context', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.isolationLevel).toBe(TransactionIsolationLevel.SERIALIZABLE);
+        },
+        { isolationLevel: TransactionIsolationLevel.SERIALIZABLE },
+      );
+
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.isolationLevel).toBe(TransactionIsolationLevel.REPEATABLE_READ);
+        },
+        { isolationLevel: TransactionIsolationLevel.REPEATABLE_READ },
+      );
+
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.isolationLevel).toBeUndefined();
+        },
+      );
+    });
+
+    it('exposes the full resolved transactionConfig on the query context', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.transactionConfig).toEqual({
+            isolationLevel: TransactionIsolationLevel.SERIALIZABLE,
+            transactionalDataLoaderMode: TransactionalDataLoaderMode.DISABLED,
+          });
+        },
+        {
+          isolationLevel: TransactionIsolationLevel.SERIALIZABLE,
+          transactionalDataLoaderMode: TransactionalDataLoaderMode.DISABLED,
+        },
+      );
+
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          expect(queryContext.transactionConfig).toEqual({
+            transactionalDataLoaderMode: TransactionalDataLoaderMode.ENABLED,
+          });
+        },
+      );
+    });
+
+    it('propagates transactionConfig to nested transactions', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new ViewerContext(companionProvider);
+
+      await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          assert(queryContext.isInTransaction());
+          await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
+            expect(innerQueryContext.transactionConfig).toEqual(queryContext.transactionConfig);
+            expect(innerQueryContext.isolationLevel).toBe(TransactionIsolationLevel.SERIALIZABLE);
+            expect(innerQueryContext.transactionalDataLoaderMode).toBe(
+              TransactionalDataLoaderMode.DISABLED,
+            );
+          });
+        },
+        {
+          isolationLevel: TransactionIsolationLevel.SERIALIZABLE,
+          transactionalDataLoaderMode: TransactionalDataLoaderMode.DISABLED,
+        },
+      );
+    });
   });
 
   describe('global defaultTransactionalDataLoaderMode', () => {

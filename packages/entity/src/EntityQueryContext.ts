@@ -49,6 +49,9 @@ export enum TransactionalDataLoaderMode {
   DISABLED = 'DISABLED',
 }
 
+/**
+ * Configuration options for running a transaction. This includes the isolation level and DataLoader mode for the transaction.
+ */
 export type TransactionConfig = {
   /**
    * Transaction isolation level. When omitted, the database default is used (typically READ_COMMITTED).
@@ -59,6 +62,13 @@ export type TransactionConfig = {
    */
   transactionalDataLoaderMode?: TransactionalDataLoaderMode;
 };
+
+/**
+ * Resolved transaction configuration with all default values filled in.
+ * This is the configuration that is actually used for a transaction after applying defaults.
+ */
+export type ResolvedTransactionConfig = Pick<TransactionConfig, 'isolationLevel'> &
+  Required<Pick<TransactionConfig, 'transactionalDataLoaderMode'>>;
 
 /**
  * Entity framework representation of transactional and non-transactional database
@@ -134,9 +144,25 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
      * @internal
      */
     readonly transactionId: string,
-    public readonly transactionalDataLoaderMode: TransactionalDataLoaderMode,
+    public readonly transactionConfig: ResolvedTransactionConfig,
   ) {
     super(queryInterface);
+  }
+
+  /**
+   * DataLoader mode for this transaction set at time of transaction creation, controlling DataLoader caching and batching behavior within the transaction.
+   */
+  get transactionalDataLoaderMode(): TransactionalDataLoaderMode {
+    return this.transactionConfig.transactionalDataLoaderMode;
+  }
+
+  /**
+   * Transaction isolation level for this transaction set at time of transaction creation.
+   * This controls the visibility of changes made by concurrent transactions.
+   * When undefined, the database default isolation level is used (typically READ_COMMITTED).
+   */
+  get isolationLevel(): TransactionIsolationLevel | undefined {
+    return this.transactionConfig.isolationLevel;
   }
 
   /**
@@ -249,9 +275,9 @@ export class EntityNestedTransactionalQueryContext extends EntityTransactionalQu
     readonly parentQueryContext: EntityTransactionalQueryContext,
     entityQueryContextProvider: EntityQueryContextProvider,
     transactionId: string,
-    transactionalDataLoaderMode: TransactionalDataLoaderMode,
+    transactionConfig: ResolvedTransactionConfig,
   ) {
-    super(queryInterface, entityQueryContextProvider, transactionId, transactionalDataLoaderMode);
+    super(queryInterface, entityQueryContextProvider, transactionId, transactionConfig);
     parentQueryContext.childQueryContexts.push(this);
   }
 
