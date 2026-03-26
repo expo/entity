@@ -34,6 +34,8 @@ describe('EntityError subclasses', () => {
     const error = new EntityInvalidFieldValueError(SimpleTestEntity, 'id', 'badValue');
     expect(error.state).toBe(EntityErrorState.PERMANENT);
     expect(error.code).toBe(EntityErrorCode.ERR_ENTITY_INVALID_FIELD_VALUE);
+    expect(error.fieldName).toBe('id');
+    expect(error.fieldValue).toBe('badValue');
   });
 
   it('EntityCacheAdapterTransientError has correct state and code', () => {
