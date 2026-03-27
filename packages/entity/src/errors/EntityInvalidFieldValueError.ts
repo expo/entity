@@ -34,6 +34,9 @@ export class EntityInvalidFieldValueError<
     return EntityErrorCode.ERR_ENTITY_INVALID_FIELD_VALUE;
   }
 
+  readonly fieldName: N;
+  readonly fieldValue: TFields[N] | undefined;
+
   constructor(
     entityClass: IEntityClass<
       TFields,
@@ -47,5 +50,7 @@ export class EntityInvalidFieldValueError<
     fieldValue?: TFields[N],
   ) {
     super(`Entity field not valid: ${entityClass.name} (${String(fieldName)} = ${fieldValue})`);
+    this.fieldName = fieldName;
+    this.fieldValue = fieldValue;
   }
 }
