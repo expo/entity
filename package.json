@@ -30,7 +30,7 @@
     "lerna": "9.0.6",
     "prettier": "3.8.1",
     "prettier-plugin-organize-imports": "4.3.0",
-    "typedoc": "0.28.17",
+    "typedoc": "0.28.18",
     "typescript": "5.9.3"
   },
   "resolutions": {
