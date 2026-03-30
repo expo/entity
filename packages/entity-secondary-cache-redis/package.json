@@ -34,7 +34,7 @@
   "devDependencies": {
     "@expo/nullthrows": "2.1.0",
     "@jest/globals": "30.3.0",
-    "ioredis": "5.10.0",
+    "ioredis": "5.10.1",
     "typescript": "5.9.3"
   }
 }
