@@ -102,6 +102,26 @@ export class PostgresEntityDatabaseAdapter<
     );
   }
 
+  protected override async fetchManyWhereWithPaginationInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    tableColumns: readonly string[],
+    tableTuple: readonly any[],
+    offset: number,
+    limit: number,
+  ): Promise<object[]> {
+    return await this.fetchManyByFieldEqualityConjunctionInternalAsync(
+      queryInterface,
+      tableName,
+      tableColumns.map((column, index) => ({
+        tableField: column,
+        tableValue: tableTuple[index],
+      })),
+      [],
+      { limit, offset, orderBy: undefined },
+    );
+  }
+
   protected async fetchOneWhereInternalAsync(
     queryInterface: Knex,
     tableName: string,

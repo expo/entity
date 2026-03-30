@@ -75,6 +75,7 @@ export * from './rules/AlwaysDenyPrivacyPolicyRule.ts';
 export * from './rules/AlwaysSkipPrivacyPolicyRule.ts';
 export * from './rules/EvaluateIfEntityFieldPredicatePrivacyPolicyRule.ts';
 export * from './rules/PrivacyPolicyRule.ts';
+export * from './utils/EntityCascadeDeletionUtils.ts';
 export * from './utils/EntityCreationUtils.ts';
 export * from './utils/EntityPrivacyUtils.ts';
 export * from './utils/mergeEntityMutationTriggerConfigurations.ts';

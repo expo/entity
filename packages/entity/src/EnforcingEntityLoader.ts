@@ -105,6 +105,35 @@ export class EnforcingEntityLoader<
   }
 
   /**
+   * Load entities in pages where fieldName equals fieldValue. Each yielded page contains
+   * at most `pageSize` enforced entities. Bypasses DataLoader and cache to avoid
+   * loading all matching entities into memory at once.
+   *
+   * @param fieldName - entity field being queried
+   * @param fieldValue - fieldName field value being queried
+   * @param pageSize - maximum number of entities per page
+   * @param advanceOffset - if true, advances offset between pages (standard pagination).
+   *   If false, always queries from offset 0 (use when each page's results are deleted
+   *   or modified before the next page is fetched).
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
+   */
+  async *loadManyByFieldEqualingInPagesAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>,
+    pageSize: number,
+    advanceOffset: boolean,
+  ): AsyncGenerator<readonly TEntity[]> {
+    for await (const pageResults of this.entityLoader.loadManyByFieldEqualingInPagesAsync(
+      fieldName,
+      fieldValue,
+      pageSize,
+      advanceOffset,
+    )) {
+      yield pageResults.map((result) => result.enforceValue());
+    }
+  }
+
+  /**
    * Load many entities where compositeField equals compositeFieldValue.
    * @param compositeField - composite field being queried
    * @param compositeFieldValue - compositeField value being queried

@@ -101,6 +101,66 @@ export abstract class EntityDatabaseAdapter<
   ): Promise<object[]>;
 
   /**
+   * Fetch objects where key equals a single value, with offset and limit for pagination.
+   * Bypasses DataLoader and cache since pagination doesn't compose with batching.
+   *
+   * @param queryContext - query context with which to perform the fetch
+   * @param key - load key being queried
+   * @param value - single load value being queried
+   * @param offset - number of rows to skip
+   * @param limit - maximum number of rows to return
+   * @returns array of field objects matching the query with pagination applied
+   */
+  async fetchManyWhereWithPaginationAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    queryContext: EntityQueryContext,
+    key: TLoadKey,
+    value: TLoadValue,
+    offset: number,
+    limit: number,
+  ): Promise<readonly Readonly<TFields>[]> {
+    const keyDatabaseColumns = key.getDatabaseColumns(this.entityConfiguration);
+    const valueDatabaseValues = key.getDatabaseValues(value);
+
+    const results = await this.fetchManyWhereWithPaginationInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      keyDatabaseColumns,
+      valueDatabaseValues,
+      offset,
+      limit,
+    );
+
+    return results.map((result) =>
+      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
+    );
+  }
+
+  /**
+   * Internal pagination fetch. Default implementation delegates to fetchManyWhereInternalAsync
+   * and slices in memory. Subclasses should override for efficient database-level pagination.
+   */
+  protected async fetchManyWhereWithPaginationInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    tableColumns: readonly string[],
+    tableTuple: readonly any[],
+    offset: number,
+    limit: number,
+  ): Promise<object[]> {
+    const allResults = await this.fetchManyWhereInternalAsync(
+      queryInterface,
+      tableName,
+      tableColumns,
+      [tableTuple],
+    );
+    return allResults.slice(offset, offset + limit);
+  }
+
+  /**
    * Fetch one objects where key is equal to value, null if no matching object exists.
    * Returned object is not guaranteed to be deterministic. Most concrete implementations will implement this
    * with a "first" or "limit 1" query.
