@@ -2,17 +2,7 @@ import type { EntityQueryContext, IEntityMetricsAdapter } from '@expo/entity';
 import { EntityMetricsLoadType, NoOpEntityMetricsAdapter } from '@expo/entity';
 import { StubQueryContextProvider } from '@expo/entity-testing-utils';
 import { describe, expect, it } from '@jest/globals';
-import {
-  anyNumber,
-  anyString,
-  anything,
-  deepEqual,
-  instance,
-  mock,
-  resetCalls,
-  verify,
-  when,
-} from 'ts-mockito';
+import { anyNumber, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 
 import { OrderByOrdering } from '../../BasePostgresEntityDatabaseAdapter.ts';
 import { PaginationStrategy } from '../../PaginationStrategy.ts';
@@ -110,14 +100,6 @@ describe(EntityKnexDataManager, () => {
           nullableField: null,
         },
       ]);
-      when(
-        databaseAdapterMock.fetchManyByRawWhereClauseAsync(
-          anything(),
-          anyString(),
-          anything(),
-          anything(),
-        ),
-      ).thenResolve([]);
 
       const entityDataManager = new EntityKnexDataManager(
         testEntityConfiguration,
@@ -144,21 +126,6 @@ describe(EntityKnexDataManager, () => {
             entityClassName: TestEntity.name,
             duration: anyNumber(),
             count: 1,
-          }),
-        ),
-      ).once();
-
-      resetCalls(metricsAdapterMock);
-
-      await entityDataManager.loadManyByRawWhereClauseAsync(queryContext, '', [], {});
-      verify(
-        metricsAdapterMock.logDataManagerLoadEvent(
-          deepEqual({
-            type: EntityMetricsLoadType.LOAD_MANY_RAW,
-            isInTransaction: false,
-            entityClassName: TestEntity.name,
-            duration: anyNumber(),
-            count: 0,
           }),
         ),
       ).once();
@@ -190,14 +157,6 @@ describe(EntityKnexDataManager, () => {
           nullableField: null,
         },
       ]);
-      when(
-        databaseAdapterMock.fetchManyByRawWhereClauseAsync(
-          anything(),
-          anyString(),
-          anything(),
-          anything(),
-        ),
-      ).thenResolve([]);
 
       const entityDataManager = new EntityKnexDataManager(
         testEntityConfiguration,
@@ -225,21 +184,6 @@ describe(EntityKnexDataManager, () => {
               entityClassName: TestEntity.name,
               duration: anyNumber(),
               count: 1,
-            }),
-          ),
-        ).once();
-
-        resetCalls(metricsAdapterMock);
-
-        await entityDataManager.loadManyByRawWhereClauseAsync(queryContext, '', [], {});
-        verify(
-          metricsAdapterMock.logDataManagerLoadEvent(
-            deepEqual({
-              type: EntityMetricsLoadType.LOAD_MANY_RAW,
-              isInTransaction: true,
-              entityClassName: TestEntity.name,
-              duration: anyNumber(),
-              count: 0,
             }),
           ),
         ).once();

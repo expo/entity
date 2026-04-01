@@ -17,10 +17,6 @@ export enum EntityMetricsLoadType {
    */
   LOAD_MANY_EQUALITY_CONJUNCTION,
   /**
-   * Knex loader load using loadManyByRawWhereClauseAsync.
-   */
-  LOAD_MANY_RAW,
-  /**
    * Knex loader load using loadManyBySQL.
    */
   LOAD_MANY_SQL,

@@ -42,8 +42,7 @@ export interface ISecondaryEntityCache<TFields extends Record<string, any>, TLoa
  * when the underlying data of a cache key could be stale.
  *
  * This is most commonly used to further optimize hot paths that cannot make use of normal entity cache loading
- * due to use of a non-unique-field-based EntityLoader method like `loadManyByFieldEqualityConjunctionAsync` or
- * `loadManyByRawWhereClauseAsync`.
+ * due to use of a non-unique-field-based EntityLoader method like `loadManyByFieldEqualityConjunctionAsync`.
  */
 export abstract class EntitySecondaryCacheLoader<
   TLoadParams,

@@ -105,50 +105,6 @@ export class EnforcingKnexEntityLoader<
   }
 
   /**
-   * Load entities with a raw SQL WHERE clause.
-   *
-   * @example
-   * Load entities with SQL function
-   * ```typescript
-   * const entitiesWithJsonKey = await ExampleEntity.loader(vc)
-   *   .loadManyByRawWhereClauseAsync(
-   *     "json_column->>'key_name' = ?",
-   *     ['value'],
-   *   );
-   * ```
-   *
-   * @example
-   * Load entities with tuple matching
-   * ```typescript
-   * const entities = await ExampleEntity.loader(vc)
-   *   .loadManyByRawWhereClauseAsync(
-   *     '(column_1, column_2) IN ((?, ?), (?, ?))',
-   *     [value1, value2, value3, value4],
-   *   );
-   * ```
-   * @param rawWhereClause - SQL WHERE clause. Interpolated values should be specified as ?-placeholders or :key_name
-   * @param bindings - values to bind to the placeholders in the WHERE clause
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query.
-   * @returns entities matching the WHERE clause
-   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
-   * @throws Error when rawWhereClause or bindings are invalid
-   *
-   * @deprecated Use loadManyBySQL instead for safer value bindings and more flexible query building.
-   */
-  async loadManyByRawWhereClauseAsync(
-    rawWhereClause: string,
-    bindings: any[] | object,
-    querySelectionModifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> = {},
-  ): Promise<readonly TEntity[]> {
-    const entityResults = await this.knexEntityLoader.loadManyByRawWhereClauseAsync(
-      rawWhereClause,
-      bindings,
-      querySelectionModifiers,
-    );
-    return entityResults.map((result) => result.enforceValue());
-  }
-
-  /**
    * Load entities using a SQL query builder. When executed, all queries will enforce authorization and throw if not authorized.
    *
    * @example

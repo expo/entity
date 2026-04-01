@@ -489,19 +489,6 @@ describe(StubPostgresDatabaseAdapter, () => {
     });
   });
 
-  describe('fetchManyByRawWhereClauseAsync', () => {
-    it('throws because it is unsupported', async () => {
-      const queryContext = instance(mock(EntityQueryContext));
-      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
-        testEntityConfiguration,
-        new Map(),
-      );
-      await expect(
-        databaseAdapter.fetchManyByRawWhereClauseAsync(queryContext, '', [], {}),
-      ).rejects.toThrow();
-    });
-  });
-
   describe('fetchManyBySQLFragmentAsync', () => {
     it('throws because it is unsupported', async () => {
       const queryContext = instance(mock(EntityQueryContext));

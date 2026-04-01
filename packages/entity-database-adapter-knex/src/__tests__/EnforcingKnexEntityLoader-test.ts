@@ -137,58 +137,6 @@ describe(EnforcingKnexEntityLoader, () => {
     });
   });
 
-  describe('loadManyByRawWhereClause', () => {
-    it('throws when result is unsuccessful', async () => {
-      const nonEnforcingKnexEntityLoaderMock = mock(
-        AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
-      );
-      const rejection = new Error();
-      when(
-        nonEnforcingKnexEntityLoaderMock.loadManyByRawWhereClauseAsync(
-          anything(),
-          anything(),
-          anything(),
-        ),
-      ).thenResolve([result(rejection)]);
-      const nonEnforcingKnexEntityLoader = instance(nonEnforcingKnexEntityLoaderMock);
-      const enforcingKnexEntityLoader = new EnforcingKnexEntityLoader(
-        nonEnforcingKnexEntityLoader,
-        instance(mock(EntityQueryContext)),
-        instance(mock(EntityKnexDataManager)),
-        instance(mock<IEntityMetricsAdapter>()),
-        instance(mock(EntityConstructionUtils)),
-      );
-      await expect(
-        enforcingKnexEntityLoader.loadManyByRawWhereClauseAsync(anything(), anything(), anything()),
-      ).rejects.toThrow(rejection);
-    });
-
-    it('returns value when result is successful', async () => {
-      const nonEnforcingKnexEntityLoaderMock = mock(
-        AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
-      );
-      const resolved = {};
-      when(
-        nonEnforcingKnexEntityLoaderMock.loadManyByRawWhereClauseAsync(
-          anything(),
-          anything(),
-          anything(),
-        ),
-      ).thenResolve([result(resolved)]);
-      const nonEnforcingKnexEntityLoader = instance(nonEnforcingKnexEntityLoaderMock);
-      const enforcingKnexEntityLoader = new EnforcingKnexEntityLoader(
-        nonEnforcingKnexEntityLoader,
-        instance(mock(EntityQueryContext)),
-        instance(mock(EntityKnexDataManager)),
-        instance(mock<IEntityMetricsAdapter>()),
-        instance(mock(EntityConstructionUtils)),
-      );
-      await expect(
-        enforcingKnexEntityLoader.loadManyByRawWhereClauseAsync(anything(), anything(), anything()),
-      ).resolves.toEqual([resolved]);
-    });
-  });
-
   describe('loadManyBySQL', () => {
     it('throws when result is unsuccessful', async () => {
       const nonEnforcingKnexEntityLoaderMock = mock(

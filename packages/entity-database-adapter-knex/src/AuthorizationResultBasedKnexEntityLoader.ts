@@ -402,27 +402,6 @@ export class AuthorizationResultBasedKnexEntityLoader<
 
   /**
    * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
-   * @returns array of entity results that match the query, where result error can be UnauthorizedError
-   * @throws Error when rawWhereClause or bindings are invalid
-   *
-   * @deprecated Use loadManyBySQL instead for safer value bindings and more flexible query building.
-   */
-  async loadManyByRawWhereClauseAsync(
-    rawWhereClause: string,
-    bindings: any[] | object,
-    querySelectionModifiers: EntityLoaderQuerySelectionModifiers<TFields, TSelectedFields> = {},
-  ): Promise<readonly Result<TEntity>[]> {
-    const fieldObjects = await this.knexDataManager.loadManyByRawWhereClauseAsync(
-      this.queryContext,
-      rawWhereClause,
-      bindings,
-      querySelectionModifiers,
-    );
-    return await this.constructionUtils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
-  }
-
-  /**
-   * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
    * @returns SQL query builder for building and executing SQL queries that when executed returns entity results where result error can be UnauthorizedError.
    */
   loadManyBySQL(

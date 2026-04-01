@@ -193,16 +193,6 @@ export class StubPostgresDatabaseAdapter<
     return filteredObjects;
   }
 
-  protected fetchManyByRawWhereClauseInternalAsync(
-    _queryInterface: any,
-    _tableName: string,
-    _rawWhereClause: string,
-    _bindings: object | any[],
-    _querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
-  ): Promise<object[]> {
-    throw new Error('Raw WHERE clauses not supported for StubDatabaseAdapter');
-  }
-
   protected fetchManyBySQLFragmentInternalAsync(
     _queryInterface: any,
     _tableName: string,
