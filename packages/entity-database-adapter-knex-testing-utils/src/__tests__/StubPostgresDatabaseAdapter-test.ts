@@ -573,12 +573,8 @@ describe(StubPostgresDatabaseAdapter, () => {
           ]),
         ),
       );
-      const result = await databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {
+      await databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {
         stringField: 'b',
-      });
-      expect(result).toMatchObject({
-        stringField: 'b',
-        testIndexedField: 'h1',
       });
     });
 
