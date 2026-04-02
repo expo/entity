@@ -252,6 +252,26 @@ export class PostgresEntityDatabaseAdapter<
     return { updatedRowCount };
   }
 
+  protected async updateWhereBySQLFragmentInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment<TFields>,
+    object: object,
+  ): Promise<object[]> {
+    return await wrapNativePostgresCallAsync(() =>
+      queryInterface
+        .update(object)
+        .into(tableName)
+        .whereRaw(
+          sqlFragment.sql,
+          sqlFragment.getKnexBindings((fieldName) =>
+            getDatabaseFieldForEntityField(this.entityConfiguration, fieldName),
+          ),
+        )
+        .returning('*'),
+    );
+  }
+
   protected async deleteInternalAsync(
     queryInterface: Knex,
     tableName: string,

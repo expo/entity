@@ -11,6 +11,7 @@ import type { Knex } from 'knex';
 import knex from 'knex';
 import { setTimeout } from 'timers/promises';
 
+import { UpdateWhereAuthorizationBehavior } from '../AuthorizationResultBasedBaseKnexMutator.ts';
 import type { PaginationSpecification } from '../AuthorizationResultBasedKnexEntityLoader.ts';
 import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter.ts';
 import { PaginationStrategy } from '../PaginationStrategy.ts';
@@ -3679,6 +3680,228 @@ describe('postgres entity integration', () => {
         const forwardLastTwo = allForward.edges.slice(-2).map((e) => e.node.getID());
         const backwardResults = lastPage.edges.map((e) => e.node.getID());
         expect(backwardResults).toEqual(forwardLastTwo);
+      });
+    });
+  });
+
+  describe('knexMutator', () => {
+    describe('updateWhere', () => {
+      it('updates a single row matching the WHERE clause', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await PostgresTestEntity.creator(vc)
+          .setField('name', 'alice')
+          .setField('hasACat', false)
+          .createAsync();
+
+        const updatedEntities = await PostgresTestEntity.knexMutator(vc)
+          .updateWhere(
+            sql`${entityField('name')} = ${'alice'}`,
+            UpdateWhereAuthorizationBehavior.NONE,
+          )
+          .setField('hasACat', true)
+          .updateAsync();
+
+        expect(updatedEntities).toHaveLength(1);
+        expect(updatedEntities[0]!.getField('name')).toBe('alice');
+        expect(updatedEntities[0]!.getField('hasACat')).toBe(true);
+
+        // Verify the change persisted via a fresh load
+        const loaded = await PostgresTestEntity.knexLoader(
+          vc,
+        ).loadManyByFieldEqualityConjunctionAsync([{ fieldName: 'name', fieldValue: 'alice' }]);
+        expect(loaded).toHaveLength(1);
+        expect(loaded[0]!.getField('hasACat')).toBe(true);
+      });
+
+      it('updates multiple rows matching the WHERE clause', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await PostgresTestEntity.creator(vc)
+          .setField('name', 'batch-target')
+          .setField('hasADog', false)
+          .createAsync();
+        await PostgresTestEntity.creator(vc)
+          .setField('name', 'batch-target')
+          .setField('hasADog', false)
+          .createAsync();
+        await PostgresTestEntity.creator(vc)
+          .setField('name', 'batch-other')
+          .setField('hasADog', false)
+          .createAsync();
+
+        const updatedEntities = await PostgresTestEntity.knexMutator(vc)
+          .updateWhere(
+            sql`${entityField('name')} = ${'batch-target'}`,
+            UpdateWhereAuthorizationBehavior.NONE,
+          )
+          .setField('hasADog', true)
+          .updateAsync();
+
+        expect(updatedEntities).toHaveLength(2);
+        for (const entity of updatedEntities) {
+          expect(entity.getField('name')).toBe('batch-target');
+          expect(entity.getField('hasADog')).toBe(true);
+        }
+
+        // Verify the non-matching row was not updated
+        const others = await PostgresTestEntity.knexLoader(
+          vc,
+        ).loadManyByFieldEqualityConjunctionAsync([
+          { fieldName: 'name', fieldValue: 'batch-other' },
+        ]);
+        expect(others).toHaveLength(1);
+        expect(others[0]!.getField('hasADog')).toBe(false);
+      });
+
+      it('returns empty array when no rows match the WHERE clause', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        const updatedEntities = await PostgresTestEntity.knexMutator(vc)
+          .updateWhere(
+            sql`${entityField('name')} = ${'nonexistent'}`,
+            UpdateWhereAuthorizationBehavior.NONE,
+          )
+          .setField('hasACat', true)
+          .updateAsync();
+
+        expect(updatedEntities).toHaveLength(0);
+      });
+
+      it('supports setting multiple fields', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await PostgresTestEntity.creator(vc)
+          .setField('name', 'multi-field')
+          .setField('hasACat', false)
+          .setField('hasADog', false)
+          .createAsync();
+
+        const updatedEntities = await PostgresTestEntity.knexMutator(vc)
+          .updateWhere(
+            sql`${entityField('name')} = ${'multi-field'}`,
+            UpdateWhereAuthorizationBehavior.NONE,
+          )
+          .setField('hasACat', true)
+          .setField('hasADog', true)
+          .updateAsync();
+
+        expect(updatedEntities).toHaveLength(1);
+        expect(updatedEntities[0]!.getField('hasACat')).toBe(true);
+        expect(updatedEntities[0]!.getField('hasADog')).toBe(true);
+      });
+
+      it('works with authorization results variant', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await PostgresTestEntity.creator(vc)
+          .setField('name', 'auth-result-test')
+          .setField('hasACat', false)
+          .createAsync();
+
+        const results = await PostgresTestEntity.knexMutatorWithAuthorizationResults(vc)
+          .updateWhere(
+            sql`${entityField('name')} = ${'auth-result-test'}`,
+            UpdateWhereAuthorizationBehavior.NONE,
+          )
+          .setField('hasACat', true)
+          .updateAsync();
+
+        expect(results).toHaveLength(1);
+        expect(results[0]!.ok).toBe(true);
+        expect(results[0]!.enforceValue().getField('hasACat')).toBe(true);
+      });
+
+      it('works within a transaction', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await PostgresTestEntity.creator(vc)
+          .setField('name', 'txn-test')
+          .setField('hasACat', false)
+          .createAsync();
+
+        const errorToThrow = new Error('Intentional rollback');
+        await expect(
+          vc.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+            await PostgresTestEntity.knexMutator(vc, queryContext)
+              .updateWhere(
+                sql`${entityField('name')} = ${'txn-test'}`,
+                UpdateWhereAuthorizationBehavior.NONE,
+              )
+              .setField('hasACat', true)
+              .updateAsync();
+            throw errorToThrow;
+          }),
+        ).rejects.toThrow(errorToThrow);
+
+        // Verify the update was rolled back
+        const loaded = await PostgresTestEntity.knexLoader(
+          vc,
+        ).loadManyByFieldEqualityConjunctionAsync([{ fieldName: 'name', fieldValue: 'txn-test' }]);
+        expect(loaded).toHaveLength(1);
+        expect(loaded[0]!.getField('hasACat')).toBe(false);
+      });
+
+      it('works with ONE_IMPLIES_ALL authorization behavior', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await PostgresTestEntity.creator(vc)
+          .setField('name', 'infer-target')
+          .setField('hasACat', false)
+          .createAsync();
+        await PostgresTestEntity.creator(vc)
+          .setField('name', 'infer-target')
+          .setField('hasACat', false)
+          .createAsync();
+
+        const updatedEntities = await PostgresTestEntity.knexMutator(vc)
+          .updateWhere(
+            sql`${entityField('name')} = ${'infer-target'}`,
+            UpdateWhereAuthorizationBehavior.ONE_IMPLIES_ALL,
+          )
+          .setField('hasACat', true)
+          .updateAsync();
+
+        expect(updatedEntities).toHaveLength(2);
+        for (const entity of updatedEntities) {
+          expect(entity.getField('hasACat')).toBe(true);
+        }
+      });
+
+      it('works with SKIP_AUTHORIZATION behavior', async () => {
+        const vc = new ViewerContext(
+          createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+        );
+
+        await PostgresTestEntity.creator(vc)
+          .setField('name', 'skip-auth')
+          .setField('hasADog', false)
+          .createAsync();
+
+        const updatedEntities = await PostgresTestEntity.knexMutator(vc)
+          .updateWhere(
+            sql`${entityField('name')} = ${'skip-auth'}`,
+            UpdateWhereAuthorizationBehavior.SKIP_AUTHORIZATION,
+          )
+          .setField('hasADog', true)
+          .updateAsync();
+
+        expect(updatedEntities).toHaveLength(1);
+        expect(updatedEntities[0]!.getField('hasADog')).toBe(true);
       });
     });
   });

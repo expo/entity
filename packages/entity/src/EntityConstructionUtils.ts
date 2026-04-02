@@ -135,6 +135,24 @@ export class EntityConstructionUtils<
   }
 
   /**
+   * Authorize an already-constructed entity against update privacy rules.
+   *
+   * @param entity - entity to authorize for update
+   * @returns entity result, where result error can be UnauthorizedError
+   */
+  public async authorizeUpdateEntityAsync(entity: TEntity): Promise<Result<TEntity>> {
+    return await asyncResult(
+      this.privacyPolicy.authorizeUpdateAsync(
+        this.viewerContext,
+        this.queryContext,
+        this.privacyPolicyEvaluationContext,
+        entity,
+        this.metricsAdapter,
+      ),
+    );
+  }
+
+  /**
    * Validate that field values are valid according to the field's validation function.
    *
    * @param fieldName - field name to validate

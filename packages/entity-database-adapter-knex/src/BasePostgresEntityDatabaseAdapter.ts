@@ -3,6 +3,7 @@ import {
   EntityDatabaseAdapter,
   getDatabaseFieldForEntityField,
   transformDatabaseObjectToFields,
+  transformFieldsToDatabaseObject,
 } from '@expo/entity';
 import type { Knex } from 'knex';
 
@@ -246,6 +247,43 @@ export abstract class BasePostgresEntityDatabaseAdapter<
     tableName: string,
     sqlFragment: SQLFragment<TFields>,
     querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
+  ): Promise<object[]>;
+
+  /**
+   * Update objects matching the SQL fragment WHERE clause, returning the updated rows.
+   *
+   * @param queryContext - query context with which to perform the update
+   * @param sqlFragment - SQLFragment for the WHERE clause of the update
+   * @param object - partial fields to update on matching rows
+   * @returns array of updated objects with all fields
+   */
+  async updateWhereBySQLFragmentAsync(
+    queryContext: EntityQueryContext,
+    sqlFragment: SQLFragment<TFields>,
+    object: Readonly<Partial<TFields>>,
+  ): Promise<readonly Readonly<TFields>[]> {
+    const dbObject = transformFieldsToDatabaseObject(
+      this.entityConfiguration,
+      this.fieldTransformerMap,
+      object,
+    );
+    const results = await this.updateWhereBySQLFragmentInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      sqlFragment,
+      dbObject,
+    );
+
+    return results.map((result) =>
+      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
+    );
+  }
+
+  protected abstract updateWhereBySQLFragmentInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment<TFields>,
+    object: object,
   ): Promise<object[]>;
 
   private convertToTableQueryModifiers(
