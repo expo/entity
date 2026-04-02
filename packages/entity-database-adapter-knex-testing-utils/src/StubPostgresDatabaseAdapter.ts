@@ -253,7 +253,7 @@ export class StubPostgresDatabaseAdapter<
     tableIdField: string,
     id: any,
     object: object,
-  ): Promise<object[]> {
+  ): Promise<{ updatedRowCount: number }> {
     // SQL does not support empty updates, mirror behavior here for better test simulation
     if (Object.keys(object).length === 0) {
       throw new Error(`Empty update (${tableIdField} = ${id})`);
@@ -268,14 +268,14 @@ export class StubPostgresDatabaseAdapter<
     // SQL updates to a nonexistent row succeed but affect 0 rows,
     // mirror that behavior here for better test simulation
     if (objectIndex < 0) {
-      return [];
+      return { updatedRowCount: 0 };
     }
 
     objectCollection[objectIndex] = {
       ...objectCollection[objectIndex],
       ...object,
     };
-    return [objectCollection[objectIndex]];
+    return { updatedRowCount: 1 };
   }
 
   protected async deleteInternalAsync(

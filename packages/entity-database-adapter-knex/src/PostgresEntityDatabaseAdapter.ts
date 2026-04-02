@@ -257,10 +257,11 @@ export class PostgresEntityDatabaseAdapter<
     tableIdField: string,
     id: any,
     object: object,
-  ): Promise<object[]> {
-    return await wrapNativePostgresCallAsync(() =>
-      queryInterface.update(object).into(tableName).where(tableIdField, id).returning('*'),
+  ): Promise<{ updatedRowCount: number }> {
+    const updatedRowCount = await wrapNativePostgresCallAsync(() =>
+      queryInterface.update(object).into(tableName).where(tableIdField, id),
     );
+    return { updatedRowCount };
   }
 
   protected async deleteInternalAsync(

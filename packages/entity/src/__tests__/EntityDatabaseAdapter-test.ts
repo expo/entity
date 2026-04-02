@@ -23,20 +23,20 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'custo
   private readonly fetchResults: object[];
   private readonly fetchOneResult: object | null;
   private readonly insertResults: object[];
-  private readonly updateResults: object[];
+  private readonly updateResults: { updatedRowCount: number };
   private readonly deleteCount: number;
 
   constructor({
     fetchResults = [],
     fetchOneResult = null,
     insertResults = [],
-    updateResults = [],
+    updateResults = { updatedRowCount: 0 },
     deleteCount = 0,
   }: {
     fetchResults?: object[];
     fetchOneResult?: object | null;
     insertResults?: object[];
-    updateResults?: object[];
+    updateResults?: { updatedRowCount: number };
     deleteCount?: number;
   }) {
     super(testEntityConfiguration);
@@ -83,7 +83,7 @@ class TestEntityDatabaseAdapter extends EntityDatabaseAdapter<TestFields, 'custo
     _tableIdField: string,
     _id: any,
     _object: object,
-  ): Promise<object[]> {
+  ): Promise<{ updatedRowCount: number }> {
     return this.updateResults;
   }
 
@@ -256,16 +256,15 @@ describe(EntityDatabaseAdapter, () => {
   });
 
   describe('updateAsync', () => {
-    it('transforms object', async () => {
+    it('succeeds when one row updated', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const adapter = new TestEntityDatabaseAdapter({ updateResults: [{ string_field: 'hello' }] });
-      const result = await adapter.updateAsync(queryContext, 'customIdField', 'wat', {});
-      expect(result).toEqual({ stringField: 'hello' });
+      const adapter = new TestEntityDatabaseAdapter({ updateResults: { updatedRowCount: 1 } });
+      await adapter.updateAsync(queryContext, 'customIdField', 'wat', {});
     });
 
     it('throws when update result count zero', async () => {
       const queryContext = instance(mock(EntityQueryContext));
-      const adapter = new TestEntityDatabaseAdapter({ updateResults: [] });
+      const adapter = new TestEntityDatabaseAdapter({ updateResults: { updatedRowCount: 0 } });
       await expect(adapter.updateAsync(queryContext, 'customIdField', 'wat', {})).rejects.toThrow(
         EntityDatabaseAdapterEmptyUpdateResultError,
       );
@@ -274,7 +273,7 @@ describe(EntityDatabaseAdapter, () => {
     it('throws when update result count greater than 1', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({
-        updateResults: [{ string_field: 'hello' }, { string_field: 'hello2' }],
+        updateResults: { updatedRowCount: 2 },
       });
       await expect(adapter.updateAsync(queryContext, 'customIdField', 'wat', {})).rejects.toThrow(
         EntityDatabaseAdapterExcessiveUpdateResultError,

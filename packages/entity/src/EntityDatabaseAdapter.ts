@@ -202,21 +202,20 @@ export abstract class EntityDatabaseAdapter<
    * @param idField - the field in the object that is the ID
    * @param id - the value of the ID field in the object
    * @param object - the object to update
-   * @returns the updated object
    */
   async updateAsync<K extends keyof TFields>(
     queryContext: EntityQueryContext,
     idField: K,
     id: any,
     object: Readonly<Partial<TFields>>,
-  ): Promise<Readonly<TFields>> {
+  ): Promise<void> {
     const idColumn = getDatabaseFieldForEntityField(this.entityConfiguration, idField);
     const dbObject = transformFieldsToDatabaseObject(
       this.entityConfiguration,
       this.fieldTransformerMap,
       object,
     );
-    const results = await this.updateInternalAsync(
+    const { updatedRowCount } = await this.updateInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       idColumn,
@@ -224,24 +223,18 @@ export abstract class EntityDatabaseAdapter<
       dbObject,
     );
 
-    if (results.length > 1) {
+    if (updatedRowCount > 1) {
       // This should never happen with a properly implemented database adapter unless the underlying table has a non-unique
       // primary key column.
       throw new EntityDatabaseAdapterExcessiveUpdateResultError(
         `Excessive results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`,
       );
-    } else if (results.length === 0) {
+    } else if (updatedRowCount === 0) {
       // This happens when the object to update does not exist. It may have been deleted by another process.
       throw new EntityDatabaseAdapterEmptyUpdateResultError(
         `Empty results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`,
       );
     }
-
-    return transformDatabaseObjectToFields(
-      this.entityConfiguration,
-      this.fieldTransformerMap,
-      results[0]!,
-    );
   }
 
   protected abstract updateInternalAsync(
@@ -250,7 +243,7 @@ export abstract class EntityDatabaseAdapter<
     tableIdField: string,
     id: any,
     object: object,
-  ): Promise<object[]>;
+  ): Promise<{ updatedRowCount: number }>;
 
   /**
    * Delete an object by ID.

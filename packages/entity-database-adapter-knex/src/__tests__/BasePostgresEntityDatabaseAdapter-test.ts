@@ -18,7 +18,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
   private readonly fetchResults: object[];
   private readonly fetchOneResult: object | null;
   private readonly insertResults: object[];
-  private readonly updateResults: object[];
+  private readonly updateResults: { updatedRowCount: number };
   private readonly fetchEqualityConditionResults: object[];
   private readonly fetchRawWhereResults: object[];
   private readonly fetchSQLFragmentResults: object[];
@@ -28,7 +28,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     fetchResults = [],
     fetchOneResult = null,
     insertResults = [],
-    updateResults = [],
+    updateResults = { updatedRowCount: 0 },
     fetchEqualityConditionResults = [],
     fetchRawWhereResults = [],
     fetchSQLFragmentResults = [],
@@ -37,7 +37,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     fetchResults?: object[];
     fetchOneResult?: object | null;
     insertResults?: object[];
-    updateResults?: object[];
+    updateResults?: { updatedRowCount: number };
     fetchEqualityConditionResults?: object[];
     fetchRawWhereResults?: object[];
     fetchSQLFragmentResults?: object[];
@@ -116,7 +116,7 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     _tableIdField: string,
     _id: any,
     _object: object,
-  ): Promise<object[]> {
+  ): Promise<{ updatedRowCount: number }> {
     return this.updateResults;
   }
 
