@@ -21,6 +21,7 @@ Then, in package.json scripts:
 ```
 
 And finally:
+
 ```sh
 yarn jscodeshift src -t node_modules/@expo/entity-codemod/build/v0.39.0-v0.40.0.js
 ```

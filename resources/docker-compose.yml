@@ -3,19 +3,19 @@ services:
   redis:
     image: redis@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93
     ports:
-      - "${REDIS_PORT}:6379"
+      - '${REDIS_PORT}:6379'
     volumes:
       - redis_data:/data
   postgres:
     image: postgres:18@sha256:a9abf4275f9e99bff8e6aed712b3b7dfec9cac1341bba01c1ffdfce9ff9fc34a
     ports:
-      - "${PGPORT}:5432"
+      - '${PGPORT}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql
     environment:
-      POSTGRES_USER: "${PGUSER}"
-      POSTGRES_PASSWORD: "${PGPASSWORD}"
-      POSTGRES_DB: "${PGDATABASE}"
+      POSTGRES_USER: '${PGUSER}'
+      POSTGRES_PASSWORD: '${PGPASSWORD}'
+      POSTGRES_DB: '${PGDATABASE}'
 
 volumes:
   postgres_data: {}

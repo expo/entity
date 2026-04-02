@@ -1016,6 +1016,7 @@ export class AuthorizationResultBasedDeleteMutator<
                       mutatorFactory
                         .forUpdate(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
                         .setField(fieldName, null)
+                        // eslint-disable-next-line no-unexpected-multiline
                         ['updateInTransactionAsync'](/* skipDatabaseUpdate */ true),
                     ),
                   ),
@@ -1029,6 +1030,7 @@ export class AuthorizationResultBasedDeleteMutator<
                       mutatorFactory
                         .forUpdate(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
                         .setField(fieldName, null)
+                        // eslint-disable-next-line no-unexpected-multiline
                         ['updateInTransactionAsync'](/* skipDatabaseUpdate */ false),
                     ),
                   ),

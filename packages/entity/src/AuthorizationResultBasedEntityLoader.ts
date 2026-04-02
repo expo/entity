@@ -150,7 +150,7 @@ export class AuthorizationResultBasedEntityLoader<
    * @internal
    */
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore -- this method is used in EntityPrivacyUtils, but is not intended to be part of the public API of this class, so it is marked as private.
+  // @ts-expect-error -- this method is used in EntityPrivacyUtils, but is not intended to be part of the public API of this class, so it is marked as private.
   private async loadOneByFieldEqualingAsync<N extends keyof Pick<TFields, TSelectedFields>>(
     fieldName: N,
     fieldValue: NonNullable<TFields[N]>,

@@ -1,4 +1,5 @@
 # @expo/entity-example
+
 > Example usage of @expo/entity.
 
 ## Summary

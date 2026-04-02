@@ -8,18 +8,18 @@
 
 1. Create a concrete implementation of abstract class `EntitySecondaryCacheLoader`, in this example `TestEntitySecondaryCacheLoader`. The underlying data can come from anywhere, but an entity is constructed from the data and then authorized for the viewer.
 2. Create an instance of your `EntitySecondaryCacheLoader`, passing in a `RedisSecondaryEntityCache`.
-    ```typescript
-    const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
-      new RedisSecondaryEntityCache(
-        redisTestEntityConfiguration,
-        genericRedisCacheContext,
-        (loadParams) => `${loadParams.id}`
-      ),
-      RedisTestEntity.loader(viewerContext)
-    );
-    ```
+   ```typescript
+   const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
+     new RedisSecondaryEntityCache(
+       redisTestEntityConfiguration,
+       genericRedisCacheContext,
+       (loadParams) => `${loadParams.id}`,
+     ),
+     RedisTestEntity.loader(viewerContext),
+   );
+   ```
 3. Load entities through it:
-    ```typescript
-    const loadParams = { id: createdEntity.getID() };
-    const results = await secondaryCacheLoader.loadManyAsync([loadParams]);
-    ```
+   ```typescript
+   const loadParams = { id: createdEntity.getID() };
+   const results = await secondaryCacheLoader.loadManyAsync([loadParams]);
+   ```

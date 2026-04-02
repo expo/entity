@@ -2,36 +2,36 @@
   "name": "@expo/entity-codemod",
   "version": "0.63.0",
   "description": "jscodeshift codemods for @expo/entity upgrades",
+  "keywords": [
+    "entity"
+  ],
+  "license": "MIT",
+  "author": "Expo",
   "files": [
     "build",
     "!*.tsbuildinfo",
     "!__*",
     "src"
   ],
+  "type": "module",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "scripts": {
     "build": "tsc --build",
     "prepack": "rm -rf build && yarn build",
     "clean": "yarn build --clean",
-    "lint": "yarn run --top-level eslint src",
+    "lint": "yarn run --top-level oxlint --type-aware src",
     "lint-fix": "yarn lint --fix",
     "test": "yarn test:all --rootDir $(pwd)"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "keywords": [
-    "entity"
-  ],
-  "author": "Expo",
-  "license": "MIT",
-  "type": "module",
   "devDependencies": {
     "@jest/globals": "30.3.0",
     "@types/jscodeshift": "17.3.0",
     "@types/node": "24.12.0",
     "jscodeshift": "17.3.0",
     "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

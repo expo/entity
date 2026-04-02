@@ -5,7 +5,7 @@
   "packageOptions": {
     "includeVersion": false,
     "excludeInternal": true,
-    "entryPoints": ["src/index.ts"],
+    "entryPoints": ["src/index.ts"]
   },
   "out": "doc",
   "exclude": [
@@ -13,7 +13,7 @@
     "**/__integration-tests__/**/*.ts",
     "**/__testfixtures__/**/*.ts",
     "packages/entity-example",
-    "packages/entity-full-integration-tests",
+    "packages/entity-full-integration-tests"
   ],
   "name": "Entity",
   "readme": "README.md"

@@ -2,37 +2,31 @@
   "name": "@expo/entity-cache-adapter-redis",
   "version": "0.63.0",
   "description": "Redis cache adapter for @expo/entity",
+  "keywords": [
+    "entity"
+  ],
+  "license": "MIT",
+  "author": "Expo",
   "files": [
     "build",
     "!*.tsbuildinfo",
     "!__*",
     "src"
   ],
+  "type": "module",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "scripts": {
     "build": "tsc --build",
     "prepack": "rm -rf build && yarn build",
     "clean": "yarn build --clean",
-    "lint": "yarn run --top-level eslint src",
+    "lint": "yarn run --top-level oxlint --type-aware src",
     "lint-fix": "yarn lint --fix",
     "test": "yarn test:all --rootDir $(pwd)",
     "integration": "yarn integration:all --rootDir $(pwd)"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "keywords": [
-    "entity"
-  ],
-  "author": "Expo",
-  "license": "MIT",
-  "type": "module",
   "dependencies": {
     "@expo/entity": "workspace:^"
-  },
-  "peerDependencies": {
-    "ioredis": ">=5"
   },
   "devDependencies": {
     "@expo/batcher": "1.0.0",
@@ -41,5 +35,11 @@
     "ioredis": "5.10.1",
     "ts-mockito": "2.6.1",
     "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "ioredis": ">=5"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
