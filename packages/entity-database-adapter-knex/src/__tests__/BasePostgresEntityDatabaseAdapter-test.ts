@@ -20,7 +20,6 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
   private readonly insertResults: object[];
   private readonly updateResults: { updatedRowCount: number };
   private readonly fetchEqualityConditionResults: object[];
-  private readonly fetchRawWhereResults: object[];
   private readonly fetchSQLFragmentResults: object[];
   private readonly deleteCount: number;
 
@@ -30,7 +29,6 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     insertResults = [],
     updateResults = { updatedRowCount: 0 },
     fetchEqualityConditionResults = [],
-    fetchRawWhereResults = [],
     fetchSQLFragmentResults = [],
     deleteCount = 0,
   }: {
@@ -39,7 +37,6 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     insertResults?: object[];
     updateResults?: { updatedRowCount: number };
     fetchEqualityConditionResults?: object[];
-    fetchRawWhereResults?: object[];
     fetchSQLFragmentResults?: object[];
     deleteCount?: number;
   }) {
@@ -49,7 +46,6 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     this.insertResults = insertResults;
     this.updateResults = updateResults;
     this.fetchEqualityConditionResults = fetchEqualityConditionResults;
-    this.fetchRawWhereResults = fetchRawWhereResults;
     this.fetchSQLFragmentResults = fetchSQLFragmentResults;
     this.deleteCount = deleteCount;
   }
@@ -74,15 +70,6 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     _tableTuple: readonly any[],
   ): Promise<object | null> {
     return this.fetchOneResult;
-  }
-
-  protected async fetchManyByRawWhereClauseInternalAsync(
-    _queryInterface: any,
-    _tableName: string,
-    _rawWhereClause: string,
-    _bindings: object | any[],
-  ): Promise<object[]> {
-    return this.fetchRawWhereResults;
   }
 
   protected async fetchManyBySQLFragmentInternalAsync(
@@ -145,17 +132,6 @@ describe(BasePostgresEntityDatabaseAdapter, () => {
         fetchEqualityConditionResults: [{ string_field: 'hello' }],
       });
       const results = await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {});
-      expect(results).toEqual([{ stringField: 'hello' }]);
-    });
-  });
-
-  describe('fetchManyWithRawWhereClause', () => {
-    it('transforms object', async () => {
-      const queryContext = instance(mock(EntityQueryContext));
-      const adapter = new TestEntityDatabaseAdapter({
-        fetchRawWhereResults: [{ string_field: 'hello' }],
-      });
-      const results = await adapter.fetchManyByRawWhereClauseAsync(queryContext, 'hello', [], {});
       expect(results).toEqual([{ stringField: 'hello' }]);
     });
   });

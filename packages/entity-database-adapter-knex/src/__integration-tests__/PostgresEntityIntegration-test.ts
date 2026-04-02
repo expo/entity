@@ -1085,6 +1085,49 @@ describe('postgres entity integration', () => {
       expect(results.map((e) => e.getField('name'))).toEqual(['alpha', 'gamma', 'beta']);
     });
 
+    it('supports fieldFragment orderBy with entityField', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'alpha')
+          .setField('hasACat', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'beta')
+          .setField('hasACat', false)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'gamma')
+          .setField('hasACat', true)
+          .createAsync(),
+      );
+
+      // Order by entityField references, which translate entity field names to DB column names
+      const results = await PostgresTestEntity.knexLoader(
+        vc1,
+      ).loadManyByFieldEqualityConjunctionAsync([], {
+        orderBy: [
+          {
+            fieldFragment: sql`${entityField('hasACat')}`,
+            order: OrderByOrdering.DESCENDING,
+          },
+          {
+            fieldFragment: sql`${entityField('name')}`,
+            order: OrderByOrdering.ASCENDING,
+          },
+        ],
+      });
+      expect(results).toHaveLength(3);
+      expect(results.map((e) => e.getField('name'))).toEqual(['alpha', 'gamma', 'beta']);
+    });
+
     it('rejects fieldFragment containing trailing ASC or DESC', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
@@ -1162,122 +1205,6 @@ describe('postgres entity integration', () => {
       );
       expect(results2).toHaveLength(2);
       expect(results2.map((e) => e.getField('name'))).toEqual([null, 'a']);
-    });
-  });
-
-  describe('raw where clause loading', () => {
-    it('loads by raw where clause', async () => {
-      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-      await enforceAsyncResult(
-        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
-          .setField('name', 'hello')
-          .setField('hasACat', false)
-          .setField('hasADog', true)
-          .createAsync(),
-      );
-
-      const results = await PostgresTestEntity.knexLoader(vc1).loadManyByRawWhereClauseAsync(
-        'name = ?',
-        ['hello'],
-      );
-
-      expect(results).toHaveLength(1);
-    });
-
-    it('throws with invalid where clause', async () => {
-      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-      await enforceAsyncResult(
-        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
-          .setField('name', 'hello')
-          .setField('hasACat', false)
-          .setField('hasADog', true)
-          .createAsync(),
-      );
-
-      await expect(
-        PostgresTestEntity.knexLoader(vc1).loadManyByRawWhereClauseAsync('invalid_column = ?', [
-          'hello',
-        ]),
-      ).rejects.toThrow();
-    });
-
-    it('supports query modifiers', async () => {
-      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-
-      await enforceAsyncResult(
-        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
-          .setField('name', 'a')
-          .setField('hasADog', true)
-          .createAsync(),
-      );
-
-      await enforceAsyncResult(
-        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
-          .setField('name', 'b')
-          .setField('hasADog', true)
-          .createAsync(),
-      );
-
-      await enforceAsyncResult(
-        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
-          .setField('name', 'c')
-          .setField('hasADog', true)
-          .createAsync(),
-      );
-
-      const results = await PostgresTestEntity.knexLoader(vc1).loadManyByRawWhereClauseAsync(
-        'has_a_dog = ?',
-        [true],
-        {
-          limit: 2,
-          offset: 1,
-          orderBy: [
-            {
-              fieldName: 'name',
-              order: OrderByOrdering.ASCENDING,
-            },
-          ],
-        },
-      );
-
-      expect(results).toHaveLength(2);
-      expect(results.map((e) => e.getField('name'))).toEqual(['b', 'c']);
-
-      const resultsMultipleOrderBy = await PostgresTestEntity.knexLoader(
-        vc1,
-      ).loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
-        orderBy: [
-          {
-            fieldName: 'hasADog',
-            order: OrderByOrdering.ASCENDING,
-          },
-          {
-            fieldName: 'name',
-            order: OrderByOrdering.DESCENDING,
-          },
-        ],
-      });
-
-      expect(resultsMultipleOrderBy).toHaveLength(3);
-      expect(resultsMultipleOrderBy.map((e) => e.getField('name'))).toEqual(['c', 'b', 'a']);
-
-      const resultsOrderByRaw = await PostgresTestEntity.knexLoader(
-        vc1,
-      ).loadManyByRawWhereClauseAsync('has_a_dog = ?', [true], {
-        orderBy: [
-          {
-            fieldFragment: sql`${entityField('hasADog')}`,
-            order: OrderByOrdering.ASCENDING,
-          },
-          {
-            fieldFragment: sql`${entityField('name')}`,
-            order: OrderByOrdering.DESCENDING,
-          },
-        ],
-      });
-
-      expect(resultsOrderByRaw).toHaveLength(3);
-      expect(resultsOrderByRaw.map((e) => e.getField('name'))).toEqual(['c', 'b', 'a']);
     });
   });
 

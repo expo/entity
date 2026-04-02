@@ -210,18 +210,6 @@ export class PostgresEntityDatabaseAdapter<
     return await wrapNativePostgresCallAsync(() => query);
   }
 
-  protected async fetchManyByRawWhereClauseInternalAsync(
-    queryInterface: Knex,
-    tableName: string,
-    rawWhereClause: string,
-    bindings: object | any[],
-    querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
-  ): Promise<object[]> {
-    let query = queryInterface.select().from(tableName).whereRaw(rawWhereClause, bindings);
-    query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
-    return await wrapNativePostgresCallAsync(() => query);
-  }
-
   protected async fetchManyBySQLFragmentInternalAsync(
     queryInterface: Knex,
     tableName: string,

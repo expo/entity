@@ -190,38 +190,6 @@ export class EntityKnexDataManager<
     );
   }
 
-  /**
-   * Loads many objects matching the raw WHERE clause.
-   *
-   * @param queryContext - query context in which to perform the load
-   * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
-   * @param bindings - array of positional bindings or object of named bindings
-   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
-   * @returns array of objects matching the query
-   */
-  async loadManyByRawWhereClauseAsync(
-    queryContext: EntityQueryContext,
-    rawWhereClause: string,
-    bindings: readonly any[] | object,
-    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
-  ): Promise<readonly Readonly<TFields>[]> {
-    EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
-
-    return await timeAndLogLoadEventAsync(
-      this.metricsAdapter,
-      EntityMetricsLoadType.LOAD_MANY_RAW,
-      this.entityClassName,
-      queryContext,
-    )(
-      this.databaseAdapter.fetchManyByRawWhereClauseAsync(
-        queryContext,
-        rawWhereClause,
-        bindings,
-        querySelectionModifiers,
-      ),
-    );
-  }
-
   async loadManyBySQLFragmentAsync(
     queryContext: EntityQueryContext,
     sqlFragment: SQLFragment<TFields>,

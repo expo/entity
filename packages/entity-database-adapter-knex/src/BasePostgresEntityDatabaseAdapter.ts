@@ -217,42 +217,6 @@ export abstract class BasePostgresEntityDatabaseAdapter<
   ): Promise<object[]>;
 
   /**
-   * Fetch many objects matching the raw WHERE clause.
-   *
-   * @param queryContext - query context with which to perform the fetch
-   * @param rawWhereClause - parameterized SQL WHERE clause with positional binding placeholders or named binding placeholders
-   * @param bindings - array of positional bindings or object of named bindings
-   * @param querySelectionModifiers - limit, offset, and orderBy for the query
-   * @returns array of objects matching the query
-   */
-  async fetchManyByRawWhereClauseAsync(
-    queryContext: EntityQueryContext,
-    rawWhereClause: string,
-    bindings: any[] | object,
-    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
-  ): Promise<readonly Readonly<TFields>[]> {
-    const results = await this.fetchManyByRawWhereClauseInternalAsync(
-      queryContext.getQueryInterface(),
-      this.entityConfiguration.tableName,
-      rawWhereClause,
-      bindings,
-      this.convertToTableQueryModifiers(querySelectionModifiers),
-    );
-
-    return results.map((result) =>
-      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
-    );
-  }
-
-  protected abstract fetchManyByRawWhereClauseInternalAsync(
-    queryInterface: Knex,
-    tableName: string,
-    rawWhereClause: string,
-    bindings: object | any[],
-    querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
-  ): Promise<object[]>;
-
-  /**
    * Fetch many objects matching the SQL fragment.
    *
    * @param queryContext - query context with which to perform the fetch
