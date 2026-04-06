@@ -14,7 +14,7 @@ run = "yarn typedoc"
 
 [tasks."checks:lint"]
 depends = "yarn"
-run = ["yarn lint --max-warnings=0"]
+run = "yarn lint"
 
 [tasks."checks:format"]
 depends = "yarn"

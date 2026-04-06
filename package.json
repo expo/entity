@@ -9,7 +9,7 @@
     "tsc": "tsc --build",
     "build": "tsc --build",
     "clean": "yarn build --clean",
-    "lint": "oxlint --type-aware . && yarn format-check",
+    "lint": "oxlint --type-aware . --max-warnings=0 && yarn format-check",
     "lint-fix": "oxlint --type-aware --fix . && yarn format",
     "format": "oxfmt --write --ignore-path .fmtignore .",
     "format-check": "oxfmt --check --ignore-path .fmtignore .",
