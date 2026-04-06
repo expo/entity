@@ -3,6 +3,7 @@ import { anyNumber, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 
 import type { EntityQueryContext } from '../../EntityQueryContext.ts';
 import {
+  timeAndLogCountEventAsync,
   timeAndLogLoadEventAsync,
   timeAndLogLoadMapEventAsync,
   timeAndLogMutationEventAsync,
@@ -77,6 +78,38 @@ describe(timeAndLogLoadMapEventAsync, () => {
           entityClassName: 'TestEntity',
           duration: anyNumber(),
           count: 3,
+        }),
+      ),
+    ).once();
+  });
+});
+
+describe(timeAndLogCountEventAsync, () => {
+  it('returns the count from the wrapped promise and logs', async () => {
+    const metricsAdapterMock = mock<IEntityMetricsAdapter>();
+    const metricsAdapter = instance(metricsAdapterMock);
+
+    const queryContextMock = mock<EntityQueryContext>();
+    when(queryContextMock.isInTransaction()).thenReturn(false);
+    const queryContext = instance(queryContextMock);
+
+    const result = await timeAndLogCountEventAsync(
+      metricsAdapter,
+      EntityMetricsLoadType.COUNT_SQL,
+      'TestEntity',
+      queryContext,
+    )(Promise.resolve(42));
+
+    expect(result).toBe(42);
+
+    verify(
+      metricsAdapterMock.logDataManagerLoadEvent(
+        deepEqual({
+          type: EntityMetricsLoadType.COUNT_SQL,
+          isInTransaction: false,
+          entityClassName: 'TestEntity',
+          duration: anyNumber(),
+          count: 42,
         }),
       ),
     ).once();

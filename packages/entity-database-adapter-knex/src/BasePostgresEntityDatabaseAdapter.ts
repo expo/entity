@@ -248,6 +248,73 @@ export abstract class BasePostgresEntityDatabaseAdapter<
     querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Promise<object[]>;
 
+  /**
+   * Count objects matching the conjunction of where clauses constructed from
+   * specified field equality operands.
+   *
+   * @param queryContext - query context with which to perform the count
+   * @param fieldEqualityOperands - list of field equality where clause operand specifications
+   * @returns count of objects matching the query
+   */
+  async countByFieldEqualityConjunctionAsync<N extends keyof TFields>(
+    queryContext: EntityQueryContext,
+    fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
+  ): Promise<number> {
+    const tableFieldSingleValueOperands: TableFieldSingleValueEqualityCondition[] = [];
+    const tableFieldMultipleValueOperands: TableFieldMultiValueEqualityCondition[] = [];
+    for (const operand of fieldEqualityOperands) {
+      if (isSingleValueFieldEqualityCondition(operand)) {
+        tableFieldSingleValueOperands.push({
+          tableField: getDatabaseFieldForEntityField(this.entityConfiguration, operand.fieldName),
+          tableValue: operand.fieldValue,
+        });
+      } else {
+        tableFieldMultipleValueOperands.push({
+          tableField: getDatabaseFieldForEntityField(this.entityConfiguration, operand.fieldName),
+          tableValues: operand.fieldValues,
+        });
+      }
+    }
+
+    return await this.countByFieldEqualityConjunctionInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      tableFieldSingleValueOperands,
+      tableFieldMultipleValueOperands,
+    );
+  }
+
+  protected abstract countByFieldEqualityConjunctionInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
+    tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
+  ): Promise<number>;
+
+  /**
+   * Count objects matching the SQL fragment.
+   *
+   * @param queryContext - query context with which to perform the count
+   * @param sqlFragment - SQLFragment for the WHERE clause of the query
+   * @returns count of objects matching the query
+   */
+  async countBySQLFragmentAsync(
+    queryContext: EntityQueryContext,
+    sqlFragment: SQLFragment<TFields>,
+  ): Promise<number> {
+    return await this.countBySQLFragmentInternalAsync(
+      queryContext.getQueryInterface(),
+      this.entityConfiguration.tableName,
+      sqlFragment,
+    );
+  }
+
+  protected abstract countBySQLFragmentInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment<TFields>,
+  ): Promise<number>;
+
   private convertToTableQueryModifiers(
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): TableQuerySelectionModifiers<TFields> {

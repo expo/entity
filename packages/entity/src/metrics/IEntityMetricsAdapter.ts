@@ -28,6 +28,14 @@ export enum EntityMetricsLoadType {
    * Knex loader load using loadPageAsync.
    */
   LOAD_PAGE,
+  /**
+   * Knex loader count using countBySQLAsync.
+   */
+  COUNT_SQL,
+  /**
+   * Knex loader count using countByFieldEqualityConjunctionAsync.
+   */
+  COUNT_EQUALITY_CONJUNCTION,
 }
 
 /**

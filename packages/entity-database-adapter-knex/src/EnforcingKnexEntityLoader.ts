@@ -105,6 +105,32 @@ export class EnforcingKnexEntityLoader<
   }
 
   /**
+   * Count entities matching the conjunction of field equality operands.
+   * This does not perform authorization since count does not load full entities.
+   * Note that this should be used with the same caution as loadManyByFieldEqualityConjunctionAsync
+   * regarding indexing since counts can be expensive on large datasets without appropriate indexes.
+   *
+   * @returns count of entities matching the filters
+   */
+  async countByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldEqualityOperands: FieldEqualityCondition<TFields, N>[],
+  ): Promise<number> {
+    return await this.knexEntityLoader.countByFieldEqualityConjunctionAsync(fieldEqualityOperands);
+  }
+
+  /**
+   * Count entities matching a SQL fragment.
+   * This does not perform authorization since count does not load full entity rows.
+   * Note that this should be used with the same caution as loadManyBySQL regarding indexing
+   * since counts can be expensive on large datasets without appropriate indexes.
+   *
+   * @returns count of entities matching the query
+   */
+  async countBySQLAsync(fragment: SQLFragment<Pick<TFields, TSelectedFields>>): Promise<number> {
+    return await this.knexEntityLoader.countBySQLAsync(fragment);
+  }
+
+  /**
    * Load entities using a SQL query builder. When executed, all queries will enforce authorization and throw if not authorized.
    *
    * @example

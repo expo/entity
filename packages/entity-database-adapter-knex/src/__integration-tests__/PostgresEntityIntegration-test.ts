@@ -959,6 +959,103 @@ describe('postgres entity integration', () => {
     });
   });
 
+  describe('counting with countBySQLAsync', () => {
+    it('counts entities matching a SQL fragment', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'Alice')
+          .setField('hasACat', true)
+          .setField('hasADog', false)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'Bob')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'Charlie')
+          .setField('hasACat', true)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      const catOwnerCount = await PostgresTestEntity.knexLoader(vc1).countBySQLAsync(
+        sql`has_a_cat = ${true}`,
+      );
+      expect(catOwnerCount).toBe(2);
+
+      const dogOwnerCount = await PostgresTestEntity.knexLoader(vc1).countBySQLAsync(
+        sql`has_a_dog = ${true}`,
+      );
+      expect(dogOwnerCount).toBe(2);
+
+      const allCount = await PostgresTestEntity.knexLoader(vc1).countBySQLAsync(sql`TRUE`);
+      expect(allCount).toBe(3);
+
+      const noneCount = await PostgresTestEntity.knexLoader(vc1).countBySQLAsync(sql`FALSE`);
+      expect(noneCount).toBe(0);
+    });
+  });
+
+  describe('counting with countByFieldEqualityConjunctionAsync', () => {
+    it('counts entities matching field equality conditions', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'hello')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'world')
+          .setField('hasACat', false)
+          .setField('hasADog', true)
+          .createAsync(),
+      );
+
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'wat')
+          .setField('hasACat', false)
+          .setField('hasADog', false)
+          .createAsync(),
+      );
+
+      const count1 = await PostgresTestEntity.knexLoader(vc1).countByFieldEqualityConjunctionAsync([
+        { fieldName: 'hasACat', fieldValue: false },
+        { fieldName: 'hasADog', fieldValue: true },
+      ]);
+      expect(count1).toBe(2);
+
+      const count2 = await PostgresTestEntity.knexLoader(vc1).countByFieldEqualityConjunctionAsync([
+        { fieldName: 'hasADog', fieldValues: [true, false] },
+      ]);
+      expect(count2).toBe(3);
+
+      const count3 = await PostgresTestEntity.knexLoader(vc1).countByFieldEqualityConjunctionAsync([
+        { fieldName: 'name', fieldValue: 'hello' },
+      ]);
+      expect(count3).toBe(1);
+
+      const count4 = await PostgresTestEntity.knexLoader(vc1).countByFieldEqualityConjunctionAsync(
+        [],
+      );
+      expect(count4).toBe(3);
+    });
+  });
+
   describe('conjunction field equality loading', () => {
     it('supports single fieldValue and multiple fieldValues', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));

@@ -489,6 +489,81 @@ describe(StubPostgresDatabaseAdapter, () => {
     });
   });
 
+  describe('countByFieldEqualityConjunctionAsync', () => {
+    it('counts matching records', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        StubPostgresDatabaseAdapter.convertFieldObjectsToDataStore(
+          testEntityConfiguration,
+          new Map([
+            [
+              testEntityConfiguration.tableName,
+              [
+                {
+                  customIdField: 'hello',
+                  testIndexedField: 'h1',
+                  intField: 3,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+                {
+                  customIdField: 'world',
+                  testIndexedField: 'h2',
+                  intField: 3,
+                  stringField: 'b',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+                {
+                  customIdField: 'other',
+                  testIndexedField: 'h3',
+                  intField: 5,
+                  stringField: 'c',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+              ],
+            ],
+          ]),
+        ),
+      );
+
+      const count = await databaseAdapter.countByFieldEqualityConjunctionAsync(queryContext, [
+        { fieldName: 'intField', fieldValue: 3 },
+      ]);
+      expect(count).toBe(2);
+
+      const countAll = await databaseAdapter.countByFieldEqualityConjunctionAsync(queryContext, []);
+      expect(countAll).toBe(3);
+
+      const countMultiValue = await databaseAdapter.countByFieldEqualityConjunctionAsync(
+        queryContext,
+        [{ fieldName: 'customIdField', fieldValues: ['hello', 'world'] }],
+      );
+      expect(countMultiValue).toBe(2);
+
+      const countNone = await databaseAdapter.countByFieldEqualityConjunctionAsync(queryContext, [
+        { fieldName: 'intField', fieldValue: 999 },
+      ]);
+      expect(countNone).toBe(0);
+    });
+  });
+
+  describe('countBySQLFragmentAsync', () => {
+    it('throws because it is unsupported', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        new Map(),
+      );
+      await expect(databaseAdapter.countBySQLFragmentAsync(queryContext, sql``)).rejects.toThrow(
+        'SQL fragment count not supported for StubDatabaseAdapter',
+      );
+    });
+  });
+
   describe('fetchManyBySQLFragmentAsync', () => {
     it('throws because it is unsupported', async () => {
       const queryContext = instance(mock(EntityQueryContext));

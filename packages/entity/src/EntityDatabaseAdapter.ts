@@ -17,6 +17,8 @@ import {
 } from './internal/EntityFieldTransformationUtils.ts';
 import type { IEntityLoadKey, IEntityLoadValue } from './internal/EntityLoadInterfaces.ts';
 
+export const RESERVED_ENTITY_COUNT_QUERY_ALIAS = '__entity_count__';
+
 /**
  * A database adapter is an interface by which entity objects can be
  * fetched, inserted, updated, and deleted from a database. This base class

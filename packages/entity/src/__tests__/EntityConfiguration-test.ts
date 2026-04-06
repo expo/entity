@@ -1,6 +1,7 @@
 import { describe, expect, it, test } from '@jest/globals';
 
 import { EntityConfiguration } from '../EntityConfiguration.ts';
+import { RESERVED_ENTITY_COUNT_QUERY_ALIAS } from '../EntityDatabaseAdapter.ts';
 import { StringField, UUIDField } from '../EntityFields.ts';
 import { CompositeFieldHolder } from '../internal/CompositeFieldHolder.ts';
 
@@ -194,6 +195,29 @@ describe(EntityConfiguration, () => {
           `Entity field name not allowed to prevent conflicts with standard Object prototype fields: ${keyName}`,
         );
       });
+    });
+
+    it('disallows RESERVED_ENTITY_COUNT_QUERY_ALIAS as a column name', () => {
+      expect(
+        () =>
+          new EntityConfiguration<{ id: string; count: string }, 'id'>({
+            idField: 'id',
+            tableName: 'blah_table',
+            schema: {
+              id: new UUIDField({
+                columnName: 'id',
+                cache: false,
+              }),
+              count: new StringField({
+                columnName: RESERVED_ENTITY_COUNT_QUERY_ALIAS,
+              }),
+            },
+            databaseAdapterFlavor: 'postgres',
+            cacheAdapterFlavor: 'redis',
+          }),
+      ).toThrow(
+        `Entity field "count" has disallowed column name "${RESERVED_ENTITY_COUNT_QUERY_ALIAS}" which is reserved for count queries. Choose a different column name.`,
+      );
     });
   });
 });
