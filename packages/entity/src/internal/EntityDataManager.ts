@@ -244,6 +244,63 @@ export class EntityDataManager<
   }
 
   /**
+   * Load objects in pages via offset/limit pagination, bypassing DataLoader and cache.
+   * Yields one page of raw field objects at a time.
+   *
+   * @param queryContext - query context in which to perform the load
+   * @param key - load key being queried
+   * @param value - single load value being queried for the key
+   * @param pageSize - number of objects per page
+   * @param advanceOffset - if true, advances offset between pages (standard pagination).
+   *   If false, always queries from offset 0 (use when processing each page deletes or
+   *   modifies the matched rows, causing subsequent rows to shift).
+   */
+  async *loadManyEqualingPaginatedAsync<
+    TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
+    TSerializedLoadValue,
+    TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
+  >(
+    queryContext: EntityQueryContext,
+    key: TLoadKey,
+    value: TLoadValue,
+    pageSize: number,
+    advanceOffset: boolean,
+  ): AsyncGenerator<readonly Readonly<TFields>[]> {
+    let offset = 0;
+    while (true) {
+      this.metricsAdapter.incrementDataManagerLoadCount({
+        type: IncrementLoadCountEventType.DATABASE,
+        isInTransaction: queryContext.isInTransaction(),
+        fieldValueCount: 1,
+        entityClassName: this.entityClassName,
+        loadType: key.getLoadMethodType(),
+      });
+
+      const page = await this.databaseAdapter.fetchManyWhereWithPaginationAsync(
+        queryContext,
+        key,
+        value,
+        offset,
+        pageSize,
+      );
+
+      if (page.length === 0) {
+        break;
+      }
+
+      yield page;
+
+      if (page.length < pageSize) {
+        break;
+      }
+
+      if (advanceOffset) {
+        offset += pageSize;
+      }
+    }
+  }
+
+  /**
    * Load one object matching load key and load value if at least one matching object exists.
    * Returned object is not guaranteed to be deterministic.
    *

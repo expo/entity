@@ -137,6 +137,40 @@ export class AuthorizationResultBasedEntityLoader<
   }
 
   /**
+   * Load entities in pages where fieldName equals fieldValue. Each yielded page contains
+   * at most `pageSize` authorized entity results. Bypasses DataLoader and cache to avoid
+   * loading all matching entities into memory at once.
+   *
+   * @param fieldName - entity field being queried
+   * @param fieldValue - fieldName field value being queried
+   * @param pageSize - maximum number of entities per page
+   * @param advanceOffset - if true, advances offset between pages (standard pagination).
+   *   If false, always queries from offset 0 (use when each page's results are deleted
+   *   or modified before the next page is fetched).
+   */
+  async *loadManyByFieldEqualingInPagesAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>,
+    pageSize: number,
+    advanceOffset: boolean,
+  ): AsyncGenerator<readonly Result<TEntity>[]> {
+    const { loadKey, loadValue } = this.validateFieldAndValueAndConvertToHolders(
+      fieldName,
+      fieldValue,
+    );
+
+    for await (const fieldObjectsPage of this.dataManager.loadManyEqualingPaginatedAsync(
+      this.queryContext,
+      loadKey,
+      loadValue,
+      pageSize,
+      advanceOffset,
+    )) {
+      yield await this.constructionUtils.constructAndAuthorizeEntitiesArrayAsync(fieldObjectsPage);
+    }
+  }
+
+  /**
    * Load one entity where fieldName equals fieldValue, or null if no entity exists matching the condition.
    * Not cached or coalesced, and not guaranteed to be deterministic if multiple entities match the condition.
    *

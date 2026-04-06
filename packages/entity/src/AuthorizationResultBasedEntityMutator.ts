@@ -979,76 +979,123 @@ export class AuthorizationResultBasedDeleteMutator<
               return;
             }
 
-            const inboundReferenceEntities = await enforceResultsAsync(
-              loaderFactory
-                .forLoad(queryContext, {
-                  previousValue: null,
-                  cascadingDeleteCause: newCascadingDeleteCause,
-                })
-                .loadManyByFieldEqualingAsync(
-                  fieldName,
-                  association.associatedEntityLookupByField
-                    ? entity.getField(association.associatedEntityLookupByField)
-                    : entity.getID(),
-                ),
-            );
+            const cascadeChunkSize = entityConfiguration.cascadeChunkSize;
+            const fieldValue = association.associatedEntityLookupByField
+              ? entity.getField(association.associatedEntityLookupByField)
+              : entity.getID();
 
-            switch (association.edgeDeletionBehavior) {
-              case EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY: {
-                await Promise.all(
-                  inboundReferenceEntities.map((inboundReferenceEntity) =>
-                    enforceAsyncResult(
-                      mutatorFactory
-                        .forDelete(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
-                        .deleteInTransactionAsync(
-                          processedEntityIdentifiers,
-                          /* skipDatabaseDeletion */ true, // deletion is handled by DB
-                        ),
+            const loader = loaderFactory.forLoad(queryContext, {
+              previousValue: null,
+              cascadingDeleteCause: newCascadingDeleteCause,
+            });
+
+            const processPage = async (
+              inboundReferenceEntities: readonly TEntity[],
+            ): Promise<void> => {
+              switch (association.edgeDeletionBehavior) {
+                case EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY: {
+                  await Promise.all(
+                    inboundReferenceEntities.map((inboundReferenceEntity) =>
+                      enforceAsyncResult(
+                        mutatorFactory
+                          .forDelete(
+                            inboundReferenceEntity,
+                            queryContext,
+                            newCascadingDeleteCause,
+                          )
+                          .deleteInTransactionAsync(
+                            processedEntityIdentifiers,
+                            /* skipDatabaseDeletion */ true, // deletion is handled by DB
+                          ),
+                      ),
                     ),
-                  ),
-                );
-                break;
-              }
-              case EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY: {
-                await Promise.all(
-                  inboundReferenceEntities.map((inboundReferenceEntity) =>
-                    enforceAsyncResult(
-                      mutatorFactory
-                        .forUpdate(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
-                        .setField(fieldName, null)
-                        ['updateInTransactionAsync'](/* skipDatabaseUpdate */ true),
+                  );
+                  break;
+                }
+                case EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY: {
+                  await Promise.all(
+                    inboundReferenceEntities.map((inboundReferenceEntity) =>
+                      enforceAsyncResult(
+                        mutatorFactory
+                          .forUpdate(
+                            inboundReferenceEntity,
+                            queryContext,
+                            newCascadingDeleteCause,
+                          )
+                          .setField(fieldName, null)
+                          ['updateInTransactionAsync'](/* skipDatabaseUpdate */ true),
+                      ),
                     ),
-                  ),
-                );
-                break;
-              }
-              case EntityEdgeDeletionBehavior.SET_NULL: {
-                await Promise.all(
-                  inboundReferenceEntities.map((inboundReferenceEntity) =>
-                    enforceAsyncResult(
-                      mutatorFactory
-                        .forUpdate(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
-                        .setField(fieldName, null)
-                        ['updateInTransactionAsync'](/* skipDatabaseUpdate */ false),
+                  );
+                  break;
+                }
+                case EntityEdgeDeletionBehavior.SET_NULL: {
+                  await Promise.all(
+                    inboundReferenceEntities.map((inboundReferenceEntity) =>
+                      enforceAsyncResult(
+                        mutatorFactory
+                          .forUpdate(
+                            inboundReferenceEntity,
+                            queryContext,
+                            newCascadingDeleteCause,
+                          )
+                          .setField(fieldName, null)
+                          ['updateInTransactionAsync'](/* skipDatabaseUpdate */ false),
+                      ),
                     ),
-                  ),
-                );
-                break;
-              }
-              case EntityEdgeDeletionBehavior.CASCADE_DELETE: {
-                await Promise.all(
-                  inboundReferenceEntities.map((inboundReferenceEntity) =>
-                    enforceAsyncResult(
-                      mutatorFactory
-                        .forDelete(inboundReferenceEntity, queryContext, newCascadingDeleteCause)
-                        .deleteInTransactionAsync(
-                          processedEntityIdentifiers,
-                          /* skipDatabaseDeletion */ false,
-                        ),
+                  );
+                  break;
+                }
+                case EntityEdgeDeletionBehavior.CASCADE_DELETE: {
+                  await Promise.all(
+                    inboundReferenceEntities.map((inboundReferenceEntity) =>
+                      enforceAsyncResult(
+                        mutatorFactory
+                          .forDelete(
+                            inboundReferenceEntity,
+                            queryContext,
+                            newCascadingDeleteCause,
+                          )
+                          .deleteInTransactionAsync(
+                            processedEntityIdentifiers,
+                            /* skipDatabaseDeletion */ false,
+                          ),
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               }
+            };
+
+            if (isFinite(cascadeChunkSize)) {
+              // For CASCADE_DELETE and SET_NULL, processing each page deletes or modifies
+              // the matched rows in the database, so subsequent rows shift down. We must
+              // re-query from offset 0 each time.
+              // For INVALIDATE_CACHE_ONLY variants, the framework skips the DB write
+              // (the DB's own FK cascade hasn't fired yet since the parent row hasn't
+              // been deleted), so rows remain and we advance the offset normally.
+              const advanceOffset =
+                association.edgeDeletionBehavior ===
+                  EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE_ONLY ||
+                association.edgeDeletionBehavior ===
+                  EntityEdgeDeletionBehavior.SET_NULL_INVALIDATE_CACHE_ONLY;
+
+              // Paginated: load and process one page at a time to bound memory
+              for await (const pageResults of loader.loadManyByFieldEqualingInPagesAsync(
+                fieldName,
+                fieldValue,
+                cascadeChunkSize,
+                advanceOffset,
+              )) {
+                const page = pageResults.map((r) => r.enforceValue());
+                await processPage(page);
+              }
+            } else {
+              // Unpaginated: load all at once (original behavior)
+              const inboundReferenceEntities = await enforceResultsAsync(
+                loader.loadManyByFieldEqualingAsync(fieldName, fieldValue),
+              );
+              await processPage(inboundReferenceEntities);
             }
           },
         );

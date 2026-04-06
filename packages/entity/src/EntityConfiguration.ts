@@ -122,6 +122,13 @@ export class EntityConfiguration<
   readonly databaseAdapterFlavor: DatabaseAdapterFlavor;
   readonly cacheAdapterFlavor: CacheAdapterFlavor;
 
+  /**
+   * Maximum number of inbound reference entities to process concurrently during
+   * cascade deletion. Controls peak memory usage for entities with many inbound references.
+   * Defaults to Infinity (process all at once, preserving existing behavior).
+   */
+  readonly cascadeChunkSize: number;
+
   constructor({
     idField,
     tableName,
@@ -131,6 +138,7 @@ export class EntityConfiguration<
     compositeFieldDefinitions,
     databaseAdapterFlavor,
     cacheAdapterFlavor,
+    cascadeChunkSize = Infinity,
   }: {
     /**
      * The field used to identify this entity. Must be a unique field in the table.
@@ -173,12 +181,20 @@ export class EntityConfiguration<
      * Cache system for this entity.
      */
     cacheAdapterFlavor: CacheAdapterFlavor;
+
+    /**
+     * Maximum number of inbound reference entities to process concurrently during
+     * cascade deletion. Controls peak memory usage for entities with many inbound references.
+     * Defaults to Infinity (process all at once, preserving existing behavior).
+     */
+    cascadeChunkSize?: number;
   }) {
     this.idField = idField;
     this.tableName = tableName;
     this.cacheKeyVersion = cacheKeyVersion;
     this.databaseAdapterFlavor = databaseAdapterFlavor;
     this.cacheAdapterFlavor = cacheAdapterFlavor;
+    this.cascadeChunkSize = cascadeChunkSize;
     this.inboundEdges = inboundEdges;
 
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
