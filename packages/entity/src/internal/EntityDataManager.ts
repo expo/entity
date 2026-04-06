@@ -6,8 +6,6 @@ import type { EntityQueryContext, EntityTransactionalQueryContext } from '../Ent
 import { TransactionalDataLoaderMode } from '../EntityQueryContext.ts';
 import type { EntityQueryContextProvider } from '../EntityQueryContextProvider.ts';
 import { partitionErrors } from '../entityUtils.ts';
-import type { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces.ts';
-import type { ReadThroughEntityCache } from './ReadThroughEntityCache.ts';
 import {
   timeAndLogLoadMapEventAsync,
   timeAndLogLoadOneEventAsync,
@@ -18,6 +16,8 @@ import {
   IncrementLoadCountEventType,
 } from '../metrics/IEntityMetricsAdapter.ts';
 import { computeIfAbsent } from '../utils/collections/maps.ts';
+import type { IEntityLoadKey, IEntityLoadValue, LoadPair } from './EntityLoadInterfaces.ts';
+import type { ReadThroughEntityCache } from './ReadThroughEntityCache.ts';
 
 type DataLoaderMap<TFields extends Record<string, any>> = Map<
   string,

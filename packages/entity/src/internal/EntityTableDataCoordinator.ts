@@ -4,9 +4,9 @@ import type { EntityQueryContextProvider } from '../EntityQueryContextProvider.t
 import type { IEntityCacheAdapter } from '../IEntityCacheAdapter.ts';
 import type { IEntityCacheAdapterProvider } from '../IEntityCacheAdapterProvider.ts';
 import type { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider.ts';
+import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
 import { EntityDataManager } from './EntityDataManager.ts';
 import { ReadThroughEntityCache } from './ReadThroughEntityCache.ts';
-import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
 
 /**
  * Responsible for orchestrating fetching and caching of entity data from a
