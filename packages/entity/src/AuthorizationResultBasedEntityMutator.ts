@@ -5,7 +5,6 @@ import invariant from 'invariant';
 import type { Entity, IEntityClass } from './Entity.ts';
 import type { EntityCompanionProvider } from './EntityCompanionProvider.ts';
 import type { EntityConfiguration } from './EntityConfiguration.ts';
-import type { EntityDatabaseAdapter } from './EntityDatabaseAdapter.ts';
 import { EntityEdgeDeletionBehavior } from './EntityFieldDefinition.ts';
 import type { EntityLoaderFactory } from './EntityLoaderFactory.ts';
 import type {
@@ -28,6 +27,7 @@ import type { EntityQueryContext, EntityTransactionalQueryContext } from './Enti
 import type { ViewerContext } from './ViewerContext.ts';
 import { enforceResultsAsync } from './entityUtils.ts';
 import { EntityInvalidFieldValueError } from './errors/EntityInvalidFieldValueError.ts';
+import type { EntityMutationDataManager } from './internal/EntityMutationDataManager.ts';
 import { timeAndLogMutationEventAsync } from './metrics/EntityMetricsUtils.ts';
 import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
 import { EntityMetricsMutationType } from './metrics/IEntityMetricsAdapter.ts';
@@ -169,7 +169,7 @@ export abstract class AuthorizationResultBasedBaseMutator<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    protected readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
+    protected readonly mutationDataManager: EntityMutationDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
@@ -382,7 +382,10 @@ export class AuthorizationResultBasedCreateMutator<
       { type: EntityMutationType.CREATE },
     );
 
-    const insertResult = await this.databaseAdapter.insertAsync(queryContext, this.fieldsForEntity);
+    const insertResult = await this.mutationDataManager.insertAsync(
+      queryContext,
+      this.fieldsForEntity,
+    );
 
     // Invalidate all caches for the new entity so that any previously-negatively-cached loads
     // are removed from the caches.
@@ -488,7 +491,7 @@ export class AuthorizationResultBasedUpdateMutator<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
+    mutationDataManager: EntityMutationDataManager<TFields, TIDField>,
     metricsAdapter: IEntityMetricsAdapter,
     originalEntity: TEntity,
     private readonly cascadingDeleteCause: EntityCascadingDeletionInfo | null,
@@ -503,7 +506,7 @@ export class AuthorizationResultBasedUpdateMutator<
       mutationValidators,
       mutationTriggers,
       entityLoaderFactory,
-      databaseAdapter,
+      mutationDataManager,
       metricsAdapter,
     );
     this.originalEntity = originalEntity;
@@ -609,7 +612,7 @@ export class AuthorizationResultBasedUpdateMutator<
 
     // skip the database update when specified
     if (!skipDatabaseUpdate) {
-      await this.databaseAdapter.updateAsync(
+      await this.mutationDataManager.updateAsync(
         queryContext,
         this.entityConfiguration.idField,
         entityAboutToBeUpdated.getID(),
@@ -753,7 +756,7 @@ export class AuthorizationResultBasedDeleteMutator<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
+    mutationDataManager: EntityMutationDataManager<TFields, TIDField>,
     metricsAdapter: IEntityMetricsAdapter,
     private readonly entity: TEntity,
     private readonly cascadingDeleteCause: EntityCascadingDeletionInfo | null,
@@ -768,7 +771,7 @@ export class AuthorizationResultBasedDeleteMutator<
       mutationValidators,
       mutationTriggers,
       entityLoaderFactory,
-      databaseAdapter,
+      mutationDataManager,
       metricsAdapter,
     );
   }
@@ -852,7 +855,7 @@ export class AuthorizationResultBasedDeleteMutator<
     );
 
     if (!skipDatabaseDeletion) {
-      await this.databaseAdapter.deleteAsync(
+      await this.mutationDataManager.deleteAsync(
         queryContext,
         this.entityConfiguration.idField,
         this.entity.getID(),

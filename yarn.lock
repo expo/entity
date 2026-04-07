@@ -831,7 +831,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/batcher@npm:1.0.0":
+"@expo/batcher@npm:1.0.0, @expo/batcher@npm:^1.0.0":
   version: 1.0.0
   resolution: "@expo/batcher@npm:1.0.0"
   checksum: 10c0/13026d1360753c31c646ff8050172a79b1787153212e5d6893dd240640674197ab300811ce835512de55d9ff5502e64c03f18f0b1dbefa74c15d571ec2331f24
@@ -1002,6 +1002,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@expo/entity@workspace:packages/entity"
   dependencies:
+    "@expo/batcher": "npm:^1.0.0"
     "@expo/results": "npm:^1.0.0"
     "@jest/globals": "npm:30.3.0"
     "@types/invariant": "npm:2.2.37"

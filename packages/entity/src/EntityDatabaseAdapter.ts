@@ -150,134 +150,129 @@ export abstract class EntityDatabaseAdapter<
   ): Promise<object | null>;
 
   /**
-   * Insert an object.
+   * Insert many objects.
    *
-   * @param queryContext - query context with which to perform the insert
-   * @param object - the object to insert
-   * @returns the inserted object
+   * @param queryContext - query context with which to perform the inserts
+   * @param objects - the objects to insert
+   * @returns the inserted objects, in the same order as the input
    */
-  async insertAsync(
+  async insertManyAsync(
     queryContext: EntityQueryContext,
-    object: Readonly<Partial<TFields>>,
-  ): Promise<Readonly<TFields>> {
-    const dbObject = transformFieldsToDatabaseObject(
-      this.entityConfiguration,
-      this.fieldTransformerMap,
-      object,
+    objects: readonly Readonly<Partial<TFields>>[],
+  ): Promise<readonly Readonly<TFields>[]> {
+    const dbObjects = objects.map((object) =>
+      transformFieldsToDatabaseObject(this.entityConfiguration, this.fieldTransformerMap, object),
     );
-    const results = await this.insertInternalAsync(
+    const results = await this.insertManyInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
-      dbObject,
+      dbObjects,
     );
 
-    // These should never happen with a properly implemented database adapter unless the underlying database has weird triggers
-    // or something.
-    // These errors are exposed to help application developers detect and diagnose such issues.
-    if (results.length > 1) {
-      throw new EntityDatabaseAdapterExcessiveInsertResultError(
-        `Excessive results from database adapter insert: ${this.entityConfiguration.tableName}`,
-      );
-    } else if (results.length === 0) {
-      throw new EntityDatabaseAdapterEmptyInsertResultError(
-        `Empty results from database adapter insert: ${this.entityConfiguration.tableName}`,
-      );
+    if (results.length !== objects.length) {
+      if (results.length > objects.length) {
+        throw new EntityDatabaseAdapterExcessiveInsertResultError(
+          `Excessive results from database adapter insert: ${this.entityConfiguration.tableName} (expected ${objects.length}, got ${results.length})`,
+        );
+      } else {
+        throw new EntityDatabaseAdapterEmptyInsertResultError(
+          `Insufficient results from database adapter insert: ${this.entityConfiguration.tableName} (expected ${objects.length}, got ${results.length})`,
+        );
+      }
     }
 
-    return transformDatabaseObjectToFields(
-      this.entityConfiguration,
-      this.fieldTransformerMap,
-      results[0]!,
+    return results.map((result) =>
+      transformDatabaseObjectToFields(this.entityConfiguration, this.fieldTransformerMap, result),
     );
   }
 
-  protected abstract insertInternalAsync(
+  protected abstract insertManyInternalAsync(
     queryInterface: any,
     tableName: string,
-    object: object,
+    objects: readonly object[],
   ): Promise<object[]>;
 
   /**
-   * Update an object.
+   * Update many objects. All items must be updating the same set of fields.
    *
-   * @param queryContext - query context with which to perform the update
-   * @param idField - the field in the object that is the ID
-   * @param id - the value of the ID field in the object
-   * @param object - the object to update
+   * @param queryContext - query context with which to perform the updates
+   * @param idField - the field in the objects that is the ID
+   * @param items - the items to update, each with an id and the fields to update
    */
-  async updateAsync<K extends keyof TFields>(
+  async updateManyAsync<K extends keyof TFields, TUpdate extends Readonly<Partial<TFields>>>(
     queryContext: EntityQueryContext,
     idField: K,
-    id: any,
-    object: Readonly<Partial<TFields>>,
+    items: readonly { id: any; object: TUpdate }[],
   ): Promise<void> {
     const idColumn = getDatabaseFieldForEntityField(this.entityConfiguration, idField);
-    const dbObject = transformFieldsToDatabaseObject(
-      this.entityConfiguration,
-      this.fieldTransformerMap,
-      object,
-    );
-    const { updatedRowCount } = await this.updateInternalAsync(
+    const dbItems = items.map((item) => ({
+      id: item.id,
+      object: transformFieldsToDatabaseObject(
+        this.entityConfiguration,
+        this.fieldTransformerMap,
+        item.object,
+      ),
+    }));
+    const results = await this.updateManyInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       idColumn,
-      id,
-      dbObject,
+      dbItems,
     );
 
-    if (updatedRowCount > 1) {
-      // This should never happen with a properly implemented database adapter unless the underlying table has a non-unique
-      // primary key column.
-      throw new EntityDatabaseAdapterExcessiveUpdateResultError(
-        `Excessive results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`,
-      );
-    } else if (updatedRowCount === 0) {
-      // This happens when the object to update does not exist. It may have been deleted by another process.
-      throw new EntityDatabaseAdapterEmptyUpdateResultError(
-        `Empty results from database adapter update: ${this.entityConfiguration.tableName}(id = ${id})`,
-      );
+    for (let i = 0; i < results.length; i++) {
+      const { updatedRowCount } = results[i]!;
+      const item = items[i]!;
+      if (updatedRowCount > 1) {
+        throw new EntityDatabaseAdapterExcessiveUpdateResultError(
+          `Excessive results from database adapter update: ${this.entityConfiguration.tableName}(id = ${item.id})`,
+        );
+      } else if (updatedRowCount === 0) {
+        throw new EntityDatabaseAdapterEmptyUpdateResultError(
+          `Empty results from database adapter update: ${this.entityConfiguration.tableName}(id = ${item.id})`,
+        );
+      }
     }
   }
 
-  protected abstract updateInternalAsync(
+  protected abstract updateManyInternalAsync(
     queryInterface: any,
     tableName: string,
     tableIdField: string,
-    id: any,
-    object: object,
-  ): Promise<{ updatedRowCount: number }>;
+    items: readonly { id: any; object: object }[],
+  ): Promise<readonly { updatedRowCount: number }[]>;
 
   /**
-   * Delete an object by ID.
+   * Delete many objects by ID.
    *
-   * @param queryContext - query context with which to perform the deletion
-   * @param idField - the field in the object that is the ID
-   * @param id - the value of the ID field in the object
+   * @param queryContext - query context with which to perform the deletions
+   * @param idField - the field in the objects that is the ID
+   * @param ids - the IDs of the objects to delete
    */
-  async deleteAsync<K extends keyof TFields>(
+  async deleteManyAsync<K extends keyof TFields>(
     queryContext: EntityQueryContext,
     idField: K,
-    id: any,
+    ids: readonly any[],
   ): Promise<void> {
     const idColumn = getDatabaseFieldForEntityField(this.entityConfiguration, idField);
-    const numDeleted = await this.deleteInternalAsync(
+    const numDeleted = await this.deleteManyInternalAsync(
       queryContext.getQueryInterface(),
       this.entityConfiguration.tableName,
       idColumn,
-      id,
+      ids,
     );
 
-    if (numDeleted > 1) {
+    if (numDeleted > ids.length) {
       throw new EntityDatabaseAdapterExcessiveDeleteResultError(
-        `Excessive deletions from database adapter delete: ${this.entityConfiguration.tableName}(id = ${id})`,
+        `Excessive deletions from database adapter delete: ${this.entityConfiguration.tableName} (expected at most ${ids.length}, got ${numDeleted})`,
       );
     }
   }
 
-  protected abstract deleteInternalAsync(
+  protected abstract deleteManyInternalAsync(
     queryInterface: any,
     tableName: string,
     tableIdField: string,
-    id: any,
+    ids: readonly any[],
   ): Promise<number>;
 }

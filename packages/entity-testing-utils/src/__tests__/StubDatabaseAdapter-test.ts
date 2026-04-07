@@ -221,17 +221,19 @@ describe(StubDatabaseAdapter, () => {
     });
   });
 
-  describe('insertAsync', () => {
+  describe('insertManyAsync', () => {
     it('inserts a record', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         new Map(),
       );
-      const result = await databaseAdapter.insertAsync(queryContext, {
-        stringField: 'hello',
-      });
-      expect(result).toMatchObject({
+      const result = await databaseAdapter.insertManyAsync(queryContext, [
+        {
+          stringField: 'hello',
+        },
+      ]);
+      expect(result[0]).toMatchObject({
         stringField: 'hello',
       });
 
@@ -246,16 +248,18 @@ describe(StubDatabaseAdapter, () => {
         testEntityConfiguration,
         new Map(),
       );
-      const result = await databaseAdapter.insertAsync(queryContext, {
-        stringField: 'hello',
-      });
+      const result = await databaseAdapter.insertManyAsync(queryContext, [
+        {
+          stringField: 'hello',
+        },
+      ]);
 
-      const ts = getTimeFromUUIDv7(result.customIdField);
+      const ts = getTimeFromUUIDv7(result[0]!.customIdField);
       expect(ts).toEqual(expectedTime);
     });
   });
 
-  describe('updateAsync', () => {
+  describe('updateManyAsync', () => {
     it('updates a record', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
@@ -279,9 +283,9 @@ describe(StubDatabaseAdapter, () => {
           ]),
         ),
       );
-      await databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {
-        stringField: 'b',
-      });
+      await databaseAdapter.updateManyAsync(queryContext, 'customIdField', [
+        { id: 'hello', object: { stringField: 'b' } },
+      ]);
     });
 
     it('throws error when empty update to match common DBMS behavior', async () => {
@@ -308,12 +312,14 @@ describe(StubDatabaseAdapter, () => {
         ),
       );
       await expect(
-        databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {}),
+        databaseAdapter.updateManyAsync(queryContext, 'customIdField', [
+          { id: 'hello', object: {} },
+        ]),
       ).rejects.toThrow(`Empty update (custom_id = hello)`);
     });
   });
 
-  describe('deleteAsync', () => {
+  describe('deleteManyAsync', () => {
     it('deletes an object', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
@@ -338,7 +344,7 @@ describe(StubDatabaseAdapter, () => {
         ),
       );
 
-      await databaseAdapter.deleteAsync(queryContext, 'customIdField', 'hello');
+      await databaseAdapter.deleteManyAsync(queryContext, 'customIdField', ['hello']);
 
       expect(
         databaseAdapter.getObjectCollectionForTable(testEntityConfiguration.tableName),
@@ -352,21 +358,21 @@ describe(StubDatabaseAdapter, () => {
       simpleTestEntityConfiguration,
       new Map(),
     );
-    const insertedObject1 = await databaseAdapter1.insertAsync(queryContext, {});
-    expect(typeof insertedObject1.id).toBe('string');
+    const insertedObjects1 = await databaseAdapter1.insertManyAsync(queryContext, [{}]);
+    expect(typeof insertedObjects1[0]!.id).toBe('string');
 
     const databaseAdapter2 = new StubDatabaseAdapter<NumberKeyFields, 'id'>(
       numberKeyEntityConfiguration,
       new Map(),
     );
-    const insertedObject2 = await databaseAdapter2.insertAsync(queryContext, {});
-    expect(typeof insertedObject2.id).toBe('number');
+    const insertedObjects2 = await databaseAdapter2.insertManyAsync(queryContext, [{}]);
+    expect(typeof insertedObjects2[0]!.id).toBe('number');
 
     const databaseAdapter3 = new StubDatabaseAdapter<DateIDTestFields, 'id'>(
       dateIDTestEntityConfiguration,
       new Map(),
     );
-    await expect(databaseAdapter3.insertAsync(queryContext, {})).rejects.toThrow(
+    await expect(databaseAdapter3.insertManyAsync(queryContext, [{}])).rejects.toThrow(
       'Unsupported ID type for StubDatabaseAdapter: DateField',
     );
   });
