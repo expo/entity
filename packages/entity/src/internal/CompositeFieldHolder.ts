@@ -6,9 +6,9 @@ import type {
   EntityConfiguration,
 } from '../EntityConfiguration.ts';
 import { pick } from '../entityUtils.ts';
-import { getDatabaseFieldForEntityField } from './EntityFieldTransformationUtils.ts';
 import type { IEntityLoadKey, IEntityLoadValue } from '../internal/EntityLoadInterfaces.ts';
 import { EntityLoadMethodType, LoadValueMap } from '../internal/EntityLoadInterfaces.ts';
+import { getDatabaseFieldForEntityField } from './EntityFieldTransformationUtils.ts';
 
 declare const CompositeFieldHolderSerializedBrand: unique symbol;
 

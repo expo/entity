@@ -1,11 +1,11 @@
 import type { EntityQueryContext } from '../EntityQueryContext.ts';
+import type { IEntityLoadValue } from '../internal/EntityLoadInterfaces.ts';
+import { reduceMap } from '../utils/collections/maps.ts';
 import type {
   EntityMetricsLoadType,
   EntityMetricsMutationType,
   IEntityMetricsAdapter,
 } from './IEntityMetricsAdapter.ts';
-import type { IEntityLoadValue } from '../internal/EntityLoadInterfaces.ts';
-import { reduceMap } from '../utils/collections/maps.ts';
 
 export const timeAndLogLoadEventAsync =
   (
