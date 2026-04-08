@@ -12,10 +12,7 @@
   },
   "packageRules": [
     {
-      "matchFileNames": [
-        "packages/entity-example/**",
-        "packages/entity-full-integration-tests/**"
-      ],
+      "matchFileNames": ["packages/entity-example/**", "packages/entity-full-integration-tests/**"],
       "extends": [":pinAllExceptPeerDependencies"]
     },
     {

@@ -1,24 +1,21 @@
 {
   "name": "@expo/entity-full-integration-tests",
-  "private": true,
   "version": "0.63.0",
+  "private": true,
   "description": "Full redis and knex integration tests for the entity framework",
-  "scripts": {
-    "build": "tsc --build",
-    "clean": "yarn build --clean",
-    "lint": "yarn run --top-level eslint src",
-    "lint-fix": "yarn lint --fix",
-    "integration": "yarn integration:all --rootDir $(pwd)"
-  },
-  "engines": {
-    "node": ">=18"
-  },
   "keywords": [
     "entity"
   ],
-  "author": "Expo",
   "license": "MIT",
+  "author": "Expo",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "yarn build --clean",
+    "lint": "yarn run --top-level oxlint --type-aware src",
+    "lint-fix": "yarn lint --fix",
+    "integration": "yarn integration:all --rootDir $(pwd)"
+  },
   "dependencies": {
     "@expo/entity": "workspace:^",
     "@expo/entity-cache-adapter-redis": "workspace:^",
@@ -27,5 +24,8 @@
   "devDependencies": {
     "@jest/globals": "30.3.0",
     "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

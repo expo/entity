@@ -4,12 +4,15 @@
   "workspaces": [
     "packages/*"
   ],
+  "type": "module",
   "scripts": {
     "tsc": "tsc --build",
     "build": "tsc --build",
     "clean": "yarn build --clean",
-    "lint": "eslint .",
+    "lint": "oxlint --type-aware .",
     "lint-fix": "yarn lint --fix",
+    "format": "oxfmt --write --ignore-path .fmtignore .",
+    "format-check": "oxfmt --check --ignore-path .fmtignore .",
     "test": "yarn build --noCheck && NODE_OPTIONS='--experimental-vm-modules --disable-warning=ExperimentalWarning' jest",
     "test:all": "yarn test",
     "integration": "./resources/run-with-docker yarn test --config jest-integration.config.js --runInBand",
@@ -18,18 +21,17 @@
     "package-files": "yarn workspaces foreach --all --no-private --parallel --topological pack --dry-run",
     "typedoc": "yarn build && typedoc"
   },
-  "type": "module",
   "devDependencies": {
     "@tsconfig/bases": "1.0.23",
     "@types/node": "24.12.0",
     "ctix": "2.7.5",
-    "eslint": "9.39.4",
-    "eslint-config-universe": "15.0.3",
-    "eslint-plugin-tsdoc": "0.5.2",
     "jest": "30.3.0",
     "lerna": "9.0.7",
+    "oxfmt": "0.43.0",
+    "oxlint": "1.59.0",
+    "oxlint-config-universe": "^0.0.2",
+    "oxlint-tsgolint": "^0.18.1",
     "prettier": "3.8.1",
-    "prettier-plugin-organize-imports": "4.3.0",
     "typedoc": "0.28.18",
     "typescript": "5.9.3"
   },

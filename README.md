@@ -16,12 +16,10 @@ Entity is a privacy-aware data layer for defining, caching, and authorizing acce
 - Configurable, optional, full-object read-through caching using Cache Adapters.
 - [Dataloader](https://github.com/graphql/dataloader) in-memory batching and read-through caching.
 
-
 ## Getting Started
 
 - [Example application](https://github.com/expo/entity/tree/main/packages/entity-example)
 - [Documentation](https://expo.github.io/entity/)
-
 
 ## Background
 
@@ -56,10 +54,7 @@ The Entity framework solves this by adding an additional property to the system:
 
 ```typescript
 class PhotoPrivacyPolicy {
-  const readRules = [
-    new AllowIfOwnerRule(),
-    new AllowIfOrganizationPermissionRule(),
-  ];
+  readRules = [new AllowIfOwnerRule(), new AllowIfOrganizationPermissionRule()];
 }
 
 // in the view, for example
@@ -72,6 +67,7 @@ async function get_photo_page(viewer: ViewerContext): string {
 ## Use Case
 
 Entity is not limited in where it can or should be used, but was designed for use in a [Koa](https://koajs.com/)-like environment with a request and response. At Expo, we use Entity in the following manner:
+
 1. A request comes into Koa router
 1. Middleware initializes the Entity framework for the request
 1. A `ViewerContext` is created identifying the individual making the request.
@@ -81,7 +77,7 @@ Note: The entity framework instance should not be shared across multiple request
 
 ## Contributing
 
-We control development tooling versions using [mise-en-place](https://mise.jdx.dev).  If you have it installed, then:
+We control development tooling versions using [mise-en-place](https://mise.jdx.dev). If you have it installed, then:
 
 - Running `mise run ci` will run all tests that our CI environment will run.
 - Running `mise t` will show a list of mise tasks you can run with `mise run <name>`.
@@ -92,6 +88,7 @@ If you don't have `mise` installed, [you can install it](https://mise.jdx.dev/in
 ## Releasing
 
 To release a new version:
+
 1. `git checkout main`
 1. `npm login` (to refresh token)
 1. `yarn lerna publish [patch|minor|major] -- --conventional-commits  --force-publish`

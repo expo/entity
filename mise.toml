@@ -16,13 +16,14 @@ run = "yarn typedoc"
 depends = "yarn"
 run = "yarn lint --max-warnings=0"
 
+[tasks."checks:format"]
+depends = "yarn"
+run = "yarn format-check"
+
 [tasks."checks:barrel"]
 description = "Check if barrel files are up-to-date"
 depends = "yarn"
-run = [
-  "yarn ctix",
-  '[ -z "$(git status --porcelain)" ]',
-]
+run = ["yarn ctix", '[ -z "$(git status --porcelain)" ]']
 
 [tasks."checks:unit"]
 depends = "yarn"
@@ -43,5 +44,5 @@ postinstall = [
   # Enable yarn shim.  Version controlled by package.json#packageManager
   # NOTE: mise can install yarn directly, but renovate does not use mise, so we
   # control yarn versions using the packageManager field.
-  "corepack enable yarn"
+  "corepack enable yarn",
 ]

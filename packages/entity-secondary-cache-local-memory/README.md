@@ -9,16 +9,16 @@ this cache with caution - it is nonstandard. The cache is shared between request
 
 1. Create a concrete implementation of abstract class `EntitySecondaryCacheLoader`, in this example `TestEntitySecondaryCacheLoader`. The underlying data can come from anywhere, but an entity is constructed from the data and then authorized for the viewer.
 2. Create an instance of your `EntitySecondaryCacheLoader`, passing in a `LocalMemorySecondaryEntityCache`.
-    ```typescript
-    const secondaryCacheLoader = new TestSecondaryLocalMemoryCacheLoader(
-      new LocalMemorySecondaryEntityCache(
-        GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({})
-      ),
-      LocalMemoryTestEntity.loader(viewerContext)
-    );
-    ```
+   ```typescript
+   const secondaryCacheLoader = new TestSecondaryLocalMemoryCacheLoader(
+     new LocalMemorySecondaryEntityCache(
+       GenericLocalMemoryCacher.createLRUCache<LocalMemoryTestEntityFields>({}),
+     ),
+     LocalMemoryTestEntity.loader(viewerContext),
+   );
+   ```
 3. Load entities through it:
-    ```typescript
-    const loadParams = { id: createdEntity.getID() };
-    const results = await secondaryCacheLoader.loadManyAsync([loadParams]);
-    ```
+   ```typescript
+   const loadParams = { id: createdEntity.getID() };
+   const results = await secondaryCacheLoader.loadManyAsync([loadParams]);
+   ```

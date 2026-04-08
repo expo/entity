@@ -1,8 +1,5 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src/**/*"],
-  "references": [
-    { "path": "../entity" },
-    { "path": "../entity-database-adapter-knex" }
-  ]
+  "references": [{ "path": "../entity" }, { "path": "../entity-database-adapter-knex" }]
 }

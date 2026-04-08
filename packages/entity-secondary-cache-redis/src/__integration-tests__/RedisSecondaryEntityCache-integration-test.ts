@@ -82,7 +82,7 @@ describe(RedisSecondaryEntityCache, () => {
   beforeAll(() => {
     genericRedisCacheContext = {
       redisClient,
-      makeKeyFn(..._parts: string[]): string {
+      makeKeyFn(): string {
         throw new Error('should not be used by this test');
       },
       cacheKeyPrefix: 'test-',

@@ -2,31 +2,28 @@
   "name": "@expo/entity-ip-address-field",
   "version": "0.63.0",
   "description": "IP address EntityField definitions for @expo/entity",
+  "keywords": [
+    "entity"
+  ],
+  "license": "MIT",
+  "author": "Expo",
   "files": [
     "build",
     "!*.tsbuildinfo",
     "!__*",
     "src"
   ],
+  "type": "module",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "scripts": {
     "build": "tsc --build",
     "prepack": "rm -rf build && yarn build",
     "clean": "yarn build --clean",
-    "lint": "yarn run --top-level eslint src",
+    "lint": "yarn run --top-level oxlint --type-aware src",
     "lint-fix": "yarn lint --fix",
     "test": "yarn test:all --rootDir $(pwd)"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "keywords": [
-    "entity"
-  ],
-  "author": "Expo",
-  "license": "MIT",
-  "type": "module",
   "dependencies": {
     "@expo/entity": "workspace:^",
     "ip-address": "^10.1.0"
@@ -35,5 +32,8 @@
     "@expo/entity-testing-utils": "workspace:^",
     "@jest/globals": "30.3.0",
     "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

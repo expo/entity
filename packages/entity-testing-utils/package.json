@@ -2,43 +2,43 @@
   "name": "@expo/entity-testing-utils",
   "version": "0.63.0",
   "description": "A package containing utilities for testing applications that use Entity",
+  "keywords": [
+    "entity"
+  ],
+  "license": "MIT",
+  "author": "Expo",
   "files": [
     "build",
     "!*.tsbuildinfo",
     "!__*",
     "src"
   ],
+  "type": "module",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "scripts": {
     "build": "tsc --build",
     "prepack": "rm -rf build && yarn build",
     "clean": "yarn build --clean",
-    "lint": "yarn run --top-level eslint src",
+    "lint": "yarn run --top-level oxlint --type-aware src",
     "lint-fix": "yarn run lint --fix",
     "test": "yarn test:all --rootDir $(pwd)"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "keywords": [
-    "entity"
-  ],
-  "author": "Expo",
-  "license": "MIT",
-  "type": "module",
   "dependencies": {
     "@expo/entity": "workspace:^",
     "lodash-es": "^4.17.23",
     "ts-mockito": "^2.6.1"
-  },
-  "peerDependencies": {
-    "@jest/globals": "*"
   },
   "devDependencies": {
     "@jest/globals": "30.3.0",
     "@types/lodash-es": "4.17.12",
     "@types/node": "24.12.0",
     "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "@jest/globals": "*"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
