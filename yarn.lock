@@ -8591,12 +8591,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oxlint-config-universe@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "oxlint-config-universe@npm:0.0.2"
+"oxlint-config-universe@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "oxlint-config-universe@npm:0.0.3"
   peerDependencies:
     oxlint: ">=1.59.0"
-  checksum: 10c0/beba2b83819b00649aae470d4a1fe947932ae6212cebf727256ea62dbcf4fc59d8faac3d6fd2d66351c6d2e8e99657264d57fe1ce212550dc167b2746186e53d
+  checksum: 10c0/3d95ae2057468d36408036f0df46fdb1dbc0e6e16173b5dfcc0ec4587e6df6aa714a3850980731cb15f676fc8a9af05dcb620c6d4784477201a125c85e18ce20
   languageName: node
   linkType: hard
 
@@ -9698,7 +9698,7 @@ __metadata:
     lerna: "npm:9.0.7"
     oxfmt: "npm:0.43.0"
     oxlint: "npm:1.59.0"
-    oxlint-config-universe: "npm:^0.0.2"
+    oxlint-config-universe: "npm:^0.0.3"
     oxlint-tsgolint: "npm:^0.18.1"
     prettier: "npm:3.8.1"
     typedoc: "npm:0.28.18"
