@@ -107,6 +107,15 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     return this.updateResults;
   }
 
+  protected async updateWhereBySQLFragmentInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _sqlFragment: any,
+    _object: object,
+  ): Promise<object[]> {
+    return [];
+  }
+
   protected async deleteInternalAsync(
     _queryInterface: any,
     _tableName: string,

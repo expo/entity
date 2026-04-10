@@ -201,6 +201,15 @@ export class StubPostgresDatabaseAdapter<
     throw new Error('SQL fragments not supported for StubDatabaseAdapter');
   }
 
+  protected updateWhereBySQLFragmentInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _sqlFragment: SQLFragment<TFields>,
+    _object: object,
+  ): Promise<object[]> {
+    throw new Error('SQL fragment updates not supported for StubDatabaseAdapter');
+  }
+
   private generateRandomID(): any {
     const idSchemaField = this.entityConfiguration2.schema.get(this.entityConfiguration2.idField);
     invariant(
