@@ -40,6 +40,7 @@ import type { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterPr
 import { ViewerContext } from '../ViewerContext.ts';
 import { enforceResultsAsync } from '../entityUtils.ts';
 import { EntityDataManager } from '../internal/EntityDataManager.ts';
+import { EntityMutationDataManager } from '../internal/EntityMutationDataManager.ts';
 import { ReadThroughEntityCache } from '../internal/ReadThroughEntityCache.ts';
 import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
 import { EntityMetricsMutationType } from '../metrics/IEntityMetricsAdapter.ts';
@@ -422,7 +423,7 @@ const createEntityMutatorFactory = (
     mutationValidators,
     mutationTriggers,
     entityLoaderFactory,
-    databaseAdapter,
+    new EntityMutationDataManager(databaseAdapter, metricsAdapter, TestEntity.name),
     metricsAdapter,
   );
   return {
@@ -1574,7 +1575,7 @@ describe(EntityMutatorFactory, () => {
       {},
       {},
       entityLoaderFactory,
-      databaseAdapter,
+      new EntityMutationDataManager(databaseAdapter, metricsAdapter, SimpleTestEntity.name),
       metricsAdapter,
     );
 
@@ -1680,24 +1681,24 @@ describe(EntityMutatorFactory, () => {
     const rejectionError = new Error();
 
     when(
-      databaseAdapterMock.insertAsync(anyOfClass(EntityTransactionalQueryContext), anything()),
+      databaseAdapterMock.insertManyAsync(anyOfClass(EntityTransactionalQueryContext), anything()),
     ).thenReject(rejectionError);
     when(
-      databaseAdapterMock.updateAsync(
+      databaseAdapterMock.updateManyAsync(
         anyOfClass(EntityTransactionalQueryContext),
-        anything(),
         anything(),
         anything(),
       ),
     ).thenReject(rejectionError);
     when(
-      databaseAdapterMock.deleteAsync(
+      databaseAdapterMock.deleteManyAsync(
         anyOfClass(EntityTransactionalQueryContext),
         anything(),
         anything(),
       ),
     ).thenReject(rejectionError);
 
+    const databaseAdapter = instance(databaseAdapterMock);
     const entityMutatorFactory = new EntityMutatorFactory(
       entityCompanionProvider,
       simpleTestEntityConfiguration,
@@ -1706,7 +1707,7 @@ describe(EntityMutatorFactory, () => {
       {},
       {},
       entityLoaderFactory,
-      instance(databaseAdapterMock),
+      new EntityMutationDataManager(databaseAdapter, metricsAdapter, SimpleTestEntity.name),
       metricsAdapter,
     );
 

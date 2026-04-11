@@ -85,7 +85,7 @@ export class EntityCompanion<
         entityCompanionProvider.globalMutationTriggers ?? {},
       ),
       this.entityLoaderFactory,
-      tableDataCoordinator.databaseAdapter,
+      tableDataCoordinator.mutationDataManager,
       metricsAdapter,
     );
   }

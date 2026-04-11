@@ -106,29 +106,28 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     return 0;
   }
 
-  protected async insertInternalAsync(
+  protected async insertManyInternalAsync(
     _queryInterface: any,
     _tableName: string,
-    _object: object,
+    _objects: readonly object[],
   ): Promise<object[]> {
     return this.insertResults;
   }
 
-  protected async updateInternalAsync(
+  protected async updateManyInternalAsync(
     _queryInterface: any,
     _tableName: string,
     _tableIdField: string,
-    _id: any,
-    _object: object,
-  ): Promise<{ updatedRowCount: number }> {
-    return this.updateResults;
+    _items: readonly { id: any; object: object }[],
+  ): Promise<readonly { updatedRowCount: number }[]> {
+    return [this.updateResults];
   }
 
-  protected async deleteInternalAsync(
+  protected async deleteManyInternalAsync(
     _queryInterface: any,
     _tableName: string,
     _tableIdField: string,
-    _id: any,
+    _ids: readonly any[],
   ): Promise<number> {
     return this.deleteCount;
   }

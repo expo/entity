@@ -150,6 +150,46 @@ export interface IncrementLoadCountEvent {
   entityClassName: string;
 }
 
+/**
+ * Type used to delineate batcher and database mutation counts in EntityMutationDataManager.
+ */
+export enum IncrementMutationCountEventType {
+  /**
+   * Type for when a mutation is submitted to the batcher.
+   */
+  BATCHER,
+
+  /**
+   * Type for when the batcher flushes mutations to the database adapter.
+   */
+  DATABASE,
+}
+
+/**
+ * Event used to record batcher and database mutation counts in EntityMutationDataManager.
+ */
+export interface IncrementMutationCountEvent {
+  /**
+   * Type of this event.
+   */
+  type: IncrementMutationCountEventType;
+
+  /**
+   * The mutation type (CREATE, UPDATE, DELETE).
+   */
+  mutationType: EntityMetricsMutationType;
+
+  /**
+   * Class name of the Entity being mutated.
+   */
+  entityClassName: string;
+
+  /**
+   * Number of items in this batch/call.
+   */
+  itemCount: number;
+}
+
 export enum EntityMetricsAuthorizationResult {
   DENY,
   ALLOW,
@@ -210,4 +250,11 @@ export interface IEntityMetricsAdapter {
    * @param incrementLoadCountEvent - count of field values being loaded for a field
    */
   incrementDataManagerLoadCount(incrementLoadCountEvent: IncrementLoadCountEvent): void;
+
+  /**
+   * Called when a batcher or database mutation is initiated via EntityMutationDataManager.
+   * Most commonly used for logging a waterfall to determine batch effectiveness.
+   * @param incrementMutationCountEvent - info about the mutation count event
+   */
+  incrementDataManagerMutationCount(incrementMutationCountEvent: IncrementMutationCountEvent): void;
 }

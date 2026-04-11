@@ -59,6 +59,7 @@ export * from './errors/EntityNotFoundError.ts';
 export * from './internal/CompositeFieldHolder.ts';
 export * from './internal/CompositeFieldValueMap.ts';
 export * from './internal/EntityDataManager.ts';
+export * from './internal/EntityMutationDataManager.ts';
 export * from './internal/EntityFieldTransformationUtils.ts';
 export * from './internal/EntityLoadInterfaces.ts';
 export * from './internal/EntityTableDataCoordinator.ts';
