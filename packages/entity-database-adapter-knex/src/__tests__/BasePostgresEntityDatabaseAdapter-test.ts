@@ -89,6 +89,23 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     return this.fetchEqualityConditionResults;
   }
 
+  protected async countByFieldEqualityConjunctionInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
+    _tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
+  ): Promise<number> {
+    return 0;
+  }
+
+  protected async countBySQLFragmentInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _sqlFragment: any,
+  ): Promise<number> {
+    return 0;
+  }
+
   protected async insertInternalAsync(
     _queryInterface: any,
     _tableName: string,

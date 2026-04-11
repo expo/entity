@@ -2,6 +2,7 @@ import invariant from 'invariant';
 
 import type { IEntityClass } from './Entity.ts';
 import type { CacheAdapterFlavor, DatabaseAdapterFlavor } from './EntityCompanionProvider.ts';
+import { RESERVED_ENTITY_COUNT_QUERY_ALIAS } from './EntityDatabaseAdapter.ts';
 import type { EntityFieldDefinition } from './EntityFieldDefinition.ts';
 import type { SerializedCompositeFieldHolder } from './internal/CompositeFieldHolder.ts';
 import { CompositeFieldHolder } from './internal/CompositeFieldHolder.ts';
@@ -183,8 +184,7 @@ export class EntityConfiguration<
 
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups
-    EntityConfiguration.validateSchema<TFields, TIDField>(schema);
-    this.schema = new Map(Object.entries(schema));
+    this.schema = this.validateSchemaMap(new Map(Object.entries(schema)));
 
     this.cacheableKeys = EntityConfiguration.computeCacheableKeys(this.schema);
     this.compositeFieldInfo = new CompositeFieldInfo(compositeFieldDefinitions ?? []);
@@ -194,21 +194,27 @@ export class EntityConfiguration<
     this.dbToEntityFieldsKeyMapping = invertMap(this.entityToDBFieldsKeyMapping);
   }
 
-  private static validateSchema<
-    TFields extends Record<string, any>,
-    TIDField extends keyof TFields,
-  >(
-    schema: Omit<Record<keyof TFields, EntityFieldDefinition<any, false>>, TIDField> &
-      Record<TIDField, EntityFieldDefinition<any, true>>,
-  ): void {
-    const disallowedFieldsKeys = Object.getOwnPropertyNames(Object.prototype);
-    for (const disallowedFieldsKey of disallowedFieldsKeys) {
-      if (Object.hasOwn(schema, disallowedFieldsKey)) {
+  private validateSchemaMap(
+    schemaMap: ReadonlyMap<keyof TFields, EntityFieldDefinition<any, any>>,
+  ): ReadonlyMap<keyof TFields, EntityFieldDefinition<any, any>> {
+    for (const disallowedFieldName of Object.getOwnPropertyNames(Object.prototype)) {
+      if (schemaMap.has(disallowedFieldName)) {
         throw new Error(
-          `Entity field name not allowed to prevent conflicts with standard Object prototype fields: ${disallowedFieldsKey}`,
+          `Entity field name not allowed to prevent conflicts with standard Object prototype fields: ${disallowedFieldName}`,
         );
       }
     }
+
+    // check for column named RESERVED_ENTITY_COUNT_QUERY_ALIAS which is used for count queries and would cause issues if used as a column name for an entity field
+    for (const [fieldName, fieldDefinition] of schemaMap) {
+      if (fieldDefinition.columnName === RESERVED_ENTITY_COUNT_QUERY_ALIAS) {
+        throw new Error(
+          `Entity field "${String(fieldName)}" has disallowed column name "${RESERVED_ENTITY_COUNT_QUERY_ALIAS}" which is reserved for count queries. Choose a different column name.`,
+        );
+      }
+    }
+
+    return schemaMap;
   }
 
   private static computeCacheableKeys<TFields extends Record<string, any>>(

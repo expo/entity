@@ -201,6 +201,30 @@ export class StubPostgresDatabaseAdapter<
     throw new Error('SQL fragments not supported for StubDatabaseAdapter');
   }
 
+  protected async countByFieldEqualityConjunctionInternalAsync(
+    queryInterface: any,
+    tableName: string,
+    tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
+    tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
+  ): Promise<number> {
+    const results = await this.fetchManyByFieldEqualityConjunctionInternalAsync(
+      queryInterface,
+      tableName,
+      tableFieldSingleValueEqualityOperands,
+      tableFieldMultiValueEqualityOperands,
+      { orderBy: undefined, offset: undefined, limit: undefined },
+    );
+    return results.length;
+  }
+
+  protected countBySQLFragmentInternalAsync(
+    _queryInterface: any,
+    _tableName: string,
+    _sqlFragment: SQLFragment<TFields>,
+  ): Promise<number> {
+    throw new Error('SQL fragment count not supported for StubDatabaseAdapter');
+  }
+
   private generateRandomID(): any {
     const idSchemaField = this.entityConfiguration2.schema.get(this.entityConfiguration2.idField);
     invariant(

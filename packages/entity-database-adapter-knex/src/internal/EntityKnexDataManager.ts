@@ -3,6 +3,7 @@ import {
   EntityDatabaseAdapterPaginationCursorInvalidError,
   EntityMetricsLoadType,
   getDatabaseFieldForEntityField,
+  timeAndLogCountEventAsync,
   timeAndLogLoadEventAsync,
 } from '@expo/entity';
 import assert from 'assert';
@@ -190,6 +191,23 @@ export class EntityKnexDataManager<
     );
   }
 
+  async countByFieldEqualityConjunctionAsync<N extends keyof TFields>(
+    queryContext: EntityQueryContext,
+    fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
+  ): Promise<number> {
+    return await timeAndLogCountEventAsync(
+      this.metricsAdapter,
+      EntityMetricsLoadType.COUNT_EQUALITY_CONJUNCTION,
+      this.entityClassName,
+      queryContext,
+    )(
+      this.databaseAdapter.countByFieldEqualityConjunctionAsync(
+        queryContext,
+        fieldEqualityOperands,
+      ),
+    );
+  }
+
   async loadManyBySQLFragmentAsync(
     queryContext: EntityQueryContext,
     sqlFragment: SQLFragment<TFields>,
@@ -209,6 +227,18 @@ export class EntityKnexDataManager<
         querySelectionModifiers,
       ),
     );
+  }
+
+  async countBySQLFragmentAsync(
+    queryContext: EntityQueryContext,
+    sqlFragment: SQLFragment<TFields>,
+  ): Promise<number> {
+    return await timeAndLogCountEventAsync(
+      this.metricsAdapter,
+      EntityMetricsLoadType.COUNT_SQL,
+      this.entityClassName,
+      queryContext,
+    )(this.databaseAdapter.countBySQLFragmentAsync(queryContext, sqlFragment));
   }
 
   /**

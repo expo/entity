@@ -401,6 +401,42 @@ export class AuthorizationResultBasedKnexEntityLoader<
   }
 
   /**
+   * Count entities matching the conjunction of field equality operands.
+   * This does not perform authorization since count does not load full entities.
+   * Note that this should be used with the same caution as loadManyByFieldEqualityConjunctionAsync
+   * regarding indexing since counts can be expensive on large datasets without appropriate indexes.
+   *
+   * @returns count of entities matching the filters
+   */
+  async countByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
+  ): Promise<number> {
+    for (const fieldEqualityOperand of fieldEqualityOperands) {
+      const fieldValues = isSingleValueFieldEqualityCondition(fieldEqualityOperand)
+        ? [fieldEqualityOperand.fieldValue]
+        : fieldEqualityOperand.fieldValues;
+      this.constructionUtils.validateFieldAndValues(fieldEqualityOperand.fieldName, fieldValues);
+    }
+
+    return await this.knexDataManager.countByFieldEqualityConjunctionAsync(
+      this.queryContext,
+      fieldEqualityOperands,
+    );
+  }
+
+  /**
+   * Count entities matching a SQL fragment.
+   * This does not perform authorization since count does not load full entities.
+   * Note that this should be used with the same caution as loadManyBySQL regarding indexing
+   * since counts can be expensive on large datasets without appropriate indexes.
+   *
+   * @returns count of entities matching the query
+   */
+  async countBySQLAsync(fragment: SQLFragment<Pick<TFields, TSelectedFields>>): Promise<number> {
+    return await this.knexDataManager.countBySQLFragmentAsync(this.queryContext, fragment);
+  }
+
+  /**
    * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
    * @returns SQL query builder for building and executing SQL queries that when executed returns entity results where result error can be UnauthorizedError.
    */

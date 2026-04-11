@@ -1,5 +1,5 @@
 import type { EntityConfiguration, FieldTransformer, FieldTransformerMap } from '@expo/entity';
-import { getDatabaseFieldForEntityField } from '@expo/entity';
+import { getDatabaseFieldForEntityField, RESERVED_ENTITY_COUNT_QUERY_ALIAS } from '@expo/entity';
 import type { Knex } from 'knex';
 
 import type {
@@ -164,14 +164,12 @@ export class PostgresEntityDatabaseAdapter<
     return ret;
   }
 
-  protected async fetchManyByFieldEqualityConjunctionInternalAsync(
-    queryInterface: Knex,
-    tableName: string,
+  private applyFieldEqualityConjunctionWhereClause(
+    query: Knex.QueryBuilder,
     tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
     tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
-    querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
-  ): Promise<object[]> {
-    let query = queryInterface.select().from(tableName);
+  ): Knex.QueryBuilder {
+    let result = query;
 
     if (tableFieldSingleValueEqualityOperands.length > 0) {
       const whereObject: { [key: string]: any } = {};
@@ -184,11 +182,11 @@ export class PostgresEntityDatabaseAdapter<
         for (const { tableField, tableValue } of nonNullTableFieldSingleValueEqualityOperands) {
           whereObject[tableField] = tableValue;
         }
-        query = query.where(whereObject);
+        result = result.where(whereObject);
       }
       if (nullTableFieldSingleValueEqualityOperands.length > 0) {
         for (const { tableField } of nullTableFieldSingleValueEqualityOperands) {
-          query = query.whereNull(tableField);
+          result = result.whereNull(tableField);
         }
       }
     }
@@ -196,7 +194,7 @@ export class PostgresEntityDatabaseAdapter<
     if (tableFieldMultiValueEqualityOperands.length > 0) {
       for (const { tableField, tableValues } of tableFieldMultiValueEqualityOperands) {
         const nonNullTableValues = tableValues.filter((tableValue) => tableValue !== null);
-        query = query.where((builder) => {
+        result = result.where((builder) => {
           builder.whereRaw('?? = ANY(?)', [tableField, [...nonNullTableValues]]);
           // there was at least one null, allow null in this equality clause
           if (nonNullTableValues.length !== tableValues.length) {
@@ -206,8 +204,35 @@ export class PostgresEntityDatabaseAdapter<
       }
     }
 
+    return result;
+  }
+
+  protected async fetchManyByFieldEqualityConjunctionInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
+    tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
+    querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
+  ): Promise<object[]> {
+    let query = this.applyFieldEqualityConjunctionWhereClause(
+      queryInterface.select().from(tableName),
+      tableFieldSingleValueEqualityOperands,
+      tableFieldMultiValueEqualityOperands,
+    );
     query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
     return await wrapNativePostgresCallAsync(() => query);
+  }
+
+  private applySQLFragmentWhereClause(
+    query: Knex.QueryBuilder,
+    sqlFragment: SQLFragment<TFields>,
+  ): Knex.QueryBuilder {
+    return query.whereRaw(
+      sqlFragment.sql,
+      sqlFragment.getKnexBindings((fieldName) =>
+        getDatabaseFieldForEntityField(this.entityConfiguration, fieldName),
+      ),
+    );
   }
 
   protected async fetchManyBySQLFragmentInternalAsync(
@@ -216,17 +241,40 @@ export class PostgresEntityDatabaseAdapter<
     sqlFragment: SQLFragment<TFields>,
     querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Promise<object[]> {
-    let query = queryInterface
-      .select()
-      .from(tableName)
-      .whereRaw(
-        sqlFragment.sql,
-        sqlFragment.getKnexBindings((fieldName) =>
-          getDatabaseFieldForEntityField(this.entityConfiguration, fieldName),
-        ),
-      );
+    let query = this.applySQLFragmentWhereClause(
+      queryInterface.select().from(tableName),
+      sqlFragment,
+    );
     query = this.applyQueryModifiersToQuery(query, querySelectionModifiers);
     return await wrapNativePostgresCallAsync(() => query);
+  }
+
+  protected async countByFieldEqualityConjunctionInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
+    tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
+  ): Promise<number> {
+    const query = this.applyFieldEqualityConjunctionWhereClause(
+      queryInterface.count('*', { as: RESERVED_ENTITY_COUNT_QUERY_ALIAS }).from(tableName),
+      tableFieldSingleValueEqualityOperands,
+      tableFieldMultiValueEqualityOperands,
+    );
+    const result = await wrapNativePostgresCallAsync(() => query);
+    return parseInt(String(result[0][RESERVED_ENTITY_COUNT_QUERY_ALIAS]), 10);
+  }
+
+  protected async countBySQLFragmentInternalAsync(
+    queryInterface: Knex,
+    tableName: string,
+    sqlFragment: SQLFragment<TFields>,
+  ): Promise<number> {
+    const query = this.applySQLFragmentWhereClause(
+      queryInterface.count('*', { as: RESERVED_ENTITY_COUNT_QUERY_ALIAS }).from(tableName),
+      sqlFragment,
+    );
+    const result = await wrapNativePostgresCallAsync(() => query);
+    return parseInt(String(result[0][RESERVED_ENTITY_COUNT_QUERY_ALIAS]), 10);
   }
 
   protected async insertInternalAsync(
