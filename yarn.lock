@@ -8591,7 +8591,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oxlint-config-universe@npm:^0.0.2":
+"oxlint-config-universe@npm:0.0.2":
   version: 0.0.2
   resolution: "oxlint-config-universe@npm:0.0.2"
   peerDependencies:
@@ -8600,7 +8600,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oxlint-tsgolint@npm:^0.18.1":
+"oxlint-tsgolint@npm:0.18.1":
   version: 0.18.1
   resolution: "oxlint-tsgolint@npm:0.18.1"
   dependencies:
@@ -9698,8 +9698,8 @@ __metadata:
     lerna: "npm:9.0.7"
     oxfmt: "npm:0.43.0"
     oxlint: "npm:1.59.0"
-    oxlint-config-universe: "npm:^0.0.2"
-    oxlint-tsgolint: "npm:^0.18.1"
+    oxlint-config-universe: "npm:0.0.2"
+    oxlint-tsgolint: "npm:0.18.1"
     prettier: "npm:3.8.1"
     typedoc: "npm:0.28.18"
     typescript: "npm:5.9.3"
