@@ -7,7 +7,7 @@ on:
 
 env:
   # renovate: datasource=github-releases depName=jdx/mise
-  MISE_VERSION: v2026.4.5
+  MISE_VERSION: v2026.4.11
 
 jobs:
   build:
