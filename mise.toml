@@ -12,6 +12,10 @@ run = "yarn build"
 depends = "build"
 run = "yarn typedoc"
 
+[tasks."checks:tsc"]
+depends = "yarn"
+run = "yarn tsc"
+
 [tasks."checks:lint"]
 depends = "yarn"
 run = "yarn lint"

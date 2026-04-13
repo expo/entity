@@ -1,9 +1,11 @@
 {
   "extends": ["@tsconfig/bases/strictest", "@tsconfig/bases/node24"],
   "compilerOptions": {
+    "lib": ["es2024"], // override to remove ESNext libs that are not supported by Node 24
     "composite": true,
     "outDir": "${configDir}/build",
     "rewriteRelativeImportExtensions": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "types": ["node"]
   }
 }
