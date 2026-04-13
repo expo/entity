@@ -32,7 +32,7 @@
     "@expo/entity-testing-utils": "workspace:^",
     "@isaacs/ttlcache": "2.1.4",
     "@jest/globals": "30.3.0",
-    "typescript": "5.9.3"
+    "typescript": "6.0.2"
   },
   "engines": {
     "node": ">=18"
