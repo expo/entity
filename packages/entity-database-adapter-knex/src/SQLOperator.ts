@@ -1,4 +1,5 @@
 import assert from 'assert';
+import type { Knex } from 'knex';
 
 /**
  * Supported SQL value types that can be safely parameterized.
@@ -12,7 +13,6 @@ export type SupportedSQLValue =
   | Date
   | Buffer
   | bigint
-  | undefined // Will be treated as NULL
   | readonly SupportedSQLValue[] // For IN clauses and array types
   | Readonly<{ [key: string]: unknown }>; // For JSON/JSONB columns
 
@@ -41,7 +41,7 @@ export class SQLFragment<TFields extends Record<string, any>> {
    */
   getKnexBindings(
     getColumnForField: (fieldName: keyof TFields) => string,
-  ): readonly SupportedSQLValue[] {
+  ): readonly Knex.RawBinding[] {
     return this.bindings.map((b) => {
       switch (b.type) {
         case 'entityField':
@@ -49,7 +49,10 @@ export class SQLFragment<TFields extends Record<string, any>> {
         case 'identifier':
           return b.name;
         case 'value':
-          return b.value;
+          // Needs a cast since bigint is supported by knex postgres dialect but not all dialects, and thus isn't included
+          // in the type. Because we only use the postgres dialect in this adapter, it's safe to allow it here.
+          // https://github.com/knex/knex/issues/5013#issuecomment-3368744254
+          return b.value as Knex.RawBinding;
       }
     });
   }
@@ -133,8 +136,8 @@ export class SQLFragment<TFields extends Record<string, any>> {
    * Handles all SupportedSQLValue types.
    */
   private static formatDebugValue(value: SupportedSQLValue): string {
-    // Handle null and undefined
-    if (value === null || value === undefined) {
+    // Handle null
+    if (value === null) {
       return 'NULL';
     }
 
@@ -303,7 +306,7 @@ export function sql<TFields extends Record<string, any>>(
   strings.forEach((string, i) => {
     sqlString += string;
     if (i < values.length) {
-      const value = values[i];
+      const value = values[i]!;
 
       if (value instanceof SQLFragment) {
         // Handle nested SQL fragments
@@ -344,7 +347,7 @@ type PickSupportedSQLValueKeys<T> = {
 }[keyof T];
 
 type PickStringValueKeys<T> = {
-  [K in keyof T]: T[K] extends string | null | undefined ? K : never;
+  [K in keyof T]: T[K] extends string | null ? K : never;
 }[keyof T];
 
 type JsonSerializable =
@@ -368,13 +371,13 @@ export class SQLChainableFragment<
 > extends SQLFragment<TFields> {
   /**
    * Generates an equality condition (`= value`).
-   * Automatically converts `null`/`undefined` to `IS NULL`.
+   * Automatically converts `null` to `IS NULL`.
    *
    * @param value - The value to compare against
    * @returns A {@link SQLFragment} representing the equality condition
    */
-  eq(value: TValue | null | undefined): SQLFragment<TFields> {
-    if (value === null || value === undefined) {
+  eq(value: TValue | null): SQLFragment<TFields> {
+    if (value === null) {
       return this.isNull();
     }
     return sql`${this} = ${value}`;
@@ -382,13 +385,13 @@ export class SQLChainableFragment<
 
   /**
    * Generates an inequality condition (`!= value`).
-   * Automatically converts `null`/`undefined` to `IS NOT NULL`.
+   * Automatically converts `null` to `IS NOT NULL`.
    *
    * @param value - The value to compare against
    * @returns A {@link SQLFragment} representing the inequality condition
    */
-  neq(value: TValue | null | undefined): SQLFragment<TFields> {
-    if (value === null || value === undefined) {
+  neq(value: TValue | null): SQLFragment<TFields> {
+    if (value === null) {
       return this.isNotNull();
     }
     return sql`${this} != ${value}`;
@@ -635,9 +638,7 @@ type ExtractFragmentFields<T> = T extends SQLFragment<infer F> ? F : never;
 // Conditional value types for expression overloads.
 // Uses SQLChainableFragment<any, ...> so that TExpr alone drives inference (single type param).
 type FragmentValueNullable<TFragment> =
-  TFragment extends SQLChainableFragment<any, infer TValue>
-    ? TValue | null | undefined
-    : SupportedSQLValue;
+  TFragment extends SQLChainableFragment<any, infer TValue> ? TValue | null : SupportedSQLValue;
 
 type FragmentValue<TFragment> =
   TFragment extends SQLChainableFragment<any, infer TValue> ? TValue : SupportedSQLValue;
@@ -950,7 +951,7 @@ function isNotNullHelper<TFields extends Record<string, any>>(
 
 /**
  * Generates an equality condition (`= value`) from a fragment.
- * Automatically converts `null`/`undefined` to `IS NULL`.
+ * Automatically converts `null` to `IS NULL`.
  *
  * @param fragment - A SQLFragment or SQLChainableFragment to compare
  * @param value - The value to compare against
@@ -961,7 +962,7 @@ function eqHelper<TFragment extends SQLFragment<any>>(
 ): SQLFragment<ExtractFragmentFields<TFragment>>;
 /**
  * Generates an equality condition (`= value`) from a field name.
- * Automatically converts `null`/`undefined` to `IS NULL`.
+ * Automatically converts `null` to `IS NULL`.
  *
  * @param fieldName - The entity field name to compare
  * @param value - The value to compare against
@@ -979,7 +980,7 @@ function eqHelper<TFields extends Record<string, any>>(
 
 /**
  * Generates an inequality condition (`!= value`) from a fragment.
- * Automatically converts `null`/`undefined` to `IS NOT NULL`.
+ * Automatically converts `null` to `IS NOT NULL`.
  *
  * @param fragment - A SQLFragment or SQLChainableFragment to compare
  * @param value - The value to compare against
@@ -990,7 +991,7 @@ function neqHelper<TFragment extends SQLFragment<any>>(
 ): SQLFragment<ExtractFragmentFields<TFragment>>;
 /**
  * Generates an inequality condition (`!= value`) from a field name.
- * Automatically converts `null`/`undefined` to `IS NOT NULL`.
+ * Automatically converts `null` to `IS NOT NULL`.
  *
  * @param fieldName - The entity field name to compare
  * @param value - The value to compare against
@@ -1521,12 +1522,12 @@ export const SQLExpression = {
   isNotNull: isNotNullHelper,
 
   /**
-   * Equality operator. Automatically converts null/undefined to IS NULL.
+   * Equality operator. Automatically converts null to IS NULL.
    */
   eq: eqHelper,
 
   /**
-   * Inequality operator. Automatically converts null/undefined to IS NOT NULL.
+   * Inequality operator. Automatically converts null to IS NOT NULL.
    */
   neq: neqHelper,
 
