@@ -29,8 +29,8 @@
     "lerna": "9.0.7",
     "oxfmt": "0.43.0",
     "oxlint": "1.59.0",
-    "oxlint-config-universe": "^0.0.2",
-    "oxlint-tsgolint": "^0.18.1",
+    "oxlint-config-universe": "0.0.2",
+    "oxlint-tsgolint": "0.18.1",
     "prettier": "3.8.1",
     "typedoc": "0.28.18",
     "typescript": "5.9.3"
