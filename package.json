@@ -31,7 +31,7 @@
     "oxlint": "1.59.0",
     "oxlint-config-universe": "0.0.2",
     "oxlint-tsgolint": "0.20.0",
-    "prettier": "3.8.1",
+    "prettier": "3.8.2",
     "typedoc": "0.28.18",
     "typescript": "5.9.3"
   },
