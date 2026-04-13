@@ -27,7 +27,7 @@
     "ctix": "2.7.5",
     "jest": "30.3.0",
     "lerna": "9.0.7",
-    "oxfmt": "0.43.0",
+    "oxfmt": "0.44.0",
     "oxlint": "1.59.0",
     "oxlint-config-universe": "0.0.2",
     "oxlint-tsgolint": "0.18.1",
