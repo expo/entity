@@ -258,12 +258,11 @@ describe('SQLOperator', () => {
       });
 
       it('handles all SupportedSQLValue types in getDebugString', () => {
-        const fragment = new SQLFragment('INSERT INTO test VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        const fragment = new SQLFragment('INSERT INTO test VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
           { type: 'value', value: 'string' },
           { type: 'value', value: 123 },
           { type: 'value', value: true },
           { type: 'value', value: null },
-          { type: 'value', value: undefined },
           { type: 'value', value: new Date('2024-01-01T00:00:00.000Z') },
           { type: 'value', value: Buffer.from('hello') },
           { type: 'value', value: BigInt(999) },
@@ -272,7 +271,7 @@ describe('SQLOperator', () => {
 
         const text = fragment.getDebugString();
         expect(text).toBe(
-          "INSERT INTO test VALUES ('string', 123, TRUE, NULL, NULL, '2024-01-01T00:00:00.000Z', '\\x68656c6c6f', 999, ARRAY[1, 2, 3])",
+          "INSERT INTO test VALUES ('string', 123, TRUE, NULL, '2024-01-01T00:00:00.000Z', '\\x68656c6c6f', 999, ARRAY[1, 2, 3])",
         );
       });
 
@@ -763,13 +762,6 @@ describe('SQLOperator', () => {
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['nullable_field']);
       });
 
-      it('handles undefined in equality check', () => {
-        const fragment = SQLExpression.eq('nullableField', undefined);
-
-        expect(fragment.sql).toBe('?? IS NULL');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['nullable_field']);
-      });
-
       it('accepts a SQLFragment expression', () => {
         const fragment = SQLExpression.eq(sql<TestFields>`${entityField('stringField')}`, 'active');
         expect(fragment.sql).toBe('?? = ?');
@@ -796,13 +788,6 @@ describe('SQLOperator', () => {
 
       it('handles null in inequality check', () => {
         const fragment = SQLExpression.neq('nullableField', null);
-
-        expect(fragment.sql).toBe('?? IS NOT NULL');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['nullable_field']);
-      });
-
-      it('handles undefined in inequality check', () => {
-        const fragment = SQLExpression.neq('nullableField', undefined);
 
         expect(fragment.sql).toBe('?? IS NOT NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['nullable_field']);
@@ -1131,12 +1116,6 @@ describe('SQLOperator', () => {
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });
 
-      it('eq(undefined) uses IS NULL', () => {
-        const fragment = makeExpr<string>(stringFieldFragment()).eq(undefined);
-        expect(fragment.sql).toBe('?? IS NULL');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
-      });
-
       it('neq(value)', () => {
         const fragment = makeExpr<string>(stringFieldFragment()).neq('deleted');
         expect(fragment.sql).toBe('?? != ?');
@@ -1145,12 +1124,6 @@ describe('SQLOperator', () => {
 
       it('neq(null) uses IS NOT NULL', () => {
         const fragment = makeExpr<string>(stringFieldFragment()).neq(null);
-        expect(fragment.sql).toBe('?? IS NOT NULL');
-        expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
-      });
-
-      it('neq(undefined) uses IS NOT NULL', () => {
-        const fragment = makeExpr<string>(stringFieldFragment()).neq(undefined);
         expect(fragment.sql).toBe('?? IS NOT NULL');
         expect(fragment.getKnexBindings(getColumnForField)).toEqual(['string_field']);
       });

@@ -902,7 +902,7 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
     "@jest/globals": "npm:30.3.0"
-    knex: "npm:^3.1.0"
+    knex: "npm:^3.2.9"
     pg: "npm:8.20.0"
     ts-mockito: "npm:2.6.1"
     typescript: "npm:6.0.2"
@@ -7179,9 +7179,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"knex@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "knex@npm:3.1.0"
+"knex@npm:^3.2.9":
+  version: 3.2.9
+  resolution: "knex@npm:3.2.9"
   dependencies:
     colorette: "npm:2.0.19"
     commander: "npm:^10.0.0"
@@ -7197,6 +7197,8 @@ __metadata:
     resolve-from: "npm:^5.0.0"
     tarn: "npm:^3.0.2"
     tildify: "npm:2.0.0"
+  peerDependencies:
+    pg-query-stream: ^4.14.0
   peerDependenciesMeta:
     better-sqlite3:
       optional: true
@@ -7208,13 +7210,15 @@ __metadata:
       optional: true
     pg-native:
       optional: true
+    pg-query-stream:
+      optional: true
     sqlite3:
       optional: true
     tedious:
       optional: true
   bin:
     knex: bin/cli.js
-  checksum: 10c0/d8a1f99fad143c6057e94759b2ae700ae661a0b0b2385f643011962ef501dcc7b32cfdb5bda66ef81283ca56f13630f47691c579ce66ad0e8128e209533c3785
+  checksum: 10c0/5b7d56232243664991e3fae523246f0213e0fee9d96178a5744bb449e4a81a23cb8883f174ca36bc730f0a3112f93623368d925c79692e5a1d1cb3a0b3566df3
   languageName: node
   linkType: hard
 

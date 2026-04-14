@@ -91,7 +91,7 @@ export class PostgresEntityDatabaseAdapter<
           .select()
           .from(tableName)
           .whereRaw(`(??) = ANY(?)`, [
-            tableColumns[0],
+            tableColumns[0]!,
             tableTuples.map((tableTuple) => tableTuple[0]),
           ]),
       );

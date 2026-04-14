@@ -480,17 +480,16 @@ export class EntityKnexDataManager<
     baseWhere: SQLFragment<TFields> | undefined,
     cursorCondition: SQLFragment<TFields> | null,
   ): SQLFragment<TFields> {
-    const conditions = [baseWhere, cursorCondition].filter((it) => !!it);
-    if (conditions.length === 0) {
-      return sql`TRUE`;
+    if (!baseWhere) {
+      return cursorCondition ?? sql`TRUE`;
     }
-    if (conditions.length === 1) {
-      return conditions[0]!;
+
+    if (!cursorCondition) {
+      return baseWhere;
     }
-    // Wrap baseWhere in parens if combining with cursor condition
-    // We know we have exactly 2 conditions at this point
-    const [first, second] = conditions;
-    return sql`(${first}) AND ${second}`;
+
+    // Wrap baseWhere in parens when combining with cursor condition
+    return sql`(${baseWhere}) AND ${cursorCondition}`;
   }
 
   private augmentOrderByIfNecessary(
