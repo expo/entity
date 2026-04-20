@@ -47,7 +47,7 @@ export abstract class BaseSQLQueryBuilder<
   orderBy(
     fieldName: TSelectedFields,
     order: OrderByOrdering = OrderByOrdering.ASCENDING,
-    nulls: NullsOrdering | undefined = undefined,
+    nulls?: NullsOrdering,
   ): this {
     this.modifiers.orderBy = [...(this.modifiers.orderBy ?? []), { fieldName, order, nulls }];
     return this;
@@ -74,7 +74,7 @@ export abstract class BaseSQLQueryBuilder<
   orderBySQL(
     fragment: SQLFragment<Pick<TFields, TSelectedFields>>,
     order: OrderByOrdering = OrderByOrdering.ASCENDING,
-    nulls: NullsOrdering | undefined = undefined,
+    nulls?: NullsOrdering,
   ): this {
     this.modifiers.orderBy = [
       ...(this.modifiers.orderBy ?? []),
