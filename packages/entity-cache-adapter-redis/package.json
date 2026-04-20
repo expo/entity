@@ -34,7 +34,7 @@
     "@jest/globals": "30.3.0",
     "ioredis": "5.10.1",
     "ts-mockito": "2.6.1",
-    "typescript": "6.0.2"
+    "typescript": "6.0.3"
   },
   "peerDependencies": {
     "ioredis": ">=5"

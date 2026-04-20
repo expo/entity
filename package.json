@@ -33,7 +33,7 @@
     "oxlint-tsgolint": "0.20.0",
     "prettier": "3.8.3",
     "typedoc": "0.28.18",
-    "typescript": "6.0.2"
+    "typescript": "6.0.3"
   },
   "resolutions": {
     "collect-v8-coverage": "^1.0.3"

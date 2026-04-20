@@ -33,7 +33,7 @@
     "@jest/globals": "30.3.0",
     "@types/lodash-es": "4.17.12",
     "@types/node": "24.12.2",
-    "typescript": "6.0.2"
+    "typescript": "6.0.3"
   },
   "peerDependencies": {
     "@jest/globals": "*"
