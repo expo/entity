@@ -32,7 +32,7 @@
     "oxlint-config-universe": "0.0.3",
     "oxlint-tsgolint": "0.20.0",
     "prettier": "3.8.3",
-    "typedoc": "0.28.18",
+    "typedoc": "0.28.19",
     "typescript": "6.0.3"
   },
   "resolutions": {
