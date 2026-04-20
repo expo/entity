@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@jest/globals": "30.3.0",
-    "typescript": "6.0.2"
+    "typescript": "6.0.3"
   },
   "engines": {
     "node": ">=18"
