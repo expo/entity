@@ -28,7 +28,7 @@
     "@expo/entity": "workspace:^",
     "@expo/entity-database-adapter-knex": "workspace:^",
     "invariant": "^2.2.4",
-    "uuid": "^13.0.0"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@jest/globals": "30.3.0",
