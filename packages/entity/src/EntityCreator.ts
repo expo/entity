@@ -68,6 +68,6 @@ export class EntityCreator<
     return this.viewerContext
       .getViewerScopedEntityCompanionForClass(this.entityClass)
       .getMutatorFactory()
-      .forCreate(this.queryContext);
+      .forCreate(this.viewerContext, this.queryContext);
   }
 }

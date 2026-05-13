@@ -1,10 +1,10 @@
 import type { EntityCompanion } from './EntityCompanion.ts';
+import type { EntityMutatorFactory } from './EntityMutatorFactory.ts';
 import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
 import type { EntityQueryContextProvider } from './EntityQueryContextProvider.ts';
 import type { ReadonlyEntity } from './ReadonlyEntity.ts';
 import type { ViewerContext } from './ViewerContext.ts';
 import { ViewerScopedEntityLoaderFactory } from './ViewerScopedEntityLoaderFactory.ts';
-import { ViewerScopedEntityMutatorFactory } from './ViewerScopedEntityMutatorFactory.ts';
 import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
 
 /**
@@ -57,7 +57,7 @@ export class ViewerScopedEntityCompanion<
   /**
    * Vend a viewer-scoped entity mutator factory.
    */
-  getMutatorFactory(): ViewerScopedEntityMutatorFactory<
+  getMutatorFactory(): EntityMutatorFactory<
     TFields,
     TIDField,
     TViewerContext,
@@ -65,10 +65,7 @@ export class ViewerScopedEntityCompanion<
     TPrivacyPolicy,
     TSelectedFields
   > {
-    return new ViewerScopedEntityMutatorFactory(
-      this.entityCompanion.getMutatorFactory(),
-      this.viewerContext,
-    );
+    return this.entityCompanion.getMutatorFactory();
   }
 
   /**
