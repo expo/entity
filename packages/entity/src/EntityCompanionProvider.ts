@@ -127,11 +127,13 @@ export interface EntityCompanionDefinition<
  */
 export class EntityCompanionProvider {
   private readonly companionDefinitionMap: Map<
-    string,
+    IEntityClass<any, any, any, any, any, any>,
     EntityCompanionDefinition<any, any, any, any, any, any>
   > = new Map();
-  private readonly companionMap: Map<string, EntityCompanion<any, any, any, any, any, any>> =
-    new Map();
+  private readonly companionMap: Map<
+    IEntityClass<any, any, any, any, any, any>,
+    EntityCompanion<any, any, any, any, any, any>
+  > = new Map();
   private readonly tableDataCoordinatorMap: Map<string, EntityTableDataCoordinator<any, any>> =
     new Map();
 
@@ -192,14 +194,14 @@ export class EntityCompanionProvider {
   ): EntityCompanion<TFields, TIDField, TViewerContext, TEntity, TPrivacyPolicy, TSelectedFields> {
     const entityCompanionDefinition = computeIfAbsent(
       this.companionDefinitionMap,
-      entityClass.name,
+      entityClass,
       () => entityClass.defineCompanionDefinition(),
     );
     const tableDataCoordinator = this.getTableDataCoordinatorForEntity(
       entityCompanionDefinition.entityConfiguration,
       entityClass.name,
     );
-    return computeIfAbsent(this.companionMap, entityClass.name, () => {
+    return computeIfAbsent(this.companionMap, entityClass, () => {
       return new EntityCompanion(
         this,
         entityCompanionDefinition,
@@ -228,7 +230,12 @@ export class EntityCompanionProvider {
     entityConfiguration: EntityConfiguration<TFields, TIDField>,
     entityClassName: string,
   ): EntityTableDataCoordinator<TFields, TIDField> {
-    return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration.tableName, () => {
+    const tableDataCoordinatorKey = [
+      entityConfiguration.databaseAdapterFlavor,
+      entityConfiguration.cacheAdapterFlavor,
+      entityConfiguration.tableName,
+    ].join('\0');
+    return computeIfAbsent(this.tableDataCoordinatorMap, tableDataCoordinatorKey, () => {
       const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors.get(
         entityConfiguration.databaseAdapterFlavor,
       );
