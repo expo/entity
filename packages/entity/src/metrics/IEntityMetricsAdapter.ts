@@ -183,6 +183,10 @@ export interface EntityMetricsAuthorizationEvent {
 /**
  * An interface for gathering metrics about the Entity framework. Information about
  * entity load and mutation operations is piped to an instance of this adapter.
+ *
+ * Method implementations of this interface must not throw exceptions since they are called
+ * in critical paths of entity loading and mutation, and thrown exceptions would cause entity
+ * operations to fail at points not tested by unit tests of the adapter implementation.
  */
 export interface IEntityMetricsAdapter {
   /**
