@@ -5,6 +5,7 @@ import type { EntityCompanionDefinition } from '../EntityCompanionProvider.ts';
 import { EntityConfiguration } from '../EntityConfiguration.ts';
 import { EntityEdgeDeletionBehavior } from '../EntityFieldDefinition.ts';
 import { UUIDField } from '../EntityFields.ts';
+import { EntityMutationTrigger } from '../EntityMutationTriggerConfiguration.ts';
 import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy.ts';
 import { CacheStatus } from '../internal/ReadThroughEntityCache.ts';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder.ts';
@@ -144,6 +145,79 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
     await expect(
       CategoryEntity.loader(viewerContext).loadByIDNullableAsync(categoryB.getID()),
     ).resolves.toBeNull();
+  });
+
+  it('fires delete-side-effects exactly once per entity in a cycle', async () => {
+    const afterDeleteCallsById: string[] = [];
+
+    class CountingTrigger extends EntityMutationTrigger<
+      CategoryFields,
+      'id',
+      TestViewerContext,
+      any
+    > {
+      async executeAsync(
+        _vc: TestViewerContext,
+        _qc: any,
+        entity: { getID(): string },
+      ): Promise<void> {
+        afterDeleteCallsById.push(entity.getID());
+      }
+    }
+
+    class TriggeredCategoryEntity extends Entity<CategoryFields, 'id', TestViewerContext> {
+      static defineCompanionDefinition(): EntityCompanionDefinition<
+        CategoryFields,
+        'id',
+        TestViewerContext,
+        TriggeredCategoryEntity,
+        CategoryPrivacyPolicy
+      > {
+        return {
+          entityClass: TriggeredCategoryEntity,
+          entityConfiguration: configuration,
+          privacyPolicyClass: CategoryPrivacyPolicy,
+          mutationTriggers: {
+            afterDelete: [new CountingTrigger()],
+          },
+        };
+      }
+    }
+
+    const configuration = new EntityConfiguration<CategoryFields, 'id'>({
+      idField: 'id',
+      tableName: 'categories',
+      inboundEdges: [TriggeredCategoryEntity],
+      schema: {
+        id: new UUIDField({ columnName: 'id', cache: true }),
+        parent_category_id: new UUIDField({
+          columnName: 'parent_category_id',
+          cache: true,
+          association: {
+            associatedEntityClass: TriggeredCategoryEntity,
+            edgeDeletionBehavior: EntityEdgeDeletionBehavior.CASCADE_DELETE,
+          },
+        }),
+      },
+      databaseAdapterFlavor: 'postgres',
+      cacheAdapterFlavor: 'redis',
+    });
+
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new TestViewerContext(companionProvider);
+
+    const initialA = await TriggeredCategoryEntity.creator(viewerContext).createAsync();
+    const categoryB = await TriggeredCategoryEntity.creator(viewerContext)
+      .setField('parent_category_id', initialA.getID())
+      .createAsync();
+    const categoryA = await TriggeredCategoryEntity.updater(initialA)
+      .setField('parent_category_id', categoryB.getID())
+      .updateAsync();
+
+    await TriggeredCategoryEntity.deleter(categoryA).deleteAsync();
+
+    expect(afterDeleteCallsById.filter((id) => id === categoryA.getID())).toHaveLength(1);
+    expect(afterDeleteCallsById.filter((id) => id === categoryB.getID())).toHaveLength(1);
   });
 
   it('handles cycles in canViewerDeleteAsync preflight', async () => {
@@ -320,11 +394,11 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE_INVALIDATE_CACHE', () => {
     const companionProvider = createUnitTestEntityCompanionProvider();
     const viewerContext = new TestViewerContext(companionProvider);
 
-    const categoryA = await CategoryEntity.creator(viewerContext).createAsync();
+    const initialCategoryA = await CategoryEntity.creator(viewerContext).createAsync();
     const categoryB = await CategoryEntity.creator(viewerContext)
-      .setField('parent_category_id', categoryA.getID())
+      .setField('parent_category_id', initialCategoryA.getID())
       .createAsync();
-    await CategoryEntity.updater(categoryA)
+    const categoryA = await CategoryEntity.updater(initialCategoryA)
       .setField('parent_category_id', categoryB.getID())
       .updateAsync();
 
