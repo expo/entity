@@ -82,9 +82,7 @@ describe(RedisSecondaryEntityCache, () => {
   beforeAll(() => {
     genericRedisCacheContext = {
       redisClient,
-      makeKeyFn(): string {
-        throw new Error('should not be used by this test');
-      },
+      cacheKeyDelimiter: ':',
       cacheKeyPrefix: 'test-',
       ttlSecondsPositive: 86400, // 1 day
       ttlSecondsNegative: 600, // 10 minutes

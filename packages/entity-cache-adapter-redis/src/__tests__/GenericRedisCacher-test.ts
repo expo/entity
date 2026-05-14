@@ -1,8 +1,11 @@
 import {
   CacheStatus,
+  CompositeFieldHolder,
+  CompositeFieldValueHolder,
   EntityConfiguration,
   SingleFieldHolder,
   SingleFieldValueHolder,
+  StringField,
   UUIDField,
 } from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
@@ -13,6 +16,8 @@ import { GenericRedisCacher, RedisCacheInvalidationStrategy } from '../GenericRe
 
 type BlahFields = {
   id: string;
+  fieldA: string;
+  fieldB: string;
 };
 
 const entityConfiguration = new EntityConfiguration<BlahFields, 'id'>({
@@ -21,6 +26,8 @@ const entityConfiguration = new EntityConfiguration<BlahFields, 'id'>({
   cacheKeyVersion: 2,
   schema: {
     id: new UUIDField({ columnName: 'id', cache: true }),
+    fieldA: new StringField({ columnName: 'field_a', cache: true }),
+    fieldB: new StringField({ columnName: 'field_b', cache: true }),
   },
   databaseAdapterFlavor: 'postgres',
   cacheAdapterFlavor: 'redis',
@@ -41,7 +48,7 @@ describe(GenericRedisCacher, () => {
       const genericCacher = new GenericRedisCacher(
         {
           redisClient: instance(mockRedisClient),
-          makeKeyFn: (...parts) => parts.join(':'),
+          cacheKeyDelimiter: ':',
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -83,7 +90,7 @@ describe(GenericRedisCacher, () => {
       const genericCacher = new GenericRedisCacher(
         {
           redisClient: instance(mock<Redis>()),
-          makeKeyFn: (...parts) => parts.join(':'),
+          cacheKeyDelimiter: ':',
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -118,7 +125,7 @@ describe(GenericRedisCacher, () => {
       const genericCacher = new GenericRedisCacher(
         {
           redisClient: instance(mockRedisClient),
-          makeKeyFn: (...parts) => parts.join(':'),
+          cacheKeyDelimiter: ':',
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -134,10 +141,12 @@ describe(GenericRedisCacher, () => {
         new SingleFieldValueHolder('wat'),
       );
 
-      await genericCacher.cacheManyAsync(new Map([[cacheKey, { id: 'wat' }]]));
+      const value = { id: 'wat', fieldA: 'a', fieldB: 'b' };
+
+      await genericCacher.cacheManyAsync(new Map([[cacheKey, value]]));
 
       expect(redisResults.get(cacheKey)).toMatchObject({
-        value: JSON.stringify({ id: 'wat' }),
+        value: JSON.stringify(value),
         code: 'EX',
         ttl: 1,
       });
@@ -163,7 +172,7 @@ describe(GenericRedisCacher, () => {
       const genericCacher = new GenericRedisCacher(
         {
           redisClient: instance(mockRedisClient),
-          makeKeyFn: (...parts) => parts.join(':'),
+          cacheKeyDelimiter: ':',
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -197,7 +206,7 @@ describe(GenericRedisCacher, () => {
       const genericCacher = new GenericRedisCacher(
         {
           redisClient: instance(mockRedisClient),
-          makeKeyFn: (...parts) => parts.join(':'),
+          cacheKeyDelimiter: ':',
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -212,10 +221,38 @@ describe(GenericRedisCacher, () => {
         new SingleFieldValueHolder('wat'),
       );
       expect(cacheKeys).toHaveLength(1);
-      expect(cacheKeys[0]).toBe('hello-:single:blah:v3.2:id:wat');
+      expect(cacheKeys[0]).toBe('hello-:single:blah:v4.2:id:wat');
 
       await genericCacher.invalidateManyAsync(cacheKeys);
       verify(mockRedisClient.del(...cacheKeys)).once();
+    });
+
+    it('does not collapse composite cache keys with delimiter-bearing parts', () => {
+      const genericCacher = new GenericRedisCacher(
+        {
+          redisClient: instance(mock<Redis>()),
+          cacheKeyPrefix: 'hello-',
+          cacheKeyDelimiter: ':',
+          ttlSecondsPositive: 1,
+          ttlSecondsNegative: 2,
+          invalidationConfig: {
+            invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION,
+          },
+        },
+        entityConfiguration,
+      );
+
+      const compositeFieldHolder = new CompositeFieldHolder<BlahFields, 'id'>(['fieldA', 'fieldB']);
+      const cacheKey1 = genericCacher['makeCacheKeyForStorage'](
+        compositeFieldHolder,
+        new CompositeFieldValueHolder({ fieldA: 'a:b', fieldB: 'c' }),
+      );
+      const cacheKey2 = genericCacher['makeCacheKeyForStorage'](
+        compositeFieldHolder,
+        new CompositeFieldValueHolder({ fieldA: 'a', fieldB: 'b:c' }),
+      );
+
+      expect(cacheKey1).not.toEqual(cacheKey2);
     });
 
     it('invalidates correctly with RedisCacheInvalidationStrategy.SURROUNDING_CACHE_KEY_VERSIONS', async () => {
@@ -225,7 +262,7 @@ describe(GenericRedisCacher, () => {
       const genericCacher = new GenericRedisCacher(
         {
           redisClient: instance(mockRedisClient),
-          makeKeyFn: (...parts) => parts.join(':'),
+          cacheKeyDelimiter: ':',
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -240,9 +277,9 @@ describe(GenericRedisCacher, () => {
         new SingleFieldValueHolder('wat'),
       );
       expect(cacheKeys).toHaveLength(3);
-      expect(cacheKeys[0]).toBe('hello-:single:blah:v3.1:id:wat');
-      expect(cacheKeys[1]).toBe('hello-:single:blah:v3.2:id:wat');
-      expect(cacheKeys[2]).toBe('hello-:single:blah:v3.3:id:wat');
+      expect(cacheKeys[0]).toBe('hello-:single:blah:v4.1:id:wat');
+      expect(cacheKeys[1]).toBe('hello-:single:blah:v4.2:id:wat');
+      expect(cacheKeys[2]).toBe('hello-:single:blah:v4.3:id:wat');
 
       await genericCacher.invalidateManyAsync(cacheKeys);
       verify(mockRedisClient.del(...cacheKeys)).once();
@@ -255,7 +292,7 @@ describe(GenericRedisCacher, () => {
       const genericCacher = new GenericRedisCacher(
         {
           redisClient: instance(mockRedisClient),
-          makeKeyFn: (...parts) => parts.join(':'),
+          cacheKeyDelimiter: ':',
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,
@@ -278,10 +315,10 @@ describe(GenericRedisCacher, () => {
         new SingleFieldValueHolder('wat'),
       );
       expect(cacheKeys).toHaveLength(4);
-      expect(cacheKeys[0]).toBe('hello-:single:blah:v3.2:id:wat');
-      expect(cacheKeys[1]).toBe('hello-:single:blah:v3.3:id:wat');
-      expect(cacheKeys[2]).toBe('hello-:single:blah:v3.4:id:wat');
-      expect(cacheKeys[3]).toBe('hello-:single:blah:v3.5:id:wat');
+      expect(cacheKeys[0]).toBe('hello-:single:blah:v4.2:id:wat');
+      expect(cacheKeys[1]).toBe('hello-:single:blah:v4.3:id:wat');
+      expect(cacheKeys[2]).toBe('hello-:single:blah:v4.4:id:wat');
+      expect(cacheKeys[3]).toBe('hello-:single:blah:v4.5:id:wat');
 
       await genericCacher.invalidateManyAsync(cacheKeys);
       verify(mockRedisClient.del(...cacheKeys)).once();
@@ -291,7 +328,7 @@ describe(GenericRedisCacher, () => {
       const genericCacher = new GenericRedisCacher(
         {
           redisClient: instance(mock<Redis>()),
-          makeKeyFn: (...parts) => parts.join(':'),
+          cacheKeyDelimiter: ':',
           cacheKeyPrefix: 'hello-',
           ttlSecondsPositive: 1,
           ttlSecondsNegative: 2,

@@ -68,13 +68,7 @@ describe(GenericRedisCacher, () => {
   beforeAll(() => {
     genericRedisCacheContext = {
       redisClient,
-      makeKeyFn(...parts: string[]): string {
-        const delimiter = ':';
-        const escapedParts = parts.map((part) =>
-          part.replaceAll('\\', '\\\\').replaceAll(delimiter, `\\${delimiter}`),
-        );
-        return escapedParts.join(delimiter);
-      },
+      cacheKeyDelimiter: ':',
       cacheKeyPrefix: 'test-',
       ttlSecondsPositive: 86400, // 1 day
       ttlSecondsNegative: 600, // 10 minutes
