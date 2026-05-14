@@ -36,6 +36,24 @@ describe(AuthorizationResultBasedEntityAssociationLoader, () => {
       );
       expect(loadedOther2).toBeNull();
     });
+
+    it('does not treat falsy non-null association values as missing', async () => {
+      const companionProvider = createUnitTestEntityCompanionProvider();
+      const viewerContext = new TestViewerContext(companionProvider);
+      const testEntity = await enforceAsyncResult(
+        TestEntity.creatorWithAuthorizationResults(viewerContext)
+          .setField('stringField', '')
+          .createAsync(),
+      );
+
+      await expect(
+        enforceAsyncResult(
+          testEntity
+            .associationLoaderWithAuthorizationResults()
+            .loadAssociatedEntityAsync('stringField', TestEntity),
+        ),
+      ).rejects.toThrow('Entity field not valid');
+    });
   });
 
   describe('loadManyAssociatedEntitiesAsync', () => {
