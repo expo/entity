@@ -5,7 +5,6 @@ import {
   EntityConfiguration,
   EntityPrivacyPolicy,
   StringField,
-  UUIDField,
 } from '@expo/entity';
 
 export type RedisTestEntityFields = {
@@ -53,7 +52,7 @@ export const redisTestEntityConfiguration = new EntityConfiguration<RedisTestEnt
   idField: 'id',
   tableName: 'redis_test_entities',
   schema: {
-    id: new UUIDField({
+    id: new StringField({
       columnName: 'id',
       cache: false,
     }),
