@@ -98,6 +98,14 @@ describe(pick, () => {
       b: 2,
     });
   });
+
+  it('handles objects that shadow hasOwnProperty', () => {
+    const object = {
+      a: 1,
+      hasOwnProperty: false,
+    };
+    expect(pick(object, ['a'])).toEqual({ a: 1 });
+  });
 });
 
 describe(partitionArray, () => {
