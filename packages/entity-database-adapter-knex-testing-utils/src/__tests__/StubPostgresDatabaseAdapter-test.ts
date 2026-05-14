@@ -174,6 +174,55 @@ describe(StubPostgresDatabaseAdapter, () => {
       const id2Results = results.get(new SingleFieldValueHolder('id2'));
       expect(id2Results?.[0]).toMatchObject({ customIdField: 'id2', stringField: 'test2' });
     });
+
+    it('does not collapse distinct composite tuples that stringify with the same delimiter join', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
+        testEntityConfiguration,
+        StubPostgresDatabaseAdapter.convertFieldObjectsToDataStore(
+          testEntityConfiguration,
+          new Map([
+            [
+              testEntityConfiguration.tableName,
+              [
+                {
+                  customIdField: 'id1',
+                  testIndexedField: 'b',
+                  intField: 5,
+                  stringField: 'a:b',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+                {
+                  customIdField: 'id2',
+                  testIndexedField: 'b:c',
+                  intField: 10,
+                  stringField: 'a',
+                  dateField: new Date(),
+                  nullableField: null,
+                },
+              ],
+            ],
+          ]),
+        ),
+      );
+
+      const results = await databaseAdapter.fetchManyWhereAsync(
+        queryContext,
+        new CompositeFieldHolder<TestFields, 'customIdField'>(['stringField', 'testIndexedField']),
+        [
+          new CompositeFieldValueHolder({ stringField: 'a:b', testIndexedField: 'c' }),
+          new CompositeFieldValueHolder({ stringField: 'a', testIndexedField: 'b:c' }),
+        ],
+      );
+
+      expect(
+        results.get(new CompositeFieldValueHolder({ stringField: 'a:b', testIndexedField: 'c' })),
+      ).toHaveLength(0);
+      expect(
+        results.get(new CompositeFieldValueHolder({ stringField: 'a', testIndexedField: 'b:c' })),
+      ).toHaveLength(1);
+    });
   });
 
   describe('fetchOneWhereAsync', () => {

@@ -75,7 +75,7 @@ export class StubPostgresDatabaseAdapter<
   ): Promise<object[]> {
     const objectCollection = this.getObjectCollectionForTable(tableName);
     const results = StubPostgresDatabaseAdapter.uniqBy(tableTuples, (tuple) =>
-      tuple.join(':'),
+      JSON.stringify(tuple),
     ).reduce(
       (acc, tableTuple) => {
         return acc.concat(
