@@ -35,6 +35,9 @@ export class AllowIfAllSubRulesAllowPrivacyPolicyRule<
     >,
     entity: TEntity,
   ): Promise<RuleEvaluationResult> {
+    if (this.subRules.length === 0) {
+      return RuleEvaluationResult.SKIP;
+    }
     const results = await Promise.all(
       this.subRules.map((subRule) =>
         subRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity),

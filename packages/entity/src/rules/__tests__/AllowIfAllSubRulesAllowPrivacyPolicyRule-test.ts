@@ -62,3 +62,15 @@ describePrivacyPolicyRule(
     ],
   },
 );
+
+describePrivacyPolicyRule(new AllowIfAllSubRulesAllowPrivacyPolicyRule([]), {
+  skipCases: [
+    {
+      viewerContext: instance(mock(ViewerContext)),
+      queryContext: instance(mock(EntityQueryContext)),
+      evaluationContext:
+        instance(mock<EntityPrivacyPolicyRuleEvaluationContext<any, any, any, any, any>>()),
+      entity: anything(),
+    },
+  ],
+});
