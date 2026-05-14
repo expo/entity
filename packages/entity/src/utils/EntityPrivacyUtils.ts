@@ -229,6 +229,7 @@ export async function canViewerDeleteAsync<
     sourceEntity,
     { previousValue: null, cascadingDeleteCause: null },
     queryContext,
+    new Set(),
   );
   return result.allowed;
 }
@@ -276,6 +277,7 @@ export async function getCanViewerDeleteResultAsync<
     sourceEntity,
     { previousValue: null, cascadingDeleteCause: null },
     queryContext,
+    new Set(),
   );
 }
 
@@ -310,7 +312,15 @@ async function canViewerDeleteInternalAsync<
     TSelectedFields
   >,
   queryContext: EntityQueryContext,
+  processedEntityIdentifiers: Set<string>,
 ): Promise<EntityPrivacyEvaluationResult> {
+  // prevent infinite reference cycles by short-circuiting on entities already being checked
+  // higher up in the recursion; their authorization is determined by the in-progress check
+  if (processedEntityIdentifiers.has(sourceEntity.getUniqueIdentifier())) {
+    return { allowed: true };
+  }
+  processedEntityIdentifiers.add(sourceEntity.getUniqueIdentifier());
+
   const viewerContext = sourceEntity.getViewerContext();
   const entityCompanionProvider = viewerContext.entityCompanionProvider;
   const viewerScopedCompanion = sourceEntity
@@ -434,6 +444,7 @@ async function canViewerDeleteInternalAsync<
                 entity,
                 { previousValue: null, cascadingDeleteCause: newCascadingDeleteCause },
                 queryContext,
+                processedEntityIdentifiers,
               ),
             ),
           );
