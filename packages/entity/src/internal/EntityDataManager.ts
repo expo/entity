@@ -117,7 +117,12 @@ export class EntityDataManager<
     const dataLoaderMapForTransaction = computeIfAbsent(
       this.transactionalDataLoaders,
       queryContext.transactionId,
-      () => new Map(),
+      () => {
+        queryContext.appendTransactionEndCallback(() => {
+          this.transactionalDataLoaders.delete(queryContext.transactionId);
+        });
+        return new Map();
+      },
     );
     return computeIfAbsent(
       dataLoaderMapForTransaction,

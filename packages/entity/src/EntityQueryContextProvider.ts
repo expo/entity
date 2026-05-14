@@ -50,27 +50,33 @@ export abstract class EntityQueryContextProvider {
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
     transactionConfig?: TransactionConfig,
   ): Promise<T> {
-    const [returnedValue, queryContext] = await this.createTransactionRunner<
-      [T, EntityTransactionalQueryContext]
-    >(transactionConfig)(async (queryInterface) => {
-      const resolvedTransactionConfig: ResolvedTransactionConfig = {
-        ...transactionConfig,
-        transactionalDataLoaderMode:
-          transactionConfig?.transactionalDataLoaderMode ??
-          this.defaultTransactionalDataLoaderMode(),
-      };
-      const queryContext = new EntityTransactionalQueryContext(
-        queryInterface,
-        this,
-        randomUUID(),
-        resolvedTransactionConfig,
-      );
-      const result = await transactionScope(queryContext);
-      await queryContext.runPreCommitCallbacksAsync();
-      return [result, queryContext];
-    });
-    await queryContext.runPostCommitCallbacksAsync();
-    return returnedValue;
+    let queryContextForCleanup: EntityTransactionalQueryContext | undefined;
+    try {
+      const [returnedValue, queryContext] = await this.createTransactionRunner<
+        [T, EntityTransactionalQueryContext]
+      >(transactionConfig)(async (queryInterface) => {
+        const resolvedTransactionConfig: ResolvedTransactionConfig = {
+          ...transactionConfig,
+          transactionalDataLoaderMode:
+            transactionConfig?.transactionalDataLoaderMode ??
+            this.defaultTransactionalDataLoaderMode(),
+        };
+        const queryContext = new EntityTransactionalQueryContext(
+          queryInterface,
+          this,
+          randomUUID(),
+          resolvedTransactionConfig,
+        );
+        queryContextForCleanup = queryContext;
+        const result = await transactionScope(queryContext);
+        await queryContext.runPreCommitCallbacksAsync();
+        return [result, queryContext];
+      });
+      await queryContext.runPostCommitCallbacksAsync();
+      return returnedValue;
+    } finally {
+      queryContextForCleanup?.runTransactionEndCallbacks();
+    }
   }
 
   /**
@@ -83,22 +89,28 @@ export abstract class EntityQueryContextProvider {
     outerQueryContext: EntityTransactionalQueryContext,
     transactionScope: (innerQueryContext: EntityNestedTransactionalQueryContext) => Promise<T>,
   ): Promise<T> {
-    const [returnedValue, innerQueryContext] = await this.createNestedTransactionRunner<
-      [T, EntityNestedTransactionalQueryContext]
-    >(outerQueryContext.getQueryInterface())(async (innerQueryInterface) => {
-      const innerQueryContext = new EntityNestedTransactionalQueryContext(
-        innerQueryInterface,
-        outerQueryContext,
-        this,
-        randomUUID(),
-        outerQueryContext.transactionConfig,
-      );
-      const result = await transactionScope(innerQueryContext);
-      await innerQueryContext.runPreCommitCallbacksAsync();
-      return [result, innerQueryContext];
-    });
-    // behavior of this call differs for nested transaction query contexts from regular transaction query contexts
-    await innerQueryContext.runPostCommitCallbacksAsync();
-    return returnedValue;
+    let innerQueryContextForCleanup: EntityNestedTransactionalQueryContext | undefined;
+    try {
+      const [returnedValue, innerQueryContext] = await this.createNestedTransactionRunner<
+        [T, EntityNestedTransactionalQueryContext]
+      >(outerQueryContext.getQueryInterface())(async (innerQueryInterface) => {
+        const innerQueryContext = new EntityNestedTransactionalQueryContext(
+          innerQueryInterface,
+          outerQueryContext,
+          this,
+          randomUUID(),
+          outerQueryContext.transactionConfig,
+        );
+        innerQueryContextForCleanup = innerQueryContext;
+        const result = await transactionScope(innerQueryContext);
+        await innerQueryContext.runPreCommitCallbacksAsync();
+        return [result, innerQueryContext];
+      });
+      // behavior of this call differs for nested transaction query contexts from regular transaction query contexts
+      await innerQueryContext.runPostCommitCallbacksAsync();
+      return returnedValue;
+    } finally {
+      innerQueryContextForCleanup?.runTransactionEndCallbacks();
+    }
   }
 }
