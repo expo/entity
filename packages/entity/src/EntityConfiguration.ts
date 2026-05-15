@@ -2,6 +2,7 @@ import invariant from 'invariant';
 
 import type { IEntityClass } from './Entity.ts';
 import type { CacheAdapterFlavor, DatabaseAdapterFlavor } from './EntityCompanionProvider.ts';
+import type { FieldEqualityCondition } from './EntityDatabaseAdapter.ts';
 import { RESERVED_ENTITY_COUNT_QUERY_ALIAS } from './EntityDatabaseAdapter.ts';
 import type { EntityFieldDefinition } from './EntityFieldDefinition.ts';
 import type { SerializedCompositeFieldHolder } from './internal/CompositeFieldHolder.ts';
@@ -120,6 +121,20 @@ export class EntityConfiguration<
   readonly entityToDBFieldsKeyMapping: ReadonlyMap<keyof TFields, string>;
   readonly dbToEntityFieldsKeyMapping: ReadonlyMap<string, keyof TFields>;
 
+  readonly inherentFilters: readonly FieldEqualityCondition<TFields, keyof TFields>[];
+
+  /**
+   * Cache-key component derived from {@link inherentFilters}; empty string when no filters
+   * are configured. Two configurations sharing a `tableName` but with different inherent
+   * filters represent different logical scopes of the same physical table, and must not
+   * share cache namespaces. Cache adapters include this component in their cache keys so
+   * that scope-A and scope-B caches stay isolated even when the underlying cache store is
+   * shared.
+   *
+   * @internal
+   */
+  readonly inherentFiltersCacheKeyComponent: string;
+
   readonly databaseAdapterFlavor: DatabaseAdapterFlavor;
   readonly cacheAdapterFlavor: CacheAdapterFlavor;
 
@@ -130,6 +145,7 @@ export class EntityConfiguration<
     inboundEdges = [],
     cacheKeyVersion = 0,
     compositeFieldDefinitions,
+    inherentFilters,
     databaseAdapterFlavor,
     cacheAdapterFlavor,
   }: {
@@ -166,6 +182,22 @@ export class EntityConfiguration<
     compositeFieldDefinitions?: EntityCompositeFieldDefinition<TFields>[];
 
     /**
+     * Field equality conditions that are inherent to this entity type — i.e., they are AND'd
+     * into every fetch against the underlying table for this entity. Useful for polymorphic
+     * tables where multiple entity classes share a row layout (each class registers a
+     * scope-disambiguating filter so it only ever sees its own rows), and for any other case
+     * where an entity represents a strict subset of the rows in its table (e.g., a
+     * `deletedAt IS NULL` invariant, or a tenant scope).
+     *
+     * Rows that don't satisfy these filters are invisible to this entity's loaders: a
+     * `loadByIDAsync` against an excluded row returns null; a `loadManyByFieldEqualingAsync`
+     * never returns excluded rows; and cascade deletes through this entity's inbound edges
+     * only see the included scope. Cache keys are not augmented — relying on the fact that
+     * each entity class has its own configuration and therefore its own cache namespace.
+     */
+    inherentFilters?: readonly FieldEqualityCondition<TFields, keyof TFields>[];
+
+    /**
      * Backing database and transaction type for this entity.
      */
     databaseAdapterFlavor: DatabaseAdapterFlavor;
@@ -181,6 +213,21 @@ export class EntityConfiguration<
     this.databaseAdapterFlavor = databaseAdapterFlavor;
     this.cacheAdapterFlavor = cacheAdapterFlavor;
     this.inboundEdges = inboundEdges;
+    this.inherentFilters = inherentFilters ?? [];
+    this.inherentFiltersCacheKeyComponent =
+      this.inherentFilters.length === 0
+        ? ''
+        : `f${JSON.stringify(
+            // Sort by field name so call-order differences in inherentFilters declaration
+            // don't change the cache key.
+            [...this.inherentFilters].sort((a, b) =>
+              String(a.fieldName) < String(b.fieldName)
+                ? -1
+                : String(a.fieldName) > String(b.fieldName)
+                  ? 1
+                  : 0,
+            ),
+          )}`;
 
     // external schema is a Record to typecheck that all fields have FieldDefinitions,
     // but internally the most useful representation is a map for lookups

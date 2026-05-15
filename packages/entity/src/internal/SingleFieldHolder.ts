@@ -52,7 +52,11 @@ export class SingleFieldHolder<
   ): readonly string[] {
     const columnName = entityConfiguration.entityToDBFieldsKeyMapping.get(this.fieldName);
     invariant(columnName, `database field mapping missing for ${String(this.fieldName)}`);
-    return [columnName, String(value.fieldValue)];
+    const parts = [columnName, String(value.fieldValue)];
+    if (entityConfiguration.inherentFiltersCacheKeyComponent !== '') {
+      parts.push(entityConfiguration.inherentFiltersCacheKeyComponent);
+    }
+    return parts;
   }
 
   getLoadMethodType(): EntityLoadMethodType {

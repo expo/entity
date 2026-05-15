@@ -1,4 +1,9 @@
-import type { EntityConfiguration, EntityQueryContext, IEntityMetricsAdapter } from '@expo/entity';
+import type {
+  EntityConfiguration,
+  EntityQueryContext,
+  FieldEqualityCondition,
+  IEntityMetricsAdapter,
+} from '@expo/entity';
 import {
   EntityDatabaseAdapterPaginationCursorInvalidError,
   EntityMetricsLoadType,
@@ -10,7 +15,6 @@ import assert from 'assert';
 
 import type {
   BasePostgresEntityDatabaseAdapter,
-  FieldEqualityCondition,
   PostgresOrderByClause,
   PostgresQuerySelectionModifiers,
 } from '../BasePostgresEntityDatabaseAdapter.ts';

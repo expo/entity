@@ -10,6 +10,8 @@ import type {
   EntityConfiguration,
 } from './EntityConfiguration.ts';
 import type { EntityConstructionUtils } from './EntityConstructionUtils.ts';
+import type { FieldEqualityCondition } from './EntityDatabaseAdapter.ts';
+import { isSingleValueFieldEqualityCondition } from './EntityDatabaseAdapter.ts';
 import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
 import type { EntityQueryContext } from './EntityQueryContext.ts';
 import type { ReadonlyEntity } from './ReadonlyEntity.ts';
@@ -134,6 +136,37 @@ export class AuthorizationResultBasedEntityLoader<
       `${fieldValue} should be guaranteed to be present in returned map of entities`,
     );
     return entityResultsForFieldValue;
+  }
+
+  /**
+   * Load entities matching the conjunction of field equality operands.
+   *
+   * Each operand asserts either that a field equals a single value
+   * (`{ fieldName, fieldValue }`) or that a field equals one of multiple values
+   * (`{ fieldName, fieldValues }`). All operands are AND'd together.
+   *
+   * Unlike {@link loadManyByFieldEqualingAsync}, this load goes directly to the database
+   * adapter; results are not memoized in the dataloader and the entity cache is not consulted.
+   *
+   * @param fieldEqualityOperands - list of field equality where-clause operands AND'd together
+   * @returns array of entity results matching the conjunction, where result error can be
+   *   UnauthorizedError or an entity construction error
+   */
+  async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
+  ): Promise<readonly Result<TEntity>[]> {
+    for (const operand of fieldEqualityOperands) {
+      const fieldValues = isSingleValueFieldEqualityCondition(operand)
+        ? [operand.fieldValue]
+        : operand.fieldValues;
+      this.constructionUtils.validateFieldAndValues(operand.fieldName, fieldValues);
+    }
+
+    const fieldObjects = await this.dataManager.loadManyByFieldEqualityConjunctionAsync(
+      this.queryContext,
+      fieldEqualityOperands,
+    );
+    return await this.constructionUtils.constructAndAuthorizeEntitiesArrayAsync(fieldObjects);
   }
 
   /**

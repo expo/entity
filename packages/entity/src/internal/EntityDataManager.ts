@@ -1,12 +1,13 @@
 import DataLoader from 'dataloader';
 import invariant from 'invariant';
 
-import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter.ts';
+import type { EntityDatabaseAdapter, FieldEqualityCondition } from '../EntityDatabaseAdapter.ts';
 import type { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext.ts';
 import { TransactionalDataLoaderMode } from '../EntityQueryContext.ts';
 import type { EntityQueryContextProvider } from '../EntityQueryContextProvider.ts';
 import { partitionErrors } from '../entityUtils.ts';
 import {
+  timeAndLogLoadEventAsync,
   timeAndLogLoadMapEventAsync,
   timeAndLogLoadOneEventAsync,
 } from '../metrics/EntityMetricsUtils.ts';
@@ -269,6 +270,31 @@ export class EntityDataManager<
       this.entityClassName,
       queryContext,
     )(this.databaseAdapter.fetchOneWhereAsync(queryContext, key, value));
+  }
+
+  /**
+   * Load objects matching the conjunction of field equality operands. Bypasses the
+   * dataloader and cache; goes directly to the database adapter.
+   *
+   * @param queryContext - query context in which to perform the load
+   * @param fieldEqualityOperands - field equality where-clause operands AND'd together
+   * @returns array of objects matching the conjunction
+   */
+  public async loadManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
+    queryContext: EntityQueryContext,
+    fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
+  ): Promise<readonly Readonly<TFields>[]> {
+    return await timeAndLogLoadEventAsync(
+      this.metricsAdapter,
+      EntityMetricsLoadType.LOAD_MANY_EQUALITY_CONJUNCTION,
+      this.entityClassName,
+      queryContext,
+    )(
+      this.databaseAdapter.fetchManyByFieldEqualityConjunctionAsync(
+        queryContext,
+        fieldEqualityOperands,
+      ),
+    );
   }
 
   private async invalidateOneAsync<

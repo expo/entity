@@ -132,8 +132,15 @@ export class EntityCompanionProvider {
   > = new Map();
   private readonly companionMap: Map<string, EntityCompanion<any, any, any, any, any, any>> =
     new Map();
-  private readonly tableDataCoordinatorMap: Map<string, EntityTableDataCoordinator<any, any>> =
-    new Map();
+  // Keyed by EntityConfiguration object identity (not tableName), so two entity classes
+  // backed by the same table but distinguished by their EntityConfiguration's inherent
+  // filters get separate coordinators — and thus separate database/cache adapters and
+  // separate dataloader caches scoped to their own inherent filters. Two entity classes
+  // that share an EntityConfiguration still share a coordinator.
+  private readonly tableDataCoordinatorMap: Map<
+    EntityConfiguration<any, any>,
+    EntityTableDataCoordinator<any, any>
+  > = new Map();
 
   /**
    * Instantiate an Entity framework.
@@ -228,7 +235,7 @@ export class EntityCompanionProvider {
     entityConfiguration: EntityConfiguration<TFields, TIDField>,
     entityClassName: string,
   ): EntityTableDataCoordinator<TFields, TIDField> {
-    return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration.tableName, () => {
+    return computeIfAbsent(this.tableDataCoordinatorMap, entityConfiguration, () => {
       const entityDatabaseAdapterFlavor = this.databaseAdapterFlavors.get(
         entityConfiguration.databaseAdapterFlavor,
       );

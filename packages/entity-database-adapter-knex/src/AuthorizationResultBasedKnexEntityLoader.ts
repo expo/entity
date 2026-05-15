@@ -2,18 +2,15 @@ import type {
   EntityConstructionUtils,
   EntityPrivacyPolicy,
   EntityQueryContext,
+  FieldEqualityCondition,
   IEntityMetricsAdapter,
   ReadonlyEntity,
   ViewerContext,
 } from '@expo/entity';
+import { isSingleValueFieldEqualityCondition } from '@expo/entity';
 import type { Result } from '@expo/results';
 
-import type {
-  FieldEqualityCondition,
-  NullsOrdering,
-  OrderByOrdering,
-} from './BasePostgresEntityDatabaseAdapter.ts';
-import { isSingleValueFieldEqualityCondition } from './BasePostgresEntityDatabaseAdapter.ts';
+import type { NullsOrdering, OrderByOrdering } from './BasePostgresEntityDatabaseAdapter.ts';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder.ts';
 import type { PaginationStrategy } from './PaginationStrategy.ts';
 import type { SQLFragment } from './SQLOperator.ts';

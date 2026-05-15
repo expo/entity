@@ -98,7 +98,11 @@ export class CompositeFieldHolder<
     const compositeFieldValues = this.compositeField.map(
       (fieldName) => value.compositeFieldValue[fieldName],
     );
-    return [...columnNames, ...compositeFieldValues.map((value) => String(value))];
+    const parts = [...columnNames, ...compositeFieldValues.map((value) => String(value))];
+    if (entityConfiguration.inherentFiltersCacheKeyComponent !== '') {
+      parts.push(entityConfiguration.inherentFiltersCacheKeyComponent);
+    }
+    return parts;
   }
 
   getLoadMethodType(): EntityLoadMethodType {

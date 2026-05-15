@@ -13,7 +13,8 @@ export enum EntityMetricsLoadType {
    */
   LOAD_MANY,
   /**
-   * Knex loader load using loadManyByFieldEqualityConjunctionAsync.
+   * Loader load using loadManyByFieldEqualityConjunctionAsync (base entity loader
+   * or knex loader).
    */
   LOAD_MANY_EQUALITY_CONJUNCTION,
   /**

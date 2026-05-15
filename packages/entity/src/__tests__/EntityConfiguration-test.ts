@@ -156,6 +156,105 @@ describe(EntityConfiguration, () => {
         expect(entityConfiguration.cacheKeyVersion).toEqual(100);
       });
     });
+
+    describe('inherentFilters', () => {
+      type WithFilters = { id: string; scope: string; tenant: string };
+
+      it('defaults to an empty array and produces an empty cache key component', () => {
+        const config = new EntityConfiguration<WithFilters, 'id'>({
+          idField: 'id',
+          tableName: 'with_filters',
+          schema: {
+            id: new UUIDField({ columnName: 'id', cache: false }),
+            scope: new StringField({ columnName: 'scope' }),
+            tenant: new StringField({ columnName: 'tenant' }),
+          },
+          databaseAdapterFlavor: 'postgres',
+          cacheAdapterFlavor: 'redis',
+        });
+        expect(config.inherentFilters).toEqual([]);
+        expect(config.inherentFiltersCacheKeyComponent).toEqual('');
+      });
+
+      it('produces a deterministic cache key component independent of operand declaration order', () => {
+        const configAB = new EntityConfiguration<WithFilters, 'id'>({
+          idField: 'id',
+          tableName: 'with_filters',
+          schema: {
+            id: new UUIDField({ columnName: 'id', cache: false }),
+            scope: new StringField({ columnName: 'scope' }),
+            tenant: new StringField({ columnName: 'tenant' }),
+          },
+          inherentFilters: [
+            { fieldName: 'scope', fieldValue: 'A' },
+            { fieldName: 'tenant', fieldValue: 'x' },
+          ],
+          databaseAdapterFlavor: 'postgres',
+          cacheAdapterFlavor: 'redis',
+        });
+        const configBA = new EntityConfiguration<WithFilters, 'id'>({
+          idField: 'id',
+          tableName: 'with_filters',
+          schema: {
+            id: new UUIDField({ columnName: 'id', cache: false }),
+            scope: new StringField({ columnName: 'scope' }),
+            tenant: new StringField({ columnName: 'tenant' }),
+          },
+          // Same filters, reversed declaration order — the cache key component must be
+          // the same so cache lookups don't depend on how the user listed the operands.
+          inherentFilters: [
+            { fieldName: 'tenant', fieldValue: 'x' },
+            { fieldName: 'scope', fieldValue: 'A' },
+          ],
+          databaseAdapterFlavor: 'postgres',
+          cacheAdapterFlavor: 'redis',
+        });
+        expect(configAB.inherentFiltersCacheKeyComponent).toEqual(
+          configBA.inherentFiltersCacheKeyComponent,
+        );
+        expect(configAB.inherentFiltersCacheKeyComponent).not.toEqual('');
+      });
+
+      it('handles multiple filters on the same field name without throwing', () => {
+        // Two filters on the same fieldName exercises the equality branch of the sort
+        // comparator that orders inherentFilters before serialization.
+        const config = new EntityConfiguration<WithFilters, 'id'>({
+          idField: 'id',
+          tableName: 'with_filters',
+          schema: {
+            id: new UUIDField({ columnName: 'id', cache: false }),
+            scope: new StringField({ columnName: 'scope' }),
+            tenant: new StringField({ columnName: 'tenant' }),
+          },
+          inherentFilters: [
+            { fieldName: 'scope', fieldValue: 'A' },
+            { fieldName: 'scope', fieldValues: ['A', 'B'] },
+          ],
+          databaseAdapterFlavor: 'postgres',
+          cacheAdapterFlavor: 'redis',
+        });
+        expect(config.inherentFiltersCacheKeyComponent).not.toEqual('');
+      });
+
+      it('produces different cache key components for different filter values', () => {
+        const makeConfig = (scopeValue: string): EntityConfiguration<WithFilters, 'id'> =>
+          new EntityConfiguration<WithFilters, 'id'>({
+            idField: 'id',
+            tableName: 'with_filters',
+            schema: {
+              id: new UUIDField({ columnName: 'id', cache: false }),
+              scope: new StringField({ columnName: 'scope' }),
+              tenant: new StringField({ columnName: 'tenant' }),
+            },
+            inherentFilters: [{ fieldName: 'scope', fieldValue: scopeValue }],
+            databaseAdapterFlavor: 'postgres',
+            cacheAdapterFlavor: 'redis',
+          });
+        expect(makeConfig('A').inherentFiltersCacheKeyComponent).not.toEqual(
+          makeConfig('B').inherentFiltersCacheKeyComponent,
+        );
+      });
+    });
   });
 
   describe('validation', () => {

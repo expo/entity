@@ -1,52 +1,13 @@
-import type { EntityQueryContext } from '@expo/entity';
+import type { EntityQueryContext, FieldEqualityCondition } from '@expo/entity';
 import {
   EntityDatabaseAdapter,
   getDatabaseFieldForEntityField,
+  isSingleValueFieldEqualityCondition,
   transformDatabaseObjectToFields,
 } from '@expo/entity';
 import type { Knex } from 'knex';
 
 import type { SQLFragment } from './SQLOperator.ts';
-
-/**
- * Equality operand that is used for selecting entities with a field with a single value.
- */
-export interface SingleValueFieldEqualityCondition<
-  TFields extends Record<string, any>,
-  N extends keyof TFields = keyof TFields,
-> {
-  fieldName: N;
-  fieldValue: TFields[N];
-}
-
-/**
- * Equality operand that is used for selecting entities with a field matching one of multiple values.
- */
-export interface MultiValueFieldEqualityCondition<
-  TFields extends Record<string, any>,
-  N extends keyof TFields = keyof TFields,
-> {
-  fieldName: N;
-  fieldValues: readonly TFields[N][];
-}
-
-/**
- * A single equality operand for use in a selection clause.
- * See EntityLoader.loadManyByFieldEqualityConjunctionAsync documentation for examples.
- */
-export type FieldEqualityCondition<
-  TFields extends Record<string, any>,
-  N extends keyof TFields = keyof TFields,
-> = SingleValueFieldEqualityCondition<TFields, N> | MultiValueFieldEqualityCondition<TFields, N>;
-
-export function isSingleValueFieldEqualityCondition<
-  TFields extends Record<string, any>,
-  N extends keyof TFields = keyof TFields,
->(
-  condition: FieldEqualityCondition<TFields, N>,
-): condition is SingleValueFieldEqualityCondition<TFields, N> {
-  return (condition as SingleValueFieldEqualityCondition<TFields, N>).fieldValue !== undefined;
-}
 
 export interface TableFieldSingleValueEqualityCondition {
   tableField: string;
@@ -167,21 +128,31 @@ export abstract class BasePostgresEntityDatabaseAdapter<
   }
   /**
    * Fetch many objects matching the conjunction of where clauses constructed from
-   * specified field equality operands.
+   * specified field equality operands. Overrides the base entity adapter implementation
+   * to push the conjunction filter all the way down to SQL.
    *
    * @param queryContext - query context with which to perform the fetch
    * @param fieldEqualityOperands - list of field equality where clause operand specifications
-   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query
+   * @param querySelectionModifiers - limit, offset, orderBy, and orderByRaw for the query.
+   *   Optional; when omitted the entire conjunction is returned in arbitrary order.
    * @returns array of objects matching the query
    */
-  async fetchManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
+  override async fetchManyByFieldEqualityConjunctionAsync<N extends keyof TFields>(
     queryContext: EntityQueryContext,
     fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
-    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
+    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields> = {},
   ): Promise<readonly Readonly<TFields>[]> {
+    const combinedOperands: readonly FieldEqualityCondition<TFields, N>[] = [
+      ...fieldEqualityOperands,
+      ...(this.entityConfiguration.inherentFilters as readonly FieldEqualityCondition<
+        TFields,
+        N
+      >[]),
+    ];
+
     const tableFieldSingleValueOperands: TableFieldSingleValueEqualityCondition[] = [];
     const tableFieldMultipleValueOperands: TableFieldMultiValueEqualityCondition[] = [];
-    for (const operand of fieldEqualityOperands) {
+    for (const operand of combinedOperands) {
       if (isSingleValueFieldEqualityCondition(operand)) {
         tableFieldSingleValueOperands.push({
           tableField: getDatabaseFieldForEntityField(this.entityConfiguration, operand.fieldName),

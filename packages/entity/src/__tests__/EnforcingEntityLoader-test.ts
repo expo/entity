@@ -217,6 +217,38 @@ describe(EnforcingEntityLoader, () => {
     });
   });
 
+  describe('loadManyByFieldEqualityConjunctionAsync', () => {
+    it('throws when result is unsuccessful', async () => {
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
+      const rejection = new Error();
+      when(
+        nonEnforcingEntityLoaderMock.loadManyByFieldEqualityConjunctionAsync(anything()),
+      ).thenResolve([result(rejection)]);
+      const nonEnforcingEntityLoader = instance(nonEnforcingEntityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(nonEnforcingEntityLoader);
+      await expect(
+        enforcingEntityLoader.loadManyByFieldEqualityConjunctionAsync(anything()),
+      ).rejects.toThrow(rejection);
+    });
+
+    it('returns value when result is successful', async () => {
+      const nonEnforcingEntityLoaderMock = mock<
+        AuthorizationResultBasedEntityLoader<any, any, any, any, any, any>
+      >(AuthorizationResultBasedEntityLoader);
+      const resolved = {};
+      when(
+        nonEnforcingEntityLoaderMock.loadManyByFieldEqualityConjunctionAsync(anything()),
+      ).thenResolve([result(resolved)]);
+      const nonEnforcingEntityLoader = instance(nonEnforcingEntityLoaderMock);
+      const enforcingEntityLoader = new EnforcingEntityLoader(nonEnforcingEntityLoader);
+      await expect(
+        enforcingEntityLoader.loadManyByFieldEqualityConjunctionAsync(anything()),
+      ).resolves.toEqual([resolved]);
+    });
+  });
+
   describe('loadByFieldEqualingAsync', () => {
     it('throws when result is unsuccessful', async () => {
       const nonEnforcingEntityLoaderMock = mock<

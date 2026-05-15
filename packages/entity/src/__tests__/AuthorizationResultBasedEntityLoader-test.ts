@@ -321,6 +321,110 @@ describe(AuthorizationResultBasedEntityLoader, () => {
     ).toEqual([id3]);
   });
 
+  it('loads entities by a field equality conjunction', async () => {
+    const dateToInsert = new Date();
+    const viewerContext = instance(mock(ViewerContext));
+    const privacyPolicyEvaluationContext =
+      instance(
+        mock<
+          EntityPrivacyPolicyEvaluationContext<
+            TestFields,
+            'customIdField',
+            ViewerContext,
+            TestEntity
+          >
+        >(),
+      );
+    const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+    const queryContext = new StubQueryContextProvider().getQueryContext();
+
+    const id1 = uuidv4();
+    const id2 = uuidv4();
+    const id3 = uuidv4();
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      StubDatabaseAdapter.convertFieldObjectsToDataStore(
+        testEntityConfiguration,
+        new Map([
+          [
+            testEntityConfiguration.tableName,
+            [
+              {
+                customIdField: id1,
+                testIndexedField: 'h1',
+                intField: 5,
+                stringField: 'huh',
+                dateField: dateToInsert,
+                nullableField: null,
+              },
+              {
+                customIdField: id2,
+                testIndexedField: 'h2',
+                intField: 5,
+                stringField: 'huh',
+                dateField: dateToInsert,
+                nullableField: null,
+              },
+              {
+                customIdField: id3,
+                testIndexedField: 'h3',
+                intField: 3,
+                stringField: 'huh',
+                dateField: dateToInsert,
+                nullableField: null,
+              },
+            ],
+          ],
+        ]),
+      ),
+    );
+    const privacyPolicy = new TestEntityPrivacyPolicy();
+    const cacheAdapterProvider = new NoCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const dataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      new StubQueryContextProvider(),
+      instance(mock<IEntityMetricsAdapter>()),
+      TestEntity.name,
+    );
+    const constructionUtils = new EntityConstructionUtils(
+      viewerContext,
+      queryContext,
+      privacyPolicyEvaluationContext,
+      testEntityConfiguration,
+      TestEntity,
+      /* entitySelectedFields */ undefined,
+      privacyPolicy,
+      metricsAdapter,
+    );
+    const entityLoader = new AuthorizationResultBasedEntityLoader(
+      queryContext,
+      testEntityConfiguration,
+      TestEntity,
+      dataManager,
+      constructionUtils,
+    );
+
+    // Single-value AND multi-value operands combined: stringField='huh' AND intField IN [5].
+    const conjunctionResults = await enforceResultsAsync(
+      entityLoader.loadManyByFieldEqualityConjunctionAsync([
+        { fieldName: 'stringField', fieldValue: 'huh' },
+        { fieldName: 'intField', fieldValues: [5] },
+      ]),
+    );
+    expect(conjunctionResults.map((m) => m.getID()).sort()).toEqual([id1, id2].sort());
+
+    // Validates each operand's value type — passing the wrong-type value (number for a
+    // string field) throws.
+    await expect(
+      entityLoader.loadManyByFieldEqualityConjunctionAsync([
+        { fieldName: 'stringField', fieldValue: 5 as unknown as string },
+      ]),
+    ).rejects.toThrow();
+  });
+
   it('authorizes loaded entities', async () => {
     const privacyPolicy = new TestEntityPrivacyPolicy();
     const spiedPrivacyPolicy = spy(privacyPolicy);

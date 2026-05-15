@@ -2,6 +2,7 @@ import type {
   EntityConstructionUtils,
   EntityPrivacyPolicy,
   EntityQueryContext,
+  FieldEqualityCondition,
   IEntityMetricsAdapter,
   ReadonlyEntity,
   ViewerContext,
@@ -12,7 +13,6 @@ import type {
   EntityLoaderLoadPageArgs,
   EntityLoaderQuerySelectionModifiers,
 } from './AuthorizationResultBasedKnexEntityLoader.ts';
-import type { FieldEqualityCondition } from './BasePostgresEntityDatabaseAdapter.ts';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder.ts';
 import type { SQLFragment } from './SQLOperator.ts';
 import type { Connection, EntityKnexDataManager } from './internal/EntityKnexDataManager.ts';

@@ -1,5 +1,6 @@
 import type { AuthorizationResultBasedEntityLoader } from './AuthorizationResultBasedEntityLoader.ts';
 import type { EntityCompositeField, EntityCompositeFieldValue } from './EntityConfiguration.ts';
+import type { FieldEqualityCondition } from './EntityDatabaseAdapter.ts';
 import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
 import type { ReadonlyEntity } from './ReadonlyEntity.ts';
 import type { ViewerContext } from './ViewerContext.ts';
@@ -101,6 +102,20 @@ export class EnforcingEntityLoader<
       fieldName,
       fieldValue,
     );
+    return entityResults.map((result) => result.enforceValue());
+  }
+
+  /**
+   * Load many entities matching the conjunction of field equality operands.
+   * @param fieldEqualityOperands - field equality where-clause operands AND'd together
+   * @returns array of entities matching the conjunction
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
+   */
+  async loadManyByFieldEqualityConjunctionAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldEqualityOperands: readonly FieldEqualityCondition<TFields, N>[],
+  ): Promise<readonly TEntity[]> {
+    const entityResults =
+      await this.entityLoader.loadManyByFieldEqualityConjunctionAsync(fieldEqualityOperands);
     return entityResults.map((result) => result.enforceValue());
   }
 
