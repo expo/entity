@@ -79,6 +79,27 @@ export type GenericRedisCacheInvalidationConfig =
       cacheKeyVersionsToInvalidateFn: (cacheKeyVersion: number) => readonly number[];
     };
 
+function validateGenericRedisCacheContext(context: GenericRedisCacheContext): void {
+  if (context.cacheKeyDelimiter.length === 0) {
+    throw new Error('GenericRedisCacheContext.cacheKeyDelimiter must be a non-empty string');
+  }
+  if (context.cacheKeyDelimiter.includes('\\')) {
+    throw new Error(
+      `GenericRedisCacheContext.cacheKeyDelimiter must not contain the escape character "\\" (got ${JSON.stringify(context.cacheKeyDelimiter)})`,
+    );
+  }
+  if (!Number.isInteger(context.ttlSecondsPositive) || context.ttlSecondsPositive <= 0) {
+    throw new Error(
+      `GenericRedisCacheContext.ttlSecondsPositive must be a positive integer (got ${context.ttlSecondsPositive})`,
+    );
+  }
+  if (!Number.isInteger(context.ttlSecondsNegative) || context.ttlSecondsNegative <= 0) {
+    throw new Error(
+      `GenericRedisCacheContext.ttlSecondsNegative must be a positive integer (got ${context.ttlSecondsNegative})`,
+    );
+  }
+}
+
 export interface GenericRedisCacheContext {
   /**
    * Instance of ioredis.Redis
@@ -127,7 +148,9 @@ export class GenericRedisCacher<
   constructor(
     private readonly context: GenericRedisCacheContext,
     private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
-  ) {}
+  ) {
+    validateGenericRedisCacheContext(context);
+  }
 
   public async loadManyAsync(
     keys: readonly string[],
@@ -259,12 +282,19 @@ export class GenericRedisCacher<
         ).map((cacheKeyVersion) =>
           this.makeCacheKeyForCacheKeyVersion(key, value, cacheKeyVersion),
         );
-      case RedisCacheInvalidationStrategy.CUSTOM:
-        return this.context.invalidationConfig
-          .cacheKeyVersionsToInvalidateFn(this.entityConfiguration.cacheKeyVersion)
-          .map((cacheKeyVersion) =>
-            this.makeCacheKeyForCacheKeyVersion(key, value, cacheKeyVersion),
+      case RedisCacheInvalidationStrategy.CUSTOM: {
+        const cacheKeyVersions = this.context.invalidationConfig.cacheKeyVersionsToInvalidateFn(
+          this.entityConfiguration.cacheKeyVersion,
+        );
+        if (cacheKeyVersions.length === 0) {
+          throw new Error(
+            `GenericRedisCacheContext.invalidationConfig.cacheKeyVersionsToInvalidateFn returned an empty list for cacheKeyVersion ${this.entityConfiguration.cacheKeyVersion}; this would silently disable invalidation`,
           );
+        }
+        return cacheKeyVersions.map((cacheKeyVersion) =>
+          this.makeCacheKeyForCacheKeyVersion(key, value, cacheKeyVersion),
+        );
+      }
     }
   }
 }

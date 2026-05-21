@@ -340,5 +340,89 @@ describe(GenericRedisCacher, () => {
       );
       await genericCacher.invalidateManyAsync([]);
     });
+
+    it('throws when CUSTOM strategy returns an empty cacheKeyVersions list', () => {
+      const genericCacher = new GenericRedisCacher(
+        {
+          redisClient: instance(mock<Redis>()),
+          cacheKeyDelimiter: ':',
+          cacheKeyPrefix: 'hello-',
+          ttlSecondsPositive: 1,
+          ttlSecondsNegative: 2,
+          invalidationConfig: {
+            invalidationStrategy: RedisCacheInvalidationStrategy.CUSTOM,
+            cacheKeyVersionsToInvalidateFn: () => [],
+          },
+        },
+        entityConfiguration,
+      );
+      expect(() =>
+        genericCacher['makeCacheKeysForInvalidation'](
+          new SingleFieldHolder('id'),
+          new SingleFieldValueHolder('wat'),
+        ),
+      ).toThrow(/empty list/);
+    });
+  });
+
+  describe('GenericRedisCacheContext validation', () => {
+    const validContext = {
+      redisClient: instance(mock<Redis>()),
+      cacheKeyDelimiter: ':',
+      cacheKeyPrefix: 'hello-',
+      ttlSecondsPositive: 1,
+      ttlSecondsNegative: 2,
+      invalidationConfig: {
+        invalidationStrategy: RedisCacheInvalidationStrategy.CURRENT_CACHE_KEY_VERSION as const,
+      },
+    };
+
+    it('throws when cacheKeyDelimiter is empty', () => {
+      expect(
+        () =>
+          new GenericRedisCacher({ ...validContext, cacheKeyDelimiter: '' }, entityConfiguration),
+      ).toThrow(/cacheKeyDelimiter must be a non-empty string/);
+    });
+
+    it('throws when cacheKeyDelimiter contains the escape character', () => {
+      expect(
+        () =>
+          new GenericRedisCacher({ ...validContext, cacheKeyDelimiter: '\\' }, entityConfiguration),
+      ).toThrow(/must not contain the escape character/);
+    });
+
+    it('throws when ttlSecondsPositive is not a positive integer', () => {
+      expect(
+        () =>
+          new GenericRedisCacher({ ...validContext, ttlSecondsPositive: 0 }, entityConfiguration),
+      ).toThrow(/ttlSecondsPositive must be a positive integer/);
+      expect(
+        () =>
+          new GenericRedisCacher({ ...validContext, ttlSecondsPositive: -1 }, entityConfiguration),
+      ).toThrow(/ttlSecondsPositive must be a positive integer/);
+      expect(
+        () =>
+          new GenericRedisCacher({ ...validContext, ttlSecondsPositive: 1.5 }, entityConfiguration),
+      ).toThrow(/ttlSecondsPositive must be a positive integer/);
+    });
+
+    it('throws when ttlSecondsNegative is not a positive integer', () => {
+      expect(
+        () =>
+          new GenericRedisCacher({ ...validContext, ttlSecondsNegative: 0 }, entityConfiguration),
+      ).toThrow(/ttlSecondsNegative must be a positive integer/);
+      expect(
+        () =>
+          new GenericRedisCacher({ ...validContext, ttlSecondsNegative: -1 }, entityConfiguration),
+      ).toThrow(/ttlSecondsNegative must be a positive integer/);
+      expect(
+        () =>
+          new GenericRedisCacher({ ...validContext, ttlSecondsNegative: 1.5 }, entityConfiguration),
+      ).toThrow(/ttlSecondsNegative must be a positive integer/);
+    });
+
+    it('accepts a valid context', () => {
+      expect(() => new GenericRedisCacher(validContext, entityConfiguration)).not.toThrow();
+    });
   });
 });
