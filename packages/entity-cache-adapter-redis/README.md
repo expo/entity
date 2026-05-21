@@ -13,13 +13,7 @@ import Redis from 'ioredis';
 
 const genericRedisCacherContext = {
   redisClient: new Redis(new URL(process.env['REDIS_URL']!).toString()),
-  makeKeyFn(...parts: string[]): string {
-    const delimiter = ':';
-    const escapedParts = parts.map((part) =>
-      part.replaceAll('\\', '\\\\').replaceAll(delimiter, `\\${delimiter}`)
-    );
-    return escapedParts.join(delimiter);
-  },
+  cacheKeyDelimiter: ':',
   cacheKeyPrefix: 'ent-',
   ttlSecondsPositive: 86400, // 1 day
   ttlSecondsNegative: 600, // 10 minutes

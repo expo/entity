@@ -86,10 +86,15 @@ export interface GenericRedisCacheContext {
   redisClient: IRedis;
 
   /**
-   * Create a key string for key parts (cache key prefix, versions, entity name, etc).
-   * Most commonly a simple `parts.join(':')`. See integration test for example.
+   * Delimiter used to join the parts of a Redis cache key (cache key prefix,
+   * versions, entity name, field values, etc). Typically `:`.
+   *
+   * The cacher escapes occurrences of this delimiter (and the escape character `\`)
+   * within each part before joining, so the encoding is injective regardless of
+   * what the parts contain. This prevents a value that happens to contain the
+   * delimiter from colliding with a different (key, value) pair.
    */
-  makeKeyFn: (...parts: string[]) => string;
+  cacheKeyDelimiter: string;
 
   /**
    * Prefix prepended to all entity cache keys. Useful for adding a short, human-readable
@@ -212,14 +217,18 @@ export class GenericRedisCacher<
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue, cacheKeyVersion: number): string {
     const cacheKeyType = key.getLoadMethodType();
-    const parts = key.createCacheKeyPartsForLoadValue(this.entityConfiguration, value);
-    return this.context.makeKeyFn(
+    const keyAndValueParts = key.createCacheKeyPartsForLoadValue(this.entityConfiguration, value);
+    const allParts = [
       this.context.cacheKeyPrefix,
       cacheKeyType,
       this.entityConfiguration.tableName,
-      `v3.${cacheKeyVersion}`,
-      ...parts,
-    );
+      `v4.${cacheKeyVersion}`,
+      ...keyAndValueParts,
+    ];
+    const delimiter = this.context.cacheKeyDelimiter;
+    return allParts
+      .map((part) => part.replaceAll('\\', '\\\\').replaceAll(delimiter, `\\${delimiter}`))
+      .join(delimiter);
   }
 
   public makeCacheKeyForStorage<
