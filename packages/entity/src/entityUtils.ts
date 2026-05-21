@@ -117,7 +117,7 @@ export const pick = <T extends object, U extends keyof T>(
 ): Pick<T, U> => {
   const result = {} as Pick<T, U>;
   for (const prop of props) {
-    if (object.hasOwnProperty(prop)) {
+    if (Object.prototype.hasOwnProperty.call(object, prop)) {
       result[prop] = object[prop];
     }
   }
