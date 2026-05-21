@@ -63,7 +63,9 @@ export class StubDatabaseAdapter<
     tableTuples: (readonly any[])[],
   ): Promise<object[]> {
     const objectCollection = this.getObjectCollectionForTable(tableName);
-    const results = StubDatabaseAdapter.uniqBy(tableTuples, (tuple) => tuple.join(':')).reduce(
+    const results = StubDatabaseAdapter.uniqBy(tableTuples, (tuple) =>
+      JSON.stringify(tuple),
+    ).reduce(
       (acc, tableTuple) => {
         return acc.concat(
           objectCollection.filter((obj) => {
