@@ -60,7 +60,14 @@ describe(isEqualWithEntityAware, () => {
     const map3 = new SingleFieldValueHolderMap(
       new Map([[new SingleFieldValueHolder('foo2'), 'bar']]),
     );
+    const map4 = new SingleFieldValueHolderMap(
+      new Map([
+        [new SingleFieldValueHolder('foo'), 'bar'],
+        [new SingleFieldValueHolder('extra'), 'bar'],
+      ]),
+    );
     expect(isEqualWithEntityAware(map1, map2)).toBe(true);
     expect(isEqualWithEntityAware(map1, map3)).toBe(false);
+    expect(isEqualWithEntityAware(map1, map4)).toBe(false);
   });
 });

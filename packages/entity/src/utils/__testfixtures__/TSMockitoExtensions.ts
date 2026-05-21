@@ -34,8 +34,11 @@ export function isEqualWithEntityAware(expected: any, actual: any): boolean {
     }
 
     if (expected instanceof SerializableKeyMap && actual instanceof SerializableKeyMap) {
+      if (expected.size !== actual.size) {
+        return false;
+      }
       for (const [key, value] of expected.entries()) {
-        if (!actual.has(key) || !isEqualWith(value, actual.get(key))) {
+        if (!actual.has(key) || !isEqualWithEntityAware(value, actual.get(key))) {
           return false;
         }
       }
