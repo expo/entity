@@ -14,9 +14,26 @@ import { ViewerContext } from '../ViewerContext.ts';
 import { NoOpEntityMetricsAdapter } from '../metrics/NoOpEntityMetricsAdapter.ts';
 import { InMemoryFullCacheStubCacheAdapterProvider } from '../utils/__testfixtures__/StubCacheAdapter.ts';
 import { StubDatabaseAdapterProvider } from '../utils/__testfixtures__/StubDatabaseAdapterProvider.ts';
+import { StubQueryContextProvider } from '../utils/__testfixtures__/StubQueryContextProvider.ts';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 describe(EntityQueryContext, () => {
+  describe('non-transactional query contexts', () => {
+    it('returns a singleton default query context and creates nested query context scopes', async () => {
+      const queryContextProvider = new StubQueryContextProvider();
+
+      const defaultQueryContext = queryContextProvider.getQueryContext();
+      expect(queryContextProvider.getQueryContext()).toBe(defaultQueryContext);
+
+      await defaultQueryContext.runInNestedQueryContextAsync(async (nestedQueryContext) => {
+        expect(nestedQueryContext).not.toBe(defaultQueryContext);
+        expect(nestedQueryContext.queryContextId).not.toBe(defaultQueryContext.queryContextId);
+        expect(nestedQueryContext.parentQueryContext).toBe(defaultQueryContext);
+        expect(nestedQueryContext.isInTransaction()).toBe(false);
+      });
+    });
+  });
+
   describe('callbacks', () => {
     it('calls all callbacks, and calls invalidation first', async () => {
       const companionProvider = createUnitTestEntityCompanionProvider();

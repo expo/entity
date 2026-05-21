@@ -78,7 +78,13 @@ export type ResolvedTransactionConfig = Pick<TransactionConfig, 'isolationLevel'
  * differs when in a transactional context.
  */
 export abstract class EntityQueryContext {
-  constructor(private readonly queryInterface: any) {}
+  constructor(
+    private readonly queryInterface: any,
+    /**
+     * @internal
+     */
+    readonly queryContextId: string,
+  ) {}
 
   abstract isInTransaction(): this is EntityTransactionalQueryContext;
 
@@ -90,6 +96,12 @@ export abstract class EntityQueryContext {
     transactionScope: (queryContext: EntityTransactionalQueryContext) => Promise<T>,
     transactionConfig?: TransactionConfig,
   ): Promise<T>;
+
+  async runInNestedQueryContextAsync<T>(
+    _queryContextScope: (queryContext: EntityQueryContext) => Promise<T>,
+  ): Promise<T> {
+    throw new Error(`${this.constructor.name} does not support nested query contexts`);
+  }
 }
 
 /**
@@ -102,9 +114,12 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
   constructor(
     queryInterface: any,
     private readonly entityQueryContextProvider: EntityQueryContextProvider,
+    queryContextId: string,
   ) {
-    super(queryInterface);
+    super(queryInterface, queryContextId);
   }
+
+  private readonly queryContextEndCallbacks: (() => void)[] = [];
 
   override isInTransaction(): this is EntityTransactionalQueryContext {
     return false;
@@ -118,6 +133,55 @@ export class EntityNonTransactionalQueryContext extends EntityQueryContext {
       transactionScope,
       transactionConfig,
     );
+  }
+
+  override async runInNestedQueryContextAsync<T>(
+    queryContextScope: (innerQueryContext: EntityNestedNonTransactionalQueryContext) => Promise<T>,
+  ): Promise<T> {
+    return await this.entityQueryContextProvider.runInNestedNonTransactionalQueryContextAsync(
+      this,
+      queryContextScope,
+    );
+  }
+
+  /**
+   * Schedule a callback to run when this query context ends. Default non-transactional query
+   * contexts are intentionally long-lived, so this is primarily used by nested non-transactional
+   * query contexts.
+   *
+   * @internal
+   */
+  public appendQueryContextEndCallback(callback: () => void): void {
+    this.queryContextEndCallbacks.push(callback);
+  }
+
+  /**
+   * @internal
+   */
+  public runQueryContextEndCallbacks(): void {
+    const callbacks = [...this.queryContextEndCallbacks];
+    this.queryContextEndCallbacks.length = 0;
+    for (const callback of callbacks) {
+      callback();
+    }
+  }
+}
+
+/**
+ * Entity framework representation of a nested non-transactional query execution unit.
+ * This exists to provide a fresh local DataLoader scope without opening a database transaction.
+ */
+export class EntityNestedNonTransactionalQueryContext extends EntityNonTransactionalQueryContext {
+  constructor(
+    queryInterface: any,
+    /**
+     * @internal
+     */
+    readonly parentQueryContext: EntityNonTransactionalQueryContext,
+    entityQueryContextProvider: EntityQueryContextProvider,
+    queryContextId: string,
+  ) {
+    super(queryInterface, entityQueryContextProvider, queryContextId);
   }
 }
 
@@ -145,10 +209,10 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
     /**
      * @internal
      */
-    readonly transactionId: string,
+    queryContextId: string,
     public readonly transactionConfig: ResolvedTransactionConfig,
   ) {
-    super(queryInterface);
+    super(queryInterface, queryContextId);
   }
 
   /**
@@ -279,6 +343,12 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
       transactionScope,
     );
   }
+
+  override async runInNestedQueryContextAsync<T>(
+    queryContextScope: (innerQueryContext: EntityTransactionalQueryContext) => Promise<T>,
+  ): Promise<T> {
+    return await this.runInNestedTransactionAsync(queryContextScope);
+  }
 }
 
 /**
@@ -300,10 +370,10 @@ export class EntityNestedTransactionalQueryContext extends EntityTransactionalQu
      */
     readonly parentQueryContext: EntityTransactionalQueryContext,
     entityQueryContextProvider: EntityQueryContextProvider,
-    transactionId: string,
+    queryContextId: string,
     transactionConfig: ResolvedTransactionConfig,
   ) {
-    super(queryInterface, entityQueryContextProvider, transactionId, transactionConfig);
+    super(queryInterface, entityQueryContextProvider, queryContextId, transactionConfig);
     parentQueryContext.childQueryContexts.push(this);
   }
 

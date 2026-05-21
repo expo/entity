@@ -1,14 +1,22 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import type { EntityTransactionalQueryContext } from '../../EntityQueryContext.ts';
+import { EntityCompanionProvider } from '../../EntityCompanionProvider.ts';
+import type { EntityQueryContext } from '../../EntityQueryContext.ts';
 import { ViewerContext } from '../../ViewerContext.ts';
 import { EntityDatabaseAdapterUniqueConstraintError } from '../../errors/EntityDatabaseAdapterError.ts';
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError.ts';
+import { NoOpEntityMetricsAdapter } from '../../metrics/NoOpEntityMetricsAdapter.ts';
 import {
   createOrGetExistingAsync,
   createWithUniqueConstraintRecoveryAsync,
 } from '../EntityCreationUtils.ts';
-import { SimpleTestEntity } from '../__testfixtures__/SimpleTestEntity.ts';
+import {
+  SimpleTestEntity,
+  simpleTestEntityConfiguration,
+} from '../__testfixtures__/SimpleTestEntity.ts';
+import { NoCacheStubCacheAdapterProvider } from '../__testfixtures__/StubCacheAdapter.ts';
+import { StubDatabaseAdapterProvider } from '../__testfixtures__/StubDatabaseAdapterProvider.ts';
+import { StubQueryContextProvider } from '../__testfixtures__/StubQueryContextProvider.ts';
 import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/createUnitTestEntityCompanionProvider.ts';
 
 type TArgs = object;
@@ -24,17 +32,13 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       const args: TArgs = {};
 
       const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
+        async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityQueryContext) => {
           return entity;
         },
       );
 
       const createFn = jest.fn(
-        async (vc: ViewerContext, _args: TArgs, queryContext?: EntityTransactionalQueryContext) => {
+        async (vc: ViewerContext, _args: TArgs, queryContext?: EntityQueryContext) => {
           return await SimpleTestEntity.creator(vc, queryContext).createAsync();
         },
       );
@@ -76,17 +80,13 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       const args: TArgs = {};
 
       const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
+        async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityQueryContext) => {
           return null;
         },
       );
 
       const createFn = jest.fn(
-        async (vc: ViewerContext, _args: TArgs, queryContext?: EntityTransactionalQueryContext) => {
+        async (vc: ViewerContext, _args: TArgs, queryContext?: EntityQueryContext) => {
           return await SimpleTestEntity.creator(vc, queryContext).createAsync();
         },
       );
@@ -130,17 +130,13 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       const args: TArgs = {};
 
       const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
+        async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityQueryContext) => {
           return null;
         },
       );
 
       const createFn = jest.fn(
-        async (vc: ViewerContext, _args: TArgs, queryContext?: EntityTransactionalQueryContext) => {
+        async (vc: ViewerContext, _args: TArgs, queryContext?: EntityQueryContext) => {
           return await SimpleTestEntity.creator(vc, queryContext).createAsync();
         },
       );
@@ -184,21 +180,13 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       const args: TArgs = {};
 
       const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
+        async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityQueryContext) => {
           return entity;
         },
       );
 
       const createFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
+        async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityQueryContext) => {
           throw new EntityDatabaseAdapterUniqueConstraintError('wat');
         },
       );
@@ -240,21 +228,13 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       const args: TArgs = {};
 
       const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
+        async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityQueryContext) => {
           return null;
         },
       );
 
       const createFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
+        async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityQueryContext) => {
           throw new EntityDatabaseAdapterUniqueConstraintError('wat');
         },
       );
@@ -300,21 +280,13 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       const args: TArgs = {};
 
       const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
+        async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityQueryContext) => {
           return null;
         },
       );
 
       const createFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
+        async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityQueryContext) => {
           throw new Error('wat');
         },
       );
@@ -352,5 +324,68 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
       expect(getFn).toHaveBeenCalledTimes(0);
       expect(createFn).toHaveBeenCalledTimes(1);
     });
+  });
+});
+
+describe('non-transactional query context scoping', () => {
+  it('does not reuse a negative dataloader entry from the initial get during unique constraint recovery', async () => {
+    const queryContextProvider = new StubQueryContextProvider();
+    const databaseAdapterProvider = new StubDatabaseAdapterProvider();
+    const companionProvider = new EntityCompanionProvider(
+      new NoOpEntityMetricsAdapter(),
+      new Map([
+        [
+          'postgres',
+          {
+            adapterProvider: databaseAdapterProvider,
+            queryContextProvider,
+          },
+        ],
+      ]),
+      new Map([
+        [
+          'redis',
+          {
+            cacheAdapterProvider: new NoCacheStubCacheAdapterProvider(),
+          },
+        ],
+      ]),
+    );
+    const viewerContext = new ViewerContext(companionProvider);
+    const args = { id: '00000000-0000-7000-8000-000000000001' };
+
+    const getFn = jest.fn(
+      async (vc: ViewerContext, getArgs: typeof args, queryContext?: EntityQueryContext) => {
+        return await SimpleTestEntity.loader(vc, queryContext).loadByIDNullableAsync(getArgs.id);
+      },
+    );
+
+    const createFn = jest.fn(
+      async (
+        _vc: ViewerContext,
+        createArgs: typeof args,
+        queryContext?: EntityQueryContext,
+      ): Promise<SimpleTestEntity> => {
+        await databaseAdapterProvider
+          .getDatabaseAdapter(simpleTestEntityConfiguration)
+          .insertAsync(queryContext ?? queryContextProvider.getQueryContext(), {
+            id: createArgs.id,
+          });
+        throw new EntityDatabaseAdapterUniqueConstraintError('duplicate');
+      },
+    );
+
+    const entity = await createOrGetExistingAsync(
+      viewerContext,
+      SimpleTestEntity,
+      getFn,
+      args,
+      createFn,
+      args,
+    );
+
+    expect(entity.getID()).toBe(args.id);
+    expect(getFn).toHaveBeenCalledTimes(2);
+    expect(createFn).toHaveBeenCalledTimes(1);
   });
 });

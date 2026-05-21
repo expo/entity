@@ -1,8 +1,4 @@
-import type {
-  EntityCompanionDefinition,
-  EntityTransactionalQueryContext,
-  ViewerContext,
-} from '@expo/entity';
+import type { EntityCompanionDefinition, EntityQueryContext, ViewerContext } from '@expo/entity';
 import {
   AlwaysAllowPrivacyPolicyRule,
   Entity,
@@ -60,7 +56,7 @@ export class PostgresUniqueTestEntity extends Entity<
   public static async getByNameAsync(
     viewerContext: ViewerContext,
     args: { name: string },
-    queryContext?: EntityTransactionalQueryContext,
+    queryContext?: EntityQueryContext,
   ): Promise<PostgresUniqueTestEntity | null> {
     return await PostgresUniqueTestEntity.loader(
       viewerContext,
@@ -71,7 +67,7 @@ export class PostgresUniqueTestEntity extends Entity<
   public static async createWithNameAsync(
     viewerContext: ViewerContext,
     args: { name: string },
-    queryContext?: EntityTransactionalQueryContext,
+    queryContext?: EntityQueryContext,
   ): Promise<PostgresUniqueTestEntity> {
     return await PostgresUniqueTestEntity.creator(viewerContext, queryContext)
       .setField('name', args.name)

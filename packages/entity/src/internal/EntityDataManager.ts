@@ -2,7 +2,11 @@ import DataLoader from 'dataloader';
 import invariant from 'invariant';
 
 import type { EntityDatabaseAdapter } from '../EntityDatabaseAdapter.ts';
-import type { EntityQueryContext, EntityTransactionalQueryContext } from '../EntityQueryContext.ts';
+import type {
+  EntityNonTransactionalQueryContext,
+  EntityQueryContext,
+  EntityTransactionalQueryContext,
+} from '../EntityQueryContext.ts';
 import { TransactionalDataLoaderMode } from '../EntityQueryContext.ts';
 import type { EntityQueryContextProvider } from '../EntityQueryContextProvider.ts';
 import { partitionErrors } from '../entityUtils.ts';
@@ -36,8 +40,8 @@ export class EntityDataManager<
   TFields extends Record<string, any>,
   TIDField extends keyof TFields,
 > {
-  // map from (load method type + data manager data loader key) to dataloader
-  private readonly dataLoaders: DataLoaderMap<TFields> = new Map();
+  // map from non-transactional query context id to dataloader map
+  private readonly nonTransactionalDataLoaders: Map<string, DataLoaderMap<TFields>> = new Map();
 
   // map from transaction id to dataloader map
   private readonly transactionalDataLoaders: Map<string, DataLoaderMap<TFields>> = new Map();
@@ -45,7 +49,7 @@ export class EntityDataManager<
   constructor(
     private readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
     private readonly entityCache: ReadThroughEntityCache<TFields, TIDField>,
-    private readonly queryContextProvider: EntityQueryContextProvider,
+    _queryContextProvider: EntityQueryContextProvider,
     private readonly metricsAdapter: IEntityMetricsAdapter,
     private readonly entityClassName: string,
   ) {}
@@ -54,9 +58,22 @@ export class EntityDataManager<
     TLoadKey extends IEntityLoadKey<TFields, TIDField, TSerializedLoadValue, TLoadValue>,
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
-  >(key: TLoadKey): DataLoader<TSerializedLoadValue, readonly Readonly<TFields>[]> {
+  >(
+    queryContext: EntityNonTransactionalQueryContext,
+    key: TLoadKey,
+  ): DataLoader<TSerializedLoadValue, readonly Readonly<TFields>[]> {
+    const dataLoaderMapForQueryContext = computeIfAbsent(
+      this.nonTransactionalDataLoaders,
+      queryContext.queryContextId,
+      () => {
+        queryContext.appendQueryContextEndCallback(() => {
+          this.nonTransactionalDataLoaders.delete(queryContext.queryContextId);
+        });
+        return new Map();
+      },
+    );
     return computeIfAbsent(
-      this.dataLoaders,
+      dataLoaderMapForQueryContext,
       key.getLoadMethodType() + key.getDataManagerDataLoaderKey(),
       () => {
         return new DataLoader(
@@ -66,7 +83,11 @@ export class EntityDataManager<
             const values = serializedLoadValues.map((serializedLoadValue) =>
               key.deserializeLoadValue(serializedLoadValue),
             );
-            const objectMap = await this.loadManyForNonTransactionalDataLoaderAsync(key, values);
+            const objectMap = await this.loadManyForNonTransactionalDataLoaderAsync(
+              queryContext,
+              key,
+              values,
+            );
             return values.map((value) => objectMap.get(value) ?? []);
           },
         );
@@ -79,6 +100,7 @@ export class EntityDataManager<
     TSerializedLoadValue,
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(
+    queryContext: EntityNonTransactionalQueryContext,
     key: TLoadKey,
     values: readonly TLoadValue[],
   ): Promise<ReadonlyMap<TLoadValue, readonly Readonly<TFields>[]>> {
@@ -98,11 +120,7 @@ export class EntityDataManager<
         entityClassName: this.entityClassName,
         loadType: key.getLoadMethodType(),
       });
-      return await this.databaseAdapter.fetchManyWhereAsync(
-        this.queryContextProvider.getQueryContext(),
-        key,
-        fetcherValues,
-      );
+      return await this.databaseAdapter.fetchManyWhereAsync(queryContext, key, fetcherValues);
     });
   }
 
@@ -116,10 +134,10 @@ export class EntityDataManager<
   ): DataLoader<TSerializedLoadValue, readonly Readonly<TFields>[]> {
     const dataLoaderMapForTransaction = computeIfAbsent(
       this.transactionalDataLoaders,
-      queryContext.transactionId,
+      queryContext.queryContextId,
       () => {
         queryContext.appendTransactionEndCallback(() => {
-          this.transactionalDataLoaders.delete(queryContext.transactionId);
+          this.transactionalDataLoaders.delete(queryContext.queryContextId);
         });
         return new Map();
       },
@@ -229,7 +247,7 @@ export class EntityDataManager<
     });
     const dataLoader = queryContext.isInTransaction()
       ? this.getTransactionalDataLoaderForLoadKey(queryContext, key)
-      : this.getDataLoaderForLoadKey(key);
+      : this.getDataLoaderForLoadKey(queryContext as EntityNonTransactionalQueryContext, key);
     const results = await dataLoader.loadMany(values.map((v) => key.serializeLoadValue(v)));
     const [successfulValues, errors] = partitionErrors(results);
     if (errors.length > 0) {
@@ -282,7 +300,11 @@ export class EntityDataManager<
     TLoadValue extends IEntityLoadValue<TSerializedLoadValue>,
   >(key: TLoadKey, value: TLoadValue): Promise<void> {
     await this.entityCache.invalidateManyAsync(key, [value]);
-    this.getDataLoaderForLoadKey(key).clear(key.serializeLoadValue(value));
+    for (const dataLoaderMap of this.nonTransactionalDataLoaders.values()) {
+      dataLoaderMap
+        .get(key.getLoadMethodType() + key.getDataManagerDataLoaderKey())
+        ?.clear(key.serializeLoadValue(value));
+    }
   }
 
   private invalidateOneForTransaction<

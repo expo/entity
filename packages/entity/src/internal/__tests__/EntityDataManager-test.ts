@@ -262,6 +262,68 @@ describe(EntityDataManager, () => {
     cacheSpy.mockReset();
   });
 
+  it('scopes non-transactional dataloaders by query context and cleans up nested query context state', async () => {
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects,
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const queryContextProvider = new StubQueryContextProvider();
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      queryContextProvider,
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name,
+    );
+    const defaultQueryContext = queryContextProvider.getQueryContext();
+    const sameDefaultQueryContext = queryContextProvider.getQueryContext();
+
+    const dbSpy = jest.spyOn(databaseAdapter, 'fetchManyWhereAsync');
+    const cacheSpy = jest.spyOn(entityCache, 'readManyThroughAsync');
+    const loadByStringFieldAsync = async (
+      queryContext: typeof defaultQueryContext,
+    ): Promise<
+      ReadonlyMap<
+        SingleFieldValueHolder<TestFields, 'stringField'>,
+        readonly Readonly<TestFields>[]
+      >
+    > =>
+      await entityDataManager.loadManyEqualingAsync(
+        queryContext,
+        new SingleFieldHolder<TestFields, 'customIdField', 'stringField'>('stringField'),
+        [new SingleFieldValueHolder<TestFields, 'stringField'>('hello')],
+      );
+
+    await loadByStringFieldAsync(defaultQueryContext);
+    await loadByStringFieldAsync(sameDefaultQueryContext);
+
+    expect(dbSpy).toHaveBeenCalledTimes(1);
+    expect(cacheSpy).toHaveBeenCalledTimes(1);
+    expect(entityDataManager['nonTransactionalDataLoaders'].size).toBe(1);
+
+    await defaultQueryContext.runInNestedQueryContextAsync(async (nestedQueryContext) => {
+      await loadByStringFieldAsync(nestedQueryContext);
+      await loadByStringFieldAsync(nestedQueryContext);
+
+      expect(dbSpy).toHaveBeenCalledTimes(2);
+      expect(cacheSpy).toHaveBeenCalledTimes(2);
+      expect(entityDataManager['nonTransactionalDataLoaders'].size).toBe(2);
+    });
+
+    expect(entityDataManager['nonTransactionalDataLoaders'].size).toBe(1);
+
+    dbSpy.mockReset();
+    cacheSpy.mockReset();
+  });
+
   it('loads and in-memory caches (dataloader) non-unique, non-cacheable loads', async () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(

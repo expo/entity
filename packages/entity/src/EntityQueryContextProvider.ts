@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import type { ResolvedTransactionConfig, TransactionConfig } from './EntityQueryContext.ts';
 import {
+  EntityNestedNonTransactionalQueryContext,
   EntityNestedTransactionalQueryContext,
   EntityNonTransactionalQueryContext,
   EntityTransactionalQueryContext,
@@ -12,11 +13,17 @@ import {
  * A query context provider vends transactional and non-transactional query contexts.
  */
 export abstract class EntityQueryContextProvider {
+  private defaultQueryContext: EntityNonTransactionalQueryContext | undefined;
+
   /**
    * Vend a regular (non-transactional) entity query context.
    */
   public getQueryContext(): EntityNonTransactionalQueryContext {
-    return new EntityNonTransactionalQueryContext(this.getQueryInterface(), this);
+    return (this.defaultQueryContext ??= new EntityNonTransactionalQueryContext(
+      this.getQueryInterface(),
+      this,
+      randomUUID(),
+    ));
   }
 
   /**
@@ -41,6 +48,31 @@ export abstract class EntityQueryContextProvider {
   protected abstract createNestedTransactionRunner<T>(
     outerQueryInterface: any,
   ): (transactionScope: (queryInterface: any) => Promise<T>) => Promise<T>;
+
+  /**
+   * Start a nested non-transactional query context from the specified parent query context and
+   * execute the provided closure within that nested DataLoader scope.
+   * @param outerQueryContext - the parent non-transactional query context
+   * @param queryContextScope - async callback to execute within the nested query context
+   */
+  async runInNestedNonTransactionalQueryContextAsync<T>(
+    outerQueryContext: EntityNonTransactionalQueryContext,
+    queryContextScope: (innerQueryContext: EntityNestedNonTransactionalQueryContext) => Promise<T>,
+  ): Promise<T> {
+    let innerQueryContextForCleanup: EntityNestedNonTransactionalQueryContext | undefined;
+    try {
+      const innerQueryContext = new EntityNestedNonTransactionalQueryContext(
+        outerQueryContext.getQueryInterface(),
+        outerQueryContext,
+        this,
+        randomUUID(),
+      );
+      innerQueryContextForCleanup = innerQueryContext;
+      return await queryContextScope(innerQueryContext);
+    } finally {
+      innerQueryContextForCleanup?.runQueryContextEndCallbacks();
+    }
+  }
 
   /**
    * Start a transaction and execute the provided transaction-scoped closure within the transaction.

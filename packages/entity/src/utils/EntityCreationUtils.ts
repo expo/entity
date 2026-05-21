@@ -1,6 +1,6 @@
 import type { IEntityClass } from '../Entity.ts';
 import type { EntityPrivacyPolicy } from '../EntityPrivacyPolicy.ts';
-import type { EntityTransactionalQueryContext } from '../EntityQueryContext.ts';
+import type { EntityQueryContext } from '../EntityQueryContext.ts';
 import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
 import type { ViewerContext } from '../ViewerContext.ts';
 import { EntityDatabaseAdapterUniqueConstraintError } from '../errors/EntityDatabaseAdapterError.ts';
@@ -37,35 +37,34 @@ export async function createOrGetExistingAsync<
   getAsync: (
     viewerContext: TViewerContext,
     getArgs: TGetArgs,
-    queryContext?: EntityTransactionalQueryContext,
+    queryContext?: EntityQueryContext,
   ) => Promise<TEntity | null>,
   getArgs: TGetArgs,
   createAsync: (
     viewerContext: TViewerContext,
     createArgs: TCreateArgs,
-    queryContext?: EntityTransactionalQueryContext,
+    queryContext?: EntityQueryContext,
   ) => Promise<TEntity>,
   createArgs: TCreateArgs,
-  queryContext?: EntityTransactionalQueryContext,
+  queryContext?: EntityQueryContext,
 ): Promise<TEntity> {
-  if (!queryContext) {
-    const maybeEntity = await getAsync(viewerContext, getArgs);
-    if (maybeEntity) {
-      return maybeEntity;
-    }
-  } else {
-    // This is done in a nested transaction since entity may negatively cache load results per-transaction (when configured).
-    // Without it, it would
-    // 1. load the entity in the current query context, negatively cache it
-    // 2. then try to create it in the nested transaction, which may fail due to a unique constraint error
-    // 3. then try to load the entity again in the current query context, which would return null due to negative cache
-    const maybeEntity = await queryContext.runInNestedTransactionAsync((nestedQueryContext) =>
-      getAsync(viewerContext, getArgs, nestedQueryContext),
-    );
-    if (maybeEntity) {
-      return maybeEntity;
-    }
+  const effectiveQueryContext =
+    queryContext ??
+    viewerContext
+      .getViewerScopedEntityCompanionForClass(entityClass)
+      .getQueryContextProvider()
+      .getQueryContext();
+
+  // This is done in a nested query context since entity may negatively cache load results
+  // in the current query context. Without it, create recovery can hit that negative cache
+  // after a concurrent insert causes a unique constraint error.
+  const maybeEntity = await effectiveQueryContext.runInNestedQueryContextAsync(
+    async (nestedQueryContext) => await getAsync(viewerContext, getArgs, nestedQueryContext),
+  );
+  if (maybeEntity) {
+    return maybeEntity;
   }
+
   return await createWithUniqueConstraintRecoveryAsync(
     viewerContext,
     entityClass,
@@ -73,7 +72,7 @@ export async function createOrGetExistingAsync<
     getArgs,
     createAsync,
     createArgs,
-    queryContext,
+    effectiveQueryContext,
   );
 }
 
@@ -109,23 +108,27 @@ export async function createWithUniqueConstraintRecoveryAsync<
   getAsync: (
     viewerContext: TViewerContext,
     getArgs: TGetArgs,
-    queryContext?: EntityTransactionalQueryContext,
+    queryContext?: EntityQueryContext,
   ) => Promise<TEntity | null>,
   getArgs: TGetArgs,
   createAsync: (
     viewerContext: TViewerContext,
     createArgs: TCreateArgs,
-    queryContext?: EntityTransactionalQueryContext,
+    queryContext?: EntityQueryContext,
   ) => Promise<TEntity>,
   createArgs: TCreateArgs,
-  queryContext?: EntityTransactionalQueryContext,
+  queryContext?: EntityQueryContext,
 ): Promise<TEntity> {
   try {
     if (!queryContext) {
       return await createAsync(viewerContext, createArgs);
     }
-    return await queryContext.runInNestedTransactionAsync((nestedQueryContext) =>
-      createAsync(viewerContext, createArgs, nestedQueryContext),
+    if (!queryContext.isInTransaction()) {
+      return await createAsync(viewerContext, createArgs, queryContext);
+    }
+    return await queryContext.runInNestedTransactionAsync(
+      async (nestedQueryContext) =>
+        await createAsync(viewerContext, createArgs, nestedQueryContext),
     );
   } catch (e) {
     if (e instanceof EntityDatabaseAdapterUniqueConstraintError) {
