@@ -137,6 +137,8 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
 
   private readonly preCommitCallbacks: { callback: PreCommitCallback; order: number }[] = [];
 
+  private readonly transactionEndCallbacks: (() => void)[] = [];
+
   constructor(
     queryInterface: any,
     private readonly entityQueryContextProvider: EntityQueryContextProvider,
@@ -197,6 +199,30 @@ export class EntityTransactionalQueryContext extends EntityQueryContext {
    */
   public appendPostCommitCallback(callback: PostCommitCallback): void {
     this.postCommitCallbacks.push(callback);
+  }
+
+  /**
+   * Schedule a callback to run when the transaction ends, regardless of whether it commits or rolls back.
+   * When the transaction is successful, these run after post-commit callbacks. When the transaction rolls back,
+   * these run after the rollback is complete. Use for resource cleanup tied to the transaction's
+   * lifetime (e.g. dropping per-transaction in-memory state).
+   * @param callback - synchronous cleanup callback to schedule
+   *
+   * @internal
+   */
+  public appendTransactionEndCallback(callback: () => void): void {
+    this.transactionEndCallbacks.push(callback);
+  }
+
+  /**
+   * @internal
+   */
+  public runTransactionEndCallbacks(): void {
+    const callbacks = [...this.transactionEndCallbacks];
+    this.transactionEndCallbacks.length = 0;
+    for (const callback of callbacks) {
+      callback();
+    }
   }
 
   /**

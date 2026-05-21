@@ -792,6 +792,60 @@ describe(EntityDataManager, () => {
     expect(entityDataManager['transactionalDataLoaders'].size).toBe(0);
   });
 
+  it('releases transactional dataloader state when transactions end', async () => {
+    const objects = getObjects();
+    const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
+      testEntityConfiguration,
+      objects,
+    );
+    const databaseAdapter = new StubDatabaseAdapter<TestFields, 'customIdField'>(
+      testEntityConfiguration,
+      dataStore,
+    );
+    const cacheAdapterProvider = new InMemoryFullCacheStubCacheAdapterProvider();
+    const cacheAdapter = cacheAdapterProvider.getCacheAdapter(testEntityConfiguration);
+    const entityCache = new ReadThroughEntityCache(testEntityConfiguration, cacheAdapter);
+    const entityDataManager = new EntityDataManager(
+      databaseAdapter,
+      entityCache,
+      new StubQueryContextProvider(),
+      new NoOpEntityMetricsAdapter(),
+      TestEntity.name,
+    );
+    const provider = new StubQueryContextProvider();
+    const objectInQuestion = objects.get(testEntityConfiguration.tableName)![1]!;
+
+    await provider.runInTransactionAsync(async (queryContext) => {
+      await entityDataManager.loadManyEqualingAsync(
+        queryContext,
+        new SingleFieldHolder<TestFields, 'customIdField', 'customIdField'>('customIdField'),
+        [new SingleFieldValueHolder(objectInQuestion['customIdField'])],
+      );
+      await queryContext.runInNestedTransactionAsync(async (innerQueryContext) => {
+        await entityDataManager.loadManyEqualingAsync(
+          innerQueryContext,
+          new SingleFieldHolder<TestFields, 'customIdField', 'customIdField'>('customIdField'),
+          [new SingleFieldValueHolder(objectInQuestion['customIdField'])],
+        );
+        expect(entityDataManager['transactionalDataLoaders'].size).toBe(2);
+      });
+      expect(entityDataManager['transactionalDataLoaders'].size).toBe(1);
+    });
+    expect(entityDataManager['transactionalDataLoaders'].size).toBe(0);
+
+    await expect(
+      provider.runInTransactionAsync(async (queryContext) => {
+        await entityDataManager.loadManyEqualingAsync(
+          queryContext,
+          new SingleFieldHolder<TestFields, 'customIdField', 'customIdField'>('customIdField'),
+          [new SingleFieldValueHolder(objectInQuestion['customIdField'])],
+        );
+        throw new Error('transaction failure');
+      }),
+    ).rejects.toThrow('transaction failure');
+    expect(entityDataManager['transactionalDataLoaders'].size).toBe(0);
+  });
+
   it('does not load from cache when in transaction', async () => {
     const objects = getObjects();
     const dataStore = StubDatabaseAdapter.convertFieldObjectsToDataStore(
