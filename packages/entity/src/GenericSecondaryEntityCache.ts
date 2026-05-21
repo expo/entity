@@ -43,13 +43,17 @@ export abstract class GenericSecondaryEntityCache<
       ).keys(),
     );
 
-    // put cache hits in result map
+    // put cache hits and negative cache hits in result map
     const results: Map<Readonly<TLoadParams>, Readonly<TFields> | null> = new Map();
     cacheLoadResults.forEach((cacheLoadResult, cacheKey) => {
       if (cacheLoadResult.status === CacheStatus.HIT) {
         const loadParams = cacheKeyToLoadParamsMap.get(cacheKey);
         invariant(loadParams !== undefined, 'load params should be in cache key map');
         results.set(loadParams, cacheLoadResult.item);
+      } else if (cacheLoadResult.status === CacheStatus.NEGATIVE) {
+        const loadParams = cacheKeyToLoadParamsMap.get(cacheKey);
+        invariant(loadParams !== undefined, 'load params should be in cache key map');
+        results.set(loadParams, null);
       }
     });
 

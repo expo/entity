@@ -196,5 +196,12 @@ describe(GenericSecondaryEntityCache, () => {
     const results = await secondaryCacheLoader.loadManyAsync([loadParams]);
     expect(results.size).toBe(1);
     expect(results.get(loadParams)).toBe(null);
+    expect(secondaryCacheLoader.databaseLoadCount).toEqual(1);
+
+    // second call should be served from the negative cache and still return null
+    const results2 = await secondaryCacheLoader.loadManyAsync([loadParams]);
+    expect(results2.size).toBe(1);
+    expect(results2.get(loadParams)).toBe(null);
+    expect(secondaryCacheLoader.databaseLoadCount).toEqual(1);
   });
 });
