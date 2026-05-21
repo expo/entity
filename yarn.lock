@@ -4644,9 +4644,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ctix@npm:2.7.5":
-  version: 2.7.5
-  resolution: "ctix@npm:2.7.5"
+"ctix@npm:2.8.0":
+  version: 2.8.0
+  resolution: "ctix@npm:2.8.0"
   dependencies:
     chalk: "npm:^4.1.2"
     change-case: "npm:^4.1.2"
@@ -4682,10 +4682,10 @@ __metadata:
   peerDependencies:
     prettier: ">=3"
     prettier-plugin-organize-imports: ">=3"
-    typescript: ">=5"
+    typescript: ">=5 <6"
   bin:
     ctix: dist/cjs/cli.cjs
-  checksum: 10c0/62ee888f3101bf4ef96d8f2a9fc708e3363342d48ac7bf97ad2d1374eb9400fedb140361bd2e65a71f4193c47702415859b8db5e5eadb7c4381d809a65fe0481
+  checksum: 10c0/1c075f83022df5c1336725ae8c35e9c89b1f150f08dcf752477891ca100d8a951e82eea173ec0b8001ebb6efd74468ce57ba328b568dc0eeee5b8070171d64ee
   languageName: node
   linkType: hard
 
@@ -9642,7 +9642,7 @@ __metadata:
   dependencies:
     "@tsconfig/bases": "npm:1.0.23"
     "@types/node": "npm:24.12.4"
-    ctix: "npm:2.7.5"
+    ctix: "npm:2.8.0"
     jest: "npm:30.3.0"
     lerna: "npm:9.0.7"
     oxfmt: "npm:0.46.0"
