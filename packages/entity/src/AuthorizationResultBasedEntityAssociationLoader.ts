@@ -64,7 +64,7 @@ export class AuthorizationResultBasedEntityAssociationLoader<
     Result<null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity>
   > {
     const associatedEntityID = this.entity.getField(fieldIdentifyingAssociatedEntity);
-    if (!associatedEntityID) {
+    if (associatedEntityID === null || associatedEntityID === undefined) {
       return result(null) as Result<
         null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity
       >;
