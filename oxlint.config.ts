@@ -11,6 +11,39 @@ export default defineConfig({
   rules: {
     // Overrides from oxlint-config-universe defaults
     eqeqeq: ['warn', 'always'],
+    'no-restricted-properties': [
+      'warn',
+      {
+        object: 'it',
+        property: 'only',
+        message: 'it.only should not be committed to main.',
+      },
+      {
+        object: 'test',
+        property: 'only',
+        message: 'test.only should not be committed to main.',
+      },
+      {
+        object: 'describe',
+        property: 'only',
+        message: 'describe.only should not be committed to main.',
+      },
+      {
+        object: 'it',
+        property: 'skip',
+        message: 'it.skip should not be committed to main.',
+      },
+      {
+        object: 'test',
+        property: 'skip',
+        message: 'test.skip should not be committed to main.',
+      },
+      {
+        object: 'describe',
+        property: 'skip',
+        message: 'describe.skip should not be committed to main.',
+      },
+    ],
     'no-console': 'warn',
     'no-void': ['warn', { allowAsStatement: true }],
     'no-restricted-imports': ['error', { paths: ['.', '..', '../..'] }],
@@ -42,6 +75,13 @@ export default defineConfig({
       rules: {
         'typescript/no-confusing-void-expression': 'off',
         'typescript/unbound-method': 'off',
+      },
+    },
+    {
+      files: ['packages/**/*.ts'],
+      excludeFiles: ['**/*tests__/**', 'packages/entity-codemod/src/transforms/**'],
+      rules: {
+        'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true } }],
       },
     },
   ],
