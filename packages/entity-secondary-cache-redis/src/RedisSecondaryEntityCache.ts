@@ -14,8 +14,21 @@ export class RedisSecondaryEntityCache<
   constructor(
     entityConfiguration: EntityConfiguration<TFields, TIDField>,
     genericRedisCacheContext: GenericRedisCacheContext,
-    constructRedisKey: (params: Readonly<TLoadParams>) => string,
+    cacheKeyNamespace: string,
+    constructRedisKeyParts: (params: Readonly<TLoadParams>) => readonly string[],
   ) {
+    const constructRedisKey = (params: Readonly<TLoadParams>): string => {
+      const cacheKeyParts = [
+        genericRedisCacheContext.cacheKeyPrefix,
+        'secondary',
+        cacheKeyNamespace,
+        ...constructRedisKeyParts(params),
+      ];
+      const delimiter = genericRedisCacheContext.cacheKeyDelimiter;
+      const escape = (s: string): string =>
+        s.replaceAll('\\', '\\\\').replaceAll(delimiter, `\\${delimiter}`);
+      return cacheKeyParts.map(escape).join(delimiter);
+    };
     super(new GenericRedisCacher(genericRedisCacheContext, entityConfiguration), constructRedisKey);
   }
 }

@@ -112,7 +112,8 @@ describe(RedisSecondaryEntityCache, () => {
       new RedisSecondaryEntityCache(
         redisTestEntityConfiguration,
         genericRedisCacheContext,
-        (loadParams) => `test-key-${loadParams.id}`,
+        'test-namespace',
+        (loadParams) => ['test-key', loadParams.id],
       ),
       EntitySecondaryCacheLoader.getConstructionUtilsForEntityClass(RedisTestEntity, viewerContext),
       RedisTestEntity.loaderWithAuthorizationResults(viewerContext),
@@ -152,7 +153,8 @@ describe(RedisSecondaryEntityCache, () => {
       new RedisSecondaryEntityCache(
         redisTestEntityConfiguration,
         genericRedisCacheContext,
-        (loadParams) => `test-key-${loadParams.id}`,
+        'test-namespace',
+        (loadParams) => ['test-key', loadParams.id],
       ),
       EntitySecondaryCacheLoader.getConstructionUtilsForEntityClass(RedisTestEntity, viewerContext),
       RedisTestEntity.loaderWithAuthorizationResults(viewerContext),
@@ -162,5 +164,40 @@ describe(RedisSecondaryEntityCache, () => {
     const results = await secondaryCacheLoader.loadManyAsync([loadParams]);
     expect(results.size).toBe(1);
     expect(results.get(loadParams)).toBe(null);
+  });
+
+  it('does not collapse cache keys with delimiter-bearing parts and uses namespace', async () => {
+    const viewerContext = new TestViewerContext(
+      createRedisIntegrationTestEntityCompanionProvider(genericRedisCacheContext),
+    );
+
+    const id = 'id-with-delimiter-' + genericRedisCacheContext.cacheKeyDelimiter;
+
+    const createdEntity = await RedisTestEntity.creator(viewerContext)
+      .setField('id', id)
+      .setField('name', 'wat')
+      .createAsync();
+
+    const secondaryCacheLoader = new TestSecondaryRedisCacheLoader(
+      new RedisSecondaryEntityCache(
+        redisTestEntityConfiguration,
+        genericRedisCacheContext,
+        'test-namespace',
+        (loadParams) => ['test-key', loadParams.id],
+      ),
+      EntitySecondaryCacheLoader.getConstructionUtilsForEntityClass(RedisTestEntity, viewerContext),
+      RedisTestEntity.loaderWithAuthorizationResults(viewerContext),
+    );
+
+    const loadParams = { id };
+    const results = await secondaryCacheLoader.loadManyAsync([loadParams]);
+    expect(results.size).toBe(1);
+    expect(nullthrows(results.get(loadParams)).enforceValue().getID()).toEqual(
+      createdEntity.getID(),
+    );
+
+    const redisKey = `${genericRedisCacheContext.cacheKeyPrefix}:secondary:test-namespace:test-key:id-with-delimiter-\\${genericRedisCacheContext.cacheKeyDelimiter}`;
+    const redisValues = await genericRedisCacheContext.redisClient.mget(redisKey);
+    expect(redisValues[0]).toBeTruthy();
   });
 });
