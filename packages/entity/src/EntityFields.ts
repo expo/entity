@@ -129,18 +129,28 @@ export class StrictEnumField<
   T extends object,
   TRequireExplicitCache extends boolean,
 > extends EnumField<TRequireExplicitCache> {
-  private readonly enum: T;
+  private readonly enumValues: ReadonlySet<string | number>;
   constructor(
     options: TRequireExplicitCache extends true
       ? EntityFieldDefinitionOptionsExplicitCache & { enum: T }
       : EntityFieldDefinitionOptions & { enum: T },
   ) {
     super(options);
-    this.enum = options.enum;
+    // Numeric TypeScript enums contain reverse mappings (e.g. { ADMIN: 0, 0: "ADMIN" });
+    // filter out the numeric string keys so reverse-mapped names don't pass validation.
+    this.enumValues = new Set(
+      Object.entries(options.enum)
+        .filter(([key]) => Number.isNaN(Number(key)))
+        .map(([, value]) => value)
+        .filter(
+          (value): value is string | number =>
+            typeof value === 'string' || typeof value === 'number',
+        ),
+    );
   }
 
   protected override validateInputValueInternal(value: string | number): boolean {
-    return super.validateInputValueInternal(value) && Object.values(this.enum).includes(value);
+    return super.validateInputValueInternal(value) && this.enumValues.has(value);
   }
 }
 

@@ -78,10 +78,21 @@ enum TestEnum {
   WHO = 'wat',
 }
 
+enum NumericTestEnum {
+  ADMIN,
+  USER,
+}
+
 describeFieldTestCase(
   new StrictEnumField({ columnName: 'wat', enum: TestEnum }),
   [TestEnum.HELLO, TestEnum.WHO, 'world'],
   ['what', 1, true],
+);
+
+describeFieldTestCase(
+  new StrictEnumField({ columnName: 'wat', enum: NumericTestEnum }),
+  [NumericTestEnum.ADMIN, NumericTestEnum.USER],
+  ['ADMIN', 'USER', 2, true],
 );
 
 describeFieldTestCase(
