@@ -7,7 +7,7 @@ services:
     volumes:
       - redis_data:/data
   postgres:
-    image: postgres:18@sha256:7e32e9833a6fb1c92c32552794cb6ed569d51b445a54907d35fc112ef39684db
+    image: postgres:18@sha256:8ff36f3c66371cba71d20ceedccfc3de9669a68737607888c4ef0af93abe8e39
     ports:
       - '${PGPORT}:5432'
     volumes:
