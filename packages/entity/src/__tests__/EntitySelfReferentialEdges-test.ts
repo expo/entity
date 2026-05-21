@@ -9,6 +9,7 @@ import { EntityPrivacyPolicy } from '../EntityPrivacyPolicy.ts';
 import { CacheStatus } from '../internal/ReadThroughEntityCache.ts';
 import { SingleFieldHolder, SingleFieldValueHolder } from '../internal/SingleFieldHolder.ts';
 import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule.ts';
+import { canViewerDeleteAsync } from '../utils/EntityPrivacyUtils.ts';
 import type { InMemoryFullCacheStubCacheAdapter } from '../utils/__testfixtures__/StubCacheAdapter.ts';
 import { TestViewerContext } from '../utils/__testfixtures__/TestViewerContext.ts';
 import { createUnitTestEntityCompanionProvider } from '../utils/__testfixtures__/createUnitTestEntityCompanionProvider.ts';
@@ -143,6 +144,23 @@ describe('EntityEdgeDeletionBehavior.CASCADE_DELETE', () => {
     await expect(
       CategoryEntity.loader(viewerContext).loadByIDNullableAsync(categoryB.getID()),
     ).resolves.toBeNull();
+  });
+
+  it('handles cycles in canViewerDeleteAsync preflight', async () => {
+    const { CategoryEntity } = makeEntityClass(EntityEdgeDeletionBehavior.CASCADE_DELETE);
+
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new TestViewerContext(companionProvider);
+
+    const categoryA = await CategoryEntity.creator(viewerContext).createAsync();
+    const categoryB = await CategoryEntity.creator(viewerContext)
+      .setField('parent_category_id', categoryA.getID())
+      .createAsync();
+    await CategoryEntity.updater(categoryA)
+      .setField('parent_category_id', categoryB.getID())
+      .updateAsync();
+
+    await expect(canViewerDeleteAsync(CategoryEntity, categoryA)).resolves.toBe(true);
   });
 });
 
