@@ -49,7 +49,6 @@ export * from './ViewerContext.ts';
 export * from './ViewerScopedEntityCompanion.ts';
 export * from './ViewerScopedEntityCompanionProvider.ts';
 export * from './ViewerScopedEntityLoaderFactory.ts';
-export * from './ViewerScopedEntityMutatorFactory.ts';
 export * from './errors/EntityCacheAdapterError.ts';
 export * from './errors/EntityDatabaseAdapterError.ts';
 export * from './errors/EntityError.ts';
