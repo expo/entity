@@ -804,6 +804,14 @@ export class AuthorizationResultBasedDeleteMutator<
     processedEntityIdentifiersFromTransitiveDeletions: Set<string>,
     skipDatabaseDeletion: boolean,
   ): Promise<Result<void>> {
+    // prevent infinite reference cycles AND avoid re-running deletion side effects
+    // (authorization, validators, triggers, DB delete, invalidation) for an entity that
+    // is already being deleted higher up the cascade stack
+    if (processedEntityIdentifiersFromTransitiveDeletions.has(this.entity.getUniqueIdentifier())) {
+      return result();
+    }
+    processedEntityIdentifiersFromTransitiveDeletions.add(this.entity.getUniqueIdentifier());
+
     const authorizeDeleteResult = await asyncResult(
       this.privacyPolicy.authorizeDeleteAsync(
         this.viewerContext,
@@ -928,12 +936,6 @@ export class AuthorizationResultBasedDeleteMutator<
     queryContext: EntityTransactionalQueryContext,
     processedEntityIdentifiers: Set<string>,
   ): Promise<void> {
-    // prevent infinite reference cycles by keeping track of entities already processed
-    if (processedEntityIdentifiers.has(entity.getUniqueIdentifier())) {
-      return;
-    }
-    processedEntityIdentifiers.add(entity.getUniqueIdentifier());
-
     const companionDefinition = this.companionProvider.getCompanionForEntity(
       entity.constructor as IEntityClass<
         TFields,
