@@ -843,7 +843,7 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
-    "@isaacs/ttlcache": "npm:2.1.4"
+    "@isaacs/ttlcache": "npm:2.1.5"
     "@jest/globals": "npm:30.3.0"
     typescript: "npm:6.0.3"
   languageName: unknown
@@ -962,7 +962,7 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@expo/entity-cache-adapter-local-memory": "workspace:^"
     "@expo/nullthrows": "npm:2.1.0"
-    "@isaacs/ttlcache": "npm:2.1.4"
+    "@isaacs/ttlcache": "npm:2.1.5"
     "@jest/globals": "npm:30.3.0"
     typescript: "npm:6.0.3"
   languageName: unknown
@@ -1402,10 +1402,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@isaacs/ttlcache@npm:2.1.4":
-  version: 2.1.4
-  resolution: "@isaacs/ttlcache@npm:2.1.4"
-  checksum: 10c0/cca14ebd9075bd7b36d95c2aef77a8cebe55d61ae72343d36ece7536ba88e8c5f3d055d11d03570af5832523cc4125af62fe144e0c52f103d3be94fe481eb096
+"@isaacs/ttlcache@npm:2.1.5":
+  version: 2.1.5
+  resolution: "@isaacs/ttlcache@npm:2.1.5"
+  checksum: 10c0/6a5e3e868e916e43bf7f25d2dbd50861c6aec1aea9349b2a87bf348fb12efa2bfa8cb2e94dc83a7b6287071c18efff7123c9cbb7d0da1f311330c7bd0b2351bf
   languageName: node
   linkType: hard
 
