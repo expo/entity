@@ -13,48 +13,30 @@ import { createUnitTestEntityCompanionProvider } from '../__testfixtures__/creat
 
 type TArgs = object;
 
-describe.each([true, false])('in transaction %p', (inTransaction) => {
-  describe(createOrGetExistingAsync, () => {
-    it('does not create when already exists', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
+describe(createOrGetExistingAsync, () => {
+  it('does not create when already exists', async () => {
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(companionProvider);
 
-      const entity = await SimpleTestEntity.creator(viewerContext).createAsync();
+    const entity = await SimpleTestEntity.creator(viewerContext).createAsync();
 
-      const args: TArgs = {};
+    const args: TArgs = {};
 
-      const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
-          return entity;
-        },
-      );
+    const getFn = jest.fn(
+      async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityTransactionalQueryContext) => {
+        return entity;
+      },
+    );
 
-      const createFn = jest.fn(
-        async (vc: ViewerContext, _args: TArgs, queryContext?: EntityTransactionalQueryContext) => {
-          return await SimpleTestEntity.creator(vc, queryContext).createAsync();
-        },
-      );
+    const createFn = jest.fn(
+      async (vc: ViewerContext, _args: TArgs, queryContext?: EntityTransactionalQueryContext) => {
+        return await SimpleTestEntity.creator(vc, queryContext).createAsync();
+      },
+    );
 
-      if (inTransaction) {
-        await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
-          'postgres',
-          async (queryContext) => {
-            await createOrGetExistingAsync(
-              viewerContext,
-              SimpleTestEntity,
-              getFn,
-              args,
-              createFn,
-              args,
-              queryContext,
-            );
-          },
-        );
-      } else {
+    await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+      'postgres',
+      async (queryContext) => {
         await createOrGetExistingAsync(
           viewerContext,
           SimpleTestEntity,
@@ -62,105 +44,75 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
           args,
           createFn,
           args,
+          queryContext,
         );
-      }
+      },
+    );
 
-      expect(getFn).toHaveBeenCalledTimes(1);
-      expect(createFn).toHaveBeenCalledTimes(0);
-    });
-
-    it('creates when not found', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
-
-      const args: TArgs = {};
-
-      const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
-          return null;
-        },
-      );
-
-      const createFn = jest.fn(
-        async (vc: ViewerContext, _args: TArgs, queryContext?: EntityTransactionalQueryContext) => {
-          return await SimpleTestEntity.creator(vc, queryContext).createAsync();
-        },
-      );
-
-      if (inTransaction) {
-        await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
-          'postgres',
-          async (queryContext) => {
-            await createOrGetExistingAsync(
-              viewerContext,
-              SimpleTestEntity,
-              getFn,
-              args,
-              createFn,
-              args,
-              queryContext,
-            );
-          },
-        );
-      } else {
-        await createOrGetExistingAsync(
-          viewerContext,
-          SimpleTestEntity,
-          getFn,
-          args,
-          createFn,
-          args,
-        );
-      }
-
-      expect(getFn).toHaveBeenCalledTimes(1);
-      expect(createFn).toHaveBeenCalledTimes(1);
-    });
+    expect(getFn).toHaveBeenCalledTimes(1);
+    expect(createFn).toHaveBeenCalledTimes(0);
   });
 
-  describe(createWithUniqueConstraintRecoveryAsync, () => {
-    it('does not call get when creation succeeds', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
+  it('creates when not found', async () => {
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(companionProvider);
 
-      const args: TArgs = {};
+    const args: TArgs = {};
 
-      const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
-          return null;
-        },
-      );
+    const getFn = jest.fn(
+      async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityTransactionalQueryContext) => {
+        return null;
+      },
+    );
 
-      const createFn = jest.fn(
-        async (vc: ViewerContext, _args: TArgs, queryContext?: EntityTransactionalQueryContext) => {
-          return await SimpleTestEntity.creator(vc, queryContext).createAsync();
-        },
-      );
+    const createFn = jest.fn(
+      async (vc: ViewerContext, _args: TArgs, queryContext?: EntityTransactionalQueryContext) => {
+        return await SimpleTestEntity.creator(vc, queryContext).createAsync();
+      },
+    );
 
-      if (inTransaction) {
-        await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
-          'postgres',
-          async (queryContext) => {
-            await createWithUniqueConstraintRecoveryAsync(
-              viewerContext,
-              SimpleTestEntity,
-              getFn,
-              args,
-              createFn,
-              args,
-              queryContext,
-            );
-          },
+    await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+      'postgres',
+      async (queryContext) => {
+        await createOrGetExistingAsync(
+          viewerContext,
+          SimpleTestEntity,
+          getFn,
+          args,
+          createFn,
+          args,
+          queryContext,
         );
-      } else {
+      },
+    );
+
+    expect(getFn).toHaveBeenCalledTimes(1);
+    expect(createFn).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe(createWithUniqueConstraintRecoveryAsync, () => {
+  it('does not call get when creation succeeds', async () => {
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(companionProvider);
+
+    const args: TArgs = {};
+
+    const getFn = jest.fn(
+      async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityTransactionalQueryContext) => {
+        return null;
+      },
+    );
+
+    const createFn = jest.fn(
+      async (vc: ViewerContext, _args: TArgs, queryContext?: EntityTransactionalQueryContext) => {
+        return await SimpleTestEntity.creator(vc, queryContext).createAsync();
+      },
+    );
+
+    await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+      'postgres',
+      async (queryContext) => {
         await createWithUniqueConstraintRecoveryAsync(
           viewerContext,
           SimpleTestEntity,
@@ -168,57 +120,38 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
           args,
           createFn,
           args,
+          queryContext,
         );
-      }
+      },
+    );
 
-      expect(getFn).toHaveBeenCalledTimes(0);
-      expect(createFn).toHaveBeenCalledTimes(1);
-    });
+    expect(getFn).toHaveBeenCalledTimes(0);
+    expect(createFn).toHaveBeenCalledTimes(1);
+  });
 
-    it('calls get when database adapter throws EntityDatabaseAdapterUniqueConstraintError', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
+  it('calls get when database adapter throws EntityDatabaseAdapterUniqueConstraintError', async () => {
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(companionProvider);
 
-      const entity = await SimpleTestEntity.creator(viewerContext).createAsync();
+    const entity = await SimpleTestEntity.creator(viewerContext).createAsync();
 
-      const args: TArgs = {};
+    const args: TArgs = {};
 
-      const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
-          return entity;
-        },
-      );
+    const getFn = jest.fn(
+      async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityTransactionalQueryContext) => {
+        return entity;
+      },
+    );
 
-      const createFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
-          throw new EntityDatabaseAdapterUniqueConstraintError('wat');
-        },
-      );
+    const createFn = jest.fn(
+      async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityTransactionalQueryContext) => {
+        throw new EntityDatabaseAdapterUniqueConstraintError('wat');
+      },
+    );
 
-      if (inTransaction) {
-        await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
-          'postgres',
-          async (queryContext) => {
-            await createWithUniqueConstraintRecoveryAsync(
-              viewerContext,
-              SimpleTestEntity,
-              getFn,
-              args,
-              createFn,
-              args,
-              queryContext,
-            );
-          },
-        );
-      } else {
+    await viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+      'postgres',
+      async (queryContext) => {
         await createWithUniqueConstraintRecoveryAsync(
           viewerContext,
           SimpleTestEntity,
@@ -226,131 +159,90 @@ describe.each([true, false])('in transaction %p', (inTransaction) => {
           args,
           createFn,
           args,
+          queryContext,
         );
-      }
+      },
+    );
 
-      expect(getFn).toHaveBeenCalledTimes(1);
-      expect(createFn).toHaveBeenCalledTimes(1);
-    });
+    expect(getFn).toHaveBeenCalledTimes(1);
+    expect(createFn).toHaveBeenCalledTimes(1);
+  });
 
-    it('throws an EntityNotFoundError when database adapter throws EntityDatabaseAdapterUniqueConstraintError and getFn returns null', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
+  it('throws an EntityNotFoundError when database adapter throws EntityDatabaseAdapterUniqueConstraintError and getFn returns null', async () => {
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(companionProvider);
 
-      const args: TArgs = {};
+    const args: TArgs = {};
 
-      const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
-          return null;
-        },
-      );
+    const getFn = jest.fn(
+      async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityTransactionalQueryContext) => {
+        return null;
+      },
+    );
 
-      const createFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
-          throw new EntityDatabaseAdapterUniqueConstraintError('wat');
-        },
-      );
+    const createFn = jest.fn(
+      async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityTransactionalQueryContext) => {
+        throw new EntityDatabaseAdapterUniqueConstraintError('wat');
+      },
+    );
 
-      if (inTransaction) {
-        await expect(
-          viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
-            'postgres',
-            async (queryContext) => {
-              return await createWithUniqueConstraintRecoveryAsync(
-                viewerContext,
-                SimpleTestEntity,
-                getFn,
-                args,
-                createFn,
-                args,
-                queryContext,
-              );
-            },
-          ),
-        ).rejects.toThrow(EntityNotFoundError);
-      } else {
-        await expect(
-          createWithUniqueConstraintRecoveryAsync(
+    await expect(
+      viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          return await createWithUniqueConstraintRecoveryAsync(
             viewerContext,
             SimpleTestEntity,
             getFn,
             args,
             createFn,
             args,
-          ),
-        ).rejects.toThrow(EntityNotFoundError);
-      }
-
-      expect(getFn).toHaveBeenCalledTimes(1);
-      expect(createFn).toHaveBeenCalledTimes(1);
-    });
-
-    it('rethrows whatever error is thrown from database adapter  if not EntityDatabaseAdapterUniqueConstraintError', async () => {
-      const companionProvider = createUnitTestEntityCompanionProvider();
-      const viewerContext = new ViewerContext(companionProvider);
-
-      const args: TArgs = {};
-
-      const getFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
-          return null;
+            queryContext,
+          );
         },
-      );
+      ),
+    ).rejects.toThrow(EntityNotFoundError);
 
-      const createFn = jest.fn(
-        async (
-          _vc: ViewerContext,
-          _args: TArgs,
-          _queryContext?: EntityTransactionalQueryContext,
-        ) => {
-          throw new Error('wat');
-        },
-      );
+    expect(getFn).toHaveBeenCalledTimes(1);
+    expect(createFn).toHaveBeenCalledTimes(1);
+  });
 
-      if (inTransaction) {
-        await expect(
-          viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
-            'postgres',
-            async (queryContext) => {
-              return await createWithUniqueConstraintRecoveryAsync(
-                viewerContext,
-                SimpleTestEntity,
-                getFn,
-                args,
-                createFn,
-                args,
-                queryContext,
-              );
-            },
-          ),
-        ).rejects.toThrow('wat');
-      } else {
-        await expect(
-          createWithUniqueConstraintRecoveryAsync(
+  it('rethrows whatever error is thrown from database adapter  if not EntityDatabaseAdapterUniqueConstraintError', async () => {
+    const companionProvider = createUnitTestEntityCompanionProvider();
+    const viewerContext = new ViewerContext(companionProvider);
+
+    const args: TArgs = {};
+
+    const getFn = jest.fn(
+      async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityTransactionalQueryContext) => {
+        return null;
+      },
+    );
+
+    const createFn = jest.fn(
+      async (_vc: ViewerContext, _args: TArgs, _queryContext?: EntityTransactionalQueryContext) => {
+        throw new Error('wat');
+      },
+    );
+
+    await expect(
+      viewerContext.runInTransactionForDatabaseAdapterFlavorAsync(
+        'postgres',
+        async (queryContext) => {
+          return await createWithUniqueConstraintRecoveryAsync(
             viewerContext,
             SimpleTestEntity,
             getFn,
             args,
             createFn,
             args,
-          ),
-        ).rejects.toThrow('wat');
-      }
+            queryContext,
+          );
+        },
+      ),
+    ).rejects.toThrow('wat');
 
-      expect(getFn).toHaveBeenCalledTimes(0);
-      expect(createFn).toHaveBeenCalledTimes(1);
-    });
+    expect(getFn).toHaveBeenCalledTimes(0);
+    expect(createFn).toHaveBeenCalledTimes(1);
   });
 });

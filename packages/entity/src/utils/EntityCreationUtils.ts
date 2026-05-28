@@ -46,25 +46,18 @@ export async function createOrGetExistingAsync<
     queryContext?: EntityTransactionalQueryContext,
   ) => Promise<TEntity>,
   createArgs: TCreateArgs,
-  queryContext?: EntityTransactionalQueryContext,
+  queryContext: EntityTransactionalQueryContext,
 ): Promise<TEntity> {
-  if (!queryContext) {
-    const maybeEntity = await getAsync(viewerContext, getArgs);
-    if (maybeEntity) {
-      return maybeEntity;
-    }
-  } else {
-    // This is done in a nested transaction since entity may negatively cache load results per-transaction (when configured).
-    // Without it, it would
-    // 1. load the entity in the current query context, negatively cache it
-    // 2. then try to create it in the nested transaction, which may fail due to a unique constraint error
-    // 3. then try to load the entity again in the current query context, which would return null due to negative cache
-    const maybeEntity = await queryContext.runInNestedTransactionAsync((nestedQueryContext) =>
-      getAsync(viewerContext, getArgs, nestedQueryContext),
-    );
-    if (maybeEntity) {
-      return maybeEntity;
-    }
+  // This is done in a nested transaction since entity may negatively cache load results per-transaction (when configured).
+  // Without it, it would
+  // 1. load the entity in the current query context, negatively cache it
+  // 2. then try to create it in the nested transaction, which may fail due to a unique constraint error
+  // 3. then try to load the entity again in the current query context, which would return null due to negative cache
+  const maybeEntity = await queryContext.runInNestedTransactionAsync((nestedQueryContext) =>
+    getAsync(viewerContext, getArgs, nestedQueryContext),
+  );
+  if (maybeEntity) {
+    return maybeEntity;
   }
   return await createWithUniqueConstraintRecoveryAsync(
     viewerContext,
@@ -118,12 +111,9 @@ export async function createWithUniqueConstraintRecoveryAsync<
     queryContext?: EntityTransactionalQueryContext,
   ) => Promise<TEntity>,
   createArgs: TCreateArgs,
-  queryContext?: EntityTransactionalQueryContext,
+  queryContext: EntityTransactionalQueryContext,
 ): Promise<TEntity> {
   try {
-    if (!queryContext) {
-      return await createAsync(viewerContext, createArgs);
-    }
     return await queryContext.runInNestedTransactionAsync((nestedQueryContext) =>
       createAsync(viewerContext, createArgs, nestedQueryContext),
     );
