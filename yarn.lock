@@ -4660,9 +4660,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ctix@npm:2.8.0":
-  version: 2.8.0
-  resolution: "ctix@npm:2.8.0"
+"ctix@npm:2.8.1":
+  version: 2.8.1
+  resolution: "ctix@npm:2.8.1"
   dependencies:
     chalk: "npm:^4.1.2"
     change-case: "npm:^4.1.2"
@@ -4693,7 +4693,7 @@ __metadata:
     tslib: "npm:^2.6.2"
     type-check: "npm:^0.4.0"
     type-fest: "npm:5.0.1"
-    yaml: "npm:2.8.1"
+    yaml: "npm:2.9.0"
     yargs: "npm:17.7.2"
   peerDependencies:
     prettier: ">=3"
@@ -4701,7 +4701,7 @@ __metadata:
     typescript: ">=5 <6"
   bin:
     ctix: dist/cjs/cli.cjs
-  checksum: 10c0/1c075f83022df5c1336725ae8c35e9c89b1f150f08dcf752477891ca100d8a951e82eea173ec0b8001ebb6efd74468ce57ba328b568dc0eeee5b8070171d64ee
+  checksum: 10c0/9b93998ea30f7e44cdc9bb5c88e53b8e45586245a11d85ca77007119755bdf8097b9635981128f3acf0ad25259fd3d6d293f273150ebb3879bb4c378f8ca0d9b
   languageName: node
   linkType: hard
 
@@ -9663,7 +9663,7 @@ __metadata:
   dependencies:
     "@tsconfig/bases": "npm:1.0.24"
     "@types/node": "npm:24.12.4"
-    ctix: "npm:2.8.0"
+    ctix: "npm:2.8.1"
     jest: "npm:30.3.0"
     lerna: "npm:9.0.7"
     oxfmt: "npm:0.50.0"
@@ -11121,12 +11121,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:2.8.1":
-  version: 2.8.1
-  resolution: "yaml@npm:2.8.1"
+"yaml@npm:2.9.0":
+  version: 2.9.0
+  resolution: "yaml@npm:2.9.0"
   bin:
     yaml: bin.mjs
-  checksum: 10c0/7c587be00d9303d2ae1566e03bc5bc7fe978ba0d9bf39cc418c3139d37929dfcb93a230d9749f2cb578b6aa5d9ebebc322415e4b653cb83acd8bc0bc321707f3
+  checksum: 10c0/f340718df45e97a9551b9bf9dac61c80050bc464513b710debfb5067c380c8472e3b67809cffacb4ab5ffb5e66ef9310816c88b05f371cec60abfedd8c88e0a2
   languageName: node
   linkType: hard
 
