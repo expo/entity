@@ -21,8 +21,8 @@
       "groupName": "CI workflows"
     },
     {
-      "groupName": "eslint",
-      "matchPackageNames": ["/^eslint/"]
+      "groupName": "lint",
+      "matchPackageNames": ["/^eslint/", "/^oxlint/", "/^prettier/", "/^oxfmt/"]
     },
     {
       "groupName": "type definitions",
