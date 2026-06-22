@@ -626,17 +626,19 @@ describe(StubPostgresDatabaseAdapter, () => {
     });
   });
 
-  describe('insertAsync', () => {
+  describe('insertManyAsync', () => {
     it('inserts a record', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
         testEntityConfiguration,
         new Map(),
       );
-      const result = await databaseAdapter.insertAsync(queryContext, {
-        stringField: 'hello',
-      });
-      expect(result).toMatchObject({
+      const result = await databaseAdapter.insertManyAsync(queryContext, [
+        {
+          stringField: 'hello',
+        },
+      ]);
+      expect(result[0]).toMatchObject({
         stringField: 'hello',
       });
 
@@ -651,16 +653,18 @@ describe(StubPostgresDatabaseAdapter, () => {
         testEntityConfiguration,
         new Map(),
       );
-      const result = await databaseAdapter.insertAsync(queryContext, {
-        stringField: 'hello',
-      });
+      const result = await databaseAdapter.insertManyAsync(queryContext, [
+        {
+          stringField: 'hello',
+        },
+      ]);
 
-      const ts = getTimeFromUUIDv7(result.customIdField);
+      const ts = getTimeFromUUIDv7(result[0]!.customIdField);
       expect(ts).toEqual(expectedTime);
     });
   });
 
-  describe('updateAsync', () => {
+  describe('updateManyAsync', () => {
     it('updates a record', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
@@ -684,9 +688,9 @@ describe(StubPostgresDatabaseAdapter, () => {
           ]),
         ),
       );
-      await databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {
-        stringField: 'b',
-      });
+      await databaseAdapter.updateManyAsync(queryContext, 'customIdField', [
+        { id: 'hello', object: { stringField: 'b' } },
+      ]);
     });
 
     it('throws error when empty update to match common DBMS behavior', async () => {
@@ -713,7 +717,9 @@ describe(StubPostgresDatabaseAdapter, () => {
         ),
       );
       await expect(
-        databaseAdapter.updateAsync(queryContext, 'customIdField', 'hello', {}),
+        databaseAdapter.updateManyAsync(queryContext, 'customIdField', [
+          { id: 'hello', object: {} },
+        ]),
       ).rejects.toThrow(`Empty update (custom_id = hello)`);
     });
 
@@ -743,17 +749,17 @@ describe(StubPostgresDatabaseAdapter, () => {
 
       // Try to update a record that doesn't exist
       await expect(
-        databaseAdapter.updateAsync(
-          queryContext,
-          'customIdField',
-          'nonexistent-id', // This ID doesn't exist in the data store
-          { stringField: 'updated' },
-        ),
+        databaseAdapter.updateManyAsync(queryContext, 'customIdField', [
+          {
+            id: 'nonexistent-id', // This ID doesn't exist in the data store
+            object: { stringField: 'updated' },
+          },
+        ]),
       ).rejects.toThrow('Empty results from database adapter update');
     });
   });
 
-  describe('deleteAsync', () => {
+  describe('deleteManyAsync', () => {
     it('deletes an object', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const databaseAdapter = new StubPostgresDatabaseAdapter<TestFields, 'customIdField'>(
@@ -778,7 +784,7 @@ describe(StubPostgresDatabaseAdapter, () => {
         ),
       );
 
-      await databaseAdapter.deleteAsync(queryContext, 'customIdField', 'hello');
+      await databaseAdapter.deleteManyAsync(queryContext, 'customIdField', ['hello']);
 
       expect(
         databaseAdapter.getObjectCollectionForTable(testEntityConfiguration.tableName),
@@ -811,11 +817,9 @@ describe(StubPostgresDatabaseAdapter, () => {
 
       // Delete a record that doesn't exist
       // Unlike update, delete doesn't throw an error when the record doesn't exist
-      await databaseAdapter.deleteAsync(
-        queryContext,
-        'customIdField',
+      await databaseAdapter.deleteManyAsync(queryContext, 'customIdField', [
         'nonexistent-id', // This ID doesn't exist in the data store
-      );
+      ]);
     });
   });
 
@@ -825,21 +829,21 @@ describe(StubPostgresDatabaseAdapter, () => {
       simpleTestEntityConfiguration,
       new Map(),
     );
-    const insertedObject1 = await databaseAdapter1.insertAsync(queryContext, {});
-    expect(typeof insertedObject1.id).toBe('string');
+    const insertedObjects1 = await databaseAdapter1.insertManyAsync(queryContext, [{}]);
+    expect(typeof insertedObjects1[0]!.id).toBe('string');
 
     const databaseAdapter2 = new StubPostgresDatabaseAdapter<NumberKeyFields, 'id'>(
       numberKeyEntityConfiguration,
       new Map(),
     );
-    const insertedObject2 = await databaseAdapter2.insertAsync(queryContext, {});
-    expect(typeof insertedObject2.id).toBe('number');
+    const insertedObjects2 = await databaseAdapter2.insertManyAsync(queryContext, [{}]);
+    expect(typeof insertedObjects2[0]!.id).toBe('number');
 
     const databaseAdapter3 = new StubPostgresDatabaseAdapter<DateIDTestFields, 'id'>(
       dateIDTestEntityConfiguration,
       new Map(),
     );
-    await expect(databaseAdapter3.insertAsync(queryContext, {})).rejects.toThrow(
+    await expect(databaseAdapter3.insertManyAsync(queryContext, [{}])).rejects.toThrow(
       'Unsupported ID type for StubPostgresDatabaseAdapter: DateField',
     );
   });

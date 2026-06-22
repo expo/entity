@@ -61,70 +61,78 @@ class InMemoryDatabaseAdapter<
     return results[0] ?? null;
   }
 
-  protected async insertInternalAsync(
+  protected async insertManyInternalAsync(
     _queryInterface: any,
     _tableName: string,
-    object: object,
+    objects: readonly object[],
   ): Promise<object[]> {
     const configurationPrivate = this['entityConfiguration'];
     const idField = getDatabaseFieldForEntityField(
       configurationPrivate,
       configurationPrivate.idField,
     );
-    const objectToInsert = {
-      [idField]: uuidv4(),
-      ...object,
-    };
-    dbObjects.push(objectToInsert);
-    return [objectToInsert];
+    const insertedObjects: object[] = [];
+    for (const object of objects) {
+      const objectToInsert = {
+        [idField]: uuidv4(),
+        ...object,
+      };
+      dbObjects.push(objectToInsert);
+      insertedObjects.push(objectToInsert);
+    }
+    return insertedObjects;
   }
 
-  protected async updateInternalAsync(
+  protected async updateManyInternalAsync(
     _queryInterface: any,
     _tableName: string,
     tableIdField: string,
-    id: any,
-    object: object,
-  ): Promise<{ updatedRowCount: number }> {
-    // SQL does not support empty updates, mirror behavior here for better test simulation
-    if (Object.keys(object).length === 0) {
-      throw new Error(`Empty update (${tableIdField} = ${id})`);
+    items: readonly { id: any; object: object }[],
+  ): Promise<readonly { updatedRowCount: number }[]> {
+    const results: { updatedRowCount: number }[] = [];
+    for (const item of items) {
+      // SQL does not support empty updates, mirror behavior here for better test simulation
+      if (Object.keys(item.object).length === 0) {
+        throw new Error(`Empty update (${tableIdField} = ${item.id})`);
+      }
+
+      const objectIndex = dbObjects.findIndex((obj) => {
+        return obj[tableIdField] === item.id;
+      });
+
+      if (objectIndex < 0) {
+        results.push({ updatedRowCount: 0 });
+        continue;
+      }
+
+      dbObjects[objectIndex] = {
+        ...dbObjects[objectIndex],
+        ...item.object,
+      };
+      results.push({ updatedRowCount: 1 });
     }
-
-    const objectIndex = dbObjects.findIndex((obj) => {
-      return obj[tableIdField] === id;
-    });
-
-    // SQL updates to a nonexistent row succeed but affect 0 rows,
-    // mirror that behavior here for better test simulation
-    if (objectIndex < 0) {
-      return { updatedRowCount: 0 };
-    }
-
-    dbObjects[objectIndex] = {
-      ...dbObjects[objectIndex],
-      ...object,
-    };
-    return { updatedRowCount: 1 };
+    return results;
   }
 
-  protected async deleteInternalAsync(
+  protected async deleteManyInternalAsync(
     _queryInterface: any,
     _tableName: string,
     tableIdField: string,
-    id: any,
+    ids: readonly any[],
   ): Promise<number> {
-    const objectIndex = dbObjects.findIndex((obj) => {
-      return obj[tableIdField] === id;
-    });
+    let numDeleted = 0;
+    for (const id of ids) {
+      const objectIndex = dbObjects.findIndex((obj) => {
+        return obj[tableIdField] === id;
+      });
 
-    // SQL deletes to a nonexistent row succeed and affect 0 rows,
-    // mirror that behavior here for better test simulation
-    if (objectIndex < 0) {
-      return 0;
+      if (objectIndex < 0) {
+        continue;
+      }
+
+      dbObjects.splice(objectIndex, 1);
+      numDeleted++;
     }
-
-    dbObjects.splice(objectIndex, 1);
-    return 1;
+    return numDeleted;
   }
 }

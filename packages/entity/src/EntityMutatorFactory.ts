@@ -6,7 +6,6 @@ import {
 import type { Entity, IEntityClass } from './Entity.ts';
 import type { EntityCompanionProvider } from './EntityCompanionProvider.ts';
 import type { EntityConfiguration } from './EntityConfiguration.ts';
-import type { EntityDatabaseAdapter } from './EntityDatabaseAdapter.ts';
 import type { EntityLoaderFactory } from './EntityLoaderFactory.ts';
 import type { EntityCascadingDeletionInfo } from './EntityMutationInfo.ts';
 import type { EntityMutationTriggerConfiguration } from './EntityMutationTriggerConfiguration.ts';
@@ -14,6 +13,7 @@ import type { EntityMutationValidatorConfiguration } from './EntityMutationValid
 import type { EntityPrivacyPolicy } from './EntityPrivacyPolicy.ts';
 import type { EntityQueryContext } from './EntityQueryContext.ts';
 import type { ViewerContext } from './ViewerContext.ts';
+import type { EntityMutationDataManager } from './internal/EntityMutationDataManager.ts';
 import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
 
 /**
@@ -67,7 +67,7 @@ export class EntityMutatorFactory<
       TPrivacyPolicy,
       TSelectedFields
     >,
-    private readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>,
+    private readonly mutationDataManager: EntityMutationDataManager<TFields, TIDField>,
     private readonly metricsAdapter: IEntityMetricsAdapter,
   ) {}
 
@@ -98,7 +98,7 @@ export class EntityMutatorFactory<
       this.mutationValidators,
       this.mutationTriggers,
       this.entityLoaderFactory,
-      this.databaseAdapter,
+      this.mutationDataManager,
       this.metricsAdapter,
     );
   }
@@ -131,7 +131,7 @@ export class EntityMutatorFactory<
       this.mutationValidators,
       this.mutationTriggers,
       this.entityLoaderFactory,
-      this.databaseAdapter,
+      this.mutationDataManager,
       this.metricsAdapter,
       existingEntity,
       cascadingDeleteCause,
@@ -165,7 +165,7 @@ export class EntityMutatorFactory<
       this.mutationValidators,
       this.mutationTriggers,
       this.entityLoaderFactory,
-      this.databaseAdapter,
+      this.mutationDataManager,
       this.metricsAdapter,
       existingEntity,
       cascadingDeleteCause,

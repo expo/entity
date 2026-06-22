@@ -25,6 +25,7 @@
     "test": "yarn test:all --rootDir $(pwd)"
   },
   "dependencies": {
+    "@expo/batcher": "^1.0.0",
     "@expo/results": "^1.0.0",
     "dataloader": "^2.2.3",
     "invariant": "^2.2.4"
