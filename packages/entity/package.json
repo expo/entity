@@ -30,7 +30,7 @@
     "invariant": "^2.2.4"
   },
   "devDependencies": {
-    "@jest/globals": "30.3.0",
+    "@jest/globals": "30.4.1",
     "@types/invariant": "2.2.37",
     "@types/lodash-es": "4.17.12",
     "@types/node": "24.13.2",

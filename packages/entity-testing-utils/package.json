@@ -30,7 +30,7 @@
     "ts-mockito": "^2.6.1"
   },
   "devDependencies": {
-    "@jest/globals": "30.3.0",
+    "@jest/globals": "30.4.1",
     "@types/lodash-es": "4.17.12",
     "@types/node": "24.13.2",
     "typescript": "6.0.3"

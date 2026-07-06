@@ -25,7 +25,7 @@
     "test": "yarn test:all --rootDir $(pwd)"
   },
   "devDependencies": {
-    "@jest/globals": "30.3.0",
+    "@jest/globals": "30.4.1",
     "@types/jscodeshift": "17.3.0",
     "@types/node": "24.13.2",
     "jscodeshift": "17.3.0",
