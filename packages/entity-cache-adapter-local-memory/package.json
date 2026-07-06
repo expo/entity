@@ -31,7 +31,7 @@
   "devDependencies": {
     "@expo/entity-testing-utils": "workspace:^",
     "@isaacs/ttlcache": "2.1.5",
-    "@jest/globals": "30.3.0",
+    "@jest/globals": "30.4.1",
     "typescript": "6.0.3"
   },
   "engines": {

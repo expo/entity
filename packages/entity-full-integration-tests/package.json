@@ -22,7 +22,7 @@
     "@expo/entity-database-adapter-knex": "workspace:^"
   },
   "devDependencies": {
-    "@jest/globals": "30.3.0",
+    "@jest/globals": "30.4.1",
     "typescript": "6.0.3"
   },
   "engines": {

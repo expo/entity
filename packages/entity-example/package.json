@@ -30,7 +30,7 @@
     "koa": "3.2.1"
   },
   "devDependencies": {
-    "@jest/globals": "30.3.0",
+    "@jest/globals": "30.4.1",
     "@types/koa": "3.0.3",
     "@types/koa__cors": "5.0.1",
     "@types/koa__router": "12.0.5",
