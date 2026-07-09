@@ -33,17 +33,27 @@ export interface AllowIfInParentCascadeDeletionDirective<
   TParentSelectedFields extends keyof TParentFields = keyof TParentFields,
 > {
   /**
-   * Class of parent entity that should trigger a cascade set null update to a field within
-   * the entity being authorized.
+   * Class (or classes) of parent entity that should trigger a cascade set null update to a field
+   * within the entity being authorized. Pass an array when multiple sibling classes backed by the
+   * same table can be the deletion source.
    */
-  parentEntityClass: IEntityClass<
-    TParentFields,
-    TParentIDField,
-    TViewerContext,
-    TParentEntity,
-    TParentPrivacyPolicy,
-    TParentSelectedFields
-  >;
+  parentEntityClass:
+    | IEntityClass<
+        TParentFields,
+        TParentIDField,
+        TViewerContext,
+        TParentEntity,
+        TParentPrivacyPolicy,
+        TParentSelectedFields
+      >
+    | readonly IEntityClass<
+        TParentFields,
+        TParentIDField,
+        TViewerContext,
+        TParentEntity,
+        TParentPrivacyPolicy,
+        TParentSelectedFields
+      >[];
 
   /**
    * Field of the current entity with references the deleting instace of parentEntityClass.
@@ -138,10 +148,12 @@ export class AllowIfInParentCascadeDeletionPrivacyPolicyRule<
     >,
     entity: TEntity,
   ): Promise<RuleEvaluationResult> {
-    const parentEntityClass = this.directive.parentEntityClass;
+    const parentEntityClasses = Array.isArray(this.directive.parentEntityClass)
+      ? this.directive.parentEntityClass
+      : [this.directive.parentEntityClass];
 
     const deleteCause = evaluationContext.cascadingDeleteCause;
-    if (!deleteCause || !(deleteCause.entity instanceof parentEntityClass)) {
+    if (!deleteCause || !parentEntityClasses.some((cls) => deleteCause.entity instanceof cls)) {
       return RuleEvaluationResult.SKIP;
     }
 
