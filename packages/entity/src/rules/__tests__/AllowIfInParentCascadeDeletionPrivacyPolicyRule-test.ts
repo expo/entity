@@ -206,6 +206,108 @@ describePrivacyPolicyRule(
   },
 );
 
+// Test with array of parent entity classes
+class TestSiblingParentEntity extends ReadonlyEntity<ParentFields, 'id', ViewerContext> {
+  static defineCompanionDefinition(): EntityCompanionDefinition<
+    ParentFields,
+    'id',
+    ViewerContext,
+    TestSiblingParentEntity,
+    TestParentPrivacyPolicy
+  > {
+    throw new Error('Not implemented for test');
+  }
+}
+
+const siblingParentEntityMock = mock(TestSiblingParentEntity);
+when(siblingParentEntityMock.getID()).thenReturn('5');
+const siblingParentEntity = instance(siblingParentEntityMock);
+Object.setPrototypeOf(siblingParentEntity, TestSiblingParentEntity.prototype);
+
+const childEntityForSiblingMock = mock(TestChildEntity);
+when(childEntityForSiblingMock.getField('parent_id')).thenReturn('5');
+
+const childEntityForSiblingNullifiedMock = mock(TestChildEntity);
+when(childEntityForSiblingNullifiedMock.getField('parent_id')).thenReturn(null);
+
+describePrivacyPolicyRule(
+  new AllowIfInParentCascadeDeletionPrivacyPolicyRule<
+    ChildFields,
+    'id',
+    ViewerContext,
+    TestChildEntity,
+    ParentFields,
+    'id',
+    TestParentEntity,
+    TestParentPrivacyPolicy
+  >({
+    fieldIdentifyingParentEntity: 'parent_id',
+    parentEntityClass: [TestParentEntity, TestSiblingParentEntity],
+  }),
+  {
+    allowCases: [
+      // first class in array: parent id matches, field not yet nullified
+      {
+        viewerContext: instance(mock(ViewerContext)),
+        queryContext: instance(mock(EntityQueryContext)),
+        evaluationContext: {
+          action: anything(),
+          previousValue: instance(childEntityMock),
+          cascadingDeleteCause: {
+            entity: parentEntity,
+            cascadingDeleteCause: null,
+          },
+        },
+        entity: instance(childEntityMock),
+      },
+      // second class in array: sibling parent id matches, field not yet nullified
+      {
+        viewerContext: instance(mock(ViewerContext)),
+        queryContext: instance(mock(EntityQueryContext)),
+        evaluationContext: {
+          action: anything(),
+          previousValue: instance(childEntityForSiblingMock),
+          cascadingDeleteCause: {
+            entity: siblingParentEntity,
+            cascadingDeleteCause: null,
+          },
+        },
+        entity: instance(childEntityForSiblingMock),
+      },
+      // second class in array: field nullified, previous value matches
+      {
+        viewerContext: instance(mock(ViewerContext)),
+        queryContext: instance(mock(EntityQueryContext)),
+        evaluationContext: {
+          action: anything(),
+          previousValue: instance(childEntityForSiblingMock),
+          cascadingDeleteCause: {
+            entity: siblingParentEntity,
+            cascadingDeleteCause: null,
+          },
+        },
+        entity: instance(childEntityForSiblingNullifiedMock),
+      },
+    ],
+    skipCases: [
+      // unrelated entity class not in array
+      {
+        viewerContext: instance(mock(ViewerContext)),
+        queryContext: instance(mock(EntityQueryContext)),
+        evaluationContext: {
+          action: anything(),
+          previousValue: null,
+          cascadingDeleteCause: {
+            entity: instance(unrelatedOtherEntityMock),
+            cascadingDeleteCause: null,
+          },
+        },
+        entity: instance(childEntityMock),
+      },
+    ],
+  },
+);
+
 // Test with custom lookup field (parentEntityLookupByField)
 const parentEntityWithNameMock = mock(TestParentEntity);
 when(parentEntityWithNameMock.getField('name')).thenReturn('test-name');
