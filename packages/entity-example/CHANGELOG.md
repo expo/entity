@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.65.0](https://github.com/expo/entity/compare/v0.64.0...v0.65.0) (2026-07-10)
+
+### Bug Fixes
+
+- **deps:** update dependency koa to v3.2.1 ([#634](https://github.com/expo/entity/issues/634)) ([1c17dc0](https://github.com/expo/entity/commit/1c17dc0f37ec68fb73aae1f92b3ce2c79062b93e))
+
 # [0.62.0](https://github.com/expo/entity/compare/v0.61.0...v0.62.0) (2026-03-16)
 
 **Note:** Version bump only for package @expo/entity-example

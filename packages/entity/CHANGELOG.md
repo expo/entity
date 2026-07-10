@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.65.0](https://github.com/expo/entity/compare/v0.64.0...v0.65.0) (2026-07-10)
+
+### Features
+
+- accept array of parent entity classes in cascade deletion rule ([#650](https://github.com/expo/entity/issues/650)) ([df75910](https://github.com/expo/entity/commit/df75910cbdc89df60ed2f23dbedf8862ed5c9077))
+
 # [0.62.0](https://github.com/expo/entity/compare/v0.61.0...v0.62.0) (2026-03-16)
 
 ### Bug Fixes

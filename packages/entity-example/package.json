@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-example",
-  "version": "0.64.0",
+  "version": "0.65.0",
   "private": true,
   "description": "An example integration of the @expo/entity framework",
   "keywords": [

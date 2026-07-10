@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-full-integration-tests",
-  "version": "0.64.0",
+  "version": "0.65.0",
   "private": true,
   "description": "Full redis and knex integration tests for the entity framework",
   "keywords": [
