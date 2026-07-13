@@ -33,7 +33,7 @@
   "devDependencies": {
     "@jest/globals": "30.4.1",
     "@types/invariant": "2.2.37",
-    "@types/node": "24.13.2",
+    "@types/node": "24.13.3",
     "typescript": "6.0.3"
   },
   "peerDependencies": {
