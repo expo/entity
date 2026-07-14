@@ -277,37 +277,97 @@ export class PostgresEntityDatabaseAdapter<
     return parseInt(String(result[0][RESERVED_ENTITY_COUNT_QUERY_ALIAS]), 10);
   }
 
-  protected async insertInternalAsync(
+  protected async insertManyInternalAsync(
     queryInterface: Knex,
     tableName: string,
-    object: object,
+    objects: readonly object[],
   ): Promise<object[]> {
     return await wrapNativePostgresCallAsync(() =>
-      queryInterface.insert(object).into(tableName).returning('*'),
+      queryInterface
+        .insert([...objects])
+        .into(tableName)
+        .returning('*'),
     );
   }
 
-  protected async updateInternalAsync(
+  protected async updateManyInternalAsync(
     queryInterface: Knex,
     tableName: string,
     tableIdField: string,
-    id: any,
-    object: object,
-  ): Promise<{ updatedRowCount: number }> {
-    const updatedRowCount = await wrapNativePostgresCallAsync(() =>
-      queryInterface.update(object).into(tableName).where(tableIdField, id),
-    );
-    return { updatedRowCount };
+    items: readonly { id: any; object: object }[],
+  ): Promise<readonly { updatedRowCount: number }[]> {
+    if (items.length === 0) {
+      return [];
+    }
+
+    if (items.length === 1) {
+      const item = items[0]!;
+      const updatedRowCount = await wrapNativePostgresCallAsync(() =>
+        queryInterface.update(item.object).into(tableName).where(tableIdField, item.id),
+      );
+      return [{ updatedRowCount }];
+    }
+
+    // Bulk update using UPDATE ... FROM (VALUES ...) for same-column-set items.
+    // All items are guaranteed to have the same set of columns.
+    const columns = Object.keys(items[0]!.object);
+    const allColumns = [tableIdField, ...columns];
+
+    const valuePlaceholders = items
+      .map(() => `(${allColumns.map(() => '?').join(', ')})`)
+      .join(', ');
+    const bindings: any[] = items.flatMap((item) => [
+      item.id,
+      ...columns.map((col) => (item.object as Record<string, any>)[col]),
+    ]);
+
+    const setClause = columns.map(() => `?? = ??`).join(', ');
+    const setBindings = columns.flatMap((col) => [col, `_data_table_.${col}`]);
+
+    const columnList = allColumns.map(() => '??').join(', ');
+    const columnBindings = allColumns;
+
+    const sql = [
+      `UPDATE ?? SET ${setClause}`,
+      `FROM (VALUES ${valuePlaceholders}) AS "_data_table_"(${columnList})`,
+      `WHERE ?? = ??`,
+      `RETURNING ??`,
+    ].join(' ');
+
+    const allBindings = [
+      tableName,
+      ...setBindings,
+      ...bindings,
+      ...columnBindings,
+      `${tableName}.${tableIdField}`,
+      `_data_table_.${tableIdField}`,
+      `${tableName}.${tableIdField}`,
+    ];
+
+    const result = await wrapNativePostgresCallAsync(() => queryInterface.raw(sql, allBindings));
+
+    const updatedIdCounts = new Map<any, number>();
+    for (const row of result.rows as Record<string, any>[]) {
+      const id = row[tableIdField];
+      updatedIdCounts.set(id, (updatedIdCounts.get(id) ?? 0) + 1);
+    }
+
+    return items.map((item) => ({
+      updatedRowCount: updatedIdCounts.get(item.id) ?? 0,
+    }));
   }
 
-  protected async deleteInternalAsync(
+  protected async deleteManyInternalAsync(
     queryInterface: Knex,
     tableName: string,
     tableIdField: string,
-    id: any,
+    ids: readonly any[],
   ): Promise<number> {
     return await wrapNativePostgresCallAsync(() =>
-      queryInterface.into(tableName).where(tableIdField, id).del(),
+      queryInterface
+        .from(tableName)
+        .whereIn(tableIdField, [...ids])
+        .del(),
     );
   }
 }
