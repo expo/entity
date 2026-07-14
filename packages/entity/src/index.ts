@@ -80,3 +80,5 @@ export * from './utils/mergeEntityMutationTriggerConfigurations.ts';
 export * from './utils/collections/maps.ts';
 export * from './utils/collections/SerializableKeyMap.ts';
 export * from './utils/collections/sets.ts';
+
+export * from './GrantResolution.ts';
