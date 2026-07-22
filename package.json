@@ -33,10 +33,10 @@
     "oxlint-tsgolint": "0.23.0",
     "prettier": "3.8.4",
     "typedoc": "0.28.20",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   },
   "resolutions": {
     "collect-v8-coverage": "^1.0.3"
   },
-  "packageManager": "yarn@4.13.0+sha512.5c20ba010c99815433e5c8453112165e673f1c7948d8d2b267f4b5e52097538658388ebc9f9580656d9b75c5cc996f990f611f99304a2197d4c56d21eea370e7"
+  "packageManager": "yarn@4.17.1+sha512.ccbfabf7d7b6b32075088be9386fb9a2e00bb6887ef07fa56effabc890a56d53da1ccc4128d62db245fcbd3961b236d75335bdf7d5320ed6eafb7588b7ad4697"
 }

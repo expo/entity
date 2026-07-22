@@ -34,7 +34,7 @@
     "@jest/globals": "30.4.1",
     "pg": "8.22.0",
     "ts-mockito": "2.6.1",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   },
   "engines": {
     "node": ">=18"
