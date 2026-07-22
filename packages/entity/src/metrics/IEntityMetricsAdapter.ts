@@ -28,8 +28,14 @@ export enum EntityMetricsLoadType {
    * Knex loader load using loadPageAsync.
    */
   LOAD_PAGE,
+}
+
+/**
+ * The type of the count method being called.
+ */
+export enum EntityMetricsCountType {
   /**
-   * Knex loader count using countBySQLAsync.
+   * Knex loader count using countBySQLFragmentAsync.
    */
   COUNT_SQL,
   /**
@@ -64,6 +70,37 @@ export interface EntityMetricsLoadEvent {
 
   /**
    * Number of entities returned for this load.
+   */
+  count: number;
+}
+
+/**
+ * Event about a single call to an EntityLoader count method. Counts return a
+ * number rather than entities, so they are reported separately from loads.
+ */
+export interface EntityMetricsCountEvent {
+  /**
+   * EntityMetricsCountType for this count.
+   */
+  type: EntityMetricsCountType;
+
+  /**
+   * Whether this count is within a transaction.
+   */
+  isInTransaction: boolean;
+
+  /**
+   * Class name of the Entity being counted.
+   */
+  entityClassName: string;
+
+  /**
+   * Total duration of this count query.
+   */
+  duration: number;
+
+  /**
+   * The number returned by the count query. No entities are loaded for a count.
    */
   count: number;
 }
@@ -200,6 +237,13 @@ export interface IEntityMetricsAdapter {
    * @param loadEvent - info about the load event
    */
   logDataManagerLoadEvent(loadEvent: EntityMetricsLoadEvent): void;
+
+  /**
+   * Called when any count occurs. Counts return a number rather than entities,
+   * so they are reported separately from loads.
+   * @param countEvent - info about the count event
+   */
+  logDataManagerCountEvent(countEvent: EntityMetricsCountEvent): void;
 
   /**
    * Called when any mutation occurs.

@@ -1,6 +1,7 @@
 import type { EntityConfiguration, EntityQueryContext, IEntityMetricsAdapter } from '@expo/entity';
 import {
   EntityDatabaseAdapterPaginationCursorInvalidError,
+  EntityMetricsCountType,
   EntityMetricsLoadType,
   getDatabaseFieldForEntityField,
   timeAndLogCountEventAsync,
@@ -197,7 +198,7 @@ export class EntityKnexDataManager<
   ): Promise<number> {
     return await timeAndLogCountEventAsync(
       this.metricsAdapter,
-      EntityMetricsLoadType.COUNT_EQUALITY_CONJUNCTION,
+      EntityMetricsCountType.COUNT_EQUALITY_CONJUNCTION,
       this.entityClassName,
       queryContext,
     )(
@@ -235,7 +236,7 @@ export class EntityKnexDataManager<
   ): Promise<number> {
     return await timeAndLogCountEventAsync(
       this.metricsAdapter,
-      EntityMetricsLoadType.COUNT_SQL,
+      EntityMetricsCountType.COUNT_SQL,
       this.entityClassName,
       queryContext,
     )(this.databaseAdapter.countBySQLFragmentAsync(queryContext, sqlFragment));
