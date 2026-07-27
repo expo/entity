@@ -9,7 +9,11 @@ import {
   timeAndLogMutationEventAsync,
 } from '../EntityMetricsUtils.ts';
 import type { IEntityMetricsAdapter } from '../IEntityMetricsAdapter.ts';
-import { EntityMetricsLoadType, EntityMetricsMutationType } from '../IEntityMetricsAdapter.ts';
+import {
+  EntityMetricsCountType,
+  EntityMetricsLoadType,
+  EntityMetricsMutationType,
+} from '../IEntityMetricsAdapter.ts';
 
 describe(timeAndLogLoadEventAsync, () => {
   it('returns the result from the wrapped promise and logs', async () => {
@@ -95,7 +99,7 @@ describe(timeAndLogCountEventAsync, () => {
 
     const result = await timeAndLogCountEventAsync(
       metricsAdapter,
-      EntityMetricsLoadType.COUNT_SQL,
+      EntityMetricsCountType.COUNT_SQL,
       'TestEntity',
       queryContext,
     )(Promise.resolve(42));
@@ -103,9 +107,9 @@ describe(timeAndLogCountEventAsync, () => {
     expect(result).toBe(42);
 
     verify(
-      metricsAdapterMock.logDataManagerLoadEvent(
+      metricsAdapterMock.logDataManagerCountEvent(
         deepEqual({
-          type: EntityMetricsLoadType.COUNT_SQL,
+          type: EntityMetricsCountType.COUNT_SQL,
           isInTransaction: false,
           entityClassName: 'TestEntity',
           duration: anyNumber(),

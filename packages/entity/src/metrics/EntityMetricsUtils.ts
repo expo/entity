@@ -2,6 +2,7 @@ import type { EntityQueryContext } from '../EntityQueryContext.ts';
 import type { IEntityLoadValue } from '../internal/EntityLoadInterfaces.ts';
 import { reduceMap } from '../utils/collections/maps.ts';
 import type {
+  EntityMetricsCountType,
   EntityMetricsLoadType,
   EntityMetricsMutationType,
   IEntityMetricsAdapter,
@@ -87,7 +88,7 @@ export const timeAndLogLoadMapEventAsync =
 export const timeAndLogCountEventAsync =
   (
     metricsAdapter: IEntityMetricsAdapter,
-    loadType: EntityMetricsLoadType,
+    countType: EntityMetricsCountType,
     entityClassName: string,
     queryContext: EntityQueryContext,
   ) =>
@@ -96,8 +97,8 @@ export const timeAndLogCountEventAsync =
     const result = await promise;
     const endTime = Date.now();
 
-    metricsAdapter.logDataManagerLoadEvent({
-      type: loadType,
+    metricsAdapter.logDataManagerCountEvent({
+      type: countType,
       isInTransaction: queryContext.isInTransaction(),
       entityClassName,
       duration: endTime - startTime,
