@@ -24,7 +24,7 @@
   "devDependencies": {
     "@tsconfig/bases": "1.0.26",
     "@types/node": "24.13.3",
-    "ctix": "2.8.1",
+    "ctix": "2.8.2",
     "jest": "30.4.2",
     "lerna": "9.0.7",
     "oxfmt": "0.55.0",
