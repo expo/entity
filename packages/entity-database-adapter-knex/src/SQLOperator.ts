@@ -350,7 +350,10 @@ type PickStringValueKeys<T> = {
   [K in keyof T]: T[K] extends string | null ? K : never;
 }[keyof T];
 
-type JsonSerializable =
+/**
+ * A value that can be serialized to JSON for use with JSON(B) operators.
+ */
+export type JsonSerializable =
   | string
   | number
   | boolean
@@ -567,7 +570,7 @@ export class SQLChainableFragment<
  * Allowed PostgreSQL type names for the cast() helper.
  * Only these types can be used to prevent SQL injection through type name interpolation.
  */
-const ALLOWED_CAST_TYPES = [
+export const ALLOWED_CAST_TYPES = [
   'int',
   'integer',
   'int2',
@@ -632,18 +635,30 @@ function resolveInnerExpr<TFields extends Record<string, any>>(
 // TValue from SQLChainableFragment (for type-safe value checking) while falling back to
 // SupportedSQLValue for plain SQLFragment inputs.
 
-// Extract TFields from a SQLFragment type
-type ExtractFragmentFields<T> = T extends SQLFragment<infer F> ? F : never;
+/**
+ * Extract TFields from a SQLFragment type.
+ */
+export type ExtractFragmentFields<T> = T extends SQLFragment<infer F> ? F : never;
 
 // Conditional value types for expression overloads.
 // Uses SQLChainableFragment<any, ...> so that TExpr alone drives inference (single type param).
-type FragmentValueNullable<TFragment> =
+
+/**
+ * The nullable value type accepted by an expression overload for the given fragment type.
+ */
+export type FragmentValueNullable<TFragment> =
   TFragment extends SQLChainableFragment<any, infer TValue> ? TValue | null : SupportedSQLValue;
 
-type FragmentValue<TFragment> =
+/**
+ * The value type accepted by an expression overload for the given fragment type.
+ */
+export type FragmentValue<TFragment> =
   TFragment extends SQLChainableFragment<any, infer TValue> ? TValue : SupportedSQLValue;
 
-type FragmentValueArray<TFragment> =
+/**
+ * The array-of-values type accepted by an expression overload for the given fragment type.
+ */
+export type FragmentValueArray<TFragment> =
   TFragment extends SQLChainableFragment<any, infer TValue>
     ? readonly TValue[]
     : readonly SupportedSQLValue[];

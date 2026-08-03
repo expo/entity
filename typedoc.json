@@ -8,6 +8,20 @@
     "entryPoints": ["src/index.ts"]
   },
   "out": "doc",
+  "highlightLanguages": [
+    "bash",
+    "console",
+    "css",
+    "html",
+    "javascript",
+    "json",
+    "jsonc",
+    "json5",
+    "sql",
+    "tsx",
+    "typescript",
+    "yaml"
+  ],
   "exclude": [
     "**/__tests__/**/*.ts",
     "**/__integration-tests__/**/*.ts",

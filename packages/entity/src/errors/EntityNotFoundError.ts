@@ -4,7 +4,10 @@ import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
 import type { ViewerContext } from '../ViewerContext.ts';
 import { EntityError, EntityErrorCode, EntityErrorState } from './EntityError.ts';
 
-type EntityNotFoundOptions<
+/**
+ * Options for constructing an {@link EntityNotFoundError} from a failed load.
+ */
+export type EntityNotFoundOptions<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
