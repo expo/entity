@@ -15,7 +15,7 @@
 <div class="tsd-comment tsd-typography"><p>Search strategy for SQL-based pagination.</p>
 </div></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/613d5d742423cbb59a2a25cab082f95665e505be/packages/entity-database-adapter-knex/src/PaginationStrategy.ts#L4">entity-database-adapter-knex/src/PaginationStrategy.ts:4</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/expo/entity/blob/a4740446e03a2484d2ec96ae8af23590f3788201/packages/entity-database-adapter-knex/src/PaginationStrategy.ts#L4">entity-database-adapter-knex/src/PaginationStrategy.ts:4</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -37,14 +37,14 @@
 Results are ordered by the fields being searched within in the order specified, then by ID for tie-breaking and stable pagination.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/613d5d742423cbb59a2a25cab082f95665e505be/packages/entity-database-adapter-knex/src/PaginationStrategy.ts#L14">entity-database-adapter-knex/src/PaginationStrategy.ts:14</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/a4740446e03a2484d2ec96ae8af23590f3788201/packages/entity-database-adapter-knex/src/PaginationStrategy.ts#L14">entity-database-adapter-knex/src/PaginationStrategy.ts:14</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="standard"><span>STANDARD</span><a href="#standard" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-enum-member">STANDARD</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;standard&quot;</span></div>
 <div class="tsd-comment tsd-typography"><p>Standard pagination with ORDER BY. Results are ordered by the specified orderBy fields, with ID field automatically included for stable pagination if not already present.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/613d5d742423cbb59a2a25cab082f95665e505be/packages/entity-database-adapter-knex/src/PaginationStrategy.ts#L8">entity-database-adapter-knex/src/PaginationStrategy.ts:8</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/a4740446e03a2484d2ec96ae8af23590f3788201/packages/entity-database-adapter-knex/src/PaginationStrategy.ts#L8">entity-database-adapter-knex/src/PaginationStrategy.ts:8</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="trigram_search"><span>TRIGRAM_<wbr/>SEARCH</span><a href="#trigram_search" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-enum-member">TRIGRAM_SEARCH</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;trigram&quot;</span></div>
@@ -56,15 +56,12 @@ Results are ordered by the fields being searched within in the order specified, 
 <li>For larger datasets, ensure proper indexing or consider dedicated full-text search solutions.</li>
 <li>For optimal performance, create GIN or GIST indexes on searchable columns:</li>
 </ul>
-<pre><code class="sql">  CREATE EXTENSION IF NOT EXISTS pg_trgm;
-  CREATE INDEX idx_table_field_trigram ON table_name USING gin(field_name gin_trgm_ops);
-  -- Or for multiple columns:
-  CREATE INDEX idx_table_search ON table_name USING gin((field1 || ' ' || field2) gin_trgm_ops);
+<pre><code class="sql"><span class="hl-1">  </span><span class="hl-4">CREATE</span><span class="hl-1"> EXTENSION </span><span class="hl-4">IF</span><span class="hl-1"> </span><span class="hl-4">NOT</span><span class="hl-1"> </span><span class="hl-4">EXISTS</span><span class="hl-1"> pg_trgm;</span><br/><span class="hl-1">  </span><span class="hl-4">CREATE</span><span class="hl-1"> </span><span class="hl-4">INDEX</span><span class="hl-1"> </span><span class="hl-2">idx_table_field_trigram</span><span class="hl-1"> </span><span class="hl-4">ON</span><span class="hl-1"> table_name </span><span class="hl-4">USING</span><span class="hl-1"> gin(field_name gin_trgm_ops);</span><br/><span class="hl-1">  </span><span class="hl-7">-- Or for multiple columns:</span><br/><span class="hl-1">  </span><span class="hl-4">CREATE</span><span class="hl-1"> </span><span class="hl-4">INDEX</span><span class="hl-1"> </span><span class="hl-2">idx_table_search</span><span class="hl-1"> </span><span class="hl-4">ON</span><span class="hl-1"> table_name </span><span class="hl-4">USING</span><span class="hl-1"> gin((field1 || </span><span class="hl-5">&#39; &#39;</span><span class="hl-1"> || field2) gin_trgm_ops);</span>
 </code><button type="button">Copy</button></pre>
 
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/613d5d742423cbb59a2a25cab082f95665e505be/packages/entity-database-adapter-knex/src/PaginationStrategy.ts#L31">entity-database-adapter-knex/src/PaginationStrategy.ts:31</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/expo/entity/blob/a4740446e03a2484d2ec96ae8af23590f3788201/packages/entity-database-adapter-knex/src/PaginationStrategy.ts#L31">entity-database-adapter-knex/src/PaginationStrategy.ts:31</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
