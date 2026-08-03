@@ -247,10 +247,7 @@ export class AuthorizationResultBasedEntityLoader<
    * @returns entity result for matching ID, or null if no entity exists for ID.
    */
   async loadByIDNullableAsync(id: TFields[TIDField]): Promise<Result<TEntity> | null> {
-    return await this.loadByFieldEqualingAsync(
-      this.entityConfiguration.idField as TSelectedFields,
-      id,
-    );
+    return await this.loadByFieldEqualingAsync(this.entityConfiguration.idField, id);
   }
 
   /**
@@ -261,7 +258,7 @@ export class AuthorizationResultBasedEntityLoader<
     ids: readonly TFields[TIDField][],
   ): Promise<ReadonlyMap<TFields[TIDField], Result<TEntity>>> {
     const entityResults = (await this.loadManyByFieldEqualingManyAsync(
-      this.entityConfiguration.idField as TSelectedFields,
+      this.entityConfiguration.idField,
       ids,
     )) as ReadonlyMap<TFields[TIDField], readonly Result<TEntity>[]>;
     return mapMap(entityResults, (entityResultsForId, id) => {
@@ -287,7 +284,7 @@ export class AuthorizationResultBasedEntityLoader<
     ids: readonly TFields[TIDField][],
   ): Promise<ReadonlyMap<TFields[TIDField], Result<TEntity> | null>> {
     const entityResults = (await this.loadManyByFieldEqualingManyAsync(
-      this.entityConfiguration.idField as TSelectedFields,
+      this.entityConfiguration.idField,
       ids,
     )) as ReadonlyMap<TFields[TIDField], readonly Result<TEntity>[]>;
     return mapMap(entityResults, (entityResultsForId) => {
