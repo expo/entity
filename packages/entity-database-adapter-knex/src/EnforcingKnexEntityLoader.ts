@@ -88,7 +88,7 @@ export class EnforcingKnexEntityLoader<
    * query modifiers.
    *
    * Typically this is used for complex queries that cannot be expressed through simpler
-   * convenience methods such as {@link loadManyByFieldEqualingAsync}.
+   * convenience methods such as {@link "@expo/entity"!EnforcingEntityLoader.loadManyByFieldEqualingAsync | EnforcingEntityLoader.loadManyByFieldEqualingAsync}.
    *
    * @throws EntityNotAuthorizedError if viewer is not authorized to view the entity
    * @returns entities matching the filters

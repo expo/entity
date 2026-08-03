@@ -151,7 +151,10 @@ export type EntityLoaderSearchFieldSpecification<
   | NonNullableSelectedFields<TFields, TSelectedFields>
   | EntityLoaderSearchFieldSQLFragmentFnSpecification<TFields, TSelectedFields>;
 
-interface SearchSpecificationBase<
+/**
+ * Base specification shared by all search-based pagination strategies.
+ */
+export interface SearchSpecificationBase<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > {
@@ -166,7 +169,10 @@ interface SearchSpecificationBase<
   fields: readonly EntityLoaderSearchFieldSpecification<TFields, TSelectedFields>[];
 }
 
-interface ILikeSearchSpecification<
+/**
+ * Search specification for case-insensitive pattern matching using the SQL ILIKE operator.
+ */
+export interface ILikeSearchSpecification<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > extends SearchSpecificationBase<TFields, TSelectedFields> {
@@ -177,7 +183,10 @@ interface ILikeSearchSpecification<
   strategy: PaginationStrategy.ILIKE_SEARCH;
 }
 
-interface TrigramSearchSpecification<
+/**
+ * Search specification for similarity search using PostgreSQL trigram similarity.
+ */
+export interface TrigramSearchSpecification<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > extends SearchSpecificationBase<TFields, TSelectedFields> {
@@ -209,7 +218,10 @@ interface TrigramSearchSpecification<
   extraOrderByFields?: readonly EntityLoaderSearchFieldSpecification<TFields, TSelectedFields>[];
 }
 
-interface StandardPaginationSpecification<
+/**
+ * Pagination specification for standard (non-search) pagination.
+ */
+export interface StandardPaginationSpecification<
   TFields extends Record<string, any>,
   TSelectedFields extends keyof TFields = keyof TFields,
 > {

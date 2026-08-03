@@ -109,7 +109,7 @@ export abstract class EntityDatabaseAdapter<
    *
    * @param queryContext - query context with which to perform the fetch
    * @param key - load key being queried
-   * @param values - load value being queried
+   * @param value - load value being queried
    * @returns object that matches the query for the value
    */
   async fetchOneWhereAsync<

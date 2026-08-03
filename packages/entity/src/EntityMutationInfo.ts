@@ -34,7 +34,10 @@ export type EntityCascadingDeletionInfo = {
   cascadingDeleteCause: EntityCascadingDeletionInfo | null;
 };
 
-type EntityTriggerOrValidatorMutationInfo<
+/**
+ * Information about the mutation that invoked a trigger or validator.
+ */
+export type EntityTriggerOrValidatorMutationInfo<
   TFields extends Record<string, any>,
   TIDField extends keyof NonNullable<Pick<TFields, TSelectedFields>>,
   TViewerContext extends ViewerContext,
