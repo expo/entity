@@ -75,9 +75,7 @@ export class AuthorizationResultBasedEntityAssociationLoader<
       .getViewerScopedEntityCompanionForClass(associatedEntityClass)
       .getLoaderFactory()
       .forLoad(this.queryContext, { previousValue: null, cascadingDeleteCause: null });
-    return (await loader.loadByIDAsync(associatedEntityID)) as Result<
-      null extends TFields[TIdentifyingField] ? TAssociatedEntity | null : TAssociatedEntity
-    >;
+    return await loader.loadByIDAsync(associatedEntityID);
   }
 
   /**

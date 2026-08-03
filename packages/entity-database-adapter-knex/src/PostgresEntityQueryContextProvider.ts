@@ -48,10 +48,8 @@ export class PostgresEntityQueryContextProvider extends EntityQueryContextProvid
       }
     };
 
-    return {
-      ...(transactionConfig.isolationLevel
-        ? { isolationLevel: convertIsolationLevel(transactionConfig.isolationLevel) }
-        : {}),
-    };
+    return transactionConfig.isolationLevel
+      ? { isolationLevel: convertIsolationLevel(transactionConfig.isolationLevel) }
+      : {};
   }
 }

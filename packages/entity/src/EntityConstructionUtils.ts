@@ -73,7 +73,7 @@ export class EntityConstructionUtils<
     const selectedFields = pick(fieldsObject, entitySelectedFields);
     return new this.entityClass({
       viewerContext: this.viewerContext,
-      id: id as TFields[TIDField],
+      id,
       databaseFields: fieldsObject,
       selectedFields,
     });
