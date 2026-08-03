@@ -8,6 +8,7 @@
     "entryPoints": ["src/index.ts"]
   },
   "out": "doc",
+  "treatWarningsAsErrors": true,
   "highlightLanguages": [
     "bash",
     "console",
