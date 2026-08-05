@@ -6,6 +6,7 @@ import type { IEntityCacheAdapterProvider } from '../IEntityCacheAdapterProvider
 import type { IEntityDatabaseAdapterProvider } from '../IEntityDatabaseAdapterProvider.ts';
 import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
 import { EntityDataManager } from './EntityDataManager.ts';
+import { EntityMutationDataManager } from './EntityMutationDataManager.ts';
 import { ReadThroughEntityCache } from './ReadThroughEntityCache.ts';
 
 /**
@@ -22,6 +23,7 @@ export class EntityTableDataCoordinator<
   readonly databaseAdapter: EntityDatabaseAdapter<TFields, TIDField>;
   readonly cacheAdapter: IEntityCacheAdapter<TFields, TIDField>;
   readonly dataManager: EntityDataManager<TFields, TIDField>;
+  readonly mutationDataManager: EntityMutationDataManager<TFields, TIDField>;
 
   constructor(
     readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
@@ -37,6 +39,11 @@ export class EntityTableDataCoordinator<
       this.databaseAdapter,
       new ReadThroughEntityCache(entityConfiguration, this.cacheAdapter),
       queryContextProvider,
+      metricsAdapter,
+      entityClassName,
+    );
+    this.mutationDataManager = new EntityMutationDataManager(
+      this.databaseAdapter,
       metricsAdapter,
       entityClassName,
     );
