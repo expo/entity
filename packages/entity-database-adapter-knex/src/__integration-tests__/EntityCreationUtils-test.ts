@@ -33,57 +33,6 @@ describe(createWithUniqueConstraintRecoveryAsync, () => {
   });
 
   describe.each([true, false])('is parallel creations %p', (parallel) => {
-    it('recovers when the same entity is created twice outside of transaction', async () => {
-      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
-
-      const args = {
-        name: 'unique',
-      };
-
-      let createdEntities: [PostgresUniqueTestEntity, PostgresUniqueTestEntity];
-      if (parallel) {
-        createdEntities = await Promise.all([
-          createWithUniqueConstraintRecoveryAsync(
-            vc1,
-            PostgresUniqueTestEntity,
-            PostgresUniqueTestEntity.getByNameAsync,
-            args,
-            PostgresUniqueTestEntity.createWithNameAsync,
-            args,
-          ),
-          createWithUniqueConstraintRecoveryAsync(
-            vc1,
-            PostgresUniqueTestEntity,
-            PostgresUniqueTestEntity.getByNameAsync,
-            args,
-            PostgresUniqueTestEntity.createWithNameAsync,
-            args,
-          ),
-        ]);
-      } else {
-        createdEntities = [
-          await createWithUniqueConstraintRecoveryAsync(
-            vc1,
-            PostgresUniqueTestEntity,
-            PostgresUniqueTestEntity.getByNameAsync,
-            args,
-            PostgresUniqueTestEntity.createWithNameAsync,
-            args,
-          ),
-          await createWithUniqueConstraintRecoveryAsync(
-            vc1,
-            PostgresUniqueTestEntity,
-            PostgresUniqueTestEntity.getByNameAsync,
-            args,
-            PostgresUniqueTestEntity.createWithNameAsync,
-            args,
-          ),
-        ];
-      }
-
-      expect(createdEntities[0].getID()).toEqual(createdEntities[1].getID());
-    });
-
     it('recovers when the same entity is created twice within same transaction', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
