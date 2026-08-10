@@ -291,18 +291,16 @@ export class EntityKnexDataManager<
           // 3. Reverse the final array to present items in name ASC order
           return direction === PaginationDirection.FORWARD
             ? augmentedOrderByClauses
-            : augmentedOrderByClauses.map(
-                (clause): PostgresOrderByClause<TFields> => ({
-                  ...clause,
-                  order:
-                    clause.order === OrderByOrdering.ASCENDING
-                      ? OrderByOrdering.DESCENDING
-                      : OrderByOrdering.ASCENDING,
-                  nulls: clause.nulls
-                    ? EntityKnexDataManager.flipNullsOrderingSpread(clause.nulls)
-                    : undefined,
-                }),
-              );
+            : augmentedOrderByClauses.map((clause): PostgresOrderByClause<TFields> => ({
+                ...clause,
+                order:
+                  clause.order === OrderByOrdering.ASCENDING
+                    ? OrderByOrdering.DESCENDING
+                    : OrderByOrdering.ASCENDING,
+                nulls: clause.nulls
+                  ? EntityKnexDataManager.flipNullsOrderingSpread(clause.nulls)
+                  : undefined,
+              }));
         },
         buildCursorCondition: (decodedCursorId, _direction, orderByClauses) => {
           // all clauses are guaranteed to have the same order due to validation, so we can just look at the first one for effective ordering
@@ -758,12 +756,10 @@ export class EntityKnexDataManager<
 
         // Order by search fields + ID to match cursor fields
         const searchOrderByClauses: PostgresOrderByClause<TFields>[] = [
-          ...search.fields.map(
-            (field): PostgresOrderByClause<TFields> => ({
-              fieldFragment: this.resolveSearchFieldToSQLFragment(field),
-              order: OrderByOrdering.ASCENDING,
-            }),
-          ),
+          ...search.fields.map((field): PostgresOrderByClause<TFields> => ({
+            fieldFragment: this.resolveSearchFieldToSQLFragment(field),
+            order: OrderByOrdering.ASCENDING,
+          })),
           {
             fieldName: this.entityConfiguration.idField,
             order: OrderByOrdering.ASCENDING,
