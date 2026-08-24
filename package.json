@@ -22,7 +22,7 @@
     "typedoc": "yarn build && typedoc"
   },
   "devDependencies": {
-    "@tsconfig/bases": "1.0.26",
+    "@tsconfig/bases": "1.0.27",
     "@types/node": "24.13.3",
     "ctix": "2.8.2",
     "jest": "30.4.2",
