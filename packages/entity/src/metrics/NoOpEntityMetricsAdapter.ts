@@ -5,6 +5,7 @@ import type {
   EntityMetricsMutationEvent,
   IEntityMetricsAdapter,
   IncrementLoadCountEvent,
+  IncrementMutationCountEvent,
 } from './IEntityMetricsAdapter.ts';
 
 export class NoOpEntityMetricsAdapter implements IEntityMetricsAdapter {
@@ -13,4 +14,7 @@ export class NoOpEntityMetricsAdapter implements IEntityMetricsAdapter {
   logDataManagerCountEvent(_countEvent: EntityMetricsCountEvent): void {}
   logMutatorMutationEvent(_mutationEvent: EntityMetricsMutationEvent): void {}
   incrementDataManagerLoadCount(_incrementLoadCountEvent: IncrementLoadCountEvent): void {}
+  incrementDataManagerMutationCount(
+    _incrementMutationCountEvent: IncrementMutationCountEvent,
+  ): void {}
 }
