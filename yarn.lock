@@ -849,10 +849,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/batcher@npm:1.0.0":
-  version: 1.0.0
-  resolution: "@expo/batcher@npm:1.0.0"
-  checksum: 10c0/13026d1360753c31c646ff8050172a79b1787153212e5d6893dd240640674197ab300811ce835512de55d9ff5502e64c03f18f0b1dbefa74c15d571ec2331f24
+"@expo/batcher@npm:1.1.2":
+  version: 1.1.2
+  resolution: "@expo/batcher@npm:1.1.2"
+  checksum: 10c0/e20c819f844ea2faf17553d283833f71c85f7ef467c9a808643b0c70da3c63942ebdcab541a6117bc496f1d48e82c7d363932e8c0bd94cae3cd6c6d97549153d
   languageName: node
   linkType: hard
 
@@ -872,7 +872,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@expo/entity-cache-adapter-redis@workspace:packages/entity-cache-adapter-redis"
   dependencies:
-    "@expo/batcher": "npm:1.0.0"
+    "@expo/batcher": "npm:1.1.2"
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
     "@jest/globals": "npm:30.5.1"
