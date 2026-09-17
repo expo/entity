@@ -2,11 +2,19 @@ import type { EntityCascadingDeletionInfo } from './EntityMutationInfo.ts';
 import type { EntityQueryContext } from './EntityQueryContext.ts';
 import type { ReadonlyEntity } from './ReadonlyEntity.ts';
 import type { ViewerContext } from './ViewerContext.ts';
-import { EntityNotAuthorizedError } from './errors/EntityNotAuthorizedError.ts';
+import type {
+  EntityNotAuthorizedDenialReason,
+  EntityNotAuthorizedRuleInfo,
+  EntityNotAuthorizedUserFacingReason,
+} from './errors/EntityNotAuthorizedError.ts';
+import {
+  EntityNotAuthorizedDenialType,
+  EntityNotAuthorizedError,
+} from './errors/EntityNotAuthorizedError.ts';
 import type { IEntityMetricsAdapter } from './metrics/IEntityMetricsAdapter.ts';
 import { EntityMetricsAuthorizationResult } from './metrics/IEntityMetricsAdapter.ts';
 import type { PrivacyPolicyRule } from './rules/PrivacyPolicyRule.ts';
-import { RuleEvaluationResult } from './rules/PrivacyPolicyRule.ts';
+import { RuleEvaluationResult, normalizeRuleEvaluationOutcome } from './rules/PrivacyPolicyRule.ts';
 
 /**
  * Information about the reason this privacy policy is being evaluated.
@@ -202,6 +210,35 @@ export abstract class EntityPrivacyPolicy<
     return {
       mode: EntityPrivacyPolicyEvaluationMode.ENFORCE,
     };
+  }
+
+  /**
+   * Produce an end-user-safe explanation for a denial of this policy. The result is attached to the
+   * thrown EntityNotAuthorizedError as `userFacingReason`.
+   *
+   * @remarks
+   *
+   * The default returns null, meaning no user-facing explanation is available and callers should
+   * display a generic message. Override to map denials to messages appropriate for end users.
+   * When all rules skip, `denialReason.skippedRules` holds each skipped rule with the reason codes it
+   * contributed, so the policy can select a message for a specific reason, for example "You must be a
+   * member of this account to view this project." when a rule skipped with a NOT_ACCOUNT_MEMBER reason.
+   *
+   * The denied entity and the evaluation context are intentionally not passed to this method. The viewer
+   * is not authorized to see the entity, and the evaluation context may contain it (as the previous value
+   * or the cascading deletion cause), so neither may influence or appear in the user-facing message.
+   * Rules should instead communicate what is needed through reason codes.
+   *
+   * @param _viewerContext - viewer context that was denied
+   * @param _action - the action that was denied
+   * @param _denialReason - structured, developer-facing reason for the denial
+   */
+  protected getUserFacingDenialReason(
+    _viewerContext: TViewerContext,
+    _action: EntityAuthorizationAction,
+    _denialReason: EntityNotAuthorizedDenialReason,
+  ): EntityNotAuthorizedUserFacingReason | null {
+    return null;
   }
 
   /**
@@ -473,24 +510,26 @@ export abstract class EntityPrivacyPolicy<
     entity: TEntity,
     action: EntityAuthorizationAction,
   ): Promise<TEntity> {
+    const skippedRules: EntityNotAuthorizedRuleInfo[] = [];
     for (let i = 0; i < ruleset.length; i++) {
       const rule = ruleset[i]!;
-      const ruleEvaluationResult = await rule.evaluateAsync(
-        viewerContext,
-        queryContext,
-        { ...evaluationContext, action },
-        entity,
+      const { result, reasons } = normalizeRuleEvaluationOutcome(
+        await rule.evaluateAsync(
+          viewerContext,
+          queryContext,
+          { ...evaluationContext, action },
+          entity,
+        ),
       );
-      switch (ruleEvaluationResult) {
+      switch (result) {
         case RuleEvaluationResult.DENY:
-          throw new EntityNotAuthorizedError<
-            TFields,
-            TIDField,
-            TViewerContext,
-            TEntity,
-            TSelectedFields
-          >(entity, viewerContext, action, i);
+          throw this.createNotAuthorizedError(viewerContext, entity, action, {
+            type: EntityNotAuthorizedDenialType.RULE_DENIED,
+            rule: { ruleIndex: i, ruleName: rule.constructor.name, reasons },
+            skippedRules,
+          });
         case RuleEvaluationResult.SKIP:
+          skippedRules.push({ ruleIndex: i, ruleName: rule.constructor.name, reasons });
           continue;
         case RuleEvaluationResult.ALLOW:
           return entity;
@@ -501,11 +540,25 @@ export abstract class EntityPrivacyPolicy<
       }
     }
 
-    throw new EntityNotAuthorizedError<TFields, TIDField, TViewerContext, TEntity, TSelectedFields>(
-      entity,
-      viewerContext,
-      action,
-      -1,
-    );
+    throw this.createNotAuthorizedError(viewerContext, entity, action, {
+      type: EntityNotAuthorizedDenialType.ALL_RULES_SKIPPED,
+      skippedRules,
+    });
+  }
+
+  private createNotAuthorizedError(
+    viewerContext: TViewerContext,
+    entity: TEntity,
+    action: EntityAuthorizationAction,
+    denialReason: EntityNotAuthorizedDenialReason,
+  ): EntityNotAuthorizedError<TFields, TIDField, TViewerContext, TEntity, TSelectedFields> {
+    const userFacingReason = this.getUserFacingDenialReason(viewerContext, action, denialReason);
+    return new EntityNotAuthorizedError<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >(entity, viewerContext, action, denialReason, userFacingReason);
   }
 }

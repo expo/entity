@@ -2,6 +2,7 @@ import type { EntityPrivacyPolicyRuleEvaluationContext } from '../EntityPrivacyP
 import type { EntityQueryContext } from '../EntityQueryContext.ts';
 import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
 import type { ViewerContext } from '../ViewerContext.ts';
+import type { RuleEvaluationOutcome } from './PrivacyPolicyRule.ts';
 import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule.ts';
 
 export class EvaluateIfEntityFieldPredicatePrivacyPolicyRule<
@@ -37,7 +38,7 @@ export class EvaluateIfEntityFieldPredicatePrivacyPolicyRule<
       TSelectedFields
     >,
     entity: TEntity,
-  ): Promise<RuleEvaluationResult> {
+  ): Promise<RuleEvaluationOutcome> {
     const fieldValue = entity.getField(this.fieldName);
     return this.shouldEvaluatePredicate(fieldValue)
       ? await this.rule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity)

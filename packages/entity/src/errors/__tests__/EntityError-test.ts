@@ -6,7 +6,10 @@ import { SimpleTestEntity } from '../../utils/__testfixtures__/SimpleTestEntity.
 import { EntityCacheAdapterTransientError } from '../EntityCacheAdapterError.ts';
 import { EntityErrorCode, EntityErrorState } from '../EntityError.ts';
 import { EntityInvalidFieldValueError } from '../EntityInvalidFieldValueError.ts';
-import { EntityNotAuthorizedError } from '../EntityNotAuthorizedError.ts';
+import {
+  EntityNotAuthorizedDenialType,
+  EntityNotAuthorizedError,
+} from '../EntityNotAuthorizedError.ts';
 import { EntityNotFoundError } from '../EntityNotFoundError.ts';
 
 describe('EntityError subclasses', () => {
@@ -25,7 +28,10 @@ describe('EntityError subclasses', () => {
       databaseFields: data,
       selectedFields: data,
     });
-    const error = new EntityNotAuthorizedError(testEntity, viewerContext, 0, 0);
+    const error = new EntityNotAuthorizedError(testEntity, viewerContext, 0, {
+      type: EntityNotAuthorizedDenialType.ALL_RULES_SKIPPED,
+      skippedRules: [],
+    });
     expect(error.state).toBe(EntityErrorState.PERMANENT);
     expect(error.code).toBe(EntityErrorCode.ERR_ENTITY_NOT_AUTHORIZED);
   });

@@ -5,7 +5,7 @@ import type {
   PrivacyPolicyRule,
   EntityPrivacyPolicyRuleEvaluationContext,
 } from '@expo/entity';
-import { RuleEvaluationResult } from '@expo/entity';
+import { RuleEvaluationResult, normalizeRuleEvaluationOutcome } from '@expo/entity';
 import { describe, expect, test } from '@jest/globals';
 
 export interface Case<
@@ -25,6 +25,12 @@ export interface Case<
     TSelectedFields
   >;
   entity: TEntity;
+  /**
+   * For skip and deny cases: the exact reason codes the rule must attach to its result, in order.
+   * Omit to assert only the result. An empty array asserts that no reasons were attached.
+   * Ignored for allow cases.
+   */
+  expectedReasons?: readonly string[];
 }
 
 export type CaseMap<
@@ -62,9 +68,15 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
         test.each(Array.from(allowCases.keys()))('%p', async (caseKey) => {
           const { viewerContext, queryContext, evaluationContext, entity } =
             await allowCases.get(caseKey)!();
-          await expect(
-            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity),
-          ).resolves.toEqual(RuleEvaluationResult.ALLOW);
+          const outcome = await privacyPolicyRule.evaluateAsync(
+            viewerContext,
+            queryContext,
+            evaluationContext,
+            entity,
+          );
+          expect(normalizeRuleEvaluationOutcome(outcome).result).toEqual(
+            RuleEvaluationResult.ALLOW,
+          );
         });
       });
     }
@@ -72,11 +84,20 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
     if (skipCases && skipCases.size > 0) {
       describe('skip cases', () => {
         test.each(Array.from(skipCases.keys()))('%p', async (caseKey) => {
-          const { viewerContext, queryContext, evaluationContext, entity } =
+          const { viewerContext, queryContext, evaluationContext, entity, expectedReasons } =
             await skipCases.get(caseKey)!();
-          await expect(
-            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity),
-          ).resolves.toEqual(RuleEvaluationResult.SKIP);
+          const outcome = normalizeRuleEvaluationOutcome(
+            await privacyPolicyRule.evaluateAsync(
+              viewerContext,
+              queryContext,
+              evaluationContext,
+              entity,
+            ),
+          );
+          expect(outcome.result).toEqual(RuleEvaluationResult.SKIP);
+          if (expectedReasons !== undefined) {
+            expect(outcome.reasons).toEqual(expectedReasons);
+          }
         });
       });
     }
@@ -84,11 +105,20 @@ export const describePrivacyPolicyRuleWithAsyncTestCase = <
     if (denyCases && denyCases.size > 0) {
       describe('deny cases', () => {
         test.each(Array.from(denyCases.keys()))('%p', async (caseKey) => {
-          const { viewerContext, queryContext, evaluationContext, entity } =
+          const { viewerContext, queryContext, evaluationContext, entity, expectedReasons } =
             await denyCases.get(caseKey)!();
-          await expect(
-            privacyPolicyRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity),
-          ).resolves.toEqual(RuleEvaluationResult.DENY);
+          const outcome = normalizeRuleEvaluationOutcome(
+            await privacyPolicyRule.evaluateAsync(
+              viewerContext,
+              queryContext,
+              evaluationContext,
+              entity,
+            ),
+          );
+          expect(outcome.result).toEqual(RuleEvaluationResult.DENY);
+          if (expectedReasons !== undefined) {
+            expect(outcome.reasons).toEqual(expectedReasons);
+          }
         });
       });
     }
