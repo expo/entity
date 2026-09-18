@@ -17,13 +17,29 @@ import {
 } from '../EntityPrivacyPolicy.ts';
 import { EntityQueryContext } from '../EntityQueryContext.ts';
 import { ViewerContext } from '../ViewerContext.ts';
-import { EntityNotAuthorizedError } from '../errors/EntityNotAuthorizedError.ts';
+import type {
+  EntityNotAuthorizedDenialReason,
+  EntityNotAuthorizedUserFacingReason,
+} from '../errors/EntityNotAuthorizedError.ts';
+import {
+  EntityNotAuthorizedDenialType,
+  EntityNotAuthorizedError,
+} from '../errors/EntityNotAuthorizedError.ts';
 import type { IEntityMetricsAdapter } from '../metrics/IEntityMetricsAdapter.ts';
 import { EntityMetricsAuthorizationResult } from '../metrics/IEntityMetricsAdapter.ts';
+import { AllowIfAllSubRulesAllowPrivacyPolicyRule } from '../rules/AllowIfAllSubRulesAllowPrivacyPolicyRule.ts';
+import { AllowIfAnySubRuleAllowsPrivacyPolicyRule } from '../rules/AllowIfAnySubRuleAllowsPrivacyPolicyRule.ts';
 import { AlwaysAllowPrivacyPolicyRule } from '../rules/AlwaysAllowPrivacyPolicyRule.ts';
 import { AlwaysDenyPrivacyPolicyRule } from '../rules/AlwaysDenyPrivacyPolicyRule.ts';
 import { AlwaysSkipPrivacyPolicyRule } from '../rules/AlwaysSkipPrivacyPolicyRule.ts';
-import { PrivacyPolicyRule, RuleEvaluationResult } from '../rules/PrivacyPolicyRule.ts';
+import { EvaluateIfEntityFieldPredicatePrivacyPolicyRule } from '../rules/EvaluateIfEntityFieldPredicatePrivacyPolicyRule.ts';
+import type { RuleEvaluationOutcome } from '../rules/PrivacyPolicyRule.ts';
+import {
+  PrivacyPolicyRule,
+  RuleEvaluationResult,
+  denyWithReasons,
+  skipWithReasons,
+} from '../rules/PrivacyPolicyRule.ts';
 
 type BlahFields = {
   id: string;
@@ -313,6 +329,88 @@ class ContextCapturingPolicy extends EntityPrivacyPolicy<
   protected override readonly readRules = [this.readRule];
   protected override readonly updateRules = [this.updateRule];
   protected override readonly deleteRules = [this.deleteRule];
+}
+
+enum TestSkipReason {
+  NOT_OWNER = 'NOT_OWNER',
+  NOT_MEMBER = 'NOT_MEMBER',
+  BLOCKED = 'BLOCKED',
+}
+
+class SkipWithReasonRule extends PrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity> {
+  constructor(private readonly reason: TestSkipReason) {
+    super();
+  }
+
+  async evaluateAsync(): Promise<RuleEvaluationOutcome> {
+    return skipWithReasons(this.reason);
+  }
+}
+
+class DenyWithReasonRule extends PrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity> {
+  async evaluateAsync(): Promise<RuleEvaluationOutcome> {
+    return denyWithReasons(TestSkipReason.BLOCKED);
+  }
+}
+
+class ReasonedDenialPolicy extends EntityPrivacyPolicy<
+  BlahFields,
+  'id',
+  ViewerContext,
+  BlahEntity
+> {
+  protected override readonly createRules = [
+    new SkipWithReasonRule(TestSkipReason.NOT_OWNER),
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
+    new SkipWithReasonRule(TestSkipReason.NOT_MEMBER),
+    new SkipWithReasonRule(TestSkipReason.NOT_OWNER),
+  ];
+  protected override readonly readRules = [
+    new SkipWithReasonRule(TestSkipReason.NOT_OWNER),
+    new AlwaysSkipPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
+    new DenyWithReasonRule(),
+    new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
+  ];
+  protected override readonly updateRules = [
+    new AllowIfAnySubRuleAllowsPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>([
+      new SkipWithReasonRule(TestSkipReason.NOT_OWNER),
+      new AllowIfAllSubRulesAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>([
+        new AlwaysAllowPrivacyPolicyRule<BlahFields, 'id', ViewerContext, BlahEntity>(),
+        new SkipWithReasonRule(TestSkipReason.NOT_MEMBER),
+      ]),
+    ]),
+    new EvaluateIfEntityFieldPredicatePrivacyPolicyRule<
+      BlahFields,
+      'id',
+      ViewerContext,
+      BlahEntity,
+      'id'
+    >('id', (id) => id === '1', new SkipWithReasonRule(TestSkipReason.BLOCKED)),
+    new EvaluateIfEntityFieldPredicatePrivacyPolicyRule<
+      BlahFields,
+      'id',
+      ViewerContext,
+      BlahEntity,
+      'id'
+    >('id', (id) => id === 'never', new SkipWithReasonRule(TestSkipReason.NOT_OWNER)),
+  ];
+  protected override readonly deleteRules = [];
+
+  protected override getUserFacingDenialReason(
+    _viewerContext: ViewerContext,
+    _action: EntityAuthorizationAction,
+    denialReason: EntityNotAuthorizedDenialReason,
+  ): EntityNotAuthorizedUserFacingReason | null {
+    if (
+      denialReason.type === EntityNotAuthorizedDenialType.ALL_RULES_SKIPPED &&
+      denialReason.skippedRules.some((skippedRule) =>
+        skippedRule.reasons.includes(TestSkipReason.NOT_MEMBER),
+      )
+    ) {
+      return { code: 'MUST_BE_MEMBER', message: 'You must be a member to do this.' };
+    }
+    return null;
+  }
 }
 
 describe(EntityPrivacyPolicy, () => {
@@ -758,6 +856,190 @@ describe(EntityPrivacyPolicy, () => {
       verify(policySpy.denyHandler(anyOfClass(EntityNotAuthorizedError))).never();
 
       verify(metricsAdapterMock.logAuthorizationEvent(anything())).never();
+    });
+  });
+
+  describe('denial reasons', () => {
+    const setup = (): {
+      viewerContext: ViewerContext;
+      queryContext: EntityQueryContext;
+      privacyPolicyEvaluationContext: EntityPrivacyPolicyEvaluationContext<
+        BlahFields,
+        'id',
+        ViewerContext,
+        BlahEntity
+      >;
+      metricsAdapter: IEntityMetricsAdapter;
+      entity: BlahEntity;
+    } => {
+      const viewerContext = instance(mock(ViewerContext));
+      const queryContext = instance(mock(EntityQueryContext));
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<EntityPrivacyPolicyEvaluationContext<BlahFields, 'id', ViewerContext, BlahEntity>>(),
+        );
+      const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+      const entity = new BlahEntity({
+        viewerContext,
+        id: '1',
+        databaseFields: { id: '1' },
+        selectedFields: { id: '1' },
+      });
+      return {
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        metricsAdapter,
+        entity,
+      };
+    };
+
+    const rejectionOf = async <T>(
+      promise: Promise<T>,
+    ): Promise<EntityNotAuthorizedError<BlahFields, 'id', ViewerContext, BlahEntity>> => {
+      try {
+        await promise;
+      } catch (e) {
+        expect(e).toBeInstanceOf(EntityNotAuthorizedError);
+        return e as EntityNotAuthorizedError<BlahFields, 'id', ViewerContext, BlahEntity>;
+      }
+      throw new Error('expected rejection');
+    };
+
+    it('collects reasons from all skipped rules and passes them to the policy handler', async () => {
+      const {
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        metricsAdapter,
+        entity,
+      } = setup();
+      const policy = new ReasonedDenialPolicy();
+      const error = await rejectionOf(
+        policy.authorizeCreateAsync(
+          viewerContext,
+          queryContext,
+          privacyPolicyEvaluationContext,
+          entity,
+          metricsAdapter,
+        ),
+      );
+      expect(error.action).toBe(EntityAuthorizationAction.CREATE);
+      expect(error.entityClassName).toBe('BlahEntity');
+      expect(error.entityID).toBe('1');
+      expect(error.denialReason).toEqual({
+        type: EntityNotAuthorizedDenialType.ALL_RULES_SKIPPED,
+        skippedRules: [
+          { ruleIndex: 0, ruleName: 'SkipWithReasonRule', reasons: [TestSkipReason.NOT_OWNER] },
+          { ruleIndex: 1, ruleName: 'AlwaysSkipPrivacyPolicyRule', reasons: [] },
+          { ruleIndex: 2, ruleName: 'SkipWithReasonRule', reasons: [TestSkipReason.NOT_MEMBER] },
+          { ruleIndex: 3, ruleName: 'SkipWithReasonRule', reasons: [TestSkipReason.NOT_OWNER] },
+        ],
+      });
+      expect(error.message).toContain('action = CREATE, ruleIndex = -1)');
+      expect(error.message).not.toContain('SkipWithReasonRule');
+      expect(error.message).not.toContain('NOT_OWNER');
+      expect(error.userFacingDenialReason).toEqual({
+        code: 'MUST_BE_MEMBER',
+        message: 'You must be a member to do this.',
+      });
+    });
+
+    it('identifies the denying rule and the rules skipped before it when a rule denies', async () => {
+      const {
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        metricsAdapter,
+        entity,
+      } = setup();
+      const policy = new ReasonedDenialPolicy();
+      const error = await rejectionOf(
+        policy.authorizeReadAsync(
+          viewerContext,
+          queryContext,
+          privacyPolicyEvaluationContext,
+          entity,
+          metricsAdapter,
+        ),
+      );
+      expect(error.denialReason).toEqual({
+        type: EntityNotAuthorizedDenialType.RULE_DENIED,
+        rule: { ruleIndex: 2, ruleName: 'DenyWithReasonRule', reasons: [TestSkipReason.BLOCKED] },
+        skippedRules: [
+          { ruleIndex: 0, ruleName: 'SkipWithReasonRule', reasons: [TestSkipReason.NOT_OWNER] },
+          { ruleIndex: 1, ruleName: 'AlwaysSkipPrivacyPolicyRule', reasons: [] },
+        ],
+      });
+      expect(error.message).toContain('action = READ, ruleIndex = 2)');
+      expect(error.message).not.toContain('BLOCKED');
+      expect(error.userFacingDenialReason).toBeNull();
+    });
+
+    it('surfaces reasons from sub-rules of composite rules', async () => {
+      const {
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        metricsAdapter,
+        entity,
+      } = setup();
+      const policy = new ReasonedDenialPolicy();
+      const error = await rejectionOf(
+        policy.authorizeUpdateAsync(
+          viewerContext,
+          queryContext,
+          privacyPolicyEvaluationContext,
+          entity,
+          metricsAdapter,
+        ),
+      );
+      expect(error.denialReason).toEqual({
+        type: EntityNotAuthorizedDenialType.ALL_RULES_SKIPPED,
+        skippedRules: [
+          {
+            ruleIndex: 0,
+            ruleName: 'AllowIfAnySubRuleAllowsPrivacyPolicyRule',
+            reasons: [TestSkipReason.NOT_OWNER, TestSkipReason.NOT_MEMBER],
+          },
+          {
+            ruleIndex: 1,
+            ruleName: 'EvaluateIfEntityFieldPredicatePrivacyPolicyRule',
+            reasons: [TestSkipReason.BLOCKED],
+          },
+          {
+            ruleIndex: 2,
+            ruleName: 'EvaluateIfEntityFieldPredicatePrivacyPolicyRule',
+            reasons: [],
+          },
+        ],
+      });
+    });
+
+    it('reports an empty ruleset', async () => {
+      const {
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        metricsAdapter,
+        entity,
+      } = setup();
+      const policy = new ReasonedDenialPolicy();
+      const error = await rejectionOf(
+        policy.authorizeDeleteAsync(
+          viewerContext,
+          queryContext,
+          privacyPolicyEvaluationContext,
+          entity,
+          metricsAdapter,
+        ),
+      );
+      expect(error.denialReason).toEqual({
+        type: EntityNotAuthorizedDenialType.ALL_RULES_SKIPPED,
+        skippedRules: [],
+      });
+      expect(error.message).toContain('ruleIndex = -1)');
+      expect(error.userFacingDenialReason).toBeNull();
     });
   });
 

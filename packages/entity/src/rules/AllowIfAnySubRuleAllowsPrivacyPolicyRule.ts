@@ -2,7 +2,13 @@ import type { EntityPrivacyPolicyRuleEvaluationContext } from '../EntityPrivacyP
 import type { EntityQueryContext } from '../EntityQueryContext.ts';
 import type { ReadonlyEntity } from '../ReadonlyEntity.ts';
 import type { ViewerContext } from '../ViewerContext.ts';
-import { PrivacyPolicyRule, RuleEvaluationResult } from './PrivacyPolicyRule.ts';
+import type { RuleEvaluationOutcome } from './PrivacyPolicyRule.ts';
+import {
+  PrivacyPolicyRule,
+  RuleEvaluationResult,
+  normalizeRuleEvaluationOutcome,
+  skipWithReasons,
+} from './PrivacyPolicyRule.ts';
 
 export class AllowIfAnySubRuleAllowsPrivacyPolicyRule<
   TFields extends object,
@@ -34,14 +40,16 @@ export class AllowIfAnySubRuleAllowsPrivacyPolicyRule<
       TSelectedFields
     >,
     entity: TEntity,
-  ): Promise<RuleEvaluationResult> {
-    const results = await Promise.all(
-      this.subRules.map((subRule) =>
-        subRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity),
+  ): Promise<RuleEvaluationOutcome> {
+    const outcomes = await Promise.all(
+      this.subRules.map(async (subRule) =>
+        normalizeRuleEvaluationOutcome(
+          await subRule.evaluateAsync(viewerContext, queryContext, evaluationContext, entity),
+        ),
       ),
     );
-    return results.includes(RuleEvaluationResult.ALLOW)
+    return outcomes.some((outcome) => outcome.result === RuleEvaluationResult.ALLOW)
       ? RuleEvaluationResult.ALLOW
-      : RuleEvaluationResult.SKIP;
+      : skipWithReasons(...outcomes.flatMap((outcome) => outcome.reasons));
   }
 }

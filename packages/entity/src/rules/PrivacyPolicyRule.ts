@@ -21,6 +21,50 @@ export enum RuleEvaluationResult {
 }
 
 /**
+ * A SKIP or DENY result accompanied by reason codes explaining why the rule did not allow.
+ *
+ * @remarks
+ *
+ * Reason codes are application-defined and should be enum-like. String enums are recommended:
+ * their members are assignable to `string`, and the privacy policy's denial handler can
+ * compare against them to select an end-user-facing message.
+ *
+ * Multiple reasons are permitted so that composite rules can surface the reasons of their sub-rules.
+ */
+export type RuleEvaluationResultWithReasons = {
+  readonly result: RuleEvaluationResult;
+  readonly reasons: readonly string[];
+};
+
+/**
+ * What a rule returns from evaluation: a bare RuleEvaluationResult, or a SKIP/DENY with reasons.
+ */
+export type RuleEvaluationOutcome = RuleEvaluationResult | RuleEvaluationResultWithReasons;
+
+/**
+ * Construct a SKIP outcome with reason codes.
+ */
+export function skipWithReasons(...reasons: readonly string[]): RuleEvaluationResultWithReasons {
+  return { result: RuleEvaluationResult.SKIP, reasons };
+}
+
+/**
+ * Construct a DENY outcome with reason codes.
+ */
+export function denyWithReasons(...reasons: readonly string[]): RuleEvaluationResultWithReasons {
+  return { result: RuleEvaluationResult.DENY, reasons };
+}
+
+/**
+ * Normalize a RuleEvaluationOutcome into its result and reasons. A bare result has no reasons.
+ */
+export function normalizeRuleEvaluationOutcome(
+  outcome: RuleEvaluationOutcome,
+): RuleEvaluationResultWithReasons {
+  return typeof outcome === 'object' ? outcome : { result: outcome, reasons: [] };
+}
+
+/**
  * A single unit of which declarative privacy policies are composed, allowing for simple
  * expression and testing of authorization logic.
  *
@@ -30,6 +74,11 @@ export enum RuleEvaluationResult {
  * that it is checking for. While rules can return any of these, it is most common for
  * rules to return ALLOW or SKIP, explicitly authorizing or deferring authorization to the next
  * rule in the privacy policy. If all rules in the policy SKIP, the policy is denied.
+ *
+ * A rule may attach reason codes to a SKIP or DENY (see skipWithReasons and denyWithReasons).
+ * When the policy is denied, the reasons from all skipped rules (or from the denying rule) are
+ * passed to EntityPrivacyPolicy.getUserFacingDenialReason and attached to the thrown
+ * EntityNotAuthorizedError.
  *
  * Returning DENY from a rule is useful in a few notable cases:
  * - Preventing a CRUD action on an entity (AlwaysDenyPrivacyPolicyRule)
@@ -54,5 +103,5 @@ export abstract class PrivacyPolicyRule<
       TSelectedFields
     >,
     entity: TEntity,
-  ): Promise<RuleEvaluationResult>;
+  ): Promise<RuleEvaluationOutcome>;
 }
