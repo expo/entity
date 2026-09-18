@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-database-adapter-knex-testing-utils",
-  "version": "0.66.0",
+  "version": "0.67.0",
   "description": "Testing utilities for applications using Entity with Knex database adapter",
   "keywords": [
     "entity"
