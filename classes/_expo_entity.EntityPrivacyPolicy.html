@@ -35,7 +35,7 @@ complex yet testable permissioning logic for an entity.</p>
 <li><span id="tentity"><span class="tsd-kind-type-parameter">TEntity</span> <span class="tsd-signature-keyword">extends</span> <a href="_expo_entity.ReadonlyEntity.html" class="tsd-signature-type tsd-kind-class">ReadonlyEntity</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">&gt;</span></span></li>
 <li><span id="tselectedfields"><span class="tsd-kind-type-parameter">TSelectedFields</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-keyword">keyof</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a> = <span class="tsd-signature-keyword">keyof</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a></span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/fa5af4783faddefef3865ae0dc28f6f3cae72e64/packages/entity/src/EntityPrivacyPolicy.ts#L137">packages/entity/src/EntityPrivacyPolicy.ts:137</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L145">packages/entity/src/EntityPrivacyPolicy.ts:145</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -59,6 +59,7 @@ complex yet testable permissioning logic for an entity.</p>
 <a href="#authorizereadasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>authorize<wbr/>Read<wbr/>Async</span></a>
 <a href="#authorizeupdateasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>authorize<wbr/>Update<wbr/>Async</span></a>
 <a href="#getprivacypolicyevaluator" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Privacy<wbr/>Policy<wbr/>Evaluator</span></a>
+<a href="#getuserfacingdenialreason" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>User<wbr/>Facing<wbr/>Denial<wbr/>Reason</span></a>
 </div></section></div></details></section></section>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
@@ -87,28 +88,28 @@ complex yet testable permissioning logic for an entity.</p>
 <div class="tsd-comment tsd-typography"><p>List of rules to evaluate for create authorization.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/fa5af4783faddefef3865ae0dc28f6f3cae72e64/packages/entity/src/EntityPrivacyPolicy.ts#L147">packages/entity/src/EntityPrivacyPolicy.ts:147</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L155">packages/entity/src/EntityPrivacyPolicy.ts:155</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="deleterules"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>delete<wbr/>Rules</span><a href="#deleterules" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">deleteRules</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">readonly</span> <a href="_expo_entity.PrivacyPolicyRule.html" class="tsd-signature-type tsd-kind-class">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 <div class="tsd-comment tsd-typography"><p>List of rules to evaluate for delete authorization.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/fa5af4783faddefef3865ae0dc28f6f3cae72e64/packages/entity/src/EntityPrivacyPolicy.ts#L180">packages/entity/src/EntityPrivacyPolicy.ts:180</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L188">packages/entity/src/EntityPrivacyPolicy.ts:188</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="readrules"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>read<wbr/>Rules</span><a href="#readrules" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">readRules</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">readonly</span> <a href="_expo_entity.PrivacyPolicyRule.html" class="tsd-signature-type tsd-kind-class">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 <div class="tsd-comment tsd-typography"><p>List of rules to evaluate for read authorization.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/fa5af4783faddefef3865ae0dc28f6f3cae72e64/packages/entity/src/EntityPrivacyPolicy.ts#L158">packages/entity/src/EntityPrivacyPolicy.ts:158</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L166">packages/entity/src/EntityPrivacyPolicy.ts:166</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="updaterules"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>update<wbr/>Rules</span><a href="#updaterules" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">updateRules</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">readonly</span> <a href="_expo_entity.PrivacyPolicyRule.html" class="tsd-signature-type tsd-kind-class">PrivacyPolicyRule</a><span class="tsd-signature-symbol">&lt;</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 <div class="tsd-comment tsd-typography"><p>List of rules to evaluate for update authorization.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/fa5af4783faddefef3865ae0dc28f6f3cae72e64/packages/entity/src/EntityPrivacyPolicy.ts#L169">packages/entity/src/EntityPrivacyPolicy.ts:169</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L177">packages/entity/src/EntityPrivacyPolicy.ts:177</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -141,7 +142,7 @@ complex yet testable permissioning logic for an entity.</p>
 <h4 class="tsd-anchor-link" id="throws">Throws<a href="#throws" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError when not authorized</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/fa5af4783faddefef3865ae0dc28f6f3cae72e64/packages/entity/src/EntityPrivacyPolicy.ts#L215">packages/entity/src/EntityPrivacyPolicy.ts:215</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L252">packages/entity/src/EntityPrivacyPolicy.ts:252</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="authorizedeleteasync"><span>authorize<wbr/>Delete<wbr/>Async</span><a href="#authorizedeleteasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -175,7 +176,7 @@ complex yet testable permissioning logic for an entity.</p>
 <h4 class="tsd-anchor-link" id="throws-1">Throws<a href="#throws-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError when not authorized</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/fa5af4783faddefef3865ae0dc28f6f3cae72e64/packages/entity/src/EntityPrivacyPolicy.ts#L317">packages/entity/src/EntityPrivacyPolicy.ts:317</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L354">packages/entity/src/EntityPrivacyPolicy.ts:354</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="authorizereadasync"><span>authorize<wbr/>Read<wbr/>Async</span><a href="#authorizereadasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -209,7 +210,7 @@ complex yet testable permissioning logic for an entity.</p>
 <h4 class="tsd-anchor-link" id="throws-2">Throws<a href="#throws-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError when not authorized</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/fa5af4783faddefef3865ae0dc28f6f3cae72e64/packages/entity/src/EntityPrivacyPolicy.ts#L249">packages/entity/src/EntityPrivacyPolicy.ts:249</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L286">packages/entity/src/EntityPrivacyPolicy.ts:286</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="authorizeupdateasync"><span>authorize<wbr/>Update<wbr/>Async</span><a href="#authorizeupdateasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -243,7 +244,7 @@ complex yet testable permissioning logic for an entity.</p>
 <h4 class="tsd-anchor-link" id="throws-3">Throws<a href="#throws-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError when not authorized</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/fa5af4783faddefef3865ae0dc28f6f3cae72e64/packages/entity/src/EntityPrivacyPolicy.ts#L283">packages/entity/src/EntityPrivacyPolicy.ts:283</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L320">packages/entity/src/EntityPrivacyPolicy.ts:320</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="getprivacypolicyevaluator"><code class="tsd-tag">Protected</code><span>get<wbr/>Privacy<wbr/>Policy<wbr/>Evaluator</span><a href="#getprivacypolicyevaluator" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -265,7 +266,43 @@ first rolling out a new policy. Entities that fail the policy will be allowed so
 <h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Override to enable dry run evaluation of the policy.</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/fa5af4783faddefef3865ae0dc28f6f3cae72e64/packages/entity/src/EntityPrivacyPolicy.ts#L199">packages/entity/src/EntityPrivacyPolicy.ts:199</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L207">packages/entity/src/EntityPrivacyPolicy.ts:207</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="getuserfacingdenialreason"><code class="tsd-tag">Protected</code><span>get<wbr/>User<wbr/>Facing<wbr/>Denial<wbr/>Reason</span><a href="#getuserfacingdenialreason" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getuserfacingdenialreason-1"><span class="tsd-kind-call-signature">getUserFacingDenialReason</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">_viewerContext</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">_action</span><span class="tsd-signature-symbol">:</span> <a href="../enums/_expo_entity.EntityAuthorizationAction.html" class="tsd-signature-type tsd-kind-enum">EntityAuthorizationAction</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">_denialReason</span><span class="tsd-signature-symbol">:</span> <a href="../types/_expo_entity.EntityNotAuthorizedDenialReason.html" class="tsd-signature-type tsd-kind-type-alias">EntityNotAuthorizedDenialReason</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../types/_expo_entity.EntityNotAuthorizedUserFacingReason.html" class="tsd-signature-type tsd-kind-type-alias">EntityNotAuthorizedUserFacingReason</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#getuserfacingdenialreason-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Produce an end-user-safe explanation for a denial of this policy. The result is attached to the
+thrown EntityNotAuthorizedError as <code>userFacingReason</code>.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">_viewerContext</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a></span>
+<div class="tsd-comment tsd-typography"><p>viewer context that was denied</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">_action</span>: <a href="../enums/_expo_entity.EntityAuthorizationAction.html" class="tsd-signature-type tsd-kind-enum">EntityAuthorizationAction</a></span>
+<div class="tsd-comment tsd-typography"><p>the action that was denied</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">_denialReason</span>: <a href="../types/_expo_entity.EntityNotAuthorizedDenialReason.html" class="tsd-signature-type tsd-kind-type-alias">EntityNotAuthorizedDenialReason</a></span>
+<div class="tsd-comment tsd-typography"><p>structured, developer-facing reason for the denial</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_expo_entity.EntityNotAuthorizedUserFacingReason.html" class="tsd-signature-type tsd-kind-type-alias">EntityNotAuthorizedUserFacingReason</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The default returns null, meaning no user-facing explanation is available and callers should
+display a generic message. Override to map denials to messages appropriate for end users.
+When all rules skip, <code>denialReason.skippedRules</code> holds each skipped rule with the reason codes it
+contributed, so the policy can select a message for a specific reason, for example &quot;You must be a
+member of this account to view this project.&quot; when a rule skipped with a NOT_ACCOUNT_MEMBER reason.</p>
+<p>The denied entity and the evaluation context are intentionally not passed to this method. The viewer
+is not authorized to see the entity, and the evaluation context may contain it (as the previous value
+or the cascading deletion cause), so neither may influence or appear in the user-facing message.
+Rules should instead communicate what is needed through reason codes.</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/4af5ede87de075245ae92ea9e31c856f9ab9d9fd/packages/entity/src/EntityPrivacyPolicy.ts#L236">packages/entity/src/EntityPrivacyPolicy.ts:236</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -286,7 +323,7 @@ first rolling out a new policy. Entities that fail the policy will be allowed so
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
 <div><a href="#createrules" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>create<wbr/>Rules</span></a><a href="#deleterules" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>delete<wbr/>Rules</span></a><a href="#readrules" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>read<wbr/>Rules</span></a><a href="#updaterules" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>update<wbr/>Rules</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#authorizecreateasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>authorize<wbr/>Create<wbr/>Async</span></a><a href="#authorizedeleteasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>authorize<wbr/>Delete<wbr/>Async</span></a><a href="#authorizereadasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>authorize<wbr/>Read<wbr/>Async</span></a><a href="#authorizeupdateasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>authorize<wbr/>Update<wbr/>Async</span></a><a href="#getprivacypolicyevaluator" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Privacy<wbr/>Policy<wbr/>Evaluator</span></a></div></details></div></details></div>
+<div><a href="#authorizecreateasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>authorize<wbr/>Create<wbr/>Async</span></a><a href="#authorizedeleteasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>authorize<wbr/>Delete<wbr/>Async</span></a><a href="#authorizereadasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>authorize<wbr/>Read<wbr/>Async</span></a><a href="#authorizeupdateasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>authorize<wbr/>Update<wbr/>Async</span></a><a href="#getprivacypolicyevaluator" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Privacy<wbr/>Policy<wbr/>Evaluator</span></a><a href="#getuserfacingdenialreason" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>User<wbr/>Facing<wbr/>Denial<wbr/>Reason</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html">Entity</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
