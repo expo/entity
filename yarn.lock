@@ -3042,10 +3042,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/bases@npm:1.0.27":
-  version: 1.0.27
-  resolution: "@tsconfig/bases@npm:1.0.27"
-  checksum: 10c0/ec66e75847f712c82d5db58f3d1d4d806b2d963fb76a991e02d49e2886ceda09b00ffb46386507e332f7272794373a441e977132f4b2c47ef35c16ed75d7adc1
+"@tsconfig/bases@npm:1.0.28":
+  version: 1.0.28
+  resolution: "@tsconfig/bases@npm:1.0.28"
+  checksum: 10c0/0f50b3f18dcc93f9f9e22fb39c8261ade004291a0f0ead9d2f82fae7a652a30ed678c5455213b5d91e68d9c4418e26acfdb1a56b5e7901c53f062cfb3282d830
   languageName: node
   linkType: hard
 
@@ -9788,7 +9788,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root@workspace:."
   dependencies:
-    "@tsconfig/bases": "npm:1.0.27"
+    "@tsconfig/bases": "npm:1.0.28"
     "@types/node": "npm:24.13.4"
     ctix: "npm:2.8.2"
     jest: "npm:30.5.1"
