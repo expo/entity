@@ -22,6 +22,7 @@ export abstract class BaseSQLQueryBuilder<
       limit?: number;
       offset?: number;
       orderBy?: readonly EntityLoaderOrderByClause<TFields, TSelectedFields>[];
+      forUpdate?: boolean;
     },
   ) {}
 
@@ -38,6 +39,15 @@ export abstract class BaseSQLQueryBuilder<
    */
   offset(n: number): this {
     this.modifiers.offset = n;
+    return this;
+  }
+
+  /**
+   * Lock the selected rows for update using `SELECT ... FOR UPDATE`. The lock is held until the
+   * end of the transaction, so the query must be executed in a transactional query context.
+   */
+  forUpdate(): this {
+    this.modifiers.forUpdate = true;
     return this;
   }
 

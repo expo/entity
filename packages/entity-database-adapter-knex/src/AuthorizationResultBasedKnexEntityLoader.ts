@@ -85,6 +85,12 @@ export interface EntityLoaderQuerySelectionModifiers<
    * Limit the number of entities returned.
    */
   limit?: number;
+
+  /**
+   * Lock the selected rows for update using `SELECT ... FOR UPDATE`. The lock is held until the
+   * end of the transaction, so the query context must be transactional.
+   */
+  forUpdate?: boolean;
 }
 
 /**
