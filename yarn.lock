@@ -890,7 +890,7 @@ __metadata:
   dependencies:
     "@jest/globals": "npm:30.5.1"
     "@types/jscodeshift": "npm:17.3.0"
-    "@types/node": "npm:24.13.4"
+    "@types/node": "npm:24.13.5"
     jscodeshift: "npm:17.4.0"
     typescript: "npm:6.0.3"
   languageName: unknown
@@ -904,7 +904,7 @@ __metadata:
     "@expo/entity-database-adapter-knex": "workspace:^"
     "@jest/globals": "npm:30.5.1"
     "@types/invariant": "npm:2.2.37"
-    "@types/node": "npm:24.13.4"
+    "@types/node": "npm:24.13.5"
     invariant: "npm:^2.2.4"
     typescript: "npm:6.0.3"
     uuid: "npm:^14.0.0"
@@ -1007,7 +1007,7 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@jest/globals": "npm:30.5.1"
     "@types/lodash-es": "npm:4.17.12"
-    "@types/node": "npm:24.13.4"
+    "@types/node": "npm:24.13.5"
     lodash-es: "npm:^4.17.23"
     ts-mockito: "npm:^2.6.1"
     typescript: "npm:6.0.3"
@@ -1024,7 +1024,7 @@ __metadata:
     "@jest/globals": "npm:30.5.1"
     "@types/invariant": "npm:2.2.37"
     "@types/lodash-es": "npm:4.17.12"
-    "@types/node": "npm:24.13.4"
+    "@types/node": "npm:24.13.5"
     dataloader: "npm:^2.2.3"
     invariant: "npm:^2.2.4"
     lodash-es: "npm:4.18.1"
@@ -3389,12 +3389,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.13.4":
-  version: 24.13.4
-  resolution: "@types/node@npm:24.13.4"
+"@types/node@npm:24.13.5":
+  version: 24.13.5
+  resolution: "@types/node@npm:24.13.5"
   dependencies:
     undici-types: "npm:~7.18.0"
-  checksum: 10c0/a12196e984cb09ead549651217b4b395961ea011f3a3791a9f78311d70b5f3be343c6fc935376553c06a34c14d963d4f637ad7829837b0c88cf441919f422893
+  checksum: 10c0/f6c7f564e7b16670bc72ce119f2aaba0f6d6ebb886c13d8cd3656a96e4825d91d826be3d0995fc776df4e19eceb4d3074e5e18d54ce1aebd3f6e0ba12b9108cb
   languageName: node
   linkType: hard
 
@@ -9789,7 +9789,7 @@ __metadata:
   resolution: "root@workspace:."
   dependencies:
     "@tsconfig/bases": "npm:1.0.28"
-    "@types/node": "npm:24.13.4"
+    "@types/node": "npm:24.13.5"
     ctix: "npm:2.8.2"
     jest: "npm:30.5.1"
     lerna: "npm:9.0.7"
