@@ -134,6 +134,11 @@ export interface PostgresQuerySelectionModifiers<TFields extends Record<string, 
    * Limit the number of entities returned.
    */
   limit?: number;
+
+  /**
+   * Lock the selected rows for update using `SELECT ... FOR UPDATE`.
+   */
+  forUpdate?: boolean;
 }
 
 export type TableOrderByClause<TFields extends Record<string, any>> =
@@ -152,6 +157,7 @@ export interface TableQuerySelectionModifiers<TFields extends Record<string, any
   orderBy: TableOrderByClause<TFields>[] | undefined;
   offset: number | undefined;
   limit: number | undefined;
+  forUpdate: boolean | undefined;
 }
 
 export abstract class BasePostgresEntityDatabaseAdapter<
@@ -343,6 +349,7 @@ export abstract class BasePostgresEntityDatabaseAdapter<
           : undefined,
       offset: querySelectionModifiers.offset,
       limit: querySelectionModifiers.limit,
+      forUpdate: querySelectionModifiers.forUpdate,
     };
   }
 }

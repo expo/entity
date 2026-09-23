@@ -211,6 +211,166 @@ describe('postgres entity integration', () => {
     );
   });
 
+  describe('forUpdate', () => {
+    // Attempts to lock the row from a separate connection without waiting. Postgres raises
+    // lock_not_available (55P03) when another transaction already holds a FOR UPDATE lock on the row.
+    const tryLockRowFromOtherConnectionAsync = async (id: string): Promise<string | null> => {
+      try {
+        await knexInstance.raw(
+          'SELECT * FROM postgres_test_entities WHERE id = ? FOR UPDATE NOWAIT',
+          [id],
+        );
+        return null;
+      } catch (e) {
+        return (e as any).code ?? null;
+      }
+    };
+
+    it('locks rows loaded with loadManyByFieldEqualityConjunctionAsync until the transaction ends', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entity = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'locked')
+          .createAsync(),
+      );
+
+      // not locked before the transaction
+      expect(await tryLockRowFromOtherConnectionAsync(entity.getID())).toBeNull();
+
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+        const results = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadManyByFieldEqualityConjunctionAsync([{ fieldName: 'name', fieldValue: 'locked' }], {
+          forUpdate: true,
+        });
+        expect(results).toHaveLength(1);
+        expect(results[0]!.getID()).toBe(entity.getID());
+
+        // locked while the transaction is open
+        expect(await tryLockRowFromOtherConnectionAsync(entity.getID())).toBe('55P03');
+      });
+
+      // unlocked after the transaction commits
+      expect(await tryLockRowFromOtherConnectionAsync(entity.getID())).toBeNull();
+    });
+
+    it('locks rows loaded with loadFirstByFieldEqualityConjunctionAsync', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entity = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'locked-first')
+          .createAsync(),
+      );
+
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+        const result = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadFirstByFieldEqualityConjunctionAsync(
+          [{ fieldName: 'name', fieldValue: 'locked-first' }],
+          {
+            orderBy: [{ fieldName: 'name', order: OrderByOrdering.ASCENDING }],
+            forUpdate: true,
+          },
+        );
+        expect(result?.getID()).toBe(entity.getID());
+        expect(await tryLockRowFromOtherConnectionAsync(entity.getID())).toBe('55P03');
+      });
+
+      expect(await tryLockRowFromOtherConnectionAsync(entity.getID())).toBeNull();
+    });
+
+    it('locks rows loaded with the loadManyBySQL query builder', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entity = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'locked-sql')
+          .createAsync(),
+      );
+
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+        // via the fluent builder method
+        const results = await PostgresTestEntity.knexLoader(vc1, queryContext)
+          .loadManyBySQL(sql`name = ${'locked-sql'}`)
+          .forUpdate()
+          .executeAsync();
+        expect(results).toHaveLength(1);
+        expect(results[0]!.getID()).toBe(entity.getID());
+        expect(await tryLockRowFromOtherConnectionAsync(entity.getID())).toBe('55P03');
+
+        // via the modifiers argument on the authorization-result-based loader
+        const authorizationResults = await PostgresTestEntity.knexLoaderWithAuthorizationResults(
+          vc1,
+          queryContext,
+        )
+          .loadManyBySQL(sql`name = ${'locked-sql'}`, { forUpdate: true })
+          .executeAsync();
+        expect(authorizationResults).toHaveLength(1);
+        expect(authorizationResults[0]!.enforceValue().getID()).toBe(entity.getID());
+      });
+
+      expect(await tryLockRowFromOtherConnectionAsync(entity.getID())).toBeNull();
+    });
+
+    it('blocks a concurrent forUpdate load until the first transaction completes', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entity = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'counter')
+          .setField('hasADog', false)
+          .createAsync(),
+      );
+
+      const events: string[] = [];
+      const lockAndUpdateAsync = async (label: string, holdDuration: number): Promise<void> => {
+        await vc1.runInTransactionForDatabaseAdapterFlavorAsync(
+          'postgres',
+          async (queryContext) => {
+            const locked = await PostgresTestEntity.knexLoader(vc1, queryContext)
+              .loadManyBySQL(sql`id = ${entity.getID()}`)
+              .forUpdate()
+              .executeAsync();
+            events.push(`${label}:locked`);
+            await setTimeout(holdDuration);
+            await PostgresTestEntity.updater(locked[0]!, queryContext)
+              .setField('name', locked[0]!.getField('name') + ',' + label)
+              .updateAsync();
+            events.push(`${label}:updated`);
+          },
+        );
+      };
+
+      await Promise.all([
+        lockAndUpdateAsync('a', 200),
+        setTimeout(50).then(() => lockAndUpdateAsync('b', 0)),
+      ]);
+
+      // b cannot acquire the lock until a commits, so a's update always lands before b locks
+      expect(events).toEqual(['a:locked', 'a:updated', 'b:locked', 'b:updated']);
+
+      const reloaded = await PostgresTestEntity.loader(vc1).loadByIDAsync(entity.getID());
+      expect(reloaded.getField('name')).toBe('counter,a,b');
+    });
+
+    it('throws when forUpdate is used outside of a transaction', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await expect(
+        PostgresTestEntity.knexLoader(vc1).loadManyByFieldEqualityConjunctionAsync([], {
+          forUpdate: true,
+        }),
+      ).rejects.toThrow('forUpdate requires a transactional query context');
+
+      await expect(
+        PostgresTestEntity.knexLoader(vc1)
+          .loadManyBySQL(sql`TRUE`)
+          .forUpdate()
+          .executeAsync(),
+      ).rejects.toThrow('forUpdate requires a transactional query context');
+    });
+  });
+
   describe('JSON fields', () => {
     it('supports both types of array fields', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));

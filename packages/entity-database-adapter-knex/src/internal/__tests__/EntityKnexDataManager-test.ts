@@ -7,6 +7,7 @@ import { anyNumber, anything, deepEqual, instance, mock, verify, when } from 'ts
 import { OrderByOrdering } from '../../BasePostgresEntityDatabaseAdapter.ts';
 import { PaginationStrategy } from '../../PaginationStrategy.ts';
 import { PostgresEntityDatabaseAdapter } from '../../PostgresEntityDatabaseAdapter.ts';
+import { sql } from '../../SQLOperator.ts';
 import type { TestFields } from '../../__tests__/fixtures/TestEntity.ts';
 import { TestEntity, testEntityConfiguration } from '../../__tests__/fixtures/TestEntity.ts';
 import { EntityKnexDataManager } from '../EntityKnexDataManager.ts';
@@ -190,6 +191,146 @@ describe(EntityKnexDataManager, () => {
 
         verify(metricsAdapterMock.incrementDataManagerLoadCount(anything())).never();
       });
+    });
+  });
+
+  describe('forUpdate', () => {
+    const fieldObject = {
+      customIdField: '1',
+      testIndexedField: 'unique1',
+      stringField: 'hello',
+      intField: 1,
+      dateField: new Date(),
+      nullableField: null,
+    };
+
+    it('throws when loading by field equality conjunction outside of a transaction', async () => {
+      const queryContext = new StubQueryContextProvider().getQueryContext();
+      const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+        PostgresEntityDatabaseAdapter,
+      );
+      const entityDataManager = new EntityKnexDataManager(
+        testEntityConfiguration,
+        instance(databaseAdapterMock),
+        new NoOpEntityMetricsAdapter(),
+        TestEntity.name,
+      );
+
+      await expect(
+        entityDataManager.loadManyByFieldEqualityConjunctionAsync(queryContext, [], {
+          forUpdate: true,
+        }),
+      ).rejects.toThrow('forUpdate requires a transactional query context');
+      verify(
+        databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+          anything(),
+          anything(),
+          anything(),
+        ),
+      ).never();
+    });
+
+    it('throws when loading by SQL fragment outside of a transaction', async () => {
+      const queryContext = new StubQueryContextProvider().getQueryContext();
+      const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+        PostgresEntityDatabaseAdapter,
+      );
+      const entityDataManager = new EntityKnexDataManager(
+        testEntityConfiguration,
+        instance(databaseAdapterMock),
+        new NoOpEntityMetricsAdapter(),
+        TestEntity.name,
+      );
+
+      await expect(
+        entityDataManager.loadManyBySQLFragmentAsync(queryContext, sql`TRUE`, {
+          forUpdate: true,
+        }),
+      ).rejects.toThrow('forUpdate requires a transactional query context');
+      verify(
+        databaseAdapterMock.fetchManyBySQLFragmentAsync(anything(), anything(), anything()),
+      ).never();
+    });
+
+    it('passes forUpdate through to the database adapter inside of a transaction', async () => {
+      const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+        PostgresEntityDatabaseAdapter,
+      );
+      when(
+        databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+          anything(),
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([fieldObject]);
+      when(
+        databaseAdapterMock.fetchManyBySQLFragmentAsync(anything(), anything(), anything()),
+      ).thenResolve([fieldObject]);
+
+      const entityDataManager = new EntityKnexDataManager(
+        testEntityConfiguration,
+        instance(databaseAdapterMock),
+        new NoOpEntityMetricsAdapter(),
+        TestEntity.name,
+      );
+
+      await new StubQueryContextProvider().runInTransactionAsync(async (queryContext) => {
+        const equalityResults = await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          [{ fieldName: 'stringField', fieldValue: 'hello' }],
+          { forUpdate: true, limit: 1 },
+        );
+        expect(equalityResults).toHaveLength(1);
+
+        const sqlResults = await entityDataManager.loadManyBySQLFragmentAsync(
+          queryContext,
+          sql`TRUE`,
+          { forUpdate: true },
+        );
+        expect(sqlResults).toHaveLength(1);
+
+        verify(
+          databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+            queryContext,
+            anything(),
+            deepEqual({ forUpdate: true, limit: 1 }),
+          ),
+        ).once();
+        verify(
+          databaseAdapterMock.fetchManyBySQLFragmentAsync(
+            queryContext,
+            anything(),
+            deepEqual({ forUpdate: true }),
+          ),
+        ).once();
+      });
+    });
+
+    it('does not require a transaction when forUpdate is not set', async () => {
+      const queryContext = new StubQueryContextProvider().getQueryContext();
+      const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+        PostgresEntityDatabaseAdapter,
+      );
+      when(
+        databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+          anything(),
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([fieldObject]);
+      const entityDataManager = new EntityKnexDataManager(
+        testEntityConfiguration,
+        instance(databaseAdapterMock),
+        new NoOpEntityMetricsAdapter(),
+        TestEntity.name,
+      );
+
+      const results = await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
+        queryContext,
+        [],
+        { forUpdate: false },
+      );
+      expect(results).toHaveLength(1);
     });
   });
 

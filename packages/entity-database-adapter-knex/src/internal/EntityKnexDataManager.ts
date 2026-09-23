@@ -177,6 +177,7 @@ export class EntityKnexDataManager<
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
+    EntityKnexDataManager.validateForUpdate(queryContext, querySelectionModifiers.forUpdate);
 
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
@@ -215,6 +216,7 @@ export class EntityKnexDataManager<
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
+    EntityKnexDataManager.validateForUpdate(queryContext, querySelectionModifiers.forUpdate);
 
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
@@ -529,6 +531,24 @@ export class EntityKnexDataManager<
         );
       }
     }
+  }
+
+  /**
+   * `SELECT ... FOR UPDATE` row locks are released at the end of the transaction. Outside of a
+   * transaction the lock is released as soon as the statement completes, which makes it useless,
+   * so require a transactional query context.
+   */
+  private static validateForUpdate(
+    queryContext: EntityQueryContext,
+    forUpdate: boolean | undefined,
+  ): void {
+    if (!forUpdate) {
+      return;
+    }
+    assert(
+      queryContext.isInTransaction(),
+      'forUpdate requires a transactional query context since row locks are released at the end of the transaction.',
+    );
   }
 
   /**

@@ -6,8 +6,10 @@ import { instance, mock } from 'ts-mockito';
 import type {
   TableFieldMultiValueEqualityCondition,
   TableFieldSingleValueEqualityCondition,
+  TableQuerySelectionModifiers,
 } from '../BasePostgresEntityDatabaseAdapter.ts';
 import { BasePostgresEntityDatabaseAdapter } from '../BasePostgresEntityDatabaseAdapter.ts';
+import { sql } from '../SQLOperator.ts';
 import type { TestFields } from './fixtures/TestEntity.ts';
 import { testEntityConfiguration } from './fixtures/TestEntity.ts';
 
@@ -22,6 +24,12 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
   private readonly fetchEqualityConditionResults: object[];
   private readonly fetchSQLFragmentResults: object[];
   private readonly deleteCount: number;
+  public lastEqualityConditionQuerySelectionModifiers:
+    | TableQuerySelectionModifiers<TestFields>
+    | undefined;
+  public lastSQLFragmentQuerySelectionModifiers:
+    | TableQuerySelectionModifiers<TestFields>
+    | undefined;
 
   constructor({
     fetchResults = [],
@@ -76,7 +84,9 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     _queryInterface: any,
     _tableName: string,
     _sqlFragment: any,
+    querySelectionModifiers: TableQuerySelectionModifiers<TestFields>,
   ): Promise<object[]> {
+    this.lastSQLFragmentQuerySelectionModifiers = querySelectionModifiers;
     return this.fetchSQLFragmentResults;
   }
 
@@ -85,7 +95,9 @@ class TestEntityDatabaseAdapter extends BasePostgresEntityDatabaseAdapter<
     _tableName: string,
     _tableFieldSingleValueEqualityOperands: TableFieldSingleValueEqualityCondition[],
     _tableFieldMultiValueEqualityOperands: TableFieldMultiValueEqualityCondition[],
+    querySelectionModifiers: TableQuerySelectionModifiers<TestFields>,
   ): Promise<object[]> {
+    this.lastEqualityConditionQuerySelectionModifiers = querySelectionModifiers;
     return this.fetchEqualityConditionResults;
   }
 
@@ -150,6 +162,44 @@ describe(BasePostgresEntityDatabaseAdapter, () => {
       });
       const results = await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {});
       expect(results).toEqual([{ stringField: 'hello' }]);
+    });
+
+    it('converts query selection modifiers including forUpdate', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({});
+      await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {
+        limit: 2,
+        offset: 1,
+        forUpdate: true,
+      });
+      expect(adapter.lastEqualityConditionQuerySelectionModifiers).toEqual({
+        orderBy: undefined,
+        limit: 2,
+        offset: 1,
+        forUpdate: true,
+      });
+
+      await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {});
+      expect(adapter.lastEqualityConditionQuerySelectionModifiers).toEqual({
+        orderBy: undefined,
+        limit: undefined,
+        offset: undefined,
+        forUpdate: undefined,
+      });
+    });
+  });
+
+  describe('fetchManyBySQLFragmentAsync', () => {
+    it('converts query selection modifiers including forUpdate', async () => {
+      const queryContext = instance(mock(EntityQueryContext));
+      const adapter = new TestEntityDatabaseAdapter({});
+      await adapter.fetchManyBySQLFragmentAsync(queryContext, sql`TRUE`, { forUpdate: true });
+      expect(adapter.lastSQLFragmentQuerySelectionModifiers).toEqual({
+        orderBy: undefined,
+        limit: undefined,
+        offset: undefined,
+        forUpdate: true,
+      });
     });
   });
 });

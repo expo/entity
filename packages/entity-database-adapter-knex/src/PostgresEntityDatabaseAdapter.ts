@@ -116,7 +116,7 @@ export class PostgresEntityDatabaseAdapter<
         tableValue: tableTuple[index],
       })),
       [],
-      { limit: 1, orderBy: undefined, offset: undefined },
+      { limit: 1, orderBy: undefined, offset: undefined, forUpdate: undefined },
     );
     return results[0] ?? null;
   }
@@ -125,7 +125,7 @@ export class PostgresEntityDatabaseAdapter<
     query: Knex.QueryBuilder,
     querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Knex.QueryBuilder {
-    const { orderBy, offset, limit } = querySelectionModifiers;
+    const { orderBy, offset, limit, forUpdate } = querySelectionModifiers;
 
     let ret = query;
 
@@ -159,6 +159,10 @@ export class PostgresEntityDatabaseAdapter<
 
     if (limit !== undefined) {
       ret = ret.limit(limit);
+    }
+
+    if (forUpdate) {
+      ret = ret.forUpdate();
     }
 
     return ret;
