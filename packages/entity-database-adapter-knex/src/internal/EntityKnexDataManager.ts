@@ -177,7 +177,7 @@ export class EntityKnexDataManager<
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
-    EntityKnexDataManager.validateForUpdate(queryContext, querySelectionModifiers.forUpdate);
+    EntityKnexDataManager.validateRowLockingModifiers(queryContext, querySelectionModifiers);
 
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
@@ -216,7 +216,7 @@ export class EntityKnexDataManager<
     querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): Promise<readonly Readonly<TFields>[]> {
     EntityKnexDataManager.validateOrderByClauses(querySelectionModifiers.orderBy);
-    EntityKnexDataManager.validateForUpdate(queryContext, querySelectionModifiers.forUpdate);
+    EntityKnexDataManager.validateRowLockingModifiers(queryContext, querySelectionModifiers);
 
     return await timeAndLogLoadEventAsync(
       this.metricsAdapter,
@@ -534,20 +534,26 @@ export class EntityKnexDataManager<
   }
 
   /**
-   * `SELECT ... FOR UPDATE` row locks are released at the end of the transaction. Outside of a
-   * transaction the lock is released as soon as the statement completes, which makes it useless,
-   * so require a transactional query context.
+   * Validates row locking modifiers (forUpdate, forShare, skipLocked).
+   *
+   * `SELECT ... FOR UPDATE` and `SELECT ... FOR SHARE` row locks are released at the end of the
+   * transaction. Outside of a transaction the lock is released as soon as the statement completes,
+   * which makes it useless, so require a transactional query context. FOR UPDATE and FOR SHARE
+   * cannot be combined in a single statement, and SKIP LOCKED is only valid with a row lock.
    */
-  private static validateForUpdate(
+  private static validateRowLockingModifiers<TFields extends Record<string, any>>(
     queryContext: EntityQueryContext,
-    forUpdate: boolean | undefined,
+    querySelectionModifiers: PostgresQuerySelectionModifiers<TFields>,
   ): void {
-    if (!forUpdate) {
+    const { forUpdate, forShare, skipLocked } = querySelectionModifiers;
+    if (!forUpdate && !forShare) {
+      assert(!skipLocked, 'skipLocked requires forUpdate or forShare.');
       return;
     }
+    assert(!(forUpdate && forShare), 'forUpdate and forShare are mutually exclusive.');
     assert(
       queryContext.isInTransaction(),
-      'forUpdate requires a transactional query context since row locks are released at the end of the transaction.',
+      'forUpdate and forShare require a transactional query context since row locks are released at the end of the transaction.',
     );
   }
 

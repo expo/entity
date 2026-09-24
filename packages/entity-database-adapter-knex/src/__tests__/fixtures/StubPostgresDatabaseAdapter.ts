@@ -213,7 +213,14 @@ export class StubPostgresDatabaseAdapter<
       tableName,
       tableFieldSingleValueEqualityOperands,
       tableFieldMultiValueEqualityOperands,
-      { orderBy: undefined, offset: undefined, limit: undefined, forUpdate: undefined },
+      {
+        orderBy: undefined,
+        offset: undefined,
+        limit: undefined,
+        forUpdate: undefined,
+        forShare: undefined,
+        skipLocked: undefined,
+      },
     );
     return results.length;
   }

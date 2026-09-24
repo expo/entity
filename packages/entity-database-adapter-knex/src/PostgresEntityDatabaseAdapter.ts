@@ -116,7 +116,14 @@ export class PostgresEntityDatabaseAdapter<
         tableValue: tableTuple[index],
       })),
       [],
-      { limit: 1, orderBy: undefined, offset: undefined, forUpdate: undefined },
+      {
+        limit: 1,
+        orderBy: undefined,
+        offset: undefined,
+        forUpdate: undefined,
+        forShare: undefined,
+        skipLocked: undefined,
+      },
     );
     return results[0] ?? null;
   }
@@ -125,7 +132,7 @@ export class PostgresEntityDatabaseAdapter<
     query: Knex.QueryBuilder,
     querySelectionModifiers: TableQuerySelectionModifiers<TFields>,
   ): Knex.QueryBuilder {
-    const { orderBy, offset, limit, forUpdate } = querySelectionModifiers;
+    const { orderBy, offset, limit, forUpdate, forShare, skipLocked } = querySelectionModifiers;
 
     let ret = query;
 
@@ -163,6 +170,14 @@ export class PostgresEntityDatabaseAdapter<
 
     if (forUpdate) {
       ret = ret.forUpdate();
+    }
+
+    if (forShare) {
+      ret = ret.forShare();
+    }
+
+    if (skipLocked) {
+      ret = ret.skipLocked();
     }
 
     return ret;

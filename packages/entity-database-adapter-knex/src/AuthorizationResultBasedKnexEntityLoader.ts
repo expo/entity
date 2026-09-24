@@ -88,9 +88,21 @@ export interface EntityLoaderQuerySelectionModifiers<
 
   /**
    * Lock the selected rows for update using `SELECT ... FOR UPDATE`. The lock is held until the
-   * end of the transaction, so the query context must be transactional.
+   * end of the transaction, so the query context must be transactional. Mutually exclusive with `forShare`.
    */
   forUpdate?: boolean;
+
+  /**
+   * Lock the selected rows in share mode using `SELECT ... FOR SHARE`. The lock is held until the
+   * end of the transaction, so the query context must be transactional. Mutually exclusive with `forUpdate`.
+   */
+  forShare?: boolean;
+
+  /**
+   * Skip rows that are already locked by another transaction using `SKIP LOCKED` instead of waiting for them.
+   * Requires `forUpdate` or `forShare`.
+   */
+  skipLocked?: boolean;
 }
 
 /**
