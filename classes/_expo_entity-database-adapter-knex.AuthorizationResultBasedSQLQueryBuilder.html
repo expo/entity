@@ -23,14 +23,14 @@
 <li><span id="tentity"><span class="tsd-kind-type-parameter">TEntity</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">ReadonlyEntity</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">&gt;</span></span></li>
 <li><span id="tprivacypolicy"><span class="tsd-kind-type-parameter">TPrivacyPolicy</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">EntityPrivacyPolicy</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">&gt;</span></span></li>
 <li><span id="tselectedfields"><span class="tsd-kind-type-parameter">TSelectedFields</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-keyword">keyof</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a></span></li></ul></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="10595">
+<section class="tsd-panel tsd-hierarchy" data-refl="10618">
 <h4>Hierarchy (<a href="../hierarchy.html#@expo/entity-database-adapter-knex.AuthorizationResultBasedSQLQueryBuilder">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html" class="tsd-signature-type tsd-kind-class">BaseSQLQueryBuilder</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">AuthorizationResultBasedSQLQueryBuilder</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts#L531">entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts:531</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts#L543">entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts:543</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -44,6 +44,7 @@
 <h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-index-list"><a href="#executeasync" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>execute<wbr/>Async</span></a>
 <a href="#executeinternalasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>execute<wbr/>Internal<wbr/>Async</span></a>
+<a href="#forshare" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>for<wbr/>Share</span></a>
 <a href="#forupdate" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>for<wbr/>Update</span></a>
 <a href="#getmodifiers" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Modifiers</span></a>
 <a href="#getsqlfragment" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>SQL<wbr/>Fragment</span></a>
@@ -51,6 +52,7 @@
 <a href="#offset" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>offset</span></a>
 <a href="#orderby" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>order<wbr/>By</span></a>
 <a href="#orderbysql" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>order<wbr/>By<wbr/>SQL</span></a>
+<a href="#skiplocked" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>skip<wbr/>Locked</span></a>
 </div></section></div></details></section></section>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
@@ -81,7 +83,7 @@
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">AuthorizationResultBasedSQLQueryBuilder</a><span class="tsd-signature-symbol">&lt;</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tprivacypolicy">TPrivacyPolicy</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts#L545">entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts:545</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts#L557">entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts:557</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -97,7 +99,7 @@ Implementation depends on the specific loader type.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-keyword">readonly</span> <span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#executeasync">executeAsync</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L114">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:114</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L136">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:136</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="executeinternalasync"><span>execute<wbr/>Internal<wbr/>Async</span><a href="#executeinternalasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -109,7 +111,21 @@ Implementation depends on the specific loader type.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-keyword">readonly</span> <span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#executeinternalasync">executeInternalAsync</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts#L565">entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts:565</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts#L577">entity-database-adapter-knex/src/AuthorizationResultBasedKnexEntityLoader.ts:577</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="forshare"><span>for<wbr/>Share</span><a href="#forshare" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="forshare-1"><span class="tsd-kind-call-signature">forShare</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#forshare-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Lock the selected rows in share mode using <code>SELECT ... FOR SHARE</code>. The lock is held until the
+end of the transaction, so the query must be executed in a transactional query context.
+Mutually exclusive with <code>forUpdate</code>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#forshare">forShare</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L62">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:62</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="forupdate"><span>for<wbr/>Update</span><a href="#forupdate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -117,12 +133,13 @@ Implementation depends on the specific loader type.</p>
 <div class="tsd-signature tsd-anchor-link" id="forupdate-1"><span class="tsd-kind-call-signature">forUpdate</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#forupdate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Lock the selected rows for update using <code>SELECT ... FOR UPDATE</code>. The lock is held until the
-end of the transaction, so the query must be executed in a transactional query context.</p>
+end of the transaction, so the query must be executed in a transactional query context.
+Mutually exclusive with <code>forShare</code>.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#forupdate">forUpdate</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L49">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:49</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L52">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:52</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getmodifiers"><code class="tsd-tag">Protected</code><span>get<wbr/>Modifiers</span><a href="#getmodifiers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
@@ -134,7 +151,7 @@ end of the transaction, so the query must be executed in a transactional query c
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/_expo_entity-database-adapter-knex.EntityLoaderQuerySelectionModifiers.html" class="tsd-signature-type tsd-kind-interface">EntityLoaderQuerySelectionModifiers</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#getmodifiers">getModifiers</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L99">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:99</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L121">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:121</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getsqlfragment"><code class="tsd-tag">Protected</code><span>get<wbr/>SQL<wbr/>Fragment</span><a href="#getsqlfragment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
@@ -146,7 +163,7 @@ end of the transaction, so the query must be executed in a transactional query c
 <h4 class="tsd-returns-title">Returns <a href="_expo_entity-database-adapter-knex.SQLFragment.html" class="tsd-signature-type tsd-kind-class">SQLFragment</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#getsqlfragment">getSQLFragment</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L106">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:106</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L128">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:128</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="limit"><span>limit</span><a href="#limit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -162,7 +179,7 @@ end of the transaction, so the query must be executed in a transactional query c
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#limit">limit</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L32">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:32</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L34">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:34</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="offset"><span>offset</span><a href="#offset" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -178,7 +195,7 @@ end of the transaction, so the query must be executed in a transactional query c
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#offset">offset</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L40">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:40</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L42">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:42</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="orderby"><span>order<wbr/>By</span><a href="#orderby" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -196,7 +213,7 @@ end of the transaction, so the query must be executed in a transactional query c
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#orderby">orderBy</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L57">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:57</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L79">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:79</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="orderbysql"><span>order<wbr/>By<wbr/>SQL</span><a href="#orderbysql" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -225,7 +242,20 @@ Provides type-safe, parameterized ORDER BY clauses</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#orderbysql">orderBySQL</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/727f16662d8baa3757bb8e94f51d837f17fd333d/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L84">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:84</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L106">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:106</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="skiplocked"><span>skip<wbr/>Locked</span><a href="#skiplocked" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="skiplocked-1"><span class="tsd-kind-call-signature">skipLocked</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#skiplocked-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Skip rows that are already locked by another transaction using <code>SKIP LOCKED</code> instead of waiting for them.
+Requires <code>forUpdate()</code> or <code>forShare()</code>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html">BaseSQLQueryBuilder</a>.<a href="_expo_entity-database-adapter-knex.BaseSQLQueryBuilder.html#skiplocked">skipLocked</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/243a0386fb9755f3926ade8dcc1b92adf38cd923/packages/entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts#L71">entity-database-adapter-knex/src/BaseSQLQueryBuilder.ts:71</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -244,7 +274,7 @@ Provides type-safe, parameterized ORDER BY clauses</p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#executeasync" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>execute<wbr/>Async</span></a><a href="#executeinternalasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>execute<wbr/>Internal<wbr/>Async</span></a><a href="#forupdate" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>for<wbr/>Update</span></a><a href="#getmodifiers" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Modifiers</span></a><a href="#getsqlfragment" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>SQL<wbr/>Fragment</span></a><a href="#limit" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>limit</span></a><a href="#offset" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>offset</span></a><a href="#orderby" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>order<wbr/>By</span></a><a href="#orderbysql" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>order<wbr/>By<wbr/>SQL</span></a></div></details></div></details></div>
+<div><a href="#executeasync" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>execute<wbr/>Async</span></a><a href="#executeinternalasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>execute<wbr/>Internal<wbr/>Async</span></a><a href="#forshare" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>for<wbr/>Share</span></a><a href="#forupdate" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>for<wbr/>Update</span></a><a href="#getmodifiers" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Modifiers</span></a><a href="#getsqlfragment" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>SQL<wbr/>Fragment</span></a><a href="#limit" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>limit</span></a><a href="#offset" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>offset</span></a><a href="#orderby" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>order<wbr/>By</span></a><a href="#orderbysql" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>order<wbr/>By<wbr/>SQL</span></a><a href="#skiplocked" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>skip<wbr/>Locked</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html">Entity</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
