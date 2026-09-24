@@ -23,6 +23,8 @@ export abstract class BaseSQLQueryBuilder<
       offset?: number;
       orderBy?: readonly EntityLoaderOrderByClause<TFields, TSelectedFields>[];
       forUpdate?: boolean;
+      forShare?: boolean;
+      skipLocked?: boolean;
     },
   ) {}
 
@@ -45,9 +47,29 @@ export abstract class BaseSQLQueryBuilder<
   /**
    * Lock the selected rows for update using `SELECT ... FOR UPDATE`. The lock is held until the
    * end of the transaction, so the query must be executed in a transactional query context.
+   * Mutually exclusive with `forShare`.
    */
   forUpdate(): this {
     this.modifiers.forUpdate = true;
+    return this;
+  }
+
+  /**
+   * Lock the selected rows in share mode using `SELECT ... FOR SHARE`. The lock is held until the
+   * end of the transaction, so the query must be executed in a transactional query context.
+   * Mutually exclusive with `forUpdate`.
+   */
+  forShare(): this {
+    this.modifiers.forShare = true;
+    return this;
+  }
+
+  /**
+   * Skip rows that are already locked by another transaction using `SKIP LOCKED` instead of waiting for them.
+   * Requires `forUpdate()` or `forShare()`.
+   */
+  skipLocked(): this {
+    this.modifiers.skipLocked = true;
     return this;
   }
 

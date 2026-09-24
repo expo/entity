@@ -194,7 +194,7 @@ describe(EntityKnexDataManager, () => {
     });
   });
 
-  describe('forUpdate', () => {
+  describe('row locking modifiers', () => {
     const fieldObject = {
       customIdField: '1',
       testIndexedField: 'unique1',
@@ -220,7 +220,7 @@ describe(EntityKnexDataManager, () => {
         entityDataManager.loadManyByFieldEqualityConjunctionAsync(queryContext, [], {
           forUpdate: true,
         }),
-      ).rejects.toThrow('forUpdate requires a transactional query context');
+      ).rejects.toThrow('require a transactional query context');
       verify(
         databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
           anything(),
@@ -246,7 +246,7 @@ describe(EntityKnexDataManager, () => {
         entityDataManager.loadManyBySQLFragmentAsync(queryContext, sql`TRUE`, {
           forUpdate: true,
         }),
-      ).rejects.toThrow('forUpdate requires a transactional query context');
+      ).rejects.toThrow('require a transactional query context');
       verify(
         databaseAdapterMock.fetchManyBySQLFragmentAsync(anything(), anything(), anything()),
       ).never();
@@ -306,7 +306,140 @@ describe(EntityKnexDataManager, () => {
       });
     });
 
-    it('does not require a transaction when forUpdate is not set', async () => {
+    it('throws when forShare is used outside of a transaction', async () => {
+      const queryContext = new StubQueryContextProvider().getQueryContext();
+      const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+        PostgresEntityDatabaseAdapter,
+      );
+      const entityDataManager = new EntityKnexDataManager(
+        testEntityConfiguration,
+        instance(databaseAdapterMock),
+        new NoOpEntityMetricsAdapter(),
+        TestEntity.name,
+      );
+
+      await expect(
+        entityDataManager.loadManyByFieldEqualityConjunctionAsync(queryContext, [], {
+          forShare: true,
+        }),
+      ).rejects.toThrow('require a transactional query context');
+      await expect(
+        entityDataManager.loadManyBySQLFragmentAsync(queryContext, sql`TRUE`, { forShare: true }),
+      ).rejects.toThrow('require a transactional query context');
+    });
+
+    it('throws when forUpdate and forShare are both set', async () => {
+      const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+        PostgresEntityDatabaseAdapter,
+      );
+      const entityDataManager = new EntityKnexDataManager(
+        testEntityConfiguration,
+        instance(databaseAdapterMock),
+        new NoOpEntityMetricsAdapter(),
+        TestEntity.name,
+      );
+
+      await new StubQueryContextProvider().runInTransactionAsync(async (queryContext) => {
+        await expect(
+          entityDataManager.loadManyByFieldEqualityConjunctionAsync(queryContext, [], {
+            forUpdate: true,
+            forShare: true,
+          }),
+        ).rejects.toThrow('forUpdate and forShare are mutually exclusive');
+        await expect(
+          entityDataManager.loadManyBySQLFragmentAsync(queryContext, sql`TRUE`, {
+            forUpdate: true,
+            forShare: true,
+          }),
+        ).rejects.toThrow('forUpdate and forShare are mutually exclusive');
+      });
+      verify(
+        databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+          anything(),
+          anything(),
+          anything(),
+        ),
+      ).never();
+      verify(
+        databaseAdapterMock.fetchManyBySQLFragmentAsync(anything(), anything(), anything()),
+      ).never();
+    });
+
+    it('throws when skipLocked is set without forUpdate or forShare', async () => {
+      const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+        PostgresEntityDatabaseAdapter,
+      );
+      const entityDataManager = new EntityKnexDataManager(
+        testEntityConfiguration,
+        instance(databaseAdapterMock),
+        new NoOpEntityMetricsAdapter(),
+        TestEntity.name,
+      );
+
+      await new StubQueryContextProvider().runInTransactionAsync(async (queryContext) => {
+        await expect(
+          entityDataManager.loadManyByFieldEqualityConjunctionAsync(queryContext, [], {
+            skipLocked: true,
+          }),
+        ).rejects.toThrow('skipLocked requires forUpdate or forShare');
+        await expect(
+          entityDataManager.loadManyBySQLFragmentAsync(queryContext, sql`TRUE`, {
+            skipLocked: true,
+          }),
+        ).rejects.toThrow('skipLocked requires forUpdate or forShare');
+      });
+    });
+
+    it('passes forShare and skipLocked through to the database adapter inside of a transaction', async () => {
+      const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
+        PostgresEntityDatabaseAdapter,
+      );
+      when(
+        databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+          anything(),
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([fieldObject]);
+      when(
+        databaseAdapterMock.fetchManyBySQLFragmentAsync(anything(), anything(), anything()),
+      ).thenResolve([fieldObject]);
+
+      const entityDataManager = new EntityKnexDataManager(
+        testEntityConfiguration,
+        instance(databaseAdapterMock),
+        new NoOpEntityMetricsAdapter(),
+        TestEntity.name,
+      );
+
+      await new StubQueryContextProvider().runInTransactionAsync(async (queryContext) => {
+        await entityDataManager.loadManyByFieldEqualityConjunctionAsync(queryContext, [], {
+          forShare: true,
+          skipLocked: true,
+        });
+        await entityDataManager.loadManyBySQLFragmentAsync(queryContext, sql`TRUE`, {
+          forUpdate: true,
+          skipLocked: true,
+        });
+
+        verify(
+          databaseAdapterMock.fetchManyByFieldEqualityConjunctionAsync(
+            queryContext,
+            anything(),
+            deepEqual({ forShare: true, skipLocked: true }),
+          ),
+        ).once();
+        verify(
+          databaseAdapterMock.fetchManyBySQLFragmentAsync(
+            queryContext,
+            anything(),
+            deepEqual({ forUpdate: true, skipLocked: true }),
+          ),
+        ).once();
+      });
+    });
+
+    it('does not require a transaction when no row locking modifier is set', async () => {
       const queryContext = new StubQueryContextProvider().getQueryContext();
       const databaseAdapterMock = mock<PostgresEntityDatabaseAdapter<TestFields, 'customIdField'>>(
         PostgresEntityDatabaseAdapter,
@@ -328,7 +461,7 @@ describe(EntityKnexDataManager, () => {
       const results = await entityDataManager.loadManyByFieldEqualityConjunctionAsync(
         queryContext,
         [],
-        { forUpdate: false },
+        { forUpdate: false, forShare: false, skipLocked: false },
       );
       expect(results).toHaveLength(1);
     });

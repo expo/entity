@@ -164,19 +164,32 @@ describe(BasePostgresEntityDatabaseAdapter, () => {
       expect(results).toEqual([{ stringField: 'hello' }]);
     });
 
-    it('converts query selection modifiers including forUpdate', async () => {
+    it('converts query selection modifiers including row locking modifiers', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({});
       await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {
         limit: 2,
         offset: 1,
         forUpdate: true,
+        skipLocked: true,
       });
       expect(adapter.lastEqualityConditionQuerySelectionModifiers).toEqual({
         orderBy: undefined,
         limit: 2,
         offset: 1,
         forUpdate: true,
+        forShare: undefined,
+        skipLocked: true,
+      });
+
+      await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], { forShare: true });
+      expect(adapter.lastEqualityConditionQuerySelectionModifiers).toEqual({
+        orderBy: undefined,
+        limit: undefined,
+        offset: undefined,
+        forUpdate: undefined,
+        forShare: true,
+        skipLocked: undefined,
       });
 
       await adapter.fetchManyByFieldEqualityConjunctionAsync(queryContext, [], {});
@@ -185,20 +198,27 @@ describe(BasePostgresEntityDatabaseAdapter, () => {
         limit: undefined,
         offset: undefined,
         forUpdate: undefined,
+        forShare: undefined,
+        skipLocked: undefined,
       });
     });
   });
 
   describe('fetchManyBySQLFragmentAsync', () => {
-    it('converts query selection modifiers including forUpdate', async () => {
+    it('converts query selection modifiers including row locking modifiers', async () => {
       const queryContext = instance(mock(EntityQueryContext));
       const adapter = new TestEntityDatabaseAdapter({});
-      await adapter.fetchManyBySQLFragmentAsync(queryContext, sql`TRUE`, { forUpdate: true });
+      await adapter.fetchManyBySQLFragmentAsync(queryContext, sql`TRUE`, {
+        forShare: true,
+        skipLocked: true,
+      });
       expect(adapter.lastSQLFragmentQuerySelectionModifiers).toEqual({
         orderBy: undefined,
         limit: undefined,
         offset: undefined,
-        forUpdate: true,
+        forUpdate: undefined,
+        forShare: true,
+        skipLocked: true,
       });
     });
   });

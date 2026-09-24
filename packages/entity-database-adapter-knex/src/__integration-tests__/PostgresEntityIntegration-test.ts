@@ -211,13 +211,16 @@ describe('postgres entity integration', () => {
     );
   });
 
-  describe('forUpdate', () => {
+  describe('row locking modifiers (forUpdate, forShare, skipLocked)', () => {
     // Attempts to lock the row from a separate connection without waiting. Postgres raises
-    // lock_not_available (55P03) when another transaction already holds a FOR UPDATE lock on the row.
-    const tryLockRowFromOtherConnectionAsync = async (id: string): Promise<string | null> => {
+    // lock_not_available (55P03) when another transaction already holds a conflicting lock on the row.
+    const tryLockRowFromOtherConnectionAsync = async (
+      id: string,
+      lockMode: 'FOR UPDATE' | 'FOR SHARE' = 'FOR UPDATE',
+    ): Promise<string | null> => {
       try {
         await knexInstance.raw(
-          'SELECT * FROM postgres_test_entities WHERE id = ? FOR UPDATE NOWAIT',
+          `SELECT * FROM postgres_test_entities WHERE id = ? ${lockMode} NOWAIT`,
           [id],
         );
         return null;
@@ -353,21 +356,145 @@ describe('postgres entity integration', () => {
       expect(reloaded.getField('name')).toBe('counter,a,b');
     });
 
-    it('throws when forUpdate is used outside of a transaction', async () => {
+    it('forShare allows concurrent share locks but blocks update locks', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entity = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'shared')
+          .createAsync(),
+      );
+
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+        const results = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadManyByFieldEqualityConjunctionAsync([{ fieldName: 'name', fieldValue: 'shared' }], {
+          forShare: true,
+        });
+        expect(results).toHaveLength(1);
+
+        // another share lock is compatible, an update lock is not
+        expect(await tryLockRowFromOtherConnectionAsync(entity.getID(), 'FOR SHARE')).toBeNull();
+        expect(await tryLockRowFromOtherConnectionAsync(entity.getID(), 'FOR UPDATE')).toBe(
+          '55P03',
+        );
+
+        // via the fluent builder method
+        const builderResults = await PostgresTestEntity.knexLoader(vc1, queryContext)
+          .loadManyBySQL(sql`name = ${'shared'}`)
+          .forShare()
+          .executeAsync();
+        expect(builderResults).toHaveLength(1);
+      });
+
+      expect(await tryLockRowFromOtherConnectionAsync(entity.getID(), 'FOR UPDATE')).toBeNull();
+    });
+
+    it('skipLocked skips rows locked by another transaction', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entityA = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'queue')
+          .createAsync(),
+      );
+      const entityB = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'queue')
+          .createAsync(),
+      );
+
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync(
+        'postgres',
+        async (outerQueryContext) => {
+          // lock entityA in the outer transaction
+          const locked = await PostgresTestEntity.knexLoader(vc1, outerQueryContext)
+            .loadManyBySQL(sql`id = ${entityA.getID()}`)
+            .forUpdate()
+            .executeAsync();
+          expect(locked.map((e) => e.getID())).toEqual([entityA.getID()]);
+
+          // a second transaction on another connection sees only the unlocked row
+          const vc2 = new ViewerContext(
+            createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+          );
+          await vc2.runInTransactionForDatabaseAdapterFlavorAsync(
+            'postgres',
+            async (innerQueryContext) => {
+              const skipLockedResults = await PostgresTestEntity.knexLoader(
+                vc2,
+                innerQueryContext,
+              ).loadManyByFieldEqualityConjunctionAsync(
+                [{ fieldName: 'name', fieldValue: 'queue' }],
+                { forUpdate: true, skipLocked: true },
+              );
+              expect(skipLockedResults.map((e) => e.getID())).toEqual([entityB.getID()]);
+
+              const builderResults = await PostgresTestEntity.knexLoader(vc2, innerQueryContext)
+                .loadManyBySQL(sql`name = ${'queue'}`)
+                .forShare()
+                .skipLocked()
+                .executeAsync();
+              expect(builderResults.map((e) => e.getID())).toEqual([entityB.getID()]);
+            },
+          );
+        },
+      );
+
+      // both rows are visible once the outer transaction commits
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+        const results = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadManyByFieldEqualityConjunctionAsync([{ fieldName: 'name', fieldValue: 'queue' }], {
+          forUpdate: true,
+          skipLocked: true,
+        });
+        expect(results).toHaveLength(2);
+      });
+    });
+
+    it('throws when forUpdate or forShare is used outside of a transaction', async () => {
       const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
 
       await expect(
         PostgresTestEntity.knexLoader(vc1).loadManyByFieldEqualityConjunctionAsync([], {
           forUpdate: true,
         }),
-      ).rejects.toThrow('forUpdate requires a transactional query context');
+      ).rejects.toThrow('require a transactional query context');
+
+      await expect(
+        PostgresTestEntity.knexLoader(vc1).loadManyByFieldEqualityConjunctionAsync([], {
+          forShare: true,
+        }),
+      ).rejects.toThrow('require a transactional query context');
 
       await expect(
         PostgresTestEntity.knexLoader(vc1)
           .loadManyBySQL(sql`TRUE`)
           .forUpdate()
           .executeAsync(),
-      ).rejects.toThrow('forUpdate requires a transactional query context');
+      ).rejects.toThrow('require a transactional query context');
+    });
+
+    it('throws for invalid row locking modifier combinations', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+        await expect(
+          PostgresTestEntity.knexLoader(vc1, queryContext)
+            .loadManyBySQL(sql`TRUE`)
+            .forUpdate()
+            .forShare()
+            .executeAsync(),
+        ).rejects.toThrow('forUpdate and forShare are mutually exclusive');
+
+        await expect(
+          PostgresTestEntity.knexLoader(vc1, queryContext)
+            .loadManyBySQL(sql`TRUE`)
+            .skipLocked()
+            .executeAsync(),
+        ).rejects.toThrow('skipLocked requires forUpdate or forShare');
+      });
     });
   });
 

@@ -136,9 +136,19 @@ export interface PostgresQuerySelectionModifiers<TFields extends Record<string, 
   limit?: number;
 
   /**
-   * Lock the selected rows for update using `SELECT ... FOR UPDATE`.
+   * Lock the selected rows for update using `SELECT ... FOR UPDATE`. Mutually exclusive with `forShare`.
    */
   forUpdate?: boolean;
+
+  /**
+   * Lock the selected rows in share mode using `SELECT ... FOR SHARE`. Mutually exclusive with `forUpdate`.
+   */
+  forShare?: boolean;
+
+  /**
+   * Skip rows that are already locked by another transaction using `SKIP LOCKED`. Requires `forUpdate` or `forShare`.
+   */
+  skipLocked?: boolean;
 }
 
 export type TableOrderByClause<TFields extends Record<string, any>> =
@@ -158,6 +168,8 @@ export interface TableQuerySelectionModifiers<TFields extends Record<string, any
   offset: number | undefined;
   limit: number | undefined;
   forUpdate: boolean | undefined;
+  forShare: boolean | undefined;
+  skipLocked: boolean | undefined;
 }
 
 export abstract class BasePostgresEntityDatabaseAdapter<
@@ -350,6 +362,8 @@ export abstract class BasePostgresEntityDatabaseAdapter<
       offset: querySelectionModifiers.offset,
       limit: querySelectionModifiers.limit,
       forUpdate: querySelectionModifiers.forUpdate,
+      forShare: querySelectionModifiers.forShare,
+      skipLocked: querySelectionModifiers.skipLocked,
     };
   }
 }
