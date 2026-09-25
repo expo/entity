@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.68.0](https://github.com/expo/entity/compare/v0.67.0...v0.68.0) (2026-09-25)
+
+### Features
+
+- add forShare and skipLocked selection modifiers to knex loader ([#705](https://github.com/expo/entity/issues/705)) ([243a038](https://github.com/expo/entity/commit/243a0386fb9755f3926ade8dcc1b92adf38cd923))
+- add forUpdate to knex loader ([#704](https://github.com/expo/entity/issues/704)) ([727f166](https://github.com/expo/entity/commit/727f16662d8baa3757bb8e94f51d837f17fd333d))
+
 # [0.67.0](https://github.com/expo/entity/compare/v0.66.0...v0.67.0) (2026-09-18)
 
 **Note:** Version bump only for package @expo/entity-database-adapter-knex-testing-utils
