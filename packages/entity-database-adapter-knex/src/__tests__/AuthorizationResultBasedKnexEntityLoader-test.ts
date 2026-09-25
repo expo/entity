@@ -3,9 +3,14 @@ import type {
   EntityQueryContext,
   IEntityMetricsAdapter,
 } from '@expo/entity';
-import { enforceResultsAsync, EntityConstructionUtils, ViewerContext } from '@expo/entity';
+import {
+  enforceResultsAsync,
+  EntityConstructionUtils,
+  EntityNotFoundError,
+  ViewerContext,
+} from '@expo/entity';
 import { describe, expect, it } from '@jest/globals';
-import { anyOfClass, anything, instance, mock, spy, verify, when } from 'ts-mockito';
+import { anyOfClass, anything, deepEqual, instance, mock, spy, verify, when } from 'ts-mockito';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AuthorizationResultBasedKnexEntityLoader } from '../AuthorizationResultBasedKnexEntityLoader.ts';
@@ -87,6 +92,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
     );
     const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
       queryContext,
+      testEntityConfiguration,
+      TestEntity,
       instance(knexDataManagerMock),
       metricsAdapter,
       constructionUtils,
@@ -170,6 +177,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
     );
     const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
       queryContext,
+      testEntityConfiguration,
+      TestEntity,
       instance(knexDataManagerMock),
       metricsAdapter,
       constructionUtils,
@@ -263,6 +272,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
 
       const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
         queryContext,
+        testEntityConfiguration,
+        TestEntity,
         instance(knexDataManagerMock),
         metricsAdapter,
         constructionUtils,
@@ -344,6 +355,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
 
       const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
         queryContext,
+        testEntityConfiguration,
+        TestEntity,
         instance(knexDataManagerMock),
         metricsAdapter,
         constructionUtils,
@@ -430,6 +443,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
 
       const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
         queryContext,
+        testEntityConfiguration,
+        TestEntity,
         instance(knexDataManagerMock),
         metricsAdapter,
         constructionUtils,
@@ -545,6 +560,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
 
       const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
         queryContext,
+        testPaginationEntityConfiguration,
+        TestPaginationEntity,
         instance(knexDataManagerMock),
         metricsAdapter,
         constructionUtils,
@@ -631,6 +648,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
 
       const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
         queryContext,
+        testEntityConfiguration,
+        TestEntity,
         instance(knexDataManagerMock),
         metricsAdapter,
         constructionUtils,
@@ -731,6 +750,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
 
       const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
         queryContext,
+        testPaginationEntityConfiguration,
+        TestPaginationEntity,
         instance(knexDataManagerMock),
         metricsAdapter,
         constructionUtils,
@@ -825,6 +846,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
 
       const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
         queryContext,
+        testPaginationEntityConfiguration,
+        TestPaginationEntity,
         instance(knexDataManagerMock),
         metricsAdapter,
         constructionUtils,
@@ -916,6 +939,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
 
       const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
         queryContext,
+        testPaginationEntityConfiguration,
+        TestPaginationEntity,
         instance(knexDataManagerMock),
         metricsAdapter,
         constructionUtils,
@@ -980,6 +1005,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
 
       const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
         queryContext,
+        testPaginationEntityConfiguration,
+        TestPaginationEntity,
         instance(knexDataManagerMock),
         metricsAdapter,
         constructionUtils,
@@ -1067,6 +1094,8 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
 
       const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
         queryContext,
+        testPaginationEntityConfiguration,
+        TestPaginationEntity,
         instance(knexDataManagerMock),
         metricsAdapter,
         constructionUtils,
@@ -1085,6 +1114,328 @@ describe(AuthorizationResultBasedKnexEntityLoader, () => {
       expect(connection.edges).toHaveLength(0);
       expect(connection.pageInfo.startCursor).toBeNull();
       expect(connection.pageInfo.endCursor).toBeNull();
+    });
+  });
+
+  describe('FromDatabase load methods', () => {
+    const makeFieldObject = (id: string, testIndexedField: string): TestFields => ({
+      customIdField: id,
+      stringField: 'huh',
+      intField: 4,
+      testIndexedField,
+      dateField: new Date(),
+      nullableField: null,
+    });
+
+    const setup = (): {
+      knexEntityLoader: AuthorizationResultBasedKnexEntityLoader<
+        TestFields,
+        'customIdField',
+        ViewerContext,
+        TestEntity,
+        TestEntityPrivacyPolicy,
+        keyof TestFields
+      >;
+      knexDataManagerMock: EntityKnexDataManager<TestFields, 'customIdField'>;
+      queryContext: EntityQueryContext;
+    } => {
+      const privacyPolicy = new TestEntityPrivacyPolicy();
+      const viewerContext = instance(mock(ViewerContext));
+      const privacyPolicyEvaluationContext =
+        instance(
+          mock<
+            EntityPrivacyPolicyEvaluationContext<
+              TestFields,
+              'customIdField',
+              ViewerContext,
+              TestEntity
+            >
+          >(),
+        );
+      const metricsAdapter = instance(mock<IEntityMetricsAdapter>());
+      const queryContext = instance(mock<EntityQueryContext>());
+      const knexDataManagerMock =
+        mock<EntityKnexDataManager<TestFields, 'customIdField'>>(EntityKnexDataManager);
+      const constructionUtils = new EntityConstructionUtils(
+        viewerContext,
+        queryContext,
+        privacyPolicyEvaluationContext,
+        testEntityConfiguration,
+        TestEntity,
+        /* entitySelectedFields */ undefined,
+        privacyPolicy,
+        metricsAdapter,
+      );
+      const knexEntityLoader = new AuthorizationResultBasedKnexEntityLoader(
+        queryContext,
+        testEntityConfiguration,
+        TestEntity,
+        instance(knexDataManagerMock),
+        metricsAdapter,
+        constructionUtils,
+      );
+      return { knexEntityLoader, knexDataManagerMock, queryContext };
+    };
+
+    it('loads entities with loadManyByIDsNullableFromDatabaseAsync', async () => {
+      const { knexEntityLoader, knexDataManagerMock, queryContext } = setup();
+      const id1 = uuidv4();
+      const id2 = uuidv4();
+      const missingId = uuidv4();
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([makeFieldObject(id1, '1'), makeFieldObject(id2, '2')]);
+
+      const results = await knexEntityLoader.loadManyByIDsNullableFromDatabaseAsync(
+        [id1, id2, missingId],
+        { forUpdate: true },
+      );
+      expect(results.size).toBe(3);
+      expect(results.get(id1)!.enforceValue().getID()).toBe(id1);
+      expect(results.get(id2)!.enforceValue().getID()).toBe(id2);
+      expect(results.get(missingId)).toBeNull();
+
+      verify(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          deepEqual([{ fieldName: 'customIdField', fieldValues: [id1, id2, missingId] }]),
+          deepEqual({ forUpdate: true }),
+        ),
+      ).once();
+    });
+
+    it('returns an empty map and does not query for an empty list of IDs', async () => {
+      const { knexEntityLoader, knexDataManagerMock } = setup();
+      const results = await knexEntityLoader.loadManyByIDsNullableFromDatabaseAsync([], {
+        forUpdate: true,
+      });
+      expect(results.size).toBe(0);
+      verify(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          anything(),
+          anything(),
+          anything(),
+        ),
+      ).never();
+    });
+
+    it('returns EntityNotFoundError results for missing IDs with loadManyByIDsFromDatabaseAsync', async () => {
+      const { knexEntityLoader, knexDataManagerMock, queryContext } = setup();
+      const id1 = uuidv4();
+      const missingId = uuidv4();
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([makeFieldObject(id1, '1')]);
+
+      const results = await knexEntityLoader.loadManyByIDsFromDatabaseAsync([id1, missingId], {
+        forShare: true,
+      });
+      expect(results.size).toBe(2);
+      expect(results.get(id1)!.ok).toBe(true);
+      const missingResult = results.get(missingId)!;
+      expect(missingResult.ok).toBe(false);
+      expect(missingResult.enforceError()).toBeInstanceOf(EntityNotFoundError);
+    });
+
+    it('loads an entity with loadByIDFromDatabaseAsync', async () => {
+      const { knexEntityLoader, knexDataManagerMock, queryContext } = setup();
+      const id1 = uuidv4();
+      const missingId = uuidv4();
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          deepEqual([{ fieldName: 'customIdField', fieldValues: [id1] }]),
+          anything(),
+        ),
+      ).thenResolve([makeFieldObject(id1, '1')]);
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          deepEqual([{ fieldName: 'customIdField', fieldValues: [missingId] }]),
+          anything(),
+        ),
+      ).thenResolve([]);
+
+      const found = await knexEntityLoader.loadByIDFromDatabaseAsync(id1, { forUpdate: true });
+      expect(found.enforceValue().getID()).toBe(id1);
+
+      const missing = await knexEntityLoader.loadByIDFromDatabaseAsync(missingId, {
+        forUpdate: true,
+      });
+      expect(missing.ok).toBe(false);
+      expect(missing.enforceError()).toBeInstanceOf(EntityNotFoundError);
+    });
+
+    it('loads an entity or null with loadByIDNullableFromDatabaseAsync', async () => {
+      const { knexEntityLoader, knexDataManagerMock, queryContext } = setup();
+      const id1 = uuidv4();
+      const missingId = uuidv4();
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          deepEqual([{ fieldName: 'customIdField', fieldValues: [id1] }]),
+          anything(),
+        ),
+      ).thenResolve([makeFieldObject(id1, '1')]);
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          deepEqual([{ fieldName: 'customIdField', fieldValues: [missingId] }]),
+          anything(),
+        ),
+      ).thenResolve([]);
+
+      const found = await knexEntityLoader.loadByIDNullableFromDatabaseAsync(id1, {
+        forUpdate: true,
+        skipLocked: true,
+      });
+      expect(found!.enforceValue().getID()).toBe(id1);
+
+      const missing = await knexEntityLoader.loadByIDNullableFromDatabaseAsync(missingId, {
+        forUpdate: true,
+        skipLocked: true,
+      });
+      expect(missing).toBeNull();
+    });
+
+    it('requires exactly one lock mode at the type level', async () => {
+      const { knexEntityLoader, knexDataManagerMock, queryContext } = setup();
+      const id1 = uuidv4();
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([makeFieldObject(id1, '1')]);
+
+      // valid: exactly one lock mode, optional skipLocked on nullable variants
+      await knexEntityLoader.loadByIDNullableFromDatabaseAsync(id1, { forUpdate: true });
+      await knexEntityLoader.loadByIDNullableFromDatabaseAsync(id1, { forShare: true });
+      await knexEntityLoader.loadByIDNullableFromDatabaseAsync(id1, {
+        forShare: true,
+        skipLocked: true,
+      });
+      await knexEntityLoader.loadByIDFromDatabaseAsync(id1, { forUpdate: true });
+
+      // @ts-expect-error a lock mode is required
+      await knexEntityLoader.loadByIDNullableFromDatabaseAsync(id1, {});
+      // @ts-expect-error skipLocked alone is not a lock mode
+      await knexEntityLoader.loadByIDNullableFromDatabaseAsync(id1, { skipLocked: true });
+      // @ts-expect-error forUpdate must be true
+      await knexEntityLoader.loadByIDNullableFromDatabaseAsync(id1, { forUpdate: false });
+      await knexEntityLoader.loadByIDNullableFromDatabaseAsync(id1, {
+        forUpdate: true,
+        // @ts-expect-error forUpdate and forShare are mutually exclusive
+        forShare: true,
+      });
+      // @ts-expect-error skipLocked is not permitted on throwing variants
+      await knexEntityLoader.loadByIDFromDatabaseAsync(id1, { forUpdate: true, skipLocked: true });
+      await knexEntityLoader.loadManyByIDsFromDatabaseAsync([id1], {
+        forShare: true,
+        // @ts-expect-error skipLocked is not permitted on throwing variants
+        skipLocked: true,
+      });
+    });
+
+    it('validates ID values for FromDatabase ID loads', async () => {
+      const { knexEntityLoader, knexDataManagerMock } = setup();
+      await expect(
+        knexEntityLoader.loadByIDFromDatabaseAsync('not-a-uuid', { forUpdate: true }),
+      ).rejects.toThrow('Entity field not valid: TestEntity (customIdField = not-a-uuid)');
+      verify(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          anything(),
+          anything(),
+          anything(),
+        ),
+      ).never();
+    });
+
+    it('loads entities with loadManyByFieldEqualingFromDatabaseAsync', async () => {
+      const { knexEntityLoader, knexDataManagerMock, queryContext } = setup();
+      const id1 = uuidv4();
+      const id2 = uuidv4();
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          anything(),
+          anything(),
+        ),
+      ).thenResolve([makeFieldObject(id1, '1'), makeFieldObject(id2, '2')]);
+
+      const results = await knexEntityLoader.loadManyByFieldEqualingFromDatabaseAsync(
+        'stringField',
+        'huh',
+        { forUpdate: true },
+      );
+      expect(results).toHaveLength(2);
+      expect(results.map((r) => r.enforceValue().getID())).toEqual([id1, id2]);
+
+      verify(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          deepEqual([{ fieldName: 'stringField', fieldValue: 'huh' }]),
+          deepEqual({ forUpdate: true }),
+        ),
+      ).once();
+    });
+
+    it('loads an entity or null with loadByFieldEqualingFromDatabaseAsync and throws on multiple matches', async () => {
+      const { knexEntityLoader, knexDataManagerMock, queryContext } = setup();
+      const id1 = uuidv4();
+      const id2 = uuidv4();
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          deepEqual([{ fieldName: 'testIndexedField', fieldValue: 'one' }]),
+          anything(),
+        ),
+      ).thenResolve([makeFieldObject(id1, 'one')]);
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          deepEqual([{ fieldName: 'testIndexedField', fieldValue: 'none' }]),
+          anything(),
+        ),
+      ).thenResolve([]);
+      when(
+        knexDataManagerMock.loadManyByFieldEqualityConjunctionAsync(
+          queryContext,
+          deepEqual([{ fieldName: 'testIndexedField', fieldValue: 'many' }]),
+          anything(),
+        ),
+      ).thenResolve([makeFieldObject(id1, 'many'), makeFieldObject(id2, 'many')]);
+
+      const found = await knexEntityLoader.loadByFieldEqualingFromDatabaseAsync(
+        'testIndexedField',
+        'one',
+        { forShare: true },
+      );
+      expect(found!.enforceValue().getID()).toBe(id1);
+
+      const missing = await knexEntityLoader.loadByFieldEqualingFromDatabaseAsync(
+        'testIndexedField',
+        'none',
+        { forShare: true },
+      );
+      expect(missing).toBeNull();
+
+      await expect(
+        knexEntityLoader.loadByFieldEqualingFromDatabaseAsync('testIndexedField', 'many', {
+          forShare: true,
+        }),
+      ).rejects.toThrow(
+        'loadByFieldEqualingFromDatabase: Multiple entities of type TestEntity found for testIndexedField=many',
+      );
     });
   });
 });

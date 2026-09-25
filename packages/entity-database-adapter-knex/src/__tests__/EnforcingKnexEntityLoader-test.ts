@@ -2,7 +2,7 @@ import type { IEntityMetricsAdapter } from '@expo/entity';
 import { EntityConstructionUtils, EntityQueryContext } from '@expo/entity';
 import { result } from '@expo/results';
 import { describe, expect, it } from '@jest/globals';
-import { anything, instance, mock, when } from 'ts-mockito';
+import { anything, deepEqual, instance, mock, when } from 'ts-mockito';
 
 import {
   AuthorizationResultBasedKnexEntityLoader,
@@ -195,6 +195,294 @@ describe(EnforcingKnexEntityLoader, () => {
 
       const enforcingQueryBuilder = enforcingKnexEntityLoader.loadManyBySQL(sql`1=1`);
       await expect(enforcingQueryBuilder.executeAsync()).resolves.toEqual([entity1, entity2]);
+    });
+  });
+
+  describe('FromDatabase load methods', () => {
+    const makeLoader = (
+      nonEnforcingKnexEntityLoaderMock: AuthorizationResultBasedKnexEntityLoader<
+        any,
+        any,
+        any,
+        any,
+        any,
+        any
+      >,
+    ): EnforcingKnexEntityLoader<any, any, any, any, any, any> =>
+      new EnforcingKnexEntityLoader(
+        instance(nonEnforcingKnexEntityLoaderMock),
+        instance(mock(EntityQueryContext)),
+        instance(mock(EntityKnexDataManager)),
+        instance(mock<IEntityMetricsAdapter>()),
+        instance(mock(EntityConstructionUtils)),
+      );
+
+    describe('loadByIDFromDatabaseAsync', () => {
+      it('throws when result is unsuccessful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const rejection = new Error();
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadByIDFromDatabaseAsync(anything(), anything()),
+        ).thenResolve(result(rejection));
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadByIDFromDatabaseAsync('id', { forUpdate: true }),
+        ).rejects.toThrow(rejection);
+      });
+
+      it('returns value when result is successful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const resolved = {};
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadByIDFromDatabaseAsync(
+            'id',
+            deepEqual({ forUpdate: true }),
+          ),
+        ).thenResolve(result(resolved));
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadByIDFromDatabaseAsync('id', { forUpdate: true }),
+        ).resolves.toEqual(resolved);
+      });
+    });
+
+    describe('loadByIDNullableFromDatabaseAsync', () => {
+      it('throws when result is unsuccessful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const rejection = new Error();
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadByIDNullableFromDatabaseAsync(
+            anything(),
+            anything(),
+          ),
+        ).thenResolve(result(rejection));
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadByIDNullableFromDatabaseAsync('id', { forUpdate: true }),
+        ).rejects.toThrow(rejection);
+      });
+
+      it('returns value when result is successful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const resolved = {};
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadByIDNullableFromDatabaseAsync(
+            anything(),
+            anything(),
+          ),
+        ).thenResolve(result(resolved));
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadByIDNullableFromDatabaseAsync('id', { forUpdate: true }),
+        ).resolves.toEqual(resolved);
+      });
+
+      it('returns null when result is null', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadByIDNullableFromDatabaseAsync(
+            anything(),
+            anything(),
+          ),
+        ).thenResolve(null);
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadByIDNullableFromDatabaseAsync('id', { forUpdate: true }),
+        ).resolves.toBeNull();
+      });
+    });
+
+    describe('loadManyByIDsFromDatabaseAsync', () => {
+      it('throws when result is unsuccessful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const rejection = new Error();
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadManyByIDsFromDatabaseAsync(anything(), anything()),
+        ).thenResolve(new Map([['id', result(rejection)]]));
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadManyByIDsFromDatabaseAsync(['id'], { forUpdate: true }),
+        ).rejects.toThrow(rejection);
+      });
+
+      it('returns value when result is successful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const resolved = {};
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadManyByIDsFromDatabaseAsync(anything(), anything()),
+        ).thenResolve(new Map([['id', result(resolved)]]));
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadManyByIDsFromDatabaseAsync(['id'], { forUpdate: true }),
+        ).resolves.toEqual(new Map([['id', resolved]]));
+      });
+    });
+
+    describe('loadManyByIDsNullableFromDatabaseAsync', () => {
+      it('throws when result is unsuccessful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const rejection = new Error();
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadManyByIDsNullableFromDatabaseAsync(
+            anything(),
+            anything(),
+          ),
+        ).thenResolve(new Map([['id', result(rejection)]]));
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadManyByIDsNullableFromDatabaseAsync(['id'], {
+            forUpdate: true,
+          }),
+        ).rejects.toThrow(rejection);
+      });
+
+      it('returns values and nulls when results are successful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const resolved = {};
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadManyByIDsNullableFromDatabaseAsync(
+            anything(),
+            anything(),
+          ),
+        ).thenResolve(
+          new Map([
+            ['id', result(resolved)],
+            ['missing', null],
+          ]),
+        );
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadManyByIDsNullableFromDatabaseAsync(['id', 'missing'], {
+            forUpdate: true,
+          }),
+        ).resolves.toEqual(
+          new Map([
+            ['id', resolved],
+            ['missing', null],
+          ]),
+        );
+      });
+    });
+
+    describe('loadByFieldEqualingFromDatabaseAsync', () => {
+      it('throws when result is unsuccessful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const rejection = new Error();
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadByFieldEqualingFromDatabaseAsync(
+            anything(),
+            anything(),
+            anything(),
+          ),
+        ).thenResolve(result(rejection));
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadByFieldEqualingFromDatabaseAsync('field', 'value', {
+            forUpdate: true,
+          }),
+        ).rejects.toThrow(rejection);
+      });
+
+      it('returns value when result is successful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const resolved = {};
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadByFieldEqualingFromDatabaseAsync(
+            anything(),
+            anything(),
+            anything(),
+          ),
+        ).thenResolve(result(resolved));
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadByFieldEqualingFromDatabaseAsync('field', 'value', {
+            forUpdate: true,
+          }),
+        ).resolves.toEqual(resolved);
+      });
+
+      it('returns null when result is null', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadByFieldEqualingFromDatabaseAsync(
+            anything(),
+            anything(),
+            anything(),
+          ),
+        ).thenResolve(null);
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadByFieldEqualingFromDatabaseAsync('field', 'value', {
+            forUpdate: true,
+          }),
+        ).resolves.toBeNull();
+      });
+    });
+
+    describe('loadManyByFieldEqualingFromDatabaseAsync', () => {
+      it('throws when result is unsuccessful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const rejection = new Error();
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadManyByFieldEqualingFromDatabaseAsync(
+            anything(),
+            anything(),
+            anything(),
+          ),
+        ).thenResolve([result(rejection)]);
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadManyByFieldEqualingFromDatabaseAsync('field', 'value', {
+            forUpdate: true,
+          }),
+        ).rejects.toThrow(rejection);
+      });
+
+      it('returns values when results are successful', async () => {
+        const nonEnforcingKnexEntityLoaderMock = mock(
+          AuthorizationResultBasedKnexEntityLoader<any, any, any, any, any, any>,
+        );
+        const resolved = {};
+        when(
+          nonEnforcingKnexEntityLoaderMock.loadManyByFieldEqualingFromDatabaseAsync(
+            anything(),
+            anything(),
+            anything(),
+          ),
+        ).thenResolve([result(resolved)]);
+        const enforcingKnexEntityLoader = makeLoader(nonEnforcingKnexEntityLoaderMock);
+        await expect(
+          enforcingKnexEntityLoader.loadManyByFieldEqualingFromDatabaseAsync('field', 'value', {
+            forUpdate: true,
+          }),
+        ).resolves.toEqual([resolved]);
+      });
     });
   });
 

@@ -79,6 +79,8 @@ export class KnexEntityLoaderFactory<
 
     return new AuthorizationResultBasedKnexEntityLoader(
       queryContext,
+      this.entityCompanion.entityCompanionDefinition.entityConfiguration,
+      this.entityCompanion.entityCompanionDefinition.entityClass,
       this.knexDataManager,
       this.metricsAdapter,
       constructionUtils,
