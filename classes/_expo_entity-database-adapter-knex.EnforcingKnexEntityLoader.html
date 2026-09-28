@@ -25,7 +25,7 @@ All loads through this loader will throw if the load is not successful.</p>
 <li><span id="tprivacypolicy"><span class="tsd-kind-type-parameter">TPrivacyPolicy</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">EntityPrivacyPolicy</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">&gt;</span></span></li>
 <li><span id="tselectedfields"><span class="tsd-kind-type-parameter">TSelectedFields</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-keyword">keyof</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a></span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/68e222f5126d20837fe6b6a828ad1938b5a4fc0f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L24">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:24</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L27">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:27</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -44,8 +44,14 @@ All loads through this loader will throw if the load is not successful.</p>
 <div class="tsd-index-list"><a href="#countbyfieldequalityconjunctionasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>count<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span></a>
 <a href="#countbysqlasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>count<wbr/>By<wbr/>SQL<wbr/>Async</span></a>
 <a href="#getpaginationcursorforentity" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pagination<wbr/>Cursor<wbr/>For<wbr/>Entity</span></a>
+<a href="#loadbyfieldequalingfromdatabaseasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>By<wbr/>Field<wbr/>Equaling<wbr/>From<wbr/>Database<wbr/>Async</span></a>
+<a href="#loadbyidfromdatabaseasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>By<wbr/>ID<wbr/>From<wbr/>Database<wbr/>Async</span></a>
+<a href="#loadbyidnullablefromdatabaseasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>By<wbr/>ID<wbr/>Nullable<wbr/>From<wbr/>Database<wbr/>Async</span></a>
 <a href="#loadfirstbyfieldequalityconjunctionasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>First<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span></a>
+<a href="#loadmanybyfieldequalingfromdatabaseasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>Field<wbr/>Equaling<wbr/>From<wbr/>Database<wbr/>Async</span></a>
 <a href="#loadmanybyfieldequalityconjunctionasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span></a>
+<a href="#loadmanybyidsfromdatabaseasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>I<wbr/>Ds<wbr/>From<wbr/>Database<wbr/>Async</span></a>
+<a href="#loadmanybyidsnullablefromdatabaseasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>I<wbr/>Ds<wbr/>Nullable<wbr/>From<wbr/>Database<wbr/>Async</span></a>
 <a href="#loadmanybysql" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>SQL</span></a>
 <a href="#loadpageasync" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Page<wbr/>Async</span></a>
 </div></section></div></details></section></section>
@@ -77,7 +83,7 @@ All loads through this loader will throw if the load is not successful.</p>
 <li><span><span class="tsd-kind-parameter">constructionUtils</span>: <span class="tsd-signature-type">EntityConstructionUtils</span><span class="tsd-signature-symbol">&lt;</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tprivacypolicy">TPrivacyPolicy</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">EnforcingKnexEntityLoader</a><span class="tsd-signature-symbol">&lt;</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tviewercontext">TViewerContext</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tprivacypolicy">TPrivacyPolicy</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#tselectedfields">TSelectedFields</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/68e222f5126d20837fe6b6a828ad1938b5a4fc0f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L38">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:38</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L41">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:41</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -85,7 +91,7 @@ All loads through this loader will throw if the load is not successful.</p>
 <h3 class="tsd-anchor-link" id="metricsadapter"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>metrics<wbr/>Adapter</span><a href="#metricsadapter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">metricsAdapter</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IEntityMetricsAdapter</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/68e222f5126d20837fe6b6a828ad1938b5a4fc0f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L49">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:49</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L52">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:52</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -111,7 +117,7 @@ regarding indexing since counts can be expensive on large datasets without appro
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4><p>count of entities matching the filters</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/68e222f5126d20837fe6b6a828ad1938b5a4fc0f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L115">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:115</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L252">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:252</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="countbysqlasync"><span>count<wbr/>By<wbr/>SQL<wbr/>Async</span><a href="#countbysqlasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -130,7 +136,7 @@ since counts can be expensive on large datasets without appropriate indexes.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4><p>count of entities matching the query</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/68e222f5126d20837fe6b6a828ad1938b5a4fc0f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L129">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:129</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L266">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:266</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getpaginationcursorforentity"><span>get<wbr/>Pagination<wbr/>Cursor<wbr/>For<wbr/>Entity</span><a href="#getpaginationcursorforentity" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -150,7 +156,102 @@ Most commonly used for testing pagination behavior.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><p>The pagination cursor for the given entity.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/68e222f5126d20837fe6b6a828ad1938b5a4fc0f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L204">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:204</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L341">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:341</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="loadbyfieldequalingfromdatabaseasync"><span>load<wbr/>By<wbr/>Field<wbr/>Equaling<wbr/>From<wbr/>Database<wbr/>Async</span><a href="#loadbyfieldequalingfromdatabaseasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="loadbyfieldequalingfromdatabaseasync-1"><span class="tsd-kind-call-signature">loadByFieldEqualingFromDatabaseAsync</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#loadbyfieldequalingfromdatabaseasyncn">N</a> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">uniqueFieldName</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#loadbyfieldequalingfromdatabaseasyncn">N</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">fieldValue</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#loadbyfieldequalingfromdatabaseasyncn">N</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">modifiers</span><span class="tsd-signature-symbol">:</span> <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiers.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiers</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#loadbyfieldequalingfromdatabaseasync-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Load an entity where uniqueFieldName equals fieldValue directly from the database, or null if no entity matches.
+See <a href="#loadbyidfromdatabaseasync" class="tsd-kind-method">loadByIDFromDatabaseAsync</a> for how this differs from the standard loader.</p>
+</div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="loadbyfieldequalingfromdatabaseasyncn"><span class="tsd-kind-type-parameter">N</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span></span></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">uniqueFieldName</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#loadbyfieldequalingfromdatabaseasyncn">N</a></span>
+<div class="tsd-comment tsd-typography"><p>entity field being queried</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">fieldValue</span>: <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#loadbyfieldequalingfromdatabaseasyncn">N</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></span>
+<div class="tsd-comment tsd-typography"><p>uniqueFieldName field value being queried</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">modifiers</span>: <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiers.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiers</a></span>
+<div class="tsd-comment tsd-typography"><p>row locking modifiers for the query</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><p>entity where uniqueFieldName equals fieldValue, or null if no entity matches the condition</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws">Throws<a href="#throws" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>when multiple entities match the condition</p>
+</div>
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-1">Throws<a href="#throws-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError when viewer is not authorized to view the returned entity</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L161">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:161</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="loadbyidfromdatabaseasync"><span>load<wbr/>By<wbr/>ID<wbr/>From<wbr/>Database<wbr/>Async</span><a href="#loadbyidfromdatabaseasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="loadbyidfromdatabaseasync-1"><span class="tsd-kind-call-signature">loadByIDFromDatabaseAsync</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">id</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">modifiers</span><span class="tsd-signature-symbol">:</span> <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiersWithoutSkipLocked.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiersWithoutSkipLocked</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">&gt;</span><a href="#loadbyidfromdatabaseasync-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Load an entity by ID directly from the database, bypassing the dataloader and cache.</p>
+<p>Unlike <a href="_expo_entity.EnforcingEntityLoader.html#loadbyidasync" class="tsd-kind-method">EnforcingEntityLoader.loadByIDAsync</a>, this
+issues one database query per call and does not read from or write to the entity cache. It exists
+for cases that need row locking modifiers, which are required to make this intent explicit.
+<code>skipLocked</code> is not permitted here since a skipped row would be reported as not found.
+Use <a href="#loadbyidnullablefromdatabaseasync" class="tsd-kind-method">loadByIDNullableFromDatabaseAsync</a> with <code>skipLocked</code>.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">id</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span></span>
+<div class="tsd-comment tsd-typography"><p>ID of the entity</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">modifiers</span>: <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiersWithoutSkipLocked.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiersWithoutSkipLocked</a></span>
+<div class="tsd-comment tsd-typography"><p>row locking modifiers for the query</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">&gt;</span></h4><p>entity matching ID</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-2">Throws<a href="#throws-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError when viewer is not authorized to view the returned entity</p>
+</div>
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-3">Throws<a href="#throws-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotFoundError when no entity exists for ID</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L78">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:78</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="loadbyidnullablefromdatabaseasync"><span>load<wbr/>By<wbr/>ID<wbr/>Nullable<wbr/>From<wbr/>Database<wbr/>Async</span><a href="#loadbyidnullablefromdatabaseasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="loadbyidnullablefromdatabaseasync-1"><span class="tsd-kind-call-signature">loadByIDNullableFromDatabaseAsync</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">id</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">modifiers</span><span class="tsd-signature-symbol">:</span> <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiers.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiers</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#loadbyidnullablefromdatabaseasync-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Load an entity by ID directly from the database, or return null if non-existent.
+See <a href="#loadbyidfromdatabaseasync" class="tsd-kind-method">loadByIDFromDatabaseAsync</a> for how this differs from the standard loader.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">id</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span></span>
+<div class="tsd-comment tsd-typography"><p>ID of the entity</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">modifiers</span>: <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiers.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiers</a></span>
+<div class="tsd-comment tsd-typography"><p>row locking modifiers for the query</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><p>entity for matching ID, or null if no entity exists for ID</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-4">Throws<a href="#throws-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError when viewer is not authorized to view the returned entity</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L95">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:95</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="loadfirstbyfieldequalityconjunctionasync"><span>load<wbr/>First<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span><a href="#loadfirstbyfieldequalityconjunctionasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -176,10 +277,43 @@ the filters.</p>
 
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws">Throws<a href="#throws" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError if viewer is not authorized to view the entity</p>
+<h4 class="tsd-anchor-link" id="throws-5">Throws<a href="#throws-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError if viewer is not authorized to view the entity</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/68e222f5126d20837fe6b6a828ad1938b5a4fc0f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L71">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:71</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L208">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:208</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="loadmanybyfieldequalingfromdatabaseasync"><span>load<wbr/>Many<wbr/>By<wbr/>Field<wbr/>Equaling<wbr/>From<wbr/>Database<wbr/>Async</span><a href="#loadmanybyfieldequalingfromdatabaseasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="loadmanybyfieldequalingfromdatabaseasync-1"><span class="tsd-kind-call-signature">loadManyByFieldEqualingFromDatabaseAsync</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#loadmanybyfieldequalingfromdatabaseasyncn">N</a> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">fieldName</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#loadmanybyfieldequalingfromdatabaseasyncn">N</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">fieldValue</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#loadmanybyfieldequalingfromdatabaseasyncn">N</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">modifiers</span><span class="tsd-signature-symbol">:</span> <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiers.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiers</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-keyword">readonly</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#loadmanybyfieldequalingfromdatabaseasync-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Load many entities where fieldName equals fieldValue directly from the database.
+See <a href="#loadbyidfromdatabaseasync" class="tsd-kind-method">loadByIDFromDatabaseAsync</a> for how this differs from the standard loader.</p>
+</div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="loadmanybyfieldequalingfromdatabaseasyncn"><span class="tsd-kind-type-parameter">N</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span></span></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">fieldName</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#loadmanybyfieldequalingfromdatabaseasyncn">N</a></span>
+<div class="tsd-comment tsd-typography"><p>entity field being queried</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">fieldValue</span>: <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#loadmanybyfieldequalingfromdatabaseasyncn">N</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></span>
+<div class="tsd-comment tsd-typography"><p>fieldName field value being queried</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">modifiers</span>: <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiers.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiers</a></span>
+<div class="tsd-comment tsd-typography"><p>row locking modifiers for the query</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-keyword">readonly</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><p>array of entities where fieldName equals fieldValue</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-6">Throws<a href="#throws-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L184">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:184</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="loadmanybyfieldequalityconjunctionasync"><span>load<wbr/>Many<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span><a href="#loadmanybyfieldequalityconjunctionasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -204,10 +338,67 @@ convenience methods such as <a href="_expo_entity.EnforcingEntityLoader.html#loa
 
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-1">Throws<a href="#throws-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError if viewer is not authorized to view the entity</p>
+<h4 class="tsd-anchor-link" id="throws-7">Throws<a href="#throws-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError if viewer is not authorized to view the entity</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/68e222f5126d20837fe6b6a828ad1938b5a4fc0f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L96">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:96</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L233">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:233</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="loadmanybyidsfromdatabaseasync"><span>load<wbr/>Many<wbr/>By<wbr/>I<wbr/>Ds<wbr/>From<wbr/>Database<wbr/>Async</span><a href="#loadmanybyidsfromdatabaseasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="loadmanybyidsfromdatabaseasync-1"><span class="tsd-kind-call-signature">loadManyByIDsFromDatabaseAsync</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">ids</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">readonly</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">modifiers</span><span class="tsd-signature-symbol">:</span> <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiersWithoutSkipLocked.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiersWithoutSkipLocked</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#loadmanybyidsfromdatabaseasync-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Load many entities for a list of IDs directly from the database.
+See <a href="#loadbyidfromdatabaseasync" class="tsd-kind-method">loadByIDFromDatabaseAsync</a> for how this differs from the standard loader.</p>
+<p><code>skipLocked</code> is not permitted here since a skipped row would be reported as not found.
+Use <a href="#loadmanybyidsnullablefromdatabaseasync" class="tsd-kind-method">loadManyByIDsNullableFromDatabaseAsync</a> with <code>skipLocked</code>.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">ids</span>: <span class="tsd-signature-keyword">readonly</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>IDs of the entities to load</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">modifiers</span>: <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiersWithoutSkipLocked.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiersWithoutSkipLocked</a></span>
+<div class="tsd-comment tsd-typography"><p>row locking modifiers for the query</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>map from ID to corresponding entity</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-8">Throws<a href="#throws-8" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities</p>
+</div>
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-9">Throws<a href="#throws-9" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotFoundError when no entity exists for one or more of the IDs</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L119">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:119</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="loadmanybyidsnullablefromdatabaseasync"><span>load<wbr/>Many<wbr/>By<wbr/>I<wbr/>Ds<wbr/>Nullable<wbr/>From<wbr/>Database<wbr/>Async</span><a href="#loadmanybyidsnullablefromdatabaseasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="loadmanybyidsnullablefromdatabaseasync-1"><span class="tsd-kind-call-signature">loadManyByIDsNullableFromDatabaseAsync</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">ids</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">readonly</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">modifiers</span><span class="tsd-signature-symbol">:</span> <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiers.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiers</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#loadmanybyidsnullablefromdatabaseasync-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Load many entities for a list of IDs directly from the database, returning null for any IDs that are non-existent.
+See <a href="#loadbyidfromdatabaseasync" class="tsd-kind-method">loadByIDFromDatabaseAsync</a> for how this differs from the standard loader.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">ids</span>: <span class="tsd-signature-keyword">readonly</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>IDs of the entities to load</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">modifiers</span>: <a href="../types/_expo_entity-database-adapter-knex.EntityLoaderRowLockingModifiers.html" class="tsd-signature-type tsd-kind-type-alias">EntityLoaderRowLockingModifiers</a></span>
+<div class="tsd-comment tsd-typography"><p>row locking modifiers for the query</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tfields">TFields</a><span class="tsd-signature-symbol">[</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#tidfield">TIDField</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#tentity">TEntity</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>map from ID to nullable corresponding entity</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-10">Throws<a href="#throws-10" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L139">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:139</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="loadmanybysql"><span>load<wbr/>Many<wbr/>By<wbr/>SQL</span><a href="#loadmanybysql" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -229,7 +420,7 @@ convenience methods such as <a href="_expo_entity.EnforcingEntityLoader.html#loa
 
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/68e222f5126d20837fe6b6a828ad1938b5a4fc0f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L152">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:152</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L289">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:289</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="loadpageasync"><span>load<wbr/>Page<wbr/>Async</span><a href="#loadpageasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -248,10 +439,10 @@ convenience methods such as <a href="_expo_entity.EnforcingEntityLoader.html#loa
 
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-2">Throws<a href="#throws-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError if viewer is not authorized to view any returned entity</p>
+<h4 class="tsd-anchor-link" id="throws-11">Throws<a href="#throws-11" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>EntityNotAuthorizedError if viewer is not authorized to view any returned entity</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/expo/entity/blob/68e222f5126d20837fe6b6a828ad1938b5a4fc0f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L173">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:173</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/expo/entity/blob/e87e2a3a28f4279f5911bfd0189964b94a2ced7f/packages/entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts#L310">entity-database-adapter-knex/src/EnforcingKnexEntityLoader.ts:310</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -272,7 +463,7 @@ convenience methods such as <a href="_expo_entity.EnforcingEntityLoader.html#loa
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
 <div><a href="#metricsadapter" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>metrics<wbr/>Adapter</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#countbyfieldequalityconjunctionasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>count<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span></a><a href="#countbysqlasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>count<wbr/>By<wbr/>SQL<wbr/>Async</span></a><a href="#getpaginationcursorforentity"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pagination<wbr/>Cursor<wbr/>For<wbr/>Entity</span></a><a href="#loadfirstbyfieldequalityconjunctionasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>First<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span></a><a href="#loadmanybyfieldequalityconjunctionasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span></a><a href="#loadmanybysql"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>SQL</span></a><a href="#loadpageasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Page<wbr/>Async</span></a></div></details></div></details></div>
+<div><a href="#countbyfieldequalityconjunctionasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>count<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span></a><a href="#countbysqlasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>count<wbr/>By<wbr/>SQL<wbr/>Async</span></a><a href="#getpaginationcursorforentity"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pagination<wbr/>Cursor<wbr/>For<wbr/>Entity</span></a><a href="#loadbyfieldequalingfromdatabaseasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>By<wbr/>Field<wbr/>Equaling<wbr/>From<wbr/>Database<wbr/>Async</span></a><a href="#loadbyidfromdatabaseasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>By<wbr/>ID<wbr/>From<wbr/>Database<wbr/>Async</span></a><a href="#loadbyidnullablefromdatabaseasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>By<wbr/>ID<wbr/>Nullable<wbr/>From<wbr/>Database<wbr/>Async</span></a><a href="#loadfirstbyfieldequalityconjunctionasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>First<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span></a><a href="#loadmanybyfieldequalingfromdatabaseasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>Field<wbr/>Equaling<wbr/>From<wbr/>Database<wbr/>Async</span></a><a href="#loadmanybyfieldequalityconjunctionasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>Field<wbr/>Equality<wbr/>Conjunction<wbr/>Async</span></a><a href="#loadmanybyidsfromdatabaseasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>I<wbr/>Ds<wbr/>From<wbr/>Database<wbr/>Async</span></a><a href="#loadmanybyidsnullablefromdatabaseasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>I<wbr/>Ds<wbr/>Nullable<wbr/>From<wbr/>Database<wbr/>Async</span></a><a href="#loadmanybysql"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Many<wbr/>By<wbr/>SQL</span></a><a href="#loadpageasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Page<wbr/>Async</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html">Entity</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
