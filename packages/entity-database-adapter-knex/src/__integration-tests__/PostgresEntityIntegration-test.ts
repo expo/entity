@@ -1,5 +1,6 @@
 import {
   EntityDatabaseAdapterEmptyUpdateResultError,
+  EntityNotFoundError,
   TransactionIsolationLevel,
   ViewerContext,
 } from '@expo/entity';
@@ -495,6 +496,204 @@ describe('postgres entity integration', () => {
             .executeAsync(),
         ).rejects.toThrow('skipLocked requires forUpdate or forShare');
       });
+    });
+  });
+
+  describe('FromDatabase load methods', () => {
+    const tryLockRowFromOtherConnectionAsync = async (id: string): Promise<string | null> => {
+      try {
+        await knexInstance.raw(
+          'SELECT * FROM postgres_test_entities WHERE id = ? FOR UPDATE NOWAIT',
+          [id],
+        );
+        return null;
+      } catch (e) {
+        return (e as any).code ?? null;
+      }
+    };
+
+    it('loadByIDFromDatabaseAsync locks the row and throws EntityNotFoundError when missing', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entity = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'by-id')
+          .createAsync(),
+      );
+
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+        const loaded = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadByIDFromDatabaseAsync(entity.getID(), { forUpdate: true });
+        expect(loaded.getID()).toBe(entity.getID());
+        expect(loaded.getField('name')).toBe('by-id');
+        expect(await tryLockRowFromOtherConnectionAsync(entity.getID())).toBe('55P03');
+
+        await expect(
+          PostgresTestEntity.knexLoader(vc1, queryContext).loadByIDFromDatabaseAsync(
+            '00000000-0000-0000-0000-000000000000',
+            { forUpdate: true },
+          ),
+        ).rejects.toThrow(EntityNotFoundError);
+
+        const nullable = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadByIDNullableFromDatabaseAsync('00000000-0000-0000-0000-000000000000', {
+          forUpdate: true,
+        });
+        expect(nullable).toBeNull();
+      });
+
+      expect(await tryLockRowFromOtherConnectionAsync(entity.getID())).toBeNull();
+    });
+
+    it('loadManyByIDsFromDatabaseAsync returns a map and throws for missing IDs', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entityA = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1).setField('name', 'a').createAsync(),
+      );
+      const entityB = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1).setField('name', 'b').createAsync(),
+      );
+      const missingId = '00000000-0000-0000-0000-000000000000';
+
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+        const loaded = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadManyByIDsFromDatabaseAsync([entityA.getID(), entityB.getID()], { forShare: true });
+        expect(loaded.size).toBe(2);
+        expect(loaded.get(entityA.getID())!.getField('name')).toBe('a');
+        expect(loaded.get(entityB.getID())!.getField('name')).toBe('b');
+
+        await expect(
+          PostgresTestEntity.knexLoader(vc1, queryContext).loadManyByIDsFromDatabaseAsync(
+            [entityA.getID(), missingId],
+            { forShare: true },
+          ),
+        ).rejects.toThrow(EntityNotFoundError);
+
+        const nullable = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadManyByIDsNullableFromDatabaseAsync([entityA.getID(), missingId], {
+          forShare: true,
+        });
+        expect(nullable.size).toBe(2);
+        expect(nullable.get(entityA.getID())!.getField('name')).toBe('a');
+        expect(nullable.get(missingId)).toBeNull();
+      });
+    });
+
+    it('loadManyByIDsNullableFromDatabaseAsync with skipLocked returns null for locked rows', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const entityA = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1).setField('name', 'a').createAsync(),
+      );
+      const entityB = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1).setField('name', 'b').createAsync(),
+      );
+
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync(
+        'postgres',
+        async (outerQueryContext) => {
+          await PostgresTestEntity.knexLoader(vc1, outerQueryContext).loadByIDFromDatabaseAsync(
+            entityA.getID(),
+            { forUpdate: true },
+          );
+
+          const vc2 = new ViewerContext(
+            createKnexIntegrationTestEntityCompanionProvider(knexInstance),
+          );
+          await vc2.runInTransactionForDatabaseAdapterFlavorAsync(
+            'postgres',
+            async (innerQueryContext) => {
+              const results = await PostgresTestEntity.knexLoader(
+                vc2,
+                innerQueryContext,
+              ).loadManyByIDsNullableFromDatabaseAsync([entityA.getID(), entityB.getID()], {
+                forUpdate: true,
+                skipLocked: true,
+              });
+              expect(results.get(entityA.getID())).toBeNull();
+              expect(results.get(entityB.getID())!.getField('name')).toBe('b');
+
+              // the throwing variants do not permit skipLocked since a skipped row would be reported as not found
+              await expect(
+                PostgresTestEntity.knexLoader(vc2, innerQueryContext).loadByIDFromDatabaseAsync(
+                  entityB.getID(),
+                  // @ts-expect-error skipLocked is not permitted for throwing FromDatabase methods
+                  { forUpdate: true, skipLocked: true },
+                ),
+              ).resolves.toBeDefined();
+            },
+          );
+        },
+      );
+    });
+
+    it('loadByFieldEqualingFromDatabaseAsync and loadManyByFieldEqualingFromDatabaseAsync lock matching rows', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      const unique = await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'unique')
+          .createAsync(),
+      );
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'dup')
+          .createAsync(),
+      );
+      await enforceAsyncResult(
+        PostgresTestEntity.creatorWithAuthorizationResults(vc1)
+          .setField('name', 'dup')
+          .createAsync(),
+      );
+
+      await vc1.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+        const loaded = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadByFieldEqualingFromDatabaseAsync('name', 'unique', { forUpdate: true });
+        expect(loaded!.getID()).toBe(unique.getID());
+        expect(await tryLockRowFromOtherConnectionAsync(unique.getID())).toBe('55P03');
+
+        const missing = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadByFieldEqualingFromDatabaseAsync('name', 'nope', { forUpdate: true });
+        expect(missing).toBeNull();
+
+        await expect(
+          PostgresTestEntity.knexLoader(vc1, queryContext).loadByFieldEqualingFromDatabaseAsync(
+            'name',
+            'dup',
+            { forUpdate: true },
+          ),
+        ).rejects.toThrow('Multiple entities of type PostgresTestEntity found for name=dup');
+
+        const many = await PostgresTestEntity.knexLoader(
+          vc1,
+          queryContext,
+        ).loadManyByFieldEqualingFromDatabaseAsync('name', 'dup', { forUpdate: true });
+        expect(many).toHaveLength(2);
+        for (const e of many) {
+          expect(await tryLockRowFromOtherConnectionAsync(e.getID())).toBe('55P03');
+        }
+      });
+
+      expect(await tryLockRowFromOtherConnectionAsync(unique.getID())).toBeNull();
+    });
+
+    it('FromDatabase methods require a transaction when a lock is requested', async () => {
+      const vc1 = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+      await expect(
+        PostgresTestEntity.knexLoader(vc1).loadByIDFromDatabaseAsync(
+          '00000000-0000-0000-0000-000000000000',
+          { forUpdate: true },
+        ),
+      ).rejects.toThrow('require a transactional query context');
     });
   });
 

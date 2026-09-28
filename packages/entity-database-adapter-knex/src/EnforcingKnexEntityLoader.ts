@@ -6,11 +6,14 @@ import type {
   ReadonlyEntity,
   ViewerContext,
 } from '@expo/entity';
+import { mapMap } from '@expo/entity';
 
 import type {
   AuthorizationResultBasedKnexEntityLoader,
   EntityLoaderLoadPageArgs,
   EntityLoaderQuerySelectionModifiers,
+  EntityLoaderRowLockingModifiers,
+  EntityLoaderRowLockingModifiersWithoutSkipLocked,
 } from './AuthorizationResultBasedKnexEntityLoader.ts';
 import type { FieldEqualityCondition } from './BasePostgresEntityDatabaseAdapter.ts';
 import { BaseSQLQueryBuilder } from './BaseSQLQueryBuilder.ts';
@@ -56,6 +59,140 @@ export class EnforcingKnexEntityLoader<
       TSelectedFields
     >,
   ) {}
+
+  /**
+   * Load an entity by ID directly from the database, bypassing the dataloader and cache.
+   *
+   * Unlike {@link "@expo/entity"!EnforcingEntityLoader.loadByIDAsync | EnforcingEntityLoader.loadByIDAsync}, this
+   * issues one database query per call and does not read from or write to the entity cache. It exists
+   * for cases that need row locking modifiers, which are required to make this intent explicit.
+   * `skipLocked` is not permitted here since a skipped row would be reported as not found.
+   * Use {@link loadByIDNullableFromDatabaseAsync} with `skipLocked`.
+   *
+   * @param id - ID of the entity
+   * @param modifiers - row locking modifiers for the query
+   * @returns entity matching ID
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view the returned entity
+   * @throws EntityNotFoundError when no entity exists for ID
+   */
+  async loadByIDFromDatabaseAsync(
+    id: TFields[TIDField],
+    modifiers: EntityLoaderRowLockingModifiersWithoutSkipLocked,
+  ): Promise<TEntity> {
+    const entityResult = await this.knexEntityLoader.loadByIDFromDatabaseAsync(id, modifiers);
+    return entityResult.enforceValue();
+  }
+
+  /**
+   * Load an entity by ID directly from the database, or return null if non-existent.
+   * See {@link loadByIDFromDatabaseAsync} for how this differs from the standard loader.
+   *
+   * @param id - ID of the entity
+   * @param modifiers - row locking modifiers for the query
+   * @returns entity for matching ID, or null if no entity exists for ID
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view the returned entity
+   */
+  async loadByIDNullableFromDatabaseAsync(
+    id: TFields[TIDField],
+    modifiers: EntityLoaderRowLockingModifiers,
+  ): Promise<TEntity | null> {
+    const entityResult = await this.knexEntityLoader.loadByIDNullableFromDatabaseAsync(
+      id,
+      modifiers,
+    );
+    return entityResult ? entityResult.enforceValue() : null;
+  }
+
+  /**
+   * Load many entities for a list of IDs directly from the database.
+   * See {@link loadByIDFromDatabaseAsync} for how this differs from the standard loader.
+   *
+   * `skipLocked` is not permitted here since a skipped row would be reported as not found.
+   * Use {@link loadManyByIDsNullableFromDatabaseAsync} with `skipLocked`.
+   *
+   * @param ids - IDs of the entities to load
+   * @param modifiers - row locking modifiers for the query
+   * @returns map from ID to corresponding entity
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
+   * @throws EntityNotFoundError when no entity exists for one or more of the IDs
+   */
+  async loadManyByIDsFromDatabaseAsync(
+    ids: readonly TFields[TIDField][],
+    modifiers: EntityLoaderRowLockingModifiersWithoutSkipLocked,
+  ): Promise<ReadonlyMap<TFields[TIDField], TEntity>> {
+    const entityResults = await this.knexEntityLoader.loadManyByIDsFromDatabaseAsync(
+      ids,
+      modifiers,
+    );
+    return mapMap(entityResults, (entityResult) => entityResult.enforceValue());
+  }
+
+  /**
+   * Load many entities for a list of IDs directly from the database, returning null for any IDs that are non-existent.
+   * See {@link loadByIDFromDatabaseAsync} for how this differs from the standard loader.
+   *
+   * @param ids - IDs of the entities to load
+   * @param modifiers - row locking modifiers for the query
+   * @returns map from ID to nullable corresponding entity
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
+   */
+  async loadManyByIDsNullableFromDatabaseAsync(
+    ids: readonly TFields[TIDField][],
+    modifiers: EntityLoaderRowLockingModifiers,
+  ): Promise<ReadonlyMap<TFields[TIDField], TEntity | null>> {
+    const entityResults = await this.knexEntityLoader.loadManyByIDsNullableFromDatabaseAsync(
+      ids,
+      modifiers,
+    );
+    return mapMap(entityResults, (entityResult) => entityResult?.enforceValue() ?? null);
+  }
+
+  /**
+   * Load an entity where uniqueFieldName equals fieldValue directly from the database, or null if no entity matches.
+   * See {@link loadByIDFromDatabaseAsync} for how this differs from the standard loader.
+   *
+   * @param uniqueFieldName - entity field being queried
+   * @param fieldValue - uniqueFieldName field value being queried
+   * @param modifiers - row locking modifiers for the query
+   * @returns entity where uniqueFieldName equals fieldValue, or null if no entity matches the condition
+   * @throws when multiple entities match the condition
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view the returned entity
+   */
+  async loadByFieldEqualingFromDatabaseAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    uniqueFieldName: N,
+    fieldValue: NonNullable<TFields[N]>,
+    modifiers: EntityLoaderRowLockingModifiers,
+  ): Promise<TEntity | null> {
+    const entityResult = await this.knexEntityLoader.loadByFieldEqualingFromDatabaseAsync(
+      uniqueFieldName,
+      fieldValue,
+      modifiers,
+    );
+    return entityResult ? entityResult.enforceValue() : null;
+  }
+
+  /**
+   * Load many entities where fieldName equals fieldValue directly from the database.
+   * See {@link loadByIDFromDatabaseAsync} for how this differs from the standard loader.
+   *
+   * @param fieldName - entity field being queried
+   * @param fieldValue - fieldName field value being queried
+   * @param modifiers - row locking modifiers for the query
+   * @returns array of entities where fieldName equals fieldValue
+   * @throws EntityNotAuthorizedError when viewer is not authorized to view one or more of the returned entities
+   */
+  async loadManyByFieldEqualingFromDatabaseAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>,
+    modifiers: EntityLoaderRowLockingModifiers,
+  ): Promise<readonly TEntity[]> {
+    const entityResults = await this.knexEntityLoader.loadManyByFieldEqualingFromDatabaseAsync(
+      fieldName,
+      fieldValue,
+      modifiers,
+    );
+    return entityResults.map((entityResult) => entityResult.enforceValue());
+  }
 
   /**
    * Load the first entity matching the conjunction of field equality operands and

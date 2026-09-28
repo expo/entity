@@ -1,12 +1,17 @@
 import type {
+  EntityConfiguration,
   EntityConstructionUtils,
   EntityPrivacyPolicy,
   EntityQueryContext,
+  IEntityClass,
   IEntityMetricsAdapter,
   ReadonlyEntity,
   ViewerContext,
 } from '@expo/entity';
+import { EntityNotFoundError, mapMap } from '@expo/entity';
 import type { Result } from '@expo/results';
+import { result } from '@expo/results';
+import assert from 'assert';
 
 import type {
   FieldEqualityCondition,
@@ -63,6 +68,48 @@ export type EntityLoaderOrderByClause<
 > =
   | EntityLoaderFieldNameOrderByClause<TFields, TSelectedFields>
   | EntityLoaderFieldFragmentOrderByClause<TFields, TSelectedFields>;
+
+/**
+ * Row locking modifier that locks the selected rows for update using `SELECT ... FOR UPDATE`.
+ * The lock is held until the end of the transaction, so the query context must be transactional.
+ */
+export interface EntityLoaderForUpdateRowLockingModifier {
+  forUpdate: true;
+  forShare?: never;
+}
+
+/**
+ * Row locking modifier that locks the selected rows in share mode using `SELECT ... FOR SHARE`.
+ * The lock is held until the end of the transaction, so the query context must be transactional.
+ */
+export interface EntityLoaderForShareRowLockingModifier {
+  forShare: true;
+  forUpdate?: never;
+}
+
+/**
+ * Row locking modifiers for load methods that never report a missing row as an error. Exactly one of
+ * `forUpdate` or `forShare` is required. `skipLocked` may be set to skip rows already locked by another
+ * transaction (using `SKIP LOCKED`) instead of waiting for them; skipped rows are reported as missing.
+ */
+export type EntityLoaderRowLockingModifiers = (
+  | EntityLoaderForUpdateRowLockingModifier
+  | EntityLoaderForShareRowLockingModifier
+) & {
+  skipLocked?: boolean;
+};
+
+/**
+ * Row locking modifiers for load methods that throw when a row is missing. Exactly one of `forUpdate`
+ * or `forShare` is required. `skipLocked` is not permitted since a row skipped because another transaction
+ * holds a lock on it would be indistinguishable from a row that does not exist.
+ */
+export type EntityLoaderRowLockingModifiersWithoutSkipLocked = (
+  | EntityLoaderForUpdateRowLockingModifier
+  | EntityLoaderForShareRowLockingModifier
+) & {
+  skipLocked?: never;
+};
 
 /**
  * SQL modifiers that only affect the selection but not the projection.
@@ -375,6 +422,15 @@ export class AuthorizationResultBasedKnexEntityLoader<
 > {
   constructor(
     private readonly queryContext: EntityQueryContext,
+    private readonly entityConfiguration: EntityConfiguration<TFields, TIDField>,
+    private readonly entityClass: IEntityClass<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TPrivacyPolicy,
+      TSelectedFields
+    >,
     private readonly knexDataManager: EntityKnexDataManager<TFields, TIDField>,
     protected readonly metricsAdapter: IEntityMetricsAdapter,
     private readonly constructionUtils: EntityConstructionUtils<
@@ -386,6 +442,127 @@ export class AuthorizationResultBasedKnexEntityLoader<
       TSelectedFields
     >,
   ) {}
+
+  /**
+   * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
+   * @returns entity result for matching ID, where result error can be UnauthorizedError or EntityNotFoundError.
+   */
+  async loadByIDFromDatabaseAsync(
+    id: TFields[TIDField],
+    modifiers: EntityLoaderRowLockingModifiersWithoutSkipLocked,
+  ): Promise<Result<TEntity>> {
+    const entityResults = await this.loadManyByIDsFromDatabaseAsync([id], modifiers);
+    const entityResult = entityResults.get(id);
+    assert(entityResult !== undefined, `${id} should be guaranteed to be present in returned map`);
+    return entityResult;
+  }
+
+  /**
+   * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
+   * @returns entity result for matching ID, or null if no entity exists for ID, where result error can be UnauthorizedError.
+   */
+  async loadByIDNullableFromDatabaseAsync(
+    id: TFields[TIDField],
+    modifiers: EntityLoaderRowLockingModifiers,
+  ): Promise<Result<TEntity> | null> {
+    const entityResults = await this.loadManyByIDsNullableFromDatabaseAsync([id], modifiers);
+    return entityResults.get(id) ?? null;
+  }
+
+  /**
+   * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
+   * @returns map from ID to corresponding entity result, where result error can be UnauthorizedError or EntityNotFoundError.
+   */
+  async loadManyByIDsFromDatabaseAsync(
+    ids: readonly TFields[TIDField][],
+    modifiers: EntityLoaderRowLockingModifiersWithoutSkipLocked,
+  ): Promise<ReadonlyMap<TFields[TIDField], Result<TEntity>>> {
+    const entityResults = await this.loadManyByIDsNullableFromDatabaseAsync(ids, modifiers);
+    return mapMap(
+      entityResults,
+      (entityResult, id) =>
+        entityResult ??
+        result(
+          new EntityNotFoundError({
+            entityClass: this.entityClass,
+            fieldName: this.entityConfiguration.idField,
+            fieldValue: id,
+          }),
+        ),
+    );
+  }
+
+  /**
+   * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
+   * @returns map from ID to nullable corresponding entity result, where result error can be UnauthorizedError.
+   */
+  async loadManyByIDsNullableFromDatabaseAsync(
+    ids: readonly TFields[TIDField][],
+    modifiers: EntityLoaderRowLockingModifiers,
+  ): Promise<ReadonlyMap<TFields[TIDField], Result<TEntity> | null>> {
+    const idField = this.entityConfiguration.idField;
+    this.constructionUtils.validateFieldAndValues(idField, ids);
+
+    const fieldObjects =
+      ids.length > 0
+        ? await this.knexDataManager.loadManyByFieldEqualityConjunctionAsync(
+            this.queryContext,
+            [{ fieldName: idField, fieldValues: ids }],
+            modifiers,
+          )
+        : [];
+
+    const idsToFieldObjects = new Map<TFields[TIDField], readonly Readonly<TFields>[]>(
+      ids.map((id) => [id, []]),
+    );
+    for (const fieldObject of fieldObjects) {
+      const id = fieldObject[idField];
+      idsToFieldObjects.set(id, [...(idsToFieldObjects.get(id) ?? []), fieldObject]);
+    }
+
+    const idsToEntityResults =
+      await this.constructionUtils.constructAndAuthorizeEntitiesAsync(idsToFieldObjects);
+    return mapMap(idsToEntityResults, (entityResults) => entityResults[0] ?? null);
+  }
+
+  /**
+   * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
+   * @returns entity result where uniqueFieldName equals fieldValue, or null if no entity matches the condition, where result error can be UnauthorizedError.
+   * @throws when multiple entities match the condition
+   */
+  async loadByFieldEqualingFromDatabaseAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    uniqueFieldName: N,
+    fieldValue: NonNullable<TFields[N]>,
+    modifiers: EntityLoaderRowLockingModifiers,
+  ): Promise<Result<TEntity> | null> {
+    const entityResults = await this.loadManyByFieldEqualingFromDatabaseAsync(
+      uniqueFieldName,
+      fieldValue,
+      modifiers,
+    );
+    assert(
+      entityResults.length <= 1,
+      `loadByFieldEqualingFromDatabase: Multiple entities of type ${this.entityClass.name} found for ${String(
+        uniqueFieldName,
+      )}=${fieldValue}`,
+    );
+    return entityResults[0] ?? null;
+  }
+
+  /**
+   * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
+   * @returns array of entity results where fieldName equals fieldValue, where result error can be UnauthorizedError
+   */
+  async loadManyByFieldEqualingFromDatabaseAsync<N extends keyof Pick<TFields, TSelectedFields>>(
+    fieldName: N,
+    fieldValue: NonNullable<TFields[N]>,
+    modifiers: EntityLoaderRowLockingModifiers,
+  ): Promise<readonly Result<TEntity>[]> {
+    return await this.loadManyByFieldEqualityConjunctionAsync(
+      [{ fieldName, fieldValue }],
+      modifiers,
+    );
+  }
 
   /**
    * Authorization-result-based version of the EnforcingKnexEntityLoader method by the same name.
