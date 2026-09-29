@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.69.0](https://github.com/expo/entity/compare/v0.68.0...v0.69.0) (2026-09-29)
+
+### Features
+
+- add ID-based and field-based knex database loaders for use with locking modifiers ([#706](https://github.com/expo/entity/issues/706)) ([e87e2a3](https://github.com/expo/entity/commit/e87e2a3a28f4279f5911bfd0189964b94a2ced7f))
+
 # [0.68.0](https://github.com/expo/entity/compare/v0.67.0...v0.68.0) (2026-09-25)
 
 ### Features
