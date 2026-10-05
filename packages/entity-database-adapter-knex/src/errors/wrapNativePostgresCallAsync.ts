@@ -1,14 +1,15 @@
 import type { EntityDatabaseAdapterError } from '@expo/entity';
+import { EntityDatabaseAdapterUniqueConstraintError } from '@expo/entity';
+import knex from 'knex';
+
 import {
   EntityDatabaseAdapterCheckConstraintError,
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
   EntityDatabaseAdapterNotNullConstraintError,
   EntityDatabaseAdapterTransientError,
-  EntityDatabaseAdapterUniqueConstraintError,
   EntityDatabaseAdapterUnknownError,
-} from '@expo/entity';
-import knex from 'knex';
+} from './KnexEntityDatabaseAdapterError.ts';
 
 function wrapNativePostgresError(
   error: Error & { code?: string },

@@ -1,13 +1,4 @@
-import {
-  EntityDatabaseAdapterCheckConstraintError,
-  EntityDatabaseAdapterExclusionConstraintError,
-  EntityDatabaseAdapterForeignKeyConstraintError,
-  EntityDatabaseAdapterNotNullConstraintError,
-  EntityDatabaseAdapterTransientError,
-  EntityDatabaseAdapterUniqueConstraintError,
-  EntityDatabaseAdapterUnknownError,
-  ViewerContext,
-} from '@expo/entity';
+import { EntityDatabaseAdapterUniqueConstraintError, ViewerContext } from '@expo/entity';
 import nullthrows from '@expo/nullthrows';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import type { Knex } from 'knex';
@@ -15,6 +6,14 @@ import knex from 'knex';
 
 import { ErrorsTestEntity } from '../__testfixtures__/ErrorsTestEntity.ts';
 import { createKnexIntegrationTestEntityCompanionProvider } from '../__testfixtures__/createKnexIntegrationTestEntityCompanionProvider.ts';
+import {
+  EntityDatabaseAdapterCheckConstraintError,
+  EntityDatabaseAdapterExclusionConstraintError,
+  EntityDatabaseAdapterForeignKeyConstraintError,
+  EntityDatabaseAdapterNotNullConstraintError,
+  EntityDatabaseAdapterTransientError,
+  EntityDatabaseAdapterUnknownError,
+} from '../errors/KnexEntityDatabaseAdapterError.ts';
 
 describe('postgres errors', () => {
   let knexInstance: Knex;

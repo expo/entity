@@ -1,6 +1,5 @@
 import type { EntityConfiguration, EntityQueryContext, IEntityMetricsAdapter } from '@expo/entity';
 import {
-  EntityDatabaseAdapterPaginationCursorInvalidError,
   EntityMetricsCountType,
   EntityMetricsLoadType,
   getDatabaseFieldForEntityField,
@@ -18,6 +17,7 @@ import type {
 import { NullsOrdering, OrderByOrdering } from '../BasePostgresEntityDatabaseAdapter.ts';
 import { PaginationStrategy } from '../PaginationStrategy.ts';
 import { SQLFragment, SQLExpression, identifier, sql, unsafeRaw } from '../SQLOperator.ts';
+import { EntityDatabaseAdapterPaginationCursorInvalidError } from '../errors/KnexEntityDatabaseAdapterError.ts';
 import type { DistributiveOmit, NonNullableKeys } from './utilityTypes.ts';
 
 interface DataManagerStandardSpecification<TFields extends Record<string, any>> {
