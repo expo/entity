@@ -18,6 +18,7 @@ export * from './PostgresEntityDatabaseAdapterProvider.ts';
 export * from './PostgresEntityQueryContextProvider.ts';
 export * from './ReadonlyPostgresEntity.ts';
 export * from './SQLOperator.ts';
+export * from './errors/KnexEntityDatabaseAdapterError.ts';
 export * from './errors/wrapNativePostgresCallAsync.ts';
 export * from './internal/EntityKnexDataManager.ts';
 export * from './internal/getKnexDataManager.ts';
