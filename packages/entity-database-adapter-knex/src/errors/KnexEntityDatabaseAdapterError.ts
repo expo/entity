@@ -12,6 +12,7 @@ export enum KnexEntityDatabaseAdapterErrorCode {
   ERR_ENTITY_DATABASE_ADAPTER_FOREIGN_KEY_CONSTRAINT = 'ERR_ENTITY_DATABASE_ADAPTER_FOREIGN_KEY_CONSTRAINT',
   ERR_ENTITY_DATABASE_ADAPTER_NOT_NULL_CONSTRAINT = 'ERR_ENTITY_DATABASE_ADAPTER_NOT_NULL_CONSTRAINT',
   ERR_ENTITY_DATABASE_ADAPTER_PAGINATION_CURSOR_INVALID = 'ERR_ENTITY_DATABASE_ADAPTER_PAGINATION_CURSOR_INVALID',
+  ERR_ENTITY_DATABASE_ADAPTER_LOCK_NOT_AVAILABLE = 'ERR_ENTITY_DATABASE_ADAPTER_LOCK_NOT_AVAILABLE',
 }
 
 /**
@@ -138,5 +139,25 @@ export class EntityDatabaseAdapterPaginationCursorInvalidError extends EntityDat
 
   get code(): KnexEntityDatabaseAdapterErrorCode.ERR_ENTITY_DATABASE_ADAPTER_PAGINATION_CURSOR_INVALID {
     return KnexEntityDatabaseAdapterErrorCode.ERR_ENTITY_DATABASE_ADAPTER_PAGINATION_CURSOR_INVALID;
+  }
+}
+
+/**
+ * Thrown when a lock on a row or table cannot be acquired (PostgreSQL error code 55P03, `lock_not_available`).
+ * This happens when a statement exceeds `lock_timeout` while waiting for a lock, or when a `NOWAIT`
+ * lock request conflicts with a lock held by another transaction.
+ * This error is transient since the conflicting lock is released when the other transaction completes.
+ */
+export class EntityDatabaseAdapterLockNotAvailableError extends EntityDatabaseAdapterError {
+  static {
+    this.prototype.name = 'EntityDatabaseAdapterLockNotAvailableError';
+  }
+
+  get state(): EntityErrorState.TRANSIENT {
+    return EntityErrorState.TRANSIENT;
+  }
+
+  get code(): KnexEntityDatabaseAdapterErrorCode.ERR_ENTITY_DATABASE_ADAPTER_LOCK_NOT_AVAILABLE {
+    return KnexEntityDatabaseAdapterErrorCode.ERR_ENTITY_DATABASE_ADAPTER_LOCK_NOT_AVAILABLE;
   }
 }

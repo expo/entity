@@ -6,6 +6,7 @@ import {
   EntityDatabaseAdapterCheckConstraintError,
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
+  EntityDatabaseAdapterLockNotAvailableError,
   EntityDatabaseAdapterNotNullConstraintError,
   EntityDatabaseAdapterTransientError,
   EntityDatabaseAdapterUnknownError,
@@ -39,6 +40,8 @@ function translatePostgresError(
       return new EntityDatabaseAdapterCheckConstraintError(error.message, error);
     case '23P01':
       return new EntityDatabaseAdapterExclusionConstraintError(error.message, error);
+    case '55P03':
+      return new EntityDatabaseAdapterLockNotAvailableError(error.message, error);
     default:
       return new EntityDatabaseAdapterUnknownError(error.message, error);
   }
