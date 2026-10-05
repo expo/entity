@@ -38,6 +38,8 @@ function translatePostgresError(
       return new EntityDatabaseAdapterCheckConstraintError(error.message, error);
     case '23P01':
       return new EntityDatabaseAdapterExclusionConstraintError(error.message, error);
+    case '55P03':
+      return new EntityDatabaseAdapterTransientError(error.message, error);
     default:
       return new EntityDatabaseAdapterUnknownError(error.message, error);
   }
