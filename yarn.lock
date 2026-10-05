@@ -890,7 +890,7 @@ __metadata:
   dependencies:
     "@jest/globals": "npm:30.5.1"
     "@types/jscodeshift": "npm:17.3.0"
-    "@types/node": "npm:24.13.5"
+    "@types/node": "npm:24.19.1"
     jscodeshift: "npm:17.4.0"
     typescript: "npm:6.0.3"
   languageName: unknown
@@ -904,7 +904,7 @@ __metadata:
     "@expo/entity-database-adapter-knex": "workspace:^"
     "@jest/globals": "npm:30.5.1"
     "@types/invariant": "npm:2.2.37"
-    "@types/node": "npm:24.13.5"
+    "@types/node": "npm:24.19.1"
     invariant: "npm:^2.2.4"
     typescript: "npm:6.0.3"
     uuid: "npm:^14.0.0"
@@ -1007,7 +1007,7 @@ __metadata:
     "@expo/entity": "workspace:^"
     "@jest/globals": "npm:30.5.1"
     "@types/lodash-es": "npm:4.17.12"
-    "@types/node": "npm:24.13.5"
+    "@types/node": "npm:24.19.1"
     lodash-es: "npm:^4.17.23"
     ts-mockito: "npm:^2.6.1"
     typescript: "npm:6.0.3"
@@ -1024,7 +1024,7 @@ __metadata:
     "@jest/globals": "npm:30.5.1"
     "@types/invariant": "npm:2.2.37"
     "@types/lodash-es": "npm:4.17.12"
-    "@types/node": "npm:24.13.5"
+    "@types/node": "npm:24.19.1"
     dataloader: "npm:^2.2.3"
     invariant: "npm:^2.2.4"
     lodash-es: "npm:4.18.1"
@@ -3389,12 +3389,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.13.5":
-  version: 24.13.5
-  resolution: "@types/node@npm:24.13.5"
+"@types/node@npm:24.19.1":
+  version: 24.19.1
+  resolution: "@types/node@npm:24.19.1"
   dependencies:
-    undici-types: "npm:~7.18.0"
-  checksum: 10c0/f6c7f564e7b16670bc72ce119f2aaba0f6d6ebb886c13d8cd3656a96e4825d91d826be3d0995fc776df4e19eceb4d3074e5e18d54ce1aebd3f6e0ba12b9108cb
+    undici-types: "npm:>=7.24.0 <7.24.7"
+  checksum: 10c0/789822cc68a0e0b632fd0a9fa53411e33541f03c18dc19942ed38161c369bf0b013917b4c6c760688bd2d09d940c827a601add118dfa04fe35a285535b2a8596
   languageName: node
   linkType: hard
 
@@ -9789,7 +9789,7 @@ __metadata:
   resolution: "root@workspace:."
   dependencies:
     "@tsconfig/bases": "npm:1.0.28"
-    "@types/node": "npm:24.13.5"
+    "@types/node": "npm:24.19.1"
     ctix: "npm:2.8.2"
     jest: "npm:30.5.1"
     lerna: "npm:9.0.7"
@@ -10832,10 +10832,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~7.18.0":
-  version: 7.18.2
-  resolution: "undici-types@npm:7.18.2"
-  checksum: 10c0/85a79189113a238959d7a647368e4f7c5559c3a404ebdb8fc4488145ce9426fcd82252a844a302798dfc0e37e6fb178ff481ed03bc4caf634c5757d9ef43521d
+"undici-types@npm:>=7.24.0 <7.24.7":
+  version: 7.24.6
+  resolution: "undici-types@npm:7.24.6"
+  checksum: 10c0/d9cd8befb643ac904615c280a095ba4240531f6bb4a5e75a22a7483630ca8d3f1016d2ab6ace6ceda1f63b3a2db2fe037fafe121d6917a0187573aa548ff78ca
   languageName: node
   linkType: hard
 
