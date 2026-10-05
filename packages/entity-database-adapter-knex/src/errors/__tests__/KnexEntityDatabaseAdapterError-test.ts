@@ -5,6 +5,7 @@ import {
   EntityDatabaseAdapterCheckConstraintError,
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
+  EntityDatabaseAdapterLockNotAvailableError,
   EntityDatabaseAdapterNotNullConstraintError,
   EntityDatabaseAdapterPaginationCursorInvalidError,
   EntityDatabaseAdapterTransientError,
@@ -63,6 +64,13 @@ describe('KnexEntityDatabaseAdapterError', () => {
     expect(paginationCursorInvalidError.state).toBe(EntityErrorState.PERMANENT);
     expect(paginationCursorInvalidError.code).toBe(
       KnexEntityDatabaseAdapterErrorCode.ERR_ENTITY_DATABASE_ADAPTER_PAGINATION_CURSOR_INVALID,
+    );
+
+    const lockNotAvailableError = new EntityDatabaseAdapterLockNotAvailableError('test');
+    expect(lockNotAvailableError).toBeInstanceOf(EntityDatabaseAdapterError);
+    expect(lockNotAvailableError.state).toBe(EntityErrorState.TRANSIENT);
+    expect(lockNotAvailableError.code).toBe(
+      KnexEntityDatabaseAdapterErrorCode.ERR_ENTITY_DATABASE_ADAPTER_LOCK_NOT_AVAILABLE,
     );
   });
 });

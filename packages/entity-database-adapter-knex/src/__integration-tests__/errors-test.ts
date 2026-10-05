@@ -10,6 +10,7 @@ import {
   EntityDatabaseAdapterCheckConstraintError,
   EntityDatabaseAdapterExclusionConstraintError,
   EntityDatabaseAdapterForeignKeyConstraintError,
+  EntityDatabaseAdapterLockNotAvailableError,
   EntityDatabaseAdapterNotNullConstraintError,
   EntityDatabaseAdapterTransientError,
   EntityDatabaseAdapterUnknownError,
@@ -157,6 +158,34 @@ describe('postgres errors', () => {
         .setField('fieldExclusion', 'what')
         .createAsync(),
     ).rejects.toThrow(EntityDatabaseAdapterExclusionConstraintError);
+  });
+
+  it('throws EntityDatabaseAdapterLockNotAvailableError when lock_timeout is exceeded', async () => {
+    const vc = new ViewerContext(createKnexIntegrationTestEntityCompanionProvider(knexInstance));
+    const entity = await ErrorsTestEntity.creator(vc)
+      .setField('id', 1)
+      .setField('fieldNonNull', 'hello')
+      .createAsync();
+
+    // hold a row lock from a separate transaction while the entity update attempts to acquire it
+    const lockHolderTransaction = await knexInstance.transaction();
+    await lockHolderTransaction.raw(
+      'SELECT * FROM postgres_test_entities WHERE id = ? FOR UPDATE',
+      [entity.getID()],
+    );
+
+    try {
+      await expect(
+        vc.runInTransactionForDatabaseAdapterFlavorAsync('postgres', async (queryContext) => {
+          await queryContext.getQueryInterface().raw("SET LOCAL lock_timeout = '100ms'");
+          await ErrorsTestEntity.updater(entity, queryContext)
+            .setField('fieldNonNull', 'world')
+            .updateAsync();
+        }),
+      ).rejects.toThrow(EntityDatabaseAdapterLockNotAvailableError);
+    } finally {
+      await lockHolderTransaction.rollback();
+    }
   });
 
   it('throws EntityDatabaseAdapterUnknownError otherwise', async () => {
