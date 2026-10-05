@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.70.0](https://github.com/expo/entity/compare/v0.69.0...v0.70.0) (2026-10-05)
+
+### Features
+
+- add transient error for PostgreSQL lock timeouts ([#716](https://github.com/expo/entity/issues/716)) ([13ce74e](https://github.com/expo/entity/commit/13ce74e93aec0a0b0b84edd1e1e89d785a3dbf46)), closes [#714](https://github.com/expo/entity/issues/714) [#715](https://github.com/expo/entity/issues/715)
+
 # [0.69.0](https://github.com/expo/entity/compare/v0.68.0...v0.69.0) (2026-09-29)
 
 ### Features
