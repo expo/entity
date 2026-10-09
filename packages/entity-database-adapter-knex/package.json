@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@expo/entity": "workspace:^",
+    "@expo/results": "^1.0.0",
     "knex": "^3.2.9"
   },
   "devDependencies": {

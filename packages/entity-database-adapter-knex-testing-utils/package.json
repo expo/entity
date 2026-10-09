@@ -27,6 +27,7 @@
   "dependencies": {
     "@expo/entity": "workspace:^",
     "@expo/entity-database-adapter-knex": "workspace:^",
+    "@expo/entity-testing-utils": "workspace:^",
     "invariant": "^2.2.4",
     "uuid": "^14.0.0"
   },
