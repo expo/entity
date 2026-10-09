@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.71.0](https://github.com/expo/entity/compare/v0.70.0...v0.71.0) (2026-10-09)
+
+### Bug Fixes
+
+- declare runtime dependencies imported by published packages ([#717](https://github.com/expo/entity/issues/717)) ([3c96f3b](https://github.com/expo/entity/commit/3c96f3b9ea2b097c979447354f0abe35ed5e8d57))
+
 # [0.70.0](https://github.com/expo/entity/compare/v0.69.0...v0.70.0) (2026-10-05)
 
 **Note:** Version bump only for package @expo/entity-testing-utils

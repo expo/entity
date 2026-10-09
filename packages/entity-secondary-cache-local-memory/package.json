@@ -1,6 +1,6 @@
 {
   "name": "@expo/entity-secondary-cache-local-memory",
-  "version": "0.70.0",
+  "version": "0.71.0",
   "description": "Local memory secondary cache for @expo/entity",
   "keywords": [
     "entity"
