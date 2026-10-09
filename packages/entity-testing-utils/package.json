@@ -26,8 +26,10 @@
   },
   "dependencies": {
     "@expo/entity": "workspace:^",
+    "invariant": "^2.2.4",
     "lodash-es": "^4.17.23",
-    "ts-mockito": "^2.6.1"
+    "ts-mockito": "^2.6.1",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@jest/globals": "30.5.2",

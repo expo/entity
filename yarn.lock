@@ -902,6 +902,7 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-database-adapter-knex": "workspace:^"
+    "@expo/entity-testing-utils": "workspace:^"
     "@jest/globals": "npm:30.5.2"
     "@types/invariant": "npm:2.2.37"
     "@types/node": "npm:24.19.1"
@@ -919,6 +920,7 @@ __metadata:
   dependencies:
     "@expo/entity": "workspace:^"
     "@expo/entity-testing-utils": "workspace:^"
+    "@expo/results": "npm:^1.0.0"
     "@jest/globals": "npm:30.5.2"
     knex: "npm:^3.2.9"
     pg: "npm:8.23.1"
@@ -1008,9 +1010,11 @@ __metadata:
     "@jest/globals": "npm:30.5.2"
     "@types/lodash-es": "npm:4.17.12"
     "@types/node": "npm:24.19.1"
+    invariant: "npm:^2.2.4"
     lodash-es: "npm:^4.17.23"
     ts-mockito: "npm:^2.6.1"
     typescript: "npm:6.0.3"
+    uuid: "npm:^14.0.0"
   peerDependencies:
     "@jest/globals": "*"
   languageName: unknown
@@ -1020,6 +1024,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@expo/entity@workspace:packages/entity"
   dependencies:
+    "@expo/nullthrows": "npm:^2.1.0"
     "@expo/results": "npm:^1.0.0"
     "@jest/globals": "npm:30.5.2"
     "@types/invariant": "npm:2.2.37"
@@ -1034,7 +1039,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@expo/nullthrows@npm:2.1.0":
+"@expo/nullthrows@npm:2.1.0, @expo/nullthrows@npm:^2.1.0":
   version: 2.1.0
   resolution: "@expo/nullthrows@npm:2.1.0"
   checksum: 10c0/9f0b7f8ebcf5932ecc9bd2c55a4892ad35e009d21448881455b3f491bb96751586041fb852577c6c43b89c5df74a14b0693e9f2156093ffa1073be5d0670054f
