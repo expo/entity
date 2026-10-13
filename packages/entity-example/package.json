@@ -35,7 +35,7 @@
     "@types/koa__cors": "5.0.1",
     "@types/koa__router": "12.0.5",
     "@types/supertest": "7.2.1",
-    "supertest": "7.2.2",
+    "supertest": "7.3.1",
     "typescript": "6.0.3"
   },
   "engines": {
