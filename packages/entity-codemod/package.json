@@ -27,7 +27,7 @@
   "devDependencies": {
     "@jest/globals": "30.5.2",
     "@types/jscodeshift": "17.3.0",
-    "@types/node": "24.19.1",
+    "@types/node": "24.19.2",
     "jscodeshift": "17.4.0",
     "typescript": "6.0.3"
   },
