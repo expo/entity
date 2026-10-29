@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.72.0](https://github.com/expo/entity/compare/v0.71.0...v0.72.0) (2026-10-29)
+
+### Features
+
+- add notAuthorizedEntity to getUserFacingDenialReason ([#732](https://github.com/expo/entity/issues/732)) ([24109be](https://github.com/expo/entity/commit/24109bec32c03b228bd35cef8bd6a379dcf7277b))
+
 # [0.71.0](https://github.com/expo/entity/compare/v0.70.0...v0.71.0) (2026-10-09)
 
 ### Bug Fixes
