@@ -224,17 +224,28 @@ export abstract class EntityPrivacyPolicy<
    * contributed, so the policy can select a message for a specific reason, for example "You must be a
    * member of this account to view this project." when a rule skipped with a NOT_ACCOUNT_MEMBER reason.
    *
-   * The denied entity and the evaluation context are intentionally not passed to this method. The viewer
-   * is not authorized to see the entity, and the evaluation context may contain it (as the previous value
-   * or the cascading deletion cause), so neither may influence or appear in the user-facing message.
-   * Rules should instead communicate what is needed through reason codes.
+   * The evaluation context and the denied entity are passed so that the message can be selected based
+   * on them (for example, the entity type or whether the denial is part of a cascading deletion). The
+   * viewer is not authorized for the entity, and the evaluation context may contain it (as the previous
+   * value) or other entities (as the cascading deletion cause), so take care that the message does not
+   * reveal any data that the viewer may not see. Rules should communicate what is needed through reason codes.
    *
    * @param _viewerContext - viewer context that was denied
+   * @param _evaluationContext - context in which the policy was evaluated
+   * @param _notAuthorizedEntity - entity for which the action was denied
    * @param _action - the action that was denied
    * @param _denialReason - structured, developer-facing reason for the denial
    */
   protected getUserFacingDenialReason(
     _viewerContext: TViewerContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
+    _notAuthorizedEntity: TEntity,
     _action: EntityAuthorizationAction,
     _denialReason: EntityNotAuthorizedDenialReason,
   ): EntityNotAuthorizedUserFacingReason | null {
@@ -523,7 +534,7 @@ export abstract class EntityPrivacyPolicy<
       );
       switch (result) {
         case RuleEvaluationResult.DENY:
-          throw this.createNotAuthorizedError(viewerContext, entity, action, {
+          throw this.createNotAuthorizedError(viewerContext, evaluationContext, entity, action, {
             type: EntityNotAuthorizedDenialType.RULE_DENIED,
             rule: { ruleIndex: i, ruleName: rule.constructor.name, reasons },
             skippedRules,
@@ -540,7 +551,7 @@ export abstract class EntityPrivacyPolicy<
       }
     }
 
-    throw this.createNotAuthorizedError(viewerContext, entity, action, {
+    throw this.createNotAuthorizedError(viewerContext, evaluationContext, entity, action, {
       type: EntityNotAuthorizedDenialType.ALL_RULES_SKIPPED,
       skippedRules,
     });
@@ -548,11 +559,24 @@ export abstract class EntityPrivacyPolicy<
 
   private createNotAuthorizedError(
     viewerContext: TViewerContext,
+    evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      TFields,
+      TIDField,
+      TViewerContext,
+      TEntity,
+      TSelectedFields
+    >,
     entity: TEntity,
     action: EntityAuthorizationAction,
     denialReason: EntityNotAuthorizedDenialReason,
   ): EntityNotAuthorizedError<TFields, TIDField, TViewerContext, TEntity, TSelectedFields> {
-    const userFacingReason = this.getUserFacingDenialReason(viewerContext, action, denialReason);
+    const userFacingReason = this.getUserFacingDenialReason(
+      viewerContext,
+      evaluationContext,
+      entity,
+      action,
+      denialReason,
+    );
     return new EntityNotAuthorizedError<
       TFields,
       TIDField,
