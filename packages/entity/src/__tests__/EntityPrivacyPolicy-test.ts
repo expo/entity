@@ -398,6 +398,13 @@ class ReasonedDenialPolicy extends EntityPrivacyPolicy<
 
   protected override getUserFacingDenialReason(
     _viewerContext: ViewerContext,
+    _evaluationContext: EntityPrivacyPolicyEvaluationContext<
+      BlahFields,
+      'id',
+      ViewerContext,
+      BlahEntity
+    >,
+    notAuthorizedEntity: BlahEntity,
     _action: EntityAuthorizationAction,
     denialReason: EntityNotAuthorizedDenialReason,
   ): EntityNotAuthorizedUserFacingReason | null {
@@ -407,7 +414,10 @@ class ReasonedDenialPolicy extends EntityPrivacyPolicy<
         skippedRule.reasons.includes(TestSkipReason.NOT_MEMBER),
       )
     ) {
-      return { code: 'MUST_BE_MEMBER', message: 'You must be a member to do this.' };
+      return {
+        code: 'MUST_BE_MEMBER',
+        message: `You must be a member to access this ${notAuthorizedEntity.constructor.name}.`,
+      };
     }
     return null;
   }
@@ -941,7 +951,7 @@ describe(EntityPrivacyPolicy, () => {
       expect(error.message).not.toContain('NOT_OWNER');
       expect(error.userFacingDenialReason).toEqual({
         code: 'MUST_BE_MEMBER',
-        message: 'You must be a member to do this.',
+        message: 'You must be a member to access this BlahEntity.',
       });
     });
 
