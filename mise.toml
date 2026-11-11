@@ -1,5 +1,5 @@
 [tools]
-node = "24.22.1"
+node = "24.22.3"
 
 [tasks.yarn]
 run = "yarn install --immutable"
