@@ -940,7 +940,7 @@ __metadata:
     "@jest/globals": "npm:30.5.2"
     "@koa/bodyparser": "npm:6.1.0"
     "@koa/cors": "npm:5.0.0"
-    "@koa/router": "npm:15.4.0"
+    "@koa/router": "npm:15.7.1"
     "@types/koa": "npm:3.0.3"
     "@types/koa__cors": "npm:5.0.1"
     "@types/koa__router": "npm:12.0.5"
@@ -1823,20 +1823,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@koa/router@npm:15.4.0":
-  version: 15.4.0
-  resolution: "@koa/router@npm:15.4.0"
+"@koa/router@npm:15.7.1":
+  version: 15.7.1
+  resolution: "@koa/router@npm:15.7.1"
   dependencies:
     debug: "npm:^4.4.3"
     http-errors: "npm:^2.0.1"
     koa-compose: "npm:^4.1.0"
-    path-to-regexp: "npm:^8.3.0"
+    path-to-regexp: "npm:^8.4.2"
   peerDependencies:
     koa: ^2.0.0 || ^3.0.0
   peerDependenciesMeta:
     koa:
       optional: false
-  checksum: 10c0/a16e079115a9e228399b5ca264ca999b2e008d86e29e139343b927eb010e889a2cd17f03194796fb41d82df8572ac25ba112d1d3c342c9e27376894412c349d5
+  checksum: 10c0/57a71a01fb19c97a5e5a4aaf9cd4080432b974287bfd664ac6890c8c8e83c6d020f9f53b13ce683d9f2a3bc1a96ee9e0f305baab2c2d5866c0a84ed5c9692430
   languageName: node
   linkType: hard
 
@@ -9170,7 +9170,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:^8.3.0":
+"path-to-regexp@npm:^8.4.2":
   version: 8.4.2
   resolution: "path-to-regexp@npm:8.4.2"
   checksum: 10c0/05b115c49b47ad252ce05faa32930f643f23769c68b8bcfe78ad833545140c48bbffb3266986d6c8d5db13a64cf12e07e0d72d9882cab830efeefa553533ebaf

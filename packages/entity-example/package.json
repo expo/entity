@@ -25,7 +25,7 @@
     "@expo/entity-testing-utils": "workspace:^",
     "@koa/bodyparser": "6.1.0",
     "@koa/cors": "5.0.0",
-    "@koa/router": "15.4.0",
+    "@koa/router": "15.7.1",
     "graphql": "16.13.2",
     "koa": "3.2.1"
   },
